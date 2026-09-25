@@ -1270,3 +1270,16 @@ body.is-sorting * {
 .prayer-day .concern-chips {
   margin-bottom: 0;
 }
+/* A time out of the order of the day: a plain note, not a red mark. */
+.time-order {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 var(--radius-m, 8px) var(--radius-m, 8px) 0;
+  font: 0.9rem var(--sans);
+}
+.times-grid input[aria-invalid='true'] {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}

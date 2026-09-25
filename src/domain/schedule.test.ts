@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SCHEDULE } from './model';
 import { defaultProfile, normalizeProfile } from './profile';
-import { daysLabel, firstGroups, moveDay, removeGroup, scheduleFor } from './schedule';
+import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, scheduleFor } from './schedule';
 
 const late = { ...DEFAULT_SCHEDULE, rise: '07:00' };
 
@@ -25,6 +25,19 @@ describe('times per weekday', () => {
     const added = [...g, { days: [], times: late }];
     expect(moveDay(added, 0, 2).map((x) => daysLabel(x.days))).toEqual(['Mo – Fr', 'Sa', 'So']);
     expect(moveDay(moveDay(added, 0, 2), 6, 2).map((x) => daysLabel(x.days))).toEqual(['Mo – Fr', 'Sa, So']);
+    // Tapped where it is, a day leaves its group and keeps the times for all days.
+    const off = moveDay(g, 3, 0);
+    expect(off.map((x) => daysLabel(x.days))).toEqual(['Mo, Di, Do, Fr', 'Sa, So']);
+    expect(freeDays(off)).toEqual([3]);
+    expect(
+      scheduleFor(
+        {
+          ...defaultProfile('2026-09-25'),
+          scheduleDays: { on: true, groups: off.map((x, i) => (i === 0 ? { ...x, times: late } : x)) },
+        },
+        '2026-09-23',
+      ).rise,
+    ).toBe('04:00');
     expect(removeGroup(g, 1).map((x) => daysLabel(x.days))).toEqual(['Mo – So']);
   });
 
@@ -34,7 +47,7 @@ describe('times per weekday', () => {
     expect(daysLabel([2, 3, 4, 0])).toBe('Di – Do, So');
   });
 
-  it('keeps every weekday in exactly one group when loading', () => {
+  it('keeps every weekday in at most one group when loading', () => {
     const p = normalizeProfile(
       {
         scheduleDays: {
@@ -47,10 +60,20 @@ describe('times per weekday', () => {
       },
       '2026-09-25',
     );
-    expect(p.scheduleDays!.groups.map((g) => g.days)).toEqual([
-      [1, 2, 3, 4, 5, 0],
-      [6],
-    ]);
+    expect(p.scheduleDays!.groups.map((g) => g.days)).toEqual([[1, 2], [6]]);
     expect(p.scheduleDays!.groups[1]!.times.rise).toBe('04:00');
+  });
+});
+
+describe('order of the times', () => {
+  it('notes a time before the one it follows, and lets night times pass midnight', () => {
+    expect(orderIssue(DEFAULT_SCHEDULE)).toBeUndefined();
+    const early = orderIssue({ ...DEFAULT_SCHEDULE, rise: '06:00' });
+    expect(early?.key).toBe('stillTime');
+    expect(early?.message).toBe(
+      'Stille Zeit (04:15) liegt vor Aufstehen (06:00). So geht es nicht: Stille Zeit kommt nach Aufstehen.',
+    );
+    expect(orderIssue({ ...DEFAULT_SCHEDULE, compline: '23:30', lightsOut: '00:15' })).toBeUndefined();
+    expect(orderIssue({ ...DEFAULT_SCHEDULE, vespers: '21:00' })?.key).toBe('compline');
   });
 });

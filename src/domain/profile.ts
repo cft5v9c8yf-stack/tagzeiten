@@ -3,7 +3,7 @@ import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
 import { emptyPrayer, normalizePrayer } from './prayer';
-import { sortDays, WEEK } from './schedule';
+import { sortDays } from './schedule';
 import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
@@ -58,7 +58,7 @@ function cleanSchedule(raw: Partial<Schedule> | undefined, fallback: Schedule): 
   return out;
 }
 
-/** Keeps each weekday in at most one group; days left over join the first group. */
+/** Keeps each weekday in at most one group; days in none keep the times for all days. */
 function cleanScheduleDays(raw: Profile['scheduleDays'], schedule: Schedule): Pick<Profile, 'scheduleDays'> {
   if (!raw || !Array.isArray(raw.groups)) return {};
   const seen = new Set<number>();
@@ -70,8 +70,6 @@ function cleanScheduleDays(raw: Profile['scheduleDays'], schedule: Schedule): Pi
     groups.push({ days: sortDays(days), times: cleanSchedule(g.times, schedule) });
   }
   if (groups.length === 0) return {};
-  const missing = WEEK.filter((d) => !seen.has(d));
-  groups[0] = { ...groups[0]!, days: sortDays([...groups[0]!.days, ...missing]) };
   return { scheduleDays: { on: raw.on === true, groups } };
 }
 

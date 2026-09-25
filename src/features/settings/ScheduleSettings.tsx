@@ -2,37 +2,41 @@ import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
 import type { Schedule, ScheduleGroup, TextVariant, Theme } from '../../domain/model';
-import { daysLabel, firstGroups, moveDay, removeGroup, WEEK } from '../../domain/schedule';
+import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
 import { Section } from '../../ui/Section';
 
-const TIMES: { key: keyof Schedule; label: string }[] = [
-  { key: 'rise', label: 'Aufstehen' },
-  { key: 'stillTime', label: 'Stille Zeit' },
-  { key: 'vespers', label: 'Vesper' },
-  { key: 'compline', label: 'Nachtgebet' },
-  { key: 'lightsOut', label: 'Licht aus' },
-];
+const TIMES = TIME_ORDER;
 
 const TIME_OK = /^\d{2}:\d{2}$/;
 
 /** The five times of a day, as a grid of time fields. */
 function TimesGrid({ times, onChange }: { times: Schedule; onChange: (key: keyof Schedule, v: string) => void }) {
   const base = useId();
+  const issue = orderIssue(times);
   return (
-    <div className="times-grid">
-      {TIMES.map((t) => (
-        <div className="field" key={t.key}>
-          <label htmlFor={`${base}-${t.key}`}>{t.label}</label>
-          <input
-            id={`${base}-${t.key}`}
-            type="time"
-            value={times[t.key]}
-            onChange={(e) => TIME_OK.test(e.target.value) && onChange(t.key, e.target.value)}
-          />
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="times-grid">
+        {TIMES.map((t) => (
+          <div className="field" key={t.key}>
+            <label htmlFor={`${base}-${t.key}`}>{t.label}</label>
+            <input
+              id={`${base}-${t.key}`}
+              type="time"
+              value={times[t.key]}
+              aria-invalid={issue?.key === t.key || undefined}
+              aria-describedby={issue?.key === t.key ? `${base}-order` : undefined}
+              onChange={(e) => TIME_OK.test(e.target.value) && onChange(t.key, e.target.value)}
+            />
+          </div>
+        ))}
+      </div>
+      {issue && (
+        <p id={`${base}-order`} className="time-order" role="status">
+          {issue.message}
+        </p>
+      )}
+    </>
   );
 }
 
@@ -78,7 +82,9 @@ export function ScheduleSettings() {
         />
       ) : (
         <>
-          <p className="small muted">Tippe einen Tag an, um ihn diesen Zeiten zuzuordnen.</p>
+          <p className="small muted">
+            Tippe einen Tag an, um ihn diesen Zeiten zuzuordnen; noch einmal getippt, nimmst du ihn wieder heraus.
+          </p>
           {groups.map((g, i) => (
             <fieldset key={i} className="schedule-group">
               <legend>{g.days.length > 0 ? daysLabel(g.days) : 'Noch keine Tage gewählt'}</legend>
@@ -111,6 +117,12 @@ export function ScheduleSettings() {
               )}
             </fieldset>
           ))}
+          {freeDays(groups).length > 0 && (
+            <p className="small schedule-free">
+              <b>{daysLabel(freeDays(groups))}:</b> ohne eigene Zeiten, es gelten die Zeiten für alle Tage (
+              {profile.schedule.rise} Aufstehen, {profile.schedule.lightsOut} Licht aus).
+            </p>
+          )}
           {groups.length < 7 && (
             <button
               type="button"

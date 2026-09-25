@@ -376,6 +376,12 @@ describe('Archiv', () => {
       ]),
     );
 
+    // Tapped again, a day leaves its group and keeps the times for all days.
+    const first = document.querySelectorAll('.schedule-group')[0]!;
+    fireEvent.click(within(first as HTMLElement).getByRole('button', { name: 'Mittwoch' }));
+    await waitFor(() => expect(document.querySelector('.schedule-group legend')!.textContent).toBe('Mo, Di, Do, Fr'));
+    expect(document.querySelector('.schedule-free')!.textContent).toContain('Mi:');
+
     // Back to the same times every day; the groups wait for a return.
     fireEvent.click(screen.getByRole('button', { name: 'Alle Tage gleich' }));
     await waitFor(() => expect(scheduleFor(store.getProfile(), '2026-09-26').rise).toBe('04:00'));
