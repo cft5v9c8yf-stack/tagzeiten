@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link } from 'react-router';
 import { getOrder } from '../../content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS } from '../../content/psalms';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -16,19 +16,6 @@ import { ChurchYearHeader } from './ChurchYearHeader';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
-
-/** On app start after 15:00 the evening is what is due; the prototype opened it directly. */
-let startupHandled = false;
-
-function useEveningOnStartup(isToday: boolean) {
-  const navigate = useNavigate();
-  const [params] = useSearchParams();
-  useEffect(() => {
-    if (startupHandled) return;
-    startupHandled = true;
-    if (isToday && !params.has('d') && new Date().getHours() >= 15) navigate('/abend', { replace: true });
-  }, [isToday, navigate, params]);
-}
 
 function morningStatus(day: Day): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -158,7 +145,6 @@ export function TodayPage() {
   const { date, isToday } = useSelectedDate();
   const day = useDay(date);
   const profile = useProfile();
-  useEveningOnStartup(isToday);
   const s = profile.schedule;
 
   return (

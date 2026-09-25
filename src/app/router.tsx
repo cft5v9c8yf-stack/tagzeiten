@@ -9,7 +9,7 @@ import { Layout } from './Layout';
 import { NotFound } from './NotFound';
 
 const IS_DEMO = import.meta.env.MODE === 'demo';
-if (IS_DEMO && !location.hash) location.hash = '#/morgen';
+if (IS_DEMO && !location.hash) location.hash = '#/';
 
 // The demo runs inside a frame without server-side routing, hence hash URLs.
 export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
