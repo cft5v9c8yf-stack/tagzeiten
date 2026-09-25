@@ -7,7 +7,7 @@ der Server leitet unbekannte Pfade auf `index.html` um.
 ## 1. Installieren
 
 - [ ] In **Safari** öffnen (nicht in einer anderen App), Teilen-Knopf → **„Zum Home-Bildschirm“**.
-- [ ] Symbol auf dem Home-Bildschirm: Tagesbogen mit Kreuz auf dunklem Grund, Name „Tagzeiten“.
+- [ ] Symbol auf dem Home-Bildschirm: Lutherrose auf dunklem Grund, Name „Tagzeiten“.
 - [ ] Vom Home-Bildschirm starten: keine Safari-Leiste, die App füllt den Bildschirm.
 
 ## 2. Ränder (Notch, Home-Leiste)
