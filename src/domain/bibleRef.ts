@@ -8,7 +8,8 @@ export function refUrl(ref: string): string {
   const m = /^(.*\D)\s(\d.*)$/.exec(ref.trim());
   if (!m) return BIBLE_BASE_URL;
   const book = (m[1] ?? '').replace(/\.\s+/g, '.');
-  const passage = (m[2] ?? '').replace(/–/g, '-');
+  // Half verses ("6,14a") link to the whole verse.
+  const passage = (m[2] ?? '').replace(/–/g, '-').replace(/(\d)[ab]\b/g, '$1');
   return BIBLE_BASE_URL + encodeURIComponent(book) + passage;
 }
 

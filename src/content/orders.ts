@@ -32,6 +32,8 @@ export type PartKind =
   | 'intercession'
   | 'lords-prayer'
   | 'creed'
+  | 'armor'
+  | 'armor-evening'
   | 'alignment'
   | 'thanks'
   | 'review'
@@ -91,6 +93,7 @@ const AT_BED: Order = {
         p('lords-prayer', 'Vaterunser'),
         p('baptism', 'Taufgedächtnis'),
         p('morning-blessing', 'Morgensegen'),
+        p('armor', 'Die geistliche Waffenrüstung'),
       ],
     },
   ],
@@ -105,7 +108,7 @@ const AT_BED_SHORT: Order = {
       id: 'atBed',
       title: 'Am Bett',
       minutes: 1,
-      parts: [p('lords-prayer', 'Vaterunser'), p('morning-blessing', 'Morgensegen')],
+      parts: [p('lords-prayer', 'Vaterunser'), p('morning-blessing', 'Morgensegen'), p('armor', 'Die geistliche Waffenrüstung')],
     },
   ],
 };
@@ -289,7 +292,12 @@ const COMPLINE_FULL: Order = {
   form: 'full',
   title: 'Nachtgebet',
   steps: [
-    one('sign', p('sign-of-cross', 'Kreuzzeichen')),
+    {
+      id: 'sign',
+      title: 'Kreuzzeichen',
+      minutes: 0,
+      parts: [p('sign-of-cross', 'Kreuzzeichen'), p('armor-evening', 'Seid nüchtern und wachet')],
+    },
     one('creed', p('creed', 'Glaubensbekenntnis')),
     one('lordsPrayer', p('lords-prayer', 'Vaterunser')),
     one('thanks', p('thanks', 'Dank', { fields: ['evening.thanks.0', 'evening.thanks.1', 'evening.thanks.2'] })),

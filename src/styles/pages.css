@@ -1283,3 +1283,50 @@ body.is-sorting * {
   border-color: var(--gold);
   box-shadow: 0 0 0 1px var(--gold);
 }
+/* The spiritual armour: the call of Eph 6,10-11, then the piece of the day. */
+.armor-call {
+  margin: 0 0 10px;
+  padding-left: 12px;
+  border-left: 2px solid var(--gold);
+  font-style: italic;
+}
+.armor-call .refs,
+.armor-word .refs {
+  font-style: normal;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.armor-piece {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.armor-title {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.armor-word {
+  font-style: italic;
+}
+.armor-week {
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+.armor-week li {
+  padding: 4px 0;
+}
+.armor-week li[aria-current='true'] {
+  font-weight: 600;
+}
+.armor-day {
+  display: inline-block;
+  min-width: 6.5em;
+  color: var(--muted);
+  font: 0.85rem var(--sans);
+}
+.armor-question {
+  margin: 0 0 12px;
+}

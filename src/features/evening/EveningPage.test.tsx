@@ -67,6 +67,8 @@ describe('Nachtgebet', () => {
     expect(page.querySelectorAll('input, textarea, select')).toHaveLength(0);
     expect(page.textContent).toContain('Wird gebetet, nicht notiert.');
     expect(page.textContent).toContain('1. Johannes 1,9');
+    // The question of the armour is prayed here, before confession and absolution (rules 1–3).
+    expect(page.textContent).toContain('Der Schild des Glaubens:');
     // The absolution never folds away (rule 1).
     expect(screen.queryByRole('button', { name: 'Zuspruch' })).toBeNull();
     expect(screen.getByRole('heading', { name: 'Zuspruch' })).toBeTruthy();
@@ -78,6 +80,7 @@ describe('Nachtgebet', () => {
     const flow = () => document.querySelector('.compline .flow-step')!;
     expect(document.querySelectorAll('.compline .flow-step')).toHaveLength(1);
     expect(flow().querySelector('h3')!.textContent).toBe('Kreuzzeichen');
+    expect(flow().textContent).toContain('Seid nüchtern und wachet');
     fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Glaubensbekenntnis' }));
     await waitFor(() => expect(flow().querySelector('h3')!.textContent).toBe('Glaubensbekenntnis'));
     const current = within(chainOf('Nachtgebet')).getByRole('button', { name: 'Glaubensbekenntnis' });

@@ -39,6 +39,7 @@ import {
   VERSICLE_HELP,
   VERSICLE_OPEN_LIPS,
 } from '../../content/liturgy';
+import { ARMOR_CALL, ARMOR_EVENING, ARMOR_WEEK, armorOf, refsOf } from '../../content/armor';
 import { WREATH_FREEDOM, WREATH_INTRO, WREATH_MATTER, WREATH_RULE_OF_THUMB } from '../../content/method';
 import { RUBRICS, type OrderId, type Part } from '../../content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS, PSALM_RUBRIC_ANTIPHON, PSALM_RUBRIC_MORNING } from '../../content/psalms';
@@ -69,6 +70,20 @@ function Collapsible({ title, children }: { title: string; children: ReactNode }
       <summary>{title}</summary>
       {children}
     </details>
+  );
+}
+
+/** One link per reference in "Epheser 6,14a; Johannes 14,6". */
+function Refs({ refs }: { refs: string }) {
+  return (
+    <span className="refs">
+      {refsOf(refs).map((r, i) => (
+        <span key={r}>
+          {i > 0 && ' · '}
+          <BibleLink reference={r} />
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -307,6 +322,46 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
         </>
       );
 
+    case 'armor': {
+      const piece = armorOf(wd);
+      return (
+        <>
+          <blockquote className="armor-call">
+            {ARMOR_CALL.text} <Refs refs={ARMOR_CALL.ref} />
+          </blockquote>
+          <p className="small muted">{ARMOR_CALL.note}</p>
+          <div className="armor-piece">
+            <h5 className="armor-title">
+              {piece.day}: {piece.title}
+            </h5>
+            <p className="armor-word">
+              {piece.word} <Refs refs={piece.ref} />
+            </p>
+            <p>{piece.meaning}</p>
+            <PrayerText text={{ lines: [piece.prayer] }} />
+          </div>
+          {ctx.form === 'full' && (
+            <Collapsible title="Alle Stücke der Woche">
+              <ul className="armor-week">
+                {ARMOR_WEEK.map((a) => (
+                  <li key={a.weekday} aria-current={a.weekday === wd ? 'true' : undefined}>
+                    <span className="armor-day">{a.day}</span> {a.title}
+                  </li>
+                ))}
+              </ul>
+            </Collapsible>
+          )}
+        </>
+      );
+    }
+
+    case 'armor-evening':
+      return (
+        <blockquote className="armor-call">
+          {ARMOR_EVENING.text} <Refs refs={ARMOR_EVENING.ref} />
+        </blockquote>
+      );
+
     case 'alignment':
       return <Alignment part={part} ctx={ctx} />;
 
@@ -368,7 +423,10 @@ export function OrderPart({
   /** Keeps the outline valid: h4 below a step heading, h3 directly below the order, h5 in a nested flow. */
   headingLevel?: 3 | 4 | 5;
 }) {
+  const profile = useProfile();
   const Heading = (`h${headingLevel}` as 'h3' | 'h4' | 'h5');
+  // The armour can be switched off in the settings.
+  if ((part.kind === 'armor' || part.kind === 'armor-evening') && !profile.armor) return null;
   // The absolution never folds away: an examination always ends in the word of forgiveness (rule 1).
   if (!showTitle || part.kind === 'absolution') {
     return (

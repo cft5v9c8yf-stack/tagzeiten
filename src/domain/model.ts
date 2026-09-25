@@ -180,6 +180,8 @@ export interface Profile {
   schedule: Schedule;
   /** Times per weekday, when `on`; the groups stay while switched off, for a return. */
   scheduleDays?: { on: boolean; groups: ScheduleGroup[] };
+  /** The spiritual armour in morning and night prayer. */
+  armor: boolean;
   theme: Theme;
   texts: TextVariant;
   createdAt: DateKey;

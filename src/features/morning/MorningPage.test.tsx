@@ -64,4 +64,16 @@ describe('Stille Zeit as a flow', () => {
     expect(screen.getByText('Stille Zeit abgeschlossen.')).toBeTruthy();
     expect(document.querySelector('.flow-step')).toBeNull();
   });
+
+  it('puts on the armour of the day after the morning blessing, unless switched off', async () => {
+    const store = await renderMorning();
+    const step = () => document.querySelector('.flow-step')!;
+    const parts = [...step().querySelectorAll('.part-title')].map((h) => h.textContent);
+    expect(parts.slice(-2)).toEqual(['Morgensegen', 'Die geistliche Waffenrüstung']);
+    // 25 September 2026 is a Friday.
+    expect(step().textContent).toContain('Freitag: Der Helm des Heils');
+    expect(step().textContent).toContain('Ziehet an den Harnisch Gottes');
+    store.updateProfile((p) => ({ ...p, armor: false }));
+    await waitFor(() => expect(step().textContent).not.toContain('Harnisch'));
+  });
 });

@@ -157,6 +157,21 @@ export function DisplaySettings() {
         ]}
       />
       </Section>
+      <Section id="more.display.armor" title="Geistliche Waffenrüstung" level={4}>
+      <Segmented
+        label="Geistliche Waffenrüstung"
+        value={profile.armor ? 'on' : 'off'}
+        onChange={(v) => store.updateProfile((p) => ({ ...p, armor: v === 'on' }), { immediate: true })}
+        options={[
+          { value: 'on', label: 'Anzeigen' },
+          { value: 'off', label: 'Ausblenden' },
+        ]}
+      />
+      <p className="small muted">
+        Epheser 6,10–18: nach dem Morgensegen ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und
+        eine Frage in der Prüfung.
+      </p>
+      </Section>
       <Section id="more.display.texts" title="Vaterunser und Glaubensbekenntnis" level={4}>
       <Segmented
         label="Fassung von Vaterunser und Glaubensbekenntnis"
