@@ -261,6 +261,32 @@ details.fold[open] > summary {
 .color-code td {
   padding: 3px 0;
 }
+/* A short stroke of the coloured pencil before its name */
+.pencil {
+  display: inline-block;
+  width: 22px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 4px 2px 4px 2px;
+  vertical-align: 0.05em;
+}
+/* Margin marks: the mark itself stands in front, no bullet */
+.marks-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+}
+.marks-list li {
+  display: flex;
+  gap: 10px;
+  margin: 4px 0;
+}
+.marks-list .mark-sign {
+  flex: none;
+  min-width: 1.4em;
+  font-weight: 700;
+  text-align: center;
+}
 
 /* ---------------------------------------------------------------- catechism */
 .cat-piece h5 {

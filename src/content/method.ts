@@ -28,13 +28,14 @@ export const READING_PASSES = [
   ['Dritter Durchgang', 'Die Hauptaussage für dich zusammenfassen und je Kapitel einen Vers auswählen, den du dir einprägst.'],
 ] as const;
 
+/** The coloured pencils on paper; `hex` draws a stroke of that pencil in the app. */
 export const COLOR_CODE = [
-  { color: 'Blau', meaning: 'Wer Gott ist und was er tut' },
-  { color: 'Rot', meaning: 'Was Gott gebietet und fordert' },
-  { color: 'Violett', meaning: 'Antworten in Gottesfurcht' },
-  { color: 'Braun', meaning: 'Sünde und Gottlosigkeit' },
-  { color: 'Orange', meaning: 'Schlüsselbegriffe' },
-  { color: 'Grün', meaning: 'Wo die Bibel sich selbst zitiert' },
+  { color: 'Blau', hex: '#2f6fce', meaning: 'Wer Gott ist und was er tut' },
+  { color: 'Rot', hex: '#d23a2f', meaning: 'Was Gott gebietet und fordert' },
+  { color: 'Violett', hex: '#7b4bb7', meaning: 'Antworten in Gottesfurcht' },
+  { color: 'Braun', hex: '#8a5a2b', meaning: 'Sünde und Gottlosigkeit' },
+  { color: 'Orange', hex: '#ef8a1f', meaning: 'Schlüsselbegriffe' },
+  { color: 'Grün', hex: '#3c9a4a', meaning: 'Wo die Bibel sich selbst zitiert' },
 ] as const;
 
 export const MARGIN_MARKS = [

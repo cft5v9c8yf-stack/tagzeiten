@@ -102,13 +102,16 @@ export function MethodHelpBody() {
         <tbody>
           {COLOR_CODE.map((c) => (
             <tr key={c.color}>
-              <th scope="row">{c.color}</th>
+              <th scope="row">
+                <span className="pencil" style={{ background: c.hex }} aria-hidden="true" />
+                {c.color}
+              </th>
               <td>{c.meaning}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <ul className="plain-list">
+      <ul className="marks-list">
         {MARGIN_MARKS.map((m) => (
           <li key={m.mark}>
             <b className="mark-sign">{m.mark}</b> {m.meaning}
