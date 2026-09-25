@@ -150,7 +150,7 @@ export function TodayPage() {
   return (
     <>
       <h2 className="visually-hidden">{isToday ? 'Heute' : 'Tag'}</h2>
-      <ChurchYearHeader date={date} />
+      <ChurchYearHeader date={date} isToday={isToday} />
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
         <Link to={withDate('/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>

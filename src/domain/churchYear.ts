@@ -109,6 +109,8 @@ interface ChurchYearCalendar {
   weekMarkers: Marker[];
   /** Feasts and holy days by date. */
   feasts: Map<DateKey, string>;
+  /** Weekday feasts with their own readings (Good Friday, Ascension …). */
+  majorFeasts: Marker[];
   seasons: { from: DateKey; season: Season }[];
 }
 
@@ -231,7 +233,15 @@ function calendar(year: number): ChurchYearCalendar {
     { from: thirdLast, season: 'endOfYear' },
   ];
 
-  const cal = { start, end, easter: E, weekMarkers: markers, feasts, seasons };
+  const majorFeasts: Marker[] = [
+    { date: e(-3), name: 'Gründonnerstag', key: 'maundyThursday' },
+    { date: e(-2), name: 'Karfreitag', key: 'goodFriday' },
+    { date: e(1), name: 'Ostermontag', key: 'easterMonday' },
+    { date: e(39), name: 'Christi Himmelfahrt', key: 'ascension' },
+    { date: e(50), name: 'Pfingstmontag', key: 'pentecostMonday' },
+  ];
+
+  const cal = { start, end, easter: E, weekMarkers: markers, feasts, majorFeasts, seasons };
   cache.set(year, cal);
   return cal;
 }
@@ -281,4 +291,54 @@ export function churchDay(date: DateKey): ChurchDay {
 export function isPassiontide(date: DateKey): boolean {
   const s = churchDay(date).season;
   return s === 'lent' || s === 'holyWeek';
+}
+
+export interface OutlineEntry {
+  date: DateKey;
+  name: string;
+  /** Week key for Sundays (and Christmas Day, Epiphany), feast key for weekday feasts. */
+  key: string;
+  kind: 'sunday' | 'feast';
+  season: Season;
+  circle: Circle;
+}
+
+export interface SeasonSpan {
+  season: Season;
+  circle: Circle;
+  from: DateKey;
+  to: DateKey;
+}
+
+export interface ChurchYearOutline {
+  /** Calendar year of the first Advent. */
+  churchYear: number;
+  start: DateKey;
+  end: DateKey;
+  seasons: SeasonSpan[];
+  /** All Sundays and major feasts in date order. */
+  entries: OutlineEntry[];
+}
+
+/** Every Sunday and major feast of the church year that contains `date`. */
+export function churchYearOutline(date: DateKey): ChurchYearOutline {
+  const y = fromKey(date).getFullYear();
+  const cal = date >= firstAdvent(y) ? calendar(y) : calendar(y - 1);
+  const seasons: SeasonSpan[] = cal.seasons.map((s, i) => ({
+    season: s.season,
+    circle: SEASON_CIRCLE[s.season],
+    from: s.from,
+    to: i + 1 < cal.seasons.length ? addDays(cal.seasons[i + 1]!.from, -1) : cal.end,
+  }));
+  const seasonOf = (d: DateKey) => [...seasons].reverse().find((s) => s.from <= d)!.season;
+  const entries: OutlineEntry[] = [
+    ...cal.weekMarkers.map((m) => ({ ...m, kind: (m.key === 'christmas' || m.key === 'epiphany' ? 'feast' : 'sunday') as OutlineEntry['kind'] })),
+    ...cal.majorFeasts.map((m) => ({ ...m, kind: 'feast' as const })),
+  ]
+    .map((m) => {
+      const season = seasonOf(m.date);
+      return { ...m, season, circle: SEASON_CIRCLE[season] };
+    })
+    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+  return { churchYear: fromKey(cal.start).getFullYear(), start: cal.start, end: cal.end, seasons, entries };
 }

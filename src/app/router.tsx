@@ -1,6 +1,7 @@
 import { createBrowserRouter, createHashRouter } from 'react-router';
 import { ArchivePage } from '../features/archive/ArchivePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
+import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
 import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
@@ -23,6 +24,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'archiv', element: <ArchivePage /> },
       { path: 'mehr', element: <SettingsPage /> },
+      { path: 'kirchenjahr', element: <ChurchYearPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },
