@@ -46,7 +46,7 @@
   --radius-l: 12px;
   --content-width: 640px;
   --gutter: 18px;
-  --tabbar-height: 58px;
+  --tabbar-height: 70px;
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);

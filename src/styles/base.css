@@ -268,33 +268,12 @@ nav.tabs ul {
   padding: 0;
   max-width: var(--content-width);
   display: grid;
-  /* "Sonntag" exactly in the middle, three sections on either side; both halves
-     equally wide, "Katechismus" gets the widest column. */
-  grid-template-columns: 1fr 1fr 1fr 64px 0.85fr 1.3fr 0.85fr;
+  /* "Sonntag" in the middle, three sections on either side; both halves equally
+     wide, "Katechismus" gets the widest column. */
+  grid-template-columns: 1fr 1fr 1fr 1fr 0.85fr 1.3fr 0.85fr;
 }
 nav.tabs li {
   min-width: 0;
-}
-nav.tabs .tab-today a {
-  padding-top: 0;
-}
-/* Sunday: Luther's rose, larger, rising a little above the bar; "Sonntag" below
-   it on the same line as the other labels. */
-.today-rose {
-  display: grid;
-  place-items: center;
-  width: 50px;
-  height: 50px;
-  margin-top: -19px;
-  border-radius: 50%;
-  background: var(--sheet);
-  box-shadow: 0 0 0 1px var(--rule);
-}
-nav.tabs .tab-today a[aria-current='page'] .today-rose {
-  box-shadow: 0 0 0 2px var(--gold);
-}
-nav.tabs .tab-today a[aria-current='page']::before {
-  display: none;
 }
 nav.tabs a {
   position: relative;
@@ -303,23 +282,29 @@ nav.tabs a {
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  padding: 9px 0 10px;
+  padding: 8px 0 9px;
   text-decoration: none;
   font-family: var(--sans);
   font-size: 0.66rem;
   font-weight: 600;
   color: var(--muted);
 }
-/* The chosen tab's icon grows a little */
-nav.tabs a .icon {
-  display: block;
+/* One size for every icon, the rose included; the chosen one grows a little */
+nav.tabs .tab-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
   transition: transform 0.25s ease;
 }
-nav.tabs a[aria-current='page'] .icon {
-  transform: scale(1.3) translateY(-1px);
+nav.tabs .tab-icon svg {
+  display: block;
+}
+nav.tabs a[aria-current='page'] .tab-icon {
+  transform: scale(1.15);
 }
 @media (prefers-reduced-motion: reduce) {
-  nav.tabs a .icon {
+  nav.tabs .tab-icon {
     transition: none;
   }
 }
@@ -334,7 +319,7 @@ nav.tabs a[aria-current='page']::before {
   right: 22%;
   height: 2px;
   border-radius: 0 0 2px 2px;
-  background: var(--accent);
+  background: var(--gold);
 }
 
 @media (prefers-reduced-motion: reduce) {

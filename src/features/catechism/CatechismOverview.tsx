@@ -30,7 +30,7 @@ export function CatechismOverview({
   return (
     <Section
       id="cat.overview"
-      title="Übersicht"
+      title="Hauptstücke"
       level={3}
       defaultOpen={readLegacyOpen()}
       className="cat-overview"

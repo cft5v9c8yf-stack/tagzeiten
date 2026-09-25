@@ -304,7 +304,7 @@ describe('Katechismus', () => {
 
   it('shows an overview of the chief parts for orientation', async () => {
     const { store } = await renderAt('/katechismus', <CatechismPage />);
-    const toggle = await screen.findByRole('button', { name: 'Übersicht' });
+    const toggle = await screen.findByRole('button', { name: 'Hauptstücke' });
     const overview = toggle.closest('section')!;
     const head = overview.querySelector('.fold-head')!;
     // Closed by default, with the total next to the heading.

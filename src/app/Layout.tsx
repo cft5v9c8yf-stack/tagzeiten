@@ -71,15 +71,12 @@ export function Layout() {
       <nav className="tabs" aria-label="Bereiche">
         <ul>
           {SECTIONS.map((s) => (
-            <li key={s.path} className={s.path === SUNDAY_PATH ? 'tab-today' : undefined}>
+            <li key={s.path}>
               <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
-                {s.path === SUNDAY_PATH ? (
-                  <span className="today-rose">
-                    <LutherRose size={46} />
-                  </span>
-                ) : (
-                  <SectionIcon name={s.icon} />
-                )}
+                {/* All icons one size; the Sunday is Luther's rose. */}
+                <span className="tab-icon">
+                  {s.path === SUNDAY_PATH ? <LutherRose size={34} /> : <SectionIcon name={s.icon} size={34} />}
+                </span>
                 {s.label}
               </NavLink>
             </li>
