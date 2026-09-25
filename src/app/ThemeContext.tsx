@@ -1,25 +1,20 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import { applyTheme, readStoredTheme, type Theme } from './theme';
+import { useCallback, useEffect } from 'react';
+import { useProfile, useStore } from '../data/hooks';
+import { applyTheme, type Theme } from './theme';
 
-interface ThemeValue {
-  theme: Theme;
-  setTheme: (t: Theme) => void;
+/** Applies the colour scheme stored in the profile. */
+export function ThemeSync() {
+  const { theme } = useProfile();
+  useEffect(() => applyTheme(theme), [theme]);
+  return null;
 }
 
-const ThemeContext = createContext<ThemeValue | null>(null);
-
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
-  const setTheme = useCallback((t: Theme) => {
-    applyTheme(t);
-    setThemeState(t);
-  }, []);
-  const value = useMemo(() => ({ theme, setTheme }), [theme, setTheme]);
-  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
-}
-
-export function useTheme(): ThemeValue {
-  const v = useContext(ThemeContext);
-  if (!v) throw new Error('useTheme outside ThemeProvider');
-  return v;
+export function useTheme(): { theme: Theme; setTheme: (t: Theme) => void } {
+  const store = useStore();
+  const { theme } = useProfile();
+  const setTheme = useCallback(
+    (t: Theme) => store.updateProfile((p) => ({ ...p, theme: t }), { immediate: true }),
+    [store],
+  );
+  return { theme, setTheme };
 }

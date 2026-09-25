@@ -1,0 +1,261 @@
+/**
+ * The app's single source of state. Holds profile and all days in memory,
+ * notifies subscribers (React via useSyncExternalStore) and persists every
+ * change through the write queue into IndexedDB.
+ *
+ * All reads and writes of the UI go through this module (and data/hooks).
+ */
+import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/dates';
+import { createBackup, parseBackup, type Backup } from '../domain/backup';
+import { toMarkdown } from '../domain/exportMarkdown';
+import { emptyDay, type Day, type Profile } from '../domain/model';
+import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
+import { defaultProfile, normalizeProfile } from '../domain/profile';
+import { assignReading, getPlan, markRead as markReadInPlan } from '../domain/readingPlan';
+import { PROFILE_KEY, TagzeitenDB } from './db';
+import { WriteQueue } from './writeQueue';
+
+export type SaveError = { kind: 'save'; key: string; error: unknown };
+type Listener = () => void;
+
+export interface StoreOptions {
+  db?: TagzeitenDB;
+  /** Debounce for text input, in ms. */
+  debounceMs?: number;
+  /** Injected clock for tests. */
+  now?: () => Date;
+  onError?: (e: SaveError) => void;
+  /** Values for a profile created on first start (e.g. the theme chosen before). */
+  seedProfile?: Partial<Profile>;
+}
+
+export interface UpdateOptions {
+  /** Write now instead of after the debounce (toggles, buttons). */
+  immediate?: boolean;
+}
+
+const DAY_PREFIX = 'day:';
+
+export class Store {
+  readonly db: TagzeitenDB;
+  private profile: Profile;
+  private days = new Map<DateKey, Day>();
+  /** Stable placeholders for days without entries (stable identity for React). */
+  private blanks = new Map<DateKey, Day>();
+  private listeners = new Set<Listener>();
+  private version = 0;
+  private readonly queue: WriteQueue<Day | Profile>;
+  private readonly now: () => Date;
+  private readonly seed: Partial<Profile>;
+
+  constructor(opts: StoreOptions = {}) {
+    this.db = opts.db ?? new TagzeitenDB();
+    this.now = opts.now ?? (() => new Date());
+    this.seed = opts.seedProfile ?? {};
+    this.profile = defaultProfile(this.today());
+    this.queue = new WriteQueue<Day | Profile>(
+      (key, value) => this.persist(key, value),
+      opts.debounceMs ?? 700,
+      (key, error) => opts.onError?.({ kind: 'save', key, error }),
+    );
+  }
+
+  /* ------------------------------------------------------------ lifecycle */
+
+  async load(): Promise<void> {
+    const today = this.today();
+    const stored = await this.db.profile.get(PROFILE_KEY);
+    this.profile = normalizeProfile(stored ?? { ...defaultProfile(today), ...this.seed }, today);
+    if (!stored) await this.persist('profile', this.profile);
+    const rows = await this.db.days.toArray();
+    this.days.clear();
+    for (const r of rows) {
+      const d = normalizeDay(r);
+      if (d) this.days.set(d.date, d);
+    }
+    this.emit();
+  }
+
+  /** Writes everything pending. Call when the page is hidden. */
+  flush(): Promise<void> {
+    return this.queue.flush();
+  }
+
+  get hasPendingWrites(): boolean {
+    return this.queue.pending;
+  }
+
+  /* ------------------------------------------------------------ subscription */
+
+  subscribe = (l: Listener): (() => void) => {
+    this.listeners.add(l);
+    return () => this.listeners.delete(l);
+  };
+
+  /** Changes on every update; lets hooks detect changes cheaply. */
+  getVersion = (): number => this.version;
+
+  private emit() {
+    this.version++;
+    for (const l of this.listeners) l();
+  }
+
+  /* ------------------------------------------------------------ reads */
+
+  today(): DateKey {
+    return currentTodayKey(this.now());
+  }
+
+  getProfile(): Profile {
+    return this.profile;
+  }
+
+  /** The stored day, or a fresh empty one (not persisted until changed). */
+  getDay(date: DateKey): Day {
+    const d = this.days.get(date);
+    if (d) return d;
+    let blank = this.blanks.get(date);
+    if (!blank) {
+      blank = emptyDay(date);
+      this.blanks.set(date, blank);
+    }
+    return blank;
+  }
+
+  findDay(date: DateKey): Day | undefined {
+    return this.days.get(date);
+  }
+
+  /** All stored days, newest first. */
+  allDays(): Day[] {
+    return [...this.days.values()].sort((a, b) => (a.date < b.date ? 1 : -1));
+  }
+
+  lookup = (date: DateKey): Day | undefined => this.days.get(date);
+
+  /* ------------------------------------------------------------ writes */
+
+  updateDay(date: DateKey, fn: (d: Day) => Day, opts: UpdateOptions = {}): Day {
+    const next = { ...fn(this.getDay(date)), date, updatedAt: this.now().getTime() };
+    this.days.set(date, next);
+    this.queue.schedule(DAY_PREFIX + date, next, opts.immediate);
+    this.emit();
+    return next;
+  }
+
+  updateProfile(fn: (p: Profile) => Profile, opts: UpdateOptions = {}): Profile {
+    const next = { ...fn(this.profile), updatedAt: this.now().getTime() };
+    this.profile = next;
+    this.queue.schedule('profile', next, opts.immediate);
+    this.emit();
+    return next;
+  }
+
+  /* ------------------------------------------------------------ reading plan */
+
+  /**
+   * The reading of a day. Today receives the next portion when first opened
+   * and keeps it. Past days without a reading show the current position
+   * without assigning it (nothing is "owed" for them).
+   */
+  readingFor(date: DateKey): { reading: NonNullable<Day['reading']>; assigned: boolean } {
+    const day = this.days.get(date);
+    const plan = getPlan(this.profile.plan.planId);
+    if (day?.reading) return { reading: day.reading, assigned: true };
+    return { reading: assignReading(plan, this.profile.plan.positions), assigned: false };
+  }
+
+  /** Assigns today's portion if it has none yet. */
+  ensureTodayReading(): void {
+    const date = this.today();
+    if (this.days.get(date)?.reading) return;
+    const plan = getPlan(this.profile.plan.planId);
+    const reading = assignReading(plan, this.profile.plan.positions);
+    this.updateDay(date, (d) => ({ ...d, reading }), { immediate: true });
+  }
+
+  /** Marks a day's reading as read or unread and moves the plan accordingly. */
+  setReadingDone(date: DateKey, done: boolean): void {
+    const { reading } = this.readingFor(date);
+    const plan = getPlan(reading.planId);
+    const res = markReadInPlan(plan, reading, this.profile.plan.positions, done);
+    this.updateDay(date, (d) => ({ ...d, reading: res.reading }), { immediate: true });
+    this.updateProfile((p) => ({ ...p, plan: { ...p.plan, positions: res.positions } }), { immediate: true });
+  }
+
+  /**
+   * Sets the plan position. Today's reading follows, unless it was already read.
+   */
+  setPlanPositions(positions: Record<string, number>): void {
+    this.updateProfile((p) => ({ ...p, plan: { ...p.plan, positions: { ...p.plan.positions, ...positions } } }), {
+      immediate: true,
+    });
+    const today = this.days.get(this.today());
+    if (today?.reading && !today.reading.done) {
+      const plan = getPlan(this.profile.plan.planId);
+      this.updateDay(today.date, (d) => ({ ...d, reading: assignReading(plan, this.profile.plan.positions) }), {
+        immediate: true,
+      });
+    }
+  }
+
+  /** Yesterday relative to `date`, if stored. */
+  dayBefore(date: DateKey): Day | undefined {
+    return this.days.get(addDays(date, -1));
+  }
+
+  /* ------------------------------------------------------------ export, import, delete */
+
+  async exportBackup(): Promise<Backup> {
+    await this.flush();
+    const days = this.allDays().filter((d) => !isEmptyDay(d));
+    return createBackup(this.profile, days, this.now());
+  }
+
+  async exportMarkdown(): Promise<string> {
+    await this.flush();
+    return toMarkdown(this.allDays(), this.profile.habits, this.now());
+  }
+
+  /** Replaces all data with the content of a backup file. */
+  async importBackup(json: string): Promise<{ days: number }> {
+    const { profile, days } = parseBackup(json, this.today());
+    await this.queue.cancelAll();
+    await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
+      await this.db.days.clear();
+      await this.db.profile.clear();
+      await this.db.profile.put({ ...profile, id: PROFILE_KEY });
+      await this.db.days.bulkPut(days);
+    });
+    this.profile = profile;
+    this.days = new Map(days.map((d) => [d.date, d]));
+    this.blanks.clear();
+    this.emit();
+    return { days: days.length };
+  }
+
+  /** Deletes every entry and the profile. The app starts over afterwards. */
+  async deleteAll(): Promise<void> {
+    await this.queue.cancelAll();
+    await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
+      await this.db.days.clear();
+      await this.db.profile.clear();
+    });
+    this.days.clear();
+    this.blanks.clear();
+    this.profile = defaultProfile(this.today());
+    this.emit();
+  }
+
+  /* ------------------------------------------------------------ persistence */
+
+  private async persist(key: string, value: Day | Profile): Promise<void> {
+    if (key === 'profile') {
+      await this.db.profile.put({ ...(value as Profile), id: PROFILE_KEY });
+    } else {
+      const day = value as Day;
+      if (isEmptyDay(day)) await this.db.days.delete(day.date);
+      else await this.db.days.put(day);
+    }
+  }
+}

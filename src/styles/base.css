@@ -256,3 +256,31 @@ nav.tabs a[aria-current='page']::before {
     scroll-behavior: auto !important;
   }
 }
+
+/* Status */
+.loading {
+  padding: 60px var(--gutter);
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 18px);
+  transform: translateX(-50%);
+  max-width: calc(100% - 2 * var(--gutter));
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 20;
+}
+.toast.show {
+  opacity: 0.94;
+}

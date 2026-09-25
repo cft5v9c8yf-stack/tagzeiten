@@ -1,11 +1,16 @@
 import { RouterProvider } from 'react-router';
+import { StoreProvider } from '../data/StoreContext';
 import { router } from './router';
-import { ThemeProvider } from './ThemeContext';
+import { ThemeSync } from './ThemeContext';
+import { ToastProvider } from './Toast';
 
 export function App() {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <ToastProvider>
+      <StoreProvider>
+        <ThemeSync />
+        <RouterProvider router={router} />
+      </StoreProvider>
+    </ToastProvider>
   );
 }

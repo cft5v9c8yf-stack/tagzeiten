@@ -1,11 +1,12 @@
-export type Theme = 'system' | 'light' | 'dark';
+import type { Theme } from '../domain/model';
+
+export type { Theme };
 
 const STORAGE_KEY = 'tz:theme';
 
 /**
- * The profile (IndexedDB) is the source of truth for the theme once the data
- * layer exists; localStorage only mirrors it so index.html can apply the
- * scheme before first paint.
+ * The profile is the source of truth for the theme; localStorage only mirrors
+ * it so that index.html can apply the scheme before first paint.
  */
 export function readStoredTheme(): Theme {
   try {
