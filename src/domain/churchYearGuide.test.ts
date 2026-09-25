@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CIRCLE_INFO, SEASON_INFO, SUNDAY_INFO } from '../content/churchYearGuide';
+import { CIRCLE_INFO, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../content/churchYearGuide';
 import { refUrl } from './bibleRef';
 import { churchYearOutline, CIRCLES } from './churchYear';
 
@@ -38,5 +38,30 @@ describe('church year guide', () => {
     expect(o.seasons[0]!.from).toBe(o.start);
     expect(o.seasons.at(-1)!.to).toBe(o.end);
     for (let i = 1; i < o.seasons.length; i++) expect(o.seasons[i]!.from > o.seasons[i - 1]!.to).toBe(true);
+  });
+});
+
+describe('groups of the Trinity season', () => {
+  const title = (k: string) => trinityGroupOf(k)?.title;
+
+  it('assigns the Sundays after Trinity to their groups', () => {
+    expect(title('trinity')).toBe('Berufung und Sammlung');
+    expect(title('trinity5')).toBe('Berufung und Sammlung');
+    expect(title('trinity6')).toBe('Buße und Erleuchtung');
+    expect(title('trinity10')).toBe('Buße und Erleuchtung');
+    expect(title('trinity11')).toBe('Bekehrung');
+    expect(title('trinity14')).toBe('Bekehrung');
+    expect(title('trinity15')).toBe('Heiligung');
+    expect(title('trinity23')).toBe('Heiligung');
+    expect(title('trinity24')).toBe('Vollendung');
+  });
+
+  it('puts the last Sundays of the church year into "Vollendung"', () => {
+    for (const k of ['thirdLast', 'secondLast', 'eternity']) expect(title(k)).toBe('Vollendung');
+  });
+
+  it('leaves other weeks ungrouped', () => {
+    expect(trinityGroupOf('pentecost')).toBeUndefined();
+    expect(trinityGroupOf('advent1')).toBeUndefined();
   });
 });

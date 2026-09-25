@@ -499,6 +499,6 @@ a.cy-week-name {
 .cy-circles li:not(.current) a:hover .cy-circle-name {
   color: var(--ink);
 }
-.cy-today-readings {
+.cy-readings.cy-today-readings {
   margin: 8px 0 0 16px;
 }

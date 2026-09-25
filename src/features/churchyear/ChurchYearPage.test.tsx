@@ -64,13 +64,38 @@ describe('Kirchenjahr', () => {
     const params = new URLSearchParams(router.state.location.search);
     expect(params.get('kreis')).toBe('pentecost');
     expect(params.get('woche')).toBe('trinity16');
-    const entry = await screen.findByText('16. Sonntag nach Trinitatis', { selector: 'h4' });
+    const entry = await screen.findByText('16. Sonntag nach Trinitatis', { selector: 'h5' });
     const li = entry.closest('li')!;
     expect(li.classList.contains('current')).toBe(true);
     expect(li.textContent).toContain('diese Woche');
     expect(li.textContent).toContain('Johannes 11,1-3.17-27');
     expect(document.querySelectorAll('.cy-entry.current')).toHaveLength(1);
     await waitFor(() => expect(document.activeElement).toBe(li));
+  });
+
+  it('groups the Trinity season by theme', async () => {
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost');
+    await screen.findByRole('heading', { name: 'Trinitatiszeit' });
+    const groups = [...document.querySelectorAll('.cy-group-title')].map((h) => h.firstChild!.textContent!.trim());
+    expect(groups).toEqual(['Berufung und Sammlung', 'Buße und Erleuchtung', 'Bekehrung', 'Heiligung', 'Vollendung']);
+    const inGroup = (title: string) =>
+      [...document.querySelectorAll('.cy-group')]
+        .find((g) => g.querySelector('.cy-group-title')!.textContent!.startsWith(title))!
+        .querySelectorAll('.cy-entry h5');
+    expect([...inGroup('Berufung und Sammlung')].map((h) => h.textContent)).toEqual([
+      'Trinitatis',
+      '1. Sonntag nach Trinitatis',
+      '2. Sonntag nach Trinitatis',
+      '3. Sonntag nach Trinitatis',
+      '4. Sonntag nach Trinitatis',
+      '5. Sonntag nach Trinitatis',
+    ]);
+    expect([...inGroup('Heiligung')].at(-1)!.textContent).toBe('22. Sonntag nach Trinitatis');
+    expect([...inGroup('Vollendung')].map((h) => h.textContent)).toEqual([
+      'Drittletzter Sonntag des Kirchenjahres',
+      'Vorletzter Sonntag des Kirchenjahres',
+      'Letzter Sonntag des Kirchenjahres (Ewigkeitssonntag)',
+    ]);
   });
 
   it('switches between the circles', async () => {

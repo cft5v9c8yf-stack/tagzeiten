@@ -53,6 +53,30 @@ export const SEASON_INFO: Record<Season, string> = {
     'Die letzten Sonntage richten den Blick auf die letzten Dinge: das Kommen des Reiches Gottes, das Gericht und das ewige Leben. Dazu gehören der Buß- und Bettag und am Schluss der Ewigkeitssonntag, an dem der Verstorbenen gedacht wird.',
 };
 
+/**
+ * The Sundays after Trinity in five groups. Trinitatis itself counts as 0.
+ * The last three Sundays of the church year take the places of the 24th to
+ * 27th Sunday and belong to the last group.
+ */
+export const TRINITY_GROUPS: readonly { from: number; to: number; title: string; range: string }[] = [
+  { from: 0, to: 5, title: 'Berufung und Sammlung', range: 'Trinitatis – 5. Sonntag' },
+  { from: 6, to: 10, title: 'Buße und Erleuchtung', range: '6. – 10. Sonntag' },
+  { from: 11, to: 14, title: 'Bekehrung', range: '11. – 14. Sonntag' },
+  { from: 15, to: 23, title: 'Heiligung', range: '15. – 23. Sonntag' },
+  { from: 24, to: 27, title: 'Vollendung', range: '24. – 27. Sonntag' },
+];
+
+const END_OF_YEAR_KEYS = new Set(['thirdLast', 'secondLast', 'eternity']);
+
+/** The Trinity group of a week key, or undefined outside the Trinity season and the end of the year. */
+export function trinityGroupOf(key: string): (typeof TRINITY_GROUPS)[number] | undefined {
+  if (END_OF_YEAR_KEYS.has(key)) return TRINITY_GROUPS[TRINITY_GROUPS.length - 1];
+  const m = /^trinity(\d*)$/.exec(key);
+  if (!m) return undefined;
+  const n = m[1] ? Number(m[1]) : 0;
+  return TRINITY_GROUPS.find((g) => n >= g.from && n <= g.to) ?? TRINITY_GROUPS[TRINITY_GROUPS.length - 1];
+}
+
 export interface SundayInfo {
   /** What the name means, for the Latin names. */
   meaning?: string;

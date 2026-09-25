@@ -646,3 +646,32 @@ details.cat-overview > summary h3 {
 .cy-readings dd {
   margin: 0;
 }
+.cy-group {
+  margin-top: 16px;
+}
+.cy-group-title {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.cy-group-range {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.cy-entry-head h5 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+/* Enough contrast on the highlighted background of the current week. */
+.cy-entry.current .cy-entry-date,
+.cy-entry.current .cy-meaning,
+.cy-entry.current .cy-readings dt {
+  color: var(--ink);
+}

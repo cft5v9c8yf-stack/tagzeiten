@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SUNDAY_INFO } from '../../content/churchYearGuide';
+import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle } from '../../domain/churchYear';
+import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type OutlineEntry } from '../../domain/churchYear';
 import { fromKey, MONTH_LONG, formatShort, type DateKey } from '../../domain/dates';
 import { BibleLink } from '../../ui/BibleLink';
 import { Segmented } from '../../ui/Choice';
@@ -11,6 +11,77 @@ const dayMonth = (k: DateKey) => {
   const d = fromKey(k);
   return `${d.getDate()}. ${MONTH_LONG[d.getMonth()]} ${d.getFullYear()}`;
 };
+
+/** Splits Trinity-season entries into their thematic groups, in order. */
+function groupsOf(entries: OutlineEntry[]) {
+  const groups: { title: string; range: string; entries: OutlineEntry[] }[] = [];
+  for (const e of entries) {
+    const g = trinityGroupOf(e.key);
+    const title = g?.title ?? '';
+    let last = groups[groups.length - 1];
+    if (!last || last.title !== title) {
+      last = { title, range: g?.range ?? '', entries: [] };
+      groups.push(last);
+    }
+    last.entries.push(e);
+  }
+  return groups;
+}
+
+function EntryList({
+  entries,
+  date,
+  weekKey,
+  level,
+}: {
+  entries: OutlineEntry[];
+  date: DateKey;
+  weekKey: string;
+  level: 4 | 5;
+}) {
+  const Title = level === 4 ? 'h4' : 'h5';
+  return (
+    <ol className="cy-entries">
+      {entries.map((e) => {
+        const info = SUNDAY_INFO[e.key];
+        const isFeastToday = e.kind === 'feast' && e.date === date;
+        const current = e.key === weekKey || isFeastToday;
+        return (
+          <li
+            key={e.key}
+            id={`entry-${e.key}`}
+            tabIndex={-1}
+            className={`cy-entry${current ? ' current' : ''}${e.kind === 'feast' ? ' feast' : ''}`}
+          >
+            <div className="cy-entry-head">
+              <span className="cy-entry-date">{formatShort(e.date)}</span>
+              <Title>{e.name}</Title>
+              {current && <span className="ktag">{isFeastToday ? 'heute' : 'diese Woche'}</span>}
+            </div>
+            {info?.meaning && <p className="cy-meaning">{info.meaning}</p>}
+            {info && <p className="cy-theme">{info.theme}</p>}
+            {info && (
+              <dl className="cy-readings">
+                <div>
+                  <dt>Evangelium</dt>
+                  <dd>
+                    <BibleLink reference={info.gospel} />
+                  </dd>
+                </div>
+                <div>
+                  <dt>Epistel</dt>
+                  <dd>
+                    <BibleLink reference={info.epistle} />
+                  </dd>
+                </div>
+              </dl>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
 
 const isCircle = (s: string | null): s is Circle => s === 'christmas' || s === 'easter' || s === 'pentecost';
 
@@ -71,44 +142,18 @@ export function ChurchYearPage() {
               {dayMonth(s.from)} – {dayMonth(s.to)}
             </p>
             <p>{SEASON_INFO[s.season]}</p>
-            <ol className="cy-entries">
-              {entries.map((e) => {
-                const info = SUNDAY_INFO[e.key];
-                const current = e.key === today.weekKey || (e.kind === 'feast' && e.date === date);
-                return (
-                  <li
-                    key={e.key}
-                    id={`entry-${e.key}`}
-                    tabIndex={-1}
-                    className={`cy-entry${current ? ' current' : ''}${e.kind === 'feast' ? ' feast' : ''}`}
-                  >
-                    <div className="cy-entry-head">
-                      <span className="cy-entry-date">{formatShort(e.date)}</span>
-                      <h4>{e.name}</h4>
-                      {current && <span className="ktag">{e.kind === 'feast' && e.date === date ? 'heute' : 'diese Woche'}</span>}
-                    </div>
-                    {info?.meaning && <p className="cy-meaning">{info.meaning}</p>}
-                    {info && <p className="cy-theme">{info.theme}</p>}
-                    {info && (
-                      <dl className="cy-readings">
-                        <div>
-                          <dt>Evangelium</dt>
-                          <dd>
-                            <BibleLink reference={info.gospel} />
-                          </dd>
-                        </div>
-                        <div>
-                          <dt>Epistel</dt>
-                          <dd>
-                            <BibleLink reference={info.epistle} />
-                          </dd>
-                        </div>
-                      </dl>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
+            {s.season === 'trinity' || s.season === 'endOfYear' ? (
+              groupsOf(entries).map((g) => (
+                <div key={g.title} className="cy-group">
+                  <h4 className="cy-group-title">
+                    {g.title} <span className="cy-group-range">{g.range}</span>
+                  </h4>
+                  <EntryList entries={g.entries} date={date} weekKey={today.weekKey} level={5} />
+                </div>
+              ))
+            ) : (
+              <EntryList entries={entries} date={date} weekKey={today.weekKey} level={4} />
+            )}
           </section>
         );
       })}
