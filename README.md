@@ -25,6 +25,17 @@ auf `index.html` umleiten (z. B. Netlify `_redirects`: `/* /index.html 200`); of
 das der Service Worker. Eine neue Version wird in der App angekündigt und erst auf
 „Jetzt aktualisieren“ geladen.
 
+### GitHub Pages
+
+Die Action `.github/workflows/pages.yml` baut bei jedem Push (Arbeitszweig und `main`), führt die
+Tests aus und veröffentlicht unter `https://<name>.github.io/tagzeiten/`. Einmalig einrichten:
+
+1. Settings → Pages → Source: **GitHub Actions**.
+2. Settings → Environments → `github-pages` → Deployment branches: den Arbeitszweig zusätzlich
+   erlauben (standardmäßig darf nur `main` veröffentlichen).
+
+Für einen anderen Unterpfad: `BASE_PATH=/pfad/ npm run build`.
+
 Vor der ersten Nutzung auf dem iPhone: [`docs/iphone-checkliste.md`](docs/iphone-checkliste.md).
 
 ## Aufbau

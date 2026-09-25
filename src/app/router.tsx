@@ -13,6 +13,7 @@ const IS_DEMO = import.meta.env.MODE === 'demo';
 if (IS_DEMO && !location.hash) location.hash = '#/';
 
 // The demo runs inside a frame without server-side routing, hence hash URLs.
+// BASE_URL is "/" normally and e.g. "/tagzeiten/" on GitHub Pages.
 export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
   {
     path: '/',
@@ -28,4 +29,4 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: '*', element: <NotFound /> },
     ],
   },
-]);
+], IS_DEMO ? undefined : { basename: import.meta.env.BASE_URL });
