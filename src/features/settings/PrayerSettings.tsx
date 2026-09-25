@@ -15,8 +15,10 @@ function ConcernInput({
   suggestions,
   onAdd,
   autoFocus,
+  placeholder,
 }: {
   label: string;
+  placeholder?: string;
   button: string;
   suggestions: string[];
   onAdd: (text: string) => void;
@@ -46,7 +48,7 @@ function ConcernInput({
         list={`${id}-list`}
         value={text}
         autoFocus={autoFocus}
-        placeholder={label}
+        placeholder={placeholder ?? label}
         onChange={(e) => setText(e.target.value)}
       />
       <datalist id={`${id}-list`}>
@@ -67,7 +69,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
   const on = concernsOn(prayer, day);
   const name = dayName(day);
   return (
-    <div className="prayer-day">
+    <div className={`prayer-day${day === 'daily' ? ' prayer-day-daily' : ''}`}>
       <h4 className="prayer-day-name">{name}</h4>
       <ul className="concern-chips">
         {on.map((c) => (
@@ -98,6 +100,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
         <ConcernInput
           autoFocus
           label="Anliegen wählen oder neu"
+          placeholder="Anliegen"
           button="Hinzufügen"
           suggestions={prayer.concerns.filter((c) => !on.includes(c))}
           onAdd={(t) => {
@@ -146,9 +149,11 @@ export function PrayerSettings() {
       </section>
       <section className="prayer-days" aria-labelledby="prayer-days-title">
         <h3 id="prayer-days-title">Nach Tagen</h3>
-        {DAYS.map((d) => (
-          <PrayerDayRow key={d} day={d} prayer={prayer} update={update} />
-        ))}
+        <div className="prayer-tiles">
+          {DAYS.map((d) => (
+            <PrayerDayRow key={d} day={d} prayer={prayer} update={update} />
+          ))}
+        </div>
       </section>
     </>
   );

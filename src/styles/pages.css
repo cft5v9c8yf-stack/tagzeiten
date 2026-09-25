@@ -1259,12 +1259,40 @@ body.is-sorting * {
   flex: 1;
   min-width: 0;
 }
+/* The days as tiles, two side by side like "Mehr"; "Täglich" across the width. */
+.prayer-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 12px;
+  margin-top: 10px;
+}
 .prayer-day {
-  padding: 10px 0;
-  border-top: 1px solid var(--rule);
+  min-width: 0;
+  padding: 12px 12px 10px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.prayer-day-daily {
+  grid-column: 1 / -1;
+  background: var(--gold-soft);
+  border-color: color-mix(in srgb, var(--gold) 35%, transparent);
+}
+.prayer-day .concern-input {
+  flex-wrap: wrap;
+}
+.prayer-day .concern-input .btn {
+  flex: 1 0 100%;
+}
+.prayer-day .concern-chip {
+  max-width: 100%;
+}
+.prayer-day .concern-chip span {
+  overflow-wrap: anywhere;
 }
 .prayer-day-name {
-  margin: 0;
+  margin: 0 0 4px;
   font: 600 0.9rem var(--sans);
 }
 .prayer-day .concern-chips {
