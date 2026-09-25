@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -55,12 +55,17 @@ describe('Today', () => {
     expect(v.querySelector('figcaption')!.textContent).toBe('Wochenspruch');
     expect(v.querySelector('blockquote')!.textContent).toMatch(/^Jetzt aber offenbart .* durch das Evangelium\.$/);
     expect(v.querySelector('a')!.getAttribute('href')).toBe('https://www.bibleserver.com/LUT/2.Timotheus1,10');
+    const readings = document.querySelector('.cy-today-readings')!;
+    expect(readings.getAttribute('aria-label')).toBe('Lesungen der Woche');
+    expect([...readings.querySelectorAll('a')].map((a) => a.textContent)).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
   });
 
   it('names the feast of the day', async () => {
     await renderToday('2026-04-03');
     expect(document.querySelector('.cy-feast')!.textContent).toBe('Karfreitag');
     expect(document.querySelector('.cy-verse figcaption')!.textContent).toBe('Spruch des Tages');
+    expect(document.querySelector('.cy-today-readings')!.getAttribute('aria-label')).toBe('Lesungen des Tages');
+    expect(document.querySelector('.cy-today-readings a')!.textContent).toBe('Johannes 19,16-30');
     expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('OsterkreisKarwoche');
   });
 
@@ -98,7 +103,7 @@ describe('Today', () => {
     const table = screen.getByRole('button', { name: 'Tischgebet mit der Familie, Do 24.9.' });
     expect(table.getAttribute('aria-pressed')).toBe('false');
     act(() => table.click());
-    expect(table.getAttribute('aria-pressed')).toBe('true');
+    await waitFor(() => expect(table.getAttribute('aria-pressed')).toBe('true'));
     expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
     // future days cannot be recorded
     expect((screen.getByRole('button', { name: 'Tischgebet mit der Familie, Sa 26.9.' }) as HTMLButtonElement).disabled).toBe(true);

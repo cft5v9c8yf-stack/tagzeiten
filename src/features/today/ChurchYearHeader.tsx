@@ -2,13 +2,14 @@ import { Link } from 'react-router';
 import { withDate } from '../../app/useSelectedDate';
 import { CIRCLE_LABEL, CIRCLES, churchDay, SEASON_LABEL } from '../../domain/churchYear';
 import { formatLong, type DateKey } from '../../domain/dates';
-import { verseOfDay } from '../../domain/weeklyVerse';
+import { readingsOfDay, verseOfDay } from '../../domain/weeklyVerse';
 import { BibleLink } from '../../ui/BibleLink';
 
 /** Date, week of the church year and festal circle at the top of the Today page. */
 export function ChurchYearHeader({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const c = churchDay(date);
   const verse = verseOfDay(date);
+  const readings = readingsOfDay(date);
   const link = (circle: string, week?: string) =>
     withDate('/kirchenjahr', date, isToday) +
     (isToday ? '?' : '&') +
@@ -33,6 +34,22 @@ export function ChurchYearHeader({ date, isToday }: { date: DateKey; isToday: bo
             <BibleLink reference={verse.ref} />
           </p>
         </figure>
+      )}
+      {readings && (
+        <dl className="cy-readings cy-today-readings" aria-label={readings.kind === 'feast' ? 'Lesungen des Tages' : 'Lesungen der Woche'}>
+          <div>
+            <dt>Evangelium</dt>
+            <dd>
+              <BibleLink reference={readings.gospel} />
+            </dd>
+          </div>
+          <div>
+            <dt>Epistel</dt>
+            <dd>
+              <BibleLink reference={readings.epistle} />
+            </dd>
+          </div>
+        </dl>
       )}
       <ol className="cy-circles" aria-label="Festkreise des Kirchenjahres">
         {CIRCLES.map((circle) => (

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { WEEKLY_VERSES } from '../content/weeklyVerses';
 import { churchDay } from './churchYear';
 import { addDays } from './dates';
-import { composeVerse, verseOfDay } from './weeklyVerse';
+import { composeVerse, readingsOfDay, verseOfDay } from './weeklyVerse';
 
 describe('weekly verse', () => {
   it('composes excerpts into a sentence', () => {
@@ -37,5 +37,19 @@ describe('weekly verse', () => {
       if (!verseOfDay(d)) missing.add(churchDay(d).weekKey);
     }
     expect([...missing].every((k) => /^trinity(2[4-9])$/.test(k))).toBe(true);
+  });
+});
+
+describe('readings of the day', () => {
+  it('gives Gospel and Epistle of the week', () => {
+    expect(readingsOfDay('2026-09-25')).toEqual({ gospel: 'Johannes 11,1-3.17-27', epistle: '2. Timotheus 1,7-10', kind: 'week' });
+    expect(readingsOfDay('2026-09-20')).toMatchObject({ kind: 'week', gospel: 'Johannes 11,1-3.17-27' });
+  });
+
+  it('gives feasts on weekdays their own readings', () => {
+    expect(readingsOfDay('2026-04-03')).toEqual({ gospel: 'Johannes 19,16-30', epistle: '2. Korinther 5,14-21', kind: 'feast' });
+    expect(readingsOfDay('2026-05-14')).toMatchObject({ kind: 'feast', gospel: 'Lukas 24,50-53' });
+    // Other feasts (Michaelis) keep the readings of the week.
+    expect(readingsOfDay('2026-09-29')).toMatchObject({ kind: 'week', gospel: 'Matthäus 15,21-28' });
   });
 });
