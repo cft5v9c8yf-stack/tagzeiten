@@ -40,6 +40,15 @@ function fillDay(d: Day): Day {
 }
 
 describe('Store', () => {
+  it('loads only once, so later loads do not discard changes', async () => {
+    const { store } = freshStore();
+    await store.load();
+    store.updateDay('2026-09-25', (d) => ({ ...d, habits: { tablePrayer: true } }));
+    await store.load();
+    expect(store.getDay('2026-09-25').habits.tablePrayer).toBe(true);
+    await store.flush();
+  });
+
   it('creates a default profile on first load', async () => {
     const { db, store } = freshStore();
     await store.load();

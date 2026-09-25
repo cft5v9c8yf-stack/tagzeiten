@@ -69,7 +69,15 @@ export class Store {
 
   /* ------------------------------------------------------------ lifecycle */
 
-  async load(): Promise<void> {
+  private loading: Promise<void> | null = null;
+
+  /** Loads everything once; later calls return the same promise. */
+  load(): Promise<void> {
+    this.loading ??= this.doLoad();
+    return this.loading;
+  }
+
+  private async doLoad(): Promise<void> {
     const today = this.today();
     const stored = await this.db.profile.get(PROFILE_KEY);
     this.profile = normalizeProfile(stored ?? { ...defaultProfile(today), ...this.seed }, today);

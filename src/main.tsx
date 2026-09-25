@@ -8,6 +8,7 @@ import '@fontsource/source-sans-3/latin-600.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
+import './styles/today.css';
 import { App } from './app/App';
 
 const root = document.getElementById('root');
