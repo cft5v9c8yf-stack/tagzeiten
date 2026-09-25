@@ -299,27 +299,68 @@ body.no-scroll {
 }
 
 /* ---------------------------------------------------------------- settings */
-.settings > .fold-section {
-  border-top: 1px solid var(--rule);
+/* "Mehr": the areas as tiles, two side by side */
+.more-tiles {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
-.settings > .fold-section:first-of-type {
-  border-top: 0;
+.more-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 16px 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  color: var(--ink);
+  font-weight: 400;
 }
-.settings .fold-section.level-2 > .fold-head h2 {
-  margin: 18px 0 14px;
+.more-tile .flow-icon {
+  color: var(--icon-gold);
+  margin-bottom: 4px;
 }
-.settings .fold-section.level-2.is-open > .fold-head h2 {
-  margin-bottom: 8px;
+.more-tile-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.25;
 }
-.settings .fold-section.level-2 > .fold-body {
-  padding-bottom: 18px;
+.more-tile-line {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--muted);
 }
-/* Sections gathered under "Einstellungen" */
-.settings .more-section .more-section {
-  border-top: 1px solid var(--rule);
+/* An area opened from a tile */
+.more-area-head {
+  margin: 10px 0 8px;
 }
-.settings .more-section .more-section > .fold-head h3 {
-  margin: 14px 0 10px;
+.more-area-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.more-area-head .flow-icon {
+  color: var(--icon-gold);
+}
+/* The parts of "Einstellungen" as cards */
+.settings .more-section {
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.settings .more-section > .fold-head h3 {
+  margin: 14px 0 12px;
+}
+.settings .more-section > .fold-body {
+  padding-bottom: 14px;
 }
 .habit-list {
   list-style: none;

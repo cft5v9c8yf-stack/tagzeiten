@@ -40,12 +40,15 @@ async function renderAt(path: string, element: React.ReactNode, prepare?: (s: St
   await store.load();
   prepare?.(store);
   await store.flush();
-  if (path === '/mehr') openAllMore();
+  if (path.startsWith('/mehr')) openAllMore();
+  const routes = path.startsWith('/mehr')
+    ? [
+        { path: '/mehr', element },
+        { path: '/mehr/:bereich', element },
+      ]
+    : [{ path: path.split('?')[0]!, element }];
   const router = createMemoryRouter(
-    [
-      { path: path.split('?')[0]!, element },
-      { path: '/', element: <p>Start</p> },
-    ],
+    [...routes, { path: '/', element: <p>Start</p> }],
     { initialEntries: [path] },
   );
   render(
@@ -68,54 +71,56 @@ const fill = (s: Store) => {
 };
 
 describe('Mehr: Aufbau', () => {
-  it('starts folded, remembers what was opened and gathers the settings', async () => {
-    const db = new TagzeitenDB(`m6-fold-${++n}`);
-    const store = new Store({ db, journal: memoryJournal() });
-    const router = createMemoryRouter([{ path: '/mehr', element: <SettingsPage /> }], { initialEntries: ['/mehr'] });
-    const view = render(
-      <ToastProvider>
-        <StoreProvider store={store}>
-          <RouterProvider router={router} />
-        </StoreProvider>
-      </ToastProvider>,
-    );
-    const top = await screen.findAllByRole('heading', { level: 2 });
-    expect(top.map((h) => h.textContent).filter((t) => t !== 'Mehr')).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Einstellungen']);
-    const habits = screen.getByRole('button', { name: 'Gewohnheiten' });
-    expect(habits.getAttribute('aria-expanded')).toBe('false');
+  it('shows the areas as tiles, two side by side, and opens one with its settings', async () => {
+    await renderAt('/mehr', <SettingsPage />);
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
+    const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Einstellungen']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
-    fireEvent.click(habits);
-    await waitFor(() => expect(habits.getAttribute('aria-expanded')).toBe('true'));
+    fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Gewohnheiten');
     expect(screen.getByRole('switch', { name: 'Fasten' })).toBeTruthy();
-    expect(JSON.parse(localStorage.getItem('tz:collapsed')!)).toMatchObject({ 'more.habits': true });
 
-    // Darstellung, Deine Daten and Über sit under "Einstellungen".
-    fireEvent.click(screen.getByRole('button', { name: 'Einstellungen' }));
-    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(expect.arrayContaining(['Darstellung', 'Deine Daten', 'Über Tagzeiten']));
+    fireEvent.click(screen.getByRole('link', { name: '‹ Mehr' }));
+    await waitFor(() => expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Mehr'));
+  });
 
-    // Remembered after leaving and coming back.
-    view.unmount();
-    render(
+  it('gathers Darstellung, Deine Daten and Über under "Einstellungen", folded and remembered', async () => {
+    resetOpenState();
+    const db = new TagzeitenDB(`m6-fold-${++n}`);
+    const store = new Store({ db, journal: memoryJournal() });
+    const page = () => (
       <ToastProvider>
         <StoreProvider store={store}>
-          <RouterProvider router={createMemoryRouter([{ path: '/mehr', element: <SettingsPage /> }], { initialEntries: ['/mehr'] })} />
+          <RouterProvider
+            router={createMemoryRouter([{ path: '/mehr/:bereich', element: <SettingsPage /> }], {
+              initialEntries: ['/mehr/einstellungen'],
+            })}
+          />
         </StoreProvider>
-      </ToastProvider>,
+      </ToastProvider>
     );
-    expect((await screen.findByRole('button', { name: 'Gewohnheiten' })).getAttribute('aria-expanded')).toBe('true');
+    const view = render(page());
+    await screen.findByRole('heading', { level: 2, name: /Einstellungen/ });
+    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'Über Tagzeiten']);
+    // No verse above the settings, only their explanations.
+    expect(document.querySelector('.section-verse')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
+    const display = screen.getByRole('button', { name: 'Darstellung' });
+    expect(display.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(display);
+    await waitFor(() => expect(display.getAttribute('aria-expanded')).toBe('true'));
+    view.unmount();
+    render(page());
+    expect((await screen.findByRole('button', { name: 'Darstellung' })).getAttribute('aria-expanded')).toBe('true');
   });
 
   it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
-    await renderAt('/mehr', <SettingsPage />);
-    const heading = await screen.findByRole('heading', { name: 'Zeiten' });
-    const section = heading.closest('section')!;
-    expect(section.querySelector('.section-verse blockquote')!.textContent).toBe('Meine Zeit steht in deinen Händen.');
-    // The settings block carries no verse, only its explanations.
-    const settings = screen.getByRole('heading', { name: 'Einstellungen' }).closest('section')!;
-    expect(settings.querySelector('.section-verse')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
+    await renderAt('/mehr/zeiten', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Zeiten/ });
+    expect(document.querySelector('.section-verse blockquote')!.textContent).toBe('Meine Zeit steht in deinen Händen.');
     const info = screen.getByRole('button', { name: 'Info zu Zeiten' });
     const bubble = document.getElementById(info.getAttribute('aria-controls')!)!;
     expect(bubble.hidden).toBe(true);
@@ -129,7 +134,7 @@ describe('Mehr: Aufbau', () => {
 
 describe('Mehr: Daten', () => {
   it('exports every entry as Markdown and as JSON', async () => {
-    await renderAt('/mehr', <SettingsPage />, fill);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, fill);
     fireEvent.click(await screen.findByText('Als Text exportieren (Markdown)'));
     await waitFor(() => expect(blobs).toHaveLength(1));
     const md = await blobs[0]!.text();
@@ -143,7 +148,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('asks on the page before deleting, then leaves the database empty', async () => {
-    const { db } = await renderAt('/mehr', <SettingsPage />, fill);
+    const { db } = await renderAt('/mehr/einstellungen', <SettingsPage />, fill);
     expect(await db.days.count()).toBe(2);
     fireEvent.click(await screen.findByText('Alle Einträge löschen …'));
     expect(screen.getByText(/lässt sich nicht rückgängig machen/)).toBeTruthy();
@@ -163,7 +168,7 @@ describe('Mehr: Daten', () => {
     fill(source);
     const backup = JSON.stringify(await source.exportBackup());
 
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />);
     const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
     const file = new File([backup], 'sicherung.json', { type: 'application/json' });
     await act(async () => {
@@ -180,7 +185,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('rejects a file that is not a backup', async () => {
-    await renderAt('/mehr', <SettingsPage />);
+    await renderAt('/mehr/einstellungen', <SettingsPage />);
     const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
     await act(async () => {
       fireEvent.change(input, { target: { files: [new File(['{"a":1}'], 'x.json')] } });
@@ -191,7 +196,7 @@ describe('Mehr: Daten', () => {
 
 describe('Mehr: Gewohnheiten', () => {
   it('adds, switches and deletes an own habit', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const own = store.getProfile().habits.find((h) => h.name === 'Psalm mit den Kindern')!;
@@ -203,7 +208,7 @@ describe('Mehr: Gewohnheiten', () => {
   });
 
   it('offers no way to delete a preset, only to switch it off', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const sw = await screen.findByRole('switch', { name: 'Fasten' });
     expect(screen.queryByRole('button', { name: 'Fasten löschen' })).toBeNull();
     fireEvent.click(sw);
@@ -224,7 +229,7 @@ describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
   }
 
   it('reorders a habit by dragging its handle', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const before = dailyIds(store);
     const handle = await screen.findByRole('button', { name: 'Tischgebet mit der Familie verschieben' });
     fakeLayout();
@@ -244,7 +249,7 @@ describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
   });
 
   it('keeps the order when a drag is cancelled', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const before = dailyIds(store);
     const handle = await screen.findByRole('button', { name: 'Die Kinder segnen verschieben' });
     fakeLayout();
@@ -255,7 +260,7 @@ describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
   });
 
   it('moves with the arrow keys on the handle and keeps the focus there', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const before = dailyIds(store);
     const handle = await screen.findByRole('button', { name: 'Tischgebet mit der Familie verschieben' });
     handle.focus();
@@ -271,7 +276,7 @@ describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
   });
 
   it('marks a habit as focus with a star', async () => {
-    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const star = await screen.findByRole('button', { name: 'Fokus: Die Kinder segnen' });
     expect(star.getAttribute('aria-pressed')).toBe('false');
     fireEvent.click(star);

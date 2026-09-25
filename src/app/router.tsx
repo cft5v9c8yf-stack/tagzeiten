@@ -39,6 +39,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'archiv', element: <ArchivePage /> },
       { path: 'mehr', element: <SettingsPage /> },
+      { path: 'mehr/:bereich', element: <SettingsPage /> },
       { path: 'kirchenjahr', element: <ChurchYearPage /> },
       { path: '*', element: <NotFound /> },
     ],

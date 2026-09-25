@@ -265,7 +265,8 @@ nav.tabs::after {
 nav.tabs ul {
   list-style: none;
   margin: 0 auto;
-  padding: 0;
+  /* room for the large circle of the chosen tab at either end */
+  padding: 0 8px;
   max-width: var(--content-width);
   display: grid;
   /* "Sonntag" in the middle, three sections on either side; both halves equally
