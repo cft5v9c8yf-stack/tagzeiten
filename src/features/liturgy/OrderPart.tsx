@@ -361,10 +361,10 @@ export function OrderPart({
   part: Part;
   ctx: PartContext;
   showTitle?: boolean;
-  /** Keeps the outline valid: h4 below a step heading, h3 directly below the order. */
-  headingLevel?: 3 | 4;
+  /** Keeps the outline valid: h4 below a step heading, h3 directly below the order, h5 in a nested flow. */
+  headingLevel?: 3 | 4 | 5;
 }) {
-  const Heading = headingLevel === 3 ? 'h3' : 'h4';
+  const Heading = (`h${headingLevel}` as 'h3' | 'h4' | 'h5');
   // The absolution never folds away: an examination always ends in the word of forgiveness (rule 1).
   if (!showTitle || part.kind === 'absolution') {
     return (

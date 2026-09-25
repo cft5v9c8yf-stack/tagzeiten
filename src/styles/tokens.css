@@ -27,6 +27,8 @@
   --link: #7a5d00;
   --sky: #0a7fae;
   --rose-gold: #d9ae00;
+  /* The rose's gold, a shade deeper on light paper so thin lines stay visible. */
+  --icon-gold: #c49c00;
   --rose-sky: #0bc8ff;
   --rose-green: #9acd32;
   --rose-red: #e31e24;
@@ -74,6 +76,7 @@
     --gold: #e0b93a;
     --link: #e0b93a;
     --sky: #5fd6ff;
+    --icon-gold: #d9ae00;
     --gold-soft: #2e2a1c;
     --warm-soft: #242832;
     color-scheme: dark;
@@ -98,6 +101,7 @@
   --gold: #e0b93a;
   --link: #e0b93a;
   --sky: #5fd6ff;
+  --icon-gold: #d9ae00;
   --gold-soft: #2e2a1c;
   --warm-soft: #242832;
   color-scheme: dark;

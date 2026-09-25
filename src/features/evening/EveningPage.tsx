@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
 import { getOrder, ORDER_MINUTES, RUBRICS, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
-import { useDay, useStore } from '../../data/hooks';
+import { useDay, useProfile, useStore } from '../../data/hooks';
+import { toMinutes } from '../../domain/dayArc';
 import type { DateKey } from '../../domain/dates';
 import type { EveningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
-import { Section } from '../../ui/Section';
 import { StepFlow } from '../../ui/StepFlow';
 import { OrderPart } from '../liturgy/OrderPart';
 
@@ -36,7 +37,7 @@ function useFormSetter(date: DateKey, key: 'vespersForm' | 'complineForm') {
     store.updateDay(date, (d) => ({ ...d, evening: { ...d.evening, [key]: f } as EveningEntry }), { immediate: true });
 }
 
-/** Shown under an order once it is prayed; the flow above stays open to look back. */
+/** Shown where an order ends once it is prayed. */
 function OrderDone({ note, onReopen }: { note: string; onReopen: () => void }) {
   return (
     <div className="order-end">
@@ -45,63 +46,6 @@ function OrderDone({ note, onReopen }: { note: string; onReopen: () => void }) {
         Abschluss zurücknehmen
       </button>
     </div>
-  );
-}
-
-/** Vesper, one part at a time. */
-function VespersFlow({
-  date,
-  form,
-  done,
-  onComplete,
-}: {
-  date: DateKey;
-  form: OrderForm;
-  done: boolean;
-  onComplete: (value: boolean) => void;
-}) {
-  const parts = getOrder('vespers', form).steps[0]!.parts;
-  const [current, setCurrent] = useState<number | null>(done ? null : 0);
-  const part = current === null ? undefined : parts[current];
-  const next = current === null ? undefined : parts[current + 1];
-  return (
-    <>
-      <StepFlow
-        label="Vesper"
-        steps={parts.map((p) => ({ id: p.kind, title: p.title, done }))}
-        current={current}
-        onSelect={setCurrent}
-        footer={
-          next ? (
-            <button type="button" className="btn primary" onClick={() => setCurrent(current! + 1)}>
-              Weiter zu: {next.title}
-            </button>
-          ) : done ? null : (
-            <button
-              type="button"
-              className="btn primary"
-              onClick={() => {
-                onComplete(true);
-                setCurrent(null);
-              }}
-            >
-              Vesper abschließen
-            </button>
-          )
-        }
-      >
-        {part && <OrderPart part={part} ctx={{ order: 'vespers', form, date }} showTitle={false} />}
-      </StepFlow>
-      {done && (
-        <OrderDone
-          note="Vesper gebetet."
-          onReopen={() => {
-            onComplete(false);
-            setCurrent(parts.length - 1);
-          }}
-        />
-      )}
-    </>
   );
 }
 
@@ -122,7 +66,6 @@ function complinePages(steps: readonly OrderStep[]): ComplinePage[] {
     if (prev && prev.steps.at(-1)!.id === 'examination' && step.id === 'confession') {
       prev.steps.push(step);
       prev.title = 'Prüfung, Bekenntnis und Zuspruch';
-      prev.id = 'examination';
     } else {
       pages.push({ id: step.id, title: step.title, steps: [step] });
     }
@@ -130,7 +73,29 @@ function complinePages(steps: readonly OrderStep[]): ComplinePage[] {
   return pages;
 }
 
-/** Nachtgebet, one step at a time. */
+/** Nachtgebet with its form, one step at a time. */
+function Compline({ date }: { date: DateKey }) {
+  const day = useDay(date);
+  const form = day.evening.complineForm;
+  const setForm = useFormSetter(date, 'complineForm');
+  const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
+  return (
+    <div className="order compline">
+      <Segmented
+        label="Form des Nachtgebets"
+        value={form}
+        onChange={setForm}
+        options={[
+          { value: 'full', label: `Nachtgebet · ${ORDER_MINUTES.compline.full} Min.` },
+          { value: 'short', label: 'Kurzform für müde Tage' },
+        ]}
+      />
+      <Rubric>{form === 'full' ? 'Gegen 20:45, am Bett.' : RUBRICS.complineShort}</Rubric>
+      <ComplineFlow key={form} date={date} form={form} done={day.evening.complineDone} onComplete={complete} />
+    </div>
+  );
+}
+
 function ComplineFlow({
   date,
   form,
@@ -150,7 +115,8 @@ function ComplineFlow({
     <>
       <StepFlow
         label="Nachtgebet"
-        steps={pages.map((p, i) => ({ id: p.id, title: p.title, mark: i + 1, done }))}
+        titleLevel={4}
+        steps={pages.map((p, i) => ({ id: p.id, title: p.title, mark: i + 1, icon: COMPLINE_ICONS[p.id], done }))}
         current={current}
         onSelect={setCurrent}
         footer={
@@ -174,13 +140,14 @@ function ComplineFlow({
       >
         {page?.steps.map((step, k) => (
           <div key={step.id} className={`compline-part step-${step.id}`}>
-            {k > 0 && <h4 className="flow-subtitle">{step.title}</h4>}
+            {k > 0 && <h5 className="flow-subtitle">{step.title}</h5>}
             {step.parts.map((p) => (
               <OrderPart
                 key={p.kind}
                 part={p}
                 ctx={{ order: 'compline', form, date }}
                 showTitle={step.parts.length > 1}
+                headingLevel={5}
               />
             ))}
           </div>
@@ -199,12 +166,29 @@ function ComplineFlow({
   );
 }
 
-function Vespers({ date }: { date: DateKey }) {
+const COMPLINE_MARK = 'compline';
+
+/**
+ * The evening as one row: the parts of the Vesper, and as the last mark the
+ * Nachtgebet, which has its own steps. Opens at the Nachtgebet once the Vesper
+ * is prayed or its hour is near.
+ */
+function Evening({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const day = useDay(date);
+  const profile = useProfile();
   const form = day.evening.vespersForm;
+  const parts = getOrder('vespers', form).steps[0]!.parts;
+  const last = parts.length; // index of the Nachtgebet mark
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', 'Vesper gebetet');
   const [family, setFamily] = useState(readFamilyMode);
+
+  const [current, setCurrent] = useState<number>(() => {
+    const now = new Date();
+    const lateEnough =
+      isToday && now.getHours() * 60 + now.getMinutes() >= toMinutes(profile.schedule.compline) - 30;
+    return day.evening.vespersDone || day.evening.complineDone || lateEnough ? last : 0;
+  });
 
   const toggleFamily = () => {
     setFamily((f) => {
@@ -217,57 +201,81 @@ function Vespers({ date }: { date: DateKey }) {
     });
   };
 
-  return (
-    <Section id="evening.vespers" title="Vesper" level={2} className={`order vespers${family ? ' family' : ''}`}>
-      <Segmented
-        label="Form der Vesper"
-        value={form}
-        onChange={setForm}
-        options={[
-          { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
-          { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
-        ]}
-      />
-      <p>
-        <button type="button" className="btn quiet" aria-pressed={family} onClick={toggleFamily}>
-          {family ? 'Familienmodus ausschalten' : 'Familienmodus: große Schrift, V und A im Wechsel'}
+  const steps = [
+    ...parts.map((p, i) => ({
+      id: p.kind,
+      title: p.title,
+      mark: i + 1,
+      icon: VESPERS_ICONS[p.kind],
+      done: day.evening.vespersDone,
+    })),
+    // Unnumbered, like "Am Bett" at the start of the morning: an order of its own.
+    { id: COMPLINE_MARK, title: 'Nachtgebet', mark: '·', icon: 'moon' as const, done: day.evening.complineDone },
+  ];
+
+  const part = current < last ? parts[current] : undefined;
+  const next = current < last - 1 ? parts[current + 1] : undefined;
+
+  let footer = null;
+  if (part) {
+    footer = next ? (
+      <button type="button" className="btn primary" onClick={() => setCurrent(current + 1)}>
+        Weiter zu: {next.title}
+      </button>
+    ) : day.evening.vespersDone ? (
+      <>
+        <OrderDone note="Vesper gebetet." onReopen={() => complete(false)} />
+        <button type="button" className="btn primary" onClick={() => setCurrent(last)}>
+          Weiter zum Nachtgebet
         </button>
-      </p>
-      <Rubric>{form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}</Rubric>
-      <VespersFlow key={form} date={date} form={form} done={day.evening.vespersDone} onComplete={complete} />
-    </Section>
-  );
-}
-
-function Compline({ date }: { date: DateKey }) {
-  const day = useDay(date);
-  const form = day.evening.complineForm;
-  const setForm = useFormSetter(date, 'complineForm');
-  const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
+      </>
+    ) : (
+      <button
+        type="button"
+        className="btn primary"
+        onClick={() => {
+          complete(true);
+          setCurrent(last);
+        }}
+      >
+        Vesper abschließen
+      </button>
+    );
+  }
 
   return (
-    <Section id="evening.compline" title="Nachtgebet" level={2} className="order compline">
-      <Segmented
-        label="Form des Nachtgebets"
-        value={form}
-        onChange={setForm}
-        options={[
-          { value: 'full', label: `Nachtgebet · ${ORDER_MINUTES.compline.full} Min.` },
-          { value: 'short', label: 'Kurzform für müde Tage' },
-        ]}
-      />
-      <Rubric>{form === 'full' ? 'Gegen 20:45, am Bett.' : RUBRICS.complineShort}</Rubric>
-      <ComplineFlow key={form} date={date} form={form} done={day.evening.complineDone} onComplete={complete} />
-    </Section>
+    <div className={`order vespers${family && part ? ' family' : ''}`}>
+      <h2>Vesper und Nachtgebet</h2>
+      {part && (
+        <>
+          <Segmented
+            label="Form der Vesper"
+            value={form}
+            onChange={(f) => {
+              setForm(f);
+              setCurrent(0);
+            }}
+            options={[
+              { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
+              { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
+            ]}
+          />
+          <p>
+            <button type="button" className="btn quiet" aria-pressed={family} onClick={toggleFamily}>
+              {family ? 'Familienmodus ausschalten' : 'Familienmodus: große Schrift, V und A im Wechsel'}
+            </button>
+          </p>
+          <Rubric>{form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}</Rubric>
+        </>
+      )}
+      <StepFlow label="Vesper und Nachtgebet" steps={steps} current={current} onSelect={setCurrent} footer={footer}>
+        {part ? <OrderPart part={part} ctx={{ order: 'vespers', form, date }} showTitle={false} /> : <Compline date={date} />}
+      </StepFlow>
+    </div>
   );
 }
 
 export function EveningPage() {
-  const { date } = useSelectedDate();
-  return (
-    <>
-      <Vespers key={`v-${date}`} date={date} />
-      <Compline key={`c-${date}`} date={date} />
-    </>
-  );
+  const { date, isToday } = useSelectedDate();
+  return <Evening key={date} date={date} isToday={isToday} />;
 }

@@ -30,19 +30,28 @@ async function renderEvening(date: string) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByText('Nachtgebet');
+  await screen.findByRole('heading', { name: 'Vesper und Nachtgebet' });
   return store;
 }
 
 const chainOf = (name: string) => screen.getByRole('navigation', { name: `Ablauf: ${name}` });
+const EVENING = 'Vesper und Nachtgebet';
+/** The Nachtgebet is the last mark of the evening row and has its own row. */
+const openCompline = async () => {
+  if (screen.queryByRole('navigation', { name: 'Ablauf: Nachtgebet' })) return;
+  fireEvent.click(within(chainOf(EVENING)).getByRole('button', { name: /^Nachtgebet/ }));
+  await screen.findByRole('navigation', { name: 'Ablauf: Nachtgebet' });
+};
 const openPage = async (order: string, title: RegExp | string) => {
+  if (order === 'Nachtgebet') await openCompline();
   fireEvent.click(within(chainOf(order)).getByRole('button', { name: title }));
-  await screen.findByRole('heading', { name: title, level: 3 });
+  await screen.findByRole('heading', { name: title, level: order === 'Nachtgebet' ? 4 : 3 });
 };
 
 describe('Nachtgebet', () => {
   it('runs review before examination, with confession and absolution on the examination page (rules 1, 3)', async () => {
     await renderEvening('2026-09-24');
+    await openCompline();
     const names = within(chainOf('Nachtgebet'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label'));
@@ -61,11 +70,12 @@ describe('Nachtgebet', () => {
 
   it('shows one step at a time and moves on step by step to the end', async () => {
     const store = await renderEvening('2026-09-24');
+    await openCompline();
     const flow = () => document.querySelector('.compline .flow-step')!;
     expect(document.querySelectorAll('.compline .flow-step')).toHaveLength(1);
-    expect(flow().querySelector('h3')!.textContent).toBe('Kreuzzeichen');
+    expect(flow().querySelector('h4')!.textContent).toBe('Kreuzzeichen');
     fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Glaubensbekenntnis' }));
-    await waitFor(() => expect(flow().querySelector('h3')!.textContent).toBe('Glaubensbekenntnis'));
+    await waitFor(() => expect(flow().querySelector('h4')!.textContent).toBe('Glaubensbekenntnis'));
     const current = within(chainOf('Nachtgebet')).getByRole('button', { name: 'Glaubensbekenntnis' });
     expect(current.getAttribute('aria-current')).toBe('step');
     // No times and no "gebetet" labels in the row.
@@ -75,13 +85,6 @@ describe('Nachtgebet', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Tag abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.complineDone).toBe(true));
     expect(screen.getByText('Tag abgeschlossen.')).toBeTruthy();
-  });
-
-  it('keeps the whole Nachtgebet foldable under its heading', async () => {
-    await renderEvening('2026-09-24');
-    fireEvent.click(screen.getByRole('button', { name: 'Nachtgebet' }));
-    await waitFor(() => expect(document.querySelector('.compline .flow')!.closest('[hidden]')).not.toBeNull());
-    expect(JSON.parse(localStorage.getItem('tz:collapsed')!)).toMatchObject({ 'evening.compline': false });
   });
 
   it('omits the Halleluja in Passiontide only', async () => {
@@ -115,13 +118,18 @@ describe('Nachtgebet', () => {
 });
 
 describe('Vesper', () => {
-  it('goes through its parts one at a time and closes on the last', async () => {
+  it('goes through its parts one at a time and leads on to the Nachtgebet as the last mark', async () => {
     const store = await renderEvening('2026-09-24');
-    const names = within(chainOf('Vesper')).getAllByRole('button');
-    expect(names.length).toBeGreaterThan(5);
-    fireEvent.click(names.at(-1)!);
+    const buttons = within(chainOf(EVENING)).getAllByRole('button');
+    expect(buttons.at(-1)!.getAttribute('aria-label')).toBe('Nachtgebet');
+    expect(buttons.length).toBeGreaterThan(5);
+    fireEvent.click(buttons[0]!);
+    expect(document.querySelector('.flow-step h3')!.textContent).toBe('Eröffnung');
+    fireEvent.click(buttons.at(-2)!);
     fireEvent.click(await screen.findByRole('button', { name: 'Vesper abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
-    expect(screen.getByText('Vesper gebetet.')).toBeTruthy();
+    // On to the Nachtgebet, with its own row.
+    await screen.findByRole('navigation', { name: 'Ablauf: Nachtgebet' });
+    expect(within(chainOf(EVENING)).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Eröffnung, gebetet');
   });
 });

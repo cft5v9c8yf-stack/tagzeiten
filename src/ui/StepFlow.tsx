@@ -1,10 +1,13 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { FlowIcon, type FlowIconName } from './FlowIcon';
 
 export interface FlowStep {
   id: string;
   title: string;
   /** Shown in the circle: a number, "·", or nothing (a plain point). */
   mark?: ReactNode;
+  /** Small gold icon under the mark: what happens in this step. */
+  icon?: FlowIconName;
   done?: boolean;
 }
 
@@ -21,6 +24,7 @@ export function StepFlow({
   onSelect,
   children,
   footer,
+  titleLevel = 3,
 }: {
   /** Name of the order, for screen readers ("Stille Zeit"). */
   label: string;
@@ -30,6 +34,8 @@ export function StepFlow({
   onSelect: (index: number) => void;
   children?: ReactNode;
   footer?: ReactNode;
+  /** Heading level of the step title; 4 for a flow inside a step of another flow. */
+  titleLevel?: 3 | 4;
 }) {
   const titleId = useId();
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -46,6 +52,7 @@ export function StepFlow({
   }, [current]);
 
   const step = current === null ? undefined : steps[current];
+  const Title = titleLevel === 4 ? 'h4' : 'h3';
 
   return (
     <div className="flow" ref={rootRef}>
@@ -65,15 +72,16 @@ export function StepFlow({
               >
                 <span aria-hidden="true">{s.mark}</span>
               </button>
+              {s.icon && <FlowIcon name={s.icon} />}
             </li>
           ))}
         </ol>
       </nav>
       {step && (
         <section className={`flow-step step-${step.id}`} aria-labelledby={titleId}>
-          <h3 id={titleId} ref={titleRef} tabIndex={-1} className="flow-title">
+          <Title id={titleId} ref={titleRef} tabIndex={-1} className="flow-title">
             {step.title}
-          </h3>
+          </Title>
           {children}
           {footer && <div className="flow-footer">{footer}</div>}
         </section>

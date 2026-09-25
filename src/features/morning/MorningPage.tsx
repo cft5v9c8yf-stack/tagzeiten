@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { morningIcon } from '../../content/flowIcons';
 import { getOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
@@ -64,8 +65,14 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
   const atBed = getOrder('atBed', 'full');
 
   const flow: FlowStep[] = [
-    { id: 'atBed', title: 'Am Bett', mark: '·', done: day.morning.atBed },
-    ...order.steps.map((s, i) => ({ id: s.id, title: s.title, mark: i + 1, done: !!day.morning.steps[s.id] })),
+    { id: 'atBed', title: 'Am Bett', mark: '·', icon: 'bed', done: day.morning.atBed },
+    ...order.steps.map((s, i) => ({
+      id: s.id,
+      title: s.title,
+      mark: i + 1,
+      icon: morningIcon(s.id, form),
+      done: !!day.morning.steps[s.id],
+    })),
   ];
 
   const [current, setCurrent] = useState<number | null>(() => {
