@@ -9,7 +9,7 @@ import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState, setOpen } from '../../ui/collapseState';
-import { TodayPage } from '../today/TodayPage';
+import { SundayPage } from '../sunday/SundayPage';
 import { ChurchYearPage } from './ChurchYearPage';
 
 beforeEach(() => {
@@ -24,7 +24,7 @@ async function renderAt(path: string) {
   const store = new Store({ db: new TagzeitenDB(`cy-${++n}`), journal: memoryJournal(), now: () => new Date(2026, 8, 25, 9) });
   const router = createMemoryRouter(
     [
-      { path: '/', element: <TodayPage /> },
+      { path: '/sonntag', element: <SundayPage /> },
       { path: '/kirchenjahr', element: <ChurchYearPage /> },
     ],
     { initialEntries: [path] },
@@ -40,8 +40,8 @@ async function renderAt(path: string) {
 }
 
 describe('Kirchenjahr', () => {
-  it('opens the circle from Today', async () => {
-    const router = await renderAt('/?d=2026-09-24');
+  it('opens a circle from the Sunday page', async () => {
+    const router = await renderAt('/sonntag?d=2026-09-24');
     fireEvent.click(await screen.findByRole('link', { name: /Osterkreis/ }));
     expect(router.state.location.pathname).toBe('/kirchenjahr');
     expect(new URLSearchParams(router.state.location.search).get('kreis')).toBe('easter');
@@ -61,9 +61,9 @@ describe('Kirchenjahr', () => {
     expect(document.getElementById('entry-goodFriday')!.textContent).toContain('Johannes 19,16-30');
   });
 
-  it('marks the current week and jumps to it from the week name', async () => {
-    const router = await renderAt('/?d=2026-09-24');
-    fireEvent.click(await screen.findByRole('link', { name: '16. Sonntag nach Trinitatis' }));
+  it('marks the current week and jumps to it from the Sunday page', async () => {
+    const router = await renderAt('/sonntag?d=2026-09-24');
+    fireEvent.click(await screen.findByRole('link', { name: 'Alle Sonntage im Pfingstkreis' }));
     const params = new URLSearchParams(router.state.location.search);
     expect(params.get('kreis')).toBe('pentecost');
     expect(params.get('woche')).toBe('trinity16');

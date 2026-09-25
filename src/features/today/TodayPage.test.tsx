@@ -34,42 +34,16 @@ async function renderToday(date: string, prepare?: (s: Store) => void) {
 }
 
 describe('Today', () => {
-  it('heads the page with the date and keeps the church year under "Diese Woche"', async () => {
+  it('heads the page with the date only; the week lives on "Sonntag"', async () => {
     await renderToday('2026-09-24');
-    const top = document.querySelector('.church-year')!;
-    expect(top.textContent).toBe('Donnerstag, 24. September 2026');
-    const h = screen.getByRole('heading', { name: 'Diese Woche' }).closest('section')!;
-    // Catechism and psalms are no longer part of the week on Today.
-    expect(h.textContent).not.toMatch(/Katechismus|Auswendig|Psalm am/);
-    expect(h.querySelector('.cy-week-name')!.textContent).toBe('16. Sonntag nach Trinitatis');
-    expect(h.querySelector('.cy-week-no')!.textContent).toBe('43. Woche im Kirchenjahr');
-    const current = h.querySelector('.cy-circles [aria-current]')!;
-    expect(current.textContent).toBe('PfingstkreisTrinitatiszeit');
-    expect([...h.querySelectorAll('.cy-circles li')].map((l) => l.querySelector('.cy-circle-name')!.textContent)).toEqual([
-      'Weihnachtskreis',
-      'Osterkreis',
-      'Pfingstkreis',
-    ]);
+    expect(document.querySelector('.church-year')!.textContent).toBe('Donnerstag, 24. September 2026');
+    expect(screen.queryByRole('heading', { name: 'Diese Woche' })).toBeNull();
+    expect(document.querySelector('.cy-verse, .cy-circles, .cy-readings')).toBeNull();
   });
 
-  it('shows the weekly verse with a link to the passage', async () => {
-    await renderToday('2026-09-24');
-    const v = document.querySelector('.cy-verse')!;
-    expect(v.querySelector('figcaption')!.textContent).toBe('Wochenspruch');
-    expect(v.querySelector('blockquote')!.textContent).toMatch(/^Jetzt aber offenbart .* durch das Evangelium\.$/);
-    expect(v.querySelector('a')!.getAttribute('href')).toBe('https://www.bibleserver.com/LUT/2.Timotheus1,10');
-    const readings = document.querySelector('.cy-today-readings')!;
-    expect(readings.getAttribute('aria-label')).toBe('Lesungen der Woche');
-    expect([...readings.querySelectorAll('a')].map((a) => a.textContent)).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
-  });
-
-  it('names the feast of the day', async () => {
+  it('names the feast of the day under the date', async () => {
     await renderToday('2026-04-03');
     expect(document.querySelector('.cy-feast')!.textContent).toBe('Karfreitag');
-    expect(document.querySelector('.cy-verse figcaption')!.textContent).toBe('Spruch des Tages');
-    expect(document.querySelector('.cy-today-readings')!.getAttribute('aria-label')).toBe('Lesungen des Tages');
-    expect(document.querySelector('.cy-today-readings a')!.textContent).toBe('Johannes 19,16-30');
-    expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('OsterkreisKarwoche');
   });
 
   it('shows the orders as tiles with their state', async () => {

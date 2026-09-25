@@ -7,7 +7,7 @@ import { THREE_KEYS, type Day } from '../../domain/model';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { Section } from '../../ui/Section';
 import { ReadingRefs } from '../liturgy/MorningReading';
-import { ChurchWeek, DayHeader } from './ChurchWeek';
+import { DayHeader } from './DayHeader';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
@@ -119,9 +119,6 @@ export function TodayPage() {
         <Lookback date={date} />
       </Section>
 
-      <Section id="today.week" title="Diese Woche">
-        <ChurchWeek date={date} isToday={isToday} />
-      </Section>
     </>
   );
 }
