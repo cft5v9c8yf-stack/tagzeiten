@@ -84,6 +84,28 @@ describe('Today', () => {
     expect(pill.disabled).toBe(true); // recorded on Monday, toggled there
   });
 
+  it('groups habits by rhythm in the user\'s order and stars focus habits', async () => {
+    await renderToday('2026-09-24', (s) =>
+      s.updateProfile((p) => {
+        const habits = p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h));
+        // Put "Die Kinder segnen" before "Tischgebet mit der Familie".
+        const i = habits.findIndex((h) => h.id === 'tablePrayer');
+        const j = habits.findIndex((h) => h.id === 'blessChildren');
+        [habits[i], habits[j]] = [habits[j]!, habits[i]!];
+        return { ...p, habits };
+      }),
+    );
+    const groups = [...document.querySelectorAll('.habits .group-row th')].map((t) => t.textContent);
+    expect(groups).toEqual(['Täglich', 'Wöchentlich', 'Monatlich']);
+    const daily = [...document.querySelectorAll('.habit-group-daily th[scope=row]')].map((t) => t.textContent);
+    expect(daily.findIndex((t) => t!.includes('Die Kinder segnen'))).toBeLessThan(
+      daily.findIndex((t) => t!.includes('Tischgebet')),
+    );
+    const star = [...document.querySelectorAll('.focus-star')];
+    expect(star).toHaveLength(1);
+    expect(star[0]!.closest('th')!.textContent).toBe('Fokus: Die Kinder segnen');
+  });
+
   it('keeps missed days neutral and counts nothing as a streak (rules 4, 5)', async () => {
     await renderToday('2026-09-24', (s) =>
       s.updateDay('2026-09-20', (d) => ({

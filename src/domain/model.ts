@@ -131,6 +131,8 @@ export interface Habit {
   auto: AutoSource | null;
   active: boolean;
   preset: boolean;
+  /** Marked with a star by the user as a current focus. A bookmark, not an award. */
+  focus: boolean;
 }
 
 export type Theme = 'system' | 'light' | 'dark';

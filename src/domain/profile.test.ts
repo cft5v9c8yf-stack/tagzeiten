@@ -18,7 +18,8 @@ describe('profile', () => {
         plan: { planId: 'unknown', positions: { at: 99999, nt: 12 } },
         schedule: { rise: '05:30', stillTime: '25:00' } as never,
         catechism: { memorized: { 'creed.0': true }, weekOffset: -1 },
-        habits: [{ id: 'x', name: 'Eigenes', rhythm: 'weekly', auto: null, active: true, preset: false }, { bogus: 1 } as never],
+        // A habit stored before the focus star existed.
+        habits: [{ id: 'x', name: 'Eigenes', rhythm: 'weekly', auto: null, active: true, preset: false } as never, { bogus: 1 } as never],
         theme: 'purple' as never,
       },
       '2026-09-25',
@@ -27,7 +28,7 @@ describe('profile', () => {
     expect(p.schedule.rise).toBe('05:30');
     expect(p.schedule.stillTime).toBe('04:15');
     expect(p.catechism.weekOffset).toBe(5);
-    expect(p.habits[0]!.id).toBe('x');
+    expect(p.habits[0]).toMatchObject({ id: 'x', focus: false });
     expect(p.habits).toHaveLength(HABIT_PRESETS.length + 1);
     expect(p.theme).toBe('system');
   });

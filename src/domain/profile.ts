@@ -57,7 +57,15 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
 
 function cleanHabit(h: Habit): Habit {
   const auto = h.auto === 'morning' || h.auto === 'vespers' || h.auto === 'compline' ? h.auto : null;
-  return { id: h.id, name: h.name, rhythm: h.rhythm, auto, active: h.active !== false, preset: h.preset === true };
+  return {
+    id: h.id,
+    name: h.name,
+    rhythm: h.rhythm,
+    auto,
+    active: h.active !== false,
+    preset: h.preset === true,
+    focus: h.focus === true,
+  };
 }
 
 function isHabit(h: unknown): h is Habit {

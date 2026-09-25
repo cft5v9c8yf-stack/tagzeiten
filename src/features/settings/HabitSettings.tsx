@@ -1,15 +1,38 @@
-import { useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { RHYTHM_LABEL } from '../../content/habits';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { addHabit, newHabitId, removeHabit, renameHabit, setHabitActive } from '../../domain/habits';
+import {
+  addHabit,
+  canMoveHabit,
+  habitsOfRhythm,
+  moveHabit,
+  newHabitId,
+  removeHabit,
+  renameHabit,
+  RHYTHM_ORDER,
+  setHabitActive,
+  setHabitFocus,
+} from '../../domain/habits';
+import { ChevronIcon, StarIcon } from '../../ui/Icons';
 import type { Habit, Rhythm } from '../../domain/model';
 
-const RHYTHMS: Rhythm[] = ['daily', 'weekly', 'monthly'];
+const RHYTHMS = RHYTHM_ORDER;
+type Direction = 'up' | 'down';
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
-function HabitRow({ habit }: { habit: Habit }) {
+function HabitRow({
+  habit,
+  canUp,
+  canDown,
+  onMove,
+}: {
+  habit: Habit;
+  canUp: boolean;
+  canDown: boolean;
+  onMove: (id: string, direction: Direction) => void;
+}) {
   const store = useStore();
   const id = useId();
   const [confirming, setConfirming] = useState(false);
@@ -17,7 +40,7 @@ function HabitRow({ habit }: { habit: Habit }) {
     store.updateProfile((p) => ({ ...p, habits: fn(p.habits) }), { immediate });
 
   return (
-    <li className="habit-edit">
+    <li className={`habit-edit${habit.focus ? ' is-focus' : ''}`}>
       <input
         id={id}
         type="checkbox"
@@ -32,37 +55,72 @@ function HabitRow({ habit }: { habit: Habit }) {
         ) : (
           <>
             <label htmlFor={id} className="visually-hidden">
-              {habit.name} anzeigen
+              {habit.name}
             </label>
             <input
               type="text"
-              aria-label="Name der Gewohnheit"
+              aria-label={`Name der Gewohnheit ${habit.name}`}
               defaultValue={habit.name}
               onBlur={(e) => update((hs) => renameHabit(hs, habit.id, e.target.value))}
             />
           </>
         )}
         <span className="habit-meta">
-          {RHYTHM_LABEL[habit.rhythm]}
-          {habit.auto && ' · aus dem Ablauf'}
-          {!habit.preset && ' · eigene'}
+          {habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : 'eigene'}
+          {!habit.preset &&
+            (confirming ? (
+              <span className="confirm-inline">
+                <button type="button" className="btn danger small-btn" onClick={() => update((hs) => removeHabit(hs, habit.id))}>
+                  Löschen
+                </button>
+                <button type="button" className="btn quiet small-btn" onClick={() => setConfirming(false)}>
+                  Behalten
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                className="link-btn"
+                onClick={() => setConfirming(true)}
+                aria-label={`${habit.name} löschen`}
+              >
+                löschen …
+              </button>
+            ))}
         </span>
       </div>
-      {!habit.preset &&
-        (confirming ? (
-          <span className="confirm-inline">
-            <button type="button" className="btn danger" onClick={() => update((hs) => removeHabit(hs, habit.id))}>
-              Löschen
-            </button>
-            <button type="button" className="btn quiet" onClick={() => setConfirming(false)}>
-              Behalten
-            </button>
-          </span>
-        ) : (
-          <button type="button" className="btn quiet" onClick={() => setConfirming(true)} aria-label={`${habit.name} löschen`}>
-            Löschen …
-          </button>
-        ))}
+      <button
+        type="button"
+        className="icon-btn star-btn"
+        aria-pressed={habit.focus}
+        aria-label={`Fokus: ${habit.name}`}
+        title={habit.focus ? 'Fokus – antippen zum Entfernen' : 'Als Fokus markieren'}
+        onClick={() => update((hs) => setHabitFocus(hs, habit.id, !habit.focus))}
+      >
+        <StarIcon filled={habit.focus} />
+      </button>
+      <span className="move-btns">
+        <button
+          type="button"
+          id={`move-up-${habit.id}`}
+          className="icon-btn"
+          disabled={!canUp}
+          aria-label={`${habit.name} nach oben`}
+          onClick={() => onMove(habit.id, 'up')}
+        >
+          <ChevronIcon direction="up" />
+        </button>
+        <button
+          type="button"
+          id={`move-down-${habit.id}`}
+          className="icon-btn"
+          disabled={!canDown}
+          aria-label={`${habit.name} nach unten`}
+          onClick={() => onMove(habit.id, 'down')}
+        >
+          <ChevronIcon direction="down" />
+        </button>
+      </span>
     </li>
   );
 }
@@ -75,6 +133,27 @@ export function HabitSettings() {
   const rhythmId = useId();
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
+  const [announcement, setAnnouncement] = useState('');
+  const [refocus, setRefocus] = useState<{ id: string; direction: Direction } | null>(null);
+
+  // Keep the keyboard focus on the moved habit's button, so it can be moved again.
+  useEffect(() => {
+    if (!refocus) return;
+    const same = document.getElementById(`move-${refocus.direction}-${refocus.id}`) as HTMLButtonElement | null;
+    const other = document.getElementById(
+      `move-${refocus.direction === 'up' ? 'down' : 'up'}-${refocus.id}`,
+    ) as HTMLButtonElement | null;
+    (same && !same.disabled ? same : other)?.focus();
+    setRefocus(null);
+  }, [refocus]);
+
+  const move = (id: string, direction: Direction) => {
+    const next = store.updateProfile((p) => ({ ...p, habits: moveHabit(p.habits, id, direction) }), { immediate: true });
+    const h = next.habits.find((x) => x.id === id)!;
+    const group = habitsOfRhythm(next.habits, h.rhythm);
+    setAnnouncement(`${h.name}: Platz ${group.findIndex((x) => x.id === id) + 1} von ${group.length}`);
+    setRefocus({ id, direction });
+  };
 
   const add = (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,16 +166,26 @@ export function HabitSettings() {
   return (
     <section aria-labelledby="habits-settings">
       <h2 id="habits-settings">Gewohnheiten</h2>
-      <p className="small muted">{NO_SCORE_NOTE} Eingeschaltete Gewohnheiten erscheinen auf der Startseite.</p>
+      <p className="small muted">
+        {NO_SCORE_NOTE} Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Mit dem
+        Stern markierst du, worauf du gerade achten willst.
+      </p>
+      <p className="visually-hidden" aria-live="polite">
+        {announcement}
+      </p>
       {RHYTHMS.map((r) => (
         <div key={r}>
           <h3>{GROUP_TITLE[r]}</h3>
           <ul className="habit-list">
-            {profile.habits
-              .filter((h) => h.rhythm === r)
-              .map((h) => (
-                <HabitRow key={h.id} habit={h} />
-              ))}
+            {habitsOfRhythm(profile.habits, r).map((h) => (
+              <HabitRow
+                key={h.id}
+                habit={h}
+                canUp={canMoveHabit(profile.habits, h.id, 'up')}
+                canDown={canMoveHabit(profile.habits, h.id, 'down')}
+                onMove={move}
+              />
+            ))}
           </ul>
         </div>
       ))}

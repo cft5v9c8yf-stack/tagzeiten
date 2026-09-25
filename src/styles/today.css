@@ -365,3 +365,33 @@ progress::-moz-progress-bar {
     gap: 0;
   }
 }
+
+/* Habit groups: daily, weekly, monthly */
+.habits .group-row th {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 14px 0 4px;
+  border-top: 0 !important;
+}
+.habits tbody.habit-group:first-of-type .group-row th {
+  padding-top: 4px;
+}
+.habits .group-row + tr > * {
+  border-top: 0;
+}
+.habit-name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.focus-star {
+  color: var(--accent);
+  flex: none;
+  position: relative;
+  top: 1px;
+}

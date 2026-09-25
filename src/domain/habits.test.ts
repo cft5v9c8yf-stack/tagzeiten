@@ -3,6 +3,10 @@ import { HABIT_PRESETS } from '../content/habits';
 import type { DateKey } from './dates';
 import {
   addHabit,
+  canMoveHabit,
+  habitsOfRhythm,
+  moveHabit,
+  setHabitFocus,
   canToggle,
   doneDateInPeriod,
   habitsFromPresets,
@@ -128,7 +132,15 @@ describe('manual habits', () => {
 describe('managing habits', () => {
   it('adds, renames and removes own habits; presets stay', () => {
     let hs: Habit[] = addHabit(presets, '  Psalm mit den Kindern ', 'weekly', 'own-1');
-    expect(hs.at(-1)).toEqual({ id: 'own-1', name: 'Psalm mit den Kindern', rhythm: 'weekly', auto: null, active: true, preset: false });
+    expect(hs.at(-1)).toEqual({
+      id: 'own-1',
+      name: 'Psalm mit den Kindern',
+      rhythm: 'weekly',
+      auto: null,
+      active: true,
+      preset: false,
+      focus: false,
+    });
     hs = renameHabit(hs, 'own-1', 'Psalm im Wechsel');
     expect(hs.at(-1)!.name).toBe('Psalm im Wechsel');
     expect(renameHabit(hs, 'worship', 'x').find((h) => h.id === 'worship')!.name).toBe(byId('worship').name);
@@ -143,5 +155,49 @@ describe('managing habits', () => {
     expect(merged.find((h) => h.id === 'mercy')!.active).toBe(false);
     expect(merged.find((h) => h.id === 'fasting')!.active).toBe(true);
     expect(merged).toHaveLength(presets.length);
+  });
+});
+
+describe('order and focus', () => {
+  const ids = (hs: Habit[], r: Habit['rhythm']) => habitsOfRhythm(hs, r).map((h) => h.id);
+
+  it('moves a habit within its group only', () => {
+    const daily = ids(presets, 'daily');
+    const weekly = ids(presets, 'weekly');
+    const moved = moveHabit(presets, 'tablePrayer', 'up');
+    const d = ids(moved, 'daily');
+    expect(d.indexOf('tablePrayer')).toBe(daily.indexOf('tablePrayer') - 1);
+    expect(d.slice().sort()).toEqual(daily.slice().sort());
+    expect(ids(moved, 'weekly')).toEqual(weekly);
+  });
+
+  it('skips habits of other rhythms when moving', () => {
+    // An own daily habit appended after all presets moves up past the monthly and weekly ones.
+    const hs = addHabit(presets, 'Eigene', 'daily', 'own-1');
+    const moved = moveHabit(hs, 'own-1', 'up');
+    const d = ids(moved, 'daily');
+    expect(d.at(-2)).toBe('own-1');
+    expect(ids(moved, 'weekly')).toEqual(ids(presets, 'weekly'));
+    expect(ids(moved, 'monthly')).toEqual(ids(presets, 'monthly'));
+  });
+
+  it('does nothing at the ends of a group', () => {
+    const first = ids(presets, 'weekly')[0]!;
+    const last = ids(presets, 'monthly').at(-1)!;
+    expect(canMoveHabit(presets, first, 'up')).toBe(false);
+    expect(moveHabit(presets, first, 'up')).toEqual(presets);
+    expect(canMoveHabit(presets, last, 'down')).toBe(false);
+    expect(canMoveHabit(presets, first, 'down')).toBe(true);
+  });
+
+  it('moves up and down symmetrically', () => {
+    expect(moveHabit(moveHabit(presets, 'fasting', 'down'), 'fasting', 'up')).toEqual(presets);
+  });
+
+  it('marks and unmarks a focus habit', () => {
+    expect(presets.every((h) => !h.focus)).toBe(true);
+    const f = setHabitFocus(presets, 'tablePrayer', true);
+    expect(f.filter((h) => h.focus).map((h) => h.id)).toEqual(['tablePrayer']);
+    expect(setHabitFocus(f, 'tablePrayer', false).some((h) => h.focus)).toBe(false);
   });
 });

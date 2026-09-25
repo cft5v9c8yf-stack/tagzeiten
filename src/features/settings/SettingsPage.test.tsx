@@ -141,6 +141,41 @@ describe('Mehr: Gewohnheiten', () => {
   });
 });
 
+describe('Mehr: Reihenfolge und Fokus', () => {
+  const dailyIds = (s: Store) => s.getProfile().habits.filter((h) => h.rhythm === 'daily').map((h) => h.id);
+
+  it('moves a habit within its group and keeps the focus on the button', async () => {
+    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const before = dailyIds(store);
+    const up = await screen.findByRole('button', { name: 'Tischgebet mit der Familie nach oben' });
+    up.focus();
+    fireEvent.click(up);
+    const after = dailyIds(store);
+    expect(after.indexOf('tablePrayer')).toBe(before.indexOf('tablePrayer') - 1);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Tischgebet mit der Familie nach oben' })),
+    );
+    expect(screen.getByText(/Tischgebet mit der Familie: Platz \d von \d/)).toBeTruthy();
+  });
+
+  it('cannot move the first habit of a group further up', async () => {
+    await renderAt('/mehr', <SettingsPage />);
+    const first = (await screen.findByRole('button', { name: 'Stille Zeit nach oben' })) as HTMLButtonElement;
+    expect(first.disabled).toBe(true);
+    const firstWeekly = screen.getByRole('button', { name: 'Gottesdienst – den Feiertag heiligen nach oben' }) as HTMLButtonElement;
+    expect(firstWeekly.disabled).toBe(true);
+  });
+
+  it('marks a habit as focus with a star', async () => {
+    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const star = await screen.findByRole('button', { name: 'Fokus: Die Kinder segnen' });
+    expect(star.getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(star);
+    expect(star.getAttribute('aria-pressed')).toBe('true');
+    expect(store.getProfile().habits.find((h) => h.id === 'blessChildren')!.focus).toBe(true);
+  });
+});
+
 describe('Katechismus', () => {
   it('shows the answer in the house father mode only after a tap', async () => {
     await renderAt('/katechismus', <CatechismPage />);

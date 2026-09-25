@@ -9,7 +9,7 @@ import type { Day, Habit, Rhythm } from './model';
 export type DayLookup = (date: DateKey) => Day | undefined;
 
 export function habitsFromPresets(): Habit[] {
-  return HABIT_PRESETS.map((p) => ({ ...p, preset: true }));
+  return HABIT_PRESETS.map((p) => ({ ...p, preset: true, focus: false }));
 }
 
 /**
@@ -19,7 +19,7 @@ export function habitsFromPresets(): Habit[] {
 export function mergePresets(habits: readonly Habit[]): Habit[] {
   const out = habits.map((h) => ({ ...h }));
   for (const p of HABIT_PRESETS) {
-    if (!out.some((h) => h.id === p.id)) out.push({ ...p, active: false, preset: true });
+    if (!out.some((h) => h.id === p.id)) out.push({ ...p, active: false, preset: true, focus: false });
   }
   return out;
 }
@@ -82,7 +82,7 @@ export function toggleHabit(day: Day, habit: Habit): Day {
 export function addHabit(habits: readonly Habit[], name: string, rhythm: Rhythm, id: string): Habit[] {
   const trimmed = name.trim();
   if (!trimmed) return [...habits];
-  return [...habits, { id, name: trimmed, rhythm, auto: null, active: true, preset: false }];
+  return [...habits, { id, name: trimmed, rhythm, auto: null, active: true, preset: false, focus: false }];
 }
 
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {
@@ -98,6 +98,44 @@ export function removeHabit(habits: readonly Habit[], id: string): Habit[] {
 
 export function setHabitActive(habits: readonly Habit[], id: string, active: boolean): Habit[] {
   return habits.map((h) => (h.id === id ? { ...h, active } : h));
+}
+
+export function setHabitFocus(habits: readonly Habit[], id: string, focus: boolean): Habit[] {
+  return habits.map((h) => (h.id === id ? { ...h, focus } : h));
+}
+
+export const RHYTHM_ORDER: readonly Rhythm[] = ['daily', 'weekly', 'monthly'];
+
+/** Habits of one rhythm in the user's order. */
+export function habitsOfRhythm(habits: readonly Habit[], rhythm: Rhythm): Habit[] {
+  return habits.filter((h) => h.rhythm === rhythm);
+}
+
+/** Whether the habit can move one place up or down within its group. */
+export function canMoveHabit(habits: readonly Habit[], id: string, direction: 'up' | 'down'): boolean {
+  const h = habits.find((x) => x.id === id);
+  if (!h) return false;
+  const group = habitsOfRhythm(habits, h.rhythm);
+  const i = group.findIndex((x) => x.id === id);
+  return direction === 'up' ? i > 0 : i < group.length - 1;
+}
+
+/**
+ * Moves a habit one place up or down within its rhythm group, by swapping it
+ * with its neighbour of the same rhythm. Other groups keep their order.
+ */
+export function moveHabit(habits: readonly Habit[], id: string, direction: 'up' | 'down'): Habit[] {
+  const out = [...habits];
+  const from = out.findIndex((h) => h.id === id);
+  const h = out[from];
+  if (!h) return out;
+  const step = direction === 'up' ? -1 : 1;
+  let to = from + step;
+  while (to >= 0 && to < out.length && out[to]!.rhythm !== h.rhythm) to += step;
+  if (to < 0 || to >= out.length) return out;
+  out[from] = out[to]!;
+  out[to] = h;
+  return out;
 }
 
 export function newHabitId(now: number = Date.now()): string {
