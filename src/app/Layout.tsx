@@ -52,6 +52,10 @@ export function Layout() {
           <UpdateBanner />
           <Outlet />
         </main>
+        {/* The four solas of the Reformation, at the end of every page, just above Luther's rose. */}
+        <footer className="solas" lang="la">
+          <span>Sola scriptura</span> · <span>Sola gratia</span> · <span>Sola fide</span> · <span>Solus Christus</span>
+        </footer>
       </div>
       <nav className="tabs" aria-label="Bereiche">
         <ul>

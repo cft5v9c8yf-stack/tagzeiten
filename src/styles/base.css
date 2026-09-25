@@ -86,8 +86,31 @@ dd a:not([class]) {
 .wrap {
   max-width: var(--content-width);
   margin: 0 auto;
+  /* At least one screen high, so the solas close every page just above the rose. */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh + var(--safe-top));
   padding: var(--safe-top) calc(var(--gutter) + var(--safe-right))
     calc(var(--tabbar-height) + var(--safe-bottom) + 48px) calc(var(--gutter) + var(--safe-left));
+}
+
+/* The four solas: a quiet colophon above the rose at the end of every page */
+.wrap > main {
+  flex: 1 0 auto;
+}
+.solas {
+  margin: 40px 0 -20px;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+  color: var(--gold);
+  text-wrap: balance;
+}
+.solas span {
+  white-space: nowrap;
 }
 
 header.top {
