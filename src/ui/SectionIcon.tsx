@@ -16,15 +16,15 @@ const PATHS: Record<Name, JSX.Element> = {
       <circle cx="12" cy="16" r="1.4" fill="currentColor" stroke="none" />
     </>
   ),
-  // Sunrise
-  morning: (
+  // Folded hands: Stille Zeit, Vesper and Nachtgebet
+  prayer: <path d="M12 3c-1.6 2-2.5 5-2.5 8.5V16l-3.5 4.5M12 3c1.6 2 2.5 5 2.5 8.5V16l3.5 4.5M12 5v12" />,
+  // The Sunday is drawn as Luther's rose in the bar; this is the fallback.
+  sunday: (
     <>
-      <path d="M7 17a5 5 0 0 1 10 0" />
-      <path d="M2 17h20M12 5v3M5.2 9.2l1.8 1.8M18.8 9.2 17 11" />
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v10M8.5 10.5h7" />
     </>
   ),
-  // Crescent moon
-  evening: <path d="M19 14.5A7.5 7.5 0 0 1 9.5 5a7.5 7.5 0 1 0 9.5 9.5Z" />,
   catechism: <path d="M12 3v18M7 8h10" />,
   // An open book
   archive: (

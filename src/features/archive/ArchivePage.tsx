@@ -38,8 +38,8 @@ function DayItem({ d }: { d: Day }) {
       )}
       {d.morning.mainPoint && <p className="small muted">{d.morning.mainPoint}</p>}
       <div className="archive-links">
-        <Link to={`/morgen?d=${d.date}`}>Morgen öffnen</Link>
-        <Link to={`/abend?d=${d.date}`}>Abend öffnen</Link>
+        <Link to={`/andacht/morgen?d=${d.date}`}>Morgen öffnen</Link>
+        <Link to={`/andacht/abend?d=${d.date}`}>Abend öffnen</Link>
         <Link to={`/?d=${d.date}`}>Tagesübersicht</Link>
       </div>
     </li>
@@ -117,7 +117,7 @@ export function ArchivePage() {
                 <blockquote className="archive-verse">{v.verse}</blockquote>
                 <div className="archive-date">
                   {v.ref && <>{v.ref} · </>}
-                  <Link to={`/morgen?d=${v.date}`}>{formatShort(v.date)}</Link>
+                  <Link to={`/andacht/morgen?d=${v.date}`}>{formatShort(v.date)}</Link>
                 </div>
               </li>
             ))}

@@ -1,4 +1,4 @@
-export type SectionIcon = 'bible' | 'today' | 'morning' | 'evening' | 'catechism' | 'archive' | 'more';
+export type SectionIcon = 'bible' | 'today' | 'prayer' | 'sunday' | 'catechism' | 'archive' | 'more';
 
 export interface Section {
   path: string;
@@ -6,13 +6,15 @@ export interface Section {
   icon: SectionIcon;
 }
 
+/** The week comes from its Sunday: it stands in the middle, in Luther's rose. */
+export const SUNDAY_PATH = '/sonntag';
+
 export const SECTIONS: readonly Section[] = [
-  { path: '/bibel', label: 'Bibel', icon: 'bible' },
-  { path: '/morgen', label: 'Morgen', icon: 'morning' },
-  { path: '/abend', label: 'Abend', icon: 'evening' },
-  // Today sits in the middle of the bar, a little larger (see nav.tabs .tab-today).
-  { path: '/', label: 'Heute', icon: 'today' },
-  { path: '/katechismus', label: 'Katechismus', icon: 'catechism' },
   { path: '/archiv', label: 'Archiv', icon: 'archive' },
+  { path: '/andacht', label: 'Andacht', icon: 'prayer' },
+  { path: '/', label: 'Heute', icon: 'today' },
+  { path: SUNDAY_PATH, label: 'Sonntag', icon: 'sunday' },
+  { path: '/bibel', label: 'Bibel', icon: 'bible' },
+  { path: '/katechismus', label: 'Katechismus', icon: 'catechism' },
   { path: '/mehr', label: 'Mehr', icon: 'more' },
 ];

@@ -240,9 +240,9 @@ nav.tabs ul {
   padding: 0;
   max-width: var(--content-width);
   display: grid;
-  /* "Heute" exactly in the middle, three sections on either side; both halves
+  /* "Sonntag" exactly in the middle, three sections on either side; both halves
      equally wide, "Katechismus" gets the widest column. */
-  grid-template-columns: 0.9fr 1.05fr 0.95fr 64px 1.3fr 0.85fr 0.75fr;
+  grid-template-columns: 1fr 1fr 1fr 64px 0.85fr 1.3fr 0.85fr;
 }
 nav.tabs li {
   min-width: 0;
@@ -250,8 +250,8 @@ nav.tabs li {
 nav.tabs .tab-today a {
   padding-top: 0;
 }
-/* Today: Luther's rose, larger, rising a little above the bar; "Heute" below it
-   on the same line as the other labels. */
+/* Sunday: Luther's rose, larger, rising a little above the bar; "Sonntag" below
+   it on the same line as the other labels. */
 .today-rose {
   display: grid;
   place-items: center;

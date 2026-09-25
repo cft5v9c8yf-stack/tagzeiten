@@ -3,9 +3,11 @@ import { ArchivePage } from '../features/archive/ArchivePage';
 import { BiblePage } from '../features/bible/BiblePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
+import { DevotionIndex, DevotionPage, DevotionRedirect } from '../features/devotion/DevotionPage';
 import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
+import { SundayPage } from '../features/sunday/SundayPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { Layout } from './Layout';
 import { NotFound } from './NotFound';
@@ -22,8 +24,18 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
     children: [
       { index: true, element: <TodayPage /> },
       { path: 'bibel', element: <BiblePage /> },
-      { path: 'morgen', element: <MorningPage /> },
-      { path: 'abend', element: <EveningPage /> },
+      {
+        path: 'andacht',
+        element: <DevotionPage />,
+        children: [
+          { index: true, element: <DevotionIndex /> },
+          { path: 'morgen', element: <MorningPage /> },
+          { path: 'abend', element: <EveningPage /> },
+        ],
+      },
+      { path: 'morgen', element: <DevotionRedirect part="morgen" /> },
+      { path: 'abend', element: <DevotionRedirect part="abend" /> },
+      { path: 'sonntag', element: <SundayPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'archiv', element: <ArchivePage /> },
       { path: 'mehr', element: <SettingsPage /> },

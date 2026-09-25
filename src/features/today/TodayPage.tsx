@@ -69,7 +69,7 @@ function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: 
         ) : (
           <p className="muted three-empty">
             Werden in der Stille Zeit festgelegt, nach dem Wort.{' '}
-            <Link to={withDate('/morgen', date, isToday)}>Zur Stille Zeit</Link>
+            <Link to={withDate('/andacht/morgen', date, isToday)}>Zur Stille Zeit</Link>
           </p>
         )}
       </div>
@@ -89,7 +89,7 @@ export function TodayPage() {
       <DayHeader date={date} />
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
-        <Link to={withDate('/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
+        <Link to={withDate('/andacht/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
           <span className="tile-time">
             {s.stillTime} · {day.morning.form === 'short' ? '20' : '45'} Min.
           </span>
@@ -97,7 +97,7 @@ export function TodayPage() {
           <span className="tile-state">{morningStatus(day)}</span>
         </Link>
         <Link
-          to={withDate('/abend', date, isToday)}
+          to={withDate('/andacht/abend', date, isToday)}
           className={`tile${day.evening.vespersDone && day.evening.complineDone ? ' is-done' : ''}`}
         >
           <span className="tile-time">

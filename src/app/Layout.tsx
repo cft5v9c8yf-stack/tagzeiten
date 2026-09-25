@@ -5,7 +5,7 @@ import { DemoBanner } from '../demo/DemoSetup';
 import { LutherRose } from '../ui/LutherRose';
 import { SectionIcon } from '../ui/SectionIcon';
 import { UpdateBanner } from './UpdateBanner';
-import { SECTIONS } from './routes';
+import { SECTIONS, SUNDAY_PATH } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
 
 export function Layout() {
@@ -56,9 +56,9 @@ export function Layout() {
       <nav className="tabs" aria-label="Bereiche">
         <ul>
           {SECTIONS.map((s) => (
-            <li key={s.path} className={s.path === '/' ? 'tab-today' : undefined}>
+            <li key={s.path} className={s.path === SUNDAY_PATH ? 'tab-today' : undefined}>
               <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
-                {s.path === '/' ? (
+                {s.path === SUNDAY_PATH ? (
                   <span className="today-rose">
                     <LutherRose size={46} />
                   </span>

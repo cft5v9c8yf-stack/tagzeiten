@@ -649,3 +649,105 @@ body.is-sorting * {
 .cy-entry.current .cy-readings dt {
   color: var(--ink);
 }
+
+/* ---------------------------------------------------------------- Andacht: morning / evening */
+.devotion-switch {
+  display: flex;
+  width: fit-content;
+  margin: 18px 0 0;
+}
+.devotion-switch a {
+  padding: 8px 18px;
+  min-height: 38px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.devotion-switch a[aria-current='page'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ---------------------------------------------------------------- Sunday */
+.sunday-kicker {
+  margin: 22px 0 0;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sunday-name {
+  margin: 4px 0 2px;
+  font-size: 1.6rem;
+}
+.sunday-week {
+  margin: 0 0 10px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.sunday-verse {
+  margin: 16px 0;
+  padding: 4px 0 4px 16px;
+  border-left: 3px solid var(--gold);
+}
+.sunday-verse figcaption {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sunday-verse blockquote {
+  margin: 4px 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+.sunday-page .block {
+  margin: 14px 0;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+}
+.sunday-page .block h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+.sunday-page .block > p:last-child {
+  margin-bottom: 0;
+}
+.sunday-theme {
+  font-size: 1.1rem;
+}
+.sunday-readings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.sunday-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+}
+.sunday-reading .track {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sunday-reading .bible-link {
+  font-size: 1.05rem;
+}
+.sunday-page .cy-circles {
+  margin-top: 4px;
+}
