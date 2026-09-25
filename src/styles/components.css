@@ -27,53 +27,93 @@
   min-width: 0;
 }
 
-/* ---------------------------------------------------------------- steps */
-.step {
-  border-top: 1px solid var(--rule);
+/* ---------------------------------------------------------------- step flow */
+/* The sequence of an order as a row of marks; below it only the step in view. */
+.flow {
+  scroll-margin-top: calc(var(--safe-top) + 66px);
 }
-.step-head {
-  margin: 0;
-  font-size: inherit;
-}
-.step-head button {
-  appearance: none;
-  width: 100%;
-  border: 0;
-  background: none;
-  padding: 14px 0 8px;
-  display: grid;
-  grid-template-columns: 2rem 1fr auto;
-  align-items: baseline;
-  gap: 6px;
-  text-align: left;
-  cursor: pointer;
-  color: inherit;
-  font-family: var(--serif);
-}
-.step .no {
-  font-weight: 600;
-  color: var(--rubric);
-}
-.step .title {
-  font-weight: 600;
-  font-size: 1.12rem;
-}
-.step .meta {
+.flow-chain ol {
+  position: relative;
+  list-style: none;
   display: flex;
-  gap: 8px;
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  color: var(--muted);
+  justify-content: space-between;
+  gap: 4px;
+  margin: 14px 0 6px;
+  padding: 0;
 }
-.step .state {
-  color: var(--done);
+/* The thread through the marks */
+.flow-chain ol::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--rule);
+}
+.flow-chain li {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.flow-chain button {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  color: var(--rubric);
+  font-family: var(--serif);
   font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
 }
-.step-body {
-  padding: 0 0 14px 2rem;
+.flow-chain li.point button {
+  width: 16px;
+  height: 16px;
+  margin: 6px 0;
+  border-color: var(--muted);
 }
-.step-footer {
-  margin-top: 16px;
+.flow-chain li.done button {
+  border-color: var(--done);
+  background: var(--done-soft);
+  color: var(--done);
+}
+.flow-chain li.current button {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--gold);
+  background: var(--gold-soft);
+  color: var(--rubric);
+  font-size: 0.95rem;
+}
+.flow-chain li.point.current button {
+  width: 20px;
+  height: 20px;
+  margin: 4px 0;
+}
+.flow-step {
+  padding: 4px 0 8px;
+}
+.flow-title {
+  margin: 12px 0 8px;
+  font-size: 1.25rem;
+}
+.flow-title:focus {
+  outline: none;
+}
+.flow-subtitle {
+  margin: 22px 0 4px;
+  font-size: 1.05rem;
+}
+.flow-footer {
+  margin-top: 18px;
 }
 .part + .part {
   margin-top: 14px;
@@ -435,31 +475,6 @@ select {
   border-color: var(--done);
   background: var(--done-soft);
 }
-.compline-steps {
-  list-style: none;
-  counter-reset: step;
-  padding: 0;
-  margin: 0;
-}
-.compline-step {
-  counter-increment: step;
-  border-top: 1px solid var(--rule);
-  padding: 4px 0 10px 2rem;
-  position: relative;
-}
-.compline-step > h3,
-.compline-step > .fold-section > .fold-head h3 {
-  margin: 12px 0 6px;
-}
-.compline-step::before {
-  content: counter(step);
-  position: absolute;
-  left: 0;
-  top: 13px;
-  font-weight: 600;
-  color: var(--rubric);
-}
-
 /* Family mode: large type, clear alternation of V and A for children. */
 .vespers.family {
   font-size: 1.2rem;
@@ -480,11 +495,6 @@ select {
   font-weight: 600;
 }
 
-/* Keep scrolled-to steps clear of the sticky timer. */
-.step,
-.compline-step {
-  scroll-margin-top: calc(var(--safe-top) + 66px);
-}
 
 /* Fields always show where the cursor is, also for time fields whose
    inner segments hold the focus (they never match :focus-visible). */

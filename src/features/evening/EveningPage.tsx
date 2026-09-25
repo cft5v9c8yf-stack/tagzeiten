@@ -8,6 +8,7 @@ import type { EveningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
 import { Section } from '../../ui/Section';
+import { StepFlow } from '../../ui/StepFlow';
 import { OrderPart } from '../liturgy/OrderPart';
 
 const FAMILY_KEY = 'tz:family';
@@ -35,10 +36,172 @@ function useFormSetter(date: DateKey, key: 'vespersForm' | 'complineForm') {
     store.updateDay(date, (d) => ({ ...d, evening: { ...d.evening, [key]: f } as EveningEntry }), { immediate: true });
 }
 
+/** Shown under an order once it is prayed; the flow above stays open to look back. */
+function OrderDone({ note, onReopen }: { note: string; onReopen: () => void }) {
+  return (
+    <div className="order-end">
+      <p className="done-note">{note}</p>
+      <button type="button" className="btn quiet" onClick={onReopen}>
+        Abschluss zurücknehmen
+      </button>
+    </div>
+  );
+}
+
+/** Vesper, one part at a time. */
+function VespersFlow({
+  date,
+  form,
+  done,
+  onComplete,
+}: {
+  date: DateKey;
+  form: OrderForm;
+  done: boolean;
+  onComplete: (value: boolean) => void;
+}) {
+  const parts = getOrder('vespers', form).steps[0]!.parts;
+  const [current, setCurrent] = useState<number | null>(done ? null : 0);
+  const part = current === null ? undefined : parts[current];
+  const next = current === null ? undefined : parts[current + 1];
+  return (
+    <>
+      <StepFlow
+        label="Vesper"
+        steps={parts.map((p) => ({ id: p.kind, title: p.title, done }))}
+        current={current}
+        onSelect={setCurrent}
+        footer={
+          next ? (
+            <button type="button" className="btn primary" onClick={() => setCurrent(current! + 1)}>
+              Weiter zu: {next.title}
+            </button>
+          ) : done ? null : (
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => {
+                onComplete(true);
+                setCurrent(null);
+              }}
+            >
+              Vesper abschließen
+            </button>
+          )
+        }
+      >
+        {part && <OrderPart part={part} ctx={{ order: 'vespers', form, date }} showTitle={false} />}
+      </StepFlow>
+      {done && (
+        <OrderDone
+          note="Vesper gebetet."
+          onReopen={() => {
+            onComplete(false);
+            setCurrent(parts.length - 1);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
+interface ComplinePage {
+  id: string;
+  title: string;
+  steps: OrderStep[];
+}
+
+/**
+ * The pages of the Nachtgebet. Examination and confession with absolution stand
+ * on one page: the examination never ends without the word of forgiveness (rule 1).
+ */
+function complinePages(steps: readonly OrderStep[]): ComplinePage[] {
+  const pages: ComplinePage[] = [];
+  for (const step of steps) {
+    const prev = pages.at(-1);
+    if (prev && prev.steps.at(-1)!.id === 'examination' && step.id === 'confession') {
+      prev.steps.push(step);
+      prev.title = 'Prüfung, Bekenntnis und Zuspruch';
+      prev.id = 'examination';
+    } else {
+      pages.push({ id: step.id, title: step.title, steps: [step] });
+    }
+  }
+  return pages;
+}
+
+/** Nachtgebet, one step at a time. */
+function ComplineFlow({
+  date,
+  form,
+  done,
+  onComplete,
+}: {
+  date: DateKey;
+  form: OrderForm;
+  done: boolean;
+  onComplete: (value: boolean) => void;
+}) {
+  const pages = complinePages(getOrder('compline', form).steps);
+  const [current, setCurrent] = useState<number | null>(done ? null : 0);
+  const page = current === null ? undefined : pages[current];
+  const next = current === null ? undefined : pages[current + 1];
+  return (
+    <>
+      <StepFlow
+        label="Nachtgebet"
+        steps={pages.map((p, i) => ({ id: p.id, title: p.title, mark: i + 1, done }))}
+        current={current}
+        onSelect={setCurrent}
+        footer={
+          next ? (
+            <button type="button" className="btn primary" onClick={() => setCurrent(current! + 1)}>
+              Weiter zu: {next.title}
+            </button>
+          ) : done ? null : (
+            <button
+              type="button"
+              className="btn primary"
+              onClick={() => {
+                onComplete(true);
+                setCurrent(null);
+              }}
+            >
+              Tag abschließen
+            </button>
+          )
+        }
+      >
+        {page?.steps.map((step, k) => (
+          <div key={step.id} className={`compline-part step-${step.id}`}>
+            {k > 0 && <h4 className="flow-subtitle">{step.title}</h4>}
+            {step.parts.map((p) => (
+              <OrderPart
+                key={p.kind}
+                part={p}
+                ctx={{ order: 'compline', form, date }}
+                showTitle={step.parts.length > 1}
+              />
+            ))}
+          </div>
+        ))}
+      </StepFlow>
+      {done && (
+        <OrderDone
+          note="Tag abgeschlossen."
+          onReopen={() => {
+            onComplete(false);
+            setCurrent(pages.length - 1);
+          }}
+        />
+      )}
+    </>
+  );
+}
+
 function Vespers({ date }: { date: DateKey }) {
   const day = useDay(date);
   const form = day.evening.vespersForm;
-  const order = getOrder('vespers', form);
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', 'Vesper gebetet');
   const [family, setFamily] = useState(readFamilyMode);
@@ -71,43 +234,7 @@ function Vespers({ date }: { date: DateKey }) {
         </button>
       </p>
       <Rubric>{form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}</Rubric>
-      {order.steps[0]!.parts.map((p) => (
-        <OrderPart key={p.kind} part={p} ctx={{ order: 'vespers', form, date }} headingLevel={3} />
-      ))}
-      <div className="order-end">
-        {day.evening.vespersDone ? (
-          <>
-            <p className="done-note">Vesper gebetet.</p>
-            <button type="button" className="btn quiet" onClick={() => complete(false)}>
-              Abschluss zurücknehmen
-            </button>
-          </>
-        ) : (
-          <button type="button" className="btn primary" onClick={() => complete(true)}>
-            Vesper abschließen
-          </button>
-        )}
-      </div>
-    </Section>
-  );
-}
-
-function ComplineStep({ step, form, date }: { step: OrderStep; form: OrderForm; date: DateKey }) {
-  const parts = step.parts.map((p) => (
-    <OrderPart key={p.kind} part={p} ctx={{ order: 'compline', form, date }} showTitle={step.parts.length > 1} />
-  ));
-  // Confession and absolution stay open: the examination always ends in the word of forgiveness (rule 1).
-  if (step.parts.some((p) => p.kind === 'absolution')) {
-    return (
-      <>
-        <h3 className="compline-step-title">{step.title}</h3>
-        {parts}
-      </>
-    );
-  }
-  return (
-    <Section id={`part.compline.step.${step.id}`} title={step.title} level={3}>
-      {parts}
+      <VespersFlow key={form} date={date} form={form} done={day.evening.vespersDone} onComplete={complete} />
     </Section>
   );
 }
@@ -115,7 +242,6 @@ function ComplineStep({ step, form, date }: { step: OrderStep; form: OrderForm; 
 function Compline({ date }: { date: DateKey }) {
   const day = useDay(date);
   const form = day.evening.complineForm;
-  const order = getOrder('compline', form);
   const setForm = useFormSetter(date, 'complineForm');
   const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
 
@@ -131,27 +257,7 @@ function Compline({ date }: { date: DateKey }) {
         ]}
       />
       <Rubric>{form === 'full' ? 'Gegen 20:45, am Bett.' : RUBRICS.complineShort}</Rubric>
-      <ol className="compline-steps">
-        {order.steps.map((step) => (
-          <li key={step.id} className={`compline-step step-${step.id}`}>
-            <ComplineStep step={step} form={form} date={date} />
-          </li>
-        ))}
-      </ol>
-      <div className="order-end">
-        {day.evening.complineDone ? (
-          <>
-            <p className="done-note">Tag abgeschlossen.</p>
-            <button type="button" className="btn quiet" onClick={() => complete(false)}>
-              Abschluss zurücknehmen
-            </button>
-          </>
-        ) : (
-          <button type="button" className="btn primary" onClick={() => complete(true)}>
-            Tag abschließen
-          </button>
-        )}
-      </div>
+      <ComplineFlow key={form} date={date} form={form} done={day.evening.complineDone} onComplete={complete} />
     </Section>
   );
 }
