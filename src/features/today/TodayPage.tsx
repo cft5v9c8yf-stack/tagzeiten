@@ -11,6 +11,7 @@ import { THREE_KEYS, type Day } from '../../domain/model';
 import { chaptersBefore, getPlan } from '../../domain/readingPlan';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { BibleLink } from '../../ui/BibleLink';
+import { Section } from '../../ui/Section';
 import { ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
 import { ChurchYearHeader } from './ChurchYearHeader';
 import { DayArc } from './DayArc';
@@ -41,11 +42,12 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
   }, [store, isToday]);
 
   return (
-    <section aria-labelledby="reading-title">
-      <h3 id="reading-title">
+    <Section id="today.reading" title={
+      <>
         {isToday ? 'Heute lesen' : 'Lesung'}
         {reading.done && <span className="title-state"> · gelesen</span>}
-      </h3>
+      </>
+    }>
       <ReadingRefs date={date} />
       <ReadCheckbox date={date} />
       <div className="progress">
@@ -62,15 +64,14 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
           );
         })}
       </div>
-    </section>
+    </Section>
   );
 }
 
 function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: boolean }) {
   const any = THREE_KEYS.some((k) => day.morning.three[k]);
   return (
-    <section aria-labelledby="three-title">
-      <h3 id="three-title">Die drei Dinge</h3>
+    <Section id="today.three" title="Die drei Dinge">
       <div className="panel three">
         {any ? (
           THREE_KEYS.map((k) => {
@@ -95,7 +96,7 @@ function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: 
           </p>
         )}
       </div>
-    </section>
+    </Section>
   );
 }
 
@@ -106,8 +107,7 @@ function ThisWeek({ date, isToday }: { date: string; isToday: boolean }) {
   const mp = MORNING_PSALMS[wd];
   const ep = EVENING_PSALMS[wd];
   return (
-    <section aria-labelledby="week-title">
-      <h3 id="week-title">Diese Woche</h3>
+    <Section id="today.week" title="Diese Woche">
       <dl className="facts">
         <div>
           <dt>Katechismus</dt>
@@ -137,7 +137,7 @@ function ThisWeek({ date, isToday }: { date: string; isToday: boolean }) {
           </dd>
         </div>
       </dl>
-    </section>
+    </Section>
   );
 }
 
@@ -175,15 +175,13 @@ export function TodayPage() {
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} date={date} isToday={isToday} />
 
-      <section aria-labelledby="habits-title">
-        <h3 id="habits-title">Gewohnheiten</h3>
+      <Section id="today.habits" title="Gewohnheiten">
         <HabitsWeek date={date} />
-      </section>
+      </Section>
 
-      <section aria-labelledby="lookback-title">
-        <h3 id="lookback-title">Rückblick</h3>
+      <Section id="today.lookback" title="Rückblick">
         <Lookback date={date} />
-      </section>
+      </Section>
 
       <ThisWeek date={date} isToday={isToday} />
     </>

@@ -55,28 +55,24 @@ body.no-scroll {
   align-items: center;
   margin-top: 10px;
 }
-details.chief {
+.chief {
   border-top: 1px solid var(--rule);
 }
-details.chief > summary {
-  list-style: none;
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: 2rem 1fr;
-  align-items: baseline;
-  gap: 6px;
+.chief > .fold-head {
   padding: 14px 0 10px;
 }
-details.chief > summary::-webkit-details-marker {
-  display: none;
+.chief > .fold-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
 }
-details.chief .no {
+.chief .no {
+  display: inline-block;
+  min-width: 1.4rem;
   font-weight: 600;
   color: var(--rubric);
 }
-details.chief .title {
+.chief .title {
   font-weight: 600;
-  font-size: 1.1rem;
 }
 .chief-body {
   padding: 0 0 14px 2rem;
@@ -108,6 +104,11 @@ details.chief .title {
   border: 1px solid var(--accent);
   border-radius: 999px;
   padding: 0 7px;
+}
+.kpiece-title .fold-text {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
 }
 .cat-sub {
   font-family: var(--sans);
@@ -244,28 +245,27 @@ details.chief .title {
 }
 
 /* ---------------------------------------------------------------- settings */
-.settings > section {
-  padding-top: 4px;
-  scroll-margin-top: calc(var(--safe-top) + 12px);
-}
-.settings > section + section {
+.settings > .fold-section {
   border-top: 1px solid var(--rule);
-  margin-top: 28px;
 }
-.settings-toc {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 14px 0 0;
+.settings > .fold-section:first-of-type {
+  border-top: 0;
 }
-.settings-toc a {
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  padding: 4px 10px;
+.settings .fold-section.level-2 > .fold-head h2 {
+  margin: 18px 0 14px;
+}
+.settings .fold-section.level-2.is-open > .fold-head h2 {
+  margin-bottom: 8px;
+}
+.settings .fold-section.level-2 > .fold-body {
+  padding-bottom: 18px;
+}
+/* Sections gathered under "Einstellungen" */
+.settings .more-section .more-section {
+  border-top: 1px solid var(--rule);
+}
+.settings .more-section .more-section > .fold-head h3 {
+  margin: 14px 0 10px;
 }
 .habit-list {
   list-style: none;
@@ -513,34 +513,8 @@ body.is-sorting * {
   outline: 2px solid var(--accent);
 }
 
-/* Collapsible overview */
-details.cat-overview > summary {
-  list-style: none;
-  cursor: pointer;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 2px 12px;
-  padding: 6px 0;
-}
-details.cat-overview > summary::-webkit-details-marker {
-  display: none;
-}
-details.cat-overview > summary::before {
-  content: '';
-  width: 0.5em;
-  height: 0.5em;
-  border-right: 2px solid var(--muted);
-  border-bottom: 2px solid var(--muted);
-  transform: rotate(-45deg);
-  transition: transform 0.15s;
-  align-self: center;
-}
-details.cat-overview[open] > summary::before {
-  transform: rotate(45deg);
-}
-details.cat-overview > summary h3 {
-  margin: 0;
+.cat-overview > .fold-head h3 {
+  margin: 6px 0;
 }
 .overview-total {
   font-family: var(--sans);

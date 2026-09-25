@@ -1,6 +1,6 @@
 import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
-import { RHYTHM_LABEL } from '../../content/habits';
 import { NO_SCORE_NOTE } from '../../content/about';
+import { RHYTHM_LABEL } from '../../content/habits';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -16,6 +16,7 @@ import {
   setHabitFocus,
 } from '../../domain/habits';
 import { GripIcon, StarIcon } from '../../ui/Icons';
+import { Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
 import type { Habit, Rhythm } from '../../domain/model';
 
@@ -144,8 +145,7 @@ function HabitGroup({
     },
   });
   return (
-    <div>
-      <h3>{GROUP_TITLE[rhythm]}</h3>
+    <Section id={`more.habits.${rhythm}`} title={GROUP_TITLE[rhythm]} level={3}>
       <ul className={`habit-list${drag ? ' sorting' : ''}`} ref={(el) => (listRef.current = el)}>
         {habits.map((h) => (
           <HabitRow
@@ -158,7 +158,7 @@ function HabitGroup({
           />
         ))}
       </ul>
-    </div>
+    </Section>
   );
 }
 
@@ -198,12 +198,7 @@ export function HabitSettings() {
   };
 
   return (
-    <section aria-labelledby="habits-settings">
-      <h2 id="habits-settings">Gewohnheiten</h2>
-      <p className="small muted">
-        {NO_SCORE_NOTE} Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Zum
-        Sortieren am Griff ziehen. Mit dem Stern markierst du, worauf du gerade achten willst.
-      </p>
+    <>
       <p className="visually-hidden" aria-live="polite">
         {announcement}
       </p>
@@ -213,7 +208,7 @@ export function HabitSettings() {
       {RHYTHMS.map((r) => (
         <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(profile.habits, r)} hintId={hintId} onMoved={moved} />
       ))}
-      <h3>Eigene anlegen</h3>
+      <Section id="more.habits.add" title="Eigene anlegen" level={3}>
       <form className="add-habit" onSubmit={add}>
         <div className="field">
           <label htmlFor={nameId}>Name</label>
@@ -233,6 +228,17 @@ export function HabitSettings() {
           Gewohnheit anlegen
         </button>
       </form>
-    </section>
+      </Section>
+    </>
   );
 }
+
+export const HABITS_INFO = (
+  <>
+    <p>{NO_SCORE_NOTE}</p>
+    <p>
+      Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Zum Sortieren am Griff
+      ziehen. Mit dem Stern markierst du, worauf du gerade achten willst.
+    </p>
+  </>
+);

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -10,10 +10,18 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { ArchivePage } from '../archive/ArchivePage';
 import { CatechismPage } from '../catechism/CatechismPage';
+import { resetOpenState, setOpen } from '../../ui/collapseState';
 import { SettingsPage } from './SettingsPage';
+
+/** Under "Mehr" everything starts folded; most tests work inside the sections. */
+function openAllMore() {
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'about']) setOpen(`more.${id}`, true);
+}
 
 let blobs: Blob[] = [];
 beforeEach(() => {
+  localStorage.clear();
+  resetOpenState();
   blobs = [];
   URL.createObjectURL = vi.fn((b: Blob) => {
     blobs.push(b);
@@ -32,6 +40,7 @@ async function renderAt(path: string, element: React.ReactNode, prepare?: (s: St
   await store.load();
   prepare?.(store);
   await store.flush();
+  if (path === '/mehr') openAllMore();
   const router = createMemoryRouter(
     [
       { path: path.split('?')[0]!, element },
@@ -57,6 +66,64 @@ const fill = (s: Store) => {
   }));
   s.updateDay('2026-09-23', (d) => ({ ...d, morning: { ...d.morning, mainPoint: 'Gott hält Wort' } }));
 };
+
+describe('Mehr: Aufbau', () => {
+  it('starts folded, remembers what was opened and gathers the settings', async () => {
+    const db = new TagzeitenDB(`m6-fold-${++n}`);
+    const store = new Store({ db, journal: memoryJournal() });
+    const router = createMemoryRouter([{ path: '/mehr', element: <SettingsPage /> }], { initialEntries: ['/mehr'] });
+    const view = render(
+      <ToastProvider>
+        <StoreProvider store={store}>
+          <RouterProvider router={router} />
+        </StoreProvider>
+      </ToastProvider>,
+    );
+    const top = await screen.findAllByRole('heading', { level: 2 });
+    expect(top.map((h) => h.textContent).filter((t) => t !== 'Mehr')).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Leseplan', 'Zeiten', 'Einstellungen']);
+    const habits = screen.getByRole('button', { name: 'Gewohnheiten' });
+    expect(habits.getAttribute('aria-expanded')).toBe('false');
+    expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
+
+    fireEvent.click(habits);
+    await waitFor(() => expect(habits.getAttribute('aria-expanded')).toBe('true'));
+    expect(screen.getByRole('switch', { name: 'Fasten' })).toBeTruthy();
+    expect(JSON.parse(localStorage.getItem('tz:collapsed')!)).toMatchObject({ 'more.habits': true });
+
+    // Darstellung, Deine Daten and Über sit under "Einstellungen".
+    fireEvent.click(screen.getByRole('button', { name: 'Einstellungen' }));
+    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(sub).toEqual(expect.arrayContaining(['Darstellung', 'Deine Daten', 'Über Tagzeiten']));
+
+    // Remembered after leaving and coming back.
+    view.unmount();
+    render(
+      <ToastProvider>
+        <StoreProvider store={store}>
+          <RouterProvider router={createMemoryRouter([{ path: '/mehr', element: <SettingsPage /> }], { initialEntries: ['/mehr'] })} />
+        </StoreProvider>
+      </ToastProvider>,
+    );
+    expect((await screen.findByRole('button', { name: 'Gewohnheiten' })).getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
+    await renderAt('/mehr', <SettingsPage />);
+    const heading = await screen.findByRole('heading', { name: 'Leseplan' });
+    const section = heading.closest('section')!;
+    expect(section.querySelector('.section-verse blockquote')!.textContent).toBe(
+      'Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Wege.',
+    );
+    const info = screen.getByRole('button', { name: 'Info zu Leseplan' });
+    const bubble = document.getElementById(info.getAttribute('aria-controls')!)!;
+    expect(bubble.hidden).toBe(true);
+    fireEvent.click(info);
+    expect(bubble.hidden).toBe(false);
+    expect(bubble.textContent).toContain('nach Fortschritt, nicht nach Datum');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(bubble.hidden).toBe(true);
+  });
+});
 
 describe('Mehr: Daten', () => {
   it('exports every entry as Markdown and as JSON', async () => {
@@ -103,7 +170,8 @@ describe('Mehr: Daten', () => {
     await screen.findByText(/enthält 2 Tage/);
     expect(store.allDays()).toHaveLength(0);
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Sicherung einspielen' }));
+      const confirm = screen.getByText(/enthält 2 Tage/).closest('.confirm-panel') as HTMLElement;
+      fireEvent.click(within(confirm).getByRole('button', { name: 'Sicherung einspielen' }));
     });
     await waitFor(() => expect(store.allDays()).toHaveLength(2));
     expect(store.getDay('2026-09-24').morning.verse).toBe('Sei stille dem HERRN');
@@ -232,13 +300,15 @@ describe('Katechismus', () => {
 
   it('shows an overview of the chief parts for orientation', async () => {
     const { store } = await renderAt('/katechismus', <CatechismPage />);
-    const overview = (await screen.findByText('Übersicht')).closest('details')!;
-    // Closed by default, with the total in the summary line.
-    expect(overview.open).toBe(false);
-    expect(overview.querySelector('summary')!.textContent).toContain('0 von 35 Stücken auswendig');
-    overview.open = true;
-    fireEvent(overview, new Event('toggle'));
-    expect(localStorage.getItem('tz:catOverview')).toBe('1');
+    const toggle = await screen.findByRole('button', { name: 'Übersicht' });
+    const overview = toggle.closest('section')!;
+    const head = overview.querySelector('.fold-head')!;
+    // Closed by default, with the total next to the heading.
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(head.textContent).toContain('0 von 35 Stücken auswendig');
+    fireEvent.click(toggle);
+    await waitFor(() => expect(toggle.getAttribute('aria-expanded')).toBe('true'));
+    expect(JSON.parse(localStorage.getItem('tz:collapsed')!)).toMatchObject({ 'cat.overview': true });
     const rows = overview.querySelectorAll('.overview-row');
     expect(rows).toHaveLength(6);
     expect(rows[0]!.textContent).toContain('0 von 11 Stücken auswendig');
@@ -248,12 +318,12 @@ describe('Katechismus', () => {
     const known = overview.querySelectorAll('.piece-mark.known');
     expect(known).toHaveLength(1);
     expect(overview.textContent).toMatch(/1 von \d+ Stücken auswendig/);
-    expect(overview.querySelector('summary')!.textContent).toContain('1 von 35 Stücken auswendig');
+    expect(head.textContent).toContain('1 von 35 Stücken auswendig');
 
     // Tapping a mark opens its chief part and jumps to the piece.
     const mark = overview.querySelectorAll<HTMLButtonElement>('.overview-row')[5]!.querySelector('.piece-mark')!;
     fireEvent.click(mark);
-    expect((document.getElementById('chief-lordsSupper') as HTMLDetailsElement).open).toBe(true);
+    expect(screen.getByRole('button', { name: '6 Das Sakrament des Altars' }).getAttribute('aria-expanded')).toBe('true');
     expect(document.activeElement!.id).toBe('piece-lordsSupper.0');
 
     // Orientation, no tracker: no dates, no streaks.

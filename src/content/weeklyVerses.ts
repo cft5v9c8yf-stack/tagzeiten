@@ -21,6 +21,7 @@ export interface WeeklyVerse {
 /** Obvious typos of the digital source, corrected against the printed 1912 text. */
 export const CORRECTIONS: readonly { source: string; from: string; to: string }[] = [
   { source: 'Joh 3,15', from: 'auf das alle', to: 'auf daß alle' },
+  { source: 'Ps 119,105', from: 'meine Fußes', to: 'meines Fußes' },
 ];
 
 const v = (ref: string, source: string, ...parts: string[]): WeeklyVerse => ({ ref, source, parts });

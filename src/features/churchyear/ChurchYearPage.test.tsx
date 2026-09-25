@@ -8,10 +8,13 @@ import { TagzeitenDB } from '../../data/db';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
+import { resetOpenState, setOpen } from '../../ui/collapseState';
 import { TodayPage } from '../today/TodayPage';
 import { ChurchYearPage } from './ChurchYearPage';
 
 beforeEach(() => {
+  localStorage.clear();
+  resetOpenState();
   Element.prototype.scrollIntoView = vi.fn();
 });
 afterEach(cleanup);
@@ -73,10 +76,22 @@ describe('Kirchenjahr', () => {
     await waitFor(() => expect(document.activeElement).toBe(li));
   });
 
+  it('unfolds a folded phase and group before jumping to the week', async () => {
+    setOpen('cy.phase.trinity', false);
+    setOpen('cy.group.Bekehrung', false);
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost&woche=trinity16');
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Trinitatiszeit' }).getAttribute('aria-expanded')).toBe('true'),
+    );
+    const li = document.getElementById('entry-trinity16')!;
+    expect(li.closest('[hidden]')).toBeNull();
+    await waitFor(() => expect(document.activeElement).toBe(li));
+  });
+
   it('groups the Trinity season by theme', async () => {
     await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost');
     await screen.findByRole('heading', { name: 'Trinitatiszeit' });
-    const groups = [...document.querySelectorAll('.cy-group-title')].map((h) => h.firstChild!.textContent!.trim());
+    const groups = [...document.querySelectorAll('.cy-group-title')].map((h) => h.querySelector('.fold-text')!.firstChild!.textContent!.trim());
     expect(groups).toEqual(['Berufung und Sammlung', 'Buße und Erleuchtung', 'Bekehrung', 'Heiligung', 'Vollendung']);
     const inGroup = (title: string) =>
       [...document.querySelectorAll('.cy-group')]

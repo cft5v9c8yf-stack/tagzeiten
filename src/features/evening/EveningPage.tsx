@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, RUBRICS, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useStore } from '../../data/hooks';
@@ -7,6 +7,7 @@ import type { DateKey } from '../../domain/dates';
 import type { EveningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
+import { Section } from '../../ui/Section';
 import { OrderPart } from '../liturgy/OrderPart';
 
 const FAMILY_KEY = 'tz:family';
@@ -54,8 +55,7 @@ function Vespers({ date }: { date: DateKey }) {
   };
 
   return (
-    <section className={`order vespers${family ? ' family' : ''}`} aria-labelledby="vespers-title">
-      <h2 id="vespers-title">Vesper</h2>
+    <Section id="evening.vespers" title="Vesper" level={2} className={`order vespers${family ? ' family' : ''}`}>
       <Segmented
         label="Form der Vesper"
         value={form}
@@ -88,7 +88,27 @@ function Vespers({ date }: { date: DateKey }) {
           </button>
         )}
       </div>
-    </section>
+    </Section>
+  );
+}
+
+function ComplineStep({ step, form, date }: { step: OrderStep; form: OrderForm; date: DateKey }) {
+  const parts = step.parts.map((p) => (
+    <OrderPart key={p.kind} part={p} ctx={{ order: 'compline', form, date }} showTitle={step.parts.length > 1} />
+  ));
+  // Confession and absolution stay open: the examination always ends in the word of forgiveness (rule 1).
+  if (step.parts.some((p) => p.kind === 'absolution')) {
+    return (
+      <>
+        <h3 className="compline-step-title">{step.title}</h3>
+        {parts}
+      </>
+    );
+  }
+  return (
+    <Section id={`part.compline.step.${step.id}`} title={step.title} level={3}>
+      {parts}
+    </Section>
   );
 }
 
@@ -100,8 +120,7 @@ function Compline({ date }: { date: DateKey }) {
   const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
 
   return (
-    <section className="order compline" aria-labelledby="compline-title">
-      <h2 id="compline-title">Nachtgebet</h2>
+    <Section id="evening.compline" title="Nachtgebet" level={2} className="order compline">
       <Segmented
         label="Form des Nachtgebets"
         value={form}
@@ -115,15 +134,7 @@ function Compline({ date }: { date: DateKey }) {
       <ol className="compline-steps">
         {order.steps.map((step) => (
           <li key={step.id} className={`compline-step step-${step.id}`}>
-            <h3>{step.title}</h3>
-            {step.parts.map((p) => (
-              <OrderPart
-                key={p.kind}
-                part={p}
-                ctx={{ order: 'compline', form, date }}
-                showTitle={step.parts.length > 1}
-              />
-            ))}
+            <ComplineStep step={step} form={form} date={date} />
           </li>
         ))}
       </ol>
@@ -141,7 +152,7 @@ function Compline({ date }: { date: DateKey }) {
           </button>
         )}
       </div>
-    </section>
+    </Section>
   );
 }
 

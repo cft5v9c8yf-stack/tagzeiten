@@ -49,6 +49,7 @@ import { WEEKDAY_LONG, weekdayOf, type DateKey } from '../../domain/dates';
 import type { OrderForm } from '../../domain/model';
 import { BibleLink } from '../../ui/BibleLink';
 import { Note, PrayerText, Rubric, VersicleView } from '../../ui/PrayerText';
+import { Section } from '../../ui/Section';
 import { Alignment } from './Alignment';
 import { CatechismOfDay } from './CatechismOfDay';
 import { Examination } from './Examination';
@@ -364,10 +365,24 @@ export function OrderPart({
   headingLevel?: 3 | 4;
 }) {
   const Heading = headingLevel === 3 ? 'h3' : 'h4';
+  // The absolution never folds away: an examination always ends in the word of forgiveness (rule 1).
+  if (!showTitle || part.kind === 'absolution') {
+    return (
+      <section className={`part part-${part.kind}`}>
+        {showTitle && <Heading className="part-title">{part.title}</Heading>}
+        <PartBody part={part} ctx={ctx} />
+      </section>
+    );
+  }
   return (
-    <section className={`part part-${part.kind}`}>
-      {showTitle && <Heading className="part-title">{part.title}</Heading>}
+    <Section
+      id={`part.${ctx.order}.${part.kind}`}
+      title={part.title}
+      level={headingLevel}
+      className={`part part-${part.kind}`}
+      titleClassName="part-title"
+    >
       <PartBody part={part} ctx={ctx} />
-    </section>
+    </Section>
   );
 }

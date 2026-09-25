@@ -1,0 +1,133 @@
+/* ---------------------------------------------------------------- foldable headings */
+.fold-head {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+.fold-title {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.fold-title button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+}
+.fold-chevron {
+  flex: none;
+  width: 0.42em;
+  height: 0.42em;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg) translate(-1px, -1px);
+  transition: transform 0.15s;
+  /* On the first line, also when a long title wraps. */
+  align-self: flex-start;
+  margin-top: 0.42em;
+}
+.fold-section.is-open > .fold-head .fold-chevron {
+  transform: rotate(45deg) translate(-2px, -1px);
+}
+.fold-aside {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* Info: a small "i" and a speech bubble */
+.info-wrap {
+  display: inline-flex;
+  align-self: center;
+}
+.info-btn {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+}
+.info-btn[aria-expanded='true'] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.info-bubble {
+  position: absolute;
+  z-index: 8;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  max-width: 460px;
+  padding: 10px 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.14);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.info-bubble:not([hidden]) {
+  display: block;
+}
+.info-bubble::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: calc(var(--arrow-x, 24px) - 7px);
+  width: 12px;
+  height: 12px;
+  background: var(--sheet);
+  border-left: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  transform: rotate(45deg);
+}
+.info-bubble p {
+  margin: 0 0 6px;
+}
+.info-bubble p:last-child {
+  margin-bottom: 0;
+}
+
+/* The Bible verse at the top of a section under "Mehr" */
+.section-verse {
+  margin: 4px 0 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+}
+.section-verse blockquote {
+  margin: 0;
+  font-style: italic;
+}
+.section-verse figcaption {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  margin-top: 2px;
+}

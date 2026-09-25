@@ -20,11 +20,7 @@ export function PrayerSettings() {
     });
 
   return (
-    <section aria-labelledby="prayer-settings">
-      <h2 id="prayer-settings">Gebetsübersicht</h2>
-      <p className="small muted">
-        Erscheint in der Stille Zeit bei der Fürbitte. Ein Anliegen je Wochentag, damit nichts liegenbleibt.
-      </p>
+    <>
       <div className="field">
         <label htmlFor={dailyId}>Täglich</label>
         <textarea
@@ -48,9 +44,13 @@ export function PrayerSettings() {
           </div>
         ))}
       </div>
-      <p className="small muted">
-        Zum Beispiel: verfolgte Kirche, Missionare, Obrigkeit, Nachbarn, Ungläubige im Bekanntenkreis, Kranke, Patenkinder.
-      </p>
-    </section>
+    </>
   );
 }
+
+export const PRAYER_INFO = (
+  <>
+    <p>Erscheint in der Stille Zeit bei der Fürbitte. Ein Anliegen je Wochentag, damit nichts liegenbleibt.</p>
+    <p>Zum Beispiel: verfolgte Kirche, Missionare, Obrigkeit, Nachbarn, Ungläubige im Bekanntenkreis, Kranke, Patenkinder.</p>
+  </>
+);

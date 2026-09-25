@@ -4,6 +4,8 @@ import { clearDevicePreferences, downloadText } from '../../app/files';
 import { useToast } from '../../app/Toast';
 import { useStore } from '../../data/hooks';
 import { BackupError, parseBackup } from '../../domain/backup';
+import { resetOpenState } from '../../ui/collapseState';
+import { Section } from '../../ui/Section';
 
 type Pending = { json: string; days: number; exportedAt?: string };
 
@@ -60,6 +62,7 @@ export function DataSettings() {
   const runDelete = async () => {
     await store.deleteAll();
     clearDevicePreferences();
+    resetOpenState();
     setConfirmDelete(false);
     toast('Alle Einträge gelöscht');
     navigate('/');
@@ -68,13 +71,8 @@ export function DataSettings() {
   const exportedOn = pending?.exportedAt ? new Date(pending.exportedAt).toLocaleDateString('de-DE') : null;
 
   return (
-    <section aria-labelledby="data-settings">
-      <h2 id="data-settings">Deine Daten</h2>
-      <p className="small">
-        Deine Einträge liegen nur auf diesem Gerät. Was du in Prüfung und Beichte betest, wird nirgends gespeichert.
-      </p>
-
-      <h3>Exportieren</h3>
+    <>
+      <Section id="more.data.export" title="Exportieren" level={4}>
       <div className="button-row">
         <button type="button" className="btn" onClick={exportMarkdown}>
           Als Text exportieren (Markdown)
@@ -85,7 +83,8 @@ export function DataSettings() {
       </div>
       <p className="small muted">Der Text ist zum Lesen und Aufheben. Die Sicherung kannst du hier oder auf einem anderen Gerät wieder einspielen.</p>
 
-      <h3>Sicherung einspielen</h3>
+      </Section>
+      <Section id="more.data.import" title="Sicherung einspielen" level={4}>
       <label className="btn file-btn">
         Datei wählen …
         <input
@@ -118,7 +117,8 @@ export function DataSettings() {
         </div>
       )}
 
-      <h3>Alles löschen</h3>
+      </Section>
+      <Section id="more.data.delete" title="Alles löschen" level={4}>
       {confirmDelete ? (
         <div className="panel confirm-panel danger-panel" role="alertdialog" aria-labelledby="delete-confirm">
           <p id="delete-confirm">
@@ -139,6 +139,14 @@ export function DataSettings() {
           Alle Einträge löschen …
         </button>
       )}
-    </section>
+      </Section>
+    </>
   );
 }
+
+export const DATA_INFO = (
+  <>
+    <p>Deine Einträge liegen nur auf diesem Gerät. Es gibt kein Konto und keine Übertragung.</p>
+    <p>Was du in Prüfung und Beichte betest, wird nirgends gespeichert.</p>
+  </>
+);

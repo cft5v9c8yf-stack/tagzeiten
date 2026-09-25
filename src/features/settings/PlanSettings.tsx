@@ -51,15 +51,20 @@ export function PlanSettings() {
   const profile = useProfile();
   const plan = getPlan(profile.plan.planId);
   return (
-    <section aria-labelledby="plan-settings">
-      <h2 id="plan-settings">Leseplan</h2>
-      <p className="small muted">{plan.def.description}</p>
+    <>
       {plan.tracks.map((t) => (
         <TrackPosition key={t.def.id} track={t} position={profile.plan.positions[t.def.id] ?? 0} />
       ))}
-      <p className="small muted">
-        Die heutige Lesung folgt der neuen Stelle, solange sie noch nicht als gelesen markiert ist.
-      </p>
-    </section>
+    </>
+  );
+}
+
+export function PlanInfo() {
+  const profile = useProfile();
+  return (
+    <>
+      <p>{getPlan(profile.plan.planId).def.description}</p>
+      <p>Die heutige Lesung folgt der neuen Stelle, solange sie noch nicht als gelesen markiert ist.</p>
+    </>
   );
 }

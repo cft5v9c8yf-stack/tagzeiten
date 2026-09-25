@@ -1,19 +1,15 @@
 import { MOTTO, PRIVACY, SOURCES, THE_ARC } from '../../content/about';
+import { Section } from '../../ui/Section';
 
 export function About() {
   return (
-    <section aria-labelledby="about">
-      <h2 id="about">Über Tagzeiten</h2>
-      <p>
-        Eine Ordnung für Morgen und Abend. Sie ist kein weiterer Lebensbereich, der bedient werden will, sondern ordnet die,
-        die schon da sind: Haus, Beruf, Gemeinde und den Nächsten.
-      </p>
+    <>
       {MOTTO.map((m) => (
         <blockquote key={m.ref} className="motto">
           {m.text} <span className="muted">({m.ref})</span>
         </blockquote>
       ))}
-      <h3>Der Bogen</h3>
+      <Section id="more.about.arc" title="Der Bogen" level={4}>
       <p className="arc-lines">
         {THE_ARC.morning.map((l) => (
           <span key={l}>{l}</span>
@@ -25,19 +21,29 @@ export function About() {
         ))}
       </p>
       <p>{THE_ARC.monthly}</p>
-      <h3>Quellen</h3>
+      </Section>
+      <Section id="more.about.sources" title="Quellen" level={4}>
       <ul className="plain-list">
         {SOURCES.map((s) => (
           <li key={s}>{s}</li>
         ))}
       </ul>
-      <h3>Privatsphäre</h3>
+      </Section>
+      <Section id="more.about.privacy" title="Privatsphäre" level={4}>
       <ul className="plain-list">
         {PRIVACY.map((s) => (
           <li key={s}>{s}</li>
         ))}
       </ul>
+      </Section>
       <p className="small muted">Version {__APP_VERSION__}</p>
-    </section>
+    </>
   );
 }
+
+export const ABOUT_INFO = (
+  <p>
+    Eine Ordnung für Morgen und Abend. Sie ist kein weiterer Lebensbereich, der bedient werden will, sondern ordnet die,
+    die schon da sind: Haus, Beruf, Gemeinde und den Nächsten.
+  </p>
+);

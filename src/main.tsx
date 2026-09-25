@@ -10,6 +10,7 @@ import './styles/base.css';
 import './styles/components.css';
 import './styles/today.css';
 import './styles/pages.css';
+import './styles/fold.css';
 import { App } from './app/App';
 
 const root = document.getElementById('root');

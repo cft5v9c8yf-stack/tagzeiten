@@ -409,6 +409,9 @@ select {
   padding-top: 8px;
   border-top: 1px solid var(--rule);
 }
+.order.fold-section:not(.is-open) + .order {
+  margin-top: 12px;
+}
 .order-end {
   margin: 20px 0 8px;
   display: flex;
@@ -438,8 +441,13 @@ select {
   padding: 4px 0 10px 2rem;
   position: relative;
 }
-.compline-step > h3 {
+.compline-step > h3,
+.compline-step > .fold-section > .fold-head h3 {
   margin: 12px 0 6px;
+}
+/* A step that does not fold keeps its title in line with the folding ones. */
+.compline-step-title {
+  padding-left: 0.87em;
 }
 .compline-step::before {
   content: counter(step);

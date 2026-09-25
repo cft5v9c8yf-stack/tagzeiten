@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -6,6 +7,8 @@ import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type 
 import { fromKey, MONTH_LONG, formatShort, type DateKey } from '../../domain/dates';
 import { BibleLink } from '../../ui/BibleLink';
 import { Segmented } from '../../ui/Choice';
+import { Section } from '../../ui/Section';
+import { setOpen } from '../../ui/collapseState';
 
 const dayMonth = (k: DateKey) => {
   const d = fromKey(k);
@@ -105,6 +108,15 @@ export function ChurchYearPage() {
     if (!focus) return;
     // Wait for the layout, which resets scroll and focus on every page change.
     const id = setTimeout(() => {
+      // Unfold the phase and group that hold the Sunday, whatever was folded before.
+      const entry = outline.entries.find((e) => e.key === focus);
+      if (entry) {
+        flushSync(() => {
+          setOpen(`cy.phase.${entry.season}`, true);
+          const group = trinityGroupOf(entry.key);
+          if (group) setOpen(`cy.group.${group.title}`, true);
+        });
+      }
       const el = document.getElementById(`entry-${focus}`);
       el?.scrollIntoView({ block: 'start' });
       el?.focus({ preventScroll: true });
@@ -136,25 +148,32 @@ export function ChurchYearPage() {
       {seasons.map((s) => {
         const entries = outline.entries.filter((e) => e.season === s.season);
         return (
-          <section key={s.season} className="cy-phase" aria-labelledby={`phase-${s.season}`}>
-            <h3 id={`phase-${s.season}`}>{SEASON_LABEL[s.season]}</h3>
+          <Section key={s.season} id={`cy.phase.${s.season}`} title={SEASON_LABEL[s.season]} className="cy-phase">
             <p className="cy-phase-dates">
               {dayMonth(s.from)} – {dayMonth(s.to)}
             </p>
             <p>{SEASON_INFO[s.season]}</p>
             {s.season === 'trinity' || s.season === 'endOfYear' ? (
               groupsOf(entries).map((g) => (
-                <div key={g.title} className="cy-group">
-                  <h4 className="cy-group-title">
-                    {g.title} <span className="cy-group-range">{g.range}</span>
-                  </h4>
+                <Section
+                  key={g.title}
+                  id={`cy.group.${g.title}`}
+                  title={
+                    <>
+                      {g.title} <span className="cy-group-range">{g.range}</span>
+                    </>
+                  }
+                  level={4}
+                  className="cy-group"
+                  titleClassName="cy-group-title"
+                >
                   <EntryList entries={g.entries} date={date} weekKey={today.weekKey} level={5} />
-                </div>
+                </Section>
               ))
             ) : (
               <EntryList entries={entries} date={date} weekKey={today.weekKey} level={4} />
             )}
-          </section>
+          </Section>
         );
       })}
       <p className="small muted">{LECTIONARY_NOTE}</p>

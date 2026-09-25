@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import type { Schedule, TextVariant, Theme } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
+import { Section } from '../../ui/Section';
 
 const TIMES: { key: keyof Schedule; label: string }[] = [
   { key: 'rise', label: 'Aufstehen' },
@@ -16,9 +17,7 @@ export function ScheduleSettings() {
   const profile = useProfile();
   const base = useId();
   return (
-    <section aria-labelledby="schedule-settings">
-      <h2 id="schedule-settings">Zeiten</h2>
-      <p className="small muted">Für den Tagesbogen auf der Startseite. Nicht jeder steht um vier auf.</p>
+    <>
       <div className="times-grid">
         {TIMES.map((t) => (
           <div className="field" key={t.key}>
@@ -37,7 +36,7 @@ export function ScheduleSettings() {
           </div>
         ))}
       </div>
-    </section>
+    </>
   );
 }
 
@@ -47,9 +46,8 @@ export function DisplaySettings() {
   const set = <K extends 'theme' | 'texts'>(k: K, v: K extends 'theme' ? Theme : TextVariant) =>
     store.updateProfile((p) => ({ ...p, [k]: v }), { immediate: true });
   return (
-    <section aria-labelledby="display-settings">
-      <h2 id="display-settings">Darstellung</h2>
-      <h3>Farbschema</h3>
+    <>
+      <Section id="more.display.theme" title="Farbschema" level={4}>
       <Segmented
         label="Farbschema"
         value={profile.theme}
@@ -60,7 +58,8 @@ export function DisplaySettings() {
           { value: 'dark', label: 'Dunkel' },
         ]}
       />
-      <h3>Vaterunser und Glaubensbekenntnis</h3>
+      </Section>
+      <Section id="more.display.texts" title="Vaterunser und Glaubensbekenntnis" level={4}>
       <Segmented
         label="Fassung von Vaterunser und Glaubensbekenntnis"
         value={profile.texts}
@@ -75,6 +74,7 @@ export function DisplaySettings() {
           ? '„Vater unser, der du bist im Himmel … erlöse uns von dem Übel.“ – „… niedergefahren zur Hölle …“'
           : '„Vater unser im Himmel … erlöse uns von dem Bösen.“ – „… hinabgestiegen in das Reich des Todes …“'}
       </p>
-    </section>
+      </Section>
+    </>
   );
 }

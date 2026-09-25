@@ -1,5 +1,5 @@
 /**
- * Verifies every weekly verse against the Luther 1912 source (Zefania XML,
+ * Verifies every weekly verse (and the verses under "Mehr") against the Luther 1912 source (Zefania XML,
  * CC0, npm package "xmlbible-lut1912"). Runs only when the source is present:
  *
  *   npm pack xmlbible-lut1912 && tar xzf xmlbible-lut1912-*.tgz
@@ -8,6 +8,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { SETTINGS_VERSES } from './settingsVerses';
 import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
 
 const dir = process.env.LUT1912_DIR;
@@ -35,7 +36,10 @@ function loadBible(path: string): Record<string, Record<string, Record<string, s
 describe.skipIf(!available)('weekly verses against Luther 1912', () => {
   // The describe body runs even when skipped, so load the source only when present.
   const books = available ? loadBible(dir!) : {};
-  const entries = Object.entries({ ...WEEKLY_VERSES, ...FEAST_VERSES });
+  const entries = [
+    ...Object.entries({ ...WEEKLY_VERSES, ...FEAST_VERSES }),
+    ...Object.entries(SETTINGS_VERSES).map(([k, v]) => [`settings.${k}`, v] as const),
+  ];
 
   it.each(entries)('%s is verbatim Luther 1912', (_key, verse) => {
     const [book, cv] = verse.source.split(' ') as [string, string];
