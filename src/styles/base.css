@@ -284,3 +284,13 @@ nav.tabs a[aria-current='page']::before {
 .toast.show {
   opacity: 0.94;
 }
+
+.demo-banner {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  background: var(--accent-soft);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+  margin: 4px 0 8px;
+}

@@ -3,10 +3,13 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // The demo build is a single file without service worker and with hash routing.
+  base: mode === 'demo' ? './' : '/',
+  build: mode === 'demo' ? { outDir: 'dist-demo', assetsInlineLimit: 0 } : undefined,
   plugins: [
     react(),
-    VitePWA({
+    mode !== 'demo' && VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       includeAssets: ['icons/apple-touch-icon.png', 'icons/icon.svg'],
@@ -39,4 +42,4 @@ export default defineConfig({
     environment: 'node',
     include: ['src/**/*.test.{ts,tsx}'],
   },
-});
+}));

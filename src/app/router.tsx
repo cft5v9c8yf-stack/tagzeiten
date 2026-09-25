@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, createHashRouter } from 'react-router';
 import { ArchivePage } from '../features/archive/ArchivePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
 import { EveningPage } from '../features/evening/EveningPage';
@@ -8,7 +8,11 @@ import { TodayPage } from '../features/today/TodayPage';
 import { Layout } from './Layout';
 import { NotFound } from './NotFound';
 
-export const router = createBrowserRouter([
+const IS_DEMO = import.meta.env.MODE === 'demo';
+if (IS_DEMO && !location.hash) location.hash = '#/morgen';
+
+// The demo runs inside a frame without server-side routing, hence hash URLs.
+export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
   {
     path: '/',
     element: <Layout />,
