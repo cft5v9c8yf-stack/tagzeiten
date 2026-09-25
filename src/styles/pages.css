@@ -455,36 +455,58 @@ body.is-sorting * {
 .cat-overview {
   margin: 8px 0 18px;
 }
+/* The chief parts as tiles, two side by side */
 .overview-list {
   list-style: none;
   padding: 0;
-  margin: 8px 0 0;
+  margin: 10px 0 0;
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 .overview-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+}
+.overview-row.current {
+  border: 2px solid var(--gold);
+  background: var(--gold-soft);
 }
 .overview-head {
+  appearance: none;
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
 }
 .overview-no {
   font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1;
   color: var(--rubric);
-  min-width: 1.4rem;
 }
 .overview-title {
   font-weight: 600;
+  line-height: 1.25;
 }
 .overview-pieces {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  padding-left: calc(1.4rem + 8px);
+  margin-top: auto;
 }
 .piece-mark {
   appearance: none;
@@ -501,7 +523,6 @@ body.is-sorting * {
   border-color: var(--done);
 }
 .overview-count {
-  padding-left: calc(1.4rem + 8px);
   font-family: var(--sans);
   font-size: 0.8rem;
   color: var(--muted);
@@ -1008,4 +1029,7 @@ body.is-sorting * {
 }
 .sunday-page .cy-circles {
   margin-top: 4px;
+}
+.overview-row.current .piece-mark:not(.known) {
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
 }

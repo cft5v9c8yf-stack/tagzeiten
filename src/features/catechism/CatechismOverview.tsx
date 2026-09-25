@@ -48,12 +48,12 @@ export function CatechismOverview({
         {CATECHISM.map((chief, ci) => {
           const known = chief.pieces.filter((_, pi) => memorized[pieceId(chief, pi)]).length;
           return (
-            <li key={chief.id} className="overview-row">
-              <div className="overview-head">
+            <li key={chief.id} className={`overview-row${ci === currentChief ? ' current' : ''}`}>
+              <button type="button" className="overview-head" onClick={() => onOpenPiece(ci, 0)}>
                 <span className="overview-no">{ci + 1}</span>
                 <span className="overview-title">{chief.title}</span>
-                {ci === currentChief && <span className="ktag">diese Woche</span>}
-              </div>
+              </button>
+              {ci === currentChief && <span className="ktag">diese Woche</span>}
               <div className="overview-pieces">
                 {chief.pieces.map((piece, pi) => {
                   const on = !!memorized[pieceId(chief, pi)];
