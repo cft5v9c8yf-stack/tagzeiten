@@ -512,3 +512,38 @@ body.is-sorting * {
 .kpiece:focus-visible {
   outline: 2px solid var(--accent);
 }
+
+/* Collapsible overview */
+details.cat-overview > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding: 6px 0;
+}
+details.cat-overview > summary::-webkit-details-marker {
+  display: none;
+}
+details.cat-overview > summary::before {
+  content: '';
+  width: 0.5em;
+  height: 0.5em;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+  align-self: center;
+}
+details.cat-overview[open] > summary::before {
+  transform: rotate(45deg);
+}
+details.cat-overview > summary h3 {
+  margin: 0;
+}
+.overview-total {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}

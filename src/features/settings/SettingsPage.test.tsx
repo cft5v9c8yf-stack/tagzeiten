@@ -232,7 +232,13 @@ describe('Katechismus', () => {
 
   it('shows an overview of the chief parts for orientation', async () => {
     const { store } = await renderAt('/katechismus', <CatechismPage />);
-    const overview = (await screen.findByText('Übersicht')).closest('section')!;
+    const overview = (await screen.findByText('Übersicht')).closest('details')!;
+    // Closed by default, with the total in the summary line.
+    expect(overview.open).toBe(false);
+    expect(overview.querySelector('summary')!.textContent).toContain('0 von 35 Stücken auswendig');
+    overview.open = true;
+    fireEvent(overview, new Event('toggle'));
+    expect(localStorage.getItem('tz:catOverview')).toBe('1');
     const rows = overview.querySelectorAll('.overview-row');
     expect(rows).toHaveLength(6);
     expect(rows[0]!.textContent).toContain('0 von 11 Stücken auswendig');
@@ -242,6 +248,7 @@ describe('Katechismus', () => {
     const known = overview.querySelectorAll('.piece-mark.known');
     expect(known).toHaveLength(1);
     expect(overview.textContent).toMatch(/1 von \d+ Stücken auswendig/);
+    expect(overview.querySelector('summary')!.textContent).toContain('1 von 35 Stücken auswendig');
 
     // Tapping a mark opens its chief part and jumps to the piece.
     const mark = overview.querySelectorAll<HTMLButtonElement>('.overview-row')[5]!.querySelector('.piece-mark')!;

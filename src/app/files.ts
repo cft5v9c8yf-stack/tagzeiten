@@ -15,6 +15,7 @@ export function downloadText(filename: string, text: string, mime: string): void
 export function clearDevicePreferences(): void {
   for (const [store, key] of [
     [localStorage, 'tz:family'],
+    [localStorage, 'tz:catOverview'],
     [localStorage, 'tz:theme'],
     [localStorage, 'tz:journal'],
     [sessionStorage, 'tz:timer'],

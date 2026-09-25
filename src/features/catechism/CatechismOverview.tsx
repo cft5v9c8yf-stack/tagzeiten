@@ -1,5 +1,16 @@
+import { useState } from 'react';
 import { CATECHISM } from '../../content/catechism';
-import { pieceId } from '../../domain/catechismDay';
+import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
+
+const OPEN_KEY = 'tz:catOverview';
+
+function readOpen(): boolean {
+  try {
+    return localStorage.getItem(OPEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Where do I stand? One line per chief part with its pieces learned by heart.
@@ -14,9 +25,26 @@ export function CatechismOverview({
   currentChief: number;
   onOpenPiece: (chiefIndex: number, pieceIndex: number) => void;
 }) {
+  // Open or closed is a per-device convenience, remembered between visits.
+  const [open, setOpen] = useState(readOpen);
+  const onToggle = (e: React.SyntheticEvent<HTMLDetailsElement>) => {
+    const isOpen = e.currentTarget.open;
+    setOpen(isOpen);
+    try {
+      localStorage.setItem(OPEN_KEY, isOpen ? '1' : '0');
+    } catch {
+      // storage unavailable: the choice holds for this visit
+    }
+  };
+
   return (
-    <section className="cat-overview" aria-labelledby="cat-overview-title">
-      <h3 id="cat-overview-title">Übersicht</h3>
+    <details className="cat-overview" open={open} onToggle={onToggle}>
+      <summary>
+        <h3 id="cat-overview-title">Übersicht</h3>
+        <span className="overview-total">
+          {memorizedCount(memorized)} von {TOTAL_PIECES} Stücken auswendig
+        </span>
+      </summary>
       <p className="small muted">
         Welche Stücke du schon auswendig kannst. Was gelernt ist, bleibt hier stehen – es verfällt nichts, und es fehlt
         nichts, wenn eine Woche anders lief.
@@ -53,6 +81,6 @@ export function CatechismOverview({
           );
         })}
       </ol>
-    </section>
+    </details>
   );
 }
