@@ -1,0 +1,44 @@
+/**
+ * Habit templates: Lutheran, for the man as head of the house, husband, brother.
+ * No streaks and no chains (rule 4) – a habit is only ever "done" for a day,
+ * a week or a month.
+ */
+import type { AutoSource, Rhythm } from '../domain/model';
+
+export interface HabitPreset {
+  id: string;
+  name: string;
+  rhythm: Rhythm;
+  auto: AutoSource | null;
+  /** Active on first start. */
+  active: boolean;
+}
+
+export const HABIT_PRESETS: readonly HabitPreset[] = [
+  { id: 'stillTime', name: 'Stille Zeit', rhythm: 'daily', auto: 'morning', active: true },
+  { id: 'vespers', name: 'Vesper mit der Familie', rhythm: 'daily', auto: 'vespers', active: true },
+  { id: 'compline', name: 'Nachtgebet', rhythm: 'daily', auto: 'compline', active: true },
+  { id: 'tablePrayer', name: 'Tischgebet mit der Familie', rhythm: 'daily', auto: null, active: true },
+  { id: 'blessChildren', name: 'Die Kinder segnen', rhythm: 'daily', auto: null, active: true },
+  { id: 'prayWithWife', name: 'Mit meiner Frau beten', rhythm: 'daily', auto: null, active: false },
+  { id: 'memoryVerse', name: 'Vers auswendig wiederholen', rhythm: 'daily', auto: null, active: false },
+  { id: 'exercise', name: 'Leibliche Übung', rhythm: 'daily', auto: null, active: false },
+  { id: 'worship', name: 'Gottesdienst – den Feiertag heiligen', rhythm: 'weekly', auto: null, active: true },
+  { id: 'catechismChildren', name: 'Katechismus mit den Kindern', rhythm: 'weekly', auto: null, active: true },
+  { id: 'fasting', name: 'Fasten', rhythm: 'weekly', auto: null, active: false },
+  { id: 'brothers', name: 'Gemeinschaft mit Brüdern', rhythm: 'weekly', auto: null, active: false },
+  { id: 'timeWithWife', name: 'Zeit allein mit meiner Frau', rhythm: 'weekly', auto: null, active: false },
+  { id: 'privateConfession', name: 'Privatbeichte', rhythm: 'monthly', auto: null, active: true },
+  { id: 'lordsSupper', name: 'Abendmahl', rhythm: 'monthly', auto: null, active: true },
+  { id: 'offering', name: 'Opfer und Gaben', rhythm: 'monthly', auto: null, active: false },
+  { id: 'mercy', name: 'Werk der Barmherzigkeit', rhythm: 'monthly', auto: null, active: false },
+];
+
+/** Habit toggled by "Mit den Kindern gelernt" on the catechism page. */
+export const CATECHISM_WITH_CHILDREN_HABIT = 'catechismChildren';
+
+export const RHYTHM_LABEL: Record<Rhythm, string> = {
+  daily: 'täglich',
+  weekly: 'wöchentlich',
+  monthly: 'monatlich',
+};
