@@ -4,7 +4,7 @@
   "uebersetzung": "Luther 1912",
   "einleitung": {
     "bibelstelle": "Epheser 6,10–11",
-    "bibeltext": "Zuletzt, meine Brüder, seid stark in dem HERRN und in der Macht seiner Stärke. Ziehet an den Harnisch Gottes, daß ihr bestehen könnet gegen die listigen Anschläge des Teufels.",
+    "bibeltext": "Zuletzt, meine Brüder, seid stark in dem HERRN und in der Macht seiner Stärke. Ziehet an den Harnisch Gottes, daß ihr bestehen könnet gegen die listigen Anläufe des Teufels.",
     "hinweis": "Es ist Gottes Rüstung, nicht unsere. Wir ziehen an, was uns in der Taufe geschenkt ist: Christus selbst (Röm 13,14; Gal 3,27)."
   },
   "tage": [
@@ -13,7 +13,7 @@
       "tag": "Montag",
       "stueck": "Der Gürtel der Wahrheit",
       "bibelstelle": "Epheser 6,14a; Johannes 14,6",
-      "bibeltext": "So stehet nun, umgürtet eure Lenden mit Wahrheit. – Jesus spricht: Ich bin der Weg und die Wahrheit und das Leben; niemand kommt zum Vater denn durch mich.",
+      "bibeltext": "So stehet nun, umgürtet an euren Lenden mit Wahrheit … – Jesus spricht zu ihm: Ich bin der Weg und die Wahrheit und das Leben; niemand kommt zum Vater denn durch mich.",
       "deutung": "Der Gürtel hält die ganze Rüstung zusammen. Die Wahrheit, die uns hält, ist nicht zuerst unsere Aufrichtigkeit, sondern Christus selbst. Weil er die Wahrheit ist, muss ich mir nichts vormachen: nicht über meine Sünde und nicht über seine Gnade. Der Vater der Lüge will mich verwirren – Gottes Wahrheit macht mich fest.",
       "gebet": "Herr Jesus Christus, du bist die Wahrheit. Gürte mich heute mit dir. Bewahre mich vor Lüge in Wort und Herz, vor Selbstbetrug und vor den Einflüsterungen des Feindes. Lass mich wahrhaftig reden und in deinem Wort feststehen. Amen.",
       "rueckschau": "Wo war ich heute versucht, es mit der Wahrheit nicht so genau zu nehmen – vor anderen oder vor mir selbst?"
@@ -23,7 +23,7 @@
       "tag": "Dienstag",
       "stueck": "Der Panzer der Gerechtigkeit",
       "bibelstelle": "Epheser 6,14b; 2. Korinther 5,21",
-      "bibeltext": "…und angetan mit dem Panzer der Gerechtigkeit. – Denn er hat den, der von keiner Sünde wußte, für uns zur Sünde gemacht, auf daß wir würden in ihm die Gerechtigkeit, die vor Gott gilt.",
+      "bibeltext": "…und angezogen mit dem Panzer der Gerechtigkeit. – Denn er hat den, der von keiner Sünde wußte, für uns zur Sünde gemacht, auf daß wir würden in ihm die Gerechtigkeit, die vor Gott gilt.",
       "deutung": "Der Panzer schützt das Herz. Der Verkläger greift genau dort an: „Du bist nicht gut genug.“ Mit meiner eigenen Gerechtigkeit könnte ich keinen Tag bestehen. Aber ich trage eine fremde Gerechtigkeit – die Christi, die mir geschenkt ist. Darauf kann der Feind nicht zielen, denn sie ist vollkommen.",
       "gebet": "Himmlischer Vater, ich komme nicht mit meiner Gerechtigkeit zu dir, sondern mit der deines Sohnes. Bedecke mein Herz mit ihr, wenn mich Schuld und Anklage bedrängen. Und weil ich gerecht gesprochen bin, lass mich heute auch recht handeln an meinem Nächsten. Amen.",
       "rueckschau": "Wo hat mich heute Anklage oder schlechtes Gewissen getroffen – und habe ich sie zu Christus gebracht?"
@@ -43,7 +43,7 @@
       "tag": "Donnerstag",
       "stueck": "Der Schild des Glaubens",
       "bibelstelle": "Epheser 6,16; 1. Johannes 5,4",
-      "bibeltext": "Vor allen Dingen aber ergreifet den Schild des Glaubens, mit welchem ihr auslöschen könnt alle feurigen Pfeile des Bösewichtes. – Und unser Glaube ist der Sieg, der die Welt überwunden hat.",
+      "bibeltext": "Vor allen Dingen aber ergreifet den Schild des Glaubens, mit welchem ihr auslöschen könnt alle feurigen Pfeile des Bösewichtes. – …und unser Glaube ist der Sieg, der die Welt überwunden hat.",
       "deutung": "Der Glaube ist kein Gefühl, das ich erzeugen muss, sondern ein Ergreifen: Ich halte Gott seine Verheißungen entgegen. Die feurigen Pfeile – Zweifel, Angst, Begierde, Bitterkeit – kommen oft plötzlich. Der Schild ist nicht meine Stärke, sondern das, worauf der Glaube schaut: Christus und sein Wort.",
       "gebet": "Herr, stärke mir den Glauben. Wenn heute Zweifel, Angst oder Versuchung auf mich zufliegen, dann lass mich nicht auf mich schauen, sondern auf deine Zusagen. Du hast die Welt überwunden – darauf verlasse ich mich. Amen.",
       "rueckschau": "Welcher „feurige Pfeil“ hat mich heute getroffen? Welche Verheißung Gottes setze ich ihm entgegen?"
@@ -82,8 +82,9 @@
   "abend": {
     "eroeffnung": {
       "bibelstelle": "1. Petrus 5,8–9a",
-      "bibeltext": "Seid nüchtern und wachet; denn euer Widersacher, der Teufel, gehet umher wie ein brüllender Löwe und suchet, welchen er verschlinge. Dem widerstehet fest im Glauben."
+      "bibeltext": "Seid nüchtern und wachet; denn euer Widersacher, der Teufel, geht umher wie ein brüllender Löwe und sucht, welchen er verschlinge. Dem widerstehet, fest im Glauben."
     },
     "hinweis": "Die Rückschau-Frage des jeweiligen Tages wird nach der Eröffnung angezeigt, danach folgt ein Moment der Stille."
-  }
+  },
+  "quelle": "Bibeltexte nach der Lutherbibel 1912 (gemeinfrei), abgeglichen mit deu-luther1912.osis.xml aus github.com/seven1m/open-bibles."
 }
