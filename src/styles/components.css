@@ -234,37 +234,44 @@ details.fold[open] > summary {
 }
 
 /* ---------------------------------------------------------------- reading */
+/* Today's portions: Old and New Testament as two tiles side by side. */
 .reading-refs {
-  border-left: 3px solid var(--accent);
-  padding: 2px 0 2px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
   margin: 10px 0;
 }
 .reading-refs .ref {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  line-height: 1.3;
-  margin: 2px 0;
-}
-.reading-refs.large .ref {
-  font-size: 1.4rem;
-  font-weight: 600;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.25;
 }
 .reading-refs .track {
   font-family: var(--sans);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--muted);
-  min-width: 2em;
 }
-.reading-refs a,
-a.bible-link {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--rule);
+.reading-refs .ref-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.reading-refs.large .ref-text {
+  font-size: 1.3rem;
 }
 a.bible-link {
   color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
 }
 
 /* ---------------------------------------------------------------- fields */

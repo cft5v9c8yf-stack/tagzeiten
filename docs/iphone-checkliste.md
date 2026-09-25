@@ -30,7 +30,7 @@ der Server leitet unbekannte Pfade auf `index.html` um.
 
 - [ ] Morgens: Am Bett → „Am Bett gebetet“, dann alle sechs Schritte mit „Weiter zu: …“ bis
       „Stille Zeit abschließen“. Der Bildschirm bleibt an, solange der Timer läuft.
-- [ ] Lesung: Links öffnen bibleserver.com, „Gelesen – Plan weiterrücken“ rückt die Lesung weiter.
+- [ ] Lesung: Links öffnen bibleserver.com, „Heute gelesen“ rückt die Lesung weiter.
 - [ ] Abends: „Vesper abschließen“; im Nachtgebet die Rückschau mit + ~ – setzen, bei ~ oder –
       „Morgen wieder“ wählen, dann „Tag abschließen“.
 - [ ] Am nächsten Morgen unter „Die Ausrichtung“ erscheint das Ding als Vorschlag.

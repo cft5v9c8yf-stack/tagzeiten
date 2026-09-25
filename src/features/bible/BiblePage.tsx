@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { READING_RUBRICS } from '../../content/method';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import { getPlan, portionLabel, portionUrl } from '../../domain/readingPlan';
@@ -56,18 +55,23 @@ export function BiblePage() {
     <div className="bible-page">
       <h2>Bibel</h2>
       <SectionVerse id="plan" />
-      <Section id="bible.today" title={isToday ? 'Heute lesen' : 'Lesung'}>
+      <Section id="bible.today" title={isToday ? 'Heute lesen' : 'Lesung'} className="block block-hero">
         <ReadingRefs date={date} />
         <ReadCheckbox date={date} />
-        <p className="small muted">{READING_RUBRICS.restart}</p>
       </Section>
-      <Section id="bible.next" title="Danach">
+      <Section id="bible.next" title="Danach" className="block block-plain">
         <NextPortions date={date} />
       </Section>
-      <Section id="bible.method" title="So wird gelesen" defaultOpen={false}>
+      <Section id="bible.method" title="So wird gelesen" defaultOpen={false} className="block block-warm">
         <MethodHelpBody />
       </Section>
-      <Section id="bible.plan" title="Leseplan einstellen" defaultOpen={false} info={<PlanInfo />}>
+      <Section
+        id="bible.plan"
+        title="Leseplan einstellen"
+        defaultOpen={false}
+        info={<PlanInfo />}
+        className="block block-quiet"
+      >
         <PlanSettings />
       </Section>
     </div>

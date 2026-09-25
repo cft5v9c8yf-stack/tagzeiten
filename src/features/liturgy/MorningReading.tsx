@@ -30,16 +30,16 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
       {plan.tracks.map((t) => {
         const i = reading.portions[t.def.id];
         const p = i === undefined ? undefined : t.portions[i];
-        return (
+        // Old and New Testament side by side; the whole tile opens the passage.
+        return p ? (
+          <a key={t.def.id} className="ref" href={portionUrl(t, p)} target="_blank" rel="noopener noreferrer">
+            <span className="track">{t.def.label}</span>
+            <span className="ref-text">{portionLabel(t, p)}</span>
+          </a>
+        ) : (
           <div key={t.def.id} className="ref">
             <span className="track">{t.def.label}</span>
-            {p ? (
-              <a href={portionUrl(t, p)} target="_blank" rel="noopener noreferrer">
-                {portionLabel(t, p)}
-              </a>
-            ) : (
-              '—'
-            )}
+            <span className="ref-text">—</span>
           </div>
         );
       })}
@@ -47,7 +47,7 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
   );
 }
 
-/** Checkbox that marks the reading as read and moves the plan on. */
+/** Checkbox that marks the reading as read; the plan then moves on to the next portion. */
 export function ReadCheckbox({ date }: { date: DateKey }) {
   const store = useStore();
   useStoreVersion();
@@ -57,7 +57,7 @@ export function ReadCheckbox({ date }: { date: DateKey }) {
   return (
     <label className="check">
       <input type="checkbox" checked={reading.done} onChange={(e) => store.setReadingDone(date, e.target.checked)} />
-      Gelesen – Plan weiterrücken
+      {isToday ? 'Heute gelesen' : 'Gelesen'}
     </label>
   );
 }

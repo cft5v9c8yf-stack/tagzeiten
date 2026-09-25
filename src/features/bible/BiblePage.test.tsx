@@ -46,7 +46,7 @@ describe('Bibel', () => {
 
     // Marking as read moves the plan on.
     const before = next.querySelector('li')!.textContent;
-    fireEvent.click(screen.getByLabelText('Gelesen – Plan weiterrücken'));
+    fireEvent.click(screen.getByLabelText('Heute gelesen'));
     await waitFor(() => expect(store.readingFor(store.today()).reading.done).toBe(true));
     expect(next.querySelector('li')!.textContent).toBe(before);
   });

@@ -542,17 +542,65 @@ a.cy-week-name {
 .bible-page .section-verse {
   margin-top: 4px;
 }
+/* Blocks: each section a card of its own tint. */
+.bible-page .block {
+  margin: 14px 0;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+}
+.bible-page .block > .fold-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.bible-page .block > .fold-body {
+  margin-top: 10px;
+}
+.block-hero {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.block-hero .reading-refs {
+  margin: 0 0 12px;
+}
+.block-hero .reading-refs .ref {
+  background: color-mix(in srgb, var(--on-accent) 12%, transparent);
+  border-color: transparent;
+}
+.block-hero .reading-refs .track {
+  color: inherit;
+  opacity: 0.85;
+}
+.block-hero .check {
+  color: inherit;
+}
+.block-hero .check input {
+  accent-color: var(--on-accent);
+}
+.block-hero .info-btn,
+.block-hero :focus-visible {
+  outline-color: var(--on-accent);
+}
+.block-plain {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+}
+.block-warm {
+  background: var(--warm-soft);
+}
+.block-quiet {
+  border: 1px dashed var(--rule);
+}
 .next-portions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px 18px;
 }
 .next-track-title {
-  margin: 4px 0 2px;
+  margin: 0 0 2px;
   font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -562,9 +610,14 @@ a.cy-week-name {
   padding: 0;
 }
 .next-list li {
-  padding: 5px 0;
   border-bottom: 1px solid var(--rule);
 }
 .next-list li:last-child {
   border-bottom: 0;
+}
+.next-list a {
+  display: block;
+  padding: 7px 0;
+  color: inherit;
+  text-decoration: none;
 }
