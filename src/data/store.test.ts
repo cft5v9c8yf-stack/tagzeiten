@@ -123,6 +123,33 @@ describe('Store', () => {
     await store.flush();
   });
 
+  it('switches to a plan of one own and back, carrying the place and keeping the other', async () => {
+    const { store } = freshStore();
+    await store.load();
+    store.ensureTodayReading();
+    store.setPlanPositions({ at: 5, nt: 3 });
+    store.setPlan('eigen-k2');
+    expect(store.getDay('2026-09-25').reading).toEqual({ planId: 'eigen-k2', portions: { bibel: 0 }, done: false });
+    // Johannes (book 42 of 66) at chapter 5, then three chapters a day: still at chapter 5.
+    store.setPlanPositions({ bibel: 474 });
+    const at = store.getProfile().plan.positions.bibel!;
+    store.setPlan('eigen-k3');
+    const p = store.getProfile().plan;
+    expect(p.planId).toBe('eigen-k3');
+    expect(p.positions).toMatchObject({ at: 5, nt: 3 });
+    expect(p.positions.bibel).not.toBe(at);
+    store.setReadingDone('2026-09-25', true);
+    store.setPlan('at2-nt1');
+    expect(store.getProfile().plan).toMatchObject({ planId: 'at2-nt1', own: 'eigen-k3' });
+    expect(store.getProfile().plan.positions).toMatchObject({ at: 5, nt: 3 });
+    // Today was read in the other plan and stays as it was.
+    expect(store.getDay('2026-09-25').reading!.planId).toBe('eigen-k3');
+    // Unmarking a reading of an earlier plan leaves the current plan where it is.
+    store.setReadingDone('2026-09-25', false);
+    expect(store.getProfile().plan.positions).toMatchObject({ at: 5, nt: 3 });
+    await store.flush();
+  });
+
   it('exports every entry and imports it back unchanged', async () => {
     const { store } = freshStore();
     await store.load();

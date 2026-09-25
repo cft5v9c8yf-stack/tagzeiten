@@ -13,7 +13,7 @@ import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { emptyDay, type Day, type Habit, type Profile } from '../domain/model';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
-import { assignReading, getPlan, markRead as markReadInPlan } from '../domain/readingPlan';
+import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
 import { PROFILE_KEY, TagzeitenDB } from './db';
 import { localJournal, type Journal } from './journal';
 import { WriteQueue } from './writeQueue';
@@ -241,10 +241,39 @@ export class Store {
   /** Marks a day's reading as read or unread and moves the plan accordingly. */
   setReadingDone(date: DateKey, done: boolean): void {
     const { reading } = this.readingFor(date);
+    if (reading.planId !== this.profile.plan.planId) {
+      // A reading from an earlier plan: the day is marked, the current plan stays where it is.
+      this.updateDay(date, (d) => ({ ...d, reading: { ...reading, done } }), { immediate: true });
+      return;
+    }
     const plan = getPlan(reading.planId);
     const res = markReadInPlan(plan, reading, this.profile.plan.positions, done);
     this.updateDay(date, (d) => ({ ...d, reading: res.reading }), { immediate: true });
-    this.updateProfile((p) => ({ ...p, plan: { ...p.plan, positions: res.positions } }), { immediate: true });
+    this.updateProfile((p) => ({ ...p, plan: { ...p.plan, positions: { ...p.plan.positions, ...res.positions } } }), {
+      immediate: true,
+    });
+  }
+
+  /**
+   * Chooses the reading plan: the fixed one (Old and New Testament) or one of
+   * one's own. The place in the Bible is carried over; today's reading follows,
+   * unless it was already read.
+   */
+  setPlan(planId: string): void {
+    const to = getPlan(planId);
+    const current = this.profile.plan;
+    if (to.def.id === current.planId) return;
+    // Coming back to a plan of one's own with another amount: start where the last one stood.
+    const from = getPlan(isOwnPlan(current.planId) || !current.own ? current.planId : current.own);
+    const positions = carryPositions(from, to, current.positions);
+    this.updateProfile(
+      (p) => ({
+        ...p,
+        plan: { ...p.plan, planId: to.def.id, positions, ...(isOwnPlan(to.def.id) ? { own: to.def.id } : {}) },
+      }),
+      { immediate: true },
+    );
+    this.followToday();
   }
 
   /**
@@ -254,6 +283,11 @@ export class Store {
     this.updateProfile((p) => ({ ...p, plan: { ...p.plan, positions: { ...p.plan.positions, ...positions } } }), {
       immediate: true,
     });
+    this.followToday();
+  }
+
+  /** Today's reading follows the plan, unless it was already read. */
+  private followToday(): void {
     const today = this.days.get(this.today());
     if (today?.reading && !today.reading.done) {
       const plan = getPlan(this.profile.plan.planId);

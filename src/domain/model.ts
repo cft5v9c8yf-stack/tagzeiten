@@ -149,7 +149,13 @@ export interface Schedule {
 }
 
 export interface Profile {
-  plan: { planId: string; positions: Record<string, number> };
+  plan: {
+    planId: string;
+    /** Portion index per track, of the current plan and of earlier ones, kept for a return. */
+    positions: Record<string, number>;
+    /** The last plan of one's own (e.g. "eigen-k3"), remembered while the fixed plan is chosen. */
+    own?: string;
+  };
   habits: Habit[];
   prayer: { daily: string; weekly: Partial<Record<Weekday, string>> };
   catechism: { memorized: Record<string, boolean>; weekOffset: number };

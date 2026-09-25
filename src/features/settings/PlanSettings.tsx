@@ -1,9 +1,28 @@
 import { useId } from 'react';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { getPlan, portionLabel, positionFor, type Track } from '../../domain/readingPlan';
+import { CHAPTER_CHOICES, DEFAULT_PLAN_ID, MINUTE_CHOICES, OT_BOOKS } from '../../content/readingPlans';
+import {
+  getPlan,
+  isOwnPlan,
+  ownAmount,
+  ownPlanId,
+  portionLabel,
+  positionFor,
+  type Amount,
+  type Track,
+} from '../../domain/readingPlan';
+import { Segmented } from '../../ui/Choice';
 
-function TrackPosition({ track, position }: { track: Track; position: number }) {
+function bookOptions(track: Track, from: number, to: number) {
+  return track.def.books.slice(from, to).map((b, i) => (
+    <option key={b.slug} value={from + i}>
+      {b.name}
+    </option>
+  ));
+}
+
+function TrackPosition({ track, position, single }: { track: Track; position: number; single?: boolean }) {
   const store = useStore();
   const toast = useToast();
   const bookId = useId();
@@ -19,17 +38,22 @@ function TrackPosition({ track, position }: { track: Track; position: number }) 
   return (
     <fieldset className="plan-track">
       <legend>
-        Nächste Lesung {track.def.label}: <b>{portionLabel(track, current)}</b>
+        Nächste Lesung{single ? '' : ` ${track.def.label}`}: <b>{portionLabel(track, current)}</b>
       </legend>
       <div className="grid2">
         <div className="field">
           <label htmlFor={bookId}>Buch</label>
           <select id={bookId} value={current.book} onChange={(e) => set(Number(e.target.value), 1)}>
-            {track.def.books.map((b, i) => (
-              <option key={b.slug} value={i}>
-                {b.name}
-              </option>
-            ))}
+            {single ? (
+              <>
+                <optgroup label="Altes Testament">{bookOptions(track, 0, OT_BOOKS.length)}</optgroup>
+                <optgroup label="Neues Testament">
+                  {bookOptions(track, OT_BOOKS.length, track.def.books.length)}
+                </optgroup>
+              </>
+            ) : (
+              bookOptions(track, 0, track.def.books.length)
+            )}
           </select>
         </div>
         <div className="field">
@@ -47,14 +71,75 @@ function TrackPosition({ track, position }: { track: Track; position: number }) 
   );
 }
 
+type Kind = 'fixed' | 'own';
+
+/** The daily amount of a plan of one's own: chapters or time, and how many. */
+function OwnAmount({ amount }: { amount: Amount }) {
+  const store = useStore();
+  const toast = useToast();
+  const id = useId();
+  const set = (a: Amount) => {
+    store.setPlan(ownPlanId(a));
+    toast('Leseplan angepasst');
+  };
+  const choices = amount.unit === 'chapters' ? CHAPTER_CHOICES : MINUTE_CHOICES;
+  return (
+    <fieldset className="plan-track">
+      <legend>Täglich lesen</legend>
+      <Segmented<Amount['unit']>
+        label="Maß der täglichen Lesung"
+        options={[
+          { value: 'chapters', label: 'Kapitel' },
+          { value: 'minutes', label: 'Zeit' },
+        ]}
+        value={amount.unit}
+        onChange={(unit) => unit !== amount.unit && set(unit === 'chapters' ? { unit, value: 2 } : { unit, value: 15 })}
+      />
+      <div className="field">
+        <label htmlFor={id}>{amount.unit === 'chapters' ? 'Kapitel am Tag' : 'Minuten am Tag'}</label>
+        <select id={id} value={amount.value} onChange={(e) => set({ unit: amount.unit, value: Number(e.target.value) })}>
+          {choices.map((n) => (
+            <option key={n} value={n}>
+              {amount.unit === 'chapters' ? (n === 1 ? '1 Kapitel' : `${n} Kapitel`) : `etwa ${n} Minuten`}
+            </option>
+          ))}
+        </select>
+      </div>
+    </fieldset>
+  );
+}
+
 export function PlanSettings() {
+  const store = useStore();
+  const toast = useToast();
   const profile = useProfile();
   const plan = getPlan(profile.plan.planId);
+  const amount = ownAmount(plan.def.id);
+  const choose = (kind: Kind) => {
+    if ((kind === 'own') === Boolean(amount)) return;
+    store.setPlan(kind === 'own' ? (profile.plan.own ?? ownPlanId({ unit: 'chapters', value: 2 })) : DEFAULT_PLAN_ID);
+    toast('Leseplan angepasst');
+  };
   return (
     <>
+      <Segmented<Kind>
+        label="Leseplan"
+        options={[
+          { value: 'fixed', label: 'AT und NT' },
+          { value: 'own', label: 'Eigener Plan' },
+        ]}
+        value={amount ? 'own' : 'fixed'}
+        onChange={choose}
+      />
       {plan.tracks.map((t) => (
-        <TrackPosition key={t.def.id} track={t} position={profile.plan.positions[t.def.id] ?? 0} />
+        <TrackPosition
+          key={`${plan.def.id}-${t.def.id}`}
+          track={t}
+          position={profile.plan.positions[t.def.id] ?? 0}
+          single={isOwnPlan(plan.def.id)}
+        />
       ))}
+      {amount && <OwnAmount amount={amount} />}
     </>
   );
 }

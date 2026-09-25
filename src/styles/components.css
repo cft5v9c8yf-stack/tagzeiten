@@ -370,6 +370,9 @@ details.fold[open] > summary {
   gap: 10px;
   margin: 10px 0;
 }
+.reading-refs:has(> .ref:only-child) {
+  grid-template-columns: 1fr;
+}
 .reading-refs .ref {
   display: flex;
   flex-direction: column;

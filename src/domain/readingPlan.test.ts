@@ -1,11 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { NT_BOOKS, OT_BOOKS } from '../content/readingPlans';
+import { ALL_BOOKS, NT_BOOKS, OT_BOOKS } from '../content/readingPlans';
 import {
   assignReading,
   buildPortions,
   chaptersBefore,
+  carryPositions,
+  chaptersPerDay,
   getPlan,
   initialPositions,
+  ownAmount,
+  ownPlanId,
   markRead,
   portionLabel,
   portionUrl,
@@ -129,5 +133,42 @@ describe('advancing and resetting', () => {
     expect(r.positions).toEqual({ at: 0, nt: 0 });
     const back = markRead(plan, r.reading, r.positions, false);
     expect(back.positions).toEqual(last);
+  });
+});
+
+describe('a plan of one own', () => {
+  const book = (name: string) => ALL_BOOKS.find((b) => b.name === name)!;
+
+  it('encodes its amount in the plan id and rejects unknown amounts', () => {
+    expect(ownPlanId({ unit: 'chapters', value: 3 })).toBe('eigen-k3');
+    expect(ownAmount('eigen-m15')).toEqual({ unit: 'minutes', value: 15 });
+    expect(ownAmount('eigen-k7')).toBeUndefined();
+    expect(ownAmount('at2-nt1')).toBeUndefined();
+    expect(getPlan('eigen-k99').def.id).toBe('at2-nt1');
+  });
+
+  it('walks the whole Bible in chapters a day, never across a book', () => {
+    const t = getPlan('eigen-k3').tracks[0]!;
+    expect(t.totalChapters).toBe(1189);
+    expect(portionLabel(t, t.portions[0]!)).toBe('1. Mose 1–3');
+    expect(t.portions.every((p) => p.to - p.from < 3)).toBe(true);
+    expect(portionLabel(t, t.portions.at(-1)!)).toBe('Offenbarung 22');
+  });
+
+  it('turns time into chapters by the length of the chapters in each book', () => {
+    const a = { unit: 'minutes', value: 15 } as const;
+    expect(chaptersPerDay(book('Psalm'), a)).toBeGreaterThan(chaptersPerDay(book('1. Mose'), a));
+    expect(chaptersPerDay(book('Obadja'), { unit: 'minutes', value: 5 })).toBe(1);
+    const t = getPlan('eigen-m15').tracks[0]!;
+    expect(portionLabel(t, t.portions[0]!)).toBe('1. Mose 1–2');
+  });
+
+  it('carries the place to another amount and keeps the positions of the fixed plan', () => {
+    const from = getPlan('eigen-k1');
+    const to = getPlan('eigen-k2');
+    const i = positionFor(from.tracks[0]!, 42, 5);
+    const out = carryPositions(from, to, { at: 7, bibel: i });
+    expect(out.at).toBe(7);
+    expect(portionLabel(to.tracks[0]!, to.tracks[0]!.portions[out.bibel!]!)).toBe('Johannes 5–6');
   });
 });

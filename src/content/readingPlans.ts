@@ -117,4 +117,35 @@ export const PLANS: readonly PlanDef[] = [
 
 export const DEFAULT_PLAN_ID = 'at2-nt1';
 
+/** The whole Bible in Luther's order, for a plan of one's own. */
+export const ALL_BOOKS: readonly Book[] = [...OT_BOOKS, ...NT_BOOKS];
+
+/**
+ * Verses per book (common count). Only used to estimate how many chapters fit
+ * into a given reading time; chapters differ in length from book to book.
+ */
+export const VERSES: Readonly<Record<string, number>> = {
+  '1.Mose': 1533, '2.Mose': 1213, '3.Mose': 859, '4.Mose': 1288, '5.Mose': 959,
+  Josua: 658, Richter: 618, Rut: 85, '1.Samuel': 810, '2.Samuel': 695,
+  '1.Könige': 816, '2.Könige': 719, '1.Chronik': 942, '2.Chronik': 822,
+  Esra: 280, Nehemia: 406, Ester: 167, Hiob: 1070, Psalm: 2461, Sprüche: 915,
+  Prediger: 222, Hoheslied: 117, Jesaja: 1292, Jeremia: 1364, Klagelieder: 154,
+  Hesekiel: 1273, Daniel: 357, Hosea: 197, Joel: 73, Amos: 146, Obadja: 21,
+  Jona: 48, Micha: 105, Nahum: 47, Habakuk: 56, Zefanja: 53, Haggai: 38,
+  Sacharja: 211, Maleachi: 55,
+  Matthäus: 1071, Markus: 678, Lukas: 1151, Johannes: 879, Apostelgeschichte: 1007,
+  Römer: 433, '1.Korinther': 437, '2.Korinther': 257, Galater: 149, Epheser: 155,
+  Philipper: 104, Kolosser: 95, '1.Thessalonicher': 89, '2.Thessalonicher': 47,
+  '1.Timotheus': 113, '2.Timotheus': 83, Titus: 46, Philemon: 25, '1.Petrus': 105,
+  '2.Petrus': 61, '1.Johannes': 105, '2.Johannes': 13, '3.Johannes': 15,
+  Hebräer: 303, Jakobus: 108, Judas: 25, Offenbarung: 404,
+};
+
+/** Attentive reading on paper, pencil in hand: verses per minute, roughly. */
+export const VERSES_PER_MINUTE = 5;
+
+/** Choices for a plan of one's own. */
+export const CHAPTER_CHOICES = [1, 2, 3, 4, 5, 6, 8, 10] as const;
+export const MINUTE_CHOICES = [5, 10, 15, 20, 30, 45, 60] as const;
+
 export const BIBLE_BASE_URL = 'https://www.bibleserver.com/LUT/';

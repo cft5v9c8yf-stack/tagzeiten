@@ -64,4 +64,29 @@ describe('Bibel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
     await waitFor(() => expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2));
   });
+
+  it('offers a plan of one own: a book, and chapters or time a day; today follows', async () => {
+    const store = await renderBible();
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Eigener Plan' }));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(1));
+
+    fireEvent.change(screen.getByLabelText('Buch'), { target: { value: '42' } }); // Johannes
+    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toContain('Johannes 1–2'));
+    fireEvent.change(screen.getByLabelText('Kapitel am Tag'), { target: { value: '3' } });
+    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toContain('Johannes 1–3'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Zeit' }));
+    fireEvent.change(await screen.findByLabelText('Minuten am Tag'), { target: { value: '10' } });
+    // Johannes has about 42 verses a chapter: ten minutes are about one chapter.
+    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toBe('Etwa 10 MinutenJohannes 1'));
+    expect(store.getProfile().plan.planId).toBe('eigen-m10');
+
+    // Back to Old and New Testament: the view as before, the places kept.
+    fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2);
+    expect(store.getProfile().plan.own).toBe('eigen-m10');
+  });
 });

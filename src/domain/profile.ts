@@ -2,7 +2,7 @@ import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule } from './model';
-import { getPlan, initialPositions, normalizePositions } from './readingPlan';
+import { getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
   const plan = getPlan(DEFAULT_PLAN_ID);
@@ -40,7 +40,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     if (n >= 0 && n <= 6 && typeof v === 'string') weekly[n as Weekday] = v;
   }
   return {
-    plan: { planId: plan.def.id, positions: normalizePositions(plan, raw.plan?.positions) },
+    plan: normalizePlan(plan.def.id, raw.plan),
     habits: mergePresets(Array.isArray(raw.habits) ? raw.habits.filter(isHabit).map(cleanHabit) : base.habits),
     prayer: { daily: typeof raw.prayer?.daily === 'string' ? raw.prayer.daily : '', weekly },
     catechism: {
@@ -53,6 +53,20 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     createdAt: raw.createdAt ?? today,
     updatedAt: raw.updatedAt ?? 0,
   };
+}
+
+function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined): Profile['plan'] {
+  // Positions of other plans stay for a return; they are checked again when used.
+  const positions: Record<string, number> = {};
+  for (const [k, v] of Object.entries(raw?.positions ?? {})) {
+    if (typeof v === 'number' && Number.isInteger(v) && v >= 0) positions[k] = v;
+  }
+  const out: Profile['plan'] = {
+    planId,
+    positions: { ...positions, ...normalizePositions(getPlan(planId), raw?.positions) },
+  };
+  if (typeof raw?.own === 'string' && isOwnPlan(raw.own)) out.own = raw.own;
+  return out;
 }
 
 function cleanHabit(h: Habit): Habit {

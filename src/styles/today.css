@@ -578,6 +578,12 @@ a.cy-week-name {
   grid-template-columns: 1fr 1fr;
   gap: 4px 18px;
 }
+.next-portions:has(> .next-track:only-child) {
+  grid-template-columns: 1fr;
+}
+.next-track:only-child .next-track-title {
+  display: none;
+}
 .next-track-title {
   margin: 0 0 2px;
   font-family: var(--sans);
