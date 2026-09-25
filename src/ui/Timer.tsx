@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { formatClock, timer } from './timerState';
+import { formatClock, timer as morningTimer, type Countdown } from './timerState';
 
 type WakeLock = { release: () => Promise<void> };
 
@@ -30,12 +30,22 @@ function useWakeLock(active: boolean) {
   }, [active]);
 }
 
-export function Timer({ totalMinutes, hint }: { totalMinutes: number; hint: string }) {
+export function Timer({
+  totalMinutes,
+  hint,
+  timer = morningTimer,
+  className,
+}: {
+  totalMinutes: number;
+  hint: string;
+  timer?: Countdown;
+  className?: string;
+}) {
   const state = useSyncExternalStore(timer.subscribe, timer.get);
   const [, tick] = useState(0);
   const running = state.startedAt !== null;
 
-  useEffect(() => timer.setTotal(totalMinutes * 60), [totalMinutes]);
+  useEffect(() => timer.setTotal(totalMinutes * 60), [timer, totalMinutes]);
 
   useEffect(() => {
     if (!running) return;
@@ -69,7 +79,7 @@ export function Timer({ totalMinutes, hint }: { totalMinutes: number; hint: stri
   const started = running || state.elapsedSec > 0;
 
   return (
-    <div className={`timer${stuck ? ' is-stuck' : ''}`} ref={barRef}>
+    <div className={`timer${stuck ? ' is-stuck' : ''}${className ? ` ${className}` : ''}`} ref={barRef}>
       <span className="clock" role="timer" aria-label={`Verbleibende Zeit ${formatClock(left)}`}>
         {formatClock(left)}
       </span>

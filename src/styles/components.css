@@ -16,6 +16,14 @@
 .timer.is-stuck {
   box-shadow: 0 calc(-1 * var(--safe-top)) 0 0 var(--paper);
 }
+.timer-inline {
+  position: static;
+  margin: 12px 0 0;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+}
 .timer .clock {
   font-variant-numeric: tabular-nums;
   font-size: 1.3rem;
@@ -598,4 +606,7 @@ input[type='search']:focus,
 select:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
+}
+.timer-inline.is-stuck {
+  box-shadow: none;
 }

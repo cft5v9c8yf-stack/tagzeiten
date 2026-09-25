@@ -82,10 +82,14 @@ describe('Bibel', () => {
     // Johannes has about 42 verses a chapter: ten minutes are about one chapter.
     await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toBe('Etwa 10 MinutenJohannes 1'));
     expect(store.getProfile().plan.planId).toBe('eigen-m10');
+    // Reading by time brings its own timer.
+    expect(screen.getByRole('timer').textContent).toBe('10:00');
+    expect(screen.getByRole('button', { name: 'Zeit starten' })).toBeTruthy();
 
     // Back to Old and New Testament: the view as before, the places kept.
     fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
     await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    expect(screen.queryByRole('timer')).toBeNull();
     expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2);
     expect(store.getProfile().plan.own).toBe('eigen-m10');
   });

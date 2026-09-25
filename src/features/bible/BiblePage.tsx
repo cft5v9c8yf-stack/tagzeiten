@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
-import { getPlan, portionLabel, portionUrl } from '../../domain/readingPlan';
+import { getPlan, ownAmounts, portionLabel, portionUrl } from '../../domain/readingPlan';
 import { Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
+import { Timer } from '../../ui/Timer';
+import { readingTimer } from '../../ui/timerState';
 import { MethodHelpBody, ReadingRefs } from '../liturgy/MorningReading';
 import { PlanInfo, PlanSettings } from '../settings/PlanSettings';
 
@@ -48,7 +50,11 @@ export function BiblePage() {
   const { date, isToday } = useSelectedDate();
   const store = useStore();
   useStoreVersion();
-  const read = store.readingFor(date).reading.done;
+  const { reading } = store.readingFor(date);
+  const read = reading.done;
+  // Reading by time: a timer of its own, for today's reading only.
+  const own = ownAmounts(reading.planId);
+  const minutes = own?.length === 1 && own[0]!.unit === 'minutes' ? own[0]!.value : undefined;
   useEffect(() => {
     if (isToday) store.ensureTodayReading();
   }, [store, isToday]);
@@ -69,7 +75,10 @@ export function BiblePage() {
         className="block block-hero"
       >
         <ReadingRefs date={date} />
-        </Section>
+        {isToday && minutes && (
+          <Timer timer={readingTimer} totalMinutes={minutes} hint="Lesezeit" className="timer-inline" />
+        )}
+      </Section>
       <Section id="bible.next" title="Danach" className="block block-plain">
         <NextPortions date={date} />
       </Section>
