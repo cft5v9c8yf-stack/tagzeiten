@@ -167,7 +167,11 @@ function ownPlan(id: string, amounts: readonly Amount[]): Plan {
   const single = amounts.length === 1;
   const defs: TrackDef[] = amounts.map((a, i) => ({
     id: ownTrackId(i),
-    label: single ? (a.unit === 'minutes' ? `Etwa ${a.value} Minuten` : 'Lesung') : `${i + 1}. Lesung`,
+    label: single
+      ? a.unit === 'minutes'
+        ? `Etwa ${a.value} Minuten`
+        : 'Lesung'
+      : `${i + 1}. Lesung${a.unit === 'minutes' ? ` · ${a.value} Min.` : ''}`,
     books: ALL_BOOKS,
     pattern: [1],
   }));
@@ -176,7 +180,7 @@ function ownPlan(id: string, amounts: readonly Amount[]): Plan {
     ? first.unit === 'chapters'
       ? `Täglich ${DESCRIBE(first)} aus dem Buch deiner Wahl. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`
       : `Täglich etwa ${first.value} Minuten aus dem Buch deiner Wahl. Wie viele Kapitel das sind, richtet sich nach der Länge der Kapitel im jeweiligen Buch. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`
-    : `Täglich aus ${amounts.length} Büchern deiner Wahl, aus jedem so viele Kapitel, wie du festlegst. Ist ein Buch zu Ende, geht es dort mit dem nächsten in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`;
+    : `Täglich aus ${amounts.length} Büchern deiner Wahl, aus jedem so viele Kapitel oder so viel Zeit, wie du festlegst. Ist ein Buch zu Ende, geht es dort mit dem nächsten in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`;
   return {
     def: { id, name: 'Eigener Plan', description, tracks: defs },
     tracks: defs.map((t, i) => track(t, portionsBy(t.books, (b) => [chaptersPerDay(b, amounts[i]!)]))),

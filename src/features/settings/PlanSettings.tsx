@@ -185,7 +185,7 @@ function OwnPlan({ amounts }: { amounts: Amount[] }) {
   };
   const setShape = (shape: Shape) => {
     if (shape === 'one') apply([amounts[0]!]);
-    else add([{ unit: 'chapters', value: amounts[0]!.unit === 'chapters' ? amounts[0]!.value : 1 }, { unit: 'chapters', value: 1 }]);
+    else add([amounts[0]!, { unit: 'chapters', value: 1 }]);
   };
   const setAt = (i: number, a: Amount) => apply(amounts.map((x, k) => (k === i ? a : x)));
   const single = amounts.length === 1;
@@ -210,11 +210,7 @@ function OwnPlan({ amounts }: { amounts: Amount[] }) {
             position={positions[t.def.id] ?? 0}
             legend={single ? 'Nächste Lesung' : `${i + 1}. Lesung`}
           >
-            {single ? (
-              <OneBookAmount amount={a} onChange={(x) => setAt(0, x)} />
-            ) : (
-              <ChaptersADay value={a.value} onChange={(value) => setAt(i, { unit: 'chapters', value })} />
-            )}
+            <OneBookAmount amount={a} onChange={(x) => setAt(i, x)} label={single ? undefined : `${i + 1}. Lesung`} />
             {amounts.length > 2 && (
               <button type="button" className="btn quiet plan-remove" onClick={() => remove(i)}>
                 Dieses Buch entfernen
@@ -232,14 +228,14 @@ function OwnPlan({ amounts }: { amounts: Amount[] }) {
   );
 }
 
-/** For one book: chapters a day, or time a day. */
-function OneBookAmount({ amount, onChange }: { amount: Amount; onChange: (a: Amount) => void }) {
+/** For a book: chapters a day, or time a day. */
+function OneBookAmount({ amount, onChange, label }: { amount: Amount; onChange: (a: Amount) => void; label?: string }) {
   const id = useId();
   const choices = amount.unit === 'chapters' ? CHAPTER_CHOICES : MINUTE_CHOICES;
   return (
     <>
       <Segmented<Amount['unit']>
-        label="Maß der täglichen Lesung"
+        label={label ? `Maß der täglichen Lesung, ${label}` : 'Maß der täglichen Lesung'}
         options={[
           { value: 'chapters', label: 'Kapitel' },
           { value: 'minutes', label: 'Zeit' },

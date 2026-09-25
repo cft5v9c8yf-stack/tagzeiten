@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -116,8 +116,16 @@ describe('Bibel', () => {
     await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
     expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. LesungPsalm 1');
 
+    // Each book by chapters or by time; the timer runs over the books read by time.
+    expect(screen.queryByRole('timer')).toBeNull();
+    fireEvent.click(within(screen.getByRole('group', { name: 'Maß der täglichen Lesung, 2. Lesung' })).getByRole('button', { name: 'Zeit' }));
+    await waitFor(() => expect(store.getProfile().plan.planId).toBe('eigen-k2.m15'));
+    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. Lesung · 15 Min.Psalm 1–5');
+    expect(screen.getByRole('timer').textContent).toBe('15:00');
+
     // Back to Old and New Testament, with the amounts left there.
     fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
     await waitFor(() => expect(store.getProfile().plan.planId).toBe('atnt-3-2'));
+    expect(screen.queryByRole('timer')).toBeNull();
   });
 });

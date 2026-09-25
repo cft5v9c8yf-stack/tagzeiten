@@ -52,9 +52,8 @@ export function BiblePage() {
   useStoreVersion();
   const { reading } = store.readingFor(date);
   const read = reading.done;
-  // Reading by time: a timer of its own, for today's reading only.
-  const own = ownAmounts(reading.planId);
-  const minutes = own?.length === 1 && own[0]!.unit === 'minutes' ? own[0]!.value : undefined;
+  // Reading by time: a timer of its own for today's reading, over all books read by time.
+  const minutes = (ownAmounts(reading.planId) ?? []).reduce((s, a) => s + (a.unit === 'minutes' ? a.value : 0), 0);
   useEffect(() => {
     if (isToday) store.ensureTodayReading();
   }, [store, isToday]);
@@ -75,7 +74,7 @@ export function BiblePage() {
         className="block block-hero"
       >
         <ReadingRefs date={date} />
-        {isToday && minutes && (
+        {isToday && minutes > 0 && (
           <Timer timer={readingTimer} totalMinutes={minutes} hint="Lesezeit" className="timer-inline" />
         )}
       </Section>
