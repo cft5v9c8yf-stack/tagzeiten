@@ -1,3 +1,4 @@
+import { scheduleFor } from '../../domain/schedule';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { getOrder } from '../../content/orders';
@@ -81,7 +82,7 @@ export function TodayPage() {
   const { date, isToday } = useSelectedDate();
   const day = useDay(date);
   const profile = useProfile();
-  const s = profile.schedule;
+  const s = scheduleFor(profile, date);
 
   return (
     <>

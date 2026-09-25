@@ -1170,3 +1170,43 @@ body.is-sorting * {
 .plan-remove {
   margin-top: 8px;
 }
+/* Times per weekday: each group a card with its days as round chips. */
+.schedule-group {
+  margin: 14px 0 0;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+}
+.schedule-group legend {
+  padding: 0 4px;
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.day-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+.day-chips button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 0.85rem var(--sans);
+  cursor: pointer;
+}
+.day-chips button[aria-pressed='true'] {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.schedule-add {
+  margin-top: 6px;
+}
+.schedule-group > .btn {
+  margin-top: 10px;
+}

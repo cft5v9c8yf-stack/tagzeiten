@@ -1,3 +1,4 @@
+import { scheduleFor } from '../../domain/schedule';
 import { useId, useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
 import { getOrder, ORDER_MINUTES, RUBRICS, type Step as OrderStep } from '../../content/orders';
@@ -278,7 +279,7 @@ function Evening({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const profile = useProfile();
   const [view, setView] = useState<'vespers' | 'compline'>(() => {
     const now = new Date();
-    const lateEnough = isToday && now.getHours() * 60 + now.getMinutes() >= toMinutes(profile.schedule.compline) - 30;
+    const lateEnough = isToday && now.getHours() * 60 + now.getMinutes() >= toMinutes(scheduleFor(profile, date).compline) - 30;
     return day.evening.vespersDone || day.evening.complineDone || lateEnough ? 'compline' : 'vespers';
   });
   const [vespersStep, setVespersStep] = useState<number | null>(day.evening.vespersDone ? null : 0);

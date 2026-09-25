@@ -1,6 +1,8 @@
 import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
-import type { Schedule, TextVariant, Theme } from '../../domain/model';
+import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
+import type { Schedule, ScheduleGroup, TextVariant, Theme } from '../../domain/model';
+import { daysLabel, firstGroups, moveDay, removeGroup, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
 import { Section } from '../../ui/Section';
 
@@ -12,30 +14,114 @@ const TIMES: { key: keyof Schedule; label: string }[] = [
   { key: 'lightsOut', label: 'Licht aus' },
 ];
 
+const TIME_OK = /^\d{2}:\d{2}$/;
+
+/** The five times of a day, as a grid of time fields. */
+function TimesGrid({ times, onChange }: { times: Schedule; onChange: (key: keyof Schedule, v: string) => void }) {
+  const base = useId();
+  return (
+    <div className="times-grid">
+      {TIMES.map((t) => (
+        <div className="field" key={t.key}>
+          <label htmlFor={`${base}-${t.key}`}>{t.label}</label>
+          <input
+            id={`${base}-${t.key}`}
+            type="time"
+            value={times[t.key]}
+            onChange={(e) => TIME_OK.test(e.target.value) && onChange(t.key, e.target.value)}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+type Mode = 'same' | 'days';
+
+/**
+ * The times of the day: the same every day, or per weekday in groups (say,
+ * Monday to Friday and the weekend). A day tapped in a group moves there.
+ */
 export function ScheduleSettings() {
   const store = useStore();
   const profile = useProfile();
-  const base = useId();
+  const byDay = profile.scheduleDays;
+  const mode: Mode = byDay?.on ? 'days' : 'same';
+  const groups = byDay?.groups ?? [];
+
+  const setGroups = (next: ScheduleGroup[], immediate = true) =>
+    store.updateProfile((p) => ({ ...p, scheduleDays: { on: true, groups: next } }), { immediate });
+  const setMode = (m: Mode) =>
+    store.updateProfile(
+      (p) => ({
+        ...p,
+        scheduleDays: { on: m === 'days', groups: p.scheduleDays?.groups ?? firstGroups(p.schedule) },
+      }),
+      { immediate: true },
+    );
+
   return (
     <>
-      <div className="times-grid">
-        {TIMES.map((t) => (
-          <div className="field" key={t.key}>
-            <label htmlFor={`${base}-${t.key}`}>{t.label}</label>
-            <input
-              id={`${base}-${t.key}`}
-              type="time"
-              value={profile.schedule[t.key]}
-              onChange={(e) => {
-                const v = e.target.value;
-                if (/^\d{2}:\d{2}$/.test(v)) {
-                  store.updateProfile((p) => ({ ...p, schedule: { ...p.schedule, [t.key]: v } }));
+      <Segmented<Mode>
+        label="Zeiten"
+        value={mode}
+        onChange={setMode}
+        options={[
+          { value: 'same', label: 'Alle Tage gleich' },
+          { value: 'days', label: 'Tage unterschiedlich' },
+        ]}
+      />
+      {mode === 'same' ? (
+        <TimesGrid
+          times={profile.schedule}
+          onChange={(k, v) => store.updateProfile((p) => ({ ...p, schedule: { ...p.schedule, [k]: v } }))}
+        />
+      ) : (
+        <>
+          <p className="small muted">Tippe einen Tag an, um ihn diesen Zeiten zuzuordnen.</p>
+          {groups.map((g, i) => (
+            <fieldset key={i} className="schedule-group">
+              <legend>{g.days.length > 0 ? daysLabel(g.days) : 'Noch keine Tage gewählt'}</legend>
+              <div className="day-chips" role="group" aria-label={`Tage für ${i + 1}. Zeiten`}>
+                {WEEK.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    aria-pressed={g.days.includes(d)}
+                    aria-label={WEEKDAY_LONG[d]}
+                    onClick={() => setGroups(moveDay(groups, d, i))}
+                  >
+                    {WEEKDAY_SHORT[d]}
+                  </button>
+                ))}
+              </div>
+              <TimesGrid
+                times={g.times}
+                onChange={(k, v) =>
+                  setGroups(
+                    groups.map((x, j) => (j === i ? { ...x, times: { ...x.times, [k]: v } } : x)),
+                    false,
+                  )
                 }
-              }}
-            />
-          </div>
-        ))}
-      </div>
+              />
+              {groups.length > 1 && (
+                <button type="button" className="btn quiet" onClick={() => setGroups(removeGroup(groups, i))}>
+                  Diese Zeiten entfernen
+                </button>
+              )}
+            </fieldset>
+          ))}
+          {groups.length < 7 && (
+            <button
+              type="button"
+              className="btn schedule-add"
+              onClick={() => setGroups([...groups, { days: [], times: { ...(groups.at(-1)?.times ?? profile.schedule) } }])}
+            >
+              <span aria-hidden="true">+</span> Zeiten für weitere Tage
+            </button>
+          )}
+        </>
+      )}
     </>
   );
 }

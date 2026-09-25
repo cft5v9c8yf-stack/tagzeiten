@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
 import { TagzeitenDB } from '../../data/db';
+import { scheduleFor } from '../../domain/schedule';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
@@ -347,5 +348,37 @@ describe('Archiv', () => {
     expect(screen.getByText('1 Treffer')).toBeTruthy();
     fireEvent.click(screen.getByText('Versesammlung'));
     expect(screen.getByText('Sei stille dem HERRN')).toBeTruthy();
+  });
+
+  it('sets times per weekday: working days and weekend, and further days with +', async () => {
+    const { store } = await renderAt('/mehr/zeiten', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Zeiten/ });
+    expect(screen.getAllByLabelText('Aufstehen')).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Tage unterschiedlich' }));
+    await waitFor(() => expect(screen.getAllByLabelText('Aufstehen')).toHaveLength(2));
+    expect([...document.querySelectorAll('.schedule-group legend')].map((l) => l.textContent)).toEqual([
+      'Mo – Fr',
+      'Sa, So',
+    ]);
+    fireEvent.change(screen.getAllByLabelText('Aufstehen')[1]!, { target: { value: '07:00' } });
+    await waitFor(() => expect(scheduleFor(store.getProfile(), '2026-09-26').rise).toBe('07:00'));
+    expect(scheduleFor(store.getProfile(), '2026-09-25').rise).toBe('04:00');
+
+    fireEvent.click(screen.getByRole('button', { name: /Zeiten für weitere Tage/ }));
+    await waitFor(() => expect(document.querySelectorAll('.schedule-group')).toHaveLength(3));
+    const third = document.querySelectorAll('.schedule-group')[2]!;
+    fireEvent.click(within(third as HTMLElement).getByRole('button', { name: 'Sonntag' }));
+    await waitFor(() =>
+      expect([...document.querySelectorAll('.schedule-group legend')].map((l) => l.textContent)).toEqual([
+        'Mo – Fr',
+        'Sa',
+        'So',
+      ]),
+    );
+
+    // Back to the same times every day; the groups wait for a return.
+    fireEvent.click(screen.getByRole('button', { name: 'Alle Tage gleich' }));
+    await waitFor(() => expect(scheduleFor(store.getProfile(), '2026-09-26').rise).toBe('04:00'));
+    expect(store.getProfile().scheduleDays!.groups).toHaveLength(3);
   });
 });

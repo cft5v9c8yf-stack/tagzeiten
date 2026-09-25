@@ -1,7 +1,8 @@
 import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
-import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule } from './model';
+import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
+import { sortDays, WEEK } from './schedule';
 import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
@@ -29,11 +30,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
   const base = defaultProfile(today);
   if (!raw) return base;
   const plan = getPlan(raw.plan?.planId ?? base.plan.planId);
-  const schedule: Schedule = { ...base.schedule };
-  for (const k of Object.keys(schedule) as (keyof Schedule)[]) {
-    const v = raw.schedule?.[k];
-    if (typeof v === 'string' && TIME_RE.test(v)) schedule[k] = v;
-  }
+  const schedule = cleanSchedule(raw.schedule, base.schedule);
   const weekly: Partial<Record<Weekday, string>> = {};
   for (const [k, v] of Object.entries(raw.prayer?.weekly ?? {})) {
     const n = Number(k);
@@ -48,11 +45,38 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
       weekOffset: Number.isInteger(raw.catechism?.weekOffset) ? (((raw.catechism!.weekOffset % 6) + 6) % 6) : 0,
     },
     schedule,
+    ...cleanScheduleDays(raw.scheduleDays, schedule),
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
     texts: raw.texts === 'luther' ? 'luther' : 'ecumenical',
     createdAt: raw.createdAt ?? today,
     updatedAt: raw.updatedAt ?? 0,
   };
+}
+
+function cleanSchedule(raw: Partial<Schedule> | undefined, fallback: Schedule): Schedule {
+  const out: Schedule = { ...fallback };
+  for (const k of Object.keys(out) as (keyof Schedule)[]) {
+    const v = raw?.[k];
+    if (typeof v === 'string' && TIME_RE.test(v)) out[k] = v;
+  }
+  return out;
+}
+
+/** Keeps each weekday in at most one group; days left over join the first group. */
+function cleanScheduleDays(raw: Profile['scheduleDays'], schedule: Schedule): Pick<Profile, 'scheduleDays'> {
+  if (!raw || !Array.isArray(raw.groups)) return {};
+  const seen = new Set<number>();
+  const groups: ScheduleGroup[] = [];
+  for (const g of raw.groups) {
+    if (!g || !Array.isArray(g.days)) continue;
+    const days = g.days.filter((d): d is Weekday => Number.isInteger(d) && d >= 0 && d <= 6 && !seen.has(d));
+    days.forEach((d) => seen.add(d));
+    groups.push({ days: sortDays(days), times: cleanSchedule(g.times, schedule) });
+  }
+  if (groups.length === 0) return {};
+  const missing = WEEK.filter((d) => !seen.has(d));
+  groups[0] = { ...groups[0]!, days: sortDays([...groups[0]!.days, ...missing]) };
+  return { scheduleDays: { on: raw.on === true, groups } };
 }
 
 function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined): Profile['plan'] {

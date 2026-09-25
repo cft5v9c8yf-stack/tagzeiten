@@ -148,6 +148,12 @@ export interface Schedule {
   lightsOut: string;
 }
 
+/** Times for some weekdays (0 = Sunday … 6 = Saturday). */
+export interface ScheduleGroup {
+  days: Weekday[];
+  times: Schedule;
+}
+
 export interface Profile {
   plan: {
     planId: string;
@@ -161,7 +167,10 @@ export interface Profile {
   habits: Habit[];
   prayer: { daily: string; weekly: Partial<Record<Weekday, string>> };
   catechism: { memorized: Record<string, boolean>; weekOffset: number };
+  /** The same times every day. */
   schedule: Schedule;
+  /** Times per weekday, when `on`; the groups stay while switched off, for a return. */
+  scheduleDays?: { on: boolean; groups: ScheduleGroup[] };
   theme: Theme;
   texts: TextVariant;
   createdAt: DateKey;
