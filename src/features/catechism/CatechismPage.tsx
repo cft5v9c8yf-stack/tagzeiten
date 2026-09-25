@@ -1,34 +1,19 @@
-import { useId, useState } from "react";
-import { flushSync } from "react-dom";
-import {
-  CATECHISM,
-  CATECHISM_SUBTITLE,
-  TABLE_OF_DUTIES,
-  TABLE_OF_DUTIES_SUBTITLE,
-} from "../../content/catechism";
-import { CATECHISM_WITH_CHILDREN_HABIT } from "../../content/habits";
-import {
-  PRIVATE_CONFESSION,
-  TABLE_PRAYER_AFTER,
-  TABLE_PRAYER_BEFORE,
-} from "../../content/liturgy";
-import { useSelectedDate } from "../../app/useSelectedDate";
-import { useDayLookup, useProfile, useStore } from "../../data/hooks";
-import {
-  catechismFor,
-  memorizedCount,
-  offsetForChiefPart,
-  pieceId,
-  TOTAL_PIECES,
-} from "../../domain/catechismDay";
-import { canToggle, isDoneInPeriod, toggleHabit } from "../../domain/habits";
-import { BibleLink } from "../../ui/BibleLink";
-import { PrayerText, Rubric } from "../../ui/PrayerText";
-import { Section } from "../../ui/Section";
-import { setOpen } from "../../ui/collapseState";
-import { PieceText } from "../liturgy/CatechismOfDay";
-import { CatechismOverview } from "./CatechismOverview";
-import { HouseFatherMode } from "./HouseFatherMode";
+import { useId, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
+import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
+import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
+import { useSelectedDate } from '../../app/useSelectedDate';
+import { useDayLookup, useProfile, useStore } from '../../data/hooks';
+import { catechismFor, memorizedCount, offsetForChiefPart, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
+import { canToggle, isDoneInPeriod } from '../../domain/habits';
+import { BibleLink } from '../../ui/BibleLink';
+import { PrayerText, Rubric } from '../../ui/PrayerText';
+import { Section } from '../../ui/Section';
+import { setOpen } from '../../ui/collapseState';
+import { PieceText } from '../liturgy/CatechismOfDay';
+import { CatechismOverview } from './CatechismOverview';
+import { HouseFatherMode } from './HouseFatherMode';
 
 /** A chief part (or appendix) that folds away; its number stands in red like a rubric. */
 function Chief({
@@ -64,22 +49,9 @@ function Chief({
   );
 }
 
-function TablePrayer({
-  id,
-  title,
-  prayer,
-}: {
-  id: string;
-  title: string;
-  prayer: typeof TABLE_PRAYER_BEFORE;
-}) {
+function TablePrayer({ id, title, prayer }: { id: string; title: string; prayer: typeof TABLE_PRAYER_BEFORE }) {
   return (
-    <Section
-      id={`cat.table.${id}`}
-      title={title}
-      level={4}
-      titleClassName="cat-sub"
-    >
+    <Section id={`cat.table.${id}`} title={title} level={4} titleClassName="cat-sub">
       <PrayerText text={prayer.verse} />
       <Rubric>{prayer.rubric}</Rubric>
       <PrayerText text={prayer.prayer} />
@@ -98,9 +70,7 @@ export function CatechismPage() {
   const learned = memorizedCount(memorized);
   const [houseFather, setHouseFather] = useState(false);
 
-  const habit = profile.habits.find(
-    (h) => h.id === CATECHISM_WITH_CHILDREN_HABIT,
-  );
+  const habit = profile.habits.find((h) => h.id === CATECHISM_WITH_CHILDREN_HABIT);
   const withChildren = habit ? isDoneInPeriod(habit, date, lookup) : false;
 
   const chooseChief = (i: number) =>
@@ -121,7 +91,7 @@ export function CatechismPage() {
       setOpen(`cat.piece.${id}`, true);
     });
     const piece = document.getElementById(`piece-${id}`);
-    piece?.scrollIntoView({ block: "start" });
+    piece?.scrollIntoView({ block: 'start' });
     piece?.focus({ preventScroll: true });
   };
 
@@ -144,11 +114,7 @@ export function CatechismPage() {
       <div className="panel cat-panel">
         <div className="field">
           <label htmlFor={selectId}>Hauptstück dieser Woche</label>
-          <select
-            id={selectId}
-            value={day.chiefIndex}
-            onChange={(e) => chooseChief(Number(e.target.value))}
-          >
+          <select id={selectId} value={day.chiefIndex} onChange={(e) => chooseChief(Number(e.target.value))}>
             {CATECHISM.map((c, i) => (
               <option key={c.id} value={i}>
                 {i + 1}. {c.title}
@@ -171,11 +137,7 @@ export function CatechismPage() {
           </span>
         </div>
         <div className="cat-actions">
-          <button
-            type="button"
-            className="btn primary"
-            onClick={() => setHouseFather(true)}
-          >
+          <button type="button" className="btn primary" onClick={() => setHouseFather(true)}>
             Hausvater-Modus: am Tisch abfragen
           </button>
           {habit && (
@@ -184,25 +146,15 @@ export function CatechismPage() {
               className="pill"
               aria-pressed={withChildren}
               disabled={!canToggle(habit, date, store.today(), lookup)}
-              onClick={() =>
-                store.updateDay(date, (d) => toggleHabit(d, habit), {
-                  immediate: true,
-                })
-              }
+              onClick={() => store.toggleHabit(date, habit)}
             >
-              {withChildren
-                ? "✓ Diese Woche mit den Kindern gelernt"
-                : "Mit den Kindern gelernt"}
+              {withChildren ? '✓ Diese Woche mit den Kindern gelernt' : 'Mit den Kindern gelernt'}
             </button>
           )}
         </div>
       </div>
 
-      <CatechismOverview
-        memorized={memorized}
-        currentChief={day.chiefIndex}
-        onOpenPiece={openPiece}
-      />
+      <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} onOpenPiece={openPiece} />
 
       {CATECHISM.map((chief, ci) => (
         <Chief
@@ -214,15 +166,9 @@ export function CatechismPage() {
         >
           {chief.pieces.map((piece, pi) => {
             const id = pieceId(chief, pi);
-            const today =
-              ci === day.chiefIndex && day.pieceIndices.includes(pi);
+            const today = ci === day.chiefIndex && day.pieceIndices.includes(pi);
             return (
-              <article
-                key={id}
-                id={`piece-${id}`}
-                tabIndex={-1}
-                className={`kpiece${today ? " today" : ""}`}
-              >
+              <article key={id} id={`piece-${id}`} tabIndex={-1} className={`kpiece${today ? ' today' : ''}`}>
                 <Section
                   id={`cat.piece.${id}`}
                   title={
@@ -241,7 +187,7 @@ export function CatechismPage() {
                     aria-pressed={!!memorized[id]}
                     onClick={() => toggleMemorized(id)}
                   >
-                    {memorized[id] ? "✓ auswendig" : "auswendig gelernt"}
+                    {memorized[id] ? '✓ auswendig' : 'auswendig gelernt'}
                   </button>
                 </Section>
               </article>
@@ -251,16 +197,8 @@ export function CatechismPage() {
       ))}
 
       <Chief id="table" no="·" title="Tischgebete" defaultOpen={false}>
-        <TablePrayer
-          id="before"
-          title="Vor dem Essen"
-          prayer={TABLE_PRAYER_BEFORE}
-        />
-        <TablePrayer
-          id="after"
-          title="Nach dem Essen"
-          prayer={TABLE_PRAYER_AFTER}
-        />
+        <TablePrayer id="before" title="Vor dem Essen" prayer={TABLE_PRAYER_BEFORE} />
+        <TablePrayer id="after" title="Nach dem Essen" prayer={TABLE_PRAYER_AFTER} />
       </Chief>
 
       <Chief id="duties" no="·" title="Die Haustafel" defaultOpen={false}>
@@ -272,7 +210,7 @@ export function CatechismPage() {
               <span className="small">
                 {d.refs.map((r, i) => (
                   <span key={r}>
-                    {i > 0 && " · "}
+                    {i > 0 && ' · '}
                     <BibleLink reference={r} />
                   </span>
                 ))}
@@ -282,12 +220,7 @@ export function CatechismPage() {
         </ul>
       </Chief>
 
-      <Chief
-        id="confession"
-        no="·"
-        title="Anhang: Privatbeichte"
-        defaultOpen={false}
-      >
+      <Chief id="confession" no="·" title="Anhang: Privatbeichte" defaultOpen={false}>
         {PRIVATE_CONFESSION.intro.map((t) => (
           <p key={t}>{t}</p>
         ))}
@@ -299,30 +232,17 @@ export function CatechismPage() {
             </div>
           ))}
         </dl>
-        <Section
-          id="cat.confession.request"
-          title="Bitte"
-          level={4}
-          titleClassName="cat-sub"
-        >
+        <Section id="cat.confession.request" title="Bitte" level={4} titleClassName="cat-sub">
           <PrayerText text={PRIVATE_CONFESSION.request} />
         </Section>
-        <Section
-          id="cat.confession.confession"
-          title="Bekenntnis"
-          level={4}
-          titleClassName="cat-sub"
-        >
+        <Section id="cat.confession.confession" title="Bekenntnis" level={4} titleClassName="cat-sub">
           <PrayerText text={PRIVATE_CONFESSION.confession} />
           <Rubric>{PRIVATE_CONFESSION.confessionRubric}</Rubric>
           <PrayerText text={PRIVATE_CONFESSION.confessionEnd} />
         </Section>
         {/* The absolution never folds away (rule 1). */}
         <h4 className="cat-sub">Zuspruch des Beichtvaters</h4>
-        <PrayerText
-          text={PRIVATE_CONFESSION.absolution}
-          className="absolution"
-        />
+        <PrayerText text={PRIVATE_CONFESSION.absolution} className="absolution" />
         <p className="small">{PRIVATE_CONFESSION.after}</p>
       </Chief>
 

@@ -1,6 +1,7 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
-import { canToggle, habitsOfRhythm, isDoneInPeriod, isDoneOn, RHYTHM_ORDER, toggleHabit } from '../../domain/habits';
+import { canToggle, habitsOfRhythm, isDoneInPeriod, isDoneOn, RHYTHM_ORDER } from '../../domain/habits';
+import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { StarIcon } from '../../ui/Icons';
 
@@ -35,7 +36,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const week = Array.from({ length: 7 }, (_, i) => addDays(mondayOf(date), i));
   const active = profile.habits.filter((h) => h.active);
 
-  const toggle = (h: Habit, k: DateKey) => store.updateDay(k, (d) => toggleHabit(d, h), { immediate: true });
+  const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
 
   if (active.length === 0) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
@@ -70,7 +71,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
                 if (rhythm === 'daily') {
                   return (
                     <tr key={h.id}>
-                      <HabitName habit={h} note={h.auto ? 'aus dem Ablauf' : undefined} />
+                      <HabitName habit={h} note={h.auto ? 'aus dem Ablauf' : h.id === READING_HABIT ? 'nach dem Leseplan' : undefined} />
                       {week.map((k) => {
                         const on = isDoneOn(h, lookup(k));
                         const enabled = canToggle(h, k, today, lookup);

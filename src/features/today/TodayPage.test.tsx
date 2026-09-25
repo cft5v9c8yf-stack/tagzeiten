@@ -112,6 +112,19 @@ describe('Today', () => {
     expect((screen.getByRole('button', { name: 'Tischgebet mit der Familie, Sa 26.9.' }) as HTMLButtonElement).disabled).toBe(true);
   });
 
+  it('marks the reading through the habit "Bibel lesen" and moves the plan on', async () => {
+    const store = await renderToday('2026-09-25');
+    expect(document.querySelector('input[type="checkbox"]')).toBeNull();
+    const cell = screen.getByRole('button', { name: 'Bibel lesen, Fr 25.9.' });
+    act(() => cell.click());
+    await waitFor(() => expect(cell.getAttribute('aria-pressed')).toBe('true'));
+    expect(store.getDay('2026-09-25').reading!.done).toBe(true);
+    expect(Object.values(store.getProfile().plan.positions).every((p) => p > 0)).toBe(true);
+    expect(screen.getByRole('heading', { name: /Heute lesen/ }).textContent).toContain('gelesen');
+    // Yesterday had no portion: nothing to tick, nothing owed (rule 6).
+    expect((screen.getByRole('button', { name: 'Bibel lesen, Do 24.9.' }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
   it('shows weekly habits once for the week', async () => {
     await renderToday('2026-09-24', (s) =>
       s.updateDay('2026-09-21', (d) => ({ ...d, habits: { worship: true } })),

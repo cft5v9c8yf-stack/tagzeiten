@@ -6,7 +6,7 @@ import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks'
 import { THREE_KEYS, type Day } from '../../domain/model';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { Section } from '../../ui/Section';
-import { ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
+import { ReadingRefs } from '../liturgy/MorningReading';
 import { ChurchWeek, DayHeader } from './ChurchWeek';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
@@ -41,7 +41,6 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
       </>
     }>
       <ReadingRefs date={date} />
-      <ReadCheckbox date={date} />
     </Section>
   );
 }

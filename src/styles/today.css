@@ -556,29 +556,14 @@ a.cy-week-name {
   margin-top: 10px;
 }
 .block-hero {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
 }
 .block-hero .reading-refs {
-  margin: 0 0 12px;
+  margin: 0;
 }
 .block-hero .reading-refs .ref {
-  background: color-mix(in srgb, var(--on-accent) 12%, transparent);
-  border-color: transparent;
-}
-.block-hero .reading-refs .track {
-  color: inherit;
-  opacity: 0.85;
-}
-.block-hero .check {
-  color: inherit;
-}
-.block-hero .check input {
-  accent-color: var(--on-accent);
-}
-.block-hero .info-btn,
-.block-hero :focus-visible {
-  outline-color: var(--on-accent);
+  border-color: color-mix(in srgb, var(--gold) 25%, transparent);
 }
 .block-plain {
   background: var(--sheet);

@@ -5,10 +5,12 @@
  *
  * All reads and writes of the UI go through this module (and data/hooks).
  */
+import { READING_HABIT } from '../content/habits';
 import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/dates';
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
-import { emptyDay, type Day, type Profile } from '../domain/model';
+import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
+import { emptyDay, type Day, type Habit, type Profile } from '../domain/model';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
 import { assignReading, getPlan, markRead as markReadInPlan } from '../domain/readingPlan';
@@ -225,6 +227,15 @@ export class Store {
     const plan = getPlan(this.profile.plan.planId);
     const reading = assignReading(plan, this.profile.plan.positions);
     this.updateDay(date, (d) => ({ ...d, reading }), { immediate: true });
+  }
+
+  /** Toggles a habit for a day. The reading habit marks the portion read and moves the plan. */
+  toggleHabit(date: DateKey, habit: Habit): void {
+    if (habit.id === READING_HABIT) {
+      this.setReadingDone(date, !isDoneOn(habit, this.days.get(date)));
+      return;
+    }
+    this.updateDay(date, (d) => toggleHabitOfDay(d, habit), { immediate: true });
   }
 
   /** Marks a day's reading as read or unread and moves the plan accordingly. */

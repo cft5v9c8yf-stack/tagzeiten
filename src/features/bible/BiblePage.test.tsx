@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -44,10 +44,13 @@ describe('Bibel', () => {
     expect(document.querySelector('progress')).toBeNull();
     expect(document.body.textContent).not.toMatch(/\d+ \/ \d+|Rückstand|nachholen\b(?!, nichts)/);
 
-    // Marking as read moves the plan on.
+    // No checkbox here: the habit "Bibel lesen" marks the reading (on Today).
+    expect(document.querySelector('input[type="checkbox"]')).toBeNull();
     const before = next.querySelector('li')!.textContent;
-    fireEvent.click(screen.getByLabelText('Heute gelesen'));
-    await waitFor(() => expect(store.readingFor(store.today()).reading.done).toBe(true));
+    const habit = store.getProfile().habits.find((h) => h.id === 'bibleReading')!;
+    act(() => store.toggleHabit(store.today(), habit));
+    await waitFor(() => expect(document.querySelector('.block-hero .fold-title')!.textContent).toBe('Heute lesen · gelesen'));
+    expect(store.readingFor(store.today()).reading.done).toBe(true);
     expect(next.querySelector('li')!.textContent).toBe(before);
   });
 

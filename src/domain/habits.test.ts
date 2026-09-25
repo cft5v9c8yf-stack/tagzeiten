@@ -150,6 +150,15 @@ describe('managing habits', () => {
     expect(addHabit(presets, '   ', 'daily', 'own-2')).toHaveLength(presets.length);
   });
 
+  it('places a new preset after its predecessor and switches on a replacing one', () => {
+    const old = presets.filter((h) => h.id !== 'bibleReading');
+    const merged = mergePresets(old);
+    const ids = merged.map((h) => h.id);
+    expect(ids.indexOf('bibleReading')).toBe(ids.indexOf('stillTime') + 1);
+    expect(merged.find((h) => h.id === 'bibleReading')!.active).toBe(true);
+    expect(merged.every((h) => !('activeOnUpdate' in h))).toBe(true);
+  });
+
   it('adds new presets inactive without changing existing settings', () => {
     const old = presets.filter((h) => h.id !== 'mercy').map((h) => (h.id === 'fasting' ? { ...h, active: true } : h));
     const merged = mergePresets(old);
@@ -214,5 +223,27 @@ describe('order and focus', () => {
     const f = setHabitFocus(presets, 'tablePrayer', true);
     expect(f.filter((h) => h.focus).map((h) => h.id)).toEqual(['tablePrayer']);
     expect(setHabitFocus(f, 'tablePrayer', false).some((h) => h.focus)).toBe(false);
+  });
+});
+
+describe('reading habit', () => {
+  const reading = presets.find((h) => h.id === 'bibleReading')!;
+  const withReading = (date: string, done: boolean): Day => ({
+    ...emptyDay(date),
+    reading: { planId: 'standard', portions: { ot: 0, nt: 0 }, done },
+  });
+
+  it('follows the day\'s portion and is toggled through the store only', () => {
+    expect(isDoneOn(reading, withReading('2026-09-24', true))).toBe(true);
+    expect(isDoneOn(reading, withReading('2026-09-24', false))).toBe(false);
+    expect(isDoneOn(reading, { ...emptyDay('2026-09-24'), habits: { bibleReading: true } })).toBe(false);
+    expect(() => toggleHabit(withReading('2026-09-24', false), reading)).toThrow();
+  });
+
+  it('can be ticked today and on past days with a portion only (rule 6)', () => {
+    expect(canToggle(reading, '2026-09-25', '2026-09-25', store([]))).toBe(true);
+    expect(canToggle(reading, '2026-09-24', '2026-09-25', store([]))).toBe(false);
+    expect(canToggle(reading, '2026-09-24', '2026-09-25', store([withReading('2026-09-24', false)]))).toBe(true);
+    expect(canToggle(reading, '2026-09-26', '2026-09-25', store([]))).toBe(false);
   });
 });

@@ -4,7 +4,7 @@ import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import { getPlan, portionLabel, portionUrl } from '../../domain/readingPlan';
 import { Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
-import { MethodHelpBody, ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
+import { MethodHelpBody, ReadingRefs } from '../liturgy/MorningReading';
 import { PlanInfo, PlanSettings } from '../settings/PlanSettings';
 
 const AHEAD = 5;
@@ -47,6 +47,8 @@ function NextPortions({ date }: { date: string }) {
 export function BiblePage() {
   const { date, isToday } = useSelectedDate();
   const store = useStore();
+  useStoreVersion();
+  const read = store.readingFor(date).reading.done;
   useEffect(() => {
     if (isToday) store.ensureTodayReading();
   }, [store, isToday]);
@@ -55,10 +57,19 @@ export function BiblePage() {
     <div className="bible-page">
       <h2>Bibel</h2>
       <SectionVerse id="plan" />
-      <Section id="bible.today" title={isToday ? 'Heute lesen' : 'Lesung'} className="block block-hero">
+      {/* Marked as read through the habit "Bibel lesen" on Today. */}
+      <Section
+        id="bible.today"
+        title={
+          <>
+            {isToday ? 'Heute lesen' : 'Lesung'}
+            {read && <span className="title-state"> · gelesen</span>}
+          </>
+        }
+        className="block block-hero"
+      >
         <ReadingRefs date={date} />
-        <ReadCheckbox date={date} />
-      </Section>
+        </Section>
       <Section id="bible.next" title="Danach" className="block block-plain">
         <NextPortions date={date} />
       </Section>

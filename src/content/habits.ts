@@ -12,10 +12,14 @@ export interface HabitPreset {
   auto: AutoSource | null;
   /** Active on first start. */
   active: boolean;
+  /** Also switched on for existing users when an update brings it (it replaces an earlier control). */
+  activeOnUpdate?: boolean;
 }
 
 export const HABIT_PRESETS: readonly HabitPreset[] = [
   { id: 'stillTime', name: 'Stille Zeit', rhythm: 'daily', auto: 'morning', active: true },
+  // Ticking it marks the day's portion as read and moves the reading plan on.
+  { id: 'bibleReading', name: 'Bibel lesen', rhythm: 'daily', auto: null, active: true, activeOnUpdate: true },
   { id: 'vespers', name: 'Vesper mit der Familie', rhythm: 'daily', auto: 'vespers', active: true },
   { id: 'compline', name: 'Nachtgebet', rhythm: 'daily', auto: 'compline', active: true },
   { id: 'tablePrayer', name: 'Tischgebet mit der Familie', rhythm: 'daily', auto: null, active: true },
@@ -33,6 +37,9 @@ export const HABIT_PRESETS: readonly HabitPreset[] = [
   { id: 'offering', name: 'Opfer und Gaben', rhythm: 'monthly', auto: null, active: false },
   { id: 'mercy', name: 'Werk der Barmherzigkeit', rhythm: 'monthly', auto: null, active: false },
 ];
+
+/** The habit that stands for the day's reading of the plan (see domain/habits.ts). */
+export const READING_HABIT = 'bibleReading';
 
 /** Habit toggled by "Mit den Kindern gelernt" on the catechism page. */
 export const CATECHISM_WITH_CHILDREN_HABIT = 'catechismChildren';

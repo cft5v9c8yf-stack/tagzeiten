@@ -47,21 +47,6 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
   );
 }
 
-/** Checkbox that marks the reading as read; the plan then moves on to the next portion. */
-export function ReadCheckbox({ date }: { date: DateKey }) {
-  const store = useStore();
-  useStoreVersion();
-  const { reading, assigned } = store.readingFor(date);
-  const isToday = date === store.today();
-  if (!assigned && !isToday) return <p className="small muted">An diesem Tag wurde keine Lesung eingetragen.</p>;
-  return (
-    <label className="check">
-      <input type="checkbox" checked={reading.done} onChange={(e) => store.setReadingDone(date, e.target.checked)} />
-      {isToday ? 'Heute gelesen' : 'Gelesen'}
-    </label>
-  );
-}
-
 function QuestionSelect({ date }: { date: DateKey }) {
   const store = useStore();
   const day = useDay(date);
@@ -151,7 +136,6 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
       <Rubric>{full ? READING_RUBRICS.threeTimes : 'Einmal durchlesen, einen Vers auswählen, dann die Doppelfrage.'}</Rubric>
       <p className="small muted">{READING_RUBRICS.paper}</p>
       {full && <p className="small muted">{READING_RUBRICS.restart}</p>}
-      <ReadCheckbox date={ctx.date} />
       {full && <MethodHelp />}
       {(part.fields ?? []).map((f) => {
         if (f === 'morning.questionNo') return <QuestionSelect key={f} date={ctx.date} />;

@@ -2,25 +2,37 @@
  * Habits: done for a day, a week (Mon–Sun) or a calendar month.
  * There is no streak, chain or score anywhere (rule 4).
  */
-import { HABIT_PRESETS } from '../content/habits';
+import { HABIT_PRESETS, READING_HABIT } from '../content/habits';
 import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
 import type { Day, Habit, Rhythm } from './model';
 
 export type DayLookup = (date: DateKey) => Day | undefined;
 
+const fromPreset = ({ activeOnUpdate: _, ...p }: (typeof HABIT_PRESETS)[number], active: boolean): Habit => ({
+  ...p,
+  active,
+  preset: true,
+  focus: false,
+});
+
 export function habitsFromPresets(): Habit[] {
-  return HABIT_PRESETS.map((p) => ({ ...p, preset: true, focus: false }));
+  return HABIT_PRESETS.map((p) => fromPreset(p, p.active));
 }
 
 /**
- * Adds presets introduced by a later app version, inactive, without touching
- * the user's own settings.
+ * Adds presets introduced by a later app version without touching the user's
+ * own settings: inactive (unless the preset replaces an earlier control), placed
+ * after the preset that precedes it.
  */
 export function mergePresets(habits: readonly Habit[]): Habit[] {
   const out = habits.map((h) => ({ ...h }));
-  for (const p of HABIT_PRESETS) {
-    if (!out.some((h) => h.id === p.id)) out.push({ ...p, active: false, preset: true, focus: false });
-  }
+  HABIT_PRESETS.forEach((p, i) => {
+    if (out.some((h) => h.id === p.id)) return;
+    const habit = fromPreset(p, !!p.activeOnUpdate);
+    const before = i > 0 ? out.findIndex((h) => h.id === HABIT_PRESETS[i - 1]!.id) : -1;
+    if (before >= 0) out.splice(before + 1, 0, habit);
+    else out.push(habit);
+  });
   return out;
 }
 
@@ -35,6 +47,8 @@ export function isDoneOn(habit: Habit, day: Day | undefined): boolean {
     case 'compline':
       return day.evening.complineDone;
     default:
+      // Reading the Bible is kept with the day's portion, so the plan can move on.
+      if (habit.id === READING_HABIT) return !!day.reading?.done;
       return !!day.habits[habit.id];
   }
 }
@@ -68,14 +82,20 @@ export function isDoneInPeriod(habit: Habit, date: DateKey, lookup: DayLookup): 
 export function canToggle(habit: Habit, date: DateKey, today: DateKey, lookup: DayLookup): boolean {
   if (habit.auto) return false;
   if (date > today) return false;
+  // A past day can only be ticked if it had a portion; nothing is owed for the others (rule 6).
+  if (habit.id === READING_HABIT) return date === today || !!lookup(date)?.reading;
   if (habit.rhythm === 'daily') return true;
   const doneOn = doneDateInPeriod(habit, date, lookup);
   return doneOn === undefined || doneOn === date;
 }
 
-/** Returns the day with the habit toggled. Throws for auto habits: they are derived. */
+/**
+ * Returns the day with the habit toggled. Throws for auto habits (derived from
+ * the orders) and for the reading habit, which goes through Store.toggleHabit.
+ */
 export function toggleHabit(day: Day, habit: Habit): Day {
   if (habit.auto) throw new Error(`Habit ${habit.id} is derived from the orders`);
+  if (habit.id === READING_HABIT) throw new Error('The reading habit moves the plan: use Store.toggleHabit');
   return { ...day, habits: { ...day.habits, [habit.id]: !day.habits[habit.id] } };
 }
 
