@@ -80,6 +80,10 @@ describe('Nachtgebet', () => {
   it('asks the station of the weekday', async () => {
     await renderEvening('2026-09-24'); // Thursday
     expect(screen.getByText('Als Prediger und Bruder in der Gemeinde:')).toBeTruthy();
+    cleanup();
+    await renderEvening('2026-09-25'); // Friday
+    expect(screen.getByText('Gegenüber dem Nächsten:')).toBeTruthy();
+    expect(screen.getByText('Wem bin ich heute die Liebe schuldig geblieben?')).toBeTruthy();
   });
 
   it('never calls a missed resolution sin in the review', async () => {

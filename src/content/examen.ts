@@ -9,8 +9,9 @@ export type StationId = 'husband' | 'father' | 'worker' | 'preacher' | 'neighbou
 
 export interface Station {
   id: StationId;
-  /** "Als Ehemann" */
   title: string;
+  /** Lead-in above the question; defaults to "Als {title}". */
+  label?: string;
   question: string;
   /** Matching passages from the Table of Duties (Haustafel). */
   refs: readonly string[];
@@ -45,8 +46,10 @@ export const STATIONS: Record<StationId, Station> = {
   neighbour: {
     id: 'neighbour',
     title: 'Nächster',
-    question: 'Wem bin ich heute begegnet, dem ich schuldig geblieben bin?',
-    refs: ['Römer 13,9'],
+    label: 'Gegenüber dem Nächsten',
+    // Echoes Rom 13,8: "Seid niemand nichts schuldig, denn daß ihr euch untereinander liebet."
+    question: 'Wem bin ich heute die Liebe schuldig geblieben?',
+    refs: ['Römer 13,8-10'],
   },
 };
 

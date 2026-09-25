@@ -12,7 +12,7 @@ export function Examination({ date }: { date: DateKey }) {
   return (
     <>
       <p className="small muted">{EXAMEN_INTRO}</p>
-      <p className="station">Als {station.title}:</p>
+      <p className="station">{station.label ?? `Als ${station.title}`}:</p>
       <p className="examen-question">{station.question}</p>
       <p className="small">
         Haustafel:{' '}
