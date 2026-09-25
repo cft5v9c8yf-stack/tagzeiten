@@ -97,6 +97,8 @@ const md = (y: number, month: number, day: number) => toKey(new Date(y, month - 
 interface Marker {
   date: DateKey;
   name: string;
+  /** Stable id of the week, e.g. "advent1", "epiphany3", "trinity16". */
+  key: string;
 }
 
 interface ChurchYearCalendar {
@@ -125,57 +127,61 @@ function calendar(year: number): ChurchYearCalendar {
   const y2 = year + 1;
 
   const markers: Marker[] = [];
-  const sunday = (date: DateKey, name: string) => markers.push({ date, name });
+  const sunday = (date: DateKey, name: string, key: string) => markers.push({ date, name, key });
 
   // Advent
-  for (let i = 0; i < 4; i++) sunday(addDays(start, 7 * i), `${ordinal(i + 1)} Sonntag im Advent`);
+  for (let i = 0; i < 4; i++) sunday(addDays(start, 7 * i), `${ordinal(i + 1)} Sonntag im Advent`, `advent${i + 1}`);
   // Christmas
   const christmas = md(year, 12, 25);
-  markers.push({ date: christmas, name: 'Christfest' });
+  markers.push({ date: christmas, name: 'Christfest', key: 'christmas' });
   let s = addDays(sundayOnOrBefore(christmas), 7);
   if (fromKey(christmas).getDay() === 0) s = addDays(christmas, 7);
-  for (let n = 1; s < md(y2, 1, 6); n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach dem Christfest`);
+  for (let n = 1; s < md(y2, 1, 6); n++, s = addDays(s, 7)) {
+    sunday(s, `${ordinal(n)} Sonntag nach dem Christfest`, `christmas${n}`);
+  }
   // Epiphany and the Sundays after it
   const epiphany = md(y2, 1, 6);
-  markers.push({ date: epiphany, name: 'Epiphanias' });
+  markers.push({ date: epiphany, name: 'Epiphanias', key: 'epiphany' });
   const lastAfterEpiphany = e(-70);
   s = addDays(sundayOnOrBefore(epiphany), 7);
-  for (let n = 1; s < lastAfterEpiphany; n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach Epiphanias`);
-  sunday(lastAfterEpiphany, 'Letzter Sonntag nach Epiphanias');
+  for (let n = 1; s < lastAfterEpiphany; n++, s = addDays(s, 7)) {
+    sunday(s, `${ordinal(n)} Sonntag nach Epiphanias`, `epiphany${n}`);
+  }
+  sunday(lastAfterEpiphany, 'Letzter Sonntag nach Epiphanias', 'epiphanyLast');
   // Pre-Lent, Lent, Holy Week
-  const lentSundays: [number, string][] = [
-    [-63, 'Septuagesimae'],
-    [-56, 'Sexagesimae'],
-    [-49, 'Estomihi'],
-    [-42, 'Invokavit'],
-    [-35, 'Reminiszere'],
-    [-28, 'Okuli'],
-    [-21, 'Lätare'],
-    [-14, 'Judika'],
-    [-7, 'Palmsonntag (Palmarum)'],
+  const lentSundays: [number, string, string][] = [
+    [-63, 'Septuagesimae', 'septuagesimae'],
+    [-56, 'Sexagesimae', 'sexagesimae'],
+    [-49, 'Estomihi', 'estomihi'],
+    [-42, 'Invokavit', 'invokavit'],
+    [-35, 'Reminiszere', 'reminiszere'],
+    [-28, 'Okuli', 'okuli'],
+    [-21, 'Lätare', 'laetare'],
+    [-14, 'Judika', 'judika'],
+    [-7, 'Palmsonntag (Palmarum)', 'palmarum'],
   ];
-  for (const [d, n] of lentSundays) sunday(e(d), n);
+  for (const [d, n, k] of lentSundays) sunday(e(d), n, k);
   // Easter to Trinity
-  const easterSundays: [number, string][] = [
-    [0, 'Ostersonntag'],
-    [7, 'Quasimodogeniti'],
-    [14, 'Miserikordias Domini'],
-    [21, 'Jubilate'],
-    [28, 'Kantate'],
-    [35, 'Rogate'],
-    [42, 'Exaudi'],
-    [49, 'Pfingstsonntag'],
-    [56, 'Trinitatis'],
+  const easterSundays: [number, string, string][] = [
+    [0, 'Ostersonntag', 'easter'],
+    [7, 'Quasimodogeniti', 'quasimodogeniti'],
+    [14, 'Miserikordias Domini', 'misericordias'],
+    [21, 'Jubilate', 'jubilate'],
+    [28, 'Kantate', 'kantate'],
+    [35, 'Rogate', 'rogate'],
+    [42, 'Exaudi', 'exaudi'],
+    [49, 'Pfingstsonntag', 'pentecost'],
+    [56, 'Trinitatis', 'trinity'],
   ];
-  for (const [d, n] of easterSundays) sunday(e(d), n);
+  for (const [d, n, k] of easterSundays) sunday(e(d), n, k);
   // Sundays after Trinity, then the last three Sundays of the church year
   const eternity = addDays(nextStart, -7);
   const thirdLast = addDays(eternity, -14);
   s = e(63);
-  for (let n = 1; s < thirdLast; n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach Trinitatis`);
-  sunday(thirdLast, 'Drittletzter Sonntag des Kirchenjahres');
-  sunday(addDays(eternity, -7), 'Vorletzter Sonntag des Kirchenjahres');
-  sunday(eternity, 'Letzter Sonntag des Kirchenjahres (Ewigkeitssonntag)');
+  for (let n = 1; s < thirdLast; n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach Trinitatis`, `trinity${n}`);
+  sunday(thirdLast, 'Drittletzter Sonntag des Kirchenjahres', 'thirdLast');
+  sunday(addDays(eternity, -7), 'Vorletzter Sonntag des Kirchenjahres', 'secondLast');
+  sunday(eternity, 'Letzter Sonntag des Kirchenjahres (Ewigkeitssonntag)', 'eternity');
   markers.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
   const feasts = new Map<DateKey, string>();
@@ -235,6 +241,8 @@ function calendar(year: number): ChurchYearCalendar {
 export interface ChurchDay {
   /** Name of the week: the most recent Sunday (or Christmas Day / Epiphany). */
   week: string;
+  /** Stable id of the week, e.g. "trinity16". */
+  weekKey: string;
   /** Number of the week within the church year, starting with 1 at the first Advent. */
   weekNumber: number;
   /** Feast or holy day falling on this date, if any. */
@@ -248,9 +256,9 @@ export interface ChurchDay {
 export function churchDay(date: DateKey): ChurchDay {
   const y = fromKey(date).getFullYear();
   const cal = date >= firstAdvent(y) ? calendar(y) : calendar(y - 1);
-  let week = cal.weekMarkers[0]!.name;
+  let marker = cal.weekMarkers[0]!;
   for (const m of cal.weekMarkers) {
-    if (m.date <= date) week = m.name;
+    if (m.date <= date) marker = m;
     else break;
   }
   let season: Season = 'advent';
@@ -259,7 +267,8 @@ export function churchDay(date: DateKey): ChurchDay {
     else break;
   }
   return {
-    week,
+    week: marker.name,
+    weekKey: marker.key,
     weekNumber: Math.floor(daysBetween(cal.start, sundayOnOrBefore(date)) / 7) + 1,
     feast: cal.feasts.get(date),
     circle: SEASON_CIRCLE[season],

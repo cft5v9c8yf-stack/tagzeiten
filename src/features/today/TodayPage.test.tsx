@@ -49,9 +49,18 @@ describe('Today', () => {
     ]);
   });
 
+  it('shows the weekly verse with a link to the passage', async () => {
+    await renderToday('2026-09-24');
+    const v = document.querySelector('.cy-verse')!;
+    expect(v.querySelector('figcaption')!.textContent).toBe('Wochenspruch');
+    expect(v.querySelector('blockquote')!.textContent).toMatch(/^Jetzt aber offenbart .* durch das Evangelium\.$/);
+    expect(v.querySelector('a')!.getAttribute('href')).toBe('https://www.bibleserver.com/LUT/2.Timotheus1,10');
+  });
+
   it('names the feast of the day', async () => {
     await renderToday('2026-04-03');
     expect(document.querySelector('.cy-feast')!.textContent).toBe('Karfreitag');
+    expect(document.querySelector('.cy-verse figcaption')!.textContent).toBe('Spruch des Tages');
     expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('OsterkreisKarwoche');
   });
 

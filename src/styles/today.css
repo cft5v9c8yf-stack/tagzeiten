@@ -460,3 +460,26 @@ progress::-moz-progress-bar {
   color: var(--muted);
   margin-top: 1px;
 }
+.cy-verse {
+  margin: 10px 0 2px;
+  padding: 8px 0 2px 14px;
+  border-left: 2px solid var(--rule);
+}
+.cy-verse figcaption {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cy-verse blockquote {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+.cy-verse-ref {
+  margin: 2px 0 0 !important;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}

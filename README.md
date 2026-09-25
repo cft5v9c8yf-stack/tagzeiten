@@ -39,6 +39,16 @@ src/
   styles/    Design-Tokens und Styles
 ```
 
+## Wochensprüche prüfen
+
+Die Wochensprüche (`src/content/weeklyVerses.ts`) sind wörtliche Ausschnitte der Lutherbibel 1912.
+Gegen die gemeinfreie Textausgabe (CC0) prüfen:
+
+```sh
+npm pack xmlbible-lut1912 && tar xzf xmlbible-lut1912-*.tgz
+LUT1912_DIR=package/text npx vitest run src/content/weeklyVerses.source.test.ts
+```
+
 Die Dauerhaften Regeln aus `CLAUDE.md` sind, wo möglich, als Tests abgesichert
 (`src/domain/rules.test.ts` und die Seitentests): kein Feld für Sündenbekenntnis, jede Prüfung
 endet im Zuspruch, Rückschau vor Prüfung, Kurzformen vollwertig, keine Streaks, kein Rot für
