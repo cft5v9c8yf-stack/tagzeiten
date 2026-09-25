@@ -679,6 +679,17 @@ body.is-sorting * {
   text-transform: uppercase;
   color: var(--gold);
 }
+.sunday-group {
+  margin: 2px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.sunday-summary {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
 .sunday-name {
   margin: 4px 0 2px;
   font-size: 1.6rem;
@@ -724,7 +735,7 @@ body.is-sorting * {
 }
 .sunday-readings {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-bottom: 8px;
 }

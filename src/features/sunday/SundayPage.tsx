@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
-import { CIRCLE_INFO, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
+import { SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
+import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { churchDay, churchYearOutline, CIRCLE_LABEL, CIRCLES, SEASON_LABEL } from '../../domain/churchYear';
@@ -25,12 +26,18 @@ export function SundayPage() {
   const info = SUNDAY_INFO[c.weekKey];
   const verse = WEEKLY_VERSES[c.weekKey];
   const group = trinityGroupOf(c.weekKey);
+  const summary = READING_SUMMARIES[c.weekKey];
   const toChurchYear = (circle: string, week?: string) =>
     withDate('/kirchenjahr', date, isToday) + (isToday ? '?' : '&') + `kreis=${circle}${week ? `&woche=${week}` : ''}`;
 
   return (
     <div className="sunday-page">
       <p className="sunday-kicker">{entry ? `Sonntag, ${longDate(entry.date)}` : 'Diese Woche'}</p>
+      {group && (
+        <p className="sunday-group">
+          {group.title} <span className="muted">({group.range})</span>
+        </p>
+      )}
       <h2 className="sunday-name">{c.week}</h2>
       <p className="sunday-week">{c.weekNumber}. Woche im Kirchenjahr</p>
 
@@ -59,10 +66,12 @@ export function SundayPage() {
             <div className="sunday-reading">
               <span className="track">Evangelium</span>
               <BibleLink reference={info.gospel} />
+              {summary && <p className="sunday-summary">{summary.gospel}</p>}
             </div>
             <div className="sunday-reading">
               <span className="track">Epistel</span>
               <BibleLink reference={info.epistle} />
+              {summary && <p className="sunday-summary">{summary.epistle}</p>}
             </div>
           </div>
           <p className="small muted">In der Bibel lesen, auf Papier; der Link öffnet die Lutherbibel.</p>
@@ -86,15 +95,6 @@ export function SundayPage() {
           ))}
         </ol>
         <p>{SEASON_INFO[c.season]}</p>
-        {group && (
-          <p>
-            <b>{group.title}</b> <span className="muted">({group.range})</span>
-          </p>
-        )}
-        <p className="small muted">{CIRCLE_INFO[c.circle].intro}</p>
-        <p>
-          <Link to={toChurchYear(c.circle, c.weekKey)}>Alle Sonntage im {CIRCLE_LABEL[c.circle]}</Link>
-        </p>
       </section>
     </div>
   );

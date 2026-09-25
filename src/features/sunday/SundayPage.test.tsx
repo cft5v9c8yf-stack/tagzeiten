@@ -42,6 +42,10 @@ describe('Sonntag', () => {
     const links = [...document.querySelectorAll('.sunday-readings a')].map((a) => a.textContent);
     expect(links).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
     expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('PfingstkreisTrinitatiszeit');
-    expect(screen.getByText('Heiligung')).toBeTruthy();
+    // The Trinity group stands above the name of the Sunday.
+    expect(document.querySelector('.sunday-group')!.textContent).toContain('Heiligung');
+    // A short summary of each text, in our own words.
+    expect([...document.querySelectorAll('.sunday-summary')].map((p) => p.textContent)).toHaveLength(2);
+    expect(document.querySelector('.sunday-summary')!.textContent).toContain('Auferstehung und das Leben');
   });
 });

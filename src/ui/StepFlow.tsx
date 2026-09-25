@@ -6,7 +6,7 @@ export interface FlowStep {
   title: string;
   /** Shown in the circle: a number, "·", or nothing (a plain point). */
   mark?: ReactNode;
-  /** Small gold icon under the mark: what happens in this step. */
+  /** Gold icon in the circle: what happens in this step (replaces the mark). */
   icon?: FlowIconName;
   done?: boolean;
 }
@@ -61,7 +61,7 @@ export function StepFlow({
           {steps.map((s, i) => (
             <li
               key={s.id}
-              className={`${s.done ? 'done' : ''}${i === current ? ' current' : ''}${s.mark === undefined || s.mark === '' ? ' point' : ''}`}
+              className={`${s.done ? 'done' : ''}${i === current ? ' current' : ''}${!s.icon && (s.mark === undefined || s.mark === '') ? ' point' : ''}`}
             >
               <button
                 type="button"
@@ -70,9 +70,9 @@ export function StepFlow({
                 title={s.title}
                 onClick={() => onSelect(i)}
               >
-                <span aria-hidden="true">{s.mark}</span>
+                {/* The icon names the step; numbers only where there is no icon. */}
+                {s.icon ? <FlowIcon name={s.icon} size={17} /> : <span aria-hidden="true">{s.mark}</span>}
               </button>
-              {s.icon && <FlowIcon name={s.icon} />}
             </li>
           ))}
         </ol>

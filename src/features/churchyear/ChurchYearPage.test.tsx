@@ -61,12 +61,8 @@ describe('Kirchenjahr', () => {
     expect(document.getElementById('entry-goodFriday')!.textContent).toContain('Johannes 19,16-30');
   });
 
-  it('marks the current week and jumps to it from the Sunday page', async () => {
-    const router = await renderAt('/sonntag?d=2026-09-24');
-    fireEvent.click(await screen.findByRole('link', { name: 'Alle Sonntage im Pfingstkreis' }));
-    const params = new URLSearchParams(router.state.location.search);
-    expect(params.get('kreis')).toBe('pentecost');
-    expect(params.get('woche')).toBe('trinity16');
+  it('marks the current week and jumps to it', async () => {
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost&woche=trinity16');
     const entry = await screen.findByText('16. Sonntag nach Trinitatis', { selector: 'h5' });
     const li = entry.closest('li')!;
     expect(li.classList.contains('current')).toBe(true);
