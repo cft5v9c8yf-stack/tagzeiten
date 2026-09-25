@@ -8,7 +8,9 @@ import {
   chaptersPerDay,
   getPlan,
   initialPositions,
-  ownAmount,
+  fixedAmounts,
+  fixedPlanId,
+  ownAmounts,
   ownPlanId,
   markRead,
   portionLabel,
@@ -139,12 +141,27 @@ describe('advancing and resetting', () => {
 describe('a plan of one own', () => {
   const book = (name: string) => ALL_BOOKS.find((b) => b.name === name)!;
 
-  it('encodes its amount in the plan id and rejects unknown amounts', () => {
-    expect(ownPlanId({ unit: 'chapters', value: 3 })).toBe('eigen-k3');
-    expect(ownAmount('eigen-m15')).toEqual({ unit: 'minutes', value: 15 });
-    expect(ownAmount('eigen-k7')).toBeUndefined();
-    expect(ownAmount('at2-nt1')).toBeUndefined();
+  it('encodes its amounts in the plan id and rejects unknown amounts', () => {
+    expect(ownPlanId([{ unit: 'chapters', value: 3 }])).toBe('eigen-k3');
+    expect(ownAmounts('eigen-m15')).toEqual([{ unit: 'minutes', value: 15 }]);
+    expect(ownAmounts('eigen-k2.k1')).toEqual([
+      { unit: 'chapters', value: 2 },
+      { unit: 'chapters', value: 1 },
+    ]);
+    expect(ownAmounts('eigen-k7')).toBeUndefined();
+    expect(ownAmounts('eigen-k1.k1.k1.k1.k1')).toBeUndefined();
+    expect(ownAmounts('at2-nt1')).toBeUndefined();
     expect(getPlan('eigen-k99').def.id).toBe('at2-nt1');
+  });
+
+  it('reads several books side by side, each with its own chapters', () => {
+    const p = getPlan('eigen-k2.k1');
+    expect(p.tracks.map((t) => [t.def.id, t.def.label])).toEqual([
+      ['bibel', '1. Lesung'],
+      ['bibel2', '2. Lesung'],
+    ]);
+    expect(portionLabel(p.tracks[0]!, p.tracks[0]!.portions[0]!)).toBe('1. Mose 1–2');
+    expect(portionLabel(p.tracks[1]!, p.tracks[1]!.portions[0]!)).toBe('1. Mose 1');
   });
 
   it('walks the whole Bible in chapters a day, never across a book', () => {
@@ -170,5 +187,22 @@ describe('a plan of one own', () => {
     const out = carryPositions(from, to, { at: 7, bibel: i });
     expect(out.at).toBe(7);
     expect(portionLabel(to.tracks[0]!, to.tracks[0]!.portions[out.bibel!]!)).toBe('Johannes 5–6');
+  });
+});
+
+describe('Old and New Testament with other amounts', () => {
+  it('keeps the base plan under its id and names other amounts', () => {
+    expect(fixedPlanId({ at: 'base', nt: 1 })).toBe('at2-nt1');
+    expect(fixedPlanId({ at: 3, nt: 2 })).toBe('atnt-3-2');
+    expect(fixedAmounts('atnt-g-2')).toEqual({ at: 'base', nt: 2 });
+    expect(fixedAmounts('atnt-7-1')).toBeUndefined();
+  });
+
+  it('reads so many chapters a day from each Testament', () => {
+    const [at, nt] = getPlan('atnt-3-2').tracks;
+    expect(portionLabel(at!, at!.portions[0]!)).toBe('1. Mose 1–3');
+    expect(portionLabel(nt!, nt!.portions[0]!)).toBe('Matthäus 1–2');
+    const [atBase] = getPlan('atnt-g-2').tracks;
+    expect(atBase!.portions.slice(0, 2).map((p) => p.to - p.from + 1)).toEqual([2, 1]);
   });
 });

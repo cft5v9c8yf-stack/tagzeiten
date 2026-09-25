@@ -89,4 +89,31 @@ describe('Bibel', () => {
     expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2);
     expect(store.getProfile().plan.own).toBe('eigen-m10');
   });
+
+  it('sets chapters a day for each Testament, and several books in a plan of one own', async () => {
+    const store = await renderBible();
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
+    fireEvent.change((await screen.findAllByLabelText('Kapitel am Tag'))[0]!, { target: { value: '3' } });
+    await waitFor(() => expect(store.getProfile().plan.planId).toBe('atnt-3-1'));
+    fireEvent.change(screen.getAllByLabelText('Kapitel am Tag')[1]!, { target: { value: '2' } });
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toContain('Matthäus 1–2'));
+    expect(document.querySelectorAll('.reading-refs a')[0]!.textContent).toContain('1. Mose 1–3');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Eigener Plan' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Mehrere Bücher' }));
+    // The second book starts with the Gospel according to Matthew.
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. LesungMatthäus 1');
+    fireEvent.click(screen.getByRole('button', { name: 'Weiteres Buch hinzufügen' }));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(3));
+    expect(document.querySelectorAll('.reading-refs a')[2]!.textContent).toBe('3. LesungPsalm 1');
+    fireEvent.click(screen.getAllByRole('button', { name: 'Dieses Buch entfernen' })[1]!);
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. LesungPsalm 1');
+
+    // Back to Old and New Testament, with the amounts left there.
+    fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
+    await waitFor(() => expect(store.getProfile().plan.planId).toBe('atnt-3-2'));
+  });
 });

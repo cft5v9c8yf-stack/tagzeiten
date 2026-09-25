@@ -443,7 +443,9 @@ body.no-scroll {
   padding: 0;
   margin: 14px 0 0;
 }
-.plan-track .seg {
+.plan-track .seg,
+.plan-add,
+.plan-remove {
   margin-bottom: 4px;
 }
 .plan-track legend {
@@ -1161,4 +1163,10 @@ body.is-sorting * {
 }
 .cat-week-title a {
   color: inherit;
+}
+.plan-add {
+  margin-top: 14px;
+}
+.plan-remove {
+  margin-top: 8px;
 }

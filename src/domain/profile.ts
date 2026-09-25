@@ -2,7 +2,7 @@ import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule } from './model';
-import { getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
+import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
   const plan = getPlan(DEFAULT_PLAN_ID);
@@ -66,6 +66,7 @@ function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined
     positions: { ...positions, ...normalizePositions(getPlan(planId), raw?.positions) },
   };
   if (typeof raw?.own === 'string' && isOwnPlan(raw.own)) out.own = raw.own;
+  if (typeof raw?.fixed === 'string' && fixedAmounts(raw.fixed)) out.fixed = raw.fixed;
   return out;
 }
 

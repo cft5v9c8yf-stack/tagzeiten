@@ -155,6 +155,8 @@ export interface Profile {
     positions: Record<string, number>;
     /** The last plan of one's own (e.g. "eigen-k3"), remembered while the fixed plan is chosen. */
     own?: string;
+    /** The last amounts of the fixed plan (e.g. "atnt-3-1"), remembered while a plan of one's own is chosen. */
+    fixed?: string;
   };
   habits: Habit[];
   prayer: { daily: string; weekly: Partial<Record<Weekday, string>> };

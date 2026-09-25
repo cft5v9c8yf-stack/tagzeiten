@@ -56,31 +56,22 @@ export function buildPortions(books: readonly Book[], pattern: readonly number[]
   return out;
 }
 
-/* ---------------------------------------------------------------- a plan of one's own */
+/* ---------------------------------------------------------------- daily amounts */
 
 /** A daily amount: so many chapters, or so many minutes of reading. */
 export type Amount = { unit: 'chapters' | 'minutes'; value: number };
 
-/** The single track of a plan of one's own. */
-export const OWN_TRACK = 'bibel';
+const isChapterChoice = (n: number) => (CHAPTER_CHOICES as readonly number[]).includes(n);
 
-const OWN_RE = /^eigen-([km])(\d+)$/;
-
-/** Plan id of a plan of one's own, e.g. "eigen-k3" (3 chapters) or "eigen-m15" (15 minutes). */
-export function ownPlanId(a: Amount): string {
-  return `eigen-${a.unit === 'chapters' ? 'k' : 'm'}${a.value}`;
-}
-
-/** The amount of a plan of one's own, or undefined for a fixed plan or an unknown id. */
-export function ownAmount(planId: string): Amount | undefined {
-  const m = OWN_RE.exec(planId);
+function parseAmount(code: string): Amount | undefined {
+  const m = /^([km])(\d+)$/.exec(code);
   if (!m) return undefined;
   const value = Number(m[2]);
-  if (m[1] === 'k') return (CHAPTER_CHOICES as readonly number[]).includes(value) ? { unit: 'chapters', value } : undefined;
+  if (m[1] === 'k') return isChapterChoice(value) ? { unit: 'chapters', value } : undefined;
   return (MINUTE_CHOICES as readonly number[]).includes(value) ? { unit: 'minutes', value } : undefined;
 }
 
-export const isOwnPlan = (planId: string) => ownAmount(planId) !== undefined;
+const amountCode = (a: Amount) => `${a.unit === 'chapters' ? 'k' : 'm'}${a.value}`;
 
 /** Chapters per portion for a book: fixed, or as many as fit into the time (at least one). */
 export function chaptersPerDay(book: Book, a: Amount): number {
@@ -89,45 +80,120 @@ export function chaptersPerDay(book: Book, a: Amount): number {
   return Math.max(1, Math.round((a.value * VERSES_PER_MINUTE) / perChapter));
 }
 
-function ownPlan(id: string, a: Amount): Plan {
+/** Portions of a track whose size is set per book, never across a book boundary. */
+function portionsBy(books: readonly Book[], size: (b: Book) => readonly number[]): Portion[] {
+  return books.flatMap((b, i) => buildPortions([b], size(b)).map((p) => ({ ...p, book: i })));
+}
+
+function track(def: TrackDef, portions: Portion[]): Track {
+  return { def, portions, totalChapters: def.books.reduce((s, b) => s + b.chapters, 0) };
+}
+
+/* ---------------------------------------------------------------- Old and New Testament */
+
+/** Chapters a day in the fixed plan; "base" is the 2-1-1-1 pattern of the Old Testament. */
+export type FixedAmounts = { at: number | 'base'; nt: number };
+
+const FIXED_RE = /^atnt-(g|\d+)-(\d+)$/;
+
+export function fixedPlanId(a: FixedAmounts): string {
+  if (a.at === 'base' && a.nt === 1) return DEFAULT_PLAN_ID;
+  return `atnt-${a.at === 'base' ? 'g' : a.at}-${a.nt}`;
+}
+
+/** The daily amounts of the fixed plan, or undefined for a plan of one's own or an unknown id. */
+export function fixedAmounts(planId: string): FixedAmounts | undefined {
+  if (planId === DEFAULT_PLAN_ID) return { at: 'base', nt: 1 };
+  const m = FIXED_RE.exec(planId);
+  if (!m) return undefined;
+  const at = m[1] === 'g' ? 'base' : Number(m[1]);
+  const nt = Number(m[2]);
+  if ((at !== 'base' && !isChapterChoice(at)) || !isChapterChoice(nt)) return undefined;
+  return { at, nt };
+}
+
+const chapters = (n: number) => (n === 1 ? 'einem Kapitel' : `${n} Kapiteln`);
+
+function fixedPlan(id: string, a: FixedAmounts): Plan {
+  const base = PLANS.find((p) => p.id === DEFAULT_PLAN_ID) ?? PLANS[0];
+  if (!base) throw new Error('No reading plans defined');
+  if (id === DEFAULT_PLAN_ID) {
+    return { def: base, tracks: base.tracks.map((t) => track(t, buildPortions(t.books, t.pattern))) };
+  }
+  const tracks = base.tracks.map((t) => ({
+    ...t,
+    pattern: t.id === 'at' ? (a.at === 'base' ? t.pattern : [a.at]) : [a.nt],
+  }));
   const def: PlanDef = {
     id,
-    name: 'Eigener Plan',
-    description:
-      a.unit === 'chapters'
-        ? `Täglich ${a.value === 1 ? 'ein Kapitel' : `${a.value} Kapitel`}, ab dem Buch deiner Wahl. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`
-        : `Täglich etwa ${a.value} Minuten, ab dem Buch deiner Wahl. Wie viele Kapitel das sind, richtet sich nach der Länge der Kapitel im jeweiligen Buch. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`,
-    tracks: [{ id: OWN_TRACK, label: a.unit === 'minutes' ? `Etwa ${a.value} Minuten` : 'Lesung', books: ALL_BOOKS, pattern: [1] }],
+    name: 'Altes und Neues Testament',
+    description: `Altes Testament ${a.at === 'base' ? 'im Wechsel von zwei und einem Kapitel' : `mit täglich ${chapters(a.at)}`}, Neues Testament mit täglich ${chapters(a.nt)}, in Luthers Buchreihenfolge. Der Plan läuft nach Fortschritt, nicht nach Datum: wer aussetzt, macht beim nächsten Abschnitt weiter.`,
+    tracks,
   };
-  const t = def.tracks[0]!;
-  const portions: Portion[] = [];
-  t.books.forEach((b, i) => portions.push(...buildPortions([b], [chaptersPerDay(b, a)]).map((p) => ({ ...p, book: i }))));
-  return { def, tracks: [{ def: t, portions, totalChapters: t.books.reduce((s, b) => s + b.chapters, 0) }] };
+  return { def, tracks: tracks.map((t) => track(t, buildPortions(t.books, t.pattern))) };
+}
+
+/* ---------------------------------------------------------------- a plan of one's own */
+
+/** Track ids of a plan of one's own: "bibel", "bibel2", … */
+export const OWN_TRACK = 'bibel';
+export const MAX_OWN_TRACKS = 4;
+export const ownTrackId = (i: number) => (i === 0 ? OWN_TRACK : `${OWN_TRACK}${i + 1}`);
+
+/**
+ * Plan id of a plan of one's own: one amount per book read side by side,
+ * e.g. "eigen-k3" (one book, 3 chapters), "eigen-m15" (15 minutes),
+ * "eigen-k2.k1" (two books, 2 and 1 chapters).
+ */
+export function ownPlanId(amounts: readonly Amount[]): string {
+  return `eigen-${amounts.map(amountCode).join('.')}`;
+}
+
+/** The amounts of a plan of one's own, or undefined for the fixed plan or an unknown id. */
+export function ownAmounts(planId: string): Amount[] | undefined {
+  if (!planId.startsWith('eigen-')) return undefined;
+  const codes = planId.slice(6).split('.');
+  if (codes.length < 1 || codes.length > MAX_OWN_TRACKS) return undefined;
+  const out = codes.map(parseAmount);
+  return out.every((a): a is Amount => a !== undefined) ? out : undefined;
+}
+
+export const isOwnPlan = (planId: string) => ownAmounts(planId) !== undefined;
+
+const DESCRIBE = (a: Amount) =>
+  a.unit === 'chapters' ? (a.value === 1 ? 'ein Kapitel' : `${a.value} Kapitel`) : `etwa ${a.value} Minuten`;
+
+function ownPlan(id: string, amounts: readonly Amount[]): Plan {
+  const single = amounts.length === 1;
+  const defs: TrackDef[] = amounts.map((a, i) => ({
+    id: ownTrackId(i),
+    label: single ? (a.unit === 'minutes' ? `Etwa ${a.value} Minuten` : 'Lesung') : `${i + 1}. Lesung`,
+    books: ALL_BOOKS,
+    pattern: [1],
+  }));
+  const first = amounts[0]!;
+  const description = single
+    ? first.unit === 'chapters'
+      ? `Täglich ${DESCRIBE(first)} aus dem Buch deiner Wahl. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`
+      : `Täglich etwa ${first.value} Minuten aus dem Buch deiner Wahl. Wie viele Kapitel das sind, richtet sich nach der Länge der Kapitel im jeweiligen Buch. Danach geht es in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`
+    : `Täglich aus ${amounts.length} Büchern deiner Wahl, aus jedem so viele Kapitel, wie du festlegst. Ist ein Buch zu Ende, geht es dort mit dem nächsten in Luthers Buchreihenfolge weiter. Der Plan läuft nach Fortschritt, nicht nach Datum.`;
+  return {
+    def: { id, name: 'Eigener Plan', description, tracks: defs },
+    tracks: defs.map((t, i) => track(t, portionsBy(t.books, (b) => [chaptersPerDay(b, amounts[i]!)]))),
+  };
 }
 
 /* ---------------------------------------------------------------- plans */
 
 const cache = new Map<string, Plan>();
 
+/** The plan for an id; an unknown id falls back to the fixed plan. */
 export function getPlan(planId: string): Plan {
   const hit = cache.get(planId);
   if (hit) return hit;
-  const own = ownAmount(planId);
-  let plan: Plan;
-  if (own) {
-    plan = ownPlan(planId, own);
-  } else {
-    const def = PLANS.find((p) => p.id === planId) ?? PLANS.find((p) => p.id === DEFAULT_PLAN_ID) ?? PLANS[0];
-    if (!def) throw new Error('No reading plans defined');
-    plan = {
-      def,
-      tracks: def.tracks.map((t) => ({
-        def: t,
-        portions: buildPortions(t.books, t.pattern),
-        totalChapters: t.books.reduce((s, b) => s + b.chapters, 0),
-      })),
-    };
-  }
+  const own = ownAmounts(planId);
+  const fixed = own ? undefined : fixedAmounts(planId);
+  const plan = own ? ownPlan(planId, own) : fixed ? fixedPlan(planId, fixed) : fixedPlan(DEFAULT_PLAN_ID, { at: 'base', nt: 1 });
   cache.set(planId, plan);
   return plan;
 }

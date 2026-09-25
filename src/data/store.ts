@@ -256,20 +256,21 @@ export class Store {
 
   /**
    * Chooses the reading plan: the fixed one (Old and New Testament) or one of
-   * one's own. The place in the Bible is carried over; today's reading follows,
-   * unless it was already read.
+   * one's own, or other amounts a day. The place in the Bible is carried over
+   * (or set by `starts`, per track); today's reading follows, unless it was
+   * already read.
    */
-  setPlan(planId: string): void {
+  setPlan(planId: string, starts: Record<string, number> = {}): void {
     const to = getPlan(planId);
     const current = this.profile.plan;
-    if (to.def.id === current.planId) return;
+    if (to.def.id === current.planId && Object.keys(starts).length === 0) return;
     // Coming back to a plan of one's own with another amount: start where the last one stood.
     const from = getPlan(isOwnPlan(current.planId) || !current.own ? current.planId : current.own);
-    const positions = carryPositions(from, to, current.positions);
+    const positions = { ...carryPositions(from, to, current.positions), ...starts };
     this.updateProfile(
       (p) => ({
         ...p,
-        plan: { ...p.plan, planId: to.def.id, positions, ...(isOwnPlan(to.def.id) ? { own: to.def.id } : {}) },
+        plan: { ...p.plan, planId: to.def.id, positions, ...(isOwnPlan(to.def.id) ? { own: to.def.id } : { fixed: to.def.id }) },
       }),
       { immediate: true },
     );
