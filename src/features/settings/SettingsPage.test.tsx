@@ -141,29 +141,63 @@ describe('Mehr: Gewohnheiten', () => {
   });
 });
 
-describe('Mehr: Reihenfolge und Fokus', () => {
+describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
   const dailyIds = (s: Store) => s.getProfile().habits.filter((h) => h.rhythm === 'daily').map((h) => h.id);
 
-  it('moves a habit within its group and keeps the focus on the button', async () => {
+  /** jsdom has no layout: give every row of a list a 60px slot. */
+  function fakeLayout() {
+    document.querySelectorAll('.habit-list').forEach((list) => {
+      list.querySelectorAll<HTMLElement>('[data-sort-id]').forEach((row, i) => {
+        row.getBoundingClientRect = () => ({ top: i * 60, height: 60, bottom: i * 60 + 60, left: 0, right: 300, width: 300, x: 0, y: i * 60, toJSON: () => ({}) });
+      });
+    });
+  }
+
+  it('reorders a habit by dragging its handle', async () => {
     const { store } = await renderAt('/mehr', <SettingsPage />);
     const before = dailyIds(store);
-    const up = await screen.findByRole('button', { name: 'Tischgebet mit der Familie nach oben' });
-    up.focus();
-    fireEvent.click(up);
+    const handle = await screen.findByRole('button', { name: 'Tischgebet mit der Familie verschieben' });
+    fakeLayout();
+    const from = before.indexOf('tablePrayer');
+    const y = from * 60 + 30;
+    fireEvent.pointerDown(handle, { pointerId: 1, pointerType: 'touch', clientY: y });
+    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'touch', clientY: y + 70 });
+    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'touch', clientY: y + 130 });
+    // While dragging, nothing is saved yet and the row follows the finger.
+    expect(dailyIds(store)).toEqual(before);
+    expect(handle.closest('li')!.style.transform).toBe('translateY(130px)');
+    fireEvent.pointerUp(handle, { pointerId: 1, pointerType: 'touch', clientY: y + 130 });
     const after = dailyIds(store);
-    expect(after.indexOf('tablePrayer')).toBe(before.indexOf('tablePrayer') - 1);
-    await waitFor(() =>
-      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Tischgebet mit der Familie nach oben' })),
-    );
-    expect(screen.getByText(/Tischgebet mit der Familie: Platz \d von \d/)).toBeTruthy();
+    expect(after.indexOf('tablePrayer')).toBe(from + 2);
+    expect(after.slice().sort()).toEqual(before.slice().sort());
+    expect(screen.getByText(new RegExp(`Tischgebet mit der Familie: Platz ${from + 3} von`))).toBeTruthy();
   });
 
-  it('cannot move the first habit of a group further up', async () => {
-    await renderAt('/mehr', <SettingsPage />);
-    const first = (await screen.findByRole('button', { name: 'Stille Zeit nach oben' })) as HTMLButtonElement;
-    expect(first.disabled).toBe(true);
-    const firstWeekly = screen.getByRole('button', { name: 'Gottesdienst – den Feiertag heiligen nach oben' }) as HTMLButtonElement;
-    expect(firstWeekly.disabled).toBe(true);
+  it('keeps the order when a drag is cancelled', async () => {
+    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const before = dailyIds(store);
+    const handle = await screen.findByRole('button', { name: 'Die Kinder segnen verschieben' });
+    fakeLayout();
+    fireEvent.pointerDown(handle, { pointerId: 1, pointerType: 'mouse', button: 0, clientY: 250 });
+    fireEvent.pointerMove(handle, { pointerId: 1, pointerType: 'mouse', clientY: 20 });
+    fireEvent.pointerCancel(handle, { pointerId: 1 });
+    expect(dailyIds(store)).toEqual(before);
+  });
+
+  it('moves with the arrow keys on the handle and keeps the focus there', async () => {
+    const { store } = await renderAt('/mehr', <SettingsPage />);
+    const before = dailyIds(store);
+    const handle = await screen.findByRole('button', { name: 'Tischgebet mit der Familie verschieben' });
+    handle.focus();
+    fireEvent.keyDown(handle, { key: 'ArrowUp' });
+    expect(dailyIds(store).indexOf('tablePrayer')).toBe(before.indexOf('tablePrayer') - 1);
+    await waitFor(() =>
+      expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Tischgebet mit der Familie verschieben' })),
+    );
+    // The first habit of a group stays first.
+    const first = screen.getByRole('button', { name: 'Stille Zeit verschieben' });
+    fireEvent.keyDown(first, { key: 'ArrowUp' });
+    expect(dailyIds(store)[0]).toBe('stillTime');
   });
 
   it('marks a habit as focus with a star', async () => {

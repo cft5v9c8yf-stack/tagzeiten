@@ -1,13 +1,13 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { RHYTHM_LABEL } from '../../content/habits';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
   addHabit,
-  canMoveHabit,
   habitsOfRhythm,
   moveHabit,
+  moveHabitTo,
   newHabitId,
   removeHabit,
   renameHabit,
@@ -15,23 +15,25 @@ import {
   setHabitActive,
   setHabitFocus,
 } from '../../domain/habits';
-import { ChevronIcon, StarIcon } from '../../ui/Icons';
+import { GripIcon, StarIcon } from '../../ui/Icons';
+import { useSortable } from '../../ui/useSortable';
 import type { Habit, Rhythm } from '../../domain/model';
 
 const RHYTHMS = RHYTHM_ORDER;
-type Direction = 'up' | 'down';
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
 function HabitRow({
   habit,
-  canUp,
-  canDown,
-  onMove,
+  handle,
+  style,
+  dragging,
+  hintId,
 }: {
   habit: Habit;
-  canUp: boolean;
-  canDown: boolean;
-  onMove: (id: string, direction: Direction) => void;
+  handle: HTMLAttributes<HTMLButtonElement>;
+  style: CSSProperties | undefined;
+  dragging: boolean;
+  hintId: string;
 }) {
   const store = useStore();
   const id = useId();
@@ -40,7 +42,21 @@ function HabitRow({
     store.updateProfile((p) => ({ ...p, habits: fn(p.habits) }), { immediate });
 
   return (
-    <li className={`habit-edit${habit.focus ? ' is-focus' : ''}`}>
+    <li
+      className={`habit-edit${habit.focus ? ' is-focus' : ''}${dragging ? ' is-dragging' : ''}`}
+      data-sort-id={habit.id}
+      style={style}
+    >
+      <button
+        type="button"
+        id={`sort-${habit.id}`}
+        className="icon-btn drag-handle"
+        aria-label={`${habit.name} verschieben`}
+        aria-describedby={hintId}
+        {...handle}
+      >
+        <GripIcon />
+      </button>
       <input
         id={id}
         type="checkbox"
@@ -99,29 +115,50 @@ function HabitRow({
       >
         <StarIcon filled={habit.focus} />
       </button>
-      <span className="move-btns">
-        <button
-          type="button"
-          id={`move-up-${habit.id}`}
-          className="icon-btn"
-          disabled={!canUp}
-          aria-label={`${habit.name} nach oben`}
-          onClick={() => onMove(habit.id, 'up')}
-        >
-          <ChevronIcon direction="up" />
-        </button>
-        <button
-          type="button"
-          id={`move-down-${habit.id}`}
-          className="icon-btn"
-          disabled={!canDown}
-          aria-label={`${habit.name} nach unten`}
-          onClick={() => onMove(habit.id, 'down')}
-        >
-          <ChevronIcon direction="down" />
-        </button>
-      </span>
     </li>
+  );
+}
+
+function HabitGroup({
+  rhythm,
+  habits,
+  hintId,
+  onMoved,
+}: {
+  rhythm: Rhythm;
+  habits: Habit[];
+  hintId: string;
+  onMoved: (id: string, viaKeyboard: boolean) => void;
+}) {
+  const store = useStore();
+  const ids = habits.map((h) => h.id);
+  const { listRef, drag, handleProps, itemStyle } = useSortable({
+    ids,
+    onDrop: (id, index) => {
+      store.updateProfile((p) => ({ ...p, habits: moveHabitTo(p.habits, id, index) }), { immediate: true });
+      onMoved(id, false);
+    },
+    onKeyMove: (id, direction) => {
+      store.updateProfile((p) => ({ ...p, habits: moveHabit(p.habits, id, direction) }), { immediate: true });
+      onMoved(id, true);
+    },
+  });
+  return (
+    <div>
+      <h3>{GROUP_TITLE[rhythm]}</h3>
+      <ul className={`habit-list${drag ? ' sorting' : ''}`} ref={(el) => (listRef.current = el)}>
+        {habits.map((h) => (
+          <HabitRow
+            key={h.id}
+            habit={h}
+            handle={handleProps(h.id)}
+            style={itemStyle(h.id)}
+            dragging={drag?.id === h.id}
+            hintId={hintId}
+          />
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -134,25 +171,22 @@ export function HabitSettings() {
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
   const [announcement, setAnnouncement] = useState('');
-  const [refocus, setRefocus] = useState<{ id: string; direction: Direction } | null>(null);
+  const [refocus, setRefocus] = useState<string | null>(null);
+  const hintId = useId();
 
-  // Keep the keyboard focus on the moved habit's button, so it can be moved again.
+  // After moving by keyboard, keep the focus on the handle so it can be moved again.
   useEffect(() => {
     if (!refocus) return;
-    const same = document.getElementById(`move-${refocus.direction}-${refocus.id}`) as HTMLButtonElement | null;
-    const other = document.getElementById(
-      `move-${refocus.direction === 'up' ? 'down' : 'up'}-${refocus.id}`,
-    ) as HTMLButtonElement | null;
-    (same && !same.disabled ? same : other)?.focus();
+    document.getElementById(`sort-${refocus}`)?.focus();
     setRefocus(null);
   }, [refocus]);
 
-  const move = (id: string, direction: Direction) => {
-    const next = store.updateProfile((p) => ({ ...p, habits: moveHabit(p.habits, id, direction) }), { immediate: true });
-    const h = next.habits.find((x) => x.id === id)!;
-    const group = habitsOfRhythm(next.habits, h.rhythm);
+  const moved = (id: string, viaKeyboard: boolean) => {
+    const habits = store.getProfile().habits;
+    const h = habits.find((x) => x.id === id)!;
+    const group = habitsOfRhythm(habits, h.rhythm);
     setAnnouncement(`${h.name}: Platz ${group.findIndex((x) => x.id === id) + 1} von ${group.length}`);
-    setRefocus({ id, direction });
+    if (viaKeyboard) setRefocus(id);
   };
 
   const add = (e: React.FormEvent) => {
@@ -167,27 +201,17 @@ export function HabitSettings() {
     <section aria-labelledby="habits-settings">
       <h2 id="habits-settings">Gewohnheiten</h2>
       <p className="small muted">
-        {NO_SCORE_NOTE} Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Mit dem
-        Stern markierst du, worauf du gerade achten willst.
+        {NO_SCORE_NOTE} Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Zum
+        Sortieren am Griff ziehen. Mit dem Stern markierst du, worauf du gerade achten willst.
       </p>
       <p className="visually-hidden" aria-live="polite">
         {announcement}
       </p>
+      <p id={hintId} className="visually-hidden">
+        Zum Verschieben ziehen oder mit den Pfeiltasten nach oben und unten bewegen.
+      </p>
       {RHYTHMS.map((r) => (
-        <div key={r}>
-          <h3>{GROUP_TITLE[r]}</h3>
-          <ul className="habit-list">
-            {habitsOfRhythm(profile.habits, r).map((h) => (
-              <HabitRow
-                key={h.id}
-                habit={h}
-                canUp={canMoveHabit(profile.habits, h.id, 'up')}
-                canDown={canMoveHabit(profile.habits, h.id, 'down')}
-                onMove={move}
-              />
-            ))}
-          </ul>
-        </div>
+        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(profile.habits, r)} hintId={hintId} onMoved={moved} />
       ))}
       <h3>Eigene anlegen</h3>
       <form className="add-habit" onSubmit={add}>

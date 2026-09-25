@@ -19,10 +19,16 @@ export function StarIcon({ filled, size = 20 }: { filled: boolean; size?: number
   );
 }
 
-export function ChevronIcon({ direction }: { direction: 'up' | 'down' }) {
+/** Drag handle: two columns of dots. */
+export function GripIcon() {
   return (
-    <svg {...base} fill="none">
-      <path d={direction === 'up' ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'} />
+    <svg {...base} fill="currentColor" stroke="none">
+      {[6, 12, 18].map((y) => (
+        <g key={y}>
+          <circle cx={9} cy={y} r={1.6} />
+          <circle cx={15} cy={y} r={1.6} />
+        </g>
+      ))}
     </svg>
   );
 }

@@ -368,8 +368,10 @@ details.chief .title {
 
 /* Habit settings: star and ordering */
 .habit-edit {
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto auto 1fr auto;
   gap: 8px;
+  position: relative;
+  background: var(--paper);
 }
 .icon-btn {
   appearance: none;
@@ -394,12 +396,34 @@ details.chief .title {
 .star-btn[aria-pressed='true'] {
   color: var(--accent);
 }
-.move-btns {
-  display: inline-flex;
-  flex-direction: column;
+.drag-handle {
+  width: 32px;
+  margin-left: -6px;
+  cursor: grab;
+  /* The handle takes the gesture; the rest of the row scrolls the page. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
-.move-btns .icon-btn {
-  height: 28px;
+.habit-list.sorting .habit-edit {
+  transition: transform 0.15s ease;
+}
+.habit-list.sorting .habit-edit.is-dragging {
+  transition: none;
+  z-index: 3;
+  background: var(--sheet);
+  border-radius: var(--radius-s);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.habit-edit.is-dragging + .habit-edit {
+  border-top-color: transparent;
+}
+body.is-sorting,
+body.is-sorting * {
+  cursor: grabbing !important;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .habit-edit.is-focus .habit-edit-main > label,
 .habit-edit.is-focus .habit-edit-main > input {

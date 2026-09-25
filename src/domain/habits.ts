@@ -138,6 +138,20 @@ export function moveHabit(habits: readonly Habit[], id: string, direction: 'up' 
   return out;
 }
 
+/**
+ * Places a habit at `index` within its rhythm group (0 = first). The group's
+ * habits keep the slots they occupy in the overall list; other groups stay put.
+ */
+export function moveHabitTo(habits: readonly Habit[], id: string, index: number): Habit[] {
+  const h = habits.find((x) => x.id === id);
+  if (!h) return [...habits];
+  const group = habitsOfRhythm(habits, h.rhythm).filter((x) => x.id !== id);
+  const at = Math.max(0, Math.min(index, group.length));
+  group.splice(at, 0, h);
+  let next = 0;
+  return habits.map((x) => (x.rhythm === h.rhythm ? group[next++]! : x));
+}
+
 export function newHabitId(now: number = Date.now()): string {
   return `own-${now.toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
 }

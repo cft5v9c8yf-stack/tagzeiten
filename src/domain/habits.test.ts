@@ -6,6 +6,7 @@ import {
   canMoveHabit,
   habitsOfRhythm,
   moveHabit,
+  moveHabitTo,
   setHabitFocus,
   canToggle,
   doneDateInPeriod,
@@ -192,6 +193,20 @@ describe('order and focus', () => {
 
   it('moves up and down symmetrically', () => {
     expect(moveHabit(moveHabit(presets, 'fasting', 'down'), 'fasting', 'up')).toEqual(presets);
+  });
+
+  it('places a habit anywhere within its group', () => {
+    const daily = ids(presets, 'daily');
+    const last = moveHabitTo(presets, daily[0]!, 99);
+    expect(ids(last, 'daily')).toEqual([...daily.slice(1), daily[0]]);
+    const first = moveHabitTo(presets, daily.at(-1)!, 0);
+    expect(ids(first, 'daily')).toEqual([daily.at(-1), ...daily.slice(0, -1)]);
+    const middle = moveHabitTo(presets, daily[0]!, 2);
+    expect(ids(middle, 'daily')).toEqual([daily[1], daily[2], daily[0], ...daily.slice(3)]);
+    // other groups and their slots are untouched
+    expect(middle.map((h) => h.rhythm)).toEqual(presets.map((h) => h.rhythm));
+    expect(ids(middle, 'weekly')).toEqual(ids(presets, 'weekly'));
+    expect(moveHabitTo(presets, daily[2]!, 2)).toEqual(presets);
   });
 
   it('marks and unmarks a focus habit', () => {
