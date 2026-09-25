@@ -19,6 +19,9 @@
   --done-soft: #e3ede6;
   --half: #9a7b2f;
   --half-soft: #f3ecd9;
+  /* Gold for the Today tab only: quiet, not a reward colour. */
+  --gold: #9a7b2f;
+  --gold-soft: #f6efdc;
 
   --serif: 'Literata', Georgia, 'Times New Roman', serif;
   --sans: 'Source Sans 3', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -55,6 +58,8 @@
     --done-soft: #1f3328;
     --half: #d2b26a;
     --half-soft: #33301f;
+    --gold: #d6b66e;
+    --gold-soft: #2e2a1c;
     color-scheme: dark;
   }
 }
@@ -74,5 +79,7 @@
   --done-soft: #1f3328;
   --half: #d2b26a;
   --half-soft: #33301f;
+  --gold: #d6b66e;
+  --gold-soft: #2e2a1c;
   color-scheme: dark;
 }

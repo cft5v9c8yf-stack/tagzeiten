@@ -461,11 +461,13 @@ progress::-moz-progress-bar {
 }
 .cy-circles {
   list-style: none;
-  padding: 0;
-  margin: 12px 0 4px;
+  margin: 14px 0 4px;
+  padding: 3px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
 }
 .cy-circles li {
   font-family: var(--sans);
@@ -473,22 +475,22 @@ progress::-moz-progress-bar {
   font-weight: 600;
   text-align: center;
   color: var(--muted);
-  padding: 5px 2px 6px;
-  border-top: 3px solid var(--rule);
+  border-radius: 999px;
 }
 .cy-circles li.current {
   color: var(--ink);
-  border-top-color: var(--accent);
+  background: var(--accent-soft);
 }
 .cy-circles .cy-circle-name,
 .cy-circles .cy-season {
   display: block;
+  line-height: 1.2;
 }
 .cy-circles .cy-season {
   font-weight: 400;
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-top: 1px;
+  font-size: 0.7rem;
+  color: var(--ink);
+  opacity: 0.8;
 }
 .cy-verse {
   margin: 10px 0 2px;
@@ -521,14 +523,48 @@ a.cy-week-name {
   border-bottom: 1px solid var(--rule);
 }
 .cy-circles a {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: inherit;
   text-decoration: none;
-  min-height: 36px;
+  min-height: 40px;
+  padding: 4px 6px;
 }
 .cy-circles li:not(.current) a:hover .cy-circle-name {
   color: var(--ink);
 }
 .cy-readings.cy-today-readings {
   margin: 8px 0 0 16px;
+}
+
+/* ---------------------------------------------------------------- bible page */
+.bible-page .section-verse {
+  margin-top: 4px;
+}
+.next-portions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 18px;
+}
+.next-track-title {
+  margin: 4px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.next-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.next-list li {
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.next-list li:last-child {
+  border-bottom: 0;
 }

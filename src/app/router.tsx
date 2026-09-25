@@ -1,5 +1,6 @@
 import { createBrowserRouter, createHashRouter } from 'react-router';
 import { ArchivePage } from '../features/archive/ArchivePage';
+import { BiblePage } from '../features/bible/BiblePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
 import { EveningPage } from '../features/evening/EveningPage';
@@ -20,6 +21,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
     element: <Layout />,
     children: [
       { index: true, element: <TodayPage /> },
+      { path: 'bibel', element: <BiblePage /> },
       { path: 'morgen', element: <MorningPage /> },
       { path: 'abend', element: <EveningPage /> },
       { path: 'katechismus', element: <CatechismPage /> },

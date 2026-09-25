@@ -230,9 +230,9 @@ nav.tabs ul {
   padding: 0;
   max-width: var(--content-width);
   display: grid;
-  /* "Heute" exactly in the middle: two sections left of it, three to the right,
-     both halves equally wide ("Katechismus" gets the widest column). */
-  grid-template-columns: 1fr 1fr 68px 0.9fr 0.55fr 0.55fr;
+  /* "Heute" exactly in the middle, three sections on either side; both halves
+     equally wide, "Katechismus" gets the widest column. */
+  grid-template-columns: 0.9fr 1.05fr 0.95fr 64px 1.3fr 0.85fr 0.75fr;
 }
 nav.tabs li {
   min-width: 0;
@@ -250,13 +250,12 @@ nav.tabs .tab-today a {
   margin-top: -19px;
   border-radius: 50%;
   background: var(--sheet);
-  border: 1.5px solid var(--rule);
-  color: var(--muted);
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
 }
 nav.tabs .tab-today a[aria-current='page'] .today-ring {
-  border: 2px solid var(--accent);
-  background: var(--accent-soft);
-  color: var(--ink);
+  border-width: 2px;
+  background: var(--gold-soft);
 }
 nav.tabs .tab-today a[aria-current='page']::before {
   display: none;
@@ -271,7 +270,7 @@ nav.tabs a {
   padding: 9px 0 10px;
   text-decoration: none;
   font-family: var(--sans);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 600;
   color: var(--muted);
 }

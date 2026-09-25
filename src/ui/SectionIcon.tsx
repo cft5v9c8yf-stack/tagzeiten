@@ -1,6 +1,13 @@
 import type { SectionIcon as Name } from '../app/routes';
 
 const PATHS: Record<Name, JSX.Element> = {
+  // A closed book with a cross on its cover
+  bible: (
+    <>
+      <path d="M6 3.5h11a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1-1.5Z" />
+      <path d="M11.5 7v7M9 9.5h5" />
+    </>
+  ),
   // A day arc over the horizon
   today: (
     <>

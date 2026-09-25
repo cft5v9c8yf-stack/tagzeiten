@@ -4,7 +4,6 @@ import { getOrder } from '../../content/orders';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import { THREE_KEYS, type Day } from '../../domain/model';
-import { chaptersBefore, getPlan } from '../../domain/readingPlan';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { Section } from '../../ui/Section';
 import { ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
@@ -27,9 +26,7 @@ function eveningStatus(day: Day): string {
 
 function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
   const store = useStore();
-  const profile = useProfile();
   useStoreVersion();
-  const plan = getPlan(profile.plan.planId);
   const { reading } = store.readingFor(date);
 
   useEffect(() => {
@@ -45,20 +42,6 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
     }>
       <ReadingRefs date={date} />
       <ReadCheckbox date={date} />
-      <div className="progress">
-        {plan.tracks.map((t) => {
-          const read = chaptersBefore(t, profile.plan.positions[t.def.id] ?? 0);
-          return (
-            <div key={t.def.id} className="progress-row">
-              <span className="progress-label">{t.def.label}</span>
-              <progress max={t.totalChapters} value={read} aria-label={`${t.def.label}: ${read} von ${t.totalChapters} Kapiteln gelesen`} />
-              <span className="progress-value">
-                {read} / {t.totalChapters}
-              </span>
-            </div>
-          );
-        })}
-      </div>
     </Section>
   );
 }

@@ -97,6 +97,15 @@ function MethodHelp() {
   return (
     <details className="fold">
       <summary>Dreimal lesen, Farbcode, Randzeichen</summary>
+      <MethodHelpBody />
+    </details>
+  );
+}
+
+/** Hanniel Strebel's way of reading, in our own words, with credit (rule 14). */
+export function MethodHelpBody() {
+  return (
+    <>
       <ol className="plain-list">
         {READING_PASSES.map(([t, d]) => (
           <li key={t}>
@@ -123,7 +132,7 @@ function MethodHelp() {
       </ul>
       <p className="small">{HARD_PASSAGES_NOTE}</p>
       <p className="small muted">{METHOD_CREDIT}</p>
-    </details>
+    </>
   );
 }
 

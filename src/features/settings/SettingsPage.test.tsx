@@ -80,7 +80,7 @@ describe('Mehr: Aufbau', () => {
       </ToastProvider>,
     );
     const top = await screen.findAllByRole('heading', { level: 2 });
-    expect(top.map((h) => h.textContent).filter((t) => t !== 'Mehr')).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Leseplan', 'Zeiten', 'Einstellungen']);
+    expect(top.map((h) => h.textContent).filter((t) => t !== 'Mehr')).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Einstellungen']);
     const habits = screen.getByRole('button', { name: 'Gewohnheiten' });
     expect(habits.getAttribute('aria-expanded')).toBe('false');
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
@@ -109,21 +109,19 @@ describe('Mehr: Aufbau', () => {
 
   it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
     await renderAt('/mehr', <SettingsPage />);
-    const heading = await screen.findByRole('heading', { name: 'Leseplan' });
+    const heading = await screen.findByRole('heading', { name: 'Zeiten' });
     const section = heading.closest('section')!;
-    expect(section.querySelector('.section-verse blockquote')!.textContent).toBe(
-      'Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Wege.',
-    );
+    expect(section.querySelector('.section-verse blockquote')!.textContent).toBe('Meine Zeit steht in deinen Händen.');
     // The settings block carries no verse, only its explanations.
     const settings = screen.getByRole('heading', { name: 'Einstellungen' }).closest('section')!;
     expect(settings.querySelector('.section-verse')).toBeNull();
     expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
-    const info = screen.getByRole('button', { name: 'Info zu Leseplan' });
+    const info = screen.getByRole('button', { name: 'Info zu Zeiten' });
     const bubble = document.getElementById(info.getAttribute('aria-controls')!)!;
     expect(bubble.hidden).toBe(true);
     fireEvent.click(info);
     expect(bubble.hidden).toBe(false);
-    expect(bubble.textContent).toContain('nach Fortschritt, nicht nach Datum');
+    expect(bubble.textContent).toContain('Nicht jeder steht um vier auf.');
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(bubble.hidden).toBe(true);
   });

@@ -1,27 +1,12 @@
 import type { ReactNode } from 'react';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
-import { composeVerse } from '../../domain/weeklyVerse';
-import { BibleLink } from '../../ui/BibleLink';
 import { Section } from '../../ui/Section';
+import { SectionVerse } from '../../ui/SectionVerse';
 import { About, ABOUT_INFO } from './About';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
-import { PlanInfo, PlanSettings } from './PlanSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
 import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
-
-/** A Bible verse where the explanation used to be; the explanation sits behind the "i". */
-function SectionVerse({ id }: { id: SettingsSectionId }) {
-  const v = SETTINGS_VERSES[id];
-  return (
-    <figure className="section-verse">
-      <blockquote>{composeVerse(v)}</blockquote>
-      <figcaption>
-        <BibleLink reference={v.ref} />
-      </figcaption>
-    </figure>
-  );
-}
 
 function MoreSection({
   id,
@@ -54,9 +39,6 @@ export function SettingsPage() {
       </MoreSection>
       <MoreSection id="prayer" title="Gebetsübersicht" level={2} info={PRAYER_INFO}>
         <PrayerSettings />
-      </MoreSection>
-      <MoreSection id="plan" title="Leseplan" level={2} info={<PlanInfo />}>
-        <PlanSettings />
       </MoreSection>
       <MoreSection
         id="times"
