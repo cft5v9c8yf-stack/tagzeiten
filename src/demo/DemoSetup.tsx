@@ -39,8 +39,8 @@ export function DemoSetup() {
 export function DemoBanner() {
   return (
     <p className="demo-banner">
-      Vorschau mit Beispieldaten. Einträge bleiben nur in diesem Browser. Katechismus, Archiv und Einstellungen folgen im
-      nächsten Meilenstein.
+      Vorschau mit Beispieldaten. Einträge bleiben nur in diesem Browser. Export und Import sind in der Vorschau
+      gesperrt; in der installierten App funktionieren sie.
     </p>
   );
 }

@@ -1,31 +1,41 @@
-import { useTheme } from '../../app/ThemeContext';
-import type { Theme } from '../../app/theme';
+import { About } from './About';
+import { DataSettings } from './DataSettings';
+import { HabitSettings } from './HabitSettings';
+import { PlanSettings } from './PlanSettings';
+import { PrayerSettings } from './PrayerSettings';
+import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
-const THEMES: { value: Theme; label: string }[] = [
-  { value: 'system', label: 'System' },
-  { value: 'light', label: 'Hell' },
-  { value: 'dark', label: 'Dunkel' },
-];
+const SECTIONS = [
+  ['habits-settings', 'Gewohnheiten'],
+  ['prayer-settings', 'Gebetsübersicht'],
+  ['plan-settings', 'Leseplan'],
+  ['schedule-settings', 'Zeiten'],
+  ['display-settings', 'Darstellung'],
+  ['data-settings', 'Daten'],
+  ['about', 'Über'],
+] as const;
 
 export function SettingsPage() {
-  const { theme, setTheme } = useTheme();
   return (
-    <>
-      <h2>Mehr</h2>
-      <h3>Farbschema</h3>
-      <div className="seg" role="group" aria-label="Farbschema">
-        {THEMES.map((t) => (
-          <button
-            key={t.value}
-            type="button"
-            aria-pressed={theme === t.value}
-            onClick={() => setTheme(t.value)}
-          >
-            {t.label}
-          </button>
+    <div className="settings">
+      <h2 className="visually-hidden">Mehr</h2>
+      <nav aria-label="Abschnitte" className="settings-toc">
+        {SECTIONS.map(([id, label]) => (
+          <a key={id} href={`#${id}`} onClick={(e) => {
+            e.preventDefault();
+            document.getElementById(id)?.scrollIntoView({ block: 'start' });
+          }}>
+            {label}
+          </a>
         ))}
-      </div>
-      <p className="empty">Gewohnheiten, Gebetsübersicht, Leseplan, Zeiten und Daten folgen in Meilenstein 6.</p>
-    </>
+      </nav>
+      <HabitSettings />
+      <PrayerSettings />
+      <PlanSettings />
+      <ScheduleSettings />
+      <DisplaySettings />
+      <DataSettings />
+      <About />
+    </div>
   );
 }

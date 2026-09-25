@@ -9,6 +9,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/today.css';
+import './styles/pages.css';
 import { App } from './app/App';
 
 const root = document.getElementById('root');

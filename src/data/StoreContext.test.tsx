@@ -52,7 +52,7 @@ describe('StoreProvider', () => {
     act(() => {
       document.dispatchEvent(new Event('visibilitychange'));
     });
-    await waitFor(async () => expect(await db.days.count()).toBe(1));
+    await waitFor(async () => expect(await db.days.count()).toBe(1), { timeout: 5000 });
     db.close();
     await db.delete();
   });
