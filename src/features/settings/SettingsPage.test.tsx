@@ -41,10 +41,11 @@ async function renderAt(path: string, element: React.ReactNode, prepare?: (s: St
   prepare?.(store);
   await store.flush();
   if (path.startsWith('/mehr')) openAllMore();
-  const routes = path.startsWith('/mehr')
+  const base = ['/mehr', '/katechismus'].find((b) => path.startsWith(b));
+  const routes = base
     ? [
-        { path: '/mehr', element },
-        { path: '/mehr/:bereich', element },
+        { path: base, element },
+        { path: `${base}/:${base === '/mehr' ? 'bereich' : 'teil'}`, element },
       ]
     : [{ path: path.split('?')[0]!, element }];
   const router = createMemoryRouter(
@@ -297,46 +298,37 @@ describe('Katechismus', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('marks pieces as learned by heart and counts them', async () => {
-    const { store } = await renderAt('/katechismus', <CatechismPage />);
-    const buttons = await screen.findAllByText('auswendig gelernt');
-    fireEvent.click(buttons[0]!);
+  it('marks pieces as learned by heart on the page of the chief part', async () => {
+    const { store } = await renderAt('/katechismus/confession', <CatechismPage />);
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toContain('Die Beichte');
+    fireEvent.click(screen.getAllByText('auswendig gelernt')[0]!);
     expect(Object.keys(store.getProfile().catechism.memorized)).toHaveLength(1);
-    // Counted in the overview, without a progress bar.
-    expect(document.querySelector('.overview-total')!.textContent).toContain('1 von 35 Stücken auswendig');
     expect(document.querySelector('progress')).toBeNull();
+    fireEvent.click(screen.getByRole('link', { name: '‹ Katechismus' }));
+    await screen.findByRole('heading', { name: 'Hauptstücke' });
+    expect(document.querySelector('.overview-total')!.textContent).toContain('1 von 35 Stücken auswendig');
   });
 
-  it('shows an overview of the chief parts for orientation', async () => {
-    const { store } = await renderAt('/katechismus', <CatechismPage />);
-    const toggle = await screen.findByRole('button', { name: 'Hauptstücke' });
-    const overview = toggle.closest('section')!;
-    const head = overview.querySelector('.fold-head')!;
-    // Closed by default, with the total next to the heading.
-    expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    expect(head.textContent).toContain('0 von 35 Stücken auswendig');
-    fireEvent.click(toggle);
-    await waitFor(() => expect(toggle.getAttribute('aria-expanded')).toBe('true'));
-    expect(JSON.parse(localStorage.getItem('tz:collapsed')!)).toMatchObject({ 'cat.overview': true });
-    const rows = overview.querySelectorAll('.overview-row');
-    expect(rows).toHaveLength(6);
-    expect(rows[0]!.textContent).toContain('0 von 11 Stücken auswendig');
-
-    fireEvent.click(screen.getAllByText('auswendig gelernt')[0]!); // first piece of this week's chief part
-    expect(Object.keys(store.getProfile().catechism.memorized)).toHaveLength(1);
-    const known = overview.querySelectorAll('.piece-mark.known');
-    expect(known).toHaveLength(1);
-    expect(overview.textContent).toMatch(/1 von \d+ Stücken auswendig/);
-    expect(head.textContent).toContain('1 von 35 Stücken auswendig');
-
-    // Tapping a mark opens its chief part and jumps to the piece.
-    const mark = overview.querySelectorAll<HTMLButtonElement>('.overview-row')[5]!.querySelector('.piece-mark')!;
-    fireEvent.click(mark);
-    expect(screen.getByRole('button', { name: '6 Das Sakrament des Altars' }).getAttribute('aria-expanded')).toBe('true');
-    expect(document.activeElement!.id).toBe('piece-lordsSupper.0');
-
+  it('shows the chief parts as tiles, two side by side, each opening its part', async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    await screen.findByRole('heading', { name: 'Hauptstücke' });
+    const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(9); // 6 chief parts, 3 appendices
+    expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
+    expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.
-    expect(overview.textContent).not.toMatch(/\d{1,2}\.\d{1,2}\.|zuletzt|Serie|in Folge|verpasst/);
+    expect(document.querySelector('.cat-overview')!.textContent).not.toMatch(/\d{1,2}\.\d{1,2}\.|zuletzt|Serie|in Folge|verpasst/);
+
+    fireEvent.click(screen.getByRole('link', { name: /Das Sakrament des Altars/ }));
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toContain('Das Sakrament des Altars');
+    expect(screen.getAllByText('auswendig gelernt').length).toBeGreaterThan(0);
+  });
+
+  it('jumps from today\'s piece to it on the page of the chief part', async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    const today = await screen.findByText(/Heute:/);
+    fireEvent.click(within(today).getByRole('link'));
+    await waitFor(() => expect(document.activeElement!.id).toMatch(/^piece-confession\./));
   });
 
   it('lets the chief part of the week be chosen', async () => {

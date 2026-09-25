@@ -37,6 +37,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'abend', element: <DevotionRedirect part="abend" /> },
       { path: 'sonntag', element: <SundayPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
+      { path: 'katechismus/:teil', element: <CatechismPage /> },
       { path: 'archiv', element: <ArchivePage /> },
       { path: 'mehr', element: <SettingsPage /> },
       { path: 'mehr/:bereich', element: <SettingsPage /> },
