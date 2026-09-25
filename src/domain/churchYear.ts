@@ -253,6 +253,8 @@ export interface ChurchDay {
   week: string;
   /** Stable id of the week, e.g. "trinity16". */
   weekKey: string;
+  /** The day the week begins: its Sunday (or Christmas Day / Epiphany). */
+  weekStart: DateKey;
   /** Number of the week within the church year, starting with 1 at the first Advent. */
   weekNumber: number;
   /** Feast or holy day falling on this date, if any. */
@@ -279,12 +281,27 @@ export function churchDay(date: DateKey): ChurchDay {
   return {
     week: marker.name,
     weekKey: marker.key,
+    weekStart: marker.date,
     weekNumber: Math.floor(daysBetween(cal.start, sundayOnOrBefore(date)) / 7) + 1,
     feast: cal.feasts.get(date),
     circle: SEASON_CIRCLE[season],
     season,
     churchYear: fromKey(cal.start).getFullYear(),
   };
+}
+
+/** The week before: its first day (also across the turn of the church year). */
+export function previousWeekStart(weekStart: DateKey): DateKey {
+  return churchDay(addDays(weekStart, -1)).weekStart;
+}
+
+/** The week after: its first day (a Sunday, or Christmas Day / Epiphany). */
+export function nextWeekStart(weekStart: DateKey): DateKey {
+  for (let i = 1; i <= 7; i++) {
+    const d = addDays(weekStart, i);
+    if (churchDay(d).weekStart === d) return d;
+  }
+  return addDays(weekStart, 7);
 }
 
 /** Ash Wednesday to Holy Saturday: the Halleluja is not sung. */
@@ -299,6 +316,8 @@ export interface OutlineEntry {
   /** Week key for Sundays (and Christmas Day, Epiphany), feast key for weekday feasts. */
   key: string;
   kind: 'sunday' | 'feast';
+  /** Whether a week begins here (Sundays, Christmas Day, Epiphany) – not so for weekday feasts. */
+  opensWeek: boolean;
   season: Season;
   circle: Circle;
 }
@@ -332,8 +351,12 @@ export function churchYearOutline(date: DateKey): ChurchYearOutline {
   }));
   const seasonOf = (d: DateKey) => [...seasons].reverse().find((s) => s.from <= d)!.season;
   const entries: OutlineEntry[] = [
-    ...cal.weekMarkers.map((m) => ({ ...m, kind: (m.key === 'christmas' || m.key === 'epiphany' ? 'feast' : 'sunday') as OutlineEntry['kind'] })),
-    ...cal.majorFeasts.map((m) => ({ ...m, kind: 'feast' as const })),
+    ...cal.weekMarkers.map((m) => ({
+      ...m,
+      kind: (m.key === 'christmas' || m.key === 'epiphany' ? 'feast' : 'sunday') as OutlineEntry['kind'],
+      opensWeek: true,
+    })),
+    ...cal.majorFeasts.map((m) => ({ ...m, kind: 'feast' as const, opensWeek: false })),
   ]
     .map((m) => {
       const season = seasonOf(m.date);

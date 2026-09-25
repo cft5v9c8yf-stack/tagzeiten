@@ -724,10 +724,47 @@ body.is-sorting * {
 }
 
 /* ---------------------------------------------------------------- Sunday */
-.sunday-kicker {
-  margin: 22px 0 0;
+/* Head: the Sunday in the middle, the Sundays before and after on either side */
+.sunday-head {
+  display: grid;
+  grid-template-columns: 58px 1fr 58px;
+  align-items: center;
+  gap: 6px;
+  margin: 18px 0 6px;
+}
+.sunday-center {
+  text-align: center;
+  min-width: 0;
+}
+.sunday-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.sunday-step-circle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: var(--sheet);
+  color: var(--gold);
+}
+.sunday-step-label {
+  max-width: 52px;
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.66rem;
+  line-height: 1.2;
+  text-align: center;
+}
+.sunday-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -736,7 +773,7 @@ body.is-sorting * {
 .sunday-group {
   margin: 2px 0 0;
   font-family: var(--sans);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
 }
 .sunday-summary {
@@ -746,13 +783,71 @@ body.is-sorting * {
 }
 .sunday-name {
   margin: 4px 0 2px;
-  font-size: 1.6rem;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.sunday-name a {
+  color: inherit;
+  font-weight: inherit;
 }
 .sunday-week {
-  margin: 0 0 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 2px 8px;
+  margin: 0;
   font-family: var(--sans);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--muted);
+}
+.sunday-back {
+  font-size: 0.8rem;
+}
+
+/* All Sundays: one line each, the one shown marked in gold */
+.week-season {
+  margin-top: 8px;
+}
+.week-group-title {
+  margin: 10px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.week-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.week-list a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 2px 0;
+  border-radius: 12px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.week-list a[aria-current='page'] {
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.week-date {
+  flex: none;
+  min-width: 4.6em;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.week-name {
+  flex: 1;
 }
 .sunday-verse {
   margin: 16px 0;
