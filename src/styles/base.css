@@ -17,7 +17,7 @@ body {
   /* iOS home-screen apps with a translucent status bar report a viewport that is
      short by the status bar. On pages shorter than the screen (Archiv, Mehr) the
      fixed tab bar then floats above the bottom edge. Never let a page be shorter. */
-  min-height: calc(100% + var(--safe-top));
+  min-height: calc(100% + var(--safe-top) + 1px);
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
@@ -67,7 +67,8 @@ a {
   border-radius: var(--radius-s);
   font-family: var(--sans);
   font-weight: 600;
-  transform: translateY(-200%);
+  /* Fully above the screen, also behind a translucent status bar. */
+  transform: translateY(calc(-100% - var(--safe-top) - 16px));
 }
 .skip-link:focus {
   transform: none;
