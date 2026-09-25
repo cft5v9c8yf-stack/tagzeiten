@@ -32,7 +32,9 @@ export function Layout() {
       </a>
       <div className="wrap">
         <header className="top">
-          <h1>Tagzeiten</h1>
+          {/* The app's name stays the page heading for screen readers; Luther's word at Worms stands above. */}
+          <h1 className="visually-hidden">Tagzeiten</h1>
+          <p className="top-motto">Hier stehe ich und kann nicht anders!</p>
           <div className="date">
             {isToday ? (
               // On Today, the date heads the page itself (with the church year).
