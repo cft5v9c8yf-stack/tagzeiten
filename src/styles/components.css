@@ -26,6 +26,11 @@
   font-size: 0.85rem;
   min-width: 0;
 }
+.timer .btn {
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 6px 16px;
+}
 
 /* ---------------------------------------------------------------- step flow */
 /* The sequence of an order as a row of marks; below it only the step in view. */
@@ -107,22 +112,45 @@
   color: var(--icon-gold);
   flex: none;
 }
+/* The step in view: a card of its own below the row */
 .flow-step {
-  padding: 4px 0 8px;
+  margin-top: 12px;
+  padding: 4px 18px 18px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
 }
 .flow-title {
-  margin: 12px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 10px;
   font-size: 1.25rem;
+}
+.flow-title .flow-icon {
+  color: var(--icon-gold);
+  flex: none;
 }
 .flow-title:focus {
   outline: none;
 }
 .flow-subtitle {
-  margin: 22px 0 4px;
+  margin: 24px 0 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
   font-size: 1.05rem;
 }
 .flow-footer {
-  margin-top: 18px;
+  margin-top: 22px;
+}
+.flow-footer .btn {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  font-size: 0.98rem;
+}
+.flow + .panel {
+  margin-top: 14px;
 }
 .part + .part {
   margin-top: 14px;

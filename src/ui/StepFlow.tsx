@@ -80,7 +80,8 @@ export function StepFlow({
       {step && (
         <section className={`flow-step step-${step.id}`} aria-labelledby={titleId}>
           <Title id={titleId} ref={titleRef} tabIndex={-1} className="flow-title">
-            {step.title}
+            {step.icon && <FlowIcon name={step.icon} size={22} />}
+            <span>{step.title}</span>
           </Title>
           {children}
           {footer && <div className="flow-footer">{footer}</div>}

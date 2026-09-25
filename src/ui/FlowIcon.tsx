@@ -17,7 +17,9 @@ export type FlowIconName =
   | 'drop'
   | 'song'
   | 'lyre'
-  | 'star';
+  | 'star'
+  | 'sunrise'
+  | 'sunset';
 
 const PATHS: Record<FlowIconName, JSX.Element> = {
   bed: <path d="M3 7v11M21 13v5M3 16h18M3 13h18M6.5 13a2 2 0 0 1 0-4h2.5a1.5 1.5 0 0 1 1.5 1.5V13" />,
@@ -74,6 +76,9 @@ const PATHS: Record<FlowIconName, JSX.Element> = {
   ),
   lyre: <path d="M7 4c-2 4-2 9 0 13h10c2-4 2-9 0-13M7 17l1 3h8l1-3M10 7v10M12 6v11M14 7v10" />,
   star: <path d="m12 3.5 2.5 5.5 6 .6-4.5 4 1.3 5.9-5.3-2.9-5.3 2.9L8 13.6l-4.5-4 6-.6Z" />,
+  sunrise: <path d="M7 17a5 5 0 0 1 10 0M2 17h20M12 4v4M9.5 6.5 12 4l2.5 2.5M4.5 10.5l1.6 1.2M19.5 10.5l-1.6 1.2" />,
+  // The sun going down: the Vesper
+  sunset: <path d="M7 17a5 5 0 0 1 10 0M2 17h20M12 4v5M9.5 6.5 12 9l2.5-2.5M4.5 10.5l1.6 1.2M19.5 10.5l-1.6 1.2" />,
 };
 
 export function FlowIcon({ name, size = 16 }: { name: FlowIconName; size?: number }) {

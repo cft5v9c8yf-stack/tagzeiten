@@ -9,6 +9,7 @@ import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
 import { StepFlow, type FlowStep } from '../../ui/StepFlow';
 import { Timer } from '../../ui/Timer';
+import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
 
 const FORMS: { value: OrderForm; label: string }[] = [
@@ -42,14 +43,10 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
     <>
       {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} />}
 
-      <h2>Stille Zeit</h2>
-      <Segmented label="Form der Stille Zeit" options={FORMS} value={form} onChange={setForm} />
-      {form === 'short' && (
-        <>
-          <Rubric>{RUBRICS.morningShort}</Rubric>
-          <p className="small muted">{RUBRICS.morningShortDrops}</p>
-        </>
-      )}
+      <OrderHead title="Stille Zeit" rubric={form === 'short' ? RUBRICS.morningShort : undefined}>
+        <Segmented label="Form der Stille Zeit" options={FORMS} value={form} onChange={setForm} />
+      </OrderHead>
+      {form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
       {/* The other form has other steps: it starts afresh. */}
       <MorningFlow key={form} date={date} isToday={isToday} form={form} />
     </>
@@ -152,15 +149,10 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
       <StepFlow label="Stille Zeit" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
         {content}
       </StepFlow>
-      {day.morning.done && (
-        <div className="panel done-panel">
-          <p>
-            <b>Stille Zeit abgeschlossen.</b> {RUBRICS.sendOff}
-          </p>
-          <button type="button" className="btn quiet" onClick={reopen}>
-            Abschluss zurücknehmen
-          </button>
-        </div>
+      {day.morning.done && current === null && (
+        <DonePanel note="Stille Zeit abgeschlossen." onReopen={reopen}>
+          {RUBRICS.sendOff}
+        </DonePanel>
       )}
     </>
   );

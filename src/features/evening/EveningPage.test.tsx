@@ -30,22 +30,26 @@ async function renderEvening(date: string) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { name: 'Vesper und Nachtgebet' });
+  await screen.findByRole('heading', { level: 2, name: /^(Vesper|Nachtgebet)$/ });
   return store;
 }
 
 const chainOf = (name: string) => screen.getByRole('navigation', { name: `Ablauf: ${name}` });
-const EVENING = 'Vesper und Nachtgebet';
-/** The Nachtgebet is the last mark of the evening row and has its own row. */
+/** One row at a time: the Vesper's row ends with the Nachtgebet, the Nachtgebet's begins with the Vesper. */
 const openCompline = async () => {
   if (screen.queryByRole('navigation', { name: 'Ablauf: Nachtgebet' })) return;
-  fireEvent.click(within(chainOf(EVENING)).getByRole('button', { name: /^Nachtgebet/ }));
+  fireEvent.click(within(chainOf('Vesper')).getByRole('button', { name: /^Nachtgebet/ }));
   await screen.findByRole('navigation', { name: 'Ablauf: Nachtgebet' });
 };
+const openVespers = async () => {
+  if (screen.queryByRole('navigation', { name: 'Ablauf: Vesper' })) return;
+  fireEvent.click(within(chainOf('Nachtgebet')).getByRole('button', { name: /^Vesper/ }));
+  await screen.findByRole('navigation', { name: 'Ablauf: Vesper' });
+};
 const openPage = async (order: string, title: RegExp | string) => {
-  if (order === 'Nachtgebet') await openCompline();
+  await (order === 'Nachtgebet' ? openCompline() : openVespers());
   fireEvent.click(within(chainOf(order)).getByRole('button', { name: title }));
-  await screen.findByRole('heading', { name: title, level: order === 'Nachtgebet' ? 4 : 3 });
+  await screen.findByRole('heading', { name: title, level: 3 });
 };
 
 describe('Nachtgebet', () => {
@@ -73,9 +77,9 @@ describe('Nachtgebet', () => {
     await openCompline();
     const flow = () => document.querySelector('.compline .flow-step')!;
     expect(document.querySelectorAll('.compline .flow-step')).toHaveLength(1);
-    expect(flow().querySelector('h4')!.textContent).toBe('Kreuzzeichen');
+    expect(flow().querySelector('h3')!.textContent).toBe('Kreuzzeichen');
     fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Glaubensbekenntnis' }));
-    await waitFor(() => expect(flow().querySelector('h4')!.textContent).toBe('Glaubensbekenntnis'));
+    await waitFor(() => expect(flow().querySelector('h3')!.textContent).toBe('Glaubensbekenntnis'));
     const current = within(chainOf('Nachtgebet')).getByRole('button', { name: 'Glaubensbekenntnis' });
     expect(current.getAttribute('aria-current')).toBe('step');
     // No times and no "gebetet" labels in the row.
@@ -120,7 +124,8 @@ describe('Nachtgebet', () => {
 describe('Vesper', () => {
   it('goes through its parts one at a time and leads on to the Nachtgebet as the last mark', async () => {
     const store = await renderEvening('2026-09-24');
-    const buttons = within(chainOf(EVENING)).getAllByRole('button');
+    await openVespers();
+    const buttons = within(chainOf('Vesper')).getAllByRole('button');
     expect(buttons.at(-1)!.getAttribute('aria-label')).toBe('Nachtgebet');
     expect(buttons.length).toBeGreaterThan(5);
     fireEvent.click(buttons[0]!);
@@ -128,8 +133,18 @@ describe('Vesper', () => {
     fireEvent.click(buttons.at(-2)!);
     fireEvent.click(await screen.findByRole('button', { name: 'Vesper abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
-    // On to the Nachtgebet, with its own row.
+    // On to the Nachtgebet: its row begins with the Vesper, now prayed.
     await screen.findByRole('navigation', { name: 'Ablauf: Nachtgebet' });
-    expect(within(chainOf(EVENING)).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Eröffnung, gebetet');
+    expect(screen.queryByRole('navigation', { name: 'Ablauf: Vesper' })).toBeNull();
+    expect(within(chainOf('Nachtgebet')).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Vesper, gebetet');
+  });
+
+  it('offers the family mode as a switch', async () => {
+    await renderEvening('2026-09-24');
+    await openVespers();
+    const sw = screen.getByRole('switch', { name: /Familienmodus/ });
+    fireEvent.click(sw);
+    await waitFor(() => expect(document.querySelector('.vespers.family')).not.toBeNull());
+    expect(localStorage.getItem('tz:family')).toBe('1');
   });
 });

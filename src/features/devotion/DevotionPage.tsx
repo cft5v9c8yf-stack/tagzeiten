@@ -1,14 +1,21 @@
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
+import { FlowIcon } from '../../ui/FlowIcon';
 
 /** Andacht: Stille Zeit in the morning, Vesper and Nachtgebet in the evening. */
 export function DevotionPage() {
   const { date, isToday } = useSelectedDate();
   return (
     <>
-      <nav className="seg devotion-switch" aria-label="Andacht">
-        <NavLink to={withDate('/andacht/morgen', date, isToday)}>Morgen</NavLink>
-        <NavLink to={withDate('/andacht/abend', date, isToday)}>Abend</NavLink>
+      <nav className="devotion-switch" aria-label="Andacht">
+        <NavLink to={withDate('/andacht/morgen', date, isToday)}>
+          <FlowIcon name="sunrise" size={20} />
+          Morgen
+        </NavLink>
+        <NavLink to={withDate('/andacht/abend', date, isToday)}>
+          <FlowIcon name="moon" size={20} />
+          Abend
+        </NavLink>
       </nav>
       <Outlet />
     </>

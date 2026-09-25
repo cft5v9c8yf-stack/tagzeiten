@@ -210,30 +210,35 @@ p {
   cursor: default;
 }
 
-/* Segmented control */
+/* Segmented control: a quiet capsule; the chosen option in the gold of the rose */
 .seg {
   display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
   border: 1px solid var(--rule);
-  border-radius: var(--radius-s);
-  overflow: hidden;
+  border-radius: 999px;
+  background: var(--sheet);
   margin: 6px 0 12px;
 }
 .seg button {
   appearance: none;
   border: 0;
   background: transparent;
-  padding: 7px 14px;
-  min-height: 38px;
+  padding: 6px 14px;
+  min-height: 36px;
+  border-radius: 999px;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   cursor: pointer;
   color: var(--muted);
 }
 .seg button[aria-pressed='true'],
 .seg button[aria-selected='true'] {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
 }
 
 /* Bottom navigation */
