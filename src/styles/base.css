@@ -230,10 +230,40 @@ nav.tabs ul {
   padding: 0;
   max-width: var(--content-width);
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  /* "Heute" exactly in the middle: two sections left of it, three to the right,
+     both halves equally wide ("Katechismus" gets the widest column). */
+  grid-template-columns: 1fr 1fr 68px 0.9fr 0.55fr 0.55fr;
+}
+nav.tabs li {
+  min-width: 0;
+}
+nav.tabs .tab-today a {
+  padding-top: 0;
+}
+/* Today: a larger icon in a ring that rises a little above the bar. */
+.today-ring {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  /* Label on the same line as the others; the ring rises above the bar. */
+  margin-top: -19px;
+  border-radius: 50%;
+  background: var(--sheet);
+  border: 1.5px solid var(--rule);
+  color: var(--muted);
+}
+nav.tabs .tab-today a[aria-current='page'] .today-ring {
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+nav.tabs .tab-today a[aria-current='page']::before {
+  display: none;
 }
 nav.tabs a {
   position: relative;
+  white-space: nowrap;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -241,7 +271,7 @@ nav.tabs a {
   padding: 9px 0 10px;
   text-decoration: none;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--muted);
 }

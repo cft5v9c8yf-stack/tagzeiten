@@ -34,10 +34,13 @@ async function renderToday(date: string, prepare?: (s: Store) => void) {
 }
 
 describe('Today', () => {
-  it('heads the page with date, week of the church year and festal circle', async () => {
+  it('heads the page with the date and keeps the church year under "Diese Woche"', async () => {
     await renderToday('2026-09-24');
-    const h = document.querySelector('.church-year')!;
-    expect(h.querySelector('.cy-date')!.textContent).toBe('Donnerstag, 24. September 2026');
+    const top = document.querySelector('.church-year')!;
+    expect(top.textContent).toBe('Donnerstag, 24. September 2026');
+    const h = screen.getByRole('heading', { name: 'Diese Woche' }).closest('section')!;
+    // Catechism and psalms are no longer part of the week on Today.
+    expect(h.textContent).not.toMatch(/Katechismus|Auswendig|Psalm am/);
     expect(h.querySelector('.cy-week-name')!.textContent).toBe('16. Sonntag nach Trinitatis');
     expect(h.querySelector('.cy-week-no')!.textContent).toBe('43. Woche im Kirchenjahr');
     const current = h.querySelector('.cy-circles [aria-current]')!;

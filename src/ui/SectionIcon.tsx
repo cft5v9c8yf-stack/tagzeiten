@@ -35,13 +35,13 @@ const PATHS: Record<Name, JSX.Element> = {
   ),
 };
 
-export function SectionIcon({ name }: { name: Name }) {
+export function SectionIcon({ name, size = 22 }: { name: Name; size?: number }) {
   return (
     <svg
       className="icon"
       viewBox="0 0 24 24"
-      width="22"
-      height="22"
+      width={size}
+      height={size}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.6"

@@ -1,19 +1,14 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { getOrder } from '../../content/orders';
-import { EVENING_PSALMS, MORNING_PSALMS } from '../../content/psalms';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
-import { psalmRef, psalmUrl } from '../../domain/bibleRef';
-import { catechismFor, memorizedCount, TOTAL_PIECES } from '../../domain/catechismDay';
-import { weekdayOf } from '../../domain/dates';
 import { THREE_KEYS, type Day } from '../../domain/model';
 import { chaptersBefore, getPlan } from '../../domain/readingPlan';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
-import { BibleLink } from '../../ui/BibleLink';
 import { Section } from '../../ui/Section';
 import { ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
-import { ChurchYearHeader } from './ChurchYearHeader';
+import { ChurchWeek, DayHeader } from './ChurchWeek';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
@@ -100,47 +95,6 @@ function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: 
   );
 }
 
-function ThisWeek({ date, isToday }: { date: string; isToday: boolean }) {
-  const profile = useProfile();
-  const cat = catechismFor(date, profile.catechism.weekOffset);
-  const wd = weekdayOf(date);
-  const mp = MORNING_PSALMS[wd];
-  const ep = EVENING_PSALMS[wd];
-  return (
-    <Section id="today.week" title="Diese Woche">
-      <dl className="facts">
-        <div>
-          <dt>Katechismus</dt>
-          <dd>
-            {cat.chief.title} – heute: {cat.label}{' '}
-            <Link to={withDate('/katechismus', date, isToday)} className="inline-link">
-              Katechismus lesen
-            </Link>
-          </dd>
-        </div>
-        <div>
-          <dt>Auswendig</dt>
-          <dd>
-            {memorizedCount(profile.catechism.memorized)} von {TOTAL_PIECES} Stücken
-          </dd>
-        </div>
-        <div>
-          <dt>Psalm am Morgen</dt>
-          <dd>
-            <BibleLink reference={psalmRef(mp.psalm)} href={psalmUrl(mp.psalm)} />
-          </dd>
-        </div>
-        <div>
-          <dt>Psalm am Abend</dt>
-          <dd>
-            <BibleLink reference={psalmRef(ep.psalm)} href={psalmUrl(ep.psalm)} />
-          </dd>
-        </div>
-      </dl>
-    </Section>
-  );
-}
-
 export function TodayPage() {
   const { date, isToday } = useSelectedDate();
   const day = useDay(date);
@@ -150,7 +104,7 @@ export function TodayPage() {
   return (
     <>
       <h2 className="visually-hidden">{isToday ? 'Heute' : 'Tag'}</h2>
-      <ChurchYearHeader date={date} isToday={isToday} />
+      <DayHeader date={date} />
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
         <Link to={withDate('/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
@@ -183,7 +137,9 @@ export function TodayPage() {
         <Lookback date={date} />
       </Section>
 
-      <ThisWeek date={date} isToday={isToday} />
+      <Section id="today.week" title="Diese Woche">
+        <ChurchWeek date={date} isToday={isToday} />
+      </Section>
     </>
   );
 }

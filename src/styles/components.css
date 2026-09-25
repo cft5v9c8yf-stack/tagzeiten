@@ -445,10 +445,6 @@ select {
 .compline-step > .fold-section > .fold-head h3 {
   margin: 12px 0 6px;
 }
-/* A step that does not fold keeps its title in line with the folding ones. */
-.compline-step-title {
-  padding-left: 0.87em;
-}
 .compline-step::before {
   content: counter(step);
   position: absolute;

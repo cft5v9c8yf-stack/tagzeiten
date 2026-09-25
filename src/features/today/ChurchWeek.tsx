@@ -5,8 +5,19 @@ import { formatLong, type DateKey } from '../../domain/dates';
 import { readingsOfDay, verseOfDay } from '../../domain/weeklyVerse';
 import { BibleLink } from '../../ui/BibleLink';
 
-/** Date, week of the church year and festal circle at the top of the Today page. */
-export function ChurchYearHeader({ date, isToday }: { date: DateKey; isToday: boolean }) {
+/** The date at the top of the Today page. */
+export function DayHeader({ date }: { date: DateKey }) {
+  return (
+    <header className="church-year">
+      <p className="cy-date">
+        {formatLong(date)} {date.slice(0, 4)}
+      </p>
+    </header>
+  );
+}
+
+/** Week of the church year, its verse and readings, and the festal circle ("Diese Woche"). */
+export function ChurchWeek({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const c = churchDay(date);
   const verse = verseOfDay(date);
   const readings = readingsOfDay(date);
@@ -15,10 +26,7 @@ export function ChurchYearHeader({ date, isToday }: { date: DateKey; isToday: bo
     (isToday ? '?' : '&') +
     `kreis=${circle}${week ? `&woche=${week}` : ''}`;
   return (
-    <header className="church-year" aria-labelledby="cy-date">
-      <p id="cy-date" className="cy-date">
-        {formatLong(date)} {date.slice(0, 4)}
-      </p>
+    <div className="church-week">
       <p className="cy-week">
         <Link className="cy-week-name" to={link(c.circle, c.weekKey)}>
           {c.week}
@@ -61,6 +69,6 @@ export function ChurchYearHeader({ date, isToday }: { date: DateKey; isToday: bo
           </li>
         ))}
       </ol>
-    </header>
+    </div>
   );
 }

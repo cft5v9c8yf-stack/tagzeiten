@@ -26,21 +26,6 @@
   align-items: baseline;
   gap: 0.45em;
 }
-.fold-chevron {
-  flex: none;
-  width: 0.42em;
-  height: 0.42em;
-  border-right: 2px solid var(--muted);
-  border-bottom: 2px solid var(--muted);
-  transform: rotate(-45deg) translate(-1px, -1px);
-  transition: transform 0.15s;
-  /* On the first line, also when a long title wraps. */
-  align-self: flex-start;
-  margin-top: 0.42em;
-}
-.fold-section.is-open > .fold-head .fold-chevron {
-  transform: rotate(45deg) translate(-2px, -1px);
-}
 .fold-aside {
   font-family: var(--sans);
   font-size: 0.82rem;

@@ -53,9 +53,15 @@ export function Layout() {
       <nav className="tabs" aria-label="Bereiche">
         <ul>
           {SECTIONS.map((s) => (
-            <li key={s.path}>
+            <li key={s.path} className={s.path === '/' ? 'tab-today' : undefined}>
               <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
-                <SectionIcon name={s.icon} />
+                {s.path === '/' ? (
+                  <span className="today-ring">
+                    <SectionIcon name={s.icon} size={28} />
+                  </span>
+                ) : (
+                  <SectionIcon name={s.icon} />
+                )}
                 {s.label}
               </NavLink>
             </li>

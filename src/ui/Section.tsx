@@ -4,7 +4,7 @@ import { useOpen } from './collapseState';
 type Level = 2 | 3 | 4 | 5;
 
 /**
- * A heading that folds its content away. The choice is remembered per device
+ * A heading that folds its content away when tapped (no extra marker). The choice is remembered per device
  * (key `id`). An optional "i" next to the heading shows an explanation in a
  * speech bubble.
  */
@@ -40,7 +40,6 @@ export function Section({
       <div className="fold-head">
         <Heading className={`fold-title${titleClassName ? ` ${titleClassName}` : ''}`}>
           <button type="button" aria-expanded={open} aria-controls={bodyId} onClick={() => setOpen(!open)}>
-            <span className="fold-chevron" aria-hidden="true" />
             <span className="fold-text">{title}</span>
           </button>
         </Heading>
