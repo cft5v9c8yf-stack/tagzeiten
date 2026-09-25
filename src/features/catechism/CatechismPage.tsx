@@ -5,7 +5,7 @@ import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
 import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
-import { catechismFor, memorizedCount, offsetForChiefPart, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
+import { catechismFor, offsetForChiefPart, pieceId } from '../../domain/catechismDay';
 import { canToggle, isDoneInPeriod } from '../../domain/habits';
 import { BibleLink } from '../../ui/BibleLink';
 import { PrayerText, Rubric } from '../../ui/PrayerText';
@@ -67,7 +67,6 @@ export function CatechismPage() {
   const selectId = useId();
   const day = catechismFor(date, profile.catechism.weekOffset);
   const memorized = profile.catechism.memorized;
-  const learned = memorizedCount(memorized);
   const [houseFather, setHouseFather] = useState(false);
 
   const habit = profile.habits.find((h) => h.id === CATECHISM_WITH_CHILDREN_HABIT);
@@ -111,31 +110,15 @@ export function CatechismPage() {
       <h2>Der Kleine Katechismus</h2>
       <Rubric>{CATECHISM_SUBTITLE}</Rubric>
 
-      <div className="panel cat-panel">
-        <div className="field">
-          <label htmlFor={selectId}>Hauptstück dieser Woche</label>
-          <select id={selectId} value={day.chiefIndex} onChange={(e) => chooseChief(Number(e.target.value))}>
-            {CATECHISM.map((c, i) => (
-              <option key={c.id} value={i}>
-                {i + 1}. {c.title}
-              </option>
-            ))}
-          </select>
-        </div>
-        <p className="small">
+      {/* This week's chief part: what is learned today, and the table. */}
+      <section className="block block-hero cat-week" aria-labelledby="cat-week-title">
+        <p className="cat-week-kicker">Diese Woche</p>
+        <h3 id="cat-week-title" className="cat-week-title">
+          <span className="no">{day.chiefIndex + 1}</span> {day.chief.title}
+        </h3>
+        <p className="cat-today">
           Heute: <b>{day.label}</b>
         </p>
-        <div className="progress-row">
-          <span className="progress-label">Auswendig</span>
-          <progress
-            max={TOTAL_PIECES}
-            value={learned}
-            aria-label={`${learned} von ${TOTAL_PIECES} Stücken auswendig`}
-          />
-          <span className="progress-value">
-            {learned} / {TOTAL_PIECES}
-          </span>
-        </div>
         <div className="cat-actions">
           <button type="button" className="btn primary" onClick={() => setHouseFather(true)}>
             Hausvater-Modus: am Tisch abfragen
@@ -152,7 +135,17 @@ export function CatechismPage() {
             </button>
           )}
         </div>
-      </div>
+        <div className="field cat-choose">
+          <label htmlFor={selectId}>Anderes Hauptstück für diese Woche</label>
+          <select id={selectId} value={day.chiefIndex} onChange={(e) => chooseChief(Number(e.target.value))}>
+            {CATECHISM.map((c, i) => (
+              <option key={c.id} value={i}>
+                {i + 1}. {c.title}
+              </option>
+            ))}
+          </select>
+        </div>
+      </section>
 
       <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} onOpenPiece={openPiece} />
 

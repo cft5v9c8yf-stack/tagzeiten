@@ -297,7 +297,9 @@ describe('Katechismus', () => {
     const buttons = await screen.findAllByText('auswendig gelernt');
     fireEvent.click(buttons[0]!);
     expect(Object.keys(store.getProfile().catechism.memorized)).toHaveLength(1);
-    expect(screen.getByText('1 / 35')).toBeTruthy();
+    // Counted in the overview, without a progress bar.
+    expect(document.querySelector('.overview-total')!.textContent).toContain('1 von 35 Stücken auswendig');
+    expect(document.querySelector('progress')).toBeNull();
   });
 
   it('shows an overview of the chief parts for orientation', async () => {
@@ -334,8 +336,9 @@ describe('Katechismus', () => {
 
   it('lets the chief part of the week be chosen', async () => {
     await renderAt('/katechismus', <CatechismPage />);
-    fireEvent.change(await screen.findByLabelText('Hauptstück dieser Woche'), { target: { value: '2' } });
+    fireEvent.change(await screen.findByLabelText('Anderes Hauptstück für diese Woche'), { target: { value: '2' } });
     expect(screen.getByText(/Heute:/).textContent).toMatch(/Bitte|Anrede|Beschluß/);
+    expect(document.querySelector('.cat-week-title')!.textContent).toContain('Das Vaterunser');
   });
 });
 

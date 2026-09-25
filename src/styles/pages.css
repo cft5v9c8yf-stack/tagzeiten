@@ -45,49 +45,103 @@ body.no-scroll {
 }
 
 /* ---------------------------------------------------------------- catechism */
-.cat-panel .progress-row {
-  margin: 8px 0;
+/* This week's chief part, in gold like the reading of the day */
+.cat-week {
+  margin: 14px 0;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+}
+.cat-week-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.cat-week-title {
+  margin: 2px 0 4px;
+  font-size: 1.3rem;
+}
+.cat-week-title .no {
+  color: var(--rubric);
+  margin-right: 4px;
+}
+.cat-today {
+  margin: 0 0 12px;
 }
 .cat-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  margin-top: 10px;
 }
+.cat-actions .btn.primary {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+}
+.cat-choose {
+  margin-top: 14px;
+}
+.cat-choose label {
+  font-size: 0.8rem;
+}
+/* Chief parts and appendices: one card each */
 .chief {
-  border-top: 1px solid var(--rule);
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
 }
 .chief > .fold-head {
-  padding: 14px 0 10px;
+  padding: 14px 0 12px;
 }
 .chief > .fold-head h3 {
   margin: 0;
   font-size: 1.1rem;
 }
 .chief .no {
-  display: inline-block;
-  min-width: 1.4rem;
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
   font-weight: 600;
+  font-size: 0.95rem;
   color: var(--rubric);
+  vertical-align: middle;
+}
+.chief.is-open > .fold-head .no {
+  border-color: var(--gold);
+  background: var(--gold-soft);
 }
 .chief .title {
   font-weight: 600;
+  vertical-align: middle;
 }
 .chief-body {
-  padding: 0 0 14px 2rem;
+  padding: 0 0 14px;
 }
 .kpiece {
   padding: 10px 0 14px;
-  border-bottom: 1px dashed var(--rule);
+  border-top: 1px solid var(--rule);
 }
-.kpiece:last-child {
-  border-bottom: 0;
-}
+/* Today's piece: in gold */
 .kpiece.today {
-  border-left: 3px solid var(--accent);
-  padding-left: 12px;
-  margin-left: -15px;
+  margin: 4px -10px;
+  padding: 10px 10px 14px;
+  border-top: 0;
+  border-radius: 12px;
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.kpiece.today + .kpiece {
+  border-top: 0;
 }
 .kpiece-title {
   font-size: 1rem;
@@ -100,8 +154,8 @@ body.no-scroll {
   font-family: var(--sans);
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--ink);
+  border: 1px solid var(--gold);
   border-radius: 999px;
   padding: 0 7px;
 }
@@ -361,9 +415,6 @@ body.no-scroll {
 }
 .arc-lines span {
   display: block;
-}
-.cat-panel .progress-row {
-  grid-template-columns: auto 1fr auto;
 }
 
 /* Habit settings: star and ordering */
