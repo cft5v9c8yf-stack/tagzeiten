@@ -347,10 +347,22 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
   }
 }
 
-export function OrderPart({ part, ctx, showTitle = true }: { part: Part; ctx: PartContext; showTitle?: boolean }) {
+export function OrderPart({
+  part,
+  ctx,
+  showTitle = true,
+  headingLevel = 4,
+}: {
+  part: Part;
+  ctx: PartContext;
+  showTitle?: boolean;
+  /** Keeps the outline valid: h4 below a step heading, h3 directly below the order. */
+  headingLevel?: 3 | 4;
+}) {
+  const Heading = headingLevel === 3 ? 'h3' : 'h4';
   return (
     <section className={`part part-${part.kind}`}>
-      {showTitle && <h4 className="part-title">{part.title}</h4>}
+      {showTitle && <Heading className="part-title">{part.title}</Heading>}
       <PartBody part={part} ctx={ctx} />
     </section>
   );

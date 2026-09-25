@@ -126,7 +126,7 @@ function ThisWeek({ date, isToday }: { date: string; isToday: boolean }) {
           <dd>
             {cat.chief.title} – heute: {cat.label}{' '}
             <Link to={withDate('/katechismus', date, isToday)} className="inline-link">
-              lesen
+              Katechismus lesen
             </Link>
           </dd>
         </div>

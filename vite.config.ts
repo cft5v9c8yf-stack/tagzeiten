@@ -7,16 +7,21 @@ import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig(({ mode }) => ({
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
+  // Without the PWA plugin (demo), the update hook resolves to a no-op stub.
+  resolve:
+    mode === 'demo' ? { alias: { 'virtual:pwa-register/react': '/src/demo/pwaRegisterStub.ts' } } : undefined,
   // The demo build is a single file without service worker and with hash routing.
   base: mode === 'demo' ? './' : '/',
   build: mode === 'demo' ? { outDir: 'dist-demo', assetsInlineLimit: 0 } : undefined,
   plugins: [
     react(),
     mode !== 'demo' && VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      // A new version waits until the user chooses to update – never a reload mid-prayer.
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['icons/apple-touch-icon.png', 'icons/icon.svg'],
       manifest: {
+        id: '/',
         name: 'Tagzeiten',
         short_name: 'Tagzeiten',
         description: 'Eine Ordnung für Morgen und Abend',

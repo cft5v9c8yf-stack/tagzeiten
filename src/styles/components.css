@@ -1,10 +1,12 @@
 /* ---------------------------------------------------------------- timer */
 .timer {
   position: sticky;
-  top: 0;
+  top: var(--safe-top);
   z-index: 5;
   margin: 0 calc(-1 * var(--gutter));
-  padding: calc(var(--safe-top) + 10px) var(--gutter) 10px;
+  padding: 10px var(--gutter);
+  /* Paint over the status bar area above the stuck timer (iPhone notch). */
+  box-shadow: 0 calc(-1 * var(--safe-top)) 0 0 var(--paper);
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
   display: flex;
@@ -471,5 +473,17 @@ select {
 /* Keep scrolled-to steps clear of the sticky timer. */
 .step,
 .compline-step {
-  scroll-margin-top: calc(var(--safe-top) + 76px);
+  scroll-margin-top: calc(var(--safe-top) + 66px);
+}
+
+/* Fields always show where the cursor is, also for time fields whose
+   inner segments hold the focus (they never match :focus-visible). */
+textarea:focus,
+input[type='text']:focus,
+input[type='time']:focus,
+input[type='time']:focus-within,
+input[type='search']:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }

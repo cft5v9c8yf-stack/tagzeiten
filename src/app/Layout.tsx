@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
 import { SectionIcon } from '../ui/SectionIcon';
+import { UpdateBanner } from './UpdateBanner';
 import { SECTIONS } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
 
@@ -42,8 +43,9 @@ export function Layout() {
             )}
           </div>
         </header>
-        {import.meta.env.MODE === 'demo' && <DemoBanner />}
         <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
+          {import.meta.env.MODE === 'demo' && <DemoBanner />}
+          <UpdateBanner />
           <Outlet />
         </main>
       </div>

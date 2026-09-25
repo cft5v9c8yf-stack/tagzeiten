@@ -72,7 +72,7 @@ function Vespers({ date }: { date: DateKey }) {
       </p>
       <Rubric>{form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}</Rubric>
       {order.steps[0]!.parts.map((p) => (
-        <OrderPart key={p.kind} part={p} ctx={{ order: 'vespers', form, date }} />
+        <OrderPart key={p.kind} part={p} ctx={{ order: 'vespers', form, date }} headingLevel={3} />
       ))}
       <div className="order-end">
         {day.evening.vespersDone ? (

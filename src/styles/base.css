@@ -288,7 +288,21 @@ nav.tabs a[aria-current='page']::before {
 .demo-banner {
   font-family: var(--sans);
   font-size: 0.82rem;
-  color: var(--muted);
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+  margin: 4px 0 8px;
+}
+
+.update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
   background: var(--accent-soft);
   border-radius: var(--radius-s);
   padding: 8px 12px;
