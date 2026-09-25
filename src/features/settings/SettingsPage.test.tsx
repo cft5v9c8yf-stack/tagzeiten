@@ -114,6 +114,10 @@ describe('Mehr: Aufbau', () => {
     expect(section.querySelector('.section-verse blockquote')!.textContent).toBe(
       'Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Wege.',
     );
+    // The settings block carries no verse, only its explanations.
+    const settings = screen.getByRole('heading', { name: 'Einstellungen' }).closest('section')!;
+    expect(settings.querySelector('.section-verse')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
     const info = screen.getByRole('button', { name: 'Info zu Leseplan' });
     const bubble = document.getElementById(info.getAttribute('aria-controls')!)!;
     expect(bubble.hidden).toBe(true);

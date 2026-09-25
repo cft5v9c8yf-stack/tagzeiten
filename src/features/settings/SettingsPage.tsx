@@ -30,7 +30,7 @@ function MoreSection({
   level,
   children,
 }: {
-  id: SettingsSectionId;
+  id: string;
   title: string;
   info: ReactNode;
   level: 2 | 3;
@@ -39,7 +39,7 @@ function MoreSection({
   // Under "Mehr" everything starts folded, so the page opens as an overview.
   return (
     <Section id={`more.${id}`} title={title} level={level} info={info} defaultOpen={false} className="more-section">
-      <SectionVerse id={id} />
+      {id in SETTINGS_VERSES && <SectionVerse id={id as SettingsSectionId} />}
       {children}
     </Section>
   );
