@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import { afterEach, describe, expect, it } from 'vitest';
 import { THREE_KEYS, WREATH_FIELDS, MORNING_TEXT_FIELDS, EVENING_TEXT_FIELDS, type Day } from '../domain/model';
 import { TagzeitenDB } from './db';
+import { memoryJournal } from './journal';
 import { Store } from './store';
 
 let n = 0;
@@ -149,6 +150,46 @@ describe('Store', () => {
     await expect(store.importBackup('nope')).rejects.toThrow('kein gültiges JSON');
     await expect(store.importBackup('{"format":"other"}')).rejects.toThrow('keine Sicherung');
     await expect(store.importBackup('{"format":"tagzeiten","version":99}')).rejects.toThrow('neueren Version');
+  });
+
+  it('stashes unsaved changes synchronously when suspended', async () => {
+    const journal = memoryJournal();
+    const db = new TagzeitenDB(`test-${++n}`);
+    dbs.push(db);
+    const store = new Store({ db, journal, debounceMs: 60_000 });
+    await store.load();
+    store.updateDay('2026-09-25', (d) => ({ ...d, morning: { ...d.morning, verse: 'Ps 37,7' } }));
+    const done = store.suspend();
+    // Before anything was awaited, the change is already in the journal.
+    expect(journal.entries.map(([k]) => k)).toEqual(['day:2026-09-25']);
+    await done;
+    expect(journal.entries).toEqual([]);
+    expect((await db.days.get('2026-09-25'))?.morning.verse).toBe('Ps 37,7');
+  });
+
+  it('recovers stashed changes on the next start, but never older ones', async () => {
+    const journal = memoryJournal();
+    const db = new TagzeitenDB(`test-${++n}`);
+    dbs.push(db);
+    const first = new Store({ db, journal });
+    await first.load();
+    first.updateDay('2026-09-24', (d) => ({ ...d, morning: { ...d.morning, verse: 'neu in der DB' } }), { immediate: true });
+    await first.flush();
+    const stored = (await db.days.get('2026-09-24'))!;
+
+    const lost = { ...stored, date: '2026-09-25', morning: { ...stored.morning, verse: 'nur im Journal' }, updatedAt: stored.updatedAt + 1 };
+    const stale = { ...stored, morning: { ...stored.morning, verse: 'veraltet' }, updatedAt: stored.updatedAt - 1 };
+    journal.save([
+      ['day:2026-09-25', lost],
+      ['day:2026-09-24', stale],
+    ]);
+
+    const second = new Store({ db, journal });
+    await second.load();
+    expect(second.getDay('2026-09-25').morning.verse).toBe('nur im Journal');
+    expect(second.getDay('2026-09-24').morning.verse).toBe('neu in der DB');
+    expect((await db.days.get('2026-09-25'))?.morning.verse).toBe('nur im Journal');
+    expect(journal.entries).toEqual([]);
   });
 
   it('leaves an empty database after “Alles löschen”', async () => {

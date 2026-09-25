@@ -43,7 +43,7 @@ export function StoreProvider({ children, store: injected }: { children: ReactNo
   }, [store]);
 
   useEffect(() => {
-    const flush = () => void store.flush();
+    const flush = () => void store.suspend();
     const onVisibility = () => document.visibilityState === 'hidden' && flush();
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('pagehide', flush);

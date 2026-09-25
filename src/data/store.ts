@@ -13,6 +13,7 @@ import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
 import { assignReading, getPlan, markRead as markReadInPlan } from '../domain/readingPlan';
 import { PROFILE_KEY, TagzeitenDB } from './db';
+import { localJournal, type Journal } from './journal';
 import { WriteQueue } from './writeQueue';
 
 export type SaveError = { kind: 'save'; key: string; error: unknown };
@@ -27,6 +28,8 @@ export interface StoreOptions {
   onError?: (e: SaveError) => void;
   /** Values for a profile created on first start (e.g. the theme chosen before). */
   seedProfile?: Partial<Profile>;
+  /** Synchronous stash for unsaved changes when the page is hidden. */
+  journal?: Journal;
 }
 
 export interface UpdateOptions {
@@ -47,15 +50,19 @@ export class Store {
   private readonly queue: WriteQueue<Day | Profile>;
   private readonly now: () => Date;
   private readonly seed: Partial<Profile>;
+  private readonly journal: Journal;
+  /** Documents changed in memory whose latest value is not yet in IndexedDB. */
+  private dirty = new Map<string, Day | Profile>();
 
   constructor(opts: StoreOptions = {}) {
     this.db = opts.db ?? new TagzeitenDB();
     this.now = opts.now ?? (() => new Date());
     this.seed = opts.seedProfile ?? {};
+    this.journal = opts.journal ?? localJournal;
     this.profile = defaultProfile(this.today());
     this.queue = new WriteQueue<Day | Profile>(
       (key, value) => this.persist(key, value),
-      opts.debounceMs ?? 700,
+      opts.debounceMs ?? 500,
       (key, error) => opts.onError?.({ kind: 'save', key, error }),
     );
   }
@@ -73,12 +80,45 @@ export class Store {
       const d = normalizeDay(r);
       if (d) this.days.set(d.date, d);
     }
+    await this.recoverJournal();
     this.emit();
   }
 
-  /** Writes everything pending. Call when the page is hidden. */
-  flush(): Promise<void> {
-    return this.queue.flush();
+  /** Writes everything pending into IndexedDB. */
+  async flush(): Promise<void> {
+    await this.queue.flush();
+    if (this.dirty.size === 0) this.journal.clear();
+  }
+
+  /**
+   * Call when the page is hidden: stashes unsaved changes synchronously,
+   * then starts writing them to IndexedDB.
+   */
+  suspend(): Promise<void> {
+    this.journal.save([...this.dirty.entries()]);
+    return this.flush();
+  }
+
+  /** Applies stashed changes that are newer than what IndexedDB holds. */
+  private async recoverJournal(): Promise<void> {
+    const entries = this.journal.load();
+    if (entries.length === 0) return;
+    for (const [key, value] of entries) {
+      if (key === 'profile') {
+        const p = normalizeProfile(value as Partial<Profile>, this.today());
+        if (p.updatedAt > this.profile.updatedAt) {
+          this.profile = p;
+          await this.persist(key, p);
+        }
+      } else if (key.startsWith(DAY_PREFIX)) {
+        const d = normalizeDay(value);
+        if (d && d.updatedAt > (this.days.get(d.date)?.updatedAt ?? -1)) {
+          this.days.set(d.date, d);
+          await this.persist(key, d);
+        }
+      }
+    }
+    this.journal.clear();
   }
 
   get hasPendingWrites(): boolean {
@@ -138,7 +178,7 @@ export class Store {
   updateDay(date: DateKey, fn: (d: Day) => Day, opts: UpdateOptions = {}): Day {
     const next = { ...fn(this.getDay(date)), date, updatedAt: this.now().getTime() };
     this.days.set(date, next);
-    this.queue.schedule(DAY_PREFIX + date, next, opts.immediate);
+    this.schedule(DAY_PREFIX + date, next, opts.immediate);
     this.emit();
     return next;
   }
@@ -146,9 +186,14 @@ export class Store {
   updateProfile(fn: (p: Profile) => Profile, opts: UpdateOptions = {}): Profile {
     const next = { ...fn(this.profile), updatedAt: this.now().getTime() };
     this.profile = next;
-    this.queue.schedule('profile', next, opts.immediate);
+    this.schedule('profile', next, opts.immediate);
     this.emit();
     return next;
+  }
+
+  private schedule(key: string, value: Day | Profile, immediate?: boolean) {
+    this.dirty.set(key, value);
+    this.queue.schedule(key, value, immediate);
   }
 
   /* ------------------------------------------------------------ reading plan */
@@ -221,6 +266,8 @@ export class Store {
   async importBackup(json: string): Promise<{ days: number }> {
     const { profile, days } = parseBackup(json, this.today());
     await this.queue.cancelAll();
+    this.dirty.clear();
+    this.journal.clear();
     await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
@@ -237,6 +284,8 @@ export class Store {
   /** Deletes every entry and the profile. The app starts over afterwards. */
   async deleteAll(): Promise<void> {
     await this.queue.cancelAll();
+    this.dirty.clear();
+    this.journal.clear();
     await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
@@ -257,5 +306,7 @@ export class Store {
       if (isEmptyDay(day)) await this.db.days.delete(day.date);
       else await this.db.days.put(day);
     }
+    // Only the latest value clears the flag; a newer one may be waiting.
+    if (this.dirty.get(key) === value) this.dirty.delete(key);
   }
 }

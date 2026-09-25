@@ -1,0 +1,475 @@
+/* ---------------------------------------------------------------- timer */
+.timer {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: calc(var(--safe-top) + 10px) var(--gutter) 10px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+}
+.timer .clock {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.3rem;
+  font-weight: 600;
+  min-width: 4.4ch;
+}
+.timer .hint {
+  flex: 1;
+  color: var(--muted);
+  font-size: 0.85rem;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- steps */
+.step {
+  border-top: 1px solid var(--rule);
+}
+.step-head {
+  margin: 0;
+  font-size: inherit;
+}
+.step-head button {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  background: none;
+  padding: 14px 0 8px;
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: baseline;
+  gap: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font-family: var(--serif);
+}
+.step .no {
+  font-weight: 600;
+  color: var(--rubric);
+}
+.step .title {
+  font-weight: 600;
+  font-size: 1.12rem;
+}
+.step .meta {
+  display: flex;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.step .state {
+  color: var(--done);
+  font-weight: 600;
+}
+.step-body {
+  padding: 0 0 14px 2rem;
+}
+.step-footer {
+  margin-top: 16px;
+}
+.part + .part {
+  margin-top: 14px;
+}
+.part-title {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 18px 0 6px;
+}
+
+/* ---------------------------------------------------------------- liturgical text */
+.pray {
+  margin: 8px 0 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+  font-size: 1.02rem;
+}
+.pray p {
+  margin: 0 0 8px;
+}
+.pray .line {
+  display: block;
+}
+.pray .attribution {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.pray.absolution {
+  border-left-color: var(--done);
+}
+.pray-line {
+  padding-left: 14px;
+}
+.vr {
+  display: grid;
+  grid-template-columns: 1.4em 1fr;
+  gap: 4px;
+  margin: 2px 0;
+}
+.vr b {
+  color: var(--rubric);
+  font-family: var(--sans);
+}
+.versicles > div + div {
+  margin-top: 6px;
+}
+.rubric-inline {
+  color: var(--rubric);
+  font-style: italic;
+}
+.antiphon {
+  font-style: italic;
+}
+.psalm-ref {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.note {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 6px 0 10px;
+}
+.send-off {
+  margin-top: 10px;
+  font-weight: 600;
+}
+.station {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.examen-question {
+  font-size: 1.1rem;
+}
+.field-like {
+  display: grid;
+  gap: 2px;
+  margin: 12px 0 0;
+}
+.field-label {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.placeholder-text {
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------- folds */
+details.fold {
+  margin: 8px 0;
+}
+details.fold > summary {
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--accent);
+  padding: 4px 0;
+  min-height: 32px;
+}
+details.fold[open] > summary {
+  margin-bottom: 4px;
+}
+.plain-list {
+  padding-left: 1.2em;
+  margin: 6px 0;
+}
+.plain-list li {
+  margin: 4px 0;
+}
+.mark-sign {
+  display: inline-block;
+  min-width: 1.4em;
+  font-family: var(--sans);
+}
+.color-code {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  margin: 8px 0;
+}
+.color-code th {
+  text-align: left;
+  font-family: var(--sans);
+  font-weight: 600;
+  padding: 3px 14px 3px 0;
+  vertical-align: top;
+}
+.color-code td {
+  padding: 3px 0;
+}
+
+/* ---------------------------------------------------------------- catechism */
+.cat-piece h5 {
+  font-size: 1rem;
+  margin: 12px 0 4px;
+}
+.cat-words {
+  font-weight: 600;
+  font-style: italic;
+}
+.cat-q {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--rubric);
+  margin: 8px 0 2px;
+}
+.cat-a {
+  margin: 0 0 8px;
+}
+
+/* ---------------------------------------------------------------- reading */
+.reading-refs {
+  border-left: 3px solid var(--accent);
+  padding: 2px 0 2px 14px;
+  margin: 10px 0;
+}
+.reading-refs .ref {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  line-height: 1.3;
+  margin: 2px 0;
+}
+.reading-refs.large .ref {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+.reading-refs .track {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  min-width: 2em;
+}
+.reading-refs a,
+a.bible-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
+a.bible-link {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------- fields */
+.field {
+  margin: 12px 0 0;
+}
+.field label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+textarea,
+input[type='text'],
+input[type='time'],
+input[type='search'],
+select {
+  width: 100%;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-s);
+  padding: 9px 11px;
+  font-family: var(--serif);
+  font-size: 1rem; /* 16px+ keeps iOS from zooming */
+  line-height: 1.45;
+  resize: none;
+}
+textarea {
+  min-height: 2.8em;
+  overflow: hidden;
+}
+select {
+  font-family: var(--sans);
+}
+::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 10px 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  min-height: 40px;
+  cursor: pointer;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--done);
+}
+
+/* ---------------------------------------------------------------- choice, chips */
+.choice {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.choice button {
+  appearance: none;
+  border: 1.5px solid var(--rule);
+  background: transparent;
+  border-radius: var(--radius-s);
+  min-width: 44px;
+  min-height: 40px;
+  padding: 5px 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+}
+.choice.marks button {
+  font-size: 1.1rem;
+}
+.choice button[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.choice button[data-v='plus'][aria-pressed='true'] {
+  background: var(--done);
+  border-color: var(--done);
+  color: var(--sheet);
+}
+.choice button[data-v='tilde'][aria-pressed='true'] {
+  background: var(--half);
+  border-color: var(--half);
+  color: var(--sheet);
+}
+.choice button[data-v='minus'][aria-pressed='true'] {
+  background: var(--muted);
+  border-color: var(--muted);
+  color: var(--sheet);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+.chip {
+  appearance: none;
+  border: 1px dashed var(--accent);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+.chip-source {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- review */
+.review {
+  display: grid;
+  gap: 16px;
+  margin: 10px 0;
+}
+.review-key {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.review-text {
+  margin: 2px 0 6px;
+}
+.review .carry {
+  margin-top: 6px;
+}
+
+/* ---------------------------------------------------------------- orders */
+.order + .order {
+  margin-top: 40px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+.order-end {
+  margin: 20px 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.done-note {
+  margin: 0;
+  color: var(--done);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.done-panel {
+  border-color: var(--done);
+  background: var(--done-soft);
+}
+.compline-steps {
+  list-style: none;
+  counter-reset: step;
+  padding: 0;
+  margin: 0;
+}
+.compline-step {
+  counter-increment: step;
+  border-top: 1px solid var(--rule);
+  padding: 4px 0 10px 2rem;
+  position: relative;
+}
+.compline-step > h3 {
+  margin: 12px 0 6px;
+}
+.compline-step::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 13px;
+  font-weight: 600;
+  color: var(--rubric);
+}
+
+/* Family mode: large type, clear alternation of V and A for children. */
+.vespers.family {
+  font-size: 1.2rem;
+}
+.vespers.family .pray {
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+.vespers.family .vr {
+  grid-template-columns: 1.8em 1fr;
+  margin: 6px 0;
+}
+.vespers.family .vr:nth-child(2) span {
+  font-weight: 600;
+}
+.vespers.family .antiphon {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+/* Keep scrolled-to steps clear of the sticky timer. */
+.step,
+.compline-step {
+  scroll-margin-top: calc(var(--safe-top) + 76px);
+}
