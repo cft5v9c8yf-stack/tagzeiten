@@ -1,10 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
 import { trinityGroupOf } from '../../content/churchYearGuide';
 import { churchDay, churchYearOutline, SEASON_LABEL, type OutlineEntry } from '../../domain/churchYear';
-import { addDays, formatShort } from '../../domain/dates';
-import { Section } from '../../ui/Section';
-import { Chevron, useSundayLinks } from './SundayPage';
+import { addDays, formatShort, type DateKey } from '../../domain/dates';
+import { Chevron } from './SundayPage';
 
 /** Splits the weeks of a season into the Trinity groups, where there are any. */
 function groupsOf(weeks: OutlineEntry[]) {
@@ -19,86 +17,127 @@ function groupsOf(weeks: OutlineEntry[]) {
 }
 
 /**
- * All Sundays of the church year (and Christmas Day and Epiphany, which open a
- * week too), to choose one; the chosen one opens on the Sunday page.
+ * All Sundays of a church year (and Christmas Day and Epiphany, which open a
+ * week too) as a card over the Sunday page; choosing one shows it there.
  */
-export function SundayOverview() {
-  const links = useSundayLinks();
-  const outline = churchYearOutline(links.shown);
+export function SundayChooser({
+  shown,
+  current,
+  onChoose,
+  onClose,
+}: {
+  /** The Sunday on the page (marked in gold). */
+  shown: DateKey;
+  /** The Sunday of the current week ("diese Woche"). */
+  current: DateKey;
+  onChoose: (sunday: DateKey) => void;
+  onClose: () => void;
+}) {
+  const [anchor, setAnchor] = useState(shown);
+  const outline = churchYearOutline(anchor);
   const weeks = outline.entries.filter((e) => e.opensWeek);
-  const prevYear = churchDay(addDays(outline.start, -1)).weekStart;
-  const nextYear = churchDay(addDays(outline.end, 1)).weekStart;
-  const listRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
-  // Bring the Sunday one came from into view (after the layout's reset to the top).
+  // A dialog: focus inside, Escape closes, the page behind does not scroll.
   useEffect(() => {
-    const id = setTimeout(() => {
-      listRef.current?.querySelector('[aria-current="page"]')?.scrollIntoView?.({ block: 'center' });
-    }, 0);
-    return () => clearTimeout(id);
-  }, [links.shown]);
+    const previous = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseRef.current();
+      if (e.key === 'Tab' && cardRef.current) {
+        const f = cardRef.current.querySelectorAll<HTMLElement>('button:not([disabled])');
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+      previous?.focus();
+    };
+  }, []);
+
+  // Open at the Sunday on the page.
+  useEffect(() => {
+    cardRef.current?.querySelector('[aria-current="true"]')?.scrollIntoView?.({ block: 'center' });
+  }, [anchor]);
 
   return (
-    <div className="sunday-page sunday-overview">
-      <header className="sunday-head">
-        <Link className="sunday-step" to={links.overview(prevYear)} aria-label="Voriges Kirchenjahr">
-          <span className="sunday-step-circle">
+    <div className="chooser-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="chooser" role="dialog" aria-modal="true" aria-labelledby="chooser-title" ref={cardRef}>
+        <div className="chooser-head">
+          <button
+            type="button"
+            className="chooser-year"
+            aria-label="Voriges Kirchenjahr"
+            onClick={() => setAnchor(churchDay(addDays(outline.start, -1)).weekStart)}
+          >
             <Chevron dir="left" />
-          </span>
-          <span className="sunday-step-label" aria-hidden="true">
-            Voriges Jahr
-          </span>
-        </Link>
-        <div className="sunday-center">
-          <p className="sunday-kicker">
-            Kirchenjahr {outline.churchYear}/{String(outline.churchYear + 1).slice(2)}
-          </p>
-          <h2 className="sunday-name">Alle Sonntage</h2>
-          <p className="sunday-week">
-            <Link className="sunday-back" to={links.sunday(links.shown)}>
-              Zurück zum Sonntag
-            </Link>
-          </p>
-        </div>
-        <Link className="sunday-step" to={links.overview(nextYear)} aria-label="Nächstes Kirchenjahr">
-          <span className="sunday-step-circle">
+          </button>
+          <div className="chooser-title">
+            <h2 id="chooser-title">Alle Sonntage</h2>
+            <p>
+              Kirchenjahr {outline.churchYear}/{String(outline.churchYear + 1).slice(2)}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="chooser-year"
+            aria-label="Nächstes Kirchenjahr"
+            onClick={() => setAnchor(churchDay(addDays(outline.end, 1)).weekStart)}
+          >
             <Chevron dir="right" />
-          </span>
-          <span className="sunday-step-label" aria-hidden="true">
-            Nächstes Jahr
-          </span>
-        </Link>
-      </header>
-
-      <div ref={listRef}>
-        {outline.seasons.map((season) => {
-          const inSeason = weeks.filter((w) => w.season === season.season);
-          if (inSeason.length === 0) return null;
-          return (
-            <Section key={season.season} id={`sunday.all.${season.season}`} title={SEASON_LABEL[season.season]} className="week-season">
-              {groupsOf(inSeason).map((g) => (
-                <div key={g.title ?? season.season} className="week-group">
-                  {g.title && <p className="week-group-title">{g.title}</p>}
-                  <ol className="week-list">
-                    {g.weeks.map((w) => (
-                      <li key={w.date}>
-                        <Link
-                          to={links.sunday(w.date)}
-                          aria-current={w.date === links.shown ? 'page' : undefined}
-                          className={`week-link${w.date === links.current ? ' is-current-week' : ''}`}
-                        >
-                          <span className="week-date">{formatShort(w.date)}</span>
-                          <span className="week-name">{w.name}</span>
-                          {w.date === links.current && <span className="ktag">diese Woche</span>}
-                        </Link>
-                      </li>
-                    ))}
-                  </ol>
-                </div>
-              ))}
-            </Section>
-          );
-        })}
+          </button>
+        </div>
+        <div className="chooser-list">
+          {outline.seasons.map((season) => {
+            const inSeason = weeks.filter((w) => w.season === season.season);
+            if (inSeason.length === 0) return null;
+            return (
+              <section key={season.season} className="week-season" aria-labelledby={`season-${season.season}`}>
+                <h3 id={`season-${season.season}`}>{SEASON_LABEL[season.season]}</h3>
+                {groupsOf(inSeason).map((g) => (
+                  <div key={g.title ?? season.season} className="week-group">
+                    {g.title && <p className="week-group-title">{g.title}</p>}
+                    <ul className="week-list">
+                      {g.weeks.map((w) => (
+                        <li key={w.date}>
+                          <button
+                            type="button"
+                            className="week-link"
+                            aria-current={w.date === shown ? 'true' : undefined}
+                            onClick={() => onChoose(w.date)}
+                          >
+                            <span className="week-date">{formatShort(w.date)}</span>
+                            <span className="week-name">{w.name}</span>
+                            {w.date === current && <span className="ktag">diese Woche</span>}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </section>
+            );
+          })}
+        </div>
+        <div className="chooser-foot">
+          <button type="button" className="btn quiet" ref={closeRef} onClick={onClose}>
+            Übersicht schließen
+          </button>
+        </div>
       </div>
     </div>
   );

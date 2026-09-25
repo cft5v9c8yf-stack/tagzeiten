@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -9,7 +9,6 @@ import { TagzeitenDB } from '../../data/db';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
-import { SundayOverview } from './SundayOverview';
 import { SundayPage } from './SundayPage';
 
 afterEach(cleanup);
@@ -17,13 +16,7 @@ afterEach(cleanup);
 let n = 0;
 async function renderSunday(path: string) {
   const store = new Store({ db: new TagzeitenDB(`sunday-${++n}`), journal: memoryJournal(), now: () => new Date(2026, 8, 25, 9) });
-  const router = createMemoryRouter(
-    [
-      { path: '/sonntag', element: <SundayPage /> },
-      { path: '/sonntag/alle', element: <SundayOverview /> },
-    ],
-    { initialEntries: [path] },
-  );
+  const router = createMemoryRouter([{ path: '/sonntag', element: <SundayPage /> }], { initialEntries: [path] });
   render(
     <ToastProvider>
       <StoreProvider store={store}>
@@ -34,7 +27,7 @@ async function renderSunday(path: string) {
   await screen.findByRole('heading', { level: 2 });
   return router;
 }
-const title = () => screen.getByRole('heading', { level: 2 }).textContent;
+const title = () => document.querySelector('.sunday-name')!.textContent;
 
 describe('Sonntag', () => {
   it('stands in the middle of the bar, with Andacht for morning and evening', () => {
@@ -75,16 +68,22 @@ describe('Sonntag', () => {
     await waitFor(() => expect(title()).toBe('1. Sonntag im Advent'));
   });
 
-  it('opens the list of all Sundays from the name and back to the chosen one', async () => {
+  it('opens all Sundays as a card from the name and shows the chosen one', async () => {
     const router = await renderSunday('/sonntag?d=2026-09-24');
-    fireEvent.click(screen.getByRole('link', { name: /– alle Sonntage$/ }));
-    await waitFor(() => expect(title()).toBe('Alle Sonntage'));
-    expect(router.state.location.pathname).toBe('/sonntag/alle');
-    const shown = document.querySelector('.week-list a[aria-current="page"]')!;
+    fireEvent.click(screen.getByRole('button', { name: /– alle Sonntage$/ }));
+    const card = await screen.findByRole('dialog', { name: 'Alle Sonntage' });
+    const shown = card.querySelector('.week-link[aria-current="true"]')!;
     expect(shown.textContent).toContain('16. Sonntag nach Trinitatis');
     expect(shown.textContent).toContain('diese Woche');
-    fireEvent.click(screen.getByRole('link', { name: /Invokavit/ }));
+    // Escape closes the card without leaving the page.
+    fireEvent.keyDown(document, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+
+    fireEvent.click(screen.getByRole('button', { name: /– alle Sonntage$/ }));
+    fireEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /Invokavit/ }));
     await waitFor(() => expect(title()).toBe('Invokavit'));
+    expect(screen.queryByRole('dialog')).toBeNull();
     expect(router.state.location.pathname).toBe('/sonntag');
   });
+
 });

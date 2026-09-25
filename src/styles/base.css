@@ -310,8 +310,18 @@ nav.tabs a {
   font-weight: 600;
   color: var(--muted);
 }
+/* The chosen tab's icon grows a little */
 nav.tabs a .icon {
   display: block;
+  transition: transform 0.25s ease;
+}
+nav.tabs a[aria-current='page'] .icon {
+  transform: scale(1.3) translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  nav.tabs a .icon {
+    transition: none;
+  }
 }
 nav.tabs a[aria-current='page'] {
   color: var(--ink);

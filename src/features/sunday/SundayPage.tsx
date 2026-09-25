@@ -1,4 +1,5 @@
-import { Link, useLocation } from 'react-router';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
@@ -7,6 +8,7 @@ import { churchDay, CIRCLE_LABEL, CIRCLES, nextWeekStart, previousWeekStart, SEA
 import { formatLong, type DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleLink } from '../../ui/BibleLink';
+import { SundayChooser } from './SundayOverview';
 
 const SUNDAY_PARAM = 's';
 
@@ -32,7 +34,6 @@ export function useSundayLinks() {
     current,
     shown,
     sunday: (d?: DateKey) => to('/sonntag', d),
-    overview: (d?: DateKey) => to('/sonntag/alle', d),
   };
 }
 
@@ -59,11 +60,13 @@ export function Chevron({ dir }: { dir: 'left' | 'right' }) {
  * The week comes from its Sunday: the Sunday with its verse, its meaning, its
  * place in the church year, and Gospel and Epistle – as references to read in
  * the Bible on paper (rule 13), each with a short summary in our own words.
- * The Sundays before and after are one tap away; the name opens the list of all.
+ * The Sundays before and after are one tap away; the name opens a card with all.
  */
 export function SundayPage() {
   const { date, isToday } = useSelectedDate();
   const links = useSundayLinks();
+  const navigate = useNavigate();
+  const [choosing, setChoosing] = useState(false);
   const s = links.shown;
   const c = churchDay(s);
   const prev = previousWeekStart(s);
@@ -96,9 +99,9 @@ export function SundayPage() {
             </p>
           )}
           <h2 className="sunday-name">
-            <Link to={links.overview(s)} aria-label={`${c.week} – alle Sonntage`}>
+            <button type="button" onClick={() => setChoosing(true)} aria-haspopup="dialog" aria-label={`${c.week} – alle Sonntage`}>
               {c.week}
-            </Link>
+            </button>
           </h2>
           <p className="sunday-week">
             {c.weekNumber}. Woche im Kirchenjahr
@@ -155,6 +158,18 @@ export function SundayPage() {
             </div>
           </div>
         </section>
+      )}
+
+      {choosing && (
+        <SundayChooser
+          shown={s}
+          current={links.current}
+          onClose={() => setChoosing(false)}
+          onChoose={(d) => {
+            setChoosing(false);
+            navigate(links.sunday(d));
+          }}
+        />
       )}
 
       <section className="block block-warm" aria-labelledby="sunday-place">

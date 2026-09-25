@@ -7,14 +7,13 @@ import { DevotionIndex, DevotionPage, DevotionRedirect } from '../features/devot
 import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
-import { SundayOverview } from '../features/sunday/SundayOverview';
 import { SundayPage } from '../features/sunday/SundayPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { Layout } from './Layout';
 import { NotFound } from './NotFound';
 
 const IS_DEMO = import.meta.env.MODE === 'demo';
-if (IS_DEMO && !location.hash) location.hash = '#/';
+if (IS_DEMO && !location.hash) location.hash = '#/sonntag';
 
 // The demo runs inside a frame without server-side routing, hence hash URLs.
 // BASE_URL is "/" normally and e.g. "/tagzeiten/" on GitHub Pages.
@@ -37,7 +36,6 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'morgen', element: <DevotionRedirect part="morgen" /> },
       { path: 'abend', element: <DevotionRedirect part="abend" /> },
       { path: 'sonntag', element: <SundayPage /> },
-      { path: 'sonntag/alle', element: <SundayOverview /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'archiv', element: <ArchivePage /> },
       { path: 'mehr', element: <SettingsPage /> },

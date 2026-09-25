@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
 import { LutherRose } from '../ui/LutherRose';
@@ -8,11 +8,22 @@ import { UpdateBanner } from './UpdateBanner';
 import { SECTIONS, SUNDAY_PATH } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
 
+/** Set once the app has opened; the start page is chosen only then. */
+let launched = false;
+
 export function Layout() {
   const { date, isToday } = useSelectedDate();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
+  const navigate = useNavigate();
+
+  // The app opens on the Sunday: the week comes from it. Only on launch – "Heute" stays reachable.
+  useEffect(() => {
+    if (launched) return;
+    launched = true;
+    if (pathname === '/' && !search) navigate(SUNDAY_PATH, { replace: true });
+  }, [pathname, search, navigate]);
 
   // On section change: back to the top, and move focus into the new content
   // so keyboard and screen-reader users land where the page begins.

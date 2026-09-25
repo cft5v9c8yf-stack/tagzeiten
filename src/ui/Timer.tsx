@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { formatClock, timer } from './timerState';
 
 type WakeLock = { release: () => Promise<void> };
@@ -45,11 +45,31 @@ export function Timer({ totalMinutes, hint }: { totalMinutes: number; hint: stri
 
   useWakeLock(running);
 
+  // Only once the timer sits at the top does it cover the status bar above it;
+  // otherwise that strip would hide what stands above the timer (Morgen/Abend).
+  const barRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const el = barRef.current;
+      if (!el) return;
+      const top = parseFloat(getComputedStyle(el).top) || 0;
+      setStuck(el.getBoundingClientRect().top <= top + 0.5 && window.scrollY > 0);
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, []);
+
   const left = timer.left();
   const started = running || state.elapsedSec > 0;
 
   return (
-    <div className="timer">
+    <div className={`timer${stuck ? ' is-stuck' : ''}`} ref={barRef}>
       <span className="clock" role="timer" aria-label={`Verbleibende Zeit ${formatClock(left)}`}>
         {formatClock(left)}
       </span>
