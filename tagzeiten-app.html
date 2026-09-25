@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tagzeiten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F4EF; --sheet:#FFFFFF; --ink:#1D2330; --muted:#636A76;
+  --rule:#DDD8CE; --rubric:#8C2F2F; --rubric-soft:#F1E3E1; --done:#3E6B4E; --done-soft:#E3EDE6;
+  --half:#9A7B2F; --half-soft:#F3ECD9;
+  --serif:"Literata", Georgia, "Times New Roman", serif;
+  --sans:"Source Sans 3", -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#131A26; --sheet:#1B2432; --ink:#E8E3D8; --muted:#9AA2AF;
+    --rule:#2C3748; --rubric:#E07A6E; --rubric-soft:#3A2327; --done:#7FB894; --done-soft:#1F3328;
+    --half:#D2B26A; --half-soft:#33301F;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131A26; --sheet:#1B2432; --ink:#E8E3D8; --muted:#9AA2AF;
+  --rule:#2C3748; --rubric:#E07A6E; --rubric-soft:#3A2327; --done:#7FB894; --done-soft:#1F3328;
+  --half:#D2B26A; --half-soft:#33301F;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:17px;line-height:1.55;-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:var(--rubric)}
+:focus-visible{outline:2px solid var(--rubric);outline-offset:2px;border-radius:4px}
+
+.wrap{max-width:640px;margin:0 auto;padding:0 18px 110px}
+header.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:18px 0 6px}
+header.top h1{font-size:1.05rem;font-weight:600;margin:0;letter-spacing:.01em}
+header.top .date{font-family:var(--sans);font-size:.9rem;color:var(--muted)}
+header.top .date button{background:none;border:0;color:var(--rubric);cursor:pointer;padding:0 0 0 8px;font-weight:600}
+
+h2{font-size:1.45rem;line-height:1.25;font-weight:600;margin:26px 0 6px}
+h3{font-size:1.08rem;font-weight:600;margin:22px 0 6px;color:var(--rubric)}
+p{margin:0 0 10px}
+.sans{font-family:var(--sans)}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.rubric{font-style:italic;color:var(--rubric);font-size:.93rem}
+
+/* Tagesbogen */
+.arc{margin:14px 0 8px;position:relative}
+.arc svg{display:block;width:100%;height:auto;overflow:visible}
+.arc .hours text{font-family:var(--sans);font-size:11px;fill:var(--muted)}
+.arcbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.hour-block{appearance:none;border:1px solid var(--rule);background:var(--sheet);border-radius:10px;
+  padding:12px 14px;text-align:left;cursor:pointer}
+.hour-block .t{font-family:var(--sans);font-size:.8rem;color:var(--muted)}
+.hour-block .n{font-weight:600;font-size:1.05rem}
+.hour-block .s{font-family:var(--sans);font-size:.85rem;margin-top:2px}
+.hour-block.is-done{border-color:var(--done);background:var(--done-soft)}
+.hour-block.is-done .s{color:var(--done)}
+
+.reading{border-left:3px solid var(--rubric);padding:4px 0 4px 14px;margin:18px 0 8px}
+.reading .ref{font-size:1.5rem;line-height:1.25;font-weight:600}
+.reading .ref a{color:inherit;text-decoration:none;border-bottom:1px solid var(--rule)}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+.bar>span{display:block;height:100%;background:var(--rubric)}
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;align-items:center;font-family:var(--sans);font-size:.85rem;color:var(--muted);margin-top:10px}
+
+.panel{background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;margin:12px 0}
+.three{display:grid;gap:8px}
+.three .row{display:grid;grid-template-columns:4.2em 1fr auto;gap:10px;align-items:baseline}
+.three .k{font-family:var(--sans);font-weight:600;font-size:.85rem;color:var(--rubric)}
+.mark{font-family:var(--sans);font-weight:600;font-size:.85rem;padding:1px 8px;border-radius:999px}
+.mark.plus{background:var(--done-soft);color:var(--done)}
+.mark.tilde{background:var(--half-soft);color:var(--half)}
+.mark.minus{background:var(--rule);color:var(--muted)}
+
+/* Gewohnheiten */
+.habits{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.9rem}
+.habits th{font-weight:400;color:var(--muted);font-size:.78rem;padding:0 0 6px;text-align:center}
+.habits th:first-child{text-align:left}
+.habits td{padding:5px 0;border-top:1px solid var(--rule);text-align:center;vertical-align:middle}
+.habits td:first-child{text-align:left;padding-right:8px}
+.habits .auto{color:var(--muted);font-size:.75rem;display:block}
+.cell{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--rule);background:transparent;cursor:pointer;padding:0;display:inline-grid;place-items:center}
+.cell.on{background:var(--done);border-color:var(--done)}
+.cell.on::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--sheet)}
+.cell.today{border-color:var(--rubric)}
+.cell[disabled]{cursor:default}
+.cell.future{opacity:.35}
+.pill{font-family:var(--sans);font-size:.8rem;border:1.5px solid var(--rule);border-radius:999px;padding:2px 10px;background:transparent;cursor:pointer}
+.pill.on{background:var(--done);border-color:var(--done);color:var(--sheet)}
+
+.dots{display:grid;grid-template-columns:repeat(14,1fr);gap:5px;margin:8px 0 2px}
+.dot{aspect-ratio:1;border-radius:3px;background:var(--rule)}
+.dot.m{background:color-mix(in srgb,var(--done) 55%,var(--rule))}
+.dot.me{background:var(--done)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stat .v{font-size:1.35rem;font-weight:600;line-height:1.1}
+.stat .l{font-family:var(--sans);font-size:.78rem;color:var(--muted)}
+
+/* Ablauf */
+.timer{position:sticky;top:0;z-index:5;background:var(--paper);display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--rule);font-family:var(--sans)}
+.timer .clock{font-variant-numeric:tabular-nums;font-size:1.3rem;font-weight:600;min-width:4.2ch}
+.timer .hint{color:var(--muted);font-size:.85rem;flex:1}
+.btn{appearance:none;border:1px solid var(--rule);background:var(--sheet);border-radius:8px;padding:8px 14px;
+  font-family:var(--sans);font-weight:600;font-size:.92rem;cursor:pointer}
+.btn.primary{background:var(--rubric);border-color:var(--rubric);color:var(--sheet)}
+.btn.quiet{background:transparent}
+.btn:disabled{opacity:.45;cursor:default}
+
+.step{border-top:1px solid var(--rule);padding:4px 0 10px}
+.step>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2rem 1fr auto;align-items:baseline;gap:6px;padding:14px 0 6px}
+.step>summary::-webkit-details-marker{display:none}
+.step .no{font-weight:600;color:var(--rubric)}
+.step .title{font-weight:600;font-size:1.12rem}
+.step .min{font-family:var(--sans);font-size:.82rem;color:var(--muted)}
+.step.done .no::after{content:" ✓";color:var(--done)}
+.step .body{padding-left:2rem}
+.pray{margin:8px 0 14px;padding-left:12px;border-left:2px solid var(--rule);font-size:1.02rem}
+.pray em{font-style:italic}
+.vr{display:grid;grid-template-columns:1.4em 1fr;gap:4px;margin:2px 0}
+.vr b{color:var(--rubric);font-family:var(--sans)}
+label.f{display:block;font-family:var(--sans);font-size:.82rem;font-weight:600;color:var(--muted);margin:12px 0 4px}
+textarea,input[type=text],select{width:100%;background:var(--sheet);border:1px solid var(--rule);border-radius:8px;
+  padding:9px 11px;font-family:var(--serif);font-size:1rem;line-height:1.45;resize:none}
+textarea{min-height:2.7em;overflow:hidden}
+select{font-family:var(--sans);font-size:.95rem}
+.tri{display:inline-flex;gap:6px}
+.tri button{appearance:none;border:1.5px solid var(--rule);background:transparent;border-radius:8px;min-width:40px;padding:5px 8px;font-family:var(--sans);font-weight:600;cursor:pointer}
+.tri button.sel[data-v="plus"]{background:var(--done);border-color:var(--done);color:var(--sheet)}
+.tri button.sel[data-v="tilde"]{background:var(--half);border-color:var(--half);color:var(--sheet)}
+.tri button.sel[data-v="minus"]{background:var(--muted);border-color:var(--muted);color:var(--sheet)}
+.review{display:grid;gap:14px;margin:8px 0}
+.review .item .lab{font-family:var(--sans);font-weight:600;font-size:.85rem;color:var(--rubric)}
+.review .item .txt{margin:2px 0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{appearance:none;border:1px dashed var(--rubric);background:transparent;color:var(--rubric);border-radius:999px;padding:3px 10px;font-family:var(--sans);font-size:.82rem;cursor:pointer}
+.note{font-style:italic;color:var(--muted);font-size:.9rem;margin:6px 0 10px}
+.check{display:flex;gap:10px;align-items:center;margin:10px 0;font-family:var(--sans)}
+
+/* Archiv / Listen */
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin:6px 0 12px}
+.seg button{appearance:none;border:0;background:transparent;padding:7px 14px;font-family:var(--sans);font-weight:600;font-size:.88rem;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--rubric);color:var(--sheet)}
+.list{list-style:none;margin:0;padding:0}
+.list li{border-top:1px solid var(--rule);padding:12px 0}
+.list .d{font-family:var(--sans);font-size:.8rem;color:var(--muted)}
+.list .v{font-style:italic}
+.list button.link{appearance:none;border:0;background:none;padding:0;color:var(--rubric);font-family:var(--sans);font-weight:600;font-size:.85rem;cursor:pointer}
+.empty{color:var(--muted);font-style:italic;padding:16px 0}
+.khs{border-top:1px solid var(--rule)}
+.khs>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:2rem 1fr;align-items:baseline;gap:6px;padding:14px 0 8px}
+.khs>summary::-webkit-details-marker{display:none}
+.khs .no{font-weight:600;color:var(--rubric)}
+.khs .title{font-weight:600;font-size:1.1rem}
+.khs .body{padding:0 0 12px 2rem}
+.kpiece{padding:10px 0 14px;border-bottom:1px dashed var(--rule)}
+.kpiece:last-child{border-bottom:0}
+.kpiece.today{border-left:3px solid var(--rubric);padding-left:12px;margin-left:-15px}
+.kh{font-weight:600;margin:4px 0 6px}
+.ktag{font-family:var(--sans);font-size:.72rem;font-weight:600;color:var(--rubric);border:1px solid var(--rubric);border-radius:999px;padding:0 7px;vertical-align:2px}
+.kw{font-weight:600;font-style:italic}
+.kq{font-family:var(--sans);font-weight:600;font-size:.88rem;color:var(--rubric);margin:8px 0 2px}
+.ka{margin:0 0 8px}
+
+.habit-edit{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border-top:1px solid var(--rule);padding:10px 0}
+.habit-edit .r{font-family:var(--sans);font-size:.78rem;color:var(--muted)}
+.switch{appearance:none;width:42px;height:24px;border-radius:12px;background:var(--rule);position:relative;cursor:pointer;border:0;flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--sheet);transition:left .15s}
+.switch:checked{background:var(--done)}
+.switch:checked::after{left:21px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--sheet);border-top:1px solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom,0px);z-index:10}
+nav.tabs .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+nav.tabs button{appearance:none;border:0;background:none;padding:10px 0 12px;font-family:var(--sans);font-size:.7rem;font-weight:600;color:var(--muted);cursor:pointer}
+nav.tabs button .g{display:block;font-family:var(--serif);font-size:1.1rem;font-weight:400;line-height:1.1;margin-bottom:2px}
+nav.tabs button.on{color:var(--rubric)}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);font-family:var(--sans);font-size:.85rem;padding:7px 14px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:.92}
+.loading{padding:60px 0;text-align:center;color:var(--muted);font-style:italic}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top"><h1>Tagzeiten</h1><div class="date" id="hdrDate"></div></header>
+  <main id="view"><div class="loading">Einen Moment …</div></main>
+</div>
+<nav class="tabs" aria-label="Bereiche"><div class="in">
+  <button data-go="heute"><span class="g">☉</span>Heute</button>
+  <button data-go="morgen"><span class="g">◐</span>Morgen</button>
+  <button data-go="abend"><span class="g">☾</span>Abend</button>
+  <button data-go="kat"><span class="g">✝</span>Katechismus</button>
+  <button data-go="archiv"><span class="g">¶</span>Archiv</button>
+  <button data-go="mehr"><span class="g">⁂</span>Mehr</button>
+</div></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================ DATEN */
+const AT_BOOKS=[["1. Mose",50,"1.Mose"],["2. Mose",40,"2.Mose"],["3. Mose",27,"3.Mose"],["4. Mose",36,"4.Mose"],["5. Mose",34,"5.Mose"],["Josua",24,"Josua"],["Richter",21,"Richter"],["Rut",4,"Rut"],["1. Samuel",31,"1.Samuel"],["2. Samuel",24,"2.Samuel"],["1. Könige",22,"1.Könige"],["2. Könige",25,"2.Könige"],["1. Chronik",29,"1.Chronik"],["2. Chronik",36,"2.Chronik"],["Esra",10,"Esra"],["Nehemia",13,"Nehemia"],["Ester",10,"Ester"],["Hiob",42,"Hiob"],["Psalm",150,"Psalm"],["Sprüche",31,"Sprüche"],["Prediger",12,"Prediger"],["Hoheslied",8,"Hoheslied"],["Jesaja",66,"Jesaja"],["Jeremia",52,"Jeremia"],["Klagelieder",5,"Klagelieder"],["Hesekiel",48,"Hesekiel"],["Daniel",12,"Daniel"],["Hosea",14,"Hosea"],["Joel",4,"Joel"],["Amos",9,"Amos"],["Obadja",1,"Obadja"],["Jona",4,"Jona"],["Micha",7,"Micha"],["Nahum",3,"Nahum"],["Habakuk",3,"Habakuk"],["Zefanja",3,"Zefanja"],["Haggai",2,"Haggai"],["Sacharja",14,"Sacharja"],["Maleachi",3,"Maleachi"]];
+const NT_BOOKS=[["Matthäus",28,"Matthäus"],["Markus",16,"Markus"],["Lukas",24,"Lukas"],["Johannes",21,"Johannes"],["Apostelgeschichte",28,"Apostelgeschichte"],["Römer",16,"Römer"],["1. Korinther",16,"1.Korinther"],["2. Korinther",13,"2.Korinther"],["Galater",6,"Galater"],["Epheser",6,"Epheser"],["Philipper",4,"Philipper"],["Kolosser",4,"Kolosser"],["1. Thessalonicher",5,"1.Thessalonicher"],["2. Thessalonicher",3,"2.Thessalonicher"],["1. Timotheus",6,"1.Timotheus"],["2. Timotheus",4,"2.Timotheus"],["Titus",3,"Titus"],["Philemon",1,"Philemon"],["1. Petrus",5,"1.Petrus"],["2. Petrus",3,"2.Petrus"],["1. Johannes",5,"1.Johannes"],["2. Johannes",1,"2.Johannes"],["3. Johannes",1,"3.Johannes"],["Hebräer",13,"Hebräer"],["Jakobus",5,"Jakobus"],["Judas",1,"Judas"],["Offenbarung",22,"Offenbarung"]];
+// AT: Muster 2-1-1-1 (≈1,25 Kap./Tag → rund zwei Jahre), nie über Buchgrenzen. NT: 1 Kap./Tag.
+function buildPortions(books,pattern){const out=[];let p=0;books.forEach((b,bi)=>{let c=1;while(c<=b[1]){let n=pattern[p%pattern.length];p++;n=Math.min(n,b[1]-c+1);out.push({b:bi,from:c,to:c+n-1});c+=n;}});return out;}
+const AT_P=buildPortions(AT_BOOKS,[2,1,1,1]);
+const NT_P=buildPortions(NT_BOOKS,[1]);
+const AT_TOTAL=AT_BOOKS.reduce((s,b)=>s+b[1],0), NT_TOTAL=NT_BOOKS.reduce((s,b)=>s+b[1],0);
+function portionLabel(books,p){const b=books[p.b];return b[0]+" "+(p.from===p.to?p.from:p.from+"–"+p.to);}
+function portionUrl(books,p){const b=books[p.b];return "https://www.bibleserver.com/LUT/"+encodeURIComponent(b[2])+p.from+(p.to>p.from?"-"+p.to:"");}
+function chaptersBefore(portions,idx){let s=0;for(let i=0;i<Math.min(idx,portions.length);i++)s+=portions[i].to-portions[i].from+1;return s;}
+
+const WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+const WD_LONG=["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+const PS_MORGEN={1:["63","Gott, du bist mein Gott; frühe suche ich dich."],2:["5","HERR, frühe wollest du meine Stimme hören."],3:["36","Bei dir ist die Quelle des Lebens, und in deinem Licht sehen wir das Licht."],4:["57","Wache auf, meine Ehre, wache auf, Psalter und Harfe!"],5:["51","Schaffe in mir, Gott, ein reines Herz."],6:["92","Des Morgens deine Gnade und des Nachts deine Wahrheit verkündigen."],0:["118","Dies ist der Tag, den der HERR macht; laßt uns freuen und fröhlich darin sein."]};
+const PS_ABEND={1:["141","Mein Gebet steige vor dir auf wie ein Räuchopfer."],2:["121","Meine Hilfe kommt vom HERRN, der Himmel und Erde gemacht hat."],3:["130","Bei dem HERRN ist die Gnade und viel Erlösung bei ihm."],4:["23","Der HERR ist mein Hirte, mir wird nichts mangeln."],5:["51","Schaffe in mir, Gott, ein reines Herz."],6:["84","Wie lieblich sind deine Wohnungen, HERR Zebaoth."],0:["103","Lobe den HERRN, meine Seele, und vergiß nicht, was er dir Gutes getan hat."]};
+const STAND={1:["Ehemann","Habe ich meine Frau heute geehrt, oder nur verwaltet?"],2:["Vater","Habe ich meine Kinder heute gesehen, oder nur beaufsichtigt?"],3:["Mitarbeiter und Kollege","War ich treu in dem, was mir anvertraut ist? Habe ich über andere geredet, wie ich möchte, daß über mich geredet wird?"],4:["Prediger und Bruder","Habe ich Gottes Wort heute geachtet und gern gehört? Habe ich gedient oder mich dargestellt?"],5:["Nächster","Wem bin ich heute begegnet, dem ich schuldig geblieben bin?"],6:["Vater","Habe ich meine Kinder heute gesehen, oder nur beaufsichtigt?"],0:["Ehemann","Habe ich meine Frau heute geehrt, oder nur verwaltet?"]};
+const FRAGEN=["Was sagt der Text?","Was bedeutete er für die ersten Leser?","Was lehrt er über Gott?","Was lehrt er über den Menschen?","Was erwartet er von mir?","Wie verändert das meinen Umgang mit anderen?","Wozu treibt er mich im Gebet?"];
+
+const T={
+gloria:"Ehre sei dem Vater und dem Sohn und dem Heiligen Geist,<br>wie im Anfang, so auch jetzt und alle Zeit<br>und in Ewigkeit. Amen.",
+vaterunser:"Vater unser im Himmel. Geheiligt werde dein Name. Dein Reich komme. Dein Wille geschehe, wie im Himmel, so auf Erden. Unser tägliches Brot gib uns heute. Und vergib uns unsere Schuld, wie auch wir vergeben unsern Schuldigern. Und führe uns nicht in Versuchung, sondern erlöse uns von dem Bösen. Denn dein ist das Reich und die Kraft und die Herrlichkeit in Ewigkeit. Amen.",
+glaube:"Ich glaube an Gott, den Vater, den Allmächtigen, Schöpfer des Himmels und der Erde. Und an Jesus Christus, seinen eingeborenen Sohn, unsern Herrn, empfangen durch den Heiligen Geist, geboren von der Jungfrau Maria, gelitten unter Pontius Pilatus, gekreuzigt, gestorben und begraben, hinabgestiegen in das Reich des Todes, am dritten Tage auferstanden von den Toten, aufgefahren in den Himmel; er sitzt zur Rechten Gottes, des allmächtigen Vaters; von dort wird er kommen, zu richten die Lebenden und die Toten. Ich glaube an den Heiligen Geist, die heilige christliche Kirche, Gemeinschaft der Heiligen, Vergebung der Sünden, Auferstehung der Toten und das ewige Leben. Amen.",
+morgensegen:"Ich danke dir, mein himmlischer Vater, durch Jesus Christus, deinen lieben Sohn, daß du mich diese Nacht vor allem Schaden und Gefahr behütet hast, und bitte dich, du wollest mich diesen Tag auch behüten vor Sünden und allem Übel, daß dir all mein Tun und Leben gefalle. Denn ich befehle mich, meinen Leib und Seele und alles in deine Hände. Dein heiliger Engel sei mit mir, daß der böse Feind keine Macht an mir finde. Amen.",
+abendsegen:"Ich danke dir, mein himmlischer Vater, durch Jesus Christus, deinen lieben Sohn, daß du mich diesen Tag gnädiglich behütet hast, und bitte dich, du wollest mir vergeben alle meine Sünde, wo ich Unrecht getan habe, und mich diese Nacht auch gnädiglich behüten. Denn ich befehle mich, meinen Leib und Seele und alles in deine Hände. Dein heiliger Engel sei mit mir, daß der böse Feind keine Macht an mir finde. Amen.",
+taufe:"Ich bin getauft auf den Namen des Vaters und des Sohnes und des Heiligen Geistes. Der alte Adam in mir soll durch tägliche Reue und Buße ersäuft werden und sterben mit allen Sünden und bösen Lüsten, und täglich soll wieder herauskommen und auferstehen der neue Mensch, der in Gerechtigkeit und Reinheit vor Gott ewiglich lebe. Amen.",
+hymnM:"Die helle Sonn leucht jetzt herfür,<br>fröhlich vom Schlaf aufstehen wir;<br>Gott Lob, der uns in dieser Nacht<br>behüt hat vor des Teufels Macht.",
+hymnA:"Christe, du bist der helle Tag,<br>vor dir die Nacht nicht bleiben mag;<br>du leuchtest uns vom Vater her<br>und bist des Lichtes Prediger.",
+benedictus:"Gelobt sei der Herr, der Gott Israels, denn er hat besucht und erlöst sein Volk und hat uns aufgerichtet ein Horn des Heils in dem Hause seines Dieners David, wie er vorzeiten geredet hat durch den Mund seiner heiligen Propheten: daß er uns errettete von unsern Feinden und von der Hand aller, die uns hassen, und Barmherzigkeit erzeigte unsern Vätern und gedächte an seinen heiligen Bund, daß wir, erlöst aus der Hand unserer Feinde, ihm dienten ohne Furcht unser Leben lang in Heiligkeit und Gerechtigkeit, die ihm gefällig ist. Und du, Kindlein, wirst ein Prophet des Höchsten heißen; du wirst vor dem Herrn hergehen, daß du seinen Weg bereitest und Erkenntnis des Heils gebest seinem Volk, die da ist in Vergebung ihrer Sünden, durch die herzliche Barmherzigkeit unseres Gottes, durch welche uns besucht hat der Aufgang aus der Höhe, auf daß er erscheine denen, die da sitzen in Finsternis und Schatten des Todes, und richte unsere Füße auf den Weg des Friedens.",
+magnificat:"Meine Seele erhebt den Herrn, und mein Geist freuet sich Gottes, meines Heilandes; denn er hat die Niedrigkeit seiner Magd angesehen. Siehe, von nun an werden mich selig preisen alle Kindeskinder. Denn er hat große Dinge an mir getan, der da mächtig ist und dessen Name heilig ist. Und seine Barmherzigkeit währet immer für und für bei denen, die ihn fürchten. Er übet Gewalt mit seinem Arm und zerstreut, die hoffärtig sind in ihres Herzens Sinn. Er stößt die Gewaltigen vom Stuhl und erhebt die Niedrigen. Die Hungrigen füllt er mit Gütern und läßt die Reichen leer. Er denkt der Barmherzigkeit und hilft seinem Diener Israel auf, wie er geredet hat unsern Vätern, Abraham und seinem Samen ewiglich.",
+kollM:"Herr Gott, himmlischer Vater, der du uns diesen Tag geschenkt hast: Wir bitten dich, regiere uns durch deinen Heiligen Geist, daß wir in unserem Beruf treu seien, unserm Nächsten dienen und nichts tun, was dir mißfällt, durch Jesus Christus, deinen Sohn, unsern Herrn. Amen.",
+kollA:"Herr Gott, himmlischer Vater, der du die Nacht gemacht hast, daß der Mensch ruhe: Wir bitten dich, vergib uns, was wir heute gefehlt haben, behüte uns diese Nacht und laß uns morgen fröhlich aufstehen zu deinem Dienst, durch Jesus Christus, deinen Sohn, unsern Herrn. Amen.",
+segen:"Es segne und behüte uns der allmächtige und barmherzige Gott, Vater, Sohn und Heiliger Geist. Amen.",
+bekenntnis:"Ich armer, elender Sünder bekenne dir alle meine Sünde und Missetat, die ich begangen habe mit Gedanken, Worten und Werken, womit ich dich erzürnt und deine Strafe verdient habe. Sie sind mir leid, und ich bitte um Gnade. Und was ich nicht erkenne, das erkennst du: vergib mir auch das, um deines Sohnes Jesu Christi willen.",
+zuspruch:"So wir aber unsere Sünde bekennen, so ist er treu und gerecht, daß er uns die Sünde vergibt und reinigt uns von aller Untugend. <span class='muted'>(1. Joh 1,9)</span>",
+nunc:"Herr, nun lässest du deinen Diener in Frieden fahren, wie du gesagt hast; denn meine Augen haben deinen Heiland gesehen, welchen du bereitet hast vor allen Völkern, ein Licht, zu erleuchten die Heiden, und zum Preis deines Volkes Israel."
+};
+
+// Gewohnheiten: Vorlagen. rhythm: d=täglich, w=wöchentlich, m=monatlich. auto: aus dem Ablauf abgeleitet.
+const PRESETS=[
+ {id:"stille",name:"Stille Zeit",rhythm:"d",auto:"morning",on:true,why:"Morgenordnung abgeschlossen"},
+ {id:"vesper",name:"Vesper mit der Familie",rhythm:"d",auto:"vesper",on:true,why:"Vesper abgeschlossen"},
+ {id:"nacht",name:"Nachtgebet",rhythm:"d",auto:"night",on:true,why:"Nachtgebet abgeschlossen"},
+ {id:"tisch",name:"Tischgebet mit der Familie",rhythm:"d",on:true},
+ {id:"kindersegen",name:"Die Kinder segnen",rhythm:"d",on:true},
+ {id:"ehegebet",name:"Mit meiner Frau beten",rhythm:"d",on:false},
+ {id:"memo",name:"Vers auswendig wiederholen",rhythm:"d",on:false},
+ {id:"leib",name:"Leibliche Übung",rhythm:"d",on:false},
+ {id:"gottesdienst",name:"Gottesdienst – den Feiertag heiligen",rhythm:"w",on:true},
+ {id:"katkinder",name:"Katechismus mit den Kindern",rhythm:"w",on:true},
+ {id:"fasten",name:"Fasten",rhythm:"w",on:false},
+ {id:"brueder",name:"Gemeinschaft mit Brüdern",rhythm:"w",on:false},
+ {id:"ehezeit",name:"Zeit allein mit meiner Frau",rhythm:"w",on:false},
+ {id:"beichte",name:"Privatbeichte",rhythm:"m",on:true},
+ {id:"abendmahl",name:"Abendmahl",rhythm:"m",on:true},
+ {id:"opfer",name:"Opfer und Gaben",rhythm:"m",on:false},
+ {id:"barmherzigkeit",name:"Werk der Barmherzigkeit",rhythm:"m",on:false}
+];
+const RHYTHM={d:"täglich",w:"wöchentlich",m:"monatlich"};
+
+/* ============================================================ HILFEN */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const keyOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const dateOf=k=>{const [y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d);};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const fmtDate=k=>{const d=dateOf(k);return WD_LONG[d.getDay()]+", "+d.getDate()+". "+["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][d.getMonth()];};
+const fmtShort=k=>{const d=dateOf(k);return WD[d.getDay()]+" "+d.getDate()+"."+(d.getMonth()+1)+".";};
+const mondayOf=d=>{const x=new Date(d);const wd=(x.getDay()+6)%7;x.setDate(x.getDate()-wd);return x;};
+function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7);}
+function get(o,path){return path.split(".").reduce((a,k)=>a==null?undefined:a[k],o);}
+function set(o,path,v){const ks=path.split(".");let a=o;ks.slice(0,-1).forEach(k=>{if(typeof a[k]!=="object"||a[k]===null)a[k]={};a=a[k];});a[ks[ks.length-1]]=v;}
+const clone=o=>JSON.parse(JSON.stringify(o||{}));
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove("show"),1800);}
+
+/* ============================================================ SPEICHER */
+const Store={mode:"local",db:null,base:null,
+ async init(){
+   try{
+     if(window.claude&&typeof window.claude.use==="function"){
+       const timeout=new Promise(r=>setTimeout(()=>r(null),6000));
+       const [db,user]=await Promise.race([Promise.all([window.claude.use("db"),window.claude.use("user")]),timeout.then(()=>[null,null])]);
+       if(db&&user){const uid=await user.id();if(uid){this.db=db;this.base=db.doc("data/users/"+uid+"/profile");this.mode="sync";}}
+     }
+   }catch(e){this.mode="local";}
+ },
+ _q:{},
+ async loadProfile(){
+   if(this.mode==="sync"){try{const s=await this.base.get();return s.exists?clone(s.data()):null;}catch(e){return null;}}
+   try{return JSON.parse(localStorage.getItem("tz:profile")||"null");}catch(e){return null;}
+ },
+ async listDays(){
+   if(this.mode==="sync"){try{const s=await this.base.collection("days").orderBy("date","desc").limit(800).get();return s.docs.map(d=>clone(d.data()));}catch(e){return [];}}
+   const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("tz:day:"))out.push(JSON.parse(localStorage.getItem(k)));}}catch(e){}
+   return out.sort((a,b)=>a.date<b.date?1:-1);
+ },
+ // Eine Schreiboperation je Dokument zur Zeit; spätere Änderungen werden nachgeschoben.
+ write(key,getData){
+   const q=this._q[key]||(this._q[key]={busy:false,dirty:false});
+   if(q.busy){q.dirty=true;return;}
+   q.busy=true;
+   const run=async()=>{
+     const data=getData();
+     try{
+       if(this.mode==="sync"){const ref=key==="profile"?this.base:this.base.collection("days").doc(key);await ref.set(data);}
+       else localStorage.setItem(key==="profile"?"tz:profile":"tz:day:"+key,JSON.stringify(data));
+     }catch(e){if(e&&e.code==="quota_exceeded")toast("Speicher voll – bitte ältere Tage exportieren.");else if(e&&e.code==="unavailable"){await new Promise(r=>setTimeout(r,600+Math.random()*600));try{if(this.mode==="sync"){const ref=key==="profile"?this.base:this.base.collection("days").doc(key);await ref.set(getData());}}catch(_){toast("Nicht gespeichert – Verbindung prüfen.");}}else toast("Nicht gespeichert.");}
+     if(q.dirty){q.dirty=false;await run();}
+   };
+   run().finally(()=>{q.busy=false;});
+ }
+};
+
+/* ============================================================ ZUSTAND */
+const S={profile:null,days:{},date:keyOf(new Date()),route:"heute",timer:{running:false,left:45*60,t:null},archTab:"tage",q:""};
+const todayKey=()=>keyOf(new Date());
+function defaultProfile(){return{plan:{at:0,nt:0},habits:PRESETS.map(p=>({id:p.id,name:p.name,rhythm:p.rhythm,auto:p.auto||null,active:p.on,preset:true})),prayer:{daily:"",weekly:{}},kat:{memo:{},offset:0},created:todayKey()};}
+function day(k){if(!S.days[k])S.days[k]={date:k,morning:{},evening:{},habits:{}};return S.days[k];}
+const saveTimers={};
+function saveDay(k,now){clearTimeout(saveTimers[k]);const go=()=>Store.write(k,()=>clone(S.days[k]));if(now)go();else saveTimers[k]=setTimeout(go,700);}
+function saveProfile(){Store.write("profile",()=>clone(S.profile));}
+
+// Leseplan: dem Tag wird beim ersten Öffnen die nächste Portion zugewiesen.
+function readingFor(k){
+  const d=day(k);
+  if(!d.reading){
+    if(k!==todayKey()&&!S.days[k].morning.done)return {at:S.profile.plan.at,nt:S.profile.plan.nt,virtual:true};
+    d.reading={at:S.profile.plan.at,nt:S.profile.plan.nt,done:false};saveDay(k);
+  }
+  return d.reading;
+}
+function markRead(k,val){
+  const r=readingFor(k);const d=day(k);if(r.virtual)return;
+  if(val&&!r.done){r.done=true;if(S.profile.plan.at===r.at)S.profile.plan.at=Math.min(r.at+1,AT_P.length);if(S.profile.plan.nt===r.nt)S.profile.plan.nt=Math.min(r.nt+1,NT_P.length);}
+  else if(!val&&r.done){r.done=false;if(S.profile.plan.at===r.at+1)S.profile.plan.at=r.at;if(S.profile.plan.nt===r.nt+1)S.profile.plan.nt=r.nt;}
+  d.reading=r;saveDay(k,true);saveProfile();
+}
+function habitDone(h,k){
+  const d=S.days[k];if(!d)return false;
+  if(h.auto==="morning")return !!d.morning?.done;
+  if(h.auto==="vesper")return !!d.evening?.vesperDone;
+  if(h.auto==="night")return !!d.evening?.nightDone;
+  return !!d.habits?.[h.id];
+}
+function periodKeys(h,ref){
+  const r=dateOf(ref);
+  if(h.rhythm==="w"){const m=mondayOf(r);return [...Array(7)].map((_,i)=>keyOf(addDays(m,i)));}
+  if(h.rhythm==="m"){const n=new Date(r.getFullYear(),r.getMonth()+1,0).getDate();return [...Array(n)].map((_,i)=>keyOf(new Date(r.getFullYear(),r.getMonth(),i+1)));}
+  return [ref];
+}
+const periodDone=(h,ref)=>periodKeys(h,ref).some(k=>habitDone(h,k));
+
+/* ============================================================ KATECHISMUS */
+const KK=[
+{id:"gebote",t:"Die Zehn Gebote",p:[
+ {h:"Das erste Gebot",w:"Du sollst keine anderen Götter haben.",qa:[["Was ist das?","Wir sollen Gott über alle Dinge fürchten, lieben und vertrauen."]]},
+ {h:"Das zweite Gebot",w:"Du sollst den Namen deines Gottes nicht unnützlich führen.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir bei seinem Namen nicht fluchen, schwören, zaubern, lügen oder trügen, sondern denselben in allen Nöten anrufen, beten, loben und danken."]]},
+ {h:"Das dritte Gebot",w:"Du sollst den Feiertag heiligen.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir die Predigt und sein Wort nicht verachten, sondern dasselbe heilig halten, gerne hören und lernen."]]},
+ {h:"Das vierte Gebot",w:"Du sollst deinen Vater und deine Mutter ehren.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unsere Eltern und Herren nicht verachten noch erzürnen, sondern sie in Ehren halten, ihnen dienen, gehorchen, sie lieb und wert haben."]]},
+ {h:"Das fünfte Gebot",w:"Du sollst nicht töten.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten an seinem Leibe keinen Schaden noch Leid tun, sondern ihm helfen und fördern in allen Leibesnöten."]]},
+ {h:"Das sechste Gebot",w:"Du sollst nicht ehebrechen.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir keusch und züchtig leben in Worten und Werken und ein jeglicher sein Gemahl liebe und ehre."]]},
+ {h:"Das siebente Gebot",w:"Du sollst nicht stehlen.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unsers Nächsten Geld oder Gut nicht nehmen noch mit falscher Ware oder Handel an uns bringen, sondern ihm sein Gut und Nahrung helfen bessern und behüten."]]},
+ {h:"Das achte Gebot",w:"Du sollst nicht falsch Zeugnis reden wider deinen Nächsten.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unsern Nächsten nicht fälschlich belügen, verraten, afterreden oder bösen Leumund machen, sondern sollen ihn entschuldigen, Gutes von ihm reden und alles zum Besten kehren."]]},
+ {h:"Das neunte Gebot",w:"Du sollst nicht begehren deines Nächsten Haus.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht mit List nach seinem Erbe oder Hause stehen und mit einem Schein des Rechts an uns bringen, sondern ihm dasselbe zu behalten förderlich und dienstlich sein."]]},
+ {h:"Das zehnte Gebot",w:"Du sollst nicht begehren deines Nächsten Weib, Knecht, Magd, Vieh oder was sein ist.",qa:[["Was ist das?","Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht sein Weib, Gesinde oder Vieh abspannen, abdringen oder abwendig machen, sondern dieselben anhalten, daß sie bleiben und tun, was sie schuldig sind."]]},
+ {h:"Der Beschluß der Gebote",w:"Was sagt nun Gott von diesen Geboten allen? Er sagt so: Ich, der HERR, dein Gott, bin ein eifriger Gott, der über die, so mich hassen, die Sünde der Väter heimsucht an den Kindern bis ins dritte und vierte Glied; aber denen, so mich lieben und meine Gebote halten, tue ich wohl in tausend Glied.",qa:[["Was ist das?","Gott dräuet zu strafen alle, die diese Gebote übertreten; darum sollen wir uns fürchten vor seinem Zorn und nicht wider solche Gebote tun. Er verheißt aber Gnade und alles Gute allen, die solche Gebote halten; darum sollen wir ihn auch lieben und vertrauen und gerne tun nach seinen Geboten."]]}]},
+{id:"glaube",t:"Der Glaube",p:[
+ {h:"Der erste Artikel: Von der Schöpfung",w:"Ich glaube an Gott, den Vater, den Allmächtigen, Schöpfer Himmels und der Erde.",qa:[["Was ist das?","Ich glaube, daß mich Gott geschaffen hat samt allen Kreaturen, mir Leib und Seele, Augen, Ohren und alle Glieder, Vernunft und alle Sinne gegeben hat und noch erhält; dazu Kleider und Schuh, Essen und Trinken, Haus und Hof, Weib und Kind, Acker, Vieh und alle Güter; mit allem, was not tut für Leib und Leben, mich reichlich und täglich versorgt, wider alle Fährlichkeit beschirmt und vor allem Übel behütet und bewahrt; und das alles aus lauter väterlicher, göttlicher Güte und Barmherzigkeit, ohn all mein Verdienst und Würdigkeit; des alles ich ihm zu danken und zu loben und dafür zu dienen und gehorsam zu sein schuldig bin. Das ist gewißlich wahr."]]},
+ {h:"Der zweite Artikel: Von der Erlösung",w:"Und an Jesum Christum, seinen eingebornen Sohn, unsern Herrn, der empfangen ist von dem Heiligen Geist, geboren von der Jungfrau Maria, gelitten unter Pontio Pilato, gekreuzigt, gestorben und begraben, niedergefahren zur Hölle, am dritten Tage wieder auferstanden von den Toten, aufgefahren gen Himmel, sitzend zur Rechten Gottes, des allmächtigen Vaters, von dannen er kommen wird, zu richten die Lebendigen und die Toten.",qa:[["Was ist das?","Ich glaube, daß Jesus Christus, wahrhaftiger Gott, vom Vater in Ewigkeit geboren, und auch wahrhaftiger Mensch, von der Jungfrau Maria geboren, sei mein Herr, der mich verlornen und verdammten Menschen erlöst hat, erworben, gewonnen von allen Sünden, vom Tode und von der Gewalt des Teufels; nicht mit Gold oder Silber, sondern mit seinem heiligen, teuren Blut und mit seinem unschuldigen Leiden und Sterben; auf daß ich sein eigen sei und in seinem Reich unter ihm lebe und ihm diene in ewiger Gerechtigkeit, Unschuld und Seligkeit, gleichwie er ist auferstanden vom Tode, lebet und regieret in Ewigkeit. Das ist gewißlich wahr."]]},
+ {h:"Der dritte Artikel: Von der Heiligung",w:"Ich glaube an den Heiligen Geist, eine heilige christliche Kirche, die Gemeinde der Heiligen, Vergebung der Sünden, Auferstehung des Fleisches und ein ewiges Leben. Amen.",qa:[["Was ist das?","Ich glaube, daß ich nicht aus eigener Vernunft noch Kraft an Jesum Christum, meinen Herrn, glauben oder zu ihm kommen kann; sondern der Heilige Geist hat mich durch das Evangelium berufen, mit seinen Gaben erleuchtet, im rechten Glauben geheiligt und erhalten; gleichwie er die ganze Christenheit auf Erden beruft, sammelt, erleuchtet, heiligt und bei Jesu Christo erhält im rechten, einigen Glauben; in welcher Christenheit er mir und allen Gläubigen täglich alle Sünden reichlich vergibt und am Jüngsten Tage mich und alle Toten auferwecken wird und mir samt allen Gläubigen in Christo ein ewiges Leben geben wird. Das ist gewißlich wahr."]]}]},
+{id:"vaterunser",t:"Das Vaterunser",p:[
+ {h:"Die Anrede",w:"Vater unser, der du bist im Himmel.",qa:[["Was ist das?","Gott will damit uns locken, daß wir glauben sollen, er sei unser rechter Vater und wir seine rechten Kinder, auf daß wir getrost und mit aller Zuversicht ihn bitten sollen wie die lieben Kinder ihren lieben Vater."]]},
+ {h:"Die erste Bitte",w:"Geheiliget werde dein Name.",qa:[["Was ist das?","Gottes Name ist zwar an ihm selbst heilig; aber wir bitten in diesem Gebet, daß er auch bei uns heilig werde."],["Wie geschieht das?","Wo das Wort Gottes lauter und rein gelehrt wird und wir auch heilig als die Kinder Gottes danach leben. Dazu hilf uns, lieber Vater im Himmel! Wer aber anders lehrt und lebt, denn das Wort Gottes lehrt, der entheiligt unter uns den Namen Gottes. Davor behüt uns, lieber himmlischer Vater!"]]},
+ {h:"Die zweite Bitte",w:"Dein Reich komme.",qa:[["Was ist das?","Gottes Reich kommt wohl ohne unser Gebet von ihm selbst; aber wir bitten in diesem Gebet, daß es auch zu uns komme."],["Wie geschieht das?","Wenn der himmlische Vater uns seinen Heiligen Geist gibt, daß wir seinem heiligen Wort durch seine Gnade glauben und göttlich leben, hier zeitlich und dort ewiglich."]]},
+ {h:"Die dritte Bitte",w:"Dein Wille geschehe wie im Himmel, also auch auf Erden.",qa:[["Was ist das?","Gottes guter, gnädiger Wille geschieht wohl ohne unser Gebet; aber wir bitten in diesem Gebet, daß er auch bei uns geschehe."],["Wie geschieht das?","Wenn Gott allen bösen Rat und Willen bricht und hindert, so uns den Namen Gottes nicht heiligen und sein Reich nicht kommen lassen wollen, als da ist des Teufels, der Welt und unsers Fleisches Wille; sondern stärkt und behält uns fest in seinem Wort und Glauben bis an unser Ende. Das ist sein gnädiger, guter Wille."]]},
+ {h:"Die vierte Bitte",w:"Unser täglich Brot gib uns heute.",qa:[["Was ist das?","Gott gibt täglich Brot auch wohl ohne unsere Bitte allen bösen Menschen; aber wir bitten in diesem Gebet, daß er's uns erkennen lasse und mit Danksagung empfangen unser täglich Brot."],["Was heißt denn täglich Brot?","Alles, was zur Leibesnahrung und -notdurft gehört, wie Essen, Trinken, Kleider, Schuh, Haus, Hof, Acker, Vieh, Geld, Gut, fromm Gemahl, fromme Kinder, fromm Gesinde, fromme und getreue Oberherren, gut Regiment, gut Wetter, Friede, Gesundheit, Zucht, Ehre, gute Freunde, getreue Nachbarn und desgleichen."]]},
+ {h:"Die fünfte Bitte",w:"Und vergib uns unsere Schuld, als wir vergeben unsern Schuldigern.",qa:[["Was ist das?","Wir bitten in diesem Gebet, daß der Vater im Himmel nicht ansehen wolle unsere Sünden und um derselben willen solche Bitte nicht versagen; denn wir sind der keines wert, das wir bitten, haben's auch nicht verdient; sondern er wolle es uns alles aus Gnaden geben; denn wir täglich viel sündigen und wohl eitel Strafe verdienen. So wollen wir zwar wiederum auch herzlich vergeben und gerne wohltun denen, die sich an uns versündigen."]]},
+ {h:"Die sechste Bitte",w:"Und führe uns nicht in Versuchung.",qa:[["Was ist das?","Gott versucht zwar niemand; aber wir bitten in diesem Gebet, daß uns Gott wolle behüten und erhalten, auf daß uns der Teufel, die Welt und unser Fleisch nicht betrüge noch verführe in Mißglauben, Verzweiflung und andere große Schande und Laster; und ob wir damit angefochten würden, daß wir doch endlich gewinnen und den Sieg behalten."]]},
+ {h:"Die siebente Bitte",w:"Sondern erlöse uns von dem Übel.",qa:[["Was ist das?","Wir bitten in diesem Gebet, als in der Summa, daß uns der Vater im Himmel von allerlei Übel an Leib und Seele, Gut und Ehre erlöse und zuletzt, wenn unser Stündlein kommt, ein seliges Ende beschere und mit Gnaden von diesem Jammertal zu sich nehme in den Himmel."]]},
+ {h:"Der Beschluß",w:"Denn dein ist das Reich und die Kraft und die Herrlichkeit in Ewigkeit. Amen.",qa:[["Was heißt Amen?","Daß ich soll gewiß sein, solche Bitten sind dem Vater im Himmel angenehm und erhört; denn er selbst hat uns geboten, also zu beten, und verheißen, daß er uns will erhören. Amen, Amen, das heißt: Ja, ja, es soll also geschehen."]]}]},
+{id:"taufe",t:"Das Sakrament der heiligen Taufe",p:[
+ {h:"Zum Ersten",w:"",qa:[["Was ist die Taufe?","Die Taufe ist nicht allein schlicht Wasser, sondern sie ist das Wasser in Gottes Gebot gefaßt und mit Gottes Wort verbunden."],["Welches ist denn solch Wort Gottes?","Da unser Herr Christus spricht Matthäi am letzten: Gehet hin in alle Welt, lehret alle Heiden und taufet sie im Namen des Vaters und des Sohnes und des Heiligen Geistes."]]},
+ {h:"Zum Andern",w:"",qa:[["Was gibt oder nützet die Taufe?","Sie wirkt Vergebung der Sünden, erlöst vom Tode und Teufel und gibt die ewige Seligkeit allen, die es glauben, wie die Worte und Verheißung Gottes lauten."],["Welches sind denn solche Worte und Verheißung Gottes?","Da unser Herr Christus spricht Markus am letzten: Wer da glaubet und getauft wird, der wird selig werden; wer aber nicht glaubet, der wird verdammt werden."]]},
+ {h:"Zum Dritten",w:"",qa:[["Wie kann Wasser solch große Dinge tun?","Wasser tut's freilich nicht, sondern das Wort Gottes, so mit und bei dem Wasser ist, und der Glaube, so solchem Wort Gottes im Wasser traut. Denn ohne Gottes Wort ist das Wasser schlicht Wasser und keine Taufe; aber mit dem Worte Gottes ist's eine Taufe, das ist ein gnadenreich Wasser des Lebens und ein Bad der neuen Geburt im Heiligen Geist, wie St. Paulus sagt zu Titus im dritten Kapitel: Gott macht uns selig durch das Bad der Wiedergeburt und Erneuerung des Heiligen Geistes, welchen er ausgegossen hat über uns reichlich durch Jesum Christum, unsern Heiland, auf daß wir durch desselben Gnade gerecht und Erben seien des ewigen Lebens nach der Hoffnung. Das ist gewißlich wahr."]]},
+ {h:"Zum Vierten",w:"",qa:[["Was bedeutet denn solch Wassertaufen?","Es bedeutet, daß der alte Adam in uns durch tägliche Reue und Buße soll ersäuft werden und sterben mit allen Sünden und bösen Lüsten; und wiederum täglich herauskommen und auferstehen ein neuer Mensch, der in Gerechtigkeit und Reinigkeit vor Gott ewiglich lebe."],["Wo steht das geschrieben?","St. Paulus zu den Römern im sechsten Kapitel spricht: Wir sind samt Christus durch die Taufe begraben in den Tod, auf daß, gleichwie Christus ist auferweckt von den Toten durch die Herrlichkeit des Vaters, also sollen auch wir in einem neuen Leben wandeln."]]}]},
+{id:"beichte",t:"Die Beichte",p:[
+ {h:"Was ist die Beichte?",w:"",qa:[["Was ist die Beichte?","Die Beichte begreift zwei Stücke in sich: eins, daß man die Sünde bekenne; das andere, daß man die Absolution oder Vergebung vom Beichtiger empfange als von Gott selbst und ja nicht daran zweifle, sondern fest glaube, die Sünden seien dadurch vergeben vor Gott im Himmel."]]},
+ {h:"Welche Sünden soll man beichten?",w:"",qa:[["Welche Sünden soll man denn beichten?","Vor Gott soll man sich aller Sünden schuldig geben, auch die wir nicht erkennen, wie wir im Vaterunser tun; aber vor dem Beichtiger sollen wir allein die Sünden bekennen, die wir wissen und fühlen im Herzen."]]},
+ {h:"Welche sind die?",w:"",qa:[["Welche sind die?","Da siehe deinen Stand an nach den Zehn Geboten, ob du Vater, Mutter, Sohn, Tochter, Herr, Frau, Knecht seiest, ob du ungehorsam, untreu, unfleißig gewesen seiest, ob du jemand Leid getan hast mit Worten oder Werken, ob du gestohlen, versäumt, verwahrlost oder Schaden getan hast."]]},
+ {h:"Die Absolution",w:"",qa:[["Was spricht der Beichtiger?","Gott sei dir gnädig und stärke deinen Glauben. Amen. Glaubst du auch, daß meine Vergebung Gottes Vergebung sei? – Ja, lieber Herr. – Wie du glaubst, so geschehe dir. Und ich aus dem Befehl unsers Herrn Jesu Christi vergebe dir deine Sünde im Namen des Vaters und des Sohnes und des Heiligen Geistes. Amen. Gehe hin im Frieden."]]}]},
+{id:"abendmahl",t:"Das Sakrament des Altars",p:[
+ {h:"Was ist das Sakrament des Altars?",w:"",qa:[["Was ist das Sakrament des Altars?","Es ist der wahre Leib und Blut unsers Herrn Jesu Christi, unter dem Brot und Wein uns Christen zu essen und zu trinken von Christus selbst eingesetzt."],["Wo steht das geschrieben?","So schreiben die heiligen Evangelisten Matthäus, Markus, Lukas und St. Paulus: Unser Herr Jesus Christus, in der Nacht, da er verraten ward, nahm er das Brot, dankte und brach's und gab's seinen Jüngern und sprach: Nehmet hin und esset; das ist mein Leib, der für euch gegeben wird. Solches tut zu meinem Gedächtnis. Desselbengleichen nahm er auch den Kelch nach dem Abendmahl, dankte, gab ihnen den und sprach: Nehmet hin und trinket alle daraus; dieser Kelch ist das neue Testament in meinem Blut, das für euch vergossen wird zur Vergebung der Sünden. Solches tut, sooft ihr's trinket, zu meinem Gedächtnis."]]},
+ {h:"Was nützt solch Essen und Trinken?",w:"",qa:[["Was nützt denn solch Essen und Trinken?","Das zeigen uns diese Worte: Für euch gegeben und vergossen zur Vergebung der Sünden; nämlich, daß uns im Sakrament Vergebung der Sünden, Leben und Seligkeit durch solche Worte gegeben wird; denn wo Vergebung der Sünden ist, da ist auch Leben und Seligkeit."]]},
+ {h:"Wie kann leiblich Essen solch große Dinge tun?",w:"",qa:[["Wie kann leiblich Essen und Trinken solch große Dinge tun?","Essen und Trinken tut's freilich nicht, sondern die Worte, so da stehen: Für euch gegeben und vergossen zur Vergebung der Sünden. Welche Worte sind neben dem leiblichen Essen und Trinken das Hauptstück im Sakrament; und wer denselben Worten glaubt, der hat, was sie sagen und wie sie lauten, nämlich: Vergebung der Sünden."]]},
+ {h:"Wer empfängt es würdig?",w:"",qa:[["Wer empfängt denn solch Sakrament würdiglich?","Fasten und leiblich sich bereiten ist wohl eine feine äußerliche Zucht; aber der ist recht würdig und wohl geschickt, wer den Glauben hat an diese Worte: Für euch gegeben und vergossen zur Vergebung der Sünden. Wer aber diesen Worten nicht glaubt oder zweifelt, der ist unwürdig und ungeschickt; denn das Wort ‚Für euch‘ fordert eitel gläubige Herzen."]]}]}
+];
+// Welche Stücke an welchem Wochentag (Mo=0 … So=6)
+const KMAP={gebote:[[0],[1],[2],[3],[4,5],[6,7],[8,9,10]],glaube:[[0],[0],[1],[1],[1],[2],[2]],vaterunser:[[0,1],[2],[3],[4],[5],[6],[7,8]],taufe:[[0],[0],[1],[1],[2],[2],[3]],beichte:[[0],[0],[1],[1],[2],[2],[3]],abendmahl:[[0],[0],[1],[1],[2],[3],[3]]};
+const KK_TOTAL=KK.reduce((s,h)=>s+h.p.length,0);
+function katToday(dt){
+  const off=(S.profile&&S.profile.kat&&S.profile.kat.offset)||0;
+  const hi=(((isoWeek(dt)-1+off)%6)+6)%6, hs=KK[hi], wi=(dt.getDay()+6)%7;
+  return {hi,hs,idx:KMAP[hs.id][wi],label:KMAP[hs.id][wi].map(i=>hs.p[i].h).join(", ")};
+}
+function katPieceHTML(hs,i,opts){
+  const pc=hs.p[i],pid=hs.id+"."+i,memo=!!(S.profile.kat&&S.profile.kat.memo&&S.profile.kat.memo[pid]);
+  return `<div class="kpiece ${opts&&opts.today?"today":""}">
+    <div class="kh">${esc(pc.h)}${opts&&opts.today?' <span class="ktag">heute</span>':""}</div>
+    ${pc.w?`<p class="kw">${esc(pc.w)}</p>`:""}
+    ${pc.qa.map(([q,a])=>`<p class="kq">${esc(q)}</p><p class="ka">${esc(a)}</p>`).join("")}
+    ${opts&&opts.memo===false?"":`<button class="pill ${memo?"on":""}" data-memo="${pid}" aria-pressed="${memo}">${memo?"✓ auswendig":"auswendig?"}</button>`}
+  </div>`;
+}
+const HAUSTAFEL=[
+ ["Den Bischöfen, Pfarrherren und Predigern",["1. Timotheus 3,2-6","Titus 1,9"]],
+ ["Was die Christen ihren Lehrern und Seelsorgern schuldig sind",["Lukas 10,7","1. Korinther 9,14","Galater 6,6-7","1. Timotheus 5,17-18","1. Thessalonicher 5,12-13","Hebräer 13,17"]],
+ ["Von weltlicher Obrigkeit",["Römer 13,1-4"]],
+ ["Was die Untertanen der Obrigkeit schuldig sind",["Matthäus 22,21","Römer 13,5-7","1. Timotheus 2,1-2","Titus 3,1","1. Petrus 2,13-14"]],
+ ["Den Ehemännern",["1. Petrus 3,7","Kolosser 3,19"]],
+ ["Den Eheweibern",["1. Petrus 3,1.6","Epheser 5,22"]],
+ ["Den Eltern",["Epheser 6,4","Kolosser 3,21"]],
+ ["Den Kindern",["Epheser 6,1-3"]],
+ ["Den Knechten, Mägden, Tagelöhnern und Arbeitern",["Epheser 6,5-8"]],
+ ["Den Hausherren und Hausfrauen",["Epheser 6,9"]],
+ ["Der gemeinen Jugend",["1. Petrus 5,5-6"]],
+ ["Den Witwen",["1. Timotheus 5,5-6"]],
+ ["Der Gemeinde",["Römer 13,9","1. Timotheus 2,1"]]];
+const STAND_REF={"Ehemann":["1. Petrus 3,7","Kolosser 3,19"],"Vater":["Epheser 6,4","Kolosser 3,21"],"Mitarbeiter und Kollege":["Epheser 6,5-8","Epheser 6,9"],"Prediger und Bruder":["1. Timotheus 3,2-6","Titus 1,9"],"Nächster":["Römer 13,9"]};
+function refUrl(r){const m=r.match(/^(.*\D)\s(\d.*)$/);if(!m)return "#";return "https://www.bibleserver.com/LUT/"+encodeURIComponent(m[1].replace(/\.\s/g,".")+m[2]);}
+const refLinks=rs=>rs.map(r=>`<a href="${refUrl(r)}" target="_blank" rel="noopener">${esc(r)}</a>`).join(" · ");
+const TISCH={bene:"Aller Augen warten auf dich, HERR, und du gibst ihnen ihre Speise zu seiner Zeit. Du tust deine milde Hand auf und erfüllest alles, was lebet, mit Wohlgefallen. <span class='muted'>(Ps 145,15–16)</span><br><br><span class='muted'>Vaterunser, dann:</span><br>Herr Gott, himmlischer Vater, segne uns und diese deine Gaben, die wir von deiner milden Güte zu uns nehmen, durch Jesum Christum, unsern Herrn. Amen.",
+ grat:"Danket dem HERRN; denn er ist freundlich, und seine Güte währet ewiglich. <span class='muted'>(Ps 106,1)</span><br><br><span class='muted'>Vaterunser, dann:</span><br>Wir danken dir, Herr Gott, himmlischer Vater, durch Jesum Christum, unsern Herrn, für alle deine Wohltat, der du lebest und regierest in Ewigkeit. Amen."};
+
+/* ---------- Katechismus */
+function vKat(){
+  const dt=dateOf(S.date),kt=katToday(dt);
+  const memo=S.profile.kat&&S.profile.kat.memo||{};const nMemo=Object.values(memo).filter(Boolean).length;
+  const kh=S.profile.habits.find(h=>h.id==="katkinder");const kd=kh&&habitDone(kh,S.date);
+  return `<h2>Der Kleine Katechismus</h2>
+  <p class="rubric">Wie ihn ein Hausvater seinem Hause einfältiglich vorhalten soll.</p>
+  <div class="panel">
+    <label class="f" for="katWeek" style="margin-top:0">Hauptstück dieser Woche</label>
+    <select id="katWeek" data-katweek>${KK.map((h,i)=>`<option value="${i}" ${i===kt.hi?"selected":""}>${i+1}. ${h.t}</option>`).join("")}</select>
+    <p class="small" style="margin-top:10px">Heute: <b>${esc(kt.label)}</b></p>
+    <div class="bars" style="margin-top:6px"><span>Auswendig</span><div class="bar"><span style="width:${(nMemo/KK_TOTAL*100).toFixed(1)}%"></span></div><span>${nMemo} / ${KK_TOTAL}</span></div>
+    ${kh?`<p style="margin:12px 0 0"><button class="pill ${kd?"on":""}" data-habit="katkinder" data-day="${S.date}">${kd?"✓ heute mit den Kindern gelernt":"Mit den Kindern gelernt"}</button></p>`:""}
+  </div>
+  ${KK.map((h,i)=>`<details class="khs" ${i===kt.hi?"open":""}><summary><span class="no">${i+1}</span><span class="title">${esc(h.t)}</span></summary>
+     <div class="body">${h.p.map((_,j)=>katPieceHTML(h,j,{today:i===kt.hi&&kt.idx.includes(j)})).join("")}</div></details>`).join("")}
+  <details class="khs"><summary><span class="no">·</span><span class="title">Tischgebete</span></summary><div class="body">
+    <div class="kh">Vor dem Essen</div>${pr(TISCH.bene)}<div class="kh">Nach dem Essen</div>${pr(TISCH.grat)}</div></details>
+  <details class="khs"><summary><span class="no">·</span><span class="title">Die Haustafel</span></summary><div class="body">
+    <p class="rubric">Etliche Sprüche für allerlei heilige Orden und Stände.</p>
+    <ul class="list">${HAUSTAFEL.map(([t,rs])=>`<li><div>${esc(t)}</div><div class="small">${refLinks(rs)}</div></li>`).join("")}</ul></div></details>`;
+}
+
+/* ============================================================ RENDER */
+function render(){
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.classList.toggle("on",b.dataset.go===S.route));
+  const isToday=S.date===todayKey();
+  $("#hdrDate").innerHTML=esc(isToday?fmtDate(S.date):fmtShort(S.date))+(isToday?"":'<button data-act="today">Heute</button>');
+  const v={heute:vHeute,morgen:vMorgen,abend:vAbend,kat:vKat,archiv:vArchiv,mehr:vMehr}[S.route]();
+  $("#view").innerHTML=v;
+  document.querySelectorAll("textarea").forEach(autosize);
+}
+function autosize(t){t.style.height="auto";t.style.height=(t.scrollHeight+2)+"px";}
+const pr=html=>`<div class="pray">${html}</div>`;
+const vr=(v,a)=>`<div class="vr"><b>V</b><span>${v}</span></div><div class="vr"><b>A</b><span>${a}</span></div>`;
+function field(path,label,ph,single){
+  const d=day(S.date);const val=esc(get(d,path)||"");
+  return `<label class="f" for="f_${path}">${label}</label>`+(single?`<input type="text" id="f_${path}" data-path="${path}" value="${val}" placeholder="${esc(ph||"")}">`:`<textarea rows="1" id="f_${path}" data-path="${path}" placeholder="${esc(ph||"")}">${val}</textarea>`);
+}
+
+/* ---------- Heute */
+function vHeute(){
+  const k=S.date, d=day(k), dt=dateOf(k), wd=dt.getDay();
+  const r=readingFor(k), atp=AT_P[r.at], ntp=NT_P[r.nt];
+  const atDone=chaptersBefore(AT_P,S.profile.plan.at), ntDone=chaptersBefore(NT_P,S.profile.plan.nt);
+  const mDone=!!d.morning.done, vDone=!!d.evening.vesperDone, nDone=!!d.evening.nightDone;
+  const kt=katToday(dt);
+  const nMemo=Object.values((S.profile.kat&&S.profile.kat.memo)||{}).filter(Boolean).length;
+  // Tagesbogen 04:00–21:00
+  const x=h=>((h-4)/17)*600;
+  const seg=(a,b,on,label)=>`<rect x="${x(a)}" y="22" width="${Math.max(x(b)-x(a),4)}" height="14" rx="3" fill="${on?"var(--done)":"var(--rubric)"}" opacity="${on?1:.85}"><title>${label}</title></rect>`;
+  const arc=`<svg viewBox="0 -4 600 58" role="img" aria-label="Tagesbogen von 4 bis 21 Uhr">
+    <line x1="0" y1="29" x2="600" y2="29" stroke="var(--rule)" stroke-width="2"/>
+    ${seg(4.25,5,mDone,"Stille Zeit 04:15–05:00")}
+    <rect x="${x(5.5)}" y="25" width="${x(6.67)-x(5.5)}" height="8" rx="2" fill="var(--rule)"><title>Training</title></rect>
+    ${seg(18.5,18.67,vDone,"Vesper 18:30")}${seg(20.75,21,nDone,"Nachtgebet 20:45")}
+    <g class="hours">${[4,8,12,16,21].map(h=>`<text x="${x(h)}" y="52" text-anchor="${h===4?"start":h===21?"end":"middle"}">${pad(h)}:00</text>`).join("")}</g>
+  </svg>`;
+  const three=["wort","haus","werk"].map(t=>{const txt=d.morning["drei_"+t];const m=d.evening["mark_"+t];
+    return `<div class="row"><span class="k">${t[0].toUpperCase()+t.slice(1)}</span><span>${txt?esc(txt):'<span class="muted">—</span>'}</span>${m?`<span class="mark ${m}">${{plus:"+",tilde:"~",minus:"–"}[m]}</span>`:""}</div>`;}).join("");
+  // Gewohnheiten dieser Woche
+  const mon=mondayOf(dt), week=[...Array(7)].map((_,i)=>keyOf(addDays(mon,i)));
+  const act=S.profile.habits.filter(h=>h.active);
+  const today=todayKey();
+  const rows=act.map(h=>{
+    if(h.rhythm==="d"){
+      const cells=week.map(wk=>{const on=habitDone(h,wk);const fut=wk>today;const dis=!!h.auto||fut;
+        return `<td><button class="cell ${on?"on":""} ${wk===k?"today":""} ${fut?"future":""}" ${dis?"disabled":""} data-habit="${h.id}" data-day="${wk}" aria-label="${esc(h.name)}, ${fmtShort(wk)}${on?", erledigt":""}"></button></td>`;}).join("");
+      return `<tr><td>${esc(h.name)}${h.auto?'<span class="auto">aus dem Ablauf</span>':""}</td>${cells}</tr>`;
+    }
+    const on=periodDone(h,k);const lab=h.rhythm==="w"?"diese Woche":"diesen Monat";
+    return `<tr><td>${esc(h.name)}</td><td colspan="7" style="text-align:right"><button class="pill ${on?"on":""}" data-habit="${h.id}" data-day="${k}" ${on&&!habitDone(h,k)?"disabled":""}>${on?"✓ "+lab:lab}</button></td></tr>`;
+  }).join("");
+  // Rückblick: 28 Tage
+  const days28=[...Array(28)].map((_,i)=>keyOf(addDays(dt,i-27)));
+  const dots=days28.map(dk=>{const dd=S.days[dk];const m=dd?.morning?.done, e=dd?.evening?.nightDone;return `<span class="dot ${m&&e?"me":m||e?"m":""}" title="${fmtShort(dk)}"></span>`;}).join("");
+  const last30=Object.values(S.days).filter(x=>x.date>keyOf(addDays(dt,-30))&&x.date<=k);
+  const sz=last30.filter(x=>x.morning?.done).length;
+  const verses=Object.values(S.days).filter(x=>x.morning?.vers).length;
+  let marks={plus:0,tilde:0,minus:0};last30.forEach(x=>["wort","haus","werk"].forEach(t=>{const m=x.evening?.["mark_"+t];if(m)marks[m]++;}));
+  return `
+  <div class="arc">${arc}</div>
+  <div class="arcbtns">
+    <button class="hour-block ${mDone?"is-done":""}" data-go="morgen"><div class="t">04:15 · 45 Min.</div><div class="n">Stille Zeit</div><div class="s">${mDone?"abgeschlossen":stepCount(d)+" von 6 Schritten"}</div></button>
+    <button class="hour-block ${vDone&&nDone?"is-done":""}" data-go="abend"><div class="t">18:30 · 20:45</div><div class="n">Vesper und Nachtgebet</div><div class="s">${nDone?"abgeschlossen":vDone?"Vesper gebetet":"offen"}</div></button>
+  </div>
+
+  <div class="reading">
+    <div class="small muted sans">Heute lesen${r.done?" · gelesen":""}</div>
+    <div class="ref">${atp?`<a href="${portionUrl(AT_BOOKS,atp)}" target="_blank" rel="noopener">${portionLabel(AT_BOOKS,atp)}</a>`:"AT abgeschlossen"}</div>
+    <div class="ref">${ntp?`<a href="${portionUrl(NT_BOOKS,ntp)}" target="_blank" rel="noopener">${portionLabel(NT_BOOKS,ntp)}</a>`:"NT abgeschlossen"}</div>
+    <div class="bars">
+      <span>AT</span><div class="bar"><span style="width:${(atDone/AT_TOTAL*100).toFixed(1)}%"></span></div><span>${atDone} / ${AT_TOTAL}</span>
+      <span>NT</span><div class="bar"><span style="width:${(ntDone/NT_TOTAL*100).toFixed(1)}%"></span></div><span>${ntDone} / ${NT_TOTAL}</span>
+    </div>
+  </div>
+
+  <h3>Die drei Dinge</h3>
+  <div class="panel three">${d.morning.drei_wort||d.morning.drei_haus||d.morning.drei_werk?three:'<span class="muted">Werden in der Stille Zeit festgelegt.</span>'}</div>
+
+  <h3>Gewohnheiten</h3>
+  ${act.length?`<div class="panel"><table class="habits"><thead><tr><th></th>${week.map(wk=>`<th>${WD[dateOf(wk).getDay()]}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="empty">Keine Gewohnheiten aktiv. Unter „Mehr“ auswählen oder anlegen.</p>`}
+
+  <h3>Rückblick</h3>
+  <div class="panel">
+    <div class="small muted sans">Die letzten vier Wochen</div>
+    <div class="dots">${dots}</div>
+    <div class="stats">
+      <div class="stat"><div class="v">${sz}</div><div class="l">Stille Zeiten in 30 Tagen</div></div>
+      <div class="stat"><div class="v">${verses}</div><div class="l">Verse gesammelt</div></div>
+      <div class="stat"><div class="v">${marks.plus}<span class="muted small"> · ${marks.tilde} · ${marks.minus}</span></div><div class="l">drei Dinge, + ~ –</div></div>
+    </div>
+  </div>
+
+  <h3>Diese Woche</h3>
+  <p><b>Katechismus:</b> ${kt.hs.t} – heute ${esc(kt.label)} <button class="pill" data-go="kat">lesen</button></p>
+  <p class="small muted sans">Auswendig: ${nMemo} von ${KK_TOTAL} Stücken</p>
+  <p><b>Psalm am Morgen:</b> ${PS_MORGEN[wd][0]} &nbsp; <b>am Abend:</b> ${PS_ABEND[wd][0]}</p>`;
+}
+function stepCount(d){return [1,2,3,4,5,6].filter(i=>d.morning["s"+i]).length;}
+
+/* ---------- Morgen */
+const STEPS_M=[[1,"Eröffnung",3],[2,"Das Wort",20],[3,"Das Gebet",12],[4,"Die Antwort",5],[5,"Die Ausrichtung",3],[6,"Der Segen",2]];
+function vMorgen(){
+  const k=S.date,d=day(k),dt=dateOf(k),wd=dt.getDay();
+  const r=readingFor(k),atp=AT_P[r.at],ntp=NT_P[r.nt];
+  const kt=katToday(dt);
+  const open=STEPS_M.find(s=>!d.morning["s"+s[0]]);
+  const openNo=open?open[0]:0;
+  // Übernahme vom Vortag
+  const y=S.days[keyOf(addDays(dt,-1))];
+  const carry=y?["wort","haus","werk"].filter(t=>y.evening?.["carry_"+t]==="wieder"&&y.morning?.["drei_"+t]).map(t=>({t,txt:y.morning["drei_"+t]})):[];
+  const weekly=S.profile.prayer.weekly?.[wd]||"";
+  const step=(no,title,min,body)=>`<details class="step ${d.morning["s"+no]?"done":""}" ${no===openNo?"open":""} data-step="${no}">
+     <summary><span class="no">${no}</span><span class="title">${title}</span><span class="min">${min} Min.</span></summary>
+     <div class="body">${body}
+       <p style="margin-top:14px"><button class="btn ${d.morning["s"+no]?"quiet":"primary"}" data-mstep="${no}">${d.morning["s"+no]?"Wieder öffnen":"Weiter"}</button></p>
+     </div></details>`;
+  return `
+  <div class="timer">
+    <span class="clock" id="clock">${fmtClock(S.timer.left)}</span>
+    <span class="hint">${d.morning.done?"Stille Zeit abgeschlossen":open?"Jetzt: "+open[1]+", "+open[2]+" Min.":""}</span>
+    <button class="btn" data-act="timer">${S.timer.running?"Pause":S.timer.left<45*60?"Weiter":"Start"}</button>
+    ${S.timer.left<45*60&&!S.timer.running?`<button class="btn quiet" data-act="timerReset" aria-label="Timer zurücksetzen">↺</button>`:""}
+  </div>
+
+  <h2>Stille Zeit</h2>
+  <details class="step ${d.morning.bett?"done":""}"><summary><span class="no">·</span><span class="title">Am Bett</span><span class="min">3 Min.</span></summary>
+    <div class="body"><p class="rubric">Kreuzzeichen, Vaterunser, Taufgedächtnis, dann der Morgensegen.</p>${pr(T.morgensegen)}
+    <label class="check"><input type="checkbox" data-flag="morning.bett" ${d.morning.bett?"checked":""}> Gebetet</label></div></details>
+
+  ${step(1,"Eröffnung",3,`
+    ${pr(vr("Herr, tue meine Lippen auf,","daß mein Mund deinen Ruhm verkündige.")+vr("O Gott, komm mir zu Hilfe.","Herr, eile, mir zu helfen."))}
+    ${pr(T.gloria+" Halleluja.")}
+    <p class="rubric">Wahlweise eine Strophe:</p>${pr(T.hymnM)}
+    <p><b>Psalm ${PS_MORGEN[wd][0]}</b></p><p class="rubric">Antiphon: ${PS_MORGEN[wd][1]}</p>`)}
+
+  ${step(2,"Das Wort",20,`
+    ${pr("Öffne mir die Augen, daß ich sehe die Wunder an deinem Gesetz. <span class='muted'>(Ps 119,18)</span>")}
+    <div class="reading" style="margin-top:4px">
+      <div class="ref">${atp?`<a href="${portionUrl(AT_BOOKS,atp)}" target="_blank" rel="noopener">${portionLabel(AT_BOOKS,atp)}</a>`:"AT abgeschlossen"}</div>
+      <div class="ref">${ntp?`<a href="${portionUrl(NT_BOOKS,ntp)}" target="_blank" rel="noopener">${portionLabel(NT_BOOKS,ntp)}</a>`:"NT abgeschlossen"}</div>
+    </div>
+    <p class="rubric">Dreimal lesen: ohne Stift, mit Stift nach Farbcode, dann zusammenfassen.</p>
+    ${r.virtual?"":`<label class="check"><input type="checkbox" data-act="read" ${r.done?"checked":""}> Gelesen – Plan weiterrücken</label>`}
+    ${field("morning.haupt","Hauptaussage")}
+    ${field("morning.versRef","Stelle des Verses",'z. B. Markus 4,39',true)}
+    ${field("morning.vers","Vers, den ich mitnehme")}
+    ${field("morning.gott","Was lerne ich über Gott?")}
+    ${field("morning.mensch","Was lerne ich über den Menschen?")}
+    <label class="f" for="fq">Frage des Tages</label>
+    <select id="fq" data-path="morning.frageNr"><option value="">— eine wählen —</option>${FRAGEN.map((f,i)=>`<option value="${i}" ${String(d.morning.frageNr)===String(i)?"selected":""}>${i+1}. ${f}</option>`).join("")}</select>
+    ${field("morning.frage","Antwort")}
+    ${field("morning.heil","Heilsgeschichte: Schöpfung, Fall, Erlösung, Vollendung – wo steht der Text?")}
+    <div class="grid2">${field("morning.unklar","? Unklar")}${field("morning.heraus","! Fordert mich heraus")}</div>
+    ${field("morning.pfeil","→ Umsetzung")}
+    ${pr("Herr, du hast geredet. Laß dein Wort nicht leer zurückkommen, sondern tun, wozu du es gesandt hast. Amen.")}`)}
+
+  ${step(3,"Das Gebet",12,`
+    <p>Stoff: der Vers aus der Lesung – oder das Katechismusstück.</p>
+    <details class="khs" style="border:0"><summary style="padding:4px 0"><span class="no">✝</span><span class="title" style="font-size:1rem">${esc(kt.hs.t)}: ${esc(kt.label)}</span></summary><div class="body" style="padding-left:0">${kt.idx.map(i=>katPieceHTML(kt.hs,i,{memo:false})).join("")}</div></details>
+    <p class="rubric">Der vierfache Kranz, halblaut.</p>
+    ${field("morning.k_unterricht","Unterricht – Herr, du sagst mir …")}
+    ${field("morning.k_dank","Dank – Ich danke dir, daß …")}
+    <p class="note">Beichte – Ich bekenne dir, daß ich … <br>Wird gebetet, nicht notiert.</p>
+    ${field("morning.k_bitte","Bitte – Darum bitte ich dich …")}
+    ${field("morning.bewegt","Was mich bewegt")}
+    ${field("morning.fuermich","Bitte für mich")}
+    ${pr("Sei stille dem HERRN und warte auf ihn. <span class='muted'>(Ps 37,7)</span>")}<p class="rubric">Eine Minute Stille.</p>`)}
+
+  ${step(4,"Die Antwort",5,`
+    <details><summary class="rubric" style="cursor:pointer">Benedictus</summary>${pr(T.benedictus)}${pr(T.gloria)}</details>
+    <p style="margin-top:12px"><b>Anliegen des ${WD_LONG[wd]}s:</b> ${weekly?esc(weekly):'<span class="muted">unter „Mehr“ eintragen</span>'}</p>
+    ${S.profile.prayer.daily?`<p class="small"><b>Täglich:</b> ${esc(S.profile.prayer.daily)}</p>`:""}
+    ${field("morning.menschen","Menschen, denen ich heute begegne")}
+    <details><summary class="rubric" style="cursor:pointer">Vaterunser</summary>${pr(T.vaterunser)}</details>`)}
+
+  ${step(5,"Die Ausrichtung",3,`
+    <p class="rubric">Drei, nicht fünf. Beobachtbar – abends mit Ja oder Nein zu beantworten.</p>
+    ${carry.length?`<div class="small sans muted">Von gestern übernehmen:</div><div class="chips">${carry.map(c=>`<button class="chip" data-carry="${c.t}" data-txt="${esc(c.txt)}">${c.t[0].toUpperCase()+c.t.slice(1)}: ${esc(c.txt)}</button>`).join("")}</div>`:""}
+    ${d.morning.pfeil?`<div class="chips"><button class="chip" data-carry="wort" data-txt="${esc(d.morning.pfeil)}">→ ${esc(d.morning.pfeil)}</button></div>`:""}
+    ${field("morning.drei_wort","Wort – aus der Lesung","",true)}
+    ${field("morning.drei_haus","Haus – Frau und Kinder","",true)}
+    ${field("morning.drei_werk","Werk – was morgen noch zählt","",true)}`)}
+
+  ${step(6,"Der Segen",2,`${pr(T.kollM)}${pr(vr("Lasset uns preisen den Herrn.","Gott sei ewiglich Dank."))}${pr(T.segen)}<p>Und dann: <b>mit Freuden an dein Werk gegangen.</b></p>`)}
+  `;
+}
+function fmtClock(s){const m=Math.floor(Math.abs(s)/60),x=Math.abs(s)%60;return (s<0?"+":"")+pad(m)+":"+pad(x);}
+
+/* ---------- Abend */
+function vAbend(){
+  const k=S.date,d=day(k),wd=dateOf(k).getDay();const st=STAND[wd];
+  const item=t=>{const txt=d.morning["drei_"+t];const m=d.evening["mark_"+t];const c=d.evening["carry_"+t];
+    return `<div class="item"><div class="lab">${t[0].toUpperCase()+t.slice(1)}</div><div class="txt">${txt?esc(txt):'<span class="muted">heute morgen nicht festgelegt</span>'}</div>
+     ${txt?`<div class="tri" role="group" aria-label="Rückschau ${t}">${["plus","tilde","minus"].map(v=>`<button data-mark="${t}" data-v="${v}" class="${m===v?"sel":""}" aria-pressed="${m===v}">${{plus:"+",tilde:"~",minus:"–"}[v]}</button>`).join("")}</div>
+     ${m&&m!=="plus"?`<div class="tri" style="margin-top:6px">${[["wieder","Morgen wieder"],["fallen","Fallenlassen"]].map(([v,l])=>`<button data-carryset="${t}" data-v="${v}" class="${c===v?"sel":""}" style="${c===v?"background:var(--ink);color:var(--paper);border-color:var(--ink)":""}">${l}</button>`).join("")}</div>`:""}`:""}</div>`;};
+  return `
+  <h2>Vesper</h2>
+  <p class="rubric">Beim Abendessen, mit der Familie. Gebet der Kirche, nicht Selbstprüfung.</p>
+  ${pr(vr("O Gott, komm mir zu Hilfe.","Herr, eile, mir zu helfen.")+"<br>"+T.gloria)}
+  <p class="rubric">Hymnus:</p>${pr(T.hymnA)}
+  <p><b>Psalm ${PS_ABEND[wd][0]}</b></p><p class="rubric">Antiphon: ${PS_ABEND[wd][1]}</p>
+  ${field("evening.lesung","Lesung – wenige Verse, ohne Auslegung","",true)}
+  <details><summary class="rubric" style="cursor:pointer">Magnificat</summary>${pr(T.magnificat)}${pr(T.gloria)}</details>
+  ${field("evening.fuerbitte","Fürbitte")}
+  <details><summary class="rubric" style="cursor:pointer">Vaterunser, Kollekte, Segen</summary>${pr(T.vaterunser)}${pr(T.kollA)}${pr(T.segen)}</details>
+  <p style="margin-top:14px"><button class="btn ${d.evening.vesperDone?"quiet":"primary"}" data-eflag="vesperDone">${d.evening.vesperDone?"Vesper gebetet ✓":"Vesper abschließen"}</button></p>
+
+  <h2>Nachtgebet</h2>
+  <p class="rubric">Kurzform an müden Tagen: Kreuzzeichen, Rückschau, Vaterunser, Abendsegen.</p>
+  <details><summary class="rubric" style="cursor:pointer">Kreuzzeichen, Glaube, Vaterunser</summary>${pr("Das walte Gott Vater, Sohn und Heiliger Geist. Amen.")}${pr(T.glaube)}${pr(T.vaterunser)}</details>
+
+  <h3>Dank</h3>
+  ${field("evening.dank1","1","",true)}${field("evening.dank2","2","",true)}${field("evening.dank3","3","",true)}
+
+  <h3>Rückschau</h3>
+  <p class="rubric">Rechenschaft, nicht Beichte. Ein Zeichen, kein Kommentar.</p>
+  <div class="review">${["wort","haus","werk"].map(item).join("")}</div>
+  <p class="note">„Morgen wieder“ erscheint morgen früh als Vorschlag. Nur wenn wirklich ein Gebot dahintersteht, gehört es in die Beichte.</p>
+
+  <h3>Prüfung – als ${st[0]}</h3>
+  <p>${st[1]}</p>
+  ${STAND_REF[st[0]]?`<p class="small">Haustafel: ${refLinks(STAND_REF[st[0]])}</p>`:""}
+  <p class="note">Nicht aufschreiben – bekennen.</p>
+
+  <h3>Bekenntnis und Zuspruch</h3>
+  ${pr(T.bekenntnis)}<p class="rubric">Dann laut, nicht gedacht:</p>${pr(T.zuspruch)}
+
+  <h3>Taufgedächtnis</h3>${pr(T.taufe)}
+
+  <h3>Fürbitte</h3>
+  ${field("evening.menschen","Menschen des Tages","",true)}
+  ${field("evening.weiter","Weitergegeben an","",true)}
+  <details><summary class="rubric" style="cursor:pointer">Nunc dimittis</summary>${pr(T.nunc)}</details>
+
+  <h3>Abendsegen</h3>${pr(T.abendsegen)}
+  <p>Und dann: <b>flugs und fröhlich geschlafen.</b></p>
+  <p style="margin-top:14px"><button class="btn ${d.evening.nightDone?"quiet":"primary"}" data-eflag="nightDone">${d.evening.nightDone?"Tag abgeschlossen ✓":"Tag abschließen"}</button></p>`;
+}
+
+/* ---------- Archiv */
+function vArchiv(){
+  const all=Object.values(S.days).filter(x=>x.morning?.done||x.morning?.vers||x.morning?.haupt||x.evening?.nightDone).sort((a,b)=>a.date<b.date?1:-1);
+  const q=S.q.trim().toLowerCase();
+  const match=x=>!q||JSON.stringify([x.morning,x.evening]).toLowerCase().includes(q);
+  let body="";
+  if(S.archTab==="tage"){
+    const list=all.filter(match);
+    body=list.length?`<ul class="list">${list.map(x=>{const r=x.reading;const lbl=r?[AT_P[r.at]&&portionLabel(AT_BOOKS,AT_P[r.at]),NT_P[r.nt]&&portionLabel(NT_BOOKS,NT_P[r.nt])].filter(Boolean).join(" · "):"";
+      return `<li><div class="d">${fmtDate(x.date)}${x.morning?.done?" · Stille Zeit":""}${x.evening?.nightDone?" · Nachtgebet":""}</div>
+      ${lbl?`<div>${lbl}</div>`:""}${x.morning?.vers?`<div class="v">${esc(x.morning.vers)}${x.morning.versRef?` <span class="muted">(${esc(x.morning.versRef)})</span>`:""}</div>`:""}
+      ${x.morning?.haupt?`<div class="small muted">${esc(x.morning.haupt)}</div>`:""}
+      <button class="link" data-open="${x.date}">Tag öffnen</button></li>`;}).join("")}</ul>`:`<p class="empty">${q?"Nichts gefunden.":"Noch keine Einträge. Der erste entsteht mit der ersten Stille Zeit."}</p>`;
+  }else{
+    const vs=all.filter(x=>x.morning?.vers).filter(match);
+    body=vs.length?`<ul class="list">${vs.map(x=>`<li><div class="v">${esc(x.morning.vers)}</div><div class="d">${esc(x.morning.versRef||"")}${x.morning.versRef?" · ":""}${fmtShort(x.date)}</div></li>`).join("")}</ul>`:`<p class="empty">${q?"Nichts gefunden.":"Noch keine Verse. Sie kommen aus dem Feld „Vers, den ich mitnehme“."}</p>`;
+  }
+  return `<h2>Archiv</h2>
+  <div class="seg" role="tablist"><button class="${S.archTab==="tage"?"on":""}" data-arch="tage">Tage</button><button class="${S.archTab==="verse"?"on":""}" data-arch="verse">Versesammlung</button></div>
+  <input type="text" id="search" placeholder="Durchsuchen" value="${esc(S.q)}" aria-label="Archiv durchsuchen">
+  ${body}`;
+}
+
+/* ---------- Mehr */
+function vMehr(){
+  const hs=S.profile.habits;
+  const grp=r=>hs.filter(h=>h.rhythm===r).map(h=>`<div class="habit-edit"><input type="checkbox" class="switch" data-hact="${h.id}" ${h.active?"checked":""} aria-label="${esc(h.name)} aktiv">
+     <div><div>${esc(h.name)}</div><div class="r">${RHYTHM[h.rhythm]}${h.auto?" · aus dem Ablauf":""}${h.preset?"":" · eigene"}</div></div>
+     ${h.preset?"<span></span>":`<button class="btn quiet" data-hdel="${h.id}" aria-label="${esc(h.name)} löschen">Löschen</button>`}</div>`).join("");
+  const atIdx=S.profile.plan.at, ntIdx=S.profile.plan.nt;
+  const bookSel=(books,portions,idx,name)=>{const p=portions[Math.min(idx,portions.length-1)];
+    return `<div class="grid2"><select data-planbook="${name}">${books.map((b,i)=>`<option value="${i}" ${p.b===i?"selected":""}>${b[0]}</option>`).join("")}</select>
+     <select data-planchap="${name}">${[...Array(books[p.b][1])].map((_,i)=>`<option value="${i+1}" ${p.from===i+1?"selected":""}>Kapitel ${i+1}</option>`).join("")}</select></div>`;};
+  const w=S.profile.prayer.weekly||{};
+  return `<h2>Gewohnheiten</h2>
+  <p class="muted small">Kein Serienzähler, keine Kette, die reißt. Der Rhythmus der Woche, nicht die Leistung.</p>
+  <h3>Täglich</h3>${grp("d")}
+  <h3>Wöchentlich</h3>${grp("w")}
+  <h3>Monatlich</h3>${grp("m")}
+  <h3>Eigene anlegen</h3>
+  <input type="text" id="newHabit" placeholder="z. B. Psalm mit den Kindern">
+  <div class="grid2" style="margin-top:8px"><select id="newRhythm"><option value="d">täglich</option><option value="w">wöchentlich</option><option value="m">monatlich</option></select>
+  <button class="btn primary" data-act="addHabit">Hinzufügen</button></div>
+
+  <h2>Gebetsübersicht</h2>
+  <label class="f" for="pd">Täglich</label><textarea id="pd" data-ppath="daily" rows="2" placeholder="Frau, Kinder, Gemeinde, Kollegen …">${esc(S.profile.prayer.daily||"")}</textarea>
+  ${[1,2,3,4,5,6,0].map(i=>`<label class="f" for="pw${i}">${WD_LONG[i]}</label><input type="text" id="pw${i}" data-ppath="weekly.${i}" value="${esc(w[i]||"")}">`).join("")}
+
+  <h2>Leseplan</h2>
+  <p class="small muted">Altes Testament in rund zwei Jahren, Neues Testament jährlich, in Luthers Buchreihenfolge. Der Plan läuft nach Fortschritt, nicht nach Datum: wer aussetzt, macht beim nächsten Abschnitt weiter.</p>
+  <label class="f">Nächste Lesung AT</label>${bookSel(AT_BOOKS,AT_P,atIdx,"at")}
+  <label class="f">Nächste Lesung NT</label>${bookSel(NT_BOOKS,NT_P,ntIdx,"nt")}
+
+  <h2>Daten</h2>
+  <p class="small">${Store.mode==="sync"?"Deine Einträge liegen in deinem privaten Bereich und werden über claude.ai zwischen deinen Geräten abgeglichen.":"Deine Einträge liegen nur auf diesem Gerät."}</p>
+  <p><button class="btn" data-act="export" id="exportBtn">Alles als Text exportieren</button></p>
+  <p class="small muted">Farbschema: <button class="btn quiet" data-theme="">System</button> <button class="btn quiet" data-theme="light">Hell</button> <button class="btn quiet" data-theme="dark">Dunkel</button></p>`;
+}
+
+/* ============================================================ EREIGNISSE */
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.dataset.path){set(day(S.date),t.dataset.path,t.value);saveDay(S.date);if(t.tagName==="TEXTAREA")autosize(t);}
+  if(t.dataset.ppath){set(S.profile.prayer,t.dataset.ppath,t.value);clearTimeout(saveTimers.p);saveTimers.p=setTimeout(saveProfile,700);}
+  if(t.id==="search"){S.q=t.value;const pos=t.selectionStart;render();const n=$("#search");n.focus();n.setSelectionRange(pos,pos);}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.dataset.flag){set(day(S.date),t.dataset.flag,t.checked);saveDay(S.date,true);render();}
+  if(t.dataset.act==="read"){markRead(S.date,t.checked);toast(t.checked?"Plan weitergerückt":"Zurückgesetzt");render();}
+  if(t.dataset.katweek!==undefined){const dt=dateOf(S.date);S.profile.kat=S.profile.kat||{memo:{},offset:0};const cur=(isoWeek(dt)-1)%6;S.profile.kat.offset=((+t.value-cur)%6+6)%6;saveProfile();toast("Hauptstück gewechselt");render();return;}
+  if(t.dataset.hact){const h=S.profile.habits.find(x=>x.id===t.dataset.hact);h.active=t.checked;saveProfile();}
+  if(t.dataset.planbook||t.dataset.planchap){
+    const n=t.dataset.planbook||t.dataset.planchap;const books=n==="at"?AT_BOOKS:NT_BOOKS,portions=n==="at"?AT_P:NT_P;
+    const b=+document.querySelector(`[data-planbook="${n}"]`).value;let c=t.dataset.planbook?1:+document.querySelector(`[data-planchap="${n}"]`).value;
+    const idx=portions.findIndex(p=>p.b===b&&c>=p.from&&c<=p.to);
+    S.profile.plan[n]=idx<0?0:idx;const td=S.days[todayKey()];if(td&&td.reading&&!td.reading.done){delete td.reading;saveDay(todayKey(),true);}
+    saveProfile();toast("Leseplan angepasst");render();
+  }
+});
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button,[data-go]");if(!b)return;
+  const ds=b.dataset;
+  if(ds.go){S.route=ds.go;render();window.scrollTo(0,0);return;}
+  if(ds.act==="today"){S.date=todayKey();render();return;}
+  if(ds.act==="timer"){toggleTimer();return;}
+  if(ds.act==="timerReset"){S.timer.left=45*60;render();return;}
+  if(ds.mstep){const n=+ds.mstep;const d=day(S.date);d.morning["s"+n]=!d.morning["s"+n];
+    if(n===6&&d.morning.s6){[1,2,3,4,5].forEach(i=>d.morning["s"+i]=true);d.morning.done=true;toast("Stille Zeit abgeschlossen");}
+    if(!d.morning.s6)d.morning.done=false;
+    saveDay(S.date,true);render();const nx=document.querySelector("details.step[open]");if(nx&&d.morning["s"+n])nx.scrollIntoView({behavior:"smooth",block:"start"});return;}
+  if(ds.carry){const d=day(S.date);d.morning["drei_"+ds.carry]=ds.txt;saveDay(S.date,true);render();return;}
+  if(ds.mark){const d=day(S.date);d.evening["mark_"+ds.mark]=d.evening["mark_"+ds.mark]===ds.v?null:ds.v;if(ds.v==="plus")delete d.evening["carry_"+ds.mark];saveDay(S.date,true);render();return;}
+  if(ds.carryset){const d=day(S.date);d.evening["carry_"+ds.carryset]=d.evening["carry_"+ds.carryset]===ds.v?null:ds.v;saveDay(S.date,true);render();return;}
+  if(ds.eflag){const d=day(S.date);d.evening[ds.eflag]=!d.evening[ds.eflag];saveDay(S.date,true);if(d.evening[ds.eflag])toast(ds.eflag==="nightDone"?"Tag abgeschlossen":"Vesper gebetet");render();return;}
+  if(ds.habit){const h=S.profile.habits.find(x=>x.id===ds.habit);if(!h||h.auto)return;const d=day(ds.day);d.habits[h.id]=!d.habits[h.id];saveDay(ds.day,true);render();return;}
+  if(ds.memo){S.profile.kat=S.profile.kat||{memo:{},offset:0};S.profile.kat.memo=S.profile.kat.memo||{};S.profile.kat.memo[ds.memo]=!S.profile.kat.memo[ds.memo];saveProfile();render();return;}
+  if(ds.arch){S.archTab=ds.arch;render();return;}
+  if(ds.open){S.date=ds.open;S.route="morgen";render();window.scrollTo(0,0);return;}
+  if(ds.act==="addHabit"){const n=$("#newHabit").value.trim();if(!n){$("#newHabit").focus();return;}
+    S.profile.habits.push({id:"h"+Date.now().toString(36),name:n,rhythm:$("#newRhythm").value,auto:null,active:true,preset:false});saveProfile();toast("Hinzugefügt");render();return;}
+  if(ds.hdel){S.profile.habits=S.profile.habits.filter(h=>h.id!==ds.hdel);saveProfile();toast("Gelöscht");render();return;}
+  if(ds.theme!==undefined){if(ds.theme)document.documentElement.setAttribute("data-theme",ds.theme);else document.documentElement.removeAttribute("data-theme");try{localStorage.setItem("tz:theme",ds.theme);}catch(_){}return;}
+  if(ds.act==="export"){doExport();return;}
+});
+function toggleTimer(){
+  const T0=S.timer;
+  if(T0.running){clearInterval(T0.t);T0.running=false;render();return;}
+  T0.running=true;let last=Date.now();
+  T0.t=setInterval(()=>{const now=Date.now();T0.left-=Math.round((now-last)/1000);last=now;const c=$("#clock");if(c)c.textContent=fmtClock(T0.left);},1000);
+  render();
+}
+async function doExport(){
+  const lines=["# Tagzeiten – Export","",];
+  Object.values(S.days).sort((a,b)=>a.date<b.date?-1:1).forEach(x=>{
+    const m=x.morning||{},ev=x.evening||{};if(!m.done&&!m.vers&&!ev.nightDone&&!m.haupt)return;
+    lines.push("## "+fmtDate(x.date));
+    if(x.reading){const r=x.reading;lines.push("Lesung: "+[AT_P[r.at]&&portionLabel(AT_BOOKS,AT_P[r.at]),NT_P[r.nt]&&portionLabel(NT_BOOKS,NT_P[r.nt])].filter(Boolean).join(" · "));}
+    [["haupt","Hauptaussage"],["vers","Vers"],["versRef","Stelle"],["gott","Über Gott"],["mensch","Über den Menschen"],["frage","Frage des Tages"],["heil","Heilsgeschichte"],["unklar","Unklar"],["heraus","Fordert mich heraus"],["pfeil","Umsetzung"],["k_unterricht","Unterricht"],["k_dank","Dank"],["k_bitte","Bitte"],["bewegt","Was mich bewegt"],["drei_wort","Wort"],["drei_haus","Haus"],["drei_werk","Werk"]].forEach(([k,l])=>{if(m[k])lines.push(l+": "+m[k]);});
+    ["wort","haus","werk"].forEach(t=>{if(ev["mark_"+t])lines.push("Rückschau "+t+": "+{plus:"+",tilde:"~",minus:"–"}[ev["mark_"+t]]);});
+    [["dank1","Dank"],["dank2","Dank"],["dank3","Dank"],["weiter","Weitergegeben an"]].forEach(([k,l])=>{if(ev[k])lines.push(l+": "+ev[k]);});
+    lines.push("");
+  });
+  const text=lines.join("\n");
+  try{const dl=window.claude&&await window.claude.use("downloads");
+    if(dl){await dl.save({filename:"tagzeiten-export-"+todayKey()+".md",data:text});toast("Exportiert");return;}
+  }catch(err){if(err&&err.code&&err.code!=="cancelled"&&err.code!=="declined"){}}
+  try{await navigator.clipboard.writeText(text);toast("In die Zwischenablage kopiert");}catch(_){toast("Export hier nicht möglich");}
+}
+
+/* ============================================================ START */
+(async function(){
+  try{const th=localStorage.getItem("tz:theme");if(th)document.documentElement.setAttribute("data-theme",th);}catch(_){}
+  await Store.init();
+  let p=await Store.loadProfile();
+  if(!p){p=defaultProfile();S.profile=p;saveProfile();}
+  else{
+    // neue Vorlagen ergänzen, ohne Einstellungen zu überschreiben
+    PRESETS.forEach(pr=>{if(!p.habits.find(h=>h.id===pr.id))p.habits.push({id:pr.id,name:pr.name,rhythm:pr.rhythm,auto:pr.auto||null,active:false,preset:true});});
+    p.prayer=p.prayer||{daily:"",weekly:{}};p.kat=p.kat||{memo:{},offset:0};p.plan=p.plan||{at:0,nt:0};S.profile=p;
+  }
+  (await Store.listDays()).forEach(d=>{if(d&&d.date)S.days[d.date]={morning:{},evening:{},habits:{},...d};});
+  const h=new Date().getHours();S.route=h>=15?"abend":"heute";
+  render();
+})();
+</script>
+</body>
+</html>
