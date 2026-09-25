@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
+import { LutherRose } from '../ui/LutherRose';
 import { SectionIcon } from '../ui/SectionIcon';
 import { UpdateBanner } from './UpdateBanner';
 import { SECTIONS } from './routes';
@@ -56,8 +57,8 @@ export function Layout() {
             <li key={s.path} className={s.path === '/' ? 'tab-today' : undefined}>
               <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
                 {s.path === '/' ? (
-                  <span className="today-ring">
-                    <SectionIcon name={s.icon} size={28} />
+                  <span className="today-rose">
+                    <LutherRose size={46} />
                   </span>
                 ) : (
                   <SectionIcon name={s.icon} />

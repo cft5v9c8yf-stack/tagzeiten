@@ -441,8 +441,8 @@ body.is-sorting * {
   background: none;
   padding: 0;
   font: inherit;
-  color: var(--accent);
-  text-decoration: underline;
+  color: var(--link);
+  font-weight: 600;
   cursor: pointer;
 }
 .small-btn {

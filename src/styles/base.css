@@ -34,8 +34,16 @@ select {
   color: inherit;
 }
 
+/* Links without underline: gold from Luther's rose; inside running text also bold,
+   so they do not depend on colour alone. */
 a {
-  color: var(--accent);
+  color: var(--link);
+  text-decoration: none;
+}
+p a,
+li > a:only-child:not([class]),
+dd a:not([class]) {
+  font-weight: 600;
 }
 
 :focus-visible {
@@ -240,22 +248,20 @@ nav.tabs li {
 nav.tabs .tab-today a {
   padding-top: 0;
 }
-/* Today: a larger icon in a ring that rises a little above the bar. */
-.today-ring {
+/* Today: Luther's rose, larger, rising a little above the bar; "Heute" below it
+   on the same line as the other labels. */
+.today-rose {
   display: grid;
   place-items: center;
   width: 50px;
   height: 50px;
-  /* Label on the same line as the others; the ring rises above the bar. */
   margin-top: -19px;
   border-radius: 50%;
   background: var(--sheet);
-  border: 1.5px solid var(--gold);
-  color: var(--gold);
+  box-shadow: 0 0 0 1px var(--rule);
 }
-nav.tabs .tab-today a[aria-current='page'] .today-ring {
-  border-width: 2px;
-  background: var(--gold-soft);
+nav.tabs .tab-today a[aria-current='page'] .today-rose {
+  box-shadow: 0 0 0 2px var(--gold);
 }
 nav.tabs .tab-today a[aria-current='page']::before {
   display: none;
