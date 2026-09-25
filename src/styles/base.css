@@ -121,7 +121,7 @@ header.top {
   gap: 2px 12px;
   padding: 18px 0 6px;
 }
-header.top .top-motto {
+.top-motto {
   font-size: 1.05rem;
   font-weight: 600;
   font-style: italic;

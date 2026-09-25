@@ -1125,3 +1125,7 @@ body.is-sorting * {
 .overview-row.current .piece-mark:not(.known) {
   border-color: color-mix(in srgb, var(--gold) 45%, transparent);
 }
+.sunday-page .top-motto {
+  margin: 12px 0 0;
+  text-align: center;
+}
