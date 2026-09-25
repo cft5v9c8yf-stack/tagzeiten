@@ -34,6 +34,27 @@ async function renderToday(date: string, prepare?: (s: Store) => void) {
 }
 
 describe('Today', () => {
+  it('heads the page with date, week of the church year and festal circle', async () => {
+    await renderToday('2026-09-24');
+    const h = document.querySelector('.church-year')!;
+    expect(h.querySelector('.cy-date')!.textContent).toBe('Donnerstag, 24. September 2026');
+    expect(h.querySelector('.cy-week-name')!.textContent).toBe('16. Sonntag nach Trinitatis');
+    expect(h.querySelector('.cy-week-no')!.textContent).toBe('43. Woche im Kirchenjahr');
+    const current = h.querySelector('.cy-circles [aria-current]')!;
+    expect(current.textContent).toBe('PfingstkreisTrinitatiszeit');
+    expect([...h.querySelectorAll('.cy-circles li')].map((l) => l.querySelector('.cy-circle-name')!.textContent)).toEqual([
+      'Weihnachtskreis',
+      'Osterkreis',
+      'Pfingstkreis',
+    ]);
+  });
+
+  it('names the feast of the day', async () => {
+    await renderToday('2026-04-03');
+    expect(document.querySelector('.cy-feast')!.textContent).toBe('Karfreitag');
+    expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('OsterkreisKarwoche');
+  });
+
   it('shows the orders as tiles with their state', async () => {
     await renderToday('2026-09-24', (s) =>
       s.updateDay('2026-09-24', (d) => ({

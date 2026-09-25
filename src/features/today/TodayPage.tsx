@@ -12,6 +12,7 @@ import { chaptersBefore, getPlan } from '../../domain/readingPlan';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { BibleLink } from '../../ui/BibleLink';
 import { ReadCheckbox, ReadingRefs } from '../liturgy/MorningReading';
+import { ChurchYearHeader } from './ChurchYearHeader';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
@@ -163,6 +164,7 @@ export function TodayPage() {
   return (
     <>
       <h2 className="visually-hidden">{isToday ? 'Heute' : 'Tag'}</h2>
+      <ChurchYearHeader date={date} />
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
         <Link to={withDate('/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>

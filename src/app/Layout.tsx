@@ -34,7 +34,8 @@ export function Layout() {
           <h1>Tagzeiten</h1>
           <div className="date">
             {isToday ? (
-              formatLong(date)
+              // On Today, the date heads the page itself (with the church year).
+              pathname === '/' ? null : formatLong(date)
             ) : (
               <>
                 {formatShort(date)}

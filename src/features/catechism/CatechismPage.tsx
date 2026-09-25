@@ -14,6 +14,7 @@ import { canToggle, isDoneInPeriod, toggleHabit } from '../../domain/habits';
 import { BibleLink } from '../../ui/BibleLink';
 import { PrayerText, Rubric } from '../../ui/PrayerText';
 import { PieceText } from '../liturgy/CatechismOfDay';
+import { CatechismOverview } from './CatechismOverview';
 import { HouseFatherMode } from './HouseFatherMode';
 
 function TablePrayer({ title, prayer }: { title: string; prayer: typeof TABLE_PRAYER_BEFORE }) {
@@ -46,6 +47,15 @@ export function CatechismPage() {
       (p) => ({ ...p, catechism: { ...p.catechism, weekOffset: offsetForChiefPart(date, i) } }),
       { immediate: true },
     );
+
+  const openPiece = (ci: number, pi: number) => {
+    const chief = CATECHISM[ci]!;
+    const details = document.getElementById(`chief-${chief.id}`) as HTMLDetailsElement | null;
+    if (details) details.open = true;
+    const piece = document.getElementById(`piece-${pieceId(chief, pi)}`);
+    piece?.scrollIntoView({ block: 'start' });
+    piece?.focus({ preventScroll: true });
+  };
 
   const toggleMemorized = (id: string) =>
     store.updateProfile(
@@ -102,8 +112,10 @@ export function CatechismPage() {
         </div>
       </div>
 
+      <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} onOpenPiece={openPiece} />
+
       {CATECHISM.map((chief, ci) => (
-        <details key={chief.id} className="chief" open={ci === day.chiefIndex}>
+        <details key={chief.id} id={`chief-${chief.id}`} className="chief" open={ci === day.chiefIndex}>
           <summary>
             <span className="no">{ci + 1}</span>
             <span className="title">{chief.title}</span>
@@ -113,7 +125,7 @@ export function CatechismPage() {
               const id = pieceId(chief, pi);
               const today = ci === day.chiefIndex && day.pieceIndices.includes(pi);
               return (
-                <article key={id} className={`kpiece${today ? ' today' : ''}`}>
+                <article key={id} id={`piece-${id}`} tabIndex={-1} className={`kpiece${today ? ' today' : ''}`}>
                   <h3 className="kpiece-title">
                     {piece.title}
                     {today && <span className="ktag">heute</span>}

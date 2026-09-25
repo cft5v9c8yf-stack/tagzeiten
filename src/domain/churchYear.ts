@@ -1,0 +1,275 @@
+/**
+ * The Lutheran church year (traditional order of Sundays, as used e.g. by the
+ * SELK): which Sunday names the week, which feast falls on the day, and in
+ * which festal circle and season the day lies.
+ *
+ * The week is named after the most recent Sunday; Christmas Day and Epiphany
+ * also open a week of their own.
+ */
+import { addDays, fromKey, toKey, type DateKey } from './dates';
+
+export type Circle = 'christmas' | 'easter' | 'pentecost';
+
+export type Season =
+  | 'advent'
+  | 'christmastide'
+  | 'epiphany'
+  | 'prelent'
+  | 'lent'
+  | 'holyWeek'
+  | 'eastertide'
+  | 'pentecost'
+  | 'trinity'
+  | 'endOfYear';
+
+export const CIRCLE_LABEL: Record<Circle, string> = {
+  christmas: 'Weihnachtskreis',
+  easter: 'Osterkreis',
+  pentecost: 'Pfingstkreis',
+};
+export const CIRCLES: readonly Circle[] = ['christmas', 'easter', 'pentecost'];
+
+export const SEASON_LABEL: Record<Season, string> = {
+  advent: 'Adventszeit',
+  christmastide: 'Weihnachtszeit',
+  epiphany: 'Epiphaniaszeit',
+  prelent: 'Vorpassionszeit',
+  lent: 'Passionszeit',
+  holyWeek: 'Karwoche',
+  eastertide: 'Osterzeit',
+  pentecost: 'Pfingsten',
+  trinity: 'Trinitatiszeit',
+  endOfYear: 'Ende des Kirchenjahres',
+};
+
+const SEASON_CIRCLE: Record<Season, Circle> = {
+  advent: 'christmas',
+  christmastide: 'christmas',
+  epiphany: 'christmas',
+  prelent: 'easter',
+  lent: 'easter',
+  holyWeek: 'easter',
+  eastertide: 'easter',
+  pentecost: 'pentecost',
+  trinity: 'pentecost',
+  endOfYear: 'pentecost',
+};
+
+/* ------------------------------------------------------------ anchors */
+
+/** Easter Sunday (Gregorian computus, Meeus/Jones/Butcher). */
+export function easter(year: number): DateKey {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return toKey(new Date(year, month - 1, day));
+}
+
+/** First Sunday of Advent: four Sundays before Christmas. */
+export function firstAdvent(year: number): DateKey {
+  const christmasEve = toKey(new Date(year, 11, 24));
+  const fourth = addDays(christmasEve, -fromKey(christmasEve).getDay());
+  return addDays(fourth, -21);
+}
+
+const sundayOnOrBefore = (k: DateKey) => addDays(k, -fromKey(k).getDay());
+const daysBetween = (a: DateKey, b: DateKey) =>
+  Math.round((Date.UTC(...ymd(b)) - Date.UTC(...ymd(a))) / 864e5);
+function ymd(k: DateKey): [number, number, number] {
+  const [y, m, d] = k.split('-').map(Number);
+  return [y!, m! - 1, d!];
+}
+const md = (y: number, month: number, day: number) => toKey(new Date(y, month - 1, day));
+
+/* ------------------------------------------------------------ the year's calendar */
+
+interface Marker {
+  date: DateKey;
+  name: string;
+}
+
+interface ChurchYearCalendar {
+  start: DateKey;
+  end: DateKey; // day before the next first Advent
+  easter: DateKey;
+  /** Sundays and the feasts that open a week, sorted. */
+  weekMarkers: Marker[];
+  /** Feasts and holy days by date. */
+  feasts: Map<DateKey, string>;
+  seasons: { from: DateKey; season: Season }[];
+}
+
+const ordinal = (n: number) => `${n}.`;
+const cache = new Map<number, ChurchYearCalendar>();
+
+/** The church year that begins on the first Advent of `year`. */
+function calendar(year: number): ChurchYearCalendar {
+  const hit = cache.get(year);
+  if (hit) return hit;
+  const start = firstAdvent(year);
+  const nextStart = firstAdvent(year + 1);
+  const end = addDays(nextStart, -1);
+  const E = easter(year + 1);
+  const e = (n: number) => addDays(E, n);
+  const y2 = year + 1;
+
+  const markers: Marker[] = [];
+  const sunday = (date: DateKey, name: string) => markers.push({ date, name });
+
+  // Advent
+  for (let i = 0; i < 4; i++) sunday(addDays(start, 7 * i), `${ordinal(i + 1)} Sonntag im Advent`);
+  // Christmas
+  const christmas = md(year, 12, 25);
+  markers.push({ date: christmas, name: 'Christfest' });
+  let s = addDays(sundayOnOrBefore(christmas), 7);
+  if (fromKey(christmas).getDay() === 0) s = addDays(christmas, 7);
+  for (let n = 1; s < md(y2, 1, 6); n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach dem Christfest`);
+  // Epiphany and the Sundays after it
+  const epiphany = md(y2, 1, 6);
+  markers.push({ date: epiphany, name: 'Epiphanias' });
+  const lastAfterEpiphany = e(-70);
+  s = addDays(sundayOnOrBefore(epiphany), 7);
+  for (let n = 1; s < lastAfterEpiphany; n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach Epiphanias`);
+  sunday(lastAfterEpiphany, 'Letzter Sonntag nach Epiphanias');
+  // Pre-Lent, Lent, Holy Week
+  const lentSundays: [number, string][] = [
+    [-63, 'Septuagesimae'],
+    [-56, 'Sexagesimae'],
+    [-49, 'Estomihi'],
+    [-42, 'Invokavit'],
+    [-35, 'Reminiszere'],
+    [-28, 'Okuli'],
+    [-21, 'Lätare'],
+    [-14, 'Judika'],
+    [-7, 'Palmsonntag (Palmarum)'],
+  ];
+  for (const [d, n] of lentSundays) sunday(e(d), n);
+  // Easter to Trinity
+  const easterSundays: [number, string][] = [
+    [0, 'Ostersonntag'],
+    [7, 'Quasimodogeniti'],
+    [14, 'Miserikordias Domini'],
+    [21, 'Jubilate'],
+    [28, 'Kantate'],
+    [35, 'Rogate'],
+    [42, 'Exaudi'],
+    [49, 'Pfingstsonntag'],
+    [56, 'Trinitatis'],
+  ];
+  for (const [d, n] of easterSundays) sunday(e(d), n);
+  // Sundays after Trinity, then the last three Sundays of the church year
+  const eternity = addDays(nextStart, -7);
+  const thirdLast = addDays(eternity, -14);
+  s = e(63);
+  for (let n = 1; s < thirdLast; n++, s = addDays(s, 7)) sunday(s, `${ordinal(n)} Sonntag nach Trinitatis`);
+  sunday(thirdLast, 'Drittletzter Sonntag des Kirchenjahres');
+  sunday(addDays(eternity, -7), 'Vorletzter Sonntag des Kirchenjahres');
+  sunday(eternity, 'Letzter Sonntag des Kirchenjahres (Ewigkeitssonntag)');
+  markers.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+  const feasts = new Map<DateKey, string>();
+  const feast = (date: DateKey, name: string) => {
+    if (date >= start && date <= end) feasts.set(date, name);
+  };
+  for (const y of [year, y2]) {
+    feast(md(y, 12, 24), 'Heiligabend');
+    feast(md(y, 12, 25), 'Christfest – Geburt des Herrn');
+    feast(md(y, 12, 26), '2. Christtag');
+    feast(md(y, 12, 31), 'Altjahrsabend');
+    feast(md(y, 1, 1), 'Neujahrstag – Namensgebung Jesu');
+    feast(md(y, 1, 6), 'Epiphanias – Fest der Erscheinung des Herrn');
+    feast(md(y, 2, 2), 'Tag der Darstellung des Herrn (Lichtmess)');
+    feast(md(y, 3, 25), 'Tag der Ankündigung der Geburt des Herrn');
+    feast(md(y, 6, 24), 'Tag der Geburt Johannes des Täufers');
+    feast(md(y, 6, 29), 'Tag der Apostel Petrus und Paulus');
+    feast(md(y, 9, 29), 'Tag des Erzengels Michael und aller Engel (Michaelis)');
+    feast(md(y, 10, 31), 'Gedenktag der Reformation');
+    feast(md(y, 11, 1), 'Gedenktag der Heiligen (Allerheiligen)');
+  }
+  feast(e(-46), 'Aschermittwoch');
+  feast(e(-3), 'Gründonnerstag');
+  feast(e(-2), 'Karfreitag');
+  feast(e(-1), 'Karsamstag');
+  feast(E, 'Ostersonntag – Auferstehung des Herrn');
+  feast(e(1), 'Ostermontag');
+  feast(e(39), 'Christi Himmelfahrt');
+  feast(e(49), 'Pfingstsonntag – Ausgießung des Heiligen Geistes');
+  feast(e(50), 'Pfingstmontag');
+  feast(e(56), 'Trinitatis – Fest der Heiligen Dreifaltigkeit');
+  // Harvest thanksgiving: first Sunday in October
+  const oct1 = md(year + 1, 10, 1);
+  feast(fromKey(oct1).getDay() === 0 ? oct1 : addDays(sundayOnOrBefore(oct1), 7), 'Erntedankfest');
+  feast(addDays(eternity, -4), 'Buß- und Bettag');
+
+  const seasons: { from: DateKey; season: Season }[] = [
+    { from: start, season: 'advent' },
+    { from: christmas, season: 'christmastide' },
+    { from: epiphany, season: 'epiphany' },
+    { from: e(-63), season: 'prelent' },
+    { from: e(-46), season: 'lent' },
+    { from: e(-7), season: 'holyWeek' },
+    { from: E, season: 'eastertide' },
+    { from: e(49), season: 'pentecost' },
+    { from: e(56), season: 'trinity' },
+    { from: thirdLast, season: 'endOfYear' },
+  ];
+
+  const cal = { start, end, easter: E, weekMarkers: markers, feasts, seasons };
+  cache.set(year, cal);
+  return cal;
+}
+
+/* ------------------------------------------------------------ public */
+
+export interface ChurchDay {
+  /** Name of the week: the most recent Sunday (or Christmas Day / Epiphany). */
+  week: string;
+  /** Number of the week within the church year, starting with 1 at the first Advent. */
+  weekNumber: number;
+  /** Feast or holy day falling on this date, if any. */
+  feast?: string;
+  circle: Circle;
+  season: Season;
+  /** Calendar year in which this church year began (first Advent). */
+  churchYear: number;
+}
+
+export function churchDay(date: DateKey): ChurchDay {
+  const y = fromKey(date).getFullYear();
+  const cal = date >= firstAdvent(y) ? calendar(y) : calendar(y - 1);
+  let week = cal.weekMarkers[0]!.name;
+  for (const m of cal.weekMarkers) {
+    if (m.date <= date) week = m.name;
+    else break;
+  }
+  let season: Season = 'advent';
+  for (const s of cal.seasons) {
+    if (s.from <= date) season = s.season;
+    else break;
+  }
+  return {
+    week,
+    weekNumber: Math.floor(daysBetween(cal.start, sundayOnOrBefore(date)) / 7) + 1,
+    feast: cal.feasts.get(date),
+    circle: SEASON_CIRCLE[season],
+    season,
+    churchYear: fromKey(cal.start).getFullYear(),
+  };
+}
+
+/** Ash Wednesday to Holy Saturday: the Halleluja is not sung. */
+export function isPassiontide(date: DateKey): boolean {
+  const s = churchDay(date).season;
+  return s === 'lent' || s === 'holyWeek';
+}

@@ -450,3 +450,65 @@ body.is-sorting * {
   padding: 3px 10px;
   font-size: 0.8rem;
 }
+
+/* Catechism overview: orientation, not a tracker */
+.cat-overview {
+  margin: 8px 0 18px;
+}
+.overview-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: grid;
+  gap: 10px;
+}
+.overview-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+}
+.overview-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.overview-no {
+  font-weight: 600;
+  color: var(--rubric);
+  min-width: 1.4rem;
+}
+.overview-title {
+  font-weight: 600;
+}
+.overview-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-left: calc(1.4rem + 8px);
+}
+.piece-mark {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  border: 1.5px solid var(--rule);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.piece-mark.known {
+  background: var(--done);
+  border-color: var(--done);
+}
+.overview-count {
+  padding-left: calc(1.4rem + 8px);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.kpiece:focus {
+  outline: none;
+}
+.kpiece:focus-visible {
+  outline: 2px solid var(--accent);
+}

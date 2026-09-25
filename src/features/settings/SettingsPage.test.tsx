@@ -230,6 +230,29 @@ describe('Katechismus', () => {
     expect(screen.getByText('1 / 35')).toBeTruthy();
   });
 
+  it('shows an overview of the chief parts for orientation', async () => {
+    const { store } = await renderAt('/katechismus', <CatechismPage />);
+    const overview = (await screen.findByText('Übersicht')).closest('section')!;
+    const rows = overview.querySelectorAll('.overview-row');
+    expect(rows).toHaveLength(6);
+    expect(rows[0]!.textContent).toContain('0 von 11 Stücken auswendig');
+
+    fireEvent.click(screen.getAllByText('auswendig gelernt')[0]!); // first piece of this week's chief part
+    expect(Object.keys(store.getProfile().catechism.memorized)).toHaveLength(1);
+    const known = overview.querySelectorAll('.piece-mark.known');
+    expect(known).toHaveLength(1);
+    expect(overview.textContent).toMatch(/1 von \d+ Stücken auswendig/);
+
+    // Tapping a mark opens its chief part and jumps to the piece.
+    const mark = overview.querySelectorAll<HTMLButtonElement>('.overview-row')[5]!.querySelector('.piece-mark')!;
+    fireEvent.click(mark);
+    expect((document.getElementById('chief-lordsSupper') as HTMLDetailsElement).open).toBe(true);
+    expect(document.activeElement!.id).toBe('piece-lordsSupper.0');
+
+    // Orientation, no tracker: no dates, no streaks.
+    expect(overview.textContent).not.toMatch(/\d{1,2}\.\d{1,2}\.|zuletzt|Serie|in Folge|verpasst/);
+  });
+
   it('lets the chief part of the week be chosen', async () => {
     await renderAt('/katechismus', <CatechismPage />);
     fireEvent.change(await screen.findByLabelText('Hauptstück dieser Woche'), { target: { value: '2' } });

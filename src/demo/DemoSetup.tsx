@@ -33,7 +33,16 @@ export function DemoSetup() {
     }), { immediate: true });
     store.updateDay(addDays(today, -3), (d) => ({ ...d, morning: { ...d.morning, done: true } }), { immediate: true });
     store.updateProfile(
-      (p) => ({ ...p, habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)) }),
+      (p) => ({
+        ...p,
+        habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
+        catechism: {
+          ...p.catechism,
+          memorized: Object.fromEntries(
+            ['commandments.0', 'commandments.1', 'commandments.2', 'commandments.3', 'creed.0', 'lordsPrayer.0'].map((id) => [id, true]),
+          ),
+        },
+      }),
       { immediate: true },
     );
   }, [store]);

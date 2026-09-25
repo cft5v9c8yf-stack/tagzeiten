@@ -45,6 +45,16 @@ describe('Nachtgebet', () => {
     expect(confession.textContent).toContain('1. Johannes 1,9');
   });
 
+  it('omits the Halleluja in Passiontide only', async () => {
+    await renderEvening('2026-03-10');
+    const vespers = document.querySelector('.vespers')!;
+    expect(vespers.textContent).not.toContain('Halleluja.');
+    expect(vespers.textContent).toContain('Passionszeit: Das Halleluja entfällt.');
+    cleanup();
+    await renderEvening('2026-06-10');
+    expect(document.querySelector('.vespers')!.textContent).toContain('Halleluja.');
+  });
+
   it('asks the station of the weekday', async () => {
     await renderEvening('2026-09-24'); // Thursday
     expect(screen.getByText('Als Prediger und Bruder in der Gemeinde:')).toBeTruthy();
