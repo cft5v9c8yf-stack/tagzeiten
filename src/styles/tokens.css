@@ -1,0 +1,78 @@
+/*
+ * Design tokens, taken from the prototype.
+ * Colour rule (CLAUDE.md, rule 5): --rubric is reserved for liturgical rubrics,
+ * versicle markers and step numbers. Everything interactive uses --accent.
+ * Missed days are never red: they use --rule (neutral grey).
+ */
+:root {
+  --paper: #f6f4ef;
+  --sheet: #ffffff;
+  --ink: #1d2330;
+  --muted: #636a76;
+  --rule: #ddd8ce;
+  --rubric: #8c2f2f;
+  --rubric-soft: #f1e3e1;
+  --accent: #2e4057;
+  --accent-soft: #e4e8ee;
+  --on-accent: #ffffff;
+  --done: #3e6b4e;
+  --done-soft: #e3ede6;
+  --half: #9a7b2f;
+  --half-soft: #f3ecd9;
+
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Source Sans 3', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --radius-s: 8px;
+  --radius-m: 10px;
+  --radius-l: 12px;
+  --content-width: 640px;
+  --gutter: 18px;
+  --tabbar-height: 58px;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  color-scheme: light;
+}
+
+/* Dark scheme: designed for 04:00 – low glare, warm ink, no pure white. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #131a26;
+    --sheet: #1b2432;
+    --ink: #e8e3d8;
+    --muted: #9aa2af;
+    --rule: #2c3748;
+    --rubric: #e07a6e;
+    --rubric-soft: #3a2327;
+    --accent: #d8d0c0;
+    --accent-soft: #2a3444;
+    --on-accent: #131a26;
+    --done: #7fb894;
+    --done-soft: #1f3328;
+    --half: #d2b26a;
+    --half-soft: #33301f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #131a26;
+  --sheet: #1b2432;
+  --ink: #e8e3d8;
+  --muted: #9aa2af;
+  --rule: #2c3748;
+  --rubric: #e07a6e;
+  --rubric-soft: #3a2327;
+  --accent: #d8d0c0;
+  --accent-soft: #2a3444;
+  --on-accent: #131a26;
+  --done: #7fb894;
+  --done-soft: #1f3328;
+  --half: #d2b26a;
+  --half-soft: #33301f;
+  color-scheme: dark;
+}

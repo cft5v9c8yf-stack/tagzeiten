@@ -1,0 +1,62 @@
+import { useEffect, useRef } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
+import { formatLong, formatShort } from '../domain/dates';
+import { SectionIcon } from '../ui/SectionIcon';
+import { SECTIONS } from './routes';
+import { useSelectedDate, withDate } from './useSelectedDate';
+
+export function Layout() {
+  const { date, isToday } = useSelectedDate();
+  const { pathname } = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+  const firstRender = useRef(true);
+
+  // On section change: back to the top, and move focus into the new content
+  // so keyboard and screen-reader users land where the page begins.
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    window.scrollTo(0, 0);
+    mainRef.current?.focus({ preventScroll: true });
+  }, [pathname]);
+
+  return (
+    <>
+      <a className="skip-link" href="#main">
+        Zum Inhalt
+      </a>
+      <div className="wrap">
+        <header className="top">
+          <h1>Tagzeiten</h1>
+          <div className="date">
+            {isToday ? (
+              formatLong(date)
+            ) : (
+              <>
+                {formatShort(date)}
+                <Link to={pathname}>Heute</Link>
+              </>
+            )}
+          </div>
+        </header>
+        <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
+          <Outlet />
+        </main>
+      </div>
+      <nav className="tabs" aria-label="Bereiche">
+        <ul>
+          {SECTIONS.map((s) => (
+            <li key={s.path}>
+              <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
+                <SectionIcon name={s.icon} />
+                {s.label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </>
+  );
+}
