@@ -14,6 +14,10 @@ html {
 body {
   margin: 0;
   min-height: 100%;
+  /* iOS home-screen apps with a translucent status bar report a viewport that is
+     short by the status bar. On pages shorter than the screen (Archiv, Mehr) the
+     fixed tab bar then floats above the bottom edge. Never let a page be shorter. */
+  min-height: calc(100% + var(--safe-top));
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
@@ -208,6 +212,16 @@ nav.tabs {
   background: var(--sheet);
   border-top: 1px solid var(--rule);
   padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+/* Fills any gap below the bar with its own colour, whatever the viewport reports. */
+nav.tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 120px;
+  background: var(--sheet);
 }
 nav.tabs ul {
   list-style: none;
