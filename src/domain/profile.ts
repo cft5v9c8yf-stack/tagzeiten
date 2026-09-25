@@ -2,6 +2,7 @@ import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
+import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays, WEEK } from './schedule';
 import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
@@ -10,7 +11,7 @@ export function defaultProfile(today: DateKey): Profile {
   return {
     plan: { planId: plan.def.id, positions: initialPositions(plan) },
     habits: habitsFromPresets(),
-    prayer: { daily: '', weekly: {} },
+    prayer: emptyPrayer(),
     catechism: { memorized: {}, weekOffset: 0 },
     schedule: { ...DEFAULT_SCHEDULE },
     theme: 'system',
@@ -31,15 +32,10 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
   if (!raw) return base;
   const plan = getPlan(raw.plan?.planId ?? base.plan.planId);
   const schedule = cleanSchedule(raw.schedule, base.schedule);
-  const weekly: Partial<Record<Weekday, string>> = {};
-  for (const [k, v] of Object.entries(raw.prayer?.weekly ?? {})) {
-    const n = Number(k);
-    if (n >= 0 && n <= 6 && typeof v === 'string') weekly[n as Weekday] = v;
-  }
   return {
     plan: normalizePlan(plan.def.id, raw.plan),
     habits: mergePresets(Array.isArray(raw.habits) ? raw.habits.filter(isHabit).map(cleanHabit) : base.habits),
-    prayer: { daily: typeof raw.prayer?.daily === 'string' ? raw.prayer.daily : '', weekly },
+    prayer: normalizePrayer(raw.prayer),
     catechism: {
       memorized: { ...(raw.catechism?.memorized ?? {}) },
       weekOffset: Number.isInteger(raw.catechism?.weekOffset) ? (((raw.catechism!.weekOffset % 6) + 6) % 6) : 0,

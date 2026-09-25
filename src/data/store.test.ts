@@ -155,7 +155,7 @@ describe('Store', () => {
     await store.load();
     store.updateDay('2026-09-24', fillDay);
     store.updateDay('2026-09-25', fillDay);
-    store.updateProfile((p) => ({ ...p, prayer: { daily: 'Haus', weekly: { 1: 'Mission' } } }));
+    store.updateProfile((p) => ({ ...p, prayer: { concerns: ['Haus', 'Mission'], daily: ['Haus'], weekly: { 1: ['Mission'] } } }));
     const backup = await store.exportBackup();
     expect(backup.days.map((d) => d.date)).toEqual(['2026-09-24', '2026-09-25']);
     expect(backup.days[1]).toEqual(store.getDay('2026-09-25'));
@@ -177,7 +177,7 @@ describe('Store', () => {
     const res = await other.importBackup(JSON.stringify(backup));
     expect(res.days).toBe(2);
     expect(other.getDay('2026-09-25')).toEqual(store.getDay('2026-09-25'));
-    expect(other.getProfile().prayer).toEqual({ daily: 'Haus', weekly: { 1: 'Mission' } });
+    expect(other.getProfile().prayer).toEqual({ concerns: ['Haus', 'Mission'], daily: ['Haus'], weekly: { 1: ['Mission'] } });
   });
 
   it('rejects files that are not a backup', async () => {

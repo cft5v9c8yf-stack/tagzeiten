@@ -36,6 +36,11 @@ export function DemoSetup() {
       (p) => ({
         ...p,
         habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
+        prayer: {
+          concerns: ['Frau und Kinder', 'Gemeinde', 'Verfolgte Kirche', 'Missionare', 'Obrigkeit', 'Nachbarn'],
+          daily: ['Frau und Kinder', 'Gemeinde'],
+          weekly: { 1: ['Verfolgte Kirche'], 3: ['Missionare', 'Nachbarn'], 5: ['Obrigkeit'] },
+        },
         catechism: {
           ...p.catechism,
           memorized: Object.fromEntries(

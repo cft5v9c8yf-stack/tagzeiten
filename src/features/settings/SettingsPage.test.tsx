@@ -381,4 +381,26 @@ describe('Archiv', () => {
     await waitFor(() => expect(scheduleFor(store.getProfile(), '2026-09-26').rise).toBe('04:00'));
     expect(store.getProfile().scheduleDays!.groups).toHaveLength(3);
   });
+
+  it('writes concerns as tags and sets them on days, several a day', async () => {
+    const { store } = await renderAt('/mehr/gebet', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Gebetsübersicht/ });
+    fireEvent.change(screen.getByLabelText('Neues Anliegen'), { target: { value: 'Verfolgte Kirche' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Anliegen anlegen' }));
+    await waitFor(() => expect(store.getProfile().prayer.concerns).toEqual(['Verfolgte Kirche']));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Anliegen am Montag hinzufügen' }));
+    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu'), { target: { value: 'Verfolgte Kirche' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Anliegen am Montag hinzufügen' }));
+    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu'), { target: { value: 'Missionare' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
+    await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toEqual(['Verfolgte Kirche', 'Missionare']));
+    expect(store.getProfile().prayer.concerns).toEqual(['Verfolgte Kirche', 'Missionare']);
+
+    fireEvent.click(screen.getByRole('button', { name: '„Missionare“ am Montag entfernen' }));
+    await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toEqual(['Verfolgte Kirche']));
+    fireEvent.click(screen.getByRole('button', { name: '„Verfolgte Kirche“ ganz entfernen' }));
+    await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toBeUndefined());
+  });
 });

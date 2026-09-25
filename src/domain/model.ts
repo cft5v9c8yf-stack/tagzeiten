@@ -148,6 +148,15 @@ export interface Schedule {
   lightsOut: string;
 }
 
+/** The prayer list: concerns, and the days each is set on. */
+export interface Prayer {
+  concerns: string[];
+  /** Prayed for every day. */
+  daily: string[];
+  /** Prayed for on a weekday (0 = Sunday … 6 = Saturday). */
+  weekly: Partial<Record<Weekday, string[]>>;
+}
+
 /** Times for some weekdays (0 = Sunday … 6 = Saturday). */
 export interface ScheduleGroup {
   days: Weekday[];
@@ -165,7 +174,7 @@ export interface Profile {
     fixed?: string;
   };
   habits: Habit[];
-  prayer: { daily: string; weekly: Partial<Record<Weekday, string>> };
+  prayer: Prayer;
   catechism: { memorized: Record<string, boolean>; weekOffset: number };
   /** The same times every day. */
   schedule: Schedule;

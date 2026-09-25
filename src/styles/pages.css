@@ -1210,3 +1210,63 @@ body.is-sorting * {
 .schedule-group > .btn {
   margin-top: 10px;
 }
+/* Prayer list: concerns as tags, set on days. */
+.concerns,
+.prayer-days {
+  margin-top: 18px;
+}
+.concern-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.concern-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px 4px 12px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  font: 500 0.9rem var(--sans);
+}
+.concern-chip button,
+.concern-add {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: 600 1.1rem var(--sans);
+  cursor: pointer;
+}
+.concern-add {
+  border: 1px dashed var(--rule);
+  color: var(--gold);
+}
+.concern-input {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+.concern-input input {
+  flex: 1;
+  min-width: 0;
+}
+.prayer-day {
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+.prayer-day-name {
+  margin: 0;
+  font: 600 0.9rem var(--sans);
+}
+.prayer-day .concern-chips {
+  margin-bottom: 0;
+}

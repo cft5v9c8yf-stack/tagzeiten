@@ -251,18 +251,22 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
 
     case 'intercession': {
       if (ctx.order === 'morning') {
-        const weekly = profile.prayer.weekly[wd];
+        const weekly = profile.prayer.weekly[wd] ?? [];
         return (
           <>
             <VersicleView items={[KYRIE]} />
             <Rubric>{RUBRICS.intercession}</Rubric>
             <p>
               <b>Anliegen am {WEEKDAY_LONG[wd]}:</b>{' '}
-              {weekly ? weekly : <span className="muted">in der Gebetsübersicht unter „Mehr“ eintragen</span>}
+              {weekly.length ? (
+                weekly.join(' · ')
+              ) : (
+                <span className="muted">in der Gebetsübersicht unter „Mehr“ eintragen</span>
+              )}
             </p>
-            {profile.prayer.daily && (
+            {profile.prayer.daily.length > 0 && (
               <p className="small">
-                <b>Täglich:</b> {profile.prayer.daily}
+                <b>Täglich:</b> {profile.prayer.daily.join(' · ')}
               </p>
             )}
             <PartFields part={part} date={ctx.date} />
