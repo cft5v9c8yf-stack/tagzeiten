@@ -289,22 +289,51 @@ nav.tabs a {
   font-weight: 600;
   color: var(--muted);
 }
-/* One size for every icon, the rose included; the chosen one grows a little */
+/* One size for every icon, the rose included. The chosen one grows to a large
+   circle with a gold ring that rises a little above the bar (as the rose did). */
 nav.tabs .tab-icon {
   display: grid;
   place-items: center;
   width: 34px;
   height: 34px;
-  transition: transform 0.25s ease;
+  margin-top: 0;
+  border-radius: 50%;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    margin 0.25s ease,
+    box-shadow 0.25s ease;
 }
 nav.tabs .tab-icon svg {
   display: block;
+  width: 34px;
+  height: 34px;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
 }
 nav.tabs a[aria-current='page'] .tab-icon {
-  transform: scale(1.15);
+  width: 50px;
+  height: 50px;
+  /* keeps the label on the line of the others */
+  margin-top: -16px;
+  background: var(--sheet);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+nav.tabs a[aria-current='page'] .tab-icon svg {
+  width: 30px;
+  height: 30px;
+}
+nav.tabs a[aria-current='page'] .tab-icon .luther-rose {
+  width: 46px;
+  height: 46px;
+}
+nav.tabs a[aria-current='page']::before {
+  display: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  nav.tabs .tab-icon {
+  nav.tabs .tab-icon,
+  nav.tabs .tab-icon svg {
     transition: none;
   }
 }
