@@ -737,7 +737,6 @@ body.is-sorting * {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
-  margin-bottom: 8px;
 }
 .sunday-reading {
   display: flex;

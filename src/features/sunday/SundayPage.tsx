@@ -74,7 +74,6 @@ export function SundayPage() {
               {summary && <p className="sunday-summary">{summary.epistle}</p>}
             </div>
           </div>
-          <p className="small muted">In der Bibel lesen, auf Papier; der Link öffnet die Lutherbibel.</p>
         </section>
       )}
 
