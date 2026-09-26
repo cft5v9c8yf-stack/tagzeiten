@@ -46,6 +46,15 @@ export function DemoSetup() {
             text: 'Heute gereizt gewesen, schon am Frühstückstisch.\nDie Sorge um die Arbeit sitzt mir im Nacken. Ich will sie abgeben und nicht wieder aufheben.',
           },
           {
+            id: 'demo-forge',
+            kind: 'forge',
+            createdAt: new Date(`${addDays(today, -1)}T19:30:00`).getTime(),
+            updatedAt: new Date(`${addDays(today, -1)}T19:30:00`).getTime(),
+            verses: ['Galater 6,2'],
+            concerns: ['Weisheit für die Entscheidung im Beruf', 'Treue im Gebet'],
+            text: 'Beim nächsten Treffen ansprechen: wie ich morgens die Stille Zeit halte, wenn die Kinder früh wach sind.',
+          },
+          {
             id: 'demo-0',
             createdAt: new Date(`${addDays(today, -20)}T21:40:00`).getTime(),
             updatedAt: new Date(`${addDays(today, -20)}T21:40:00`).getTime(),

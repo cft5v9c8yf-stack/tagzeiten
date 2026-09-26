@@ -4,7 +4,7 @@
  */
 import type { WeeklyVerse } from './weeklyVerses';
 
-export type SettingsSectionId = 'habits' | 'prayer' | 'plan' | 'times' | 'arena';
+export type SettingsSectionId = 'habits' | 'prayer' | 'plan' | 'times' | 'arena' | 'forge';
 
 export const SETTINGS_VERSES: Record<SettingsSectionId, WeeklyVerse> = {
   habits: {
@@ -27,5 +27,10 @@ export const SETTINGS_VERSES: Record<SettingsSectionId, WeeklyVerse> = {
     ref: '1. Timotheus 6,12',
     source: '1Tim 6,12',
     parts: ['kämpfe den guten Kampf des Glaubens; ergreife das ewige Leben'],
+  },
+  forge: {
+    ref: 'Sprüche 27,17',
+    source: 'Spr 27,17',
+    parts: ['Ein Messer wetzt das andere und ein Mann den andern.'],
   },
 };

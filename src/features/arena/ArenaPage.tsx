@@ -1,24 +1,57 @@
 import { useId, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import { entryTitle, isReference } from '../../domain/arena';
 import type { ArenaEntry } from '../../domain/model';
 import { BibleLink } from '../../ui/BibleLink';
+import { Segmented } from '../../ui/Choice';
 import { SectionVerse } from '../../ui/SectionVerse';
 
-/** What the Arena is for, and what it is not (rule 9). */
-const ARENA_NOTE =
-  'Hier schreibst du auf, was dich belastet und womit du ringst. Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.';
+type Kind = 'journal' | 'forge';
+const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
+const FORGE_PARAM = 'bereich';
+const FORGE_SLUG = 'eisenschmiede';
 
-/** The word of comfort under every entry (1. Korinther 10,13b; Römer 8,37 – Luther 1912). */
-const COMFORT = [
-  {
-    text: 'Gott ist getreu, der euch nicht läßt versuchen über euer Vermögen, sondern macht, daß die Versuchung so ein Ende gewinne, daß ihr’s könnet ertragen.',
-    ref: '1. Korinther 10,13',
+/** The two places of the Arena: the journal, and the Eisenschmiede for the brothers. */
+const PLACES = {
+  journal: {
+    title: 'Tagebuch',
+    verse: 'arena',
+    // What the journal is for, and what it is not (rule 9).
+    note: 'Hier schreibst du auf, was dich belastet und womit du ringst. Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.',
+    add: 'Neuen Eintrag schreiben',
+    textLabel: 'Was dich bewegt',
+    textHint: 'Was dich belastet, womit du ringst, was Gott dir heute gezeigt hat …',
+    concernHint: 'Wofür du betest',
+    // Luther 1912.
+    comfort: [
+      {
+        text: 'Gott ist getreu, der euch nicht läßt versuchen über euer Vermögen, sondern macht, daß die Versuchung so ein Ende gewinne, daß ihr’s könnet ertragen.',
+        ref: '1. Korinther 10,13',
+      },
+      { text: 'Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.', ref: 'Römer 8,37' },
+    ],
   },
-  { text: 'Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.', ref: 'Römer 8,37' },
-];
+  forge: {
+    title: 'Eisenschmiede',
+    verse: 'forge',
+    note: 'Was du zum nächsten Treffen mit deinen Brüdern mitbringst: was ihr besprechen und wofür ihr miteinander beten sollt. Was ihr einander bekennt, bleibt im Gespräch und wird hier nicht notiert.',
+    add: 'Anliegen fürs Treffen aufschreiben',
+    textLabel: 'Was du mit den Brüdern besprechen willst',
+    textHint: 'Was dich umtreibt, wo du Rat brauchst, wofür die Brüder mit dir beten sollen …',
+    concernHint: 'Wofür ihr gemeinsam betet',
+    comfort: [
+      { text: 'Einer trage des andern Last, so werdet ihr das Gesetz Christi erfüllen.', ref: 'Galater 6,2' },
+      {
+        text: 'Denn wo zwei oder drei versammelt sind in meinem Namen, da bin ich mitten unter ihnen.',
+        ref: 'Matthäus 18,20',
+      },
+    ],
+  },
+} as const;
+
+const arenaPath = (k: Kind) => (k === 'forge' ? `/arena?${FORGE_PARAM}=${FORGE_SLUG}` : '/arena');
 
 /** Archived entries stand in the Rückblick under "Mehr". */
 export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
@@ -93,10 +126,13 @@ function LineList({
 }
 
 /** An entry as a card: date, first line, verses. Used in the Arena and in the Rückblick. */
-export function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
+export function ArenaCard({ entry: e, showKind = true }: { entry: ArenaEntry; showKind?: boolean }) {
   return (
     <Link className="arena-card" to={`/arena/${e.id}`}>
-      <span className="arena-card-date">{dateOf(e.createdAt)}</span>
+      <span className="arena-card-date">
+        {dateOf(e.createdAt)}
+        {showKind && e.kind === 'forge' && <span className="ktag">Eisenschmiede</span>}
+      </span>
       <span className="arena-card-title">{entryTitle(e)}</span>
       {e.verses.some((v) => v.trim()) && (
         <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
@@ -114,13 +150,16 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
-  const home = archived ? REVIEW_PATH : '/arena';
+  const kind = kindOf(entry);
+  const place = PLACES[kind];
+  const home = archived ? REVIEW_PATH : arenaPath(kind);
 
   return (
     <article className="arena-entry">
       <p className="back-link">
-        <Link to={home}>{archived ? '‹ Rückblick' : '‹ Arena'}</Link>
+        <Link to={home}>{archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
       </p>
+      {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
@@ -135,25 +174,25 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       <LineList
         label="Gebetsanliegen"
         addLabel="Weiteres Gebetsanliegen hinzufügen"
-        placeholder="Wofür du betest"
+        placeholder={place.concernHint}
         values={entry.concerns}
         onChange={(concerns) => update((e) => ({ ...e, concerns }))}
         suggestions={profile.prayer.concerns}
       />
 
       <div className="field arena-text">
-        <label htmlFor={textId}>Was dich bewegt</label>
+        <label htmlFor={textId}>{place.textLabel}</label>
         <textarea
           id={textId}
           rows={14}
           value={entry.text}
-          placeholder="Was dich belastet, womit du ringst, was Gott dir heute gezeigt hat …"
+          placeholder={place.textHint}
           onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
         />
       </div>
 
       <aside className="arena-comfort" aria-label="Zuspruch">
-        {COMFORT.map((c) => (
+        {place.comfort.map((c) => (
           <p key={c.ref}>
             {c.text} <BibleLink reference={c.ref} />
           </p>
@@ -170,11 +209,11 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
             className="btn"
             onClick={() => {
               store.archiveArenaEntry(entry.id, false);
-              toast('Eintrag steht wieder in der Arena');
-              navigate('/arena');
+              toast(`Eintrag steht wieder in der ${kind === 'forge' ? 'Eisenschmiede' : 'Arena'}`);
+              navigate(arenaPath(kind));
             }}
           >
-            Zurück in die Arena holen
+            {kind === 'forge' ? 'Zurück in die Eisenschmiede holen' : 'Zurück in die Arena holen'}
           </button>
         ) : (
           <button
@@ -182,11 +221,15 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
             className="btn"
             onClick={() => {
               store.archiveArenaEntry(entry.id, true);
-              toast('Eintrag archiviert – zu finden unter Mehr, Rückblick');
-              navigate('/arena');
+              toast(
+                kind === 'forge'
+                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
+                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
+              );
+              navigate(arenaPath(kind));
             }}
           >
-            Eintrag archivieren
+            {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
           </button>
         )}
         {confirm ? (
@@ -225,6 +268,7 @@ export function ArenaPage() {
   const store = useStore();
   const profile = useProfile();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const entries = profile.arena;
 
   if (eintrag) {
@@ -240,21 +284,36 @@ export function ArenaPage() {
     );
   }
 
-  const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined);
+  const kind: Kind = params.get(FORGE_PARAM) === FORGE_SLUG ? 'forge' : 'journal';
+  const place = PLACES[kind];
+  const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === kind);
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
     <div className="arena">
       <h2>Arena</h2>
-      <SectionVerse id="arena" />
-      <p className="arena-note">{ARENA_NOTE}</p>
-      <button type="button" className="btn primary arena-new" onClick={() => navigate(`/arena/${store.addArenaEntry()}`)}>
-        Neuen Eintrag schreiben
+      <Segmented<Kind>
+        label="Bereich der Arena"
+        value={kind}
+        onChange={(k) => navigate(arenaPath(k), { replace: true })}
+        options={[
+          { value: 'journal', label: PLACES.journal.title },
+          { value: 'forge', label: PLACES.forge.title },
+        ]}
+      />
+      <SectionVerse id={place.verse} />
+      <p className="arena-note">{place.note}</p>
+      <button
+        type="button"
+        className="btn primary arena-new"
+        onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
+      >
+        {place.add}
       </button>
       {shown.length > 0 && (
         <ul className="arena-list">
           {shown.map((e) => (
             <li key={e.id}>
-              <ArenaCard entry={e} />
+              <ArenaCard entry={e} showKind={false} />
             </li>
           ))}
         </ul>

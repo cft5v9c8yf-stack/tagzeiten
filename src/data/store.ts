@@ -204,9 +204,9 @@ export class Store {
 
   /* ------------------------------------------------------------ arena */
 
-  /** Starts a new Arena entry and returns its id. Entries left empty are cleared away. */
-  addArenaEntry(): string {
-    const entry = newEntry(this.now().getTime());
+  /** Starts a new Arena entry (or one for the Eisenschmiede) and returns its id. Entries left empty are cleared away. */
+  addArenaEntry(kind?: 'forge'): string {
+    const entry = newEntry(this.now().getTime(), kind);
     this.updateProfile((p) => ({ ...p, arena: [entry, ...p.arena.filter((e) => !isEmptyEntry(e))] }), {
       immediate: true,
     });

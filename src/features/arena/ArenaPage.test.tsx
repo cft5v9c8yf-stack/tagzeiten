@@ -112,4 +112,30 @@ describe('Arena', () => {
     expect(store.getProfile().arena[0]!.archivedAt).toBeUndefined();
     expect(screen.getByRole('link', { name: /Ein alter Kampf/ })).toBeTruthy();
   });
+
+  it('has the Eisenschmiede: concerns for the meeting with the brothers, apart from the journal', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    expect(await screen.findByText(/Ein Messer wetzt das andere/)).toBeTruthy();
+    expect(document.querySelector('.arena-note')!.textContent).toContain('Treffen mit deinen Brüdern');
+    fireEvent.click(screen.getByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
+    fireEvent.change(await screen.findByLabelText('Was du mit den Brüdern besprechen willst'), {
+      target: { value: 'Entscheidung im Beruf' },
+    });
+    fireEvent.change(screen.getByLabelText('Gebetsanliegen 1'), { target: { value: 'Weisheit' } });
+    expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Einer trage des andern Last');
+    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', text: 'Entscheidung im Beruf' }));
+
+    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    expect(await screen.findByRole('link', { name: /Entscheidung im Beruf/ })).toBeTruthy();
+    // The journal does not show it.
+    fireEvent.click(screen.getByRole('button', { name: 'Tagebuch' }));
+    await waitFor(() => expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull());
+
+    // After the meeting: discussed and archived.
+    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    fireEvent.click(await screen.findByRole('link', { name: /Entscheidung im Beruf/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Besprochen – archivieren' }));
+    await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
+  });
 });

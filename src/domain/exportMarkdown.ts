@@ -107,7 +107,7 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
   if (kept.length === 0) return [];
   const out = ['', '# Arena', ''];
   for (const e of kept) {
-    out.push(`## ${new Date(e.createdAt).toLocaleDateString('de-DE')}`, '');
+    out.push(`## ${new Date(e.createdAt).toLocaleDateString('de-DE')}${e.kind === 'forge' ? ' · Eisenschmiede' : ''}`, '');
     const verses = e.verses.filter((v) => v.trim());
     const concerns = e.concerns.filter((c) => c.trim());
     if (verses.length) out.push(`**Bibelstellen:** ${verses.join(' · ')}`, '');

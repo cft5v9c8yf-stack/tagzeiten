@@ -1499,3 +1499,15 @@ mark.placeholder {
 .guide-notes li {
   margin-bottom: 10px;
 }
+.arena-entry-kind {
+  margin: 8px 0 -4px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+.arena-card-date .ktag {
+  margin-left: 8px;
+}
+.arena .seg {
+  margin-bottom: 10px;
+}

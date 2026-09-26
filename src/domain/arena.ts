@@ -8,8 +8,14 @@ import type { ArenaEntry } from './model';
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : []);
 
-export function newEntry(now: number, id = `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`): ArenaEntry {
-  return { id, createdAt: now, updatedAt: now, verses: [''], concerns: [''], text: '' };
+export function newEntry(
+  now: number,
+  kind?: 'forge',
+  id = `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+): ArenaEntry {
+  const e: ArenaEntry = { id, createdAt: now, updatedAt: now, verses: [''], concerns: [''], text: '' };
+  if (kind) e.kind = kind;
+  return e;
 }
 
 /** Nothing written yet: such entries are not kept. */
@@ -36,6 +42,7 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
       text: str(x.text),
     };
     if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
+    if (x.kind === 'forge') e.kind = 'forge';
     if (isEmptyEntry(e)) continue;
     seen.add(id);
     out.push(e);

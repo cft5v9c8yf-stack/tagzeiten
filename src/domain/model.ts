@@ -171,6 +171,8 @@ export interface ArenaEntry {
   /** Prayer concerns for this struggle. */
   concerns: string[];
   text: string;
+  /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
+  kind?: 'forge';
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
   archivedAt?: number;
 }
