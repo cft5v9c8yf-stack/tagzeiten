@@ -1517,18 +1517,6 @@ mark.placeholder {
 .arena-meeting input {
   max-width: 14rem;
 }
-.arena-meeting-group + .arena-meeting-group {
-  margin-top: 16px;
-}
-.arena-meeting-title {
-  margin: 4px 0 8px;
-  font: 600 0.95rem var(--sans);
-  color: var(--gold);
-}
-.arena-card-meeting {
-  font: 600 0.8rem var(--sans);
-  color: var(--gold);
-}
 /* Kirchenjahr: Dieffenbach's introduction and the themes of circles and seasons */
 .cy-dieffenbach {
   margin-bottom: 14px;

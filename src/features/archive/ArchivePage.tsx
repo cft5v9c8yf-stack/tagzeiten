@@ -1,7 +1,7 @@
 import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useAllDays, useProfile } from '../../data/hooks';
-import { entryTitle, meetingLabel, searchArena } from '../../domain/arena';
+import { entryTitle, forgeTitle, searchArena } from '../../domain/arena';
 import { byYearAndMonth } from '../../domain/byMonth';
 import { formatLong, toKey, type DateKey } from '../../domain/dates';
 import { readingLabel } from '../../domain/exportMarkdown';
@@ -55,10 +55,9 @@ function ArenaItem({ e }: { e: ArenaEntry }) {
       <div className="archive-date">
         {formatLong(toKey(new Date(e.createdAt)))}
         {e.kind === 'forge' && <> · Eisenschmiede</>}
-        {e.meetingDate && <> · {meetingLabel(e.meetingDate)}</>}
       </div>
       <Link className="archive-title" to={`/arena/${e.id}`}>
-        {entryTitle(e)}
+        {e.kind === 'forge' ? forgeTitle(e) : entryTitle(e)}
       </Link>
       {verses.length > 0 && <p className="small muted">{verses.join(' · ')}</p>}
     </li>

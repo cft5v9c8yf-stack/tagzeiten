@@ -131,19 +131,21 @@ describe('Arena', () => {
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', points: [{ text: 'Entscheidung im Beruf', done: false }] }));
 
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
-    expect(await screen.findByRole('link', { name: /Entscheidung im Beruf/ })).toBeTruthy();
+    // Named by its meeting only; this one has no date yet.
+    expect(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull();
     // The journal does not show it.
     fireEvent.click(screen.getByRole('button', { name: 'Gebetskammer' }));
-    await waitFor(() => expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('link', { name: 'Treffen noch ohne Termin' })).toBeNull());
 
     // After the meeting: discussed and archived.
     fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
-    fireEvent.click(await screen.findByRole('link', { name: /Entscheidung im Beruf/ }));
+    fireEvent.click(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Besprochen – archivieren' }));
     await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
   });
 
-  it('assigns concerns to a meeting, groups them by meeting, and suggests the next one', async () => {
+  it('assigns concerns to a meeting, names them by it, and suggests the next one', async () => {
     const store = await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
@@ -158,8 +160,9 @@ describe('Arena', () => {
     fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Zweites' } });
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
 
-    const group = await screen.findByRole('region', { name: 'Treffen am Donnerstag, 1. Oktober' });
-    expect(group.querySelectorAll('.arena-card')).toHaveLength(2);
+    expect(await screen.findAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })).toHaveLength(2);
+    fireEvent.click(screen.getAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })[0]!);
+    expect(await screen.findByRole('heading', { level: 2, name: 'Treffen am Donnerstag, 1. Oktober' })).toBeTruthy();
   });
 
   it('keeps the points for the meeting as a list: Enter or + for the next, a tick when spoken of', async () => {

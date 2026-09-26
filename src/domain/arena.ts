@@ -121,3 +121,6 @@ export function byMeeting(entries: readonly ArenaEntry[]): { date?: DateKey; ent
 }
 
 export const meetingLabel = (d: DateKey) => `Treffen am ${formatLong(d)}`;
+
+/** How an Eisenschmiede entry is named: by the meeting it is for. */
+export const forgeTitle = (e: ArenaEntry) => (e.meetingDate ? meetingLabel(e.meetingDate) : 'Treffen noch ohne Termin');
