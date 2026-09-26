@@ -310,3 +310,77 @@ export function optionalDays(): { key: string; label: string; season: Season }[]
     })),
   ];
 }
+
+/** One day as the book names it: its meaning by week key, or a day of EXTRA_DAYS by label. */
+export interface BookDay {
+  label: string;
+  key?: string;
+  extra?: string;
+}
+
+const roman = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+
+/** The days of each season in the order and with the names of the book. */
+export const BOOK_ORDER: Record<Season, readonly BookDay[]> = {
+  advent: ['Erster', 'Zweiter', 'Dritter', 'Vierter'].map((n, i) => ({ label: `${n} Advent`, key: `advent${i + 1}` })),
+  christmastide: [
+    { label: 'Erster Christfeiertag', key: 'christmas' },
+    { label: 'Zweiter Christfeiertag', extra: 'Zweiter Christfeiertag' },
+    { label: 'Dritter Christfeiertag', extra: 'Dritter Christfeiertag' },
+  ],
+  presentation: [
+    { label: 'Sonntag nach Weihnachten', key: 'christmas1' },
+    { label: 'Neujahr', extra: 'Neujahr' },
+    { label: 'Sonntag nach Neujahr', key: 'christmas2' },
+    { label: 'Epiphanias', key: 'epiphany' },
+  ],
+  epiphany: [
+    ...roman.map((r, i) => ({ label: `${r}. Sonntag nach Epiphanias`, key: i < 5 ? `epiphany${i + 1}` : 'epiphanyLast' })),
+    { label: 'Septuagesimä', key: 'septuagesimae' },
+    { label: 'Sexagesimä', key: 'sexagesimae' },
+    { label: 'Estomihi', key: 'estomihi' },
+  ],
+  lent: [
+    { label: 'Aschermittwoch', extra: 'Aschermittwoch' },
+    ...['invokavit', 'reminiszere', 'okuli', 'laetare', 'judika', 'palmarum'].map((key, i) => ({
+      label: `${roman[i]}. Sonntag in den Fasten`,
+      key,
+    })),
+    { label: 'Gründonnerstag', key: 'maundyThursday' },
+    { label: 'Charfreitag', key: 'goodFriday' },
+    { label: 'Ostersonnabend', extra: 'Ostersonnabend' },
+  ],
+  eastertide: [
+    { label: 'Erster Ostertag', key: 'easter' },
+    { label: 'Zweiter Ostertag', key: 'easterMonday' },
+    { label: 'Dritter Ostertag', extra: 'Dritter Ostertag' },
+    ...['quasimodogeniti', 'misericordias', 'jubilate', 'kantate', 'rogate'].map((key, i) => ({
+      label: `${roman[i]}. Sonntag nach Ostern`,
+      key,
+    })),
+    { label: 'Himmelfahrt', key: 'ascension' },
+  ],
+  waiting: [
+    { label: 'Freitag und Sonnabend vor Exaudi', extra: 'Freitag und Sonnabend vor Exaudi' },
+    { label: 'Exaudi; sechste Woche nach Ostern', key: 'exaudi' },
+  ],
+  pentecost: [
+    { label: 'Erster Pfingstfeiertag', key: 'pentecost' },
+    { label: 'Zweiter Pfingstfeiertag', key: 'pentecostMonday' },
+    { label: 'Dritter Pfingstfeiertag', extra: 'Dritter Pfingstfeiertag' },
+    { label: 'Pfingstwoche', extra: 'Pfingstwoche' },
+  ],
+  trinity: [
+    { label: 'Das Trinitatis-Fest', key: 'trinity' },
+    ...Array.from({ length: 27 }, (_, i) => ({
+      label: `${i + 1}. Woche nach Trinitatis`,
+      key: i < 24 ? `trinity${i + 1}` : (['thirdLast', 'secondLast', 'eternity'] as const)[i - 24],
+    })),
+  ],
+};
+
+/** The text of a day of the book. */
+export function bookDayText(season: Season, d: BookDay): string {
+  if (d.key) return DAY_GUIDE[d.key] ?? '';
+  return EXTRA_DAYS[season]?.find((x) => x.label === d.extra)?.text ?? '';
+}

@@ -320,6 +320,25 @@ describe('Katechismus', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
+  it('has the church year after Dieffenbach in the appendix, to be read straight through', async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    fireEvent.click(await screen.findByRole('link', { name: /Das Kirchenjahr/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Das Kirchenjahr' })).toBeTruthy();
+    const text = document.querySelector('.dieffenbach-book')!.textContent!;
+    expect(text).toContain('Georg Christian Dieffenbach');
+    // Introduction, the three circles, and every day in the order of the book.
+    for (const t of ['Einleitung', 'Der heilige Weihnachtskreis', 'Der heilige Osterkreis', 'Der heilige Pfingstkreis']) {
+      expect(screen.getByRole('button', { name: t })).toBeTruthy();
+    }
+    for (const t of ['Des Herrn Einzug in Jerusalem', 'Christi Höllenfahrt', 'Wache und bete!', '27. Woche nach Trinitatis']) {
+      expect(text).toContain(t);
+    }
+    const labels = [...document.querySelectorAll('#book-lent ~ .book-days dt')].map((d) => d.textContent);
+    expect(labels[0]).toBe('1. Aschermittwoch');
+    expect(labels.at(-1)).toBe('10. Ostersonnabend');
+    expect([...document.querySelectorAll('.book-days dd')].every((d) => d.textContent!.trim().length > 20)).toBe(true);
+  });
+
   it('marks pieces as learned by heart on the page of the chief part', async () => {
     const { store } = await renderAt('/katechismus/confession', <CatechismPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toContain('Die Beichte');
@@ -335,7 +354,7 @@ describe('Katechismus', () => {
     await renderAt('/katechismus', <CatechismPage />);
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
-    expect(document.querySelectorAll('.overview-row')).toHaveLength(9); // 6 chief parts, 3 appendices
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(10); // 6 chief parts, 4 appendices
     expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
     expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.

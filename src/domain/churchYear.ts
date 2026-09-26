@@ -46,7 +46,7 @@ export const SEASON_LABEL: Record<Season, string> = {
   trinity: 'Trinitatiszeit',
 };
 
-const SEASON_CIRCLE: Record<Season, Circle> = {
+export const SEASON_CIRCLE: Record<Season, Circle> = {
   advent: 'christmas',
   christmastide: 'christmas',
   presentation: 'christmas',

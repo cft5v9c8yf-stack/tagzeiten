@@ -8,6 +8,7 @@ export const APPENDICES = [
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
+  { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
 ] as const;
 
 /**

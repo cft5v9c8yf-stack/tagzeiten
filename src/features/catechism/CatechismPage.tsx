@@ -12,6 +12,7 @@ import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText, Rubric } from '../../ui/PrayerText';
 import { Section } from '../../ui/Section';
 import { setOpen } from '../../ui/collapseState';
+import { DieffenbachBook } from '../churchyear/DieffenbachBook';
 import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview } from './CatechismOverview';
 import { HouseFatherMode } from './HouseFatherMode';
@@ -105,6 +106,7 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
     <>
       <h2 className="cat-part-title">{title}</h2>
       <div className="cat-part">
+        {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'tischgebete' && (
           <>
             <TablePrayer id="before" title="Vor dem Essen" prayer={TABLE_PRAYER_BEFORE} />

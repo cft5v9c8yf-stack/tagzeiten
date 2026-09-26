@@ -1682,3 +1682,32 @@ mark.placeholder {
   color: var(--muted);
   text-decoration: line-through;
 }
+/* Lehre / Anhang: the church year after Dieffenbach, to be read straight through */
+.dieffenbach-book .book-circle {
+  margin-top: 10px;
+}
+.dieffenbach-book p {
+  line-height: 1.55;
+}
+.book-lead {
+  margin-top: 18px;
+  font-style: italic;
+}
+.book-season h4 {
+  margin: 22px 0 2px;
+}
+.book-group h5 {
+  margin: 16px 0 2px;
+  font: 600 0.95rem var(--sans);
+}
+.book-days {
+  margin: 8px 0 0;
+}
+.book-days dt {
+  margin-top: 12px;
+  font: 600 0.92rem var(--sans);
+}
+.book-days dd {
+  margin: 3px 0 0;
+  line-height: 1.55;
+}
