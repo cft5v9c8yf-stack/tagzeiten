@@ -157,6 +157,12 @@ export interface Prayer {
   weekly: Partial<Record<Weekday, string[]>>;
 }
 
+/** A point on the list for the meeting with the brothers. */
+export interface ArenaPoint {
+  text: string;
+  done: boolean;
+}
+
 /**
  * An entry in the Arena: what burdens you, where you fight. Not a confession
  * (rule 9): sin is prayed in the confession, not written down here.
@@ -171,6 +177,8 @@ export interface ArenaEntry {
   /** Prayer concerns for this struggle. */
   concerns: string[];
   text: string;
+  /** Eisenschmiede: what to bring to the meeting, one point each, ticked off when spoken of. */
+  points?: ArenaPoint[];
   /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
   kind?: 'forge';
   /** Eisenschmiede: the day of the meeting this entry is for. */

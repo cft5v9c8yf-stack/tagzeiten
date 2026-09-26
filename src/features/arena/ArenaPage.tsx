@@ -1,9 +1,9 @@
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import { byMeeting, entryTitle, isReference, meetingLabel } from '../../domain/arena';
-import type { ArenaEntry } from '../../domain/model';
+import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleLink } from '../../ui/BibleLink';
 import { Segmented } from '../../ui/Choice';
 import { SectionVerse } from '../../ui/SectionVerse';
@@ -38,8 +38,6 @@ const PLACES = {
     verse: 'forge',
     note: 'Was du zum nächsten Treffen mit deinen Brüdern mitbringst: was ihr besprechen und wofür ihr miteinander beten sollt. Was ihr einander bekennt, bleibt im Gespräch und wird hier nicht notiert.',
     add: 'Anliegen fürs Treffen aufschreiben',
-    textLabel: 'Was du mit den Brüdern besprechen willst',
-    textHint: 'Was dich umtreibt, wo du Rat brauchst, wofür die Brüder mit dir beten sollen …',
     concernHint: 'Wofür ihr gemeinsam betet',
     comfort: [
       { text: 'Einer trage des andern Last, so werdet ihr das Gesetz Christi erfüllen.', ref: 'Galater 6,2' },
@@ -119,6 +117,78 @@ function LineList({
         </datalist>
       )}
       <button type="button" className="concern-add arena-add" aria-label={addLabel} onClick={() => onChange([...list, ''])}>
+        +
+      </button>
+    </fieldset>
+  );
+}
+
+/**
+ * The Eisenschmiede's reminder list: one point per line, ticked off when it
+ * has been spoken of. Enter makes a new point below; Backspace on an empty
+ * point takes it out.
+ */
+function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: ArenaPoint[]) => void }) {
+  const id = useId();
+  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const [focus, setFocus] = useState<number | null>(null);
+  const list = values.length ? values : [{ text: '', done: false }];
+  useEffect(() => {
+    if (focus === null) return;
+    refs.current[focus]?.focus();
+    setFocus(null);
+  }, [focus]);
+  const set = (i: number, p: ArenaPoint) => onChange(list.map((x, k) => (k === i ? p : x)));
+  const insertAfter = (i: number) => {
+    onChange([...list.slice(0, i + 1), { text: '', done: false }, ...list.slice(i + 1)]);
+    setFocus(i + 1);
+  };
+  const remove = (i: number) => {
+    onChange(list.filter((_, k) => k !== i));
+    setFocus(Math.max(0, i - 1));
+  };
+  return (
+    <fieldset className="arena-lines arena-points">
+      <legend>Was du mit den Brüdern besprechen willst</legend>
+      <ul>
+        {list.map((p, i) => (
+          <li key={i} className={`arena-point${p.done ? ' done' : ''}`}>
+            <input
+              type="checkbox"
+              checked={p.done}
+              aria-label={`Punkt ${i + 1} besprochen`}
+              onChange={(e) => set(i, { ...p, done: e.target.checked })}
+            />
+            <label htmlFor={`${id}-${i}`} className="visually-hidden">{`Punkt ${i + 1}`}</label>
+            <input
+              id={`${id}-${i}`}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              type="text"
+              enterKeyHint="next"
+              value={p.text}
+              placeholder={i === 0 ? 'Was dich umtreibt, wo du Rat brauchst …' : 'Weiterer Punkt'}
+              onChange={(e) => set(i, { ...p, text: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  insertAfter(i);
+                } else if (e.key === 'Backspace' && p.text === '' && list.length > 1) {
+                  e.preventDefault();
+                  remove(i);
+                }
+              }}
+            />
+            {list.length > 1 && (
+              <button type="button" className="arena-remove" aria-label={`Punkt ${i + 1} entfernen`} onClick={() => remove(i)}>
+                ×
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <button type="button" className="concern-add arena-add" aria-label="Weiteren Punkt hinzufügen" onClick={() => insertAfter(list.length - 1)}>
         +
       </button>
     </fieldset>
@@ -208,16 +278,20 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         suggestions={profile.prayer.concerns}
       />
 
-      <div className="field arena-text">
-        <label htmlFor={textId}>{place.textLabel}</label>
-        <textarea
-          id={textId}
-          rows={14}
-          value={entry.text}
-          placeholder={place.textHint}
-          onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
-        />
-      </div>
+      {kind === 'forge' ? (
+        <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
+      ) : (
+        <div className="field arena-text">
+          <label htmlFor={textId}>{PLACES.journal.textLabel}</label>
+          <textarea
+            id={textId}
+            rows={14}
+            value={entry.text}
+            placeholder={PLACES.journal.textHint}
+            onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
+          />
+        </div>
+      )}
 
       <aside className="arena-comfort" aria-label="Zuspruch">
         {place.comfort.map((c) => (

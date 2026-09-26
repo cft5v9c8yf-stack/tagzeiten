@@ -53,7 +53,11 @@ export function DemoSetup() {
             updatedAt: new Date(`${addDays(today, -1)}T19:30:00`).getTime(),
             verses: ['Galater 6,2'],
             concerns: ['Weisheit für die Entscheidung im Beruf', 'Treue im Gebet'],
-            text: 'Beim nächsten Treffen ansprechen: wie ich morgens die Stille Zeit halte, wenn die Kinder früh wach sind.',
+            text: '',
+            points: [
+              { text: 'Wie ich morgens die Stille Zeit halte, wenn die Kinder früh wach sind', done: false },
+              { text: 'Rat zur Entscheidung im Beruf', done: false },
+            ],
           },
           {
             id: 'demo-0',

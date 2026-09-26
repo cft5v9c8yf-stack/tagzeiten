@@ -113,6 +113,8 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
     if (e.meetingDate) out.push(`**Für das Treffen am:** ${new Date(`${e.meetingDate}T12:00:00`).toLocaleDateString('de-DE')}`, '');
     if (verses.length) out.push(`**Bibelstellen:** ${verses.join(' · ')}`, '');
     if (concerns.length) out.push('**Gebetsanliegen:**', ...concerns.map((c) => `- ${c}`), '');
+    const points = (e.points ?? []).filter((p) => p.text.trim());
+    if (points.length) out.push('**Zum Besprechen:**', ...points.map((p) => `- [${p.done ? 'x' : ' '}] ${p.text.trim()}`), '');
     if (e.text.trim()) out.push(e.text.trim(), '');
   }
   return out;

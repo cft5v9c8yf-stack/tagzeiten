@@ -125,12 +125,10 @@ describe('Arena', () => {
     expect(await screen.findByText(/Ein Messer wetzt das andere/)).toBeTruthy();
     expect(document.querySelector('.arena-note')!.textContent).toContain('Treffen mit deinen Brüdern');
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
-    fireEvent.change(await screen.findByLabelText('Was du mit den Brüdern besprechen willst'), {
-      target: { value: 'Entscheidung im Beruf' },
-    });
+    fireEvent.change(await screen.findByLabelText('Punkt 1'), { target: { value: 'Entscheidung im Beruf' } });
     fireEvent.change(screen.getByLabelText('Gebetsanliegen 1'), { target: { value: 'Weisheit' } });
     expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Einer trage des andern Last');
-    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', text: 'Entscheidung im Beruf' }));
+    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', points: [{ text: 'Entscheidung im Beruf', done: false }] }));
 
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
     expect(await screen.findByRole('link', { name: /Entscheidung im Beruf/ })).toBeTruthy();
@@ -150,17 +148,45 @@ describe('Arena', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Für das Treffen am'), { target: { value: '2026-10-01' } });
-    fireEvent.change(screen.getByLabelText('Was du mit den Brüdern besprechen willst'), { target: { value: 'Erstes' } });
-    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ meetingDate: '2026-10-01', text: 'Erstes' }));
+    fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Erstes' } });
+    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ meetingDate: '2026-10-01', points: [{ text: 'Erstes', done: false }] }));
 
     // The next concern belongs to the same meeting without asking.
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     expect(((await screen.findByLabelText('Für das Treffen am')) as HTMLInputElement).value).toBe('2026-10-01');
-    fireEvent.change(screen.getByLabelText('Was du mit den Brüdern besprechen willst'), { target: { value: 'Zweites' } });
+    fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Zweites' } });
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
 
     const group = await screen.findByRole('region', { name: 'Treffen am Donnerstag, 1. Oktober' });
     expect(group.querySelectorAll('.arena-card')).toHaveLength(2);
+  });
+
+  it('keeps the points for the meeting as a list: Enter or + for the next, a tick when spoken of', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
+    const first = await screen.findByLabelText('Punkt 1');
+    fireEvent.change(first, { target: { value: 'Beruf' } });
+    fireEvent.keyDown(first, { key: 'Enter' });
+    const second = await screen.findByLabelText('Punkt 2');
+    await waitFor(() => expect(document.activeElement).toBe(second));
+    fireEvent.change(second, { target: { value: 'Ehe' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Weiteren Punkt hinzufügen' }));
+    fireEvent.change(await screen.findByLabelText('Punkt 3'), { target: { value: 'Gemeinde' } });
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Punkt 1 besprochen' }));
+    await waitFor(() =>
+      expect(store.getProfile().arena[0]!.points).toEqual([
+        { text: 'Beruf', done: true },
+        { text: 'Ehe', done: false },
+        { text: 'Gemeinde', done: false },
+      ]),
+    );
+    // Backspace on an empty point takes it out again.
+    fireEvent.keyDown(screen.getByLabelText('Punkt 3'), { key: 'Enter' });
+    fireEvent.keyDown(await screen.findByLabelText('Punkt 4'), { key: 'Backspace' });
+    await waitFor(() => expect(screen.queryByLabelText('Punkt 4')).toBeNull());
+    // The journal keeps its free text.
+    expect(screen.queryByLabelText('Was dich bewegt')).toBeNull();
   });
 });
