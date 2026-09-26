@@ -326,7 +326,7 @@ describe('Katechismus', () => {
     fireEvent.click(screen.getAllByText('auswendig gelernt')[0]!);
     expect(Object.keys(store.getProfile().catechism.memorized)).toHaveLength(1);
     expect(document.querySelector('progress')).toBeNull();
-    fireEvent.click(screen.getByRole('link', { name: '‹ Katechismus' }));
+    fireEvent.click(screen.getByRole('link', { name: '‹ Lehre' }));
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     expect(document.querySelector('.overview-total')!.textContent).toContain('1 von 35 Stücken auswendig');
   });

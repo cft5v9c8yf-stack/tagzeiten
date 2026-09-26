@@ -173,7 +173,7 @@ export function CatechismPage() {
     return (
       <div className="cat-page">
         <p className="back-link">
-          <Link to={withDate('/katechismus', date, isToday)}>‹ Katechismus</Link>
+          <Link to={withDate('/katechismus', date, isToday)}>‹ Lehre</Link>
         </p>
         {ci >= 0 ? <ChiefPart ci={ci} /> : <Appendix slug={appendix!.slug} />}
       </div>

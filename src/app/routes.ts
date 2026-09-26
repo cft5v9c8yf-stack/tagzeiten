@@ -15,6 +15,6 @@ export const SECTIONS: readonly Section[] = [
   { path: '/', label: 'Heute', icon: 'today' },
   { path: SUNDAY_PATH, label: 'Sonntag', icon: 'sunday' },
   { path: '/bibel', label: 'Bibel', icon: 'bible' },
-  { path: '/katechismus', label: 'Katechismus', icon: 'catechism' },
+  { path: '/katechismus', label: 'Lehre', icon: 'catechism' },
   { path: '/mehr', label: 'Mehr', icon: 'more' },
 ];

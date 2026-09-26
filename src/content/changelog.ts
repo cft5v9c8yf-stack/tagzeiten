@@ -25,6 +25,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Mehr', text: 'Neu sind das Impressum mit Hinweisen zum Datenschutz, die Anleitung „Flugmodus beim Beten“ für das iPhone und diese Übersicht der Versionen.' },
       { area: 'Deine Daten', text: 'Zeigt, ob der Browser die Einträge dauerhaft behält, und bittet ihn auf Wunsch erneut darum.' },
       { area: 'Bibel', text: 'Die Seite heißt „Mein Bibelleseplan“.' },
+      { area: 'Lehre', text: 'Der Bereich „Katechismus“ in der Leiste heißt jetzt „Lehre“.' },
     ],
   },
   {
