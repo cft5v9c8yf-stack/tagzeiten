@@ -12,55 +12,76 @@ import type { Circle, Season } from '../domain/churchYear';
 export const LECTIONARY_NOTE =
   'Evangelium und Epistel nach der lutherischen Perikopenordnung von 1978 (Reihe I und II), die weitgehend der altkirchlichen Leseordnung folgt.';
 
-export const CIRCLE_INFO: Record<Circle, { title: string; intro: string }> = {
+/**
+ * The festal circles after Georg Christian Dieffenbach, Evangelische Haus-Agende
+ * (Mainz 1853): each circle celebrates the work of one person of the Trinity.
+ */
+export const CIRCLE_INFO: Record<Circle, { title: string; of: string; range: string; intro: string }> = {
   christmas: {
     title: 'Weihnachtskreis',
+    of: 'Der Festkreis Gottes des Vaters',
+    range: 'Vom 1. Advent bis Sonnabend nach Epiphanias',
     intro:
-      'Der Weihnachtskreis steht um das Christfest. Er erzählt, wie Gott zu uns kommt: erwartet im Advent, geboren in Bethlehem, offenbart vor allen Völkern in der Epiphaniaszeit. Mit ihm beginnt das Kirchenjahr – nicht mit unserem Planen, sondern mit Gottes Kommen.',
+      'Der Weihnachtskreis feiert, was Gott der Vater zur Erlösung getan hat: die Verheißung und Vorbereitung auf Christus, die Sendung des Sohnes selbst und seine Darstellung als Heiland der Welt. Er feiert die stille Vorbereitung des Erlösungswerkes.',
   },
   easter: {
     title: 'Osterkreis',
+    of: 'Der Festkreis Gottes des Sohnes',
+    range: 'Vom 1. Sonntag nach Epiphanias bis Himmelfahrt',
     intro:
-      'Der Osterkreis steht um das Osterfest, das älteste und höchste Fest der Christenheit. Er führt von der Vorpassionszeit durch die Passion und die Karwoche zum leeren Grab und durch die fünfzig österlichen Tage bis vor Pfingsten. Hier liegt der Kern des Evangeliums: für uns gestorben, für uns auferstanden.',
+      'Der Osterkreis feiert, was Gott der Sohn zur Erlösung der Welt getan hat, in seinem dreifachen Amt: als Prophet, der lehrt und sich durch Zeichen erweist; als Hoherpriester, der am Kreuz das Opfer für die Sünden der Welt vollbringt; als König, der aus Grab und Tod siegreich hervorgeht. Er feiert das Werk der Erlösung selbst.',
   },
   pentecost: {
     title: 'Pfingstkreis',
+    of: 'Der Festkreis Gottes des Heiligen Geistes',
+    range: 'Vom Freitag vor Exaudi bis zum letzten Tag des Kirchenjahres',
     intro:
-      'Der Pfingstkreis beginnt mit der Ausgießung des Heiligen Geistes und reicht bis zum Ende des Kirchenjahres. Nach den großen Heilstaten Christi geht es nun um das Leben der Kirche und des einzelnen Christen daraus: im Wort, im Sakrament, im Beruf und Stand, im Warten auf den wiederkommenden Herrn.',
+      'Der Pfingstkreis feiert, was Gott der Heilige Geist zur Erlösung wirkt: nach einer kurzen Wartezeit seine Ausgießung, danach sein Walten in der Berufung und Sammlung, der Erleuchtung, Bekehrung, Heiligung und Vollendung der Gemeinde. Er feiert, wie die erworbenen Gnadengüter angeeignet werden und reifen bis zur Vollendung.',
   },
+};
+
+/** What each season celebrates, in Dieffenbach's words (Haus-Agende 1853). */
+export const SEASON_THEME: Record<Season, string> = {
+  advent: 'Die Vorbereitung auf Christi Ankunft',
+  christmastide: 'Die Erscheinung Christi im Fleische',
+  presentation: 'Die Darstellung Christi als des Heilands der Welt',
+  epiphany: 'Christus als Prophet',
+  lent: 'Christus als Hoherpriester',
+  eastertide: 'Christus als König',
+  waiting: 'Das Harren auf die Erscheinung des verheißenen Geistes',
+  pentecost: 'Die Ausgießung des heiligen Geistes',
+  trinity: 'Das Walten und Wirken des heiligen Geistes',
 };
 
 export const SEASON_INFO: Record<Season, string> = {
   advent:
-    'Advent heißt Ankunft. Die vier Sonntage bereiten auf das Christfest vor und blicken zugleich nach vorn: Christus kam in Bethlehem, er kommt heute in Wort und Sakrament, und er wird wiederkommen. Eine Zeit der Buße und der Vorfreude zugleich.',
+    'Vom 1. Advent bis zum Heiligen Abend. Advent heißt Ankunft: Die vier Sonntage bereiten auf das Christfest vor und blicken zugleich nach vorn – Christus kam in Bethlehem, er kommt heute in Wort und Sakrament, und er wird wiederkommen.',
   christmastide:
-    'Vom Christfest bis Epiphanias: Gott wird Mensch. Die Weihnachtszeit feiert die Geburt Christi und das Wunder, dass der ewige Sohn in unser Fleisch gekommen ist.',
+    'Vom Christfest bis zum folgenden Sonnabend. Gott wird Mensch: Der ewige Sohn kommt in unser Fleisch.',
+  presentation:
+    'Vom Sonntag nach dem Christfest bis zum Sonnabend nach Epiphanias. Der Mensch gewordene Sohn wird der Welt dargestellt – im Tempel, vor den Weisen aus den Völkern, als Heiland für alle.',
   epiphany:
-    'Epiphanias heißt Erscheinung. Christus zeigt sich als der Herr – den Weisen aus den Völkern, bei seiner Taufe, in seinen Wundern, zuletzt in der Verklärung auf dem Berg. Die Zahl der Sonntage hängt vom Osterdatum ab.',
-  prelent:
-    'Drei Sonntage vor der Passionszeit, benannt nach dem ungefähren Abstand zu Ostern (etwa 70, 60 und 50 Tage). Sie leiten über: Gnade statt Verdienst, die Kraft des Wortes, der Weg nach Jerusalem.',
+    'Vom 1. Sonntag nach Epiphanias bis Fastnacht. Christus erweist sich als der Prophet: Er lehrt das Volk und offenbart seine Herrlichkeit durch Wunder und Zeichen. Dazu gehören die drei Vorfastensonntage Septuagesimae, Sexagesimae und Estomihi. Die Zahl der Sonntage hängt vom Osterdatum ab.',
   lent:
-    'Die Passionszeit beginnt am Aschermittwoch und umfasst vierzig Tage – die Sonntage nicht mitgezählt, denn jeder Sonntag ist ein kleines Ostern. Sie bedenkt das Leiden Christi und ruft zur Buße. Das Halleluja schweigt bis Ostern.',
-  holyWeek:
-    'Die Karwoche („Klagewoche“) führt vom Einzug in Jerusalem über das Abendmahl am Gründonnerstag zum Kreuz am Karfreitag und zur Grabesruhe am Karsamstag.',
+    'Von Aschermittwoch bis zum Ostersonnabend. Christus als der Hohepriester: Er steigt hinab in das tiefste Leiden und vollbringt am Kreuz das Versöhnungsopfer für die Sünden der Welt. Die Karwoche mit Gründonnerstag und Karfreitag steht am Ende. Das Halleluja schweigt.',
   eastertide:
-    'Fünfzig Tage feiert die Kirche die Auferstehung. Die Sonntage tragen die lateinischen Anfangsworte ihrer alten Eingangspsalmen. Am vierzigsten Tag steht Christi Himmelfahrt.',
+    'Vom Ostertag bis Himmelfahrt. Christus als der König: Er geht aus Grab und Tod siegreich hervor, offenbart sich den Seinen und steigt auf zur Rechten des Vaters. Die Sonntage tragen die lateinischen Anfangsworte ihrer alten Eingangspsalmen.',
+  waiting:
+    'Vom Freitag vor Exaudi bis zum Pfingstsonnabend. Die kleine Schar der Jünger harrt auf den verheißenen Tröster, im Gebet beieinander.',
   pentecost:
-    'Pfingsten, der fünfzigste Tag nach Ostern: Gott gießt seinen Geist aus, und die Kirche beginnt. Der Geist führt zu Christus und schafft Glauben durch das Wort.',
+    'Die Pfingstwoche. Gott gießt seinen Geist aus, und die Kirche beginnt. Der Geist führt zu Christus und schafft Glauben durch das Wort.',
   trinity:
-    'Die Trinitatiszeit ist die lange, festlose Hälfte des Kirchenjahres. Sie fragt, wie Christen aus Wort und Sakrament leben – in Glaube und Liebe, im Alltag von Haus, Beruf und Gemeinde. Die Sonntage werden nach Trinitatis gezählt.',
-  endOfYear:
-    'Die letzten Sonntage richten den Blick auf die letzten Dinge: das Kommen des Reiches Gottes, das Gericht und das ewige Leben. Dazu gehören der Buß- und Bettag und am Schluss der Ewigkeitssonntag, an dem der Verstorbenen gedacht wird.',
+    'Von Trinitatis bis zum letzten Tag des Kirchenjahres – die lange, festlose Hälfte. Der Heilige Geist beruft und sammelt, erleuchtet, bekehrt, heiligt und vollendet die Gemeinde. Die letzten Sonntage richten den Blick auf die Vollendung: Wiederkunft, Gericht und ewiges Leben.',
 };
 
 /**
- * The Sundays after Trinity in five groups. Trinitatis itself counts as 0.
+ * The Sundays after Trinity in five groups, after Dieffenbach's Haus-Agende. Trinitatis itself counts as 0.
  * The last three Sundays of the church year take the places of the 24th to
  * 27th Sunday and belong to the last group.
  */
 export const TRINITY_GROUPS: readonly { from: number; to: number; title: string; range: string }[] = [
   { from: 0, to: 5, title: 'Berufung und Sammlung', range: 'Trinitatis – 5. Sonntag' },
-  { from: 6, to: 10, title: 'Buße und Erleuchtung', range: '6. – 10. Sonntag' },
+  { from: 6, to: 10, title: 'Erleuchtung', range: '6. – 10. Sonntag' },
   { from: 11, to: 14, title: 'Bekehrung', range: '11. – 14. Sonntag' },
   { from: 15, to: 23, title: 'Heiligung', range: '15. – 23. Sonntag' },
   { from: 24, to: 27, title: 'Vollendung', range: '24. – 27. Sonntag' },

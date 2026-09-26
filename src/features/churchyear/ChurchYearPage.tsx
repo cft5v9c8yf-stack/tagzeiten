@@ -1,7 +1,13 @@
 import { useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useNavigate, useSearchParams } from 'react-router';
-import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
+import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SEASON_THEME, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
+import {
+  CHURCH_YEAR_INTRO,
+  CHURCH_YEAR_INTRO_GLORIA,
+  CHURCH_YEAR_INTRO_SOURCE,
+  CHURCH_YEAR_INTRO_TITLE,
+} from '../../content/churchYearIntro';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type OutlineEntry } from '../../domain/churchYear';
 import { fromKey, MONTH_LONG, formatShort, type DateKey } from '../../domain/dates';
@@ -137,12 +143,28 @@ export function ChurchYearPage() {
         <Link to={withDate('/', date, isToday)}>‹ Zurück zu Heute</Link>
       </p>
       <h2>Das Kirchenjahr {outline.churchYear}/{String(outline.churchYear + 1).slice(2)}</h2>
+      <Section id="cy.intro" title="Einleitung" defaultOpen={false} className="cy-dieffenbach">
+        <p className="cy-intro-title">{CHURCH_YEAR_INTRO_TITLE}</p>
+        {CHURCH_YEAR_INTRO.map((part) => (
+          <section key={part.heading} className="cy-intro-part">
+            <h4>{part.heading}</h4>
+            {part.paragraphs.map((p) => (
+              <p key={p.slice(0, 40)}>{p}</p>
+            ))}
+          </section>
+        ))}
+        <p className="cy-intro-gloria">{CHURCH_YEAR_INTRO_GLORIA}</p>
+        <p className="small muted">{CHURCH_YEAR_INTRO_SOURCE} In der Rechtschreibung des Originals.</p>
+      </Section>
       <Segmented
         label="Festkreis"
         value={circle}
         onChange={setCircle}
         options={CIRCLES.map((c) => ({ value: c, label: CIRCLE_INFO[c].title }))}
       />
+      <p className="cy-circle-of">
+        {CIRCLE_INFO[circle].of} <span className="muted">· {CIRCLE_INFO[circle].range}</span>
+      </p>
       <p className="cy-intro">{CIRCLE_INFO[circle].intro}</p>
 
       {seasons.map((s) => {
@@ -152,8 +174,9 @@ export function ChurchYearPage() {
             <p className="cy-phase-dates">
               {dayMonth(s.from)} – {dayMonth(s.to)}
             </p>
+            <p className="cy-season-theme">{SEASON_THEME[s.season]}</p>
             <p>{SEASON_INFO[s.season]}</p>
-            {s.season === 'trinity' || s.season === 'endOfYear' ? (
+            {s.season === 'trinity' ? (
               groupsOf(entries).map((g) => (
                 <Section
                   key={g.title}

@@ -10,17 +10,22 @@ import { addDays, fromKey, toKey, type DateKey } from './dates';
 
 export type Circle = 'christmas' | 'easter' | 'pentecost';
 
+/**
+ * The seasons after the order of the Hausagende: three in each festal circle.
+ * Christmas circle (God the Father): Advent, Christfest, Darstellung.
+ * Easter circle (God the Son): Epiphanien (prophet), Fasten (high priest), Freuden (king).
+ * Pentecost circle (God the Holy Spirit): Warte-, Pfingstfest-, Trinitatiszeit.
+ */
 export type Season =
   | 'advent'
   | 'christmastide'
+  | 'presentation'
   | 'epiphany'
-  | 'prelent'
   | 'lent'
-  | 'holyWeek'
   | 'eastertide'
+  | 'waiting'
   | 'pentecost'
-  | 'trinity'
-  | 'endOfYear';
+  | 'trinity';
 
 export const CIRCLE_LABEL: Record<Circle, string> = {
   christmas: 'Weihnachtskreis',
@@ -31,28 +36,26 @@ export const CIRCLES: readonly Circle[] = ['christmas', 'easter', 'pentecost'];
 
 export const SEASON_LABEL: Record<Season, string> = {
   advent: 'Adventszeit',
-  christmastide: 'Weihnachtszeit',
-  epiphany: 'Epiphaniaszeit',
-  prelent: 'Vorpassionszeit',
-  lent: 'Passionszeit',
-  holyWeek: 'Karwoche',
-  eastertide: 'Osterzeit',
-  pentecost: 'Pfingsten',
+  christmastide: 'Christfestzeit',
+  presentation: 'Darstellungszeit',
+  epiphany: 'Epiphanienzeit',
+  lent: 'Fastenzeit',
+  eastertide: 'Freudenzeit',
+  waiting: 'Wartezeit',
+  pentecost: 'Pfingstfestzeit',
   trinity: 'Trinitatiszeit',
-  endOfYear: 'Ende des Kirchenjahres',
 };
 
 const SEASON_CIRCLE: Record<Season, Circle> = {
   advent: 'christmas',
   christmastide: 'christmas',
-  epiphany: 'christmas',
-  prelent: 'easter',
+  presentation: 'christmas',
+  epiphany: 'easter',
   lent: 'easter',
-  holyWeek: 'easter',
   eastertide: 'easter',
+  waiting: 'pentecost',
   pentecost: 'pentecost',
   trinity: 'pentecost',
-  endOfYear: 'pentecost',
 };
 
 /* ------------------------------------------------------------ anchors */
@@ -220,17 +223,19 @@ function calendar(year: number): ChurchYearCalendar {
   feast(fromKey(oct1).getDay() === 0 ? oct1 : addDays(sundayOnOrBefore(oct1), 7), 'Erntedankfest');
   feast(addDays(eternity, -4), 'Buß- und Bettag');
 
+  // Hausagende: Christfestzeit from Christmas Day to the following Saturday, Darstellungszeit
+  // from the Sunday after Christmas to the Saturday after Epiphany; Fastenzeit from Ash
+  // Wednesday; Freudenzeit from Easter to Ascension; Wartezeit from the Friday before Exaudi.
   const seasons: { from: DateKey; season: Season }[] = [
     { from: start, season: 'advent' },
     { from: christmas, season: 'christmastide' },
-    { from: epiphany, season: 'epiphany' },
-    { from: e(-63), season: 'prelent' },
+    { from: addDays(sundayOnOrBefore(christmas), 7), season: 'presentation' },
+    { from: addDays(sundayOnOrBefore(epiphany), 7), season: 'epiphany' },
     { from: e(-46), season: 'lent' },
-    { from: e(-7), season: 'holyWeek' },
     { from: E, season: 'eastertide' },
+    { from: e(40), season: 'waiting' },
     { from: e(49), season: 'pentecost' },
     { from: e(56), season: 'trinity' },
-    { from: thirdLast, season: 'endOfYear' },
   ];
 
   const majorFeasts: Marker[] = [
@@ -307,7 +312,7 @@ export function nextWeekStart(weekStart: DateKey): DateKey {
 /** Ash Wednesday to Holy Saturday: the Halleluja is not sung. */
 export function isPassiontide(date: DateKey): boolean {
   const s = churchDay(date).season;
-  return s === 'lent' || s === 'holyWeek';
+  return s === 'lent';
 }
 
 export interface OutlineEntry {

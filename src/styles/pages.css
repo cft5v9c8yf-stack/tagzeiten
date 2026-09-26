@@ -1529,3 +1529,34 @@ mark.placeholder {
   font: 600 0.8rem var(--sans);
   color: var(--gold);
 }
+/* Kirchenjahr: Dieffenbach's introduction and the themes of circles and seasons */
+.cy-dieffenbach {
+  margin-bottom: 14px;
+}
+.cy-intro-title {
+  font-style: italic;
+  margin-top: 0;
+}
+.cy-intro-part h4 {
+  margin: 18px 0 6px;
+  font: 600 0.95rem var(--sans);
+}
+.cy-intro-part p {
+  line-height: 1.55;
+}
+.cy-intro-gloria {
+  margin-top: 18px;
+  font-style: italic;
+}
+.cy-circle-of {
+  margin: 12px 0 0;
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.cy-circle-of .muted {
+  font-weight: 400;
+}
+.cy-season-theme {
+  margin: 2px 0 6px;
+  font-style: italic;
+}

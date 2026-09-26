@@ -45,14 +45,20 @@ describe('Kirchenjahr', () => {
     fireEvent.click(await screen.findByRole('link', { name: /Osterkreis/ }));
     expect(router.state.location.pathname).toBe('/kirchenjahr');
     expect(new URLSearchParams(router.state.location.search).get('kreis')).toBe('easter');
-    expect(await screen.findByRole('heading', { name: 'Passionszeit' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Fastenzeit' })).toBeTruthy();
   });
 
   it('explains the seasons of a circle and lists every Sunday with Gospel and Epistle', async () => {
     await renderAt('/kirchenjahr?d=2026-09-24&kreis=easter');
-    await screen.findByRole('heading', { name: 'Passionszeit' });
+    await screen.findByRole('heading', { name: 'Fastenzeit' });
     const phases = [...document.querySelectorAll('.cy-phase h3')].map((h) => h.textContent);
-    expect(phases).toEqual(['Vorpassionszeit', 'Passionszeit', 'Karwoche', 'Osterzeit']);
+    expect(phases).toEqual(['Epiphanienzeit', 'Fastenzeit', 'Freudenzeit']);
+    expect(document.querySelector('.cy-circle-of')!.textContent).toContain('Der Festkreis Gottes des Sohnes');
+    expect([...document.querySelectorAll('.cy-season-theme')].map((p) => p.textContent)).toEqual([
+      'Christus als Prophet',
+      'Christus als Hoherpriester',
+      'Christus als König',
+    ]);
     const invokavit = document.getElementById('entry-invokavit')!;
     expect(invokavit.textContent).toContain('Invokavit');
     expect(invokavit.textContent).toContain('„Er ruft mich an, so will ich ihn erhören“');
@@ -88,7 +94,7 @@ describe('Kirchenjahr', () => {
     await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost');
     await screen.findByRole('heading', { name: 'Trinitatiszeit' });
     const groups = [...document.querySelectorAll('.cy-group-title')].map((h) => h.querySelector('.fold-text')!.firstChild!.textContent!.trim());
-    expect(groups).toEqual(['Berufung und Sammlung', 'Buße und Erleuchtung', 'Bekehrung', 'Heiligung', 'Vollendung']);
+    expect(groups).toEqual(['Berufung und Sammlung', 'Erleuchtung', 'Bekehrung', 'Heiligung', 'Vollendung']);
     const inGroup = (title: string) =>
       [...document.querySelectorAll('.cy-group')]
         .find((g) => g.querySelector('.cy-group-title')!.textContent!.startsWith(title))!
@@ -114,5 +120,16 @@ describe('Kirchenjahr', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Weihnachtskreis' }));
     expect(await screen.findByRole('heading', { name: 'Adventszeit' })).toBeTruthy();
     expect(document.getElementById('entry-advent1')!.textContent).toContain('Matthäus 21,1-9');
+  });
+
+  it('carries the introduction by Dieffenbach to the church year, folded', async () => {
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=pentecost');
+    const intro = await screen.findByRole('button', { name: 'Einleitung' });
+    expect(intro.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(intro);
+    await waitFor(() => expect(intro.getAttribute('aria-expanded')).toBe('true'));
+    const text = document.querySelector('.cy-dieffenbach')!.textContent!;
+    expect(text).toContain('das ist das Wesen des Kirchenjahres');
+    expect(text).toContain('Georg Christian Dieffenbach');
   });
 });

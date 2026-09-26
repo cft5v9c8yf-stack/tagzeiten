@@ -32,7 +32,7 @@ describe('church year guide', () => {
     expect(o.churchYear).toBe(2025);
     expect(o.entries[0]).toMatchObject({ date: '2025-11-30', key: 'advent1', kind: 'sunday', circle: 'christmas' });
     expect(o.entries.at(-1)).toMatchObject({ date: '2026-11-22', key: 'eternity' });
-    expect(o.entries.find((e) => e.key === 'goodFriday')).toMatchObject({ date: '2026-04-03', kind: 'feast', season: 'holyWeek' });
+    expect(o.entries.find((e) => e.key === 'goodFriday')).toMatchObject({ date: '2026-04-03', kind: 'feast', season: 'lent' });
     const dates = o.entries.map((e) => e.date);
     expect([...dates].sort()).toEqual(dates);
     expect(o.seasons[0]!.from).toBe(o.start);
@@ -47,8 +47,8 @@ describe('groups of the Trinity season', () => {
   it('assigns the Sundays after Trinity to their groups', () => {
     expect(title('trinity')).toBe('Berufung und Sammlung');
     expect(title('trinity5')).toBe('Berufung und Sammlung');
-    expect(title('trinity6')).toBe('Buße und Erleuchtung');
-    expect(title('trinity10')).toBe('Buße und Erleuchtung');
+    expect(title('trinity6')).toBe('Erleuchtung');
+    expect(title('trinity10')).toBe('Erleuchtung');
     expect(title('trinity11')).toBe('Bekehrung');
     expect(title('trinity14')).toBe('Bekehrung');
     expect(title('trinity15')).toBe('Heiligung');

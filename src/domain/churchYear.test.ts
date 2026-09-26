@@ -99,19 +99,29 @@ describe('feasts', () => {
 describe('festal circles and seasons', () => {
   const at = (d: string) => [churchDay(d).circle, churchDay(d).season];
 
-  it('divides the year into Christmas, Easter and Pentecost circles', () => {
+  it('divides the year into the circles of Father, Son and Holy Spirit, after Dieffenbach', () => {
+    // Christmas circle: 1st Advent to the Saturday after Epiphany.
     expect(at('2025-12-01')).toEqual(['christmas', 'advent']);
-    expect(at('2025-12-25')).toEqual(['christmas', 'christmastide']);
-    expect(at('2026-01-20')).toEqual(['christmas', 'epiphany']);
-    expect(at('2026-01-31')).toEqual(['christmas', 'epiphany']);
-    expect(at('2026-02-01')).toEqual(['easter', 'prelent']);
-    expect(at('2026-02-18')).toEqual(['easter', 'lent']);
-    expect(at('2026-03-30')).toEqual(['easter', 'holyWeek']);
+    expect(at('2025-12-24')).toEqual(['christmas', 'advent']);
+    expect(at('2025-12-25')).toEqual(['christmas', 'christmastide']); // Thursday
+    expect(at('2025-12-27')).toEqual(['christmas', 'christmastide']); // the following Saturday
+    expect(at('2025-12-28')).toEqual(['christmas', 'presentation']); // Sunday after Christmas
+    expect(at('2026-01-06')).toEqual(['christmas', 'presentation']);
+    expect(at('2026-01-10')).toEqual(['christmas', 'presentation']); // Saturday after Epiphany
+    // Easter circle: 1st Sunday after Epiphany to Ascension.
+    expect(at('2026-01-11')).toEqual(['easter', 'epiphany']);
+    expect(at('2026-02-01')).toEqual(['easter', 'epiphany']); // Septuagesimae
+    expect(at('2026-02-17')).toEqual(['easter', 'epiphany']); // Fastnacht
+    expect(at('2026-02-18')).toEqual(['easter', 'lent']); // Ash Wednesday
+    expect(at('2026-04-04')).toEqual(['easter', 'lent']); // Holy Saturday
     expect(at('2026-04-05')).toEqual(['easter', 'eastertide']);
-    expect(at('2026-05-23')).toEqual(['easter', 'eastertide']);
+    expect(at('2026-05-14')).toEqual(['easter', 'eastertide']); // Ascension
+    // Pentecost circle: from the Friday before Exaudi.
+    expect(at('2026-05-15')).toEqual(['pentecost', 'waiting']);
+    expect(at('2026-05-23')).toEqual(['pentecost', 'waiting']);
     expect(at('2026-05-24')).toEqual(['pentecost', 'pentecost']);
-    expect(at('2026-09-25')).toEqual(['pentecost', 'trinity']);
-    expect(at('2026-11-10')).toEqual(['pentecost', 'endOfYear']);
+    expect(at('2026-05-31')).toEqual(['pentecost', 'trinity']);
+    expect(at('2026-11-10')).toEqual(['pentecost', 'trinity']);
     expect(at('2026-11-29')).toEqual(['christmas', 'advent']);
   });
 
