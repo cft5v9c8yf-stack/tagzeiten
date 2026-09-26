@@ -9,6 +9,7 @@ import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
 import { AirplaneGuide } from './AirplaneGuide';
 import { Imprint } from './Imprint';
+import { Changelog } from './Changelog';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
@@ -16,7 +17,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'airplane';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'airplane' | 'changelog';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -109,6 +110,15 @@ const AREAS: readonly Area[] = [
     icon: 'moon',
     info: <p>Wie das iPhone den Flugmodus einschaltet, solange Tagzeiten offen ist, und danach wieder aus.</p>,
     body: () => <AirplaneGuide />,
+  },
+  {
+    slug: 'versionen',
+    id: 'changelog',
+    title: 'Versionen',
+    line: 'Was sich geändert hat',
+    icon: 'changes',
+    info: <p>Jede Version der App mit dem, was sie Neues gebracht hat. Die neueste steht oben.</p>,
+    body: () => <Changelog />,
   },
   {
     slug: 'impressum',

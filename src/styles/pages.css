@@ -1634,3 +1634,36 @@ mark.placeholder {
 .archive-title {
   font-weight: 600;
 }
+/* Mehr: Versionen */
+.changelog-current {
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.changelog-release {
+  border-top: 1px solid var(--rule);
+  padding-top: 10px;
+  margin-top: 16px;
+}
+.changelog-release h3 {
+  margin: 0;
+}
+.changelog-date {
+  font: 400 0.85rem var(--sans);
+  color: var(--muted);
+  margin-left: 6px;
+}
+.changelog-title {
+  margin: 4px 0 8px;
+  font-style: italic;
+}
+.changelog-changes {
+  margin: 0;
+}
+.changelog-changes dt {
+  margin-top: 10px;
+  font: 600 0.9rem var(--sans);
+}
+.changelog-changes dd {
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
