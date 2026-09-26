@@ -11,7 +11,7 @@ export interface ImprintSection {
 export const IMPRINT: readonly ImprintSection[] = [
   {
     title: 'Angaben gemäß § 5 DDG',
-    lines: ['[Vor- und Nachname]', '[Straße und Hausnummer]', '[Postleitzahl und Ort]', 'Deutschland'],
+    lines: ['Andreas Dykau', '[Straße und Hausnummer]', '[Postleitzahl und Ort]', 'Deutschland'],
   },
   {
     title: 'Kontakt',
@@ -19,7 +19,7 @@ export const IMPRINT: readonly ImprintSection[] = [
   },
   {
     title: 'Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV',
-    lines: ['[Vor- und Nachname], Anschrift wie oben'],
+    lines: ['Andreas Dykau, Anschrift wie oben'],
   },
   {
     title: 'Art des Angebots',

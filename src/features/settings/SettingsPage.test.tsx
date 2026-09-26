@@ -446,7 +446,8 @@ describe('Rückblick', () => {
     await screen.findByRole('heading', { level: 2, name: /Impressum/ });
     expect(screen.getByRole('heading', { level: 3, name: 'Angaben gemäß § 5 DDG' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Datenschutz' })).toBeTruthy();
-    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toContain('[Vor- und Nachname]');
+    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toEqual(expect.arrayContaining(['[Straße und Hausnummer]', '[E-Mail-Adresse]']));
+    expect(document.body.textContent).toContain('Andreas Dykau');
     expect(document.body.textContent).toContain('bleibt auf deinem Gerät');
   });
 
