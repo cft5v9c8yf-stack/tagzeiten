@@ -1473,3 +1473,29 @@ mark.placeholder {
   border-radius: 4px;
   padding: 0 3px;
 }
+/* Guides under "Mehr" */
+.guide-part h3 {
+  margin: 22px 0 6px;
+  font-size: 1.05rem;
+}
+.guide-steps {
+  margin: 6px 0;
+  padding-left: 1.4em;
+}
+.guide-steps li {
+  margin-bottom: 8px;
+  line-height: 1.45;
+}
+.guide-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font: 0.85rem var(--sans);
+}
+.guide-notes {
+  list-style: none;
+  padding-left: 0;
+}
+.guide-notes li {
+  margin-bottom: 10px;
+}

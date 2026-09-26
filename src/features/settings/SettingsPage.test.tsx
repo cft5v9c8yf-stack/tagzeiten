@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Impressum']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Flugmodus beim Beten', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -417,5 +417,15 @@ describe('Rückblick', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Datenschutz' })).toBeTruthy();
     expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toContain('[Vor- und Nachname]');
     expect(document.body.textContent).toContain('bleibt auf deinem Gerät');
+  });
+
+  it('explains how the iPhone switches airplane mode while the app is open', async () => {
+    await renderAt('/mehr/flugmodus', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Flugmodus beim Beten/ });
+    const text = document.body.textContent!;
+    expect(text).toContain('„Wird geöffnet“');
+    expect(text).toContain('„Wird geschlossen“');
+    expect(text).toContain('Flugmodus festlegen');
+    expect(screen.getByRole('heading', { level: 3, name: 'Wenn Tagzeiten nicht in der Liste steht' })).toBeTruthy();
   });
 });

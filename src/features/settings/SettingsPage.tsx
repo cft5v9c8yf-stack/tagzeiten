@@ -7,6 +7,7 @@ import { InfoToggle, Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
+import { AirplaneGuide } from './AirplaneGuide';
 import { Imprint } from './Imprint';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
@@ -15,7 +16,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'airplane';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -99,6 +100,15 @@ const AREAS: readonly Area[] = [
         </Sub>
       </>
     ),
+  },
+  {
+    slug: 'flugmodus',
+    id: 'airplane',
+    title: 'Flugmodus beim Beten',
+    line: 'Anleitung fürs iPhone',
+    icon: 'moon',
+    info: <p>Wie das iPhone den Flugmodus einschaltet, solange Tagzeiten offen ist, und danach wieder aus.</p>,
+    body: () => <AirplaneGuide />,
   },
   {
     slug: 'impressum',
