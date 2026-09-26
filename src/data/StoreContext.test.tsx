@@ -42,6 +42,8 @@ describe('StoreProvider', () => {
     );
     expect(screen.getByText('Einen Moment …')).toBeTruthy();
     await screen.findByTestId('verse');
+    // Let React run its effects, so the component subscribes to the store before the click.
+    await act(async () => {});
     expect(screen.getByTestId('verse').textContent).toBe('—');
 
     act(() => screen.getByText('Vers setzen').click());
