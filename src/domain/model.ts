@@ -157,6 +157,22 @@ export interface Prayer {
   weekly: Partial<Record<Weekday, string[]>>;
 }
 
+/**
+ * An entry in the Arena: what burdens you, where you fight. Not a confession
+ * (rule 9): sin is prayed in the confession, not written down here.
+ */
+export interface ArenaEntry {
+  id: string;
+  /** Epoch ms. */
+  createdAt: number;
+  updatedAt: number;
+  /** Bible references (or short words), one per line in the form. */
+  verses: string[];
+  /** Prayer concerns for this struggle. */
+  concerns: string[];
+  text: string;
+}
+
 /** Times for some weekdays (0 = Sunday … 6 = Saturday). */
 export interface ScheduleGroup {
   days: Weekday[];
@@ -180,6 +196,8 @@ export interface Profile {
   schedule: Schedule;
   /** Times per weekday, when `on`; the groups stay while switched off, for a return. */
   scheduleDays?: { on: boolean; groups: ScheduleGroup[] };
+  /** Journal of the Arena, newest first; kept on the device like everything else. */
+  arena: ArenaEntry[];
   /** The spiritual armour in morning and night prayer. */
   armor: boolean;
   theme: Theme;

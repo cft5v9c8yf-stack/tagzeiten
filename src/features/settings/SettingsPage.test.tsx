@@ -9,7 +9,6 @@ import { scheduleFor } from '../../domain/schedule';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
-import { ArchivePage } from '../archive/ArchivePage';
 import { CatechismPage } from '../catechism/CatechismPage';
 import { resetOpenState, setOpen } from '../../ui/collapseState';
 import { SettingsPage } from './SettingsPage';
@@ -77,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Einstellungen']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -340,11 +339,12 @@ describe('Katechismus', () => {
   });
 });
 
-describe('Archiv', () => {
+describe('Rückblick', () => {
   it('lists days and verses and searches everything', async () => {
-    await renderAt('/archiv', <ArchivePage />, fill);
+    await renderAt('/mehr/rueckblick', <SettingsPage />, fill);
     expect(await screen.findByText('2 Tage mit Einträgen')).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('Archiv durchsuchen'), { target: { value: 'anna' } });
+    expect(screen.getByRole('heading', { level: 2, name: /Rückblick/ })).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Rückblick durchsuchen'), { target: { value: 'anna' } });
     expect(screen.getByText('1 Treffer')).toBeTruthy();
     fireEvent.click(screen.getByText('Versesammlung'));
     expect(screen.getByText('Sei stille dem HERRN')).toBeTruthy();

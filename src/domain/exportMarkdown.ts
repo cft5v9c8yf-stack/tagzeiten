@@ -8,6 +8,7 @@ import {
   MORNING_TEXT_FIELDS,
   THREE_KEYS,
   WREATH_FIELDS,
+  type ArenaEntry,
   type Day,
   type EveningTextField,
   type Habit,
@@ -15,6 +16,7 @@ import {
   type WreathField,
 } from './model';
 import { isEmptyDay } from './normalizeDay';
+import { isEmptyEntry } from './arena';
 import { getPlan, portionLabel } from './readingPlan';
 import { CARRY_LABEL, MARK_SYMBOL, THREE_LABEL } from './review';
 
@@ -100,7 +102,27 @@ export function dayToMarkdown(day: Day, habits: readonly Habit[]): string {
   return out.join('\n');
 }
 
-export function toMarkdown(days: readonly Day[], habits: readonly Habit[], exportedAt: Date): string {
+function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
+  const kept = entries.filter((e) => !isEmptyEntry(e)).sort((a, b) => a.createdAt - b.createdAt);
+  if (kept.length === 0) return [];
+  const out = ['', '# Arena', ''];
+  for (const e of kept) {
+    out.push(`## ${new Date(e.createdAt).toLocaleDateString('de-DE')}`, '');
+    const verses = e.verses.filter((v) => v.trim());
+    const concerns = e.concerns.filter((c) => c.trim());
+    if (verses.length) out.push(`**Bibelstellen:** ${verses.join(' · ')}`, '');
+    if (concerns.length) out.push('**Gebetsanliegen:**', ...concerns.map((c) => `- ${c}`), '');
+    if (e.text.trim()) out.push(e.text.trim(), '');
+  }
+  return out;
+}
+
+export function toMarkdown(
+  days: readonly Day[],
+  habits: readonly Habit[],
+  exportedAt: Date,
+  arena: readonly ArenaEntry[] = [],
+): string {
   const kept = days.filter((d) => !isEmptyDay(d)).sort((a, b) => (a.date < b.date ? -1 : 1));
   const head = [
     '# Tagzeiten – Export',
@@ -108,5 +130,5 @@ export function toMarkdown(days: readonly Day[], habits: readonly Habit[], expor
     `Exportiert am ${exportedAt.toLocaleDateString('de-DE')} · ${kept.length} Tage`,
     '',
   ];
-  return [...head, ...kept.map((d) => dayToMarkdown(d, habits))].join('\n');
+  return [...head, ...kept.map((d) => dayToMarkdown(d, habits)), ...arenaToMarkdown(arena)].join('\n');
 }

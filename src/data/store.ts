@@ -10,7 +10,8 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
-import { emptyDay, type Day, type Habit, type Profile } from '../domain/model';
+import { isEmptyEntry, newEntry } from '../domain/arena';
+import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
 import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
@@ -201,6 +202,26 @@ export class Store {
     return next;
   }
 
+  /* ------------------------------------------------------------ arena */
+
+  /** Starts a new Arena entry and returns its id. Entries left empty are cleared away. */
+  addArenaEntry(): string {
+    const entry = newEntry(this.now().getTime());
+    this.updateProfile((p) => ({ ...p, arena: [entry, ...p.arena.filter((e) => !isEmptyEntry(e))] }), {
+      immediate: true,
+    });
+    return entry.id;
+  }
+
+  updateArenaEntry(id: string, fn: (e: ArenaEntry) => ArenaEntry, opts: UpdateOptions = {}): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, arena: p.arena.map((e) => (e.id === id ? { ...fn(e), id, updatedAt: t } : e)) }), opts);
+  }
+
+  deleteArenaEntry(id: string): void {
+    this.updateProfile((p) => ({ ...p, arena: p.arena.filter((e) => e.id !== id) }), { immediate: true });
+  }
+
   private schedule(key: string, value: Day | Profile, immediate?: boolean) {
     this.dirty.set(key, value);
     this.queue.schedule(key, value, immediate);
@@ -313,7 +334,7 @@ export class Store {
 
   async exportMarkdown(): Promise<string> {
     await this.flush();
-    return toMarkdown(this.allDays(), this.profile.habits, this.now());
+    return toMarkdown(this.allDays(), this.profile.habits, this.now(), this.profile.arena);
   }
 
   /** Replaces all data with the content of a backup file. */

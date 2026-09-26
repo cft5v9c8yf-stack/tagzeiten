@@ -2,6 +2,7 @@ import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
+import { normalizeArena } from './arena';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays } from './schedule';
 import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
@@ -15,6 +16,7 @@ export function defaultProfile(today: DateKey): Profile {
     catechism: { memorized: {}, weekOffset: 0 },
     schedule: { ...DEFAULT_SCHEDULE },
     armor: true,
+    arena: [],
     theme: 'system',
     texts: 'ecumenical',
     createdAt: today,
@@ -44,6 +46,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     schedule,
     ...cleanScheduleDays(raw.scheduleDays, schedule),
     armor: raw.armor !== false,
+    arena: normalizeArena(raw.arena),
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
     texts: raw.texts === 'luther' ? 'luther' : 'ecumenical',
     createdAt: raw.createdAt ?? today,

@@ -26,11 +26,11 @@ const PATHS: Record<Name, JSX.Element> = {
     </>
   ),
   catechism: <path d="M12 3v18M7 8h10" />,
-  // An open book
-  archive: (
+  // A shield with the cross: the Arena, where the fight of faith is written down
+  arena: (
     <>
-      <path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5Z" />
-      <path d="M12 6v13" />
+      <path d="M12 3.2 19 6v5.2c0 4.6-3 8-7 9.6-4-1.6-7-5-7-9.6V6l7-2.8Z" />
+      <path d="M12 8v8M9 11h6" />
     </>
   ),
   more: (

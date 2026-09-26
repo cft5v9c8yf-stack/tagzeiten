@@ -36,6 +36,16 @@ export function DemoSetup() {
       (p) => ({
         ...p,
         habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
+        arena: [
+          {
+            id: 'demo-1',
+            createdAt: new Date(`${addDays(today, -2)}T21:15:00`).getTime(),
+            updatedAt: new Date(`${addDays(today, -2)}T21:15:00`).getTime(),
+            verses: ['1. Korinther 10,13', 'Psalm 55,23'],
+            concerns: ['Geduld mit den Kindern', 'Ruhe vor dem Gespräch mit dem Chef'],
+            text: 'Heute gereizt gewesen, schon am Frühstückstisch.\nDie Sorge um die Arbeit sitzt mir im Nacken. Ich will sie abgeben und nicht wieder aufheben.',
+          },
+        ],
         prayer: {
           concerns: ['Frau und Kinder', 'Gemeinde', 'Verfolgte Kirche', 'Missionare', 'Obrigkeit', 'Nachbarn'],
           daily: ['Frau und Kinder', 'Gemeinde'],

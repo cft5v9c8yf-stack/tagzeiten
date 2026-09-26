@@ -1,4 +1,4 @@
-export type SectionIcon = 'bible' | 'today' | 'prayer' | 'sunday' | 'catechism' | 'archive' | 'more';
+export type SectionIcon = 'bible' | 'today' | 'prayer' | 'sunday' | 'catechism' | 'arena' | 'more';
 
 export interface Section {
   path: string;
@@ -10,7 +10,7 @@ export interface Section {
 export const SUNDAY_PATH = '/sonntag';
 
 export const SECTIONS: readonly Section[] = [
-  { path: '/archiv', label: 'Archiv', icon: 'archive' },
+  { path: '/arena', label: 'Arena', icon: 'arena' },
   { path: '/andacht', label: 'Andacht', icon: 'prayer' },
   { path: '/', label: 'Heute', icon: 'today' },
   { path: SUNDAY_PATH, label: 'Sonntag', icon: 'sunday' },

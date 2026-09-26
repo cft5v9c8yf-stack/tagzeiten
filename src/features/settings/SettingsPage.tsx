@@ -5,6 +5,7 @@ import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsV
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { InfoToggle, Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
+import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
@@ -13,7 +14,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings';
+  id: SettingsSectionId | 'settings' | 'review';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -58,6 +59,15 @@ const AREAS: readonly Area[] = [
     icon: 'clock',
     info: <p>Für den Tagesbogen auf der Startseite. Nicht jeder steht um vier auf.</p>,
     body: () => <ScheduleSettings />,
+  },
+  {
+    slug: 'rueckblick',
+    id: 'review',
+    title: 'Rückblick',
+    line: 'Vergangene Tage und gesammelte Verse',
+    icon: 'review',
+    info: <p>Alle Tage mit Einträgen, durchsuchbar, und die Verse, die du dir notiert hast.</p>,
+    body: () => <ArchivePage embedded />,
   },
   {
     slug: 'einstellungen',

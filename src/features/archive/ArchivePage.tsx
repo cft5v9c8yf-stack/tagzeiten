@@ -46,7 +46,8 @@ function DayItem({ d }: { d: Day }) {
   );
 }
 
-export function ArchivePage() {
+/** Past days and collected verses; under "Mehr" as "Rückblick" (embedded: without its own heading). */
+export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const all = useAllDays();
   const [tab, setTab] = useState<Tab>('days');
   const [query, setQuery] = useState('');
@@ -60,7 +61,7 @@ export function ArchivePage() {
 
   return (
     <>
-      <h2>Archiv</h2>
+      {!embedded && <h2>Rückblick</h2>}
       <Segmented
         label="Ansicht"
         value={tab}
@@ -75,7 +76,7 @@ export function ArchivePage() {
       />
       <div className="field search-field">
         <label htmlFor={searchId} className="visually-hidden">
-          Archiv durchsuchen
+          Rückblick durchsuchen
         </label>
         <input
           id={searchId}

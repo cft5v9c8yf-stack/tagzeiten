@@ -1,5 +1,5 @@
-import { createBrowserRouter, createHashRouter } from 'react-router';
-import { ArchivePage } from '../features/archive/ArchivePage';
+import { createBrowserRouter, createHashRouter, Navigate } from 'react-router';
+import { ArenaPage } from '../features/arena/ArenaPage';
 import { BiblePage } from '../features/bible/BiblePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
@@ -38,7 +38,10 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'sonntag', element: <SundayPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'katechismus/:teil', element: <CatechismPage /> },
-      { path: 'archiv', element: <ArchivePage /> },
+      { path: 'arena', element: <ArenaPage /> },
+      { path: 'arena/:eintrag', element: <ArenaPage /> },
+      // The archive now stands under "Mehr" as "Rückblick".
+      { path: 'archiv', element: <Navigate to="/mehr/rueckblick" replace /> },
       { path: 'mehr', element: <SettingsPage /> },
       { path: 'mehr/:bereich', element: <SettingsPage /> },
       { path: 'kirchenjahr', element: <ChurchYearPage /> },

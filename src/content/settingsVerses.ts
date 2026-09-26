@@ -4,7 +4,7 @@
  */
 import type { WeeklyVerse } from './weeklyVerses';
 
-export type SettingsSectionId = 'habits' | 'prayer' | 'plan' | 'times';
+export type SettingsSectionId = 'habits' | 'prayer' | 'plan' | 'times' | 'arena';
 
 export const SETTINGS_VERSES: Record<SettingsSectionId, WeeklyVerse> = {
   habits: {
@@ -23,4 +23,9 @@ export const SETTINGS_VERSES: Record<SettingsSectionId, WeeklyVerse> = {
     parts: ['Dein Wort ist meines Fußes Leuchte und ein Licht auf meinem Wege.'],
   },
   times: { ref: 'Psalm 31,16', source: 'Ps 31,16', parts: ['Meine Zeit steht in deinen Händen.'] },
+  arena: {
+    ref: '1. Timotheus 6,12',
+    source: '1Tim 6,12',
+    parts: ['kämpfe den guten Kampf des Glaubens; ergreife das ewige Leben'],
+  },
 };

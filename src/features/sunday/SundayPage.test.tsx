@@ -31,7 +31,7 @@ const title = () => document.querySelector('.sunday-name')!.textContent;
 
 describe('Sonntag', () => {
   it('stands in the middle of the bar, with Andacht for morning and evening', () => {
-    expect(SECTIONS.map((s) => s.label)).toEqual(['Archiv', 'Andacht', 'Heute', 'Sonntag', 'Bibel', 'Katechismus', 'Mehr']);
+    expect(SECTIONS.map((s) => s.label)).toEqual(['Arena', 'Andacht', 'Heute', 'Sonntag', 'Bibel', 'Katechismus', 'Mehr']);
   });
 
   it('shows the Sunday of the week with verse, meaning, readings and its place in the church year', async () => {
