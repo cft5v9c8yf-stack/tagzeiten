@@ -35,6 +35,7 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
       concerns: strs(x.concerns),
       text: str(x.text),
     };
+    if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
     if (isEmptyEntry(e)) continue;
     seen.add(id);
     out.push(e);
@@ -51,3 +52,13 @@ export function entryTitle(e: ArenaEntry): string {
 
 /** Looks like a Bible reference ("Römer 8,37", "1. Korinther 10,13"), so it can be linked. */
 export const isReference = (s: string) => /^\s*(\d\.\s*)?[A-ZÄÖÜ][\wäöüß.]*\s+\d+(,\d+([–-]\d+)?[ab]?)?\s*$/.test(s);
+
+/** Entries whose verses, concerns or text contain every word of the query. */
+export function searchArena(entries: readonly ArenaEntry[], query: string): ArenaEntry[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return [...entries];
+  return entries.filter((e) => {
+    const hay = [...e.verses, ...e.concerns, e.text].join(' ').toLowerCase();
+    return words.every((w) => hay.includes(w));
+  });
+}

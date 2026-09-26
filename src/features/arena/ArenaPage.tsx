@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
+import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import { entryTitle, isReference } from '../../domain/arena';
 import type { ArenaEntry } from '../../domain/model';
@@ -18,6 +19,9 @@ const COMFORT = [
   },
   { text: 'Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.', ref: 'Römer 8,37' },
 ];
+
+/** Archived entries stand in the Rückblick under "Mehr". */
+export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
 
 const dateOf = (ms: number) =>
   new Date(ms).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -88,20 +92,37 @@ function LineList({
   );
 }
 
+/** An entry as a card: date, first line, verses. Used in the Arena and in the Rückblick. */
+export function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
+  return (
+    <Link className="arena-card" to={`/arena/${e.id}`}>
+      <span className="arena-card-date">{dateOf(e.createdAt)}</span>
+      <span className="arena-card-title">{entryTitle(e)}</span>
+      {e.verses.some((v) => v.trim()) && (
+        <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
+      )}
+    </Link>
+  );
+}
+
 function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const store = useStore();
   const profile = useProfile();
   const navigate = useNavigate();
   const textId = useId();
+  const toast = useToast();
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
+  const archived = entry.archivedAt !== undefined;
+  const home = archived ? REVIEW_PATH : '/arena';
 
   return (
     <article className="arena-entry">
       <p className="back-link">
-        <Link to="/arena">‹ Arena</Link>
+        <Link to={home}>{archived ? '‹ Rückblick' : '‹ Arena'}</Link>
       </p>
       <h2 className="arena-entry-date">{dateOf(entry.createdAt)}</h2>
+      {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
       <LineList
         label="Bibelstelle"
@@ -140,9 +161,34 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       </aside>
 
       <div className="arena-actions">
-        <button type="button" className="btn primary" onClick={() => navigate('/arena')}>
+        <button type="button" className="btn primary" onClick={() => navigate(home)}>
           Eintrag sichern und zurück
         </button>
+        {archived ? (
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              store.archiveArenaEntry(entry.id, false);
+              toast('Eintrag steht wieder in der Arena');
+              navigate('/arena');
+            }}
+          >
+            Zurück in die Arena holen
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              store.archiveArenaEntry(entry.id, true);
+              toast('Eintrag archiviert – zu finden unter Mehr, Rückblick');
+              navigate('/arena');
+            }}
+          >
+            Eintrag archivieren
+          </button>
+        )}
         {confirm ? (
           <>
             <button
@@ -150,7 +196,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
               className="btn"
               onClick={() => {
                 store.deleteArenaEntry(entry.id);
-                navigate('/arena');
+                navigate(home);
               }}
             >
               Ja, Eintrag löschen
@@ -194,7 +240,8 @@ export function ArenaPage() {
     );
   }
 
-  const shown = entries.filter((e) => entryTitle(e));
+  const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined);
+  const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
     <div className="arena">
       <h2>Arena</h2>
@@ -207,16 +254,15 @@ export function ArenaPage() {
         <ul className="arena-list">
           {shown.map((e) => (
             <li key={e.id}>
-              <Link className="arena-card" to={`/arena/${e.id}`}>
-                <span className="arena-card-date">{dateOf(e.createdAt)}</span>
-                <span className="arena-card-title">{entryTitle(e)}</span>
-                {e.verses.some((v) => v.trim()) && (
-                  <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
-                )}
-              </Link>
+              <ArenaCard entry={e} />
             </li>
           ))}
         </ul>
+      )}
+      {archivedCount > 0 && (
+        <p className="small arena-archived">
+          <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
+        </p>
       )}
     </div>
   );

@@ -64,9 +64,9 @@ const AREAS: readonly Area[] = [
     slug: 'rueckblick',
     id: 'review',
     title: 'Rückblick',
-    line: 'Vergangene Tage und gesammelte Verse',
+    line: 'Tage, Verse und archivierte Einträge',
     icon: 'review',
-    info: <p>Alle Tage mit Einträgen, durchsuchbar, und die Verse, die du dir notiert hast.</p>,
+    info: <p>Alle Tage mit Einträgen, die Verse, die du dir notiert hast, und die archivierten Einträge der Arena – alles durchsuchbar.</p>,
     body: () => <ArchivePage embedded />,
   },
   {

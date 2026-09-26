@@ -10,6 +10,7 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { normalizeArena } from '../../domain/arena';
 import { resetOpenState } from '../../ui/collapseState';
+import { SettingsPage } from '../settings/SettingsPage';
 import { ArenaPage } from './ArenaPage';
 
 beforeEach(() => {
@@ -26,6 +27,7 @@ async function renderArena() {
     [
       { path: '/arena', element: <ArenaPage /> },
       { path: '/arena/:eintrag', element: <ArenaPage /> },
+      { path: '/mehr/:bereich', element: <SettingsPage /> },
     ],
     { initialEntries: ['/arena'] },
   );
@@ -87,5 +89,27 @@ describe('Arena', () => {
     store.addArenaEntry();
     expect(store.getProfile().arena).toHaveLength(1);
     expect(normalizeArena(store.getProfile().arena)).toEqual([]);
+  });
+
+  it('archives an entry into the Rückblick and brings it back', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Ein alter Kampf' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Eintrag archivieren' }));
+    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number');
+    expect(screen.queryByRole('link', { name: /Ein alter Kampf/ })).toBeNull();
+
+    fireEvent.click(screen.getByRole('link', { name: 'Archivierte Einträge im Rückblick' }));
+    await screen.findByRole('heading', { level: 2, name: /Rückblick/ });
+    expect(screen.getByRole('button', { name: 'Arena' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByText('1 archivierter Eintrag')).toBeTruthy();
+    fireEvent.click(screen.getByRole('link', { name: /Ein alter Kampf/ }));
+
+    expect(await screen.findByText(/Steht im Rückblick/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück in die Arena holen' }));
+    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    expect(store.getProfile().arena[0]!.archivedAt).toBeUndefined();
+    expect(screen.getByRole('link', { name: /Ein alter Kampf/ })).toBeTruthy();
   });
 });

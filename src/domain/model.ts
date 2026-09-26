@@ -171,6 +171,8 @@ export interface ArenaEntry {
   /** Prayer concerns for this struggle. */
   concerns: string[];
   text: string;
+  /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
+  archivedAt?: number;
 }
 
 /** Times for some weekdays (0 = Sunday … 6 = Saturday). */

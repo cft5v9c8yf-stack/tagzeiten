@@ -218,6 +218,22 @@ export class Store {
     this.updateProfile((p) => ({ ...p, arena: p.arena.map((e) => (e.id === id ? { ...fn(e), id, updatedAt: t } : e)) }), opts);
   }
 
+  /** Puts an entry into the Rückblick, or brings it back into the Arena. */
+  archiveArenaEntry(id: string, archived: boolean): void {
+    const t = this.now().getTime();
+    this.updateProfile(
+      (p) => ({
+        ...p,
+        arena: p.arena.map((e) => {
+          if (e.id !== id) return e;
+          const { archivedAt: _, ...rest } = e;
+          return archived ? { ...rest, archivedAt: t } : rest;
+        }),
+      }),
+      { immediate: true },
+    );
+  }
+
   deleteArenaEntry(id: string): void {
     this.updateProfile((p) => ({ ...p, arena: p.arena.filter((e) => e.id !== id) }), { immediate: true });
   }

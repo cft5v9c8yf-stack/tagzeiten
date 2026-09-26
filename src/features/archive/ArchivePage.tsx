@@ -1,6 +1,7 @@
 import { useId, useMemo, useState } from 'react';
-import { Link } from 'react-router';
-import { useAllDays } from '../../data/hooks';
+import { Link, useSearchParams } from 'react-router';
+import { useAllDays, useProfile } from '../../data/hooks';
+import { searchArena } from '../../domain/arena';
 import { formatLong, formatShort } from '../../domain/dates';
 import { readingLabel } from '../../domain/exportMarkdown';
 import type { Day } from '../../domain/model';
@@ -8,8 +9,9 @@ import { isEmptyDay } from '../../domain/normalizeDay';
 import { searchDays } from '../../domain/search';
 import { collectedVerses } from '../../domain/stats';
 import { Segmented } from '../../ui/Choice';
+import { ArenaCard } from '../arena/ArenaPage';
 
-type Tab = 'days' | 'verses';
+type Tab = 'days' | 'verses' | 'arena';
 const PAGE = 40;
 
 function prayed(d: Day): string {
@@ -49,7 +51,9 @@ function DayItem({ d }: { d: Day }) {
 /** Past days and collected verses; under "Mehr" as "Rückblick" (embedded: without its own heading). */
 export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const all = useAllDays();
-  const [tab, setTab] = useState<Tab>('days');
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState<Tab>(params.get('ansicht') === 'arena' ? 'arena' : 'days');
+  const profile = useProfile();
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const searchId = useId();
@@ -57,7 +61,11 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const days = useMemo(() => all.filter((d) => !isEmptyDay(d)), [all]);
   const found = useMemo(() => searchDays(days, query), [days, query]);
   const verses = useMemo(() => collectedVerses(found), [found]);
-  const count = tab === 'days' ? found.length : verses.length;
+  const archived = useMemo(
+    () => searchArena(profile.arena.filter((e) => e.archivedAt !== undefined), query),
+    [profile.arena, query],
+  );
+  const count = tab === 'days' ? found.length : tab === 'verses' ? verses.length : archived.length;
 
   return (
     <>
@@ -72,6 +80,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
         options={[
           { value: 'days', label: 'Tage' },
           { value: 'verses', label: 'Versesammlung' },
+          { value: 'arena', label: 'Arena' },
         ]}
       />
       <div className="field search-field">
@@ -94,7 +103,9 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           ? `${count} Treffer`
           : tab === 'days'
             ? `${count} ${count === 1 ? 'Tag' : 'Tage'} mit Einträgen`
-            : `${count} ${count === 1 ? 'Vers' : 'Verse'}`}
+            : tab === 'verses'
+              ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
+              : `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`}
       </p>
 
       {tab === 'days' &&
@@ -126,6 +137,21 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
         ) : (
           <p className="empty">
             {query.trim() ? 'Nichts gefunden.' : 'Noch keine Verse. Sie kommen aus dem Feld „Vers, den ich mitnehme“.'}
+          </p>
+        ))}
+
+      {tab === 'arena' &&
+        (archived.length ? (
+          <ul className="arena-list">
+            {archived.slice(0, limit).map((e) => (
+              <li key={e.id}>
+                <ArenaCard entry={e} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="empty">
+            {query.trim() ? 'Nichts gefunden.' : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
           </p>
         ))}
 

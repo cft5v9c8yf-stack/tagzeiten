@@ -45,6 +45,15 @@ export function DemoSetup() {
             concerns: ['Geduld mit den Kindern', 'Ruhe vor dem Gespräch mit dem Chef'],
             text: 'Heute gereizt gewesen, schon am Frühstückstisch.\nDie Sorge um die Arbeit sitzt mir im Nacken. Ich will sie abgeben und nicht wieder aufheben.',
           },
+          {
+            id: 'demo-0',
+            createdAt: new Date(`${addDays(today, -20)}T21:40:00`).getTime(),
+            updatedAt: new Date(`${addDays(today, -20)}T21:40:00`).getTime(),
+            archivedAt: new Date(`${addDays(today, -6)}T20:00:00`).getTime(),
+            verses: ['Römer 8,37'],
+            concerns: ['Klarheit bei der Entscheidung'],
+            text: 'Die Frage nach der neuen Stelle lässt mich nicht los.',
+          },
         ],
         prayer: {
           concerns: ['Frau und Kinder', 'Gemeinde', 'Verfolgte Kirche', 'Missionare', 'Obrigkeit', 'Nachbarn'],
