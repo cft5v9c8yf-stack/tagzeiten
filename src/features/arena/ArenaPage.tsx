@@ -13,10 +13,10 @@ const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal
 const FORGE_PARAM = 'bereich';
 const FORGE_SLUG = 'eisenschmiede';
 
-/** The two places of the Arena: the journal, and the Eisenschmiede for the brothers. */
+/** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
 const PLACES = {
   journal: {
-    title: 'Tagebuch',
+    title: 'Gebetskammer',
     verse: 'arena',
     // What the journal is for, and what it is not (rule 9).
     note: 'Hier schreibst du auf, was dich belastet und womit du ringst. Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.',

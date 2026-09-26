@@ -135,7 +135,7 @@ describe('Arena', () => {
     fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
     expect(await screen.findByRole('link', { name: /Entscheidung im Beruf/ })).toBeTruthy();
     // The journal does not show it.
-    fireEvent.click(screen.getByRole('button', { name: 'Tagebuch' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Gebetskammer' }));
     await waitFor(() => expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull());
 
     // After the meeting: discussed and archived.
