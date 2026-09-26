@@ -28,7 +28,7 @@ async function renderBible() {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { name: 'Bibel' });
+  await screen.findByRole('heading', { name: 'Mein Bibelleseplan' });
   return store;
 }
 

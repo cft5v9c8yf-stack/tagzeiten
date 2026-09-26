@@ -60,7 +60,7 @@ export function BiblePage() {
 
   return (
     <div className="bible-page">
-      <h2>Bibel</h2>
+      <h2>Mein Bibelleseplan</h2>
       <SectionVerse id="plan" />
       {/* Marked as read through the habit "Bibel lesen" on Today. */}
       <Section
