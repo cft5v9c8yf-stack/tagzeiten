@@ -134,6 +134,28 @@ describe('Mehr: Aufbau', () => {
 });
 
 describe('Mehr: Daten', () => {
+  it('says whether the browser keeps the entries, and asks it again on request', async () => {
+    let granted = false;
+    let allow = false;
+    const persist = vi.fn(() => Promise.resolve((granted = allow)));
+    Object.defineProperty(navigator, 'storage', {
+      configurable: true,
+      value: { persisted: () => Promise.resolve(granted), persist },
+    });
+    try {
+      await renderAt('/mehr/einstellungen', <SettingsPage />);
+      // Asked once on start; the browser declined.
+      await waitFor(() => expect(persist).toHaveBeenCalledOnce());
+      expect(await screen.findByText(/noch nicht zugesagt/)).toBeTruthy();
+      allow = true;
+      fireEvent.click(screen.getByText('Dauerhafte Speicherung erbitten'));
+      expect(await screen.findByText(/Dein Browser behält die Einträge dauerhaft/)).toBeTruthy();
+      expect(screen.queryByText('Dauerhafte Speicherung erbitten')).toBeNull();
+    } finally {
+      delete (navigator as { storage?: unknown }).storage;
+    }
+  });
+
   it('exports every entry as Markdown and as JSON', async () => {
     await renderAt('/mehr/einstellungen', <SettingsPage />, fill);
     fireEvent.click(await screen.findByText('Als Text exportieren (Markdown)'));

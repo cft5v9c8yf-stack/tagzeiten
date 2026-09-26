@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { readStoredTheme } from '../app/theme';
 import { useToast } from '../app/Toast';
 import { Store } from './store';
+import { requestPersistence } from './persistence';
 
 const StoreContext = createContext<Store | null>(null);
 
@@ -36,7 +37,7 @@ export function StoreProvider({ children, store: injected }: { children: ReactNo
         if (alive) setState('failed');
       });
     // Ask the browser to keep our data (Safari may otherwise evict it after inactivity).
-    void navigator.storage?.persist?.().catch(() => false);
+    void requestPersistence();
     return () => {
       alive = false;
     };

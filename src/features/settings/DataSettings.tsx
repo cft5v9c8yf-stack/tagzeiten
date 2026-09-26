@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { clearDevicePreferences, downloadText } from '../../app/files';
 import { useToast } from '../../app/Toast';
 import { useStore } from '../../data/hooks';
+import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
 import { BackupError, parseBackup } from '../../domain/backup';
 import { resetOpenState } from '../../ui/collapseState';
 import { Section } from '../../ui/Section';
@@ -22,6 +23,19 @@ export function DataSettings() {
   const [importError, setImportError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const stamp = store.today();
+  const [kept, setKept] = useState<Persistence | null>(null);
+  useEffect(() => {
+    let live = true;
+    void persistence().then((p) => live && setKept(p));
+    return () => {
+      live = false;
+    };
+  }, []);
+  const askToKeep = async () => {
+    const p = await requestPersistence();
+    setKept(p);
+    toast(p === 'persisted' ? 'Der Browser behält deine Einträge dauerhaft' : 'Der Browser hat die Bitte nicht angenommen');
+  };
 
   const exportMarkdown = async () => {
     downloadText(`tagzeiten-${stamp}.md`, await store.exportMarkdown(), 'text/markdown');
@@ -72,6 +86,27 @@ export function DataSettings() {
 
   return (
     <>
+      <Section id="more.data.keep" title="Speicherung" level={4}>
+        {kept === 'persisted' && (
+          <p>Dein Browser behält die Einträge dauerhaft. Er löscht sie nicht von sich aus, auch nicht bei knappem Speicher.</p>
+        )}
+        {kept === 'best-effort' && (
+          <>
+            <p>
+              Dein Browser hat noch nicht zugesagt, die Einträge dauerhaft zu behalten. Bei knappem Speicher darf er sie
+              entfernen. Auf dem iPhone hilft es, Tagzeiten zum Home-Bildschirm hinzuzufügen und nur von dort zu öffnen.
+            </p>
+            <button type="button" className="btn" onClick={askToKeep}>
+              Dauerhafte Speicherung erbitten
+            </button>
+          </>
+        )}
+        {kept === 'unsupported' && <p>Dein Browser kennt keine dauerhafte Speicherung.</p>}
+        <p className="small muted">
+          Eine Sicherung als JSON schützt in jedem Fall, auch beim Wechsel des Geräts oder wenn du den Browserverlauf
+          löschst.
+        </p>
+      </Section>
       <Section id="more.data.export" title="Exportieren" level={4}>
       <div className="button-row">
         <button type="button" className="btn" onClick={exportMarkdown}>
