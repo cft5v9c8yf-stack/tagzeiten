@@ -8,8 +8,9 @@ import {
   CHURCH_YEAR_INTRO_SOURCE,
   CHURCH_YEAR_INTRO_TITLE,
 } from '../../content/churchYearIntro';
+import { CIRCLE_GUIDE, DAY_GUIDE, EXTRA_DAYS, GROUP_REFS, optionalDays, SEASON_GUIDE } from '../../content/dieffenbach';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type OutlineEntry } from '../../domain/churchYear';
+import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type OutlineEntry, type Season } from '../../domain/churchYear';
 import { fromKey, MONTH_LONG, formatShort, type DateKey } from '../../domain/dates';
 import { BibleLink } from '../../ui/BibleLink';
 import { Segmented } from '../../ui/Choice';
@@ -69,6 +70,7 @@ function EntryList({
             </div>
             {info?.meaning && <p className="cy-meaning">{info.meaning}</p>}
             {info && <p className="cy-theme">{info.theme}</p>}
+            {DAY_GUIDE[e.key] && <p className="cy-hausagende">{DAY_GUIDE[e.key]}</p>}
             {info && (
               <dl className="cy-readings">
                 <div>
@@ -92,6 +94,24 @@ function EntryList({
   );
 }
 
+/** Days of the book without an entry of their own this year, by title and text. */
+function MoreDays({ title, days }: { title: string; days: readonly { label: string; text: string }[] }) {
+  if (days.length === 0) return null;
+  return (
+    <div className="cy-more-days">
+      <p className="cy-more-title">{title}</p>
+      <dl>
+        {days.map((d) => (
+          <div key={d.label}>
+            <dt>{d.label}</dt>
+            <dd className="cy-hausagende">{d.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  );
+}
+
 const isCircle = (s: string | null): s is Circle => s === 'christmas' || s === 'easter' || s === 'pentecost';
 
 /**
@@ -108,6 +128,12 @@ export function ChurchYearPage() {
   const focus = params.get('woche');
   const outline = churchYearOutline(date);
   const seasons = outline.seasons.filter((s) => s.circle === circle);
+  const guide = CIRCLE_GUIDE[circle];
+  const present = new Set(outline.entries.map((e) => e.key));
+  const missing = (season: Season, keys?: (k: string) => boolean) =>
+    optionalDays()
+      .filter((d) => d.season === season && !present.has(d.key) && (!keys || keys(d.key)))
+      .map((d) => ({ label: d.label, text: DAY_GUIDE[d.key]! }));
 
   // Jump to a Sunday when coming from the week on the Today page.
   useEffect(() => {
@@ -166,6 +192,20 @@ export function ChurchYearPage() {
         {CIRCLE_INFO[circle].of} <span className="muted">· {CIRCLE_INFO[circle].range}</span>
       </p>
       <p className="cy-intro">{CIRCLE_INFO[circle].intro}</p>
+      <Section id={`cy.explain.${circle}`} title="Zur Erklärung" defaultOpen={false} className="cy-dieffenbach">
+        {guide.motto && (
+          <blockquote className="cy-motto">
+            <p>{guide.motto.text}</p>
+            <footer>
+              <BibleLink reference={guide.motto.ref} />
+            </footer>
+          </blockquote>
+        )}
+        {guide.explanation.map((p) => (
+          <p key={p.slice(0, 48)}>{p}</p>
+        ))}
+        <p className="small muted">{CHURCH_YEAR_INTRO_SOURCE} In der Rechtschreibung des Originals.</p>
+      </Section>
 
       {seasons.map((s) => {
         const entries = outline.entries.filter((e) => e.season === s.season);
@@ -176,6 +216,7 @@ export function ChurchYearPage() {
             </p>
             <p className="cy-season-theme">{SEASON_THEME[s.season]}</p>
             <p>{SEASON_INFO[s.season]}</p>
+            {SEASON_GUIDE[s.season]?.intro && <p className="cy-hausagende">{SEASON_GUIDE[s.season]!.intro}</p>}
             {s.season === 'trinity' ? (
               groupsOf(entries).map((g) => (
                 <Section
@@ -190,15 +231,45 @@ export function ChurchYearPage() {
                   className="cy-group"
                   titleClassName="cy-group-title"
                 >
+                  {GROUP_REFS[g.title] && (
+                    <p className="cy-group-refs">
+                      {GROUP_REFS[g.title]!.map((r) => (
+                        <BibleLink key={r} reference={r} />
+                      ))}
+                    </p>
+                  )}
                   <EntryList entries={g.entries} date={date} weekKey={today.weekKey} level={5} />
+                  <MoreDays
+                    title="In diesem Jahr ohne eigenen Sonntag"
+                    days={missing('trinity', (k) => trinityGroupOf(k)?.title === g.title)}
+                  />
                 </Section>
               ))
             ) : (
-              <EntryList entries={entries} date={date} weekKey={today.weekKey} level={4} />
+              <>
+                <EntryList entries={entries} date={date} weekKey={today.weekKey} level={4} />
+                <MoreDays title="In diesem Jahr ohne eigenen Sonntag" days={missing(s.season)} />
+              </>
+            )}
+            <MoreDays title="Weitere Tage" days={EXTRA_DAYS[s.season] ?? []} />
+            {SEASON_GUIDE[s.season]?.note && (
+              <p className="cy-note">
+                <span className="cy-note-label">Anmerkung.</span> {SEASON_GUIDE[s.season]!.note}
+              </p>
             )}
           </Section>
         );
       })}
+      <section className="cy-closing" aria-label={`Beschluss des ${CIRCLE_INFO[circle].title}es`}>
+        {guide.closing.map((p, i) => (
+          <p key={p.slice(0, 48)} className={i === guide.closing.length - 1 ? 'cy-intro-gloria' : undefined}>
+            {p}
+          </p>
+        ))}
+      </section>
+      <p className="small muted">
+        Die Deutung der Sonn- und Festtage, die Erklärungen und Anmerkungen stammen aus: {CHURCH_YEAR_INTRO_SOURCE}
+      </p>
       <p className="small muted">{LECTIONARY_NOTE}</p>
     </div>
   );

@@ -1560,3 +1560,65 @@ mark.placeholder {
   margin: 2px 0 6px;
   font-style: italic;
 }
+/* Kirchenjahr: Dieffenbach's explanation of each circle and the meaning of each day */
+.cy-dieffenbach p {
+  line-height: 1.55;
+}
+.cy-motto {
+  margin: 4px 0 14px;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+  font-style: italic;
+}
+.cy-motto p {
+  margin: 0 0 4px;
+}
+.cy-motto footer {
+  font: 0.85rem var(--sans);
+  font-style: normal;
+}
+.cy-hausagende {
+  margin: 4px 0 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.cy-group-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin: 0 0 6px;
+  font: 0.85rem var(--sans);
+}
+.cy-more-days {
+  margin: 12px 0 4px;
+}
+.cy-more-title {
+  margin: 0 0 4px;
+  font: 600 0.85rem var(--sans);
+  color: var(--muted);
+}
+.cy-more-days dl {
+  margin: 0;
+}
+.cy-more-days dt {
+  margin-top: 8px;
+  font: 600 0.9rem var(--sans);
+}
+.cy-more-days dd {
+  margin: 2px 0 0;
+}
+.cy-note {
+  margin: 14px 0 4px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.cy-note-label {
+  font-style: italic;
+}
+.cy-closing {
+  margin: 22px 0 14px;
+}
+.cy-closing p {
+  line-height: 1.55;
+}

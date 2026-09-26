@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
+import { DAY_GUIDE } from '../../content/dieffenbach';
 import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -141,6 +142,12 @@ export function SundayPage() {
           <h3 id="sunday-meaning">Bedeutung</h3>
           {info.meaning && <p className="cy-meaning">{info.meaning}</p>}
           <p className="sunday-theme">{info.theme}</p>
+          {DAY_GUIDE[c.weekKey] && (
+            <>
+              <p className="cy-hausagende">{DAY_GUIDE[c.weekKey]}</p>
+              <p className="small muted">Dieffenbach, Evangelische Haus-Agende, 1853</p>
+            </>
+          )}
         </section>
       )}
 

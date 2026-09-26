@@ -132,4 +132,32 @@ describe('Kirchenjahr', () => {
     expect(text).toContain('das ist das Wesen des Kirchenjahres');
     expect(text).toContain('Georg Christian Dieffenbach');
   });
+
+  it('explains each circle after the Haus-Agende, folded, and closes it with its doxology', async () => {
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=easter');
+    const explain = await screen.findByRole('button', { name: 'Zur Erklärung' });
+    expect(explain.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(explain);
+    await waitFor(() => expect(explain.getAttribute('aria-expanded')).toBe('true'));
+    const box = explain.closest('.cy-dieffenbach')!.textContent!;
+    expect(box).toContain('Philipper 2,6-11');
+    expect(box).toContain('Der Osterkreis ist der heilige Festkreis Gottes des Sohnes');
+    const closing = screen.getByRole('region', { name: 'Beschluss des Osterkreises' }).textContent!;
+    expect(closing).toContain('Siehe es hat überwunden der Löwe');
+  });
+
+  it('gives every Sunday its meaning from the Haus-Agende, and the days without an entry of their own', async () => {
+    await renderAt('/kirchenjahr?d=2026-09-24&kreis=easter');
+    await screen.findByRole('heading', { name: 'Fastenzeit' });
+    expect(document.getElementById('entry-invokavit')!.textContent).toContain('Alles Leiden des Herrn geht zuletzt vom Satan aus.');
+    const lent = screen.getByRole('heading', { name: 'Fastenzeit' }).closest('.cy-phase')!.textContent!;
+    expect(lent).toContain('Aschermittwoch');
+    expect(lent).toContain('Christi Höllenfahrt');
+    expect(lent).toContain('Anmerkung.');
+    // 2026 has only two Sundays after Epiphany; the others are read all the same.
+    const epiphany = screen.getByRole('heading', { name: 'Epiphanienzeit' }).closest('.cy-phase')!.textContent!;
+    expect(epiphany).toContain('In diesem Jahr ohne eigenen Sonntag');
+    expect(epiphany).toContain('3. Sonntag nach Epiphanias');
+    expect(epiphany).toContain('Jesus heilt Kranke');
+  });
 });
