@@ -1622,3 +1622,15 @@ mark.placeholder {
 .cy-closing p {
   line-height: 1.55;
 }
+/* Rückblick: one list under headings for year and month */
+.archive-year > h3 {
+  margin: 18px 0 2px;
+}
+.archive-month {
+  margin: 12px 0 4px;
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.archive-title {
+  font-weight: 600;
+}

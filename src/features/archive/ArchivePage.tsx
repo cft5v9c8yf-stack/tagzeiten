@@ -1,15 +1,15 @@
-import { useId, useMemo, useState } from 'react';
+import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useAllDays, useProfile } from '../../data/hooks';
-import { searchArena } from '../../domain/arena';
-import { formatLong, formatShort } from '../../domain/dates';
+import { entryTitle, meetingLabel, searchArena } from '../../domain/arena';
+import { byYearAndMonth } from '../../domain/byMonth';
+import { formatLong, toKey, type DateKey } from '../../domain/dates';
 import { readingLabel } from '../../domain/exportMarkdown';
-import type { Day } from '../../domain/model';
+import type { ArenaEntry, Day } from '../../domain/model';
 import { isEmptyDay } from '../../domain/normalizeDay';
 import { searchDays } from '../../domain/search';
 import { collectedVerses } from '../../domain/stats';
 import { Segmented } from '../../ui/Choice';
-import { ArenaCard } from '../arena/ArenaPage';
 
 type Tab = 'days' | 'verses' | 'arena';
 const PAGE = 40;
@@ -28,7 +28,7 @@ function DayItem({ d }: { d: Day }) {
   return (
     <li className="archive-item">
       <div className="archive-date">
-        {formatLong(d.date)} {d.date.slice(0, 4)}
+        {formatLong(d.date)}
         {status && <span className="archive-status"> · {status}</span>}
       </div>
       {reading && <div className="archive-reading">{reading}</div>}
@@ -48,6 +48,58 @@ function DayItem({ d }: { d: Day }) {
   );
 }
 
+function ArenaItem({ e }: { e: ArenaEntry }) {
+  const verses = e.verses.filter((v) => v.trim());
+  return (
+    <li className="archive-item">
+      <div className="archive-date">
+        {formatLong(toKey(new Date(e.createdAt)))}
+        {e.kind === 'forge' && <> · Eisenschmiede</>}
+        {e.meetingDate && <> · {meetingLabel(e.meetingDate)}</>}
+      </div>
+      <Link className="archive-title" to={`/arena/${e.id}`}>
+        {entryTitle(e)}
+      </Link>
+      {verses.length > 0 && <p className="small muted">{verses.join(' · ')}</p>}
+    </li>
+  );
+}
+
+/** A list under headings for year and month, newest first. */
+function MonthList<T>({
+  items,
+  dateOf,
+  keyOf,
+  render,
+}: {
+  items: readonly T[];
+  dateOf: (t: T) => DateKey;
+  keyOf: (t: T) => string;
+  render: (t: T) => ReactNode;
+}) {
+  return (
+    <>
+      {byYearAndMonth(items, dateOf).map((y) => (
+        <section key={y.year} className="archive-year" aria-labelledby={`rb-${y.year}`}>
+          <h3 id={`rb-${y.year}`}>{y.year}</h3>
+          {y.months.map((m) => (
+            <section key={m.key} aria-labelledby={`rb-${m.key}`}>
+              <h4 id={`rb-${m.key}`} className="archive-month">
+                {m.month}
+              </h4>
+              <ul className="archive-list">
+                {m.items.map((t) => (
+                  <Fragment key={keyOf(t)}>{render(t)}</Fragment>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </section>
+      ))}
+    </>
+  );
+}
+
 /** Past days and collected verses; under "Mehr" as "Rückblick" (embedded: without its own heading). */
 export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const all = useAllDays();
@@ -59,10 +111,14 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const searchId = useId();
 
   const days = useMemo(() => all.filter((d) => !isEmptyDay(d)), [all]);
-  const found = useMemo(() => searchDays(days, query), [days, query]);
+  const found = useMemo(() => searchDays(days, query).sort((a, b) => (a.date < b.date ? 1 : -1)), [days, query]);
   const verses = useMemo(() => collectedVerses(found), [found]);
   const archived = useMemo(
-    () => searchArena(profile.arena.filter((e) => e.archivedAt !== undefined), query),
+    () =>
+      searchArena(
+        profile.arena.filter((e) => e.archivedAt !== undefined),
+        query,
+      ).sort((a, b) => b.createdAt - a.createdAt),
     [profile.arena, query],
   );
   const count = tab === 'days' ? found.length : tab === 'verses' ? verses.length : archived.length;
@@ -110,11 +166,12 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
 
       {tab === 'days' &&
         (found.length ? (
-          <ul className="archive-list">
-            {found.slice(0, limit).map((d) => (
-              <DayItem key={d.date} d={d} />
-            ))}
-          </ul>
+          <MonthList
+            items={found.slice(0, limit)}
+            dateOf={(d) => d.date}
+            keyOf={(d) => d.date}
+            render={(d) => <DayItem d={d} />}
+          />
         ) : (
           <p className="empty">
             {query.trim() ? 'Nichts gefunden.' : 'Noch keine Einträge. Der erste entsteht mit der ersten Stille Zeit.'}
@@ -123,17 +180,20 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
 
       {tab === 'verses' &&
         (verses.length ? (
-          <ul className="archive-list">
-            {verses.slice(0, limit).map((v) => (
-              <li key={v.date} className="archive-item">
+          <MonthList
+            items={verses.slice(0, limit)}
+            dateOf={(v) => v.date}
+            keyOf={(v) => v.date}
+            render={(v) => (
+              <li className="archive-item">
                 <blockquote className="archive-verse">{v.verse}</blockquote>
                 <div className="archive-date">
                   {v.ref && <>{v.ref} · </>}
-                  <Link to={`/andacht/morgen?d=${v.date}`}>{formatShort(v.date)}</Link>
+                  <Link to={`/andacht/morgen?d=${v.date}`}>{formatLong(v.date)}</Link>
                 </div>
               </li>
-            ))}
-          </ul>
+            )}
+          />
         ) : (
           <p className="empty">
             {query.trim() ? 'Nichts gefunden.' : 'Noch keine Verse. Sie kommen aus dem Feld „Vers, den ich mitnehme“.'}
@@ -142,16 +202,17 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
 
       {tab === 'arena' &&
         (archived.length ? (
-          <ul className="arena-list">
-            {archived.slice(0, limit).map((e) => (
-              <li key={e.id}>
-                <ArenaCard entry={e} />
-              </li>
-            ))}
-          </ul>
+          <MonthList
+            items={archived.slice(0, limit)}
+            dateOf={(e) => toKey(new Date(e.createdAt))}
+            keyOf={(e) => e.id}
+            render={(e) => <ArenaItem e={e} />}
+          />
         ) : (
           <p className="empty">
-            {query.trim() ? 'Nichts gefunden.' : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
+            {query.trim()
+              ? 'Nichts gefunden.'
+              : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
           </p>
         ))}
 

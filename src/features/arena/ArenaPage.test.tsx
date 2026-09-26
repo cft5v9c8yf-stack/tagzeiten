@@ -104,7 +104,13 @@ describe('Arena', () => {
     await screen.findByRole('heading', { level: 2, name: /Rückblick/ });
     expect(screen.getByRole('button', { name: 'Arena' }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByText('1 archivierter Eintrag')).toBeTruthy();
-    fireEvent.click(screen.getByRole('link', { name: /Ein alter Kampf/ }));
+    // A list like the days, under the month it was written in, not a tile.
+    const link = screen.getByRole('link', { name: /Ein alter Kampf/ });
+    expect(link.closest('li.archive-item')).toBeTruthy();
+    expect(document.querySelector('.arena-card')).toBeNull();
+    const month = link.closest('section')!.querySelector('h4')!.textContent!;
+    expect(month).toMatch(/^[A-ZÄ][a-zä]+$/);
+    fireEvent.click(link);
 
     expect(await screen.findByText(/Steht im Rückblick/)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Zurück in die Arena holen' }));
