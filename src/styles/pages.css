@@ -1454,3 +1454,22 @@ body.is-sorting * {
   white-space: nowrap;
 }
 .arena-archived { margin-top: 14px; }
+/* Impressum */
+.imprint-section h3,
+.imprint-section h4 {
+  margin: 18px 0 4px;
+  font: 600 0.95rem var(--sans);
+}
+.imprint-section p {
+  margin: 0 0 6px;
+}
+.imprint > h3 {
+  margin-top: 28px;
+}
+mark.placeholder {
+  background: var(--gold-soft);
+  color: var(--gold);
+  border: 1px dashed var(--gold);
+  border-radius: 4px;
+  padding: 0 3px;
+}

@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -408,5 +408,14 @@ describe('Rückblick', () => {
     await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toEqual(['Verfolgte Kirche']));
     fireEvent.click(screen.getByRole('button', { name: '„Verfolgte Kirche“ ganz entfernen' }));
     await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toBeUndefined());
+  });
+
+  it('shows the Impressum with its placeholders marked and a privacy notice', async () => {
+    await renderAt('/mehr/impressum', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Impressum/ });
+    expect(screen.getByRole('heading', { level: 3, name: 'Angaben gemäß § 5 DDG' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Datenschutz' })).toBeTruthy();
+    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toContain('[Vor- und Nachname]');
+    expect(document.body.textContent).toContain('bleibt auf deinem Gerät');
   });
 });

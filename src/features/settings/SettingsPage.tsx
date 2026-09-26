@@ -7,6 +7,7 @@ import { InfoToggle, Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
+import { Imprint } from './Imprint';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
@@ -14,7 +15,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -98,6 +99,15 @@ const AREAS: readonly Area[] = [
         </Sub>
       </>
     ),
+  },
+  {
+    slug: 'impressum',
+    id: 'imprint',
+    title: 'Impressum',
+    line: 'Anbieter und Datenschutz',
+    icon: 'scroll',
+    info: <p>Wer hinter der App steht, woher die Texte kommen und was mit deinen Daten geschieht.</p>,
+    body: () => <Imprint />,
   },
 ];
 
