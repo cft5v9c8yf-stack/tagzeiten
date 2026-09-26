@@ -264,19 +264,19 @@ const VESPERS_FULL: Order = {
   ],
 };
 
-/** Family short form: hymn – psalm antiphonally – short reading – Lord's Prayer – blessing. */
+/** Short form: hymn – psalm – short reading – Lord's Prayer – blessing. */
 const VESPERS_SHORT: Order = {
   id: 'vespers',
   form: 'short',
-  title: 'Vesper – Kurzform für die Familie',
+  title: 'Vesper – Kurzform',
   steps: [
     {
       id: 'vespers',
       title: 'Vesper',
       minutes: 5,
       parts: [
-        p('hymn', 'Lied'),
-        p('psalm', 'Psalm im Wechsel'),
+        p('hymn', 'Hymnus'),
+        p('psalm', 'Psalm'),
         p('reading', 'Kurze Lesung', { fields: ['evening.reading'] }),
         p('lords-prayer', 'Vaterunser'),
         p('blessing', 'Segen'),
@@ -376,8 +376,8 @@ export const RUBRICS = {
   alignment: 'Jetzt, und erst jetzt, wird der Tag angesehen. Drei, nicht fünf. Beobachtbar – abends mit Ja oder Nein zu beantworten.',
   alignmentNotAVow: 'Die drei Dinge sind kein Gelübde. Was nicht gelingt, ist nicht Sünde, sondern Material für morgen.',
   sendOff: 'Und dann, wie Luther schreibt: mit Freuden an dein Werk gegangen.',
-  vespers: 'Beim Abendessen, mit der Familie. Gebet der Kirche, nicht Selbstprüfung.',
-  vespersShort: 'Lied – Psalm im Wechsel – kurze Lesung – Vaterunser – Segen. Fünf Minuten. Die Kinder können die Antiphon sprechen.',
+  vespers: 'Der persönliche Abschluss des Tages, für dich allein. Gebet der Kirche, nicht Selbstprüfung.',
+  vespersShort: 'Hymnus – Psalm – kurze Lesung – Vaterunser – Segen. Fünf Minuten.',
   vespersReading: 'Ein kurzer Abschnitt, ohne Auslegung. Nicht die Bibellese vom Morgen – hier genügen wenige Verse.',
   vespersIntercession: 'Für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde, für das eigene Haus.',
   magnificat: 'Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn im Nachtgebet von deinem her prüfst.',

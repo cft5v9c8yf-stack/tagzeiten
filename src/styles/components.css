@@ -576,24 +576,6 @@ select {
   background: var(--done-soft);
 }
 /* Family mode: large type, clear alternation of V and A for children. */
-.vespers.family {
-  font-size: 1.2rem;
-}
-.vespers.family .pray {
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-.vespers.family .vr {
-  grid-template-columns: 1.8em 1fr;
-  margin: 6px 0;
-}
-.vespers.family .vr:nth-child(2) span {
-  font-weight: 600;
-}
-.vespers.family .antiphon {
-  font-size: 1.3rem;
-  font-weight: 600;
-}
 
 
 /* Fields always show where the cursor is, also for time fields whose

@@ -247,3 +247,18 @@ describe('reading habit', () => {
     expect(canToggle(reading, '2026-09-26', '2026-09-25', store([]))).toBe(false);
   });
 });
+
+describe('Vesper and Familienandacht', () => {
+  it('names the Vesper as the personal close of the day and adds the Familienandacht for existing users', () => {
+    const old = habitsFromPresets()
+      .filter((h) => h.id !== 'familyDevotion')
+      .map((h) => (h.id === 'vespers' ? { ...h, name: 'Vesper mit der Familie' } : h));
+    const merged = mergePresets(old);
+    expect(merged.find((h) => h.id === 'vespers')!.name).toBe('Vesper');
+    const family = merged.find((h) => h.id === 'familyDevotion')!;
+    expect(family).toMatchObject({ name: 'Familienandacht', rhythm: 'daily', active: true });
+    // A name of one's own stays.
+    const own = mergePresets(old.map((h) => (h.id === 'vespers' ? { ...h, name: 'Abendgebet' } : h)));
+    expect(own.find((h) => h.id === 'vespers')!.name).toBe('Abendgebet');
+  });
+});

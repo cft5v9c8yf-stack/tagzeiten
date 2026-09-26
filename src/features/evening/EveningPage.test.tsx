@@ -142,12 +142,10 @@ describe('Vesper', () => {
     expect(within(chainOf('Nachtgebet')).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Vesper, gebetet');
   });
 
-  it('offers the family mode as a switch', async () => {
+  it('is the personal close of the day, without a family mode', async () => {
     await renderEvening('2026-09-24');
     await openVespers();
-    const sw = screen.getByRole('switch', { name: /Familienmodus/ });
-    fireEvent.click(sw);
-    await waitFor(() => expect(document.querySelector('.vespers.family')).not.toBeNull());
-    expect(localStorage.getItem('tz:family')).toBe('1');
+    expect(screen.queryByRole('switch')).toBeNull();
+    expect(document.querySelector('.vespers')!.textContent).toContain('für dich allein');
   });
 });

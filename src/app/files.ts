@@ -20,6 +20,7 @@ export function clearDevicePreferences(): void {
     [localStorage, 'tz:theme'],
     [localStorage, 'tz:journal'],
     [sessionStorage, 'tz:timer'],
+    [sessionStorage, 'tz:timer:reading'],
   ] as const) {
     try {
       store.removeItem(key);

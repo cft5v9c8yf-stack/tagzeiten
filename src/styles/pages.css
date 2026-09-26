@@ -824,23 +824,6 @@ body.is-sorting * {
 .order-options .seg {
   margin: 0;
 }
-.family-switch {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--sans);
-}
-.family-switch label {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.25;
-  font-size: 0.86rem;
-  cursor: pointer;
-}
-.family-switch label span {
-  font-size: 0.76rem;
-  color: var(--muted);
-}
 .done-actions {
   display: flex;
   flex-wrap: wrap;

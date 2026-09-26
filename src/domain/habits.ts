@@ -2,7 +2,7 @@
  * Habits: done for a day, a week (Mon–Sun) or a calendar month.
  * There is no streak, chain or score anywhere (rule 4).
  */
-import { HABIT_PRESETS, READING_HABIT } from '../content/habits';
+import { HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS } from '../content/habits';
 import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
 import type { Day, Habit, Rhythm } from './model';
 
@@ -25,7 +25,10 @@ export function habitsFromPresets(): Habit[] {
  * after the preset that precedes it.
  */
 export function mergePresets(habits: readonly Habit[]): Habit[] {
-  const out = habits.map((h) => ({ ...h }));
+  const out = habits.map((h) => {
+    const r = RENAMED_PRESETS[h.id];
+    return r && h.name === r.from ? { ...h, name: r.to } : { ...h };
+  });
   HABIT_PRESETS.forEach((p, i) => {
     if (out.some((h) => h.id === p.id)) return;
     const habit = fromPreset(p, !!p.activeOnUpdate);

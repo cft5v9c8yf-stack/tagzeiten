@@ -1,5 +1,5 @@
 import { scheduleFor } from '../../domain/schedule';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
 import { getOrder, ORDER_MINUTES, RUBRICS, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
@@ -12,16 +12,6 @@ import { Segmented } from '../../ui/Choice';
 import { StepFlow, type FlowStep } from '../../ui/StepFlow';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
-
-const FAMILY_KEY = 'tz:family';
-
-function readFamilyMode(): boolean {
-  try {
-    return localStorage.getItem(FAMILY_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
 
 function useCompletion(date: DateKey, flag: 'vespersDone' | 'complineDone', doneMessage: string) {
   const store = useStore();
@@ -36,20 +26,6 @@ function useFormSetter(date: DateKey, key: 'vespersForm' | 'complineForm') {
   const store = useStore();
   return (f: OrderForm) =>
     store.updateDay(date, (d) => ({ ...d, evening: { ...d.evening, [key]: f } as EveningEntry }), { immediate: true });
-}
-
-/** Large type for praying with the children; a per-device preference. */
-function FamilySwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
-  const id = useId();
-  return (
-    <div className="family-switch">
-      <input id={id} type="checkbox" role="switch" className="switch" checked={on} onChange={onToggle} aria-describedby={`${id}-d`} />
-      <label htmlFor={id}>
-        <b>Familienmodus</b>
-        <span id={`${id}-d`}>Große Schrift, V und A im Wechsel</span>
-      </label>
-    </div>
-  );
 }
 
 interface ComplinePage {
@@ -94,18 +70,6 @@ function VespersView({
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', 'Vesper gebetet');
   const done = day.evening.vespersDone;
-  const [family, setFamily] = useState(readFamilyMode);
-
-  const toggleFamily = () =>
-    setFamily((f) => {
-      try {
-        localStorage.setItem(FAMILY_KEY, f ? '0' : '1');
-      } catch {
-        // per-device preference only
-      }
-      return !f;
-    });
-
   const steps: FlowStep[] = [
     ...parts.map((p) => ({ id: p.kind, title: p.title, icon: VESPERS_ICONS[p.kind], done })),
     { id: 'compline', title: 'Nachtgebet', icon: 'moon', done: day.evening.complineDone },
@@ -136,7 +100,7 @@ function VespersView({
   );
 
   return (
-    <div className={`order vespers${family ? ' family' : ''}`}>
+    <div className="order vespers">
       <OrderHead title="Vesper" rubric={form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}>
         <Segmented
           label="Form der Vesper"
@@ -150,7 +114,6 @@ function VespersView({
             { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
           ]}
         />
-        <FamilySwitch on={family} onToggle={toggleFamily} />
       </OrderHead>
       <StepFlow
         label="Vesper"

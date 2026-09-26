@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Rubric } from '../../ui/PrayerText';
 
-/** Title of an order, its rubric, and its options (form, family mode) in one quiet row. */
+/** Title of an order, its rubric, and its options (form) in one quiet row. */
 export function OrderHead({ title, rubric, children }: { title: string; rubric?: ReactNode; children?: ReactNode }) {
   return (
     <header className="order-head">
