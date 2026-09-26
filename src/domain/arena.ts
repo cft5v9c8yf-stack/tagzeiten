@@ -3,6 +3,7 @@
  * fight – with Bible verses and prayer concerns. Sin is not written down here
  * (rule 9); it is prayed in the confession of the night prayer.
  */
+import { formatLong, isDateKey, type DateKey } from './dates';
 import type { ArenaEntry } from './model';
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
@@ -43,6 +44,7 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     };
     if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
     if (x.kind === 'forge') e.kind = 'forge';
+    if (e.kind === 'forge' && isDateKey(x.meetingDate)) e.meetingDate = x.meetingDate;
     if (isEmptyEntry(e)) continue;
     seen.add(id);
     out.push(e);
@@ -69,3 +71,28 @@ export function searchArena(entries: readonly ArenaEntry[], query: string): Aren
     return words.every((w) => hay.includes(w));
   });
 }
+
+/**
+ * The meeting a new Eisenschmiede entry is for: the next one already planned
+ * (today or later) among the open entries, if any.
+ */
+export function nextMeeting(entries: readonly ArenaEntry[], today: DateKey): DateKey | undefined {
+  return entries
+    .filter((e) => e.kind === 'forge' && e.archivedAt === undefined && e.meetingDate && e.meetingDate >= today)
+    .map((e) => e.meetingDate!)
+    .sort()[0];
+}
+
+/** Open Eisenschmiede entries grouped by meeting: earliest meeting first, entries without a date last. */
+export function byMeeting(entries: readonly ArenaEntry[]): { date?: DateKey; entries: ArenaEntry[] }[] {
+  const groups = new Map<string, ArenaEntry[]>();
+  for (const e of entries) {
+    const k = e.meetingDate ?? '';
+    groups.set(k, [...(groups.get(k) ?? []), e]);
+  }
+  return [...groups.entries()]
+    .sort(([a], [b]) => (a === '' ? 1 : b === '' ? -1 : a < b ? -1 : 1))
+    .map(([k, list]) => ({ date: k || undefined, entries: list }));
+}
+
+export const meetingLabel = (d: DateKey) => `Treffen am ${formatLong(d)}`;

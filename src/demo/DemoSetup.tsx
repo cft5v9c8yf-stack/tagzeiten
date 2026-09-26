@@ -48,6 +48,7 @@ export function DemoSetup() {
           {
             id: 'demo-forge',
             kind: 'forge',
+            meetingDate: addDays(today, 5),
             createdAt: new Date(`${addDays(today, -1)}T19:30:00`).getTime(),
             updatedAt: new Date(`${addDays(today, -1)}T19:30:00`).getTime(),
             verses: ['Galater 6,2'],

@@ -138,4 +138,23 @@ describe('Arena', () => {
     fireEvent.click(await screen.findByRole('button', { name: 'Besprochen – archivieren' }));
     await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
   });
+
+  it('assigns concerns to a meeting, groups them by meeting, and suggests the next one', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
+    fireEvent.change(await screen.findByLabelText('Für das Treffen am'), { target: { value: '2026-10-01' } });
+    fireEvent.change(screen.getByLabelText('Was du mit den Brüdern besprechen willst'), { target: { value: 'Erstes' } });
+    await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ meetingDate: '2026-10-01', text: 'Erstes' }));
+
+    // The next concern belongs to the same meeting without asking.
+    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
+    expect(((await screen.findByLabelText('Für das Treffen am')) as HTMLInputElement).value).toBe('2026-10-01');
+    fireEvent.change(screen.getByLabelText('Was du mit den Brüdern besprechen willst'), { target: { value: 'Zweites' } });
+    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+
+    const group = await screen.findByRole('region', { name: 'Treffen am Donnerstag, 1. Oktober' });
+    expect(group.querySelectorAll('.arena-card')).toHaveLength(2);
+  });
 });

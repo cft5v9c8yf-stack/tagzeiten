@@ -10,7 +10,7 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
-import { isEmptyEntry, newEntry } from '../domain/arena';
+import { isEmptyEntry, newEntry, nextMeeting } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
@@ -207,6 +207,9 @@ export class Store {
   /** Starts a new Arena entry (or one for the Eisenschmiede) and returns its id. Entries left empty are cleared away. */
   addArenaEntry(kind?: 'forge'): string {
     const entry = newEntry(this.now().getTime(), kind);
+    // A new concern for the brothers belongs to the next meeting already planned.
+    const meeting = kind === 'forge' ? nextMeeting(this.profile.arena, this.today()) : undefined;
+    if (meeting) entry.meetingDate = meeting;
     this.updateProfile((p) => ({ ...p, arena: [entry, ...p.arena.filter((e) => !isEmptyEntry(e))] }), {
       immediate: true,
     });

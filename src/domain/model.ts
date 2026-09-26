@@ -173,6 +173,8 @@ export interface ArenaEntry {
   text: string;
   /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
   kind?: 'forge';
+  /** Eisenschmiede: the day of the meeting this entry is for. */
+  meetingDate?: DateKey;
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
   archivedAt?: number;
 }

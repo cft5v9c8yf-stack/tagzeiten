@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { entryTitle, isReference } from '../../domain/arena';
+import { byMeeting, entryTitle, isReference, meetingLabel } from '../../domain/arena';
 import type { ArenaEntry } from '../../domain/model';
 import { BibleLink } from '../../ui/BibleLink';
 import { Segmented } from '../../ui/Choice';
@@ -126,7 +126,15 @@ function LineList({
 }
 
 /** An entry as a card: date, first line, verses. Used in the Arena and in the Rückblick. */
-export function ArenaCard({ entry: e, showKind = true }: { entry: ArenaEntry; showKind?: boolean }) {
+export function ArenaCard({
+  entry: e,
+  showKind = true,
+  showMeeting = true,
+}: {
+  entry: ArenaEntry;
+  showKind?: boolean;
+  showMeeting?: boolean;
+}) {
   return (
     <Link className="arena-card" to={`/arena/${e.id}`}>
       <span className="arena-card-date">
@@ -134,6 +142,7 @@ export function ArenaCard({ entry: e, showKind = true }: { entry: ArenaEntry; sh
         {showKind && e.kind === 'forge' && <span className="ktag">Eisenschmiede</span>}
       </span>
       <span className="arena-card-title">{entryTitle(e)}</span>
+      {showMeeting && e.meetingDate && <span className="arena-card-meeting">{meetingLabel(e.meetingDate)}</span>}
       {e.verses.some((v) => v.trim()) && (
         <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
       )}
@@ -146,6 +155,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const profile = useProfile();
   const navigate = useNavigate();
   const textId = useId();
+  const dateId = useId();
   const toast = useToast();
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
@@ -162,6 +172,24 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
+
+      {kind === 'forge' && (
+        <div className="field arena-meeting">
+          <label htmlFor={dateId}>Für das Treffen am</label>
+          <input
+            id={dateId}
+            type="date"
+            value={entry.meetingDate ?? ''}
+            onChange={(e) => {
+              const v = e.target.value;
+              update((x) => {
+                const { meetingDate: _, ...rest } = x;
+                return /^\d{4}-\d{2}-\d{2}$/.test(v) ? { ...rest, meetingDate: v } : rest;
+              });
+            }}
+          />
+        </div>
+      )}
 
       <LineList
         label="Bibelstelle"
@@ -309,7 +337,7 @@ export function ArenaPage() {
       >
         {place.add}
       </button>
-      {shown.length > 0 && (
+      {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {shown.map((e) => (
             <li key={e.id}>
@@ -318,6 +346,19 @@ export function ArenaPage() {
           ))}
         </ul>
       )}
+      {kind === 'forge' &&
+        byMeeting(shown).map((g) => (
+          <section key={g.date ?? 'none'} className="arena-meeting-group" aria-label={g.date ? meetingLabel(g.date) : 'Ohne Treffen'}>
+            <h3 className="arena-meeting-title">{g.date ? meetingLabel(g.date) : 'Noch keinem Treffen zugeordnet'}</h3>
+            <ul className="arena-list">
+              {g.entries.map((e) => (
+                <li key={e.id}>
+                  <ArenaCard entry={e} showKind={false} showMeeting={false} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       {archivedCount > 0 && (
         <p className="small arena-archived">
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
