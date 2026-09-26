@@ -40,9 +40,10 @@ describe('Sonntag', () => {
     expect(screen.getByText('Sonntag, 20. September 2026')).toBeTruthy();
     expect(document.querySelector('.sunday-verse blockquote')!.textContent).toMatch(/^Jetzt aber offenbart/);
     expect(screen.getByRole('heading', { name: 'Bedeutung' })).toBeTruthy();
-    // Gospel and Epistle as references with links, not as full text (rule 13).
-    const links = [...document.querySelectorAll('.sunday-readings a')].map((a) => a.textContent);
-    expect(links).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
+    // Gospel and Epistle as references only: no full text, no links (rule 13).
+    const refs = [...document.querySelectorAll('.sunday-readings .bible-ref')].map((r) => r.textContent);
+    expect(refs).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
+    expect(document.querySelector('.sunday-readings a')).toBeNull();
     expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('PfingstkreisTrinitatiszeit');
     // The Trinity group stands above the name of the Sunday.
     expect(document.querySelector('.sunday-group')!.textContent).toContain('Heiligung');

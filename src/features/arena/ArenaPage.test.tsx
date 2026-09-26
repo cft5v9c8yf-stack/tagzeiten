@@ -65,7 +65,8 @@ describe('Arena', () => {
     expect(entry.verses).toEqual(['Römer 8,37', '1. Korinther 10,13']);
     expect(entry.concerns).toEqual(['Geduld mit den Kindern', 'Arbeit']);
     // References become links to the Bible (rule 13), and a word of comfort stands underneath.
-    expect(screen.getAllByRole('link', { name: 'Römer 8,37' }).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Römer 8,37').length).toBeGreaterThan(0);
+    expect(screen.queryByRole('link', { name: 'Römer 8,37' })).toBeNull();
     expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Gott ist getreu');
 
     fireEvent.click(screen.getByRole('button', { name: 'Bibelstelle 2 entfernen' }));

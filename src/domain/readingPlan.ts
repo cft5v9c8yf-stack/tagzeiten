@@ -5,7 +5,6 @@
  */
 import {
   ALL_BOOKS,
-  BIBLE_BASE_URL,
   CHAPTER_CHOICES,
   DEFAULT_PLAN_ID,
   MINUTE_CHOICES,
@@ -239,12 +238,6 @@ export function portionLabel(track: Track, p: Portion): string {
   const b = track.def.books[p.book];
   if (!b) return '';
   return `${b.name} ${p.from === p.to ? p.from : `${p.from}–${p.to}`}`;
-}
-
-export function portionUrl(track: Track, p: Portion): string {
-  const b = track.def.books[p.book];
-  if (!b) return BIBLE_BASE_URL;
-  return `${BIBLE_BASE_URL}${encodeURIComponent(b.slug)}${p.from}${p.to > p.from ? `-${p.to}` : ''}`;
 }
 
 /** Chapters contained in the portions before `index` – the progress within the current round. */

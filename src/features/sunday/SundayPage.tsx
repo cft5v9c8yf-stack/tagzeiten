@@ -8,7 +8,7 @@ import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { churchDay, CIRCLE_LABEL, CIRCLES, nextWeekStart, previousWeekStart, SEASON_LABEL } from '../../domain/churchYear';
 import { formatLong, type DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { SundayChooser } from './SundayOverview';
 
 const SUNDAY_PARAM = 's';
@@ -132,7 +132,7 @@ export function SundayPage() {
           <figcaption>Wochenspruch</figcaption>
           <blockquote>{composeVerse(verse)}</blockquote>
           <p className="cy-verse-ref">
-            <BibleLink reference={verse.ref} />
+            <BibleRef reference={verse.ref} />
           </p>
         </figure>
       )}
@@ -157,12 +157,12 @@ export function SundayPage() {
           <div className="sunday-readings">
             <div className="sunday-reading">
               <span className="track">Evangelium</span>
-              <BibleLink reference={info.gospel} />
+              <BibleRef reference={info.gospel} />
               {summary && <p className="sunday-summary">{summary.gospel}</p>}
             </div>
             <div className="sunday-reading">
               <span className="track">Epistel</span>
-              <BibleLink reference={info.epistle} />
+              <BibleRef reference={info.epistle} />
               {summary && <p className="sunday-summary">{summary.epistle}</p>}
             </div>
           </div>

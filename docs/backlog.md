@@ -25,6 +25,6 @@ Stand:
   Schmalkaldischen Artikeln; danach Apologie, Großer Katechismus, Traktat,
   Konkordienformel. Jede Seite gegen den Scan prüfen.
 - **Bibelstellen.** Die im Bekenntnistext selbst angeführten Stellen, als
-  Verweis mit Link auf bibleserver.com (Regel 13).
+  Angabe ohne Link (Regel 13).
 - **Suche und Filter.** Volltextsuche über alle Schriften; Filter nach Schrift,
   Thema (z. B. Rechtfertigung, Taufe, Abendmahl, Beichte) und Bibelbuch.

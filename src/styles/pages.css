@@ -1110,7 +1110,7 @@ body.is-sorting * {
   text-transform: uppercase;
   color: var(--muted);
 }
-.sunday-reading .bible-link {
+.sunday-reading .bible-ref {
   font-size: 1.05rem;
 }
 .sunday-page .cy-circles {
@@ -1440,7 +1440,7 @@ body.is-sorting * {
 .arena-comfort p {
   margin: 0 0 6px;
 }
-.arena-comfort .bible-link {
+.arena-comfort .bible-ref {
   font-style: normal;
   font-size: 0.85rem;
 }
@@ -1450,7 +1450,7 @@ body.is-sorting * {
   gap: 8px;
   margin-bottom: 8px;
 }
-.arena-comfort .bible-link {
+.arena-comfort .bible-ref {
   white-space: nowrap;
 }
 .arena-archived { margin-top: 14px; }

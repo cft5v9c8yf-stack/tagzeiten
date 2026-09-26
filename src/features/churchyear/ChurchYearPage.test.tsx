@@ -62,8 +62,10 @@ describe('Kirchenjahr', () => {
     const invokavit = document.getElementById('entry-invokavit')!;
     expect(invokavit.textContent).toContain('Invokavit');
     expect(invokavit.textContent).toContain('„Er ruft mich an, so will ich ihn erhören“');
-    const links = [...invokavit.querySelectorAll('a')].map((a) => a.textContent);
-    expect(links).toEqual(['Matthäus 4,1-11', 'Hebräer 4,14-16']);
+    // References as text only, no links (rule 13).
+    const refs = [...invokavit.querySelectorAll('.bible-ref')].map((r) => r.textContent);
+    expect(refs).toEqual(['Matthäus 4,1-11', 'Hebräer 4,14-16']);
+    expect(invokavit.querySelector('a')).toBeNull();
     expect(document.getElementById('entry-goodFriday')!.textContent).toContain('Johannes 19,16-30');
   });
 

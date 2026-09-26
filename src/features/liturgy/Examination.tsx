@@ -2,7 +2,7 @@ import { armorOf } from '../../content/armor';
 import { useProfile } from '../../data/hooks';
 import { EXAMEN_INTRO, EXAMEN_NOTE, STATIONS, STATION_BY_WEEKDAY } from '../../content/examen';
 import { weekdayOf, type DateKey } from '../../domain/dates';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { Note } from '../../ui/PrayerText';
 
 /**
@@ -28,7 +28,7 @@ export function Examination({ date }: { date: DateKey }) {
         {station.refs.map((r, i) => (
           <span key={r}>
             {i > 0 && ' · '}
-            <BibleLink reference={r} />
+            <BibleRef reference={r} />
           </span>
         ))}
       </p>

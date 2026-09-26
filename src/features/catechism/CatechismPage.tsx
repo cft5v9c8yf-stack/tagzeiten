@@ -8,7 +8,7 @@ import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { catechismFor, offsetForChiefPart, pieceId } from '../../domain/catechismDay';
 import { canToggle, isDoneInPeriod } from '../../domain/habits';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText, Rubric } from '../../ui/PrayerText';
 import { Section } from '../../ui/Section';
 import { setOpen } from '../../ui/collapseState';
@@ -122,7 +122,7 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
                     {d.refs.map((r, i) => (
                       <span key={r}>
                         {i > 0 && ' · '}
-                        <BibleLink reference={r} />
+                        <BibleRef reference={r} />
                       </span>
                     ))}
                   </span>

@@ -604,9 +604,6 @@ a.cy-week-name {
 .next-list li:last-child {
   border-bottom: 0;
 }
-.next-list a {
-  display: block;
+.next-list li {
   padding: 7px 0;
-  color: inherit;
-  font-weight: 400;
 }

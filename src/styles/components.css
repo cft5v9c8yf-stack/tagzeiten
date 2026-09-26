@@ -408,8 +408,9 @@ details.fold[open] > summary {
 .reading-refs.large .ref-text {
   font-size: 1.3rem;
 }
-a.bible-link {
-  color: var(--link);
+/* A reference only: read in the printed Bible (rule 13). */
+.bible-ref {
+  color: var(--gold);
   font-weight: 600;
 }
 

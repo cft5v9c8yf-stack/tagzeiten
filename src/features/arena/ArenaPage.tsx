@@ -4,7 +4,7 @@ import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import { byMeeting, entryTitle, forgeTitle, isReference } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { SectionVerse } from '../../ui/SectionVerse';
 
@@ -255,7 +255,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         placeholder="z. B. Römer 8,37"
         values={entry.verses}
         onChange={(verses) => update((e) => ({ ...e, verses }))}
-        render={(v) => (isReference(v) ? <BibleLink reference={v.trim()} /> : null)}
+        render={(v) => (isReference(v) ? <BibleRef reference={v.trim()} /> : null)}
       />
       <LineList
         label="Gebetsanliegen"
@@ -284,7 +284,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       <aside className="arena-comfort" aria-label="Zuspruch">
         {place.comfort.map((c) => (
           <p key={c.ref}>
-            {c.text} <BibleLink reference={c.ref} />
+            {c.text} <BibleRef reference={c.ref} />
           </p>
         ))}
       </aside>

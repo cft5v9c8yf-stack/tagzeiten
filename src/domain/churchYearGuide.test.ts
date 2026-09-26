@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { CIRCLE_INFO, SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../content/churchYearGuide';
-import { refUrl } from './bibleRef';
 import { churchYearOutline, CIRCLES } from './churchYear';
 
 describe('church year guide', () => {
@@ -18,10 +17,9 @@ describe('church year guide', () => {
     expect([...missing].filter((k) => !/^trinity(2[5-9])$/.test(k))).toEqual([]);
   });
 
-  it('gives references that link to the passage', () => {
+  it('gives well-formed references', () => {
     for (const [key, info] of Object.entries(SUNDAY_INFO)) {
       for (const ref of [info.gospel, info.epistle]) {
-        expect(refUrl(ref), `${key}: ${ref}`).not.toBe('https://www.bibleserver.com/LUT/');
         expect(ref, key).toMatch(/^(\d\. )?[A-ZÄÖÜ][a-zäöüß]+ \d+,\d/);
       }
     }

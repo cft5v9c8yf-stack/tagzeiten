@@ -14,7 +14,7 @@ import type { Part } from '../../content/orders';
 import { SEVEN_QUESTIONS } from '../../content/questions';
 import { useDay, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
-import { getPlan, portionLabel, portionUrl } from '../../domain/readingPlan';
+import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { DayField } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
 import type { PartContext } from './OrderPart';
@@ -30,12 +30,12 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
       {plan.tracks.map((t) => {
         const i = reading.portions[t.def.id];
         const p = i === undefined ? undefined : t.portions[i];
-        // Old and New Testament side by side; the whole tile opens the passage.
+        // Old and New Testament side by side; read in the printed Bible.
         return p ? (
-          <a key={t.def.id} className="ref" href={portionUrl(t, p)} target="_blank" rel="noopener noreferrer">
+          <div key={t.def.id} className="ref">
             <span className="track">{t.def.label}</span>
             <span className="ref-text">{portionLabel(t, p)}</span>
-          </a>
+          </div>
         ) : (
           <div key={t.def.id} className="ref">
             <span className="track">{t.def.label}</span>

@@ -9,7 +9,7 @@ export interface Book {
   /** Display name, e.g. "1. Mose" */
   name: string;
   chapters: number;
-  /** bibleserver.com book slug, e.g. "1.Mose" */
+  /** Stable id of the book, e.g. "1.Mose" */
   slug: string;
 }
 
@@ -148,4 +148,3 @@ export const VERSES_PER_MINUTE = 5;
 export const CHAPTER_CHOICES = [1, 2, 3, 4, 5, 6, 8, 10] as const;
 export const MINUTE_CHOICES = [5, 10, 15, 20, 30, 45, 60] as const;
 
-export const BIBLE_BASE_URL = 'https://www.bibleserver.com/LUT/';

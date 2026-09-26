@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
-import { getPlan, ownAmounts, portionLabel, portionUrl } from '../../domain/readingPlan';
+import { getPlan, ownAmounts, portionLabel } from '../../domain/readingPlan';
 import { Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { Timer } from '../../ui/Timer';
@@ -33,9 +33,7 @@ function NextPortions({ date }: { date: string }) {
             <ol className="next-list">
               {next.map((p, i) => (
                 <li key={i}>
-                  <a href={portionUrl(t, p)} target="_blank" rel="noopener noreferrer">
-                    {portionLabel(t, p)}
-                  </a>
+                  {portionLabel(t, p)}
                 </li>
               ))}
             </ol>

@@ -44,11 +44,11 @@ import { WREATH_FREEDOM, WREATH_INTRO, WREATH_MATTER, WREATH_RULE_OF_THUMB } fro
 import { RUBRICS, type OrderId, type Part } from '../../content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS, PSALM_RUBRIC_ANTIPHON, PSALM_RUBRIC_MORNING } from '../../content/psalms';
 import { useProfile } from '../../data/hooks';
-import { psalmRef, psalmUrl } from '../../domain/bibleRef';
+import { psalmRef } from '../../domain/bibleRef';
 import { isPassiontide } from '../../domain/churchYear';
 import { WEEKDAY_LONG, weekdayOf, type DateKey } from '../../domain/dates';
 import type { OrderForm } from '../../domain/model';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { Note, PrayerText, Rubric, VersicleView } from '../../ui/PrayerText';
 import { Section } from '../../ui/Section';
 import { Alignment } from './Alignment';
@@ -80,7 +80,7 @@ function Refs({ refs }: { refs: string }) {
       {refsOf(refs).map((r, i) => (
         <span key={r}>
           {i > 0 && ' · '}
-          <BibleLink reference={r} />
+          <BibleRef reference={r} />
         </span>
       ))}
     </span>
@@ -136,7 +136,7 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       return (
         <>
           <p className="psalm-ref">
-            <BibleLink reference={psalmRef(ps.psalm)} href={psalmUrl(ps.psalm)} />
+            <BibleRef reference={psalmRef(ps.psalm)} />
           </p>
           <p className="antiphon">
             <span className="rubric-inline">Antiphon:</span> {ps.antiphon}

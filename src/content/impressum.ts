@@ -30,17 +30,16 @@ export const IMPRINT: readonly ImprintSection[] = [
   {
     title: 'Texte und Quellen',
     lines: [
-      'Bibeltexte nach der Lutherbibel 1912, gemeinfrei. Vollständige Bibelstellen werden nicht eingebunden; sie sind mit bibleserver.com (Lutherbibel) verlinkt.',
+      'Bibeltexte nach der Lutherbibel 1912, gemeinfrei. Vollständige Bibelabschnitte werden nicht eingebunden: Die App nennt die Stellen, gelesen wird in der gedruckten Bibel.',
       'Luthers Kleiner Katechismus in traditioneller Fassung, gemeinfrei. Lieder und Gebete aus der Zeit vor 1900.',
       'Die Lesemethode folgt Hanniel Strebel („Überblick: Hanniel zum Lesen der Bibel“, hanniel.ch) und ist in eigenen Worten beschrieben.',
       'Alle übrigen Texte – Deutungen, Hinweise, Gebete ohne Quellenangabe – sind eigene Texte des Anbieters.',
     ],
   },
   {
-    title: 'Haftung für Inhalte und Links',
+    title: 'Haftung für Inhalte',
     lines: [
       'Die Inhalte wurden mit Sorgfalt erstellt. Für Richtigkeit, Vollständigkeit und Aktualität kann dennoch keine Gewähr übernommen werden.',
-      'Die App enthält Links zu fremden Websites, vor allem zu bibleserver.com. Für deren Inhalte ist allein der jeweilige Anbieter verantwortlich. Werden Rechtsverletzungen bekannt, wird der betreffende Link entfernt.',
     ],
   },
 ];
@@ -57,7 +56,7 @@ export const PRIVACY_NOTICE: readonly ImprintSection[] = [
     title: 'Aufruf der App',
     lines: [
       'Die App wird über GitHub Pages ausgeliefert (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA). Beim Aufruf verarbeitet GitHub technisch notwendige Daten wie deine IP-Adresse, um die Seite auszuliefern und abzusichern. Näheres in der Datenschutzerklärung von GitHub.',
-      'Schriften und alle übrigen Bestandteile sind in der App enthalten; beim Beten und Lesen werden keine weiteren Dienste aufgerufen. Erst wenn du einen Bibellink antippst, öffnet sich bibleserver.com mit dessen eigener Datenschutzerklärung.',
+      'Schriften und alle übrigen Bestandteile sind in der App enthalten. Beim Beten und Lesen werden keine weiteren Dienste aufgerufen, und die App enthält keine Links zu fremden Websites.',
     ],
   },
   {

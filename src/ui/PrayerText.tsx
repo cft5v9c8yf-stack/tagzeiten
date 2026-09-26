@@ -1,6 +1,6 @@
 import type { Text, Versicle } from '../content/types';
 import type { ReactNode } from 'react';
-import { BibleLink } from './BibleLink';
+import { BibleRef } from './BibleRef';
 
 /** A prayed text, line by line; an empty line separates stanzas. */
 export function PrayerText({ text, className }: { text: Text; className?: string }) {
@@ -22,7 +22,7 @@ export function PrayerText({ text, className }: { text: Text; className?: string
       ))}
       {(text.ref || text.source) && (
         <p className="attribution">
-          {text.ref && (/^nach /.test(text.ref) ? text.ref : <BibleLink reference={text.ref} />)}
+          {text.ref && (/^nach /.test(text.ref) ? text.ref : <BibleRef reference={text.ref} />)}
           {text.ref && text.source && ' · '}
           {text.source}
         </p>

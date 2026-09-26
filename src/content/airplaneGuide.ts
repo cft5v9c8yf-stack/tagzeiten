@@ -68,6 +68,6 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
 
 export const AIRPLANE_NOTES: readonly string[] = [
   'Im Flugmodus erreicht dich niemand – auch Frau und Kinder nicht. Wer erreichbar bleiben will, nimmt statt „Flugmodus festlegen“ die Aktion „Fokus festlegen“ mit „Nicht stören“ und lässt dort Anrufe von bestimmten Personen zu.',
-  'Tagzeiten läuft ohne Internet. Nur die Bibellinks zu bibleserver.com brauchen eine Verbindung – dafür liegt die Bibel ohnehin auf dem Tisch.',
+  'Tagzeiten läuft ganz ohne Internet. Die Bibel liegt ohnehin auf dem Tisch.',
   'Die Bezeichnungen können je nach iOS-Version leicht abweichen. Beschrieben ist der Stand von iOS 17 und 18.',
 ];

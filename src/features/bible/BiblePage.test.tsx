@@ -36,7 +36,7 @@ describe('Bibel', () => {
   it('shows the reading of the day and what follows, without counts or dates', async () => {
     const store = await renderBible();
     expect(document.querySelector('.section-verse blockquote')!.textContent).toContain('Dein Wort ist meines Fußes Leuchte');
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     const next = document.querySelector('.next-portions')!;
     expect(next.querySelectorAll('.next-track')).toHaveLength(2);
     expect(next.querySelectorAll('li').length).toBe(10);
@@ -67,20 +67,20 @@ describe('Bibel', () => {
 
   it('offers a plan of one own: a book, and chapters or time a day; today follows', async () => {
     const store = await renderBible();
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Eigener Plan' }));
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(1));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(1));
 
     fireEvent.change(screen.getByLabelText('Buch'), { target: { value: '42' } }); // Johannes
-    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toContain('Johannes 1–2'));
+    await waitFor(() => expect(document.querySelector('.reading-refs .ref')!.textContent).toContain('Johannes 1–2'));
     fireEvent.change(screen.getByLabelText('Kapitel am Tag'), { target: { value: '3' } });
-    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toContain('Johannes 1–3'));
+    await waitFor(() => expect(document.querySelector('.reading-refs .ref')!.textContent).toContain('Johannes 1–3'));
 
     fireEvent.click(screen.getByRole('button', { name: 'Zeit' }));
     fireEvent.change(await screen.findByLabelText('Minuten am Tag'), { target: { value: '10' } });
     // Johannes has about 42 verses a chapter: ten minutes are about one chapter.
-    await waitFor(() => expect(document.querySelector('.reading-refs a')!.textContent).toBe('Etwa 10 MinutenJohannes 1'));
+    await waitFor(() => expect(document.querySelector('.reading-refs .ref')!.textContent).toBe('Etwa 10 MinutenJohannes 1'));
     expect(store.getProfile().plan.planId).toBe('eigen-m10');
     // Reading by time brings its own timer.
     expect(screen.getByRole('timer').textContent).toBe('10:00');
@@ -88,7 +88,7 @@ describe('Bibel', () => {
 
     // Back to Old and New Testament: the view as before, the places kept.
     fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     expect(screen.queryByRole('timer')).toBeNull();
     expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2);
     expect(store.getProfile().plan.own).toBe('eigen-m10');
@@ -96,31 +96,31 @@ describe('Bibel', () => {
 
   it('sets chapters a day for each Testament, and several books in a plan of one own', async () => {
     const store = await renderBible();
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
     fireEvent.change((await screen.findAllByLabelText('Kapitel am Tag'))[0]!, { target: { value: '3' } });
     await waitFor(() => expect(store.getProfile().plan.planId).toBe('atnt-3-1'));
     fireEvent.change(screen.getAllByLabelText('Kapitel am Tag')[1]!, { target: { value: '2' } });
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toContain('Matthäus 1–2'));
-    expect(document.querySelectorAll('.reading-refs a')[0]!.textContent).toContain('1. Mose 1–3');
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toContain('Matthäus 1–2'));
+    expect(document.querySelectorAll('.reading-refs .ref')[0]!.textContent).toContain('1. Mose 1–3');
 
     fireEvent.click(screen.getByRole('button', { name: 'Eigener Plan' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Mehrere Bücher' }));
     // The second book starts with the Gospel according to Matthew.
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
-    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. LesungMatthäus 1');
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
+    expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toBe('2. LesungMatthäus 1');
     fireEvent.click(screen.getByRole('button', { name: 'Weiteres Buch hinzufügen' }));
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(3));
-    expect(document.querySelectorAll('.reading-refs a')[2]!.textContent).toBe('3. LesungPsalm 1');
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(3));
+    expect(document.querySelectorAll('.reading-refs .ref')[2]!.textContent).toBe('3. LesungPsalm 1');
     fireEvent.click(screen.getAllByRole('button', { name: 'Dieses Buch entfernen' })[1]!);
-    await waitFor(() => expect(document.querySelectorAll('.reading-refs a').length).toBe(2));
-    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. LesungPsalm 1');
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
+    expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toBe('2. LesungPsalm 1');
 
     // Each book by chapters or by time; the timer runs over the books read by time.
     expect(screen.queryByRole('timer')).toBeNull();
     fireEvent.click(within(screen.getByRole('group', { name: 'Maß der täglichen Lesung, 2. Lesung' })).getByRole('button', { name: 'Zeit' }));
     await waitFor(() => expect(store.getProfile().plan.planId).toBe('eigen-k2.m15'));
-    expect(document.querySelectorAll('.reading-refs a')[1]!.textContent).toBe('2. Lesung · 15 Min.Psalm 1–5');
+    expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toBe('2. Lesung · 15 Min.Psalm 1–5');
     expect(screen.getByRole('timer').textContent).toBe('15:00');
 
     // Back to Old and New Testament, with the amounts left there.

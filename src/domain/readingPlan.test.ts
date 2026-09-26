@@ -14,7 +14,6 @@ import {
   ownPlanId,
   markRead,
   portionLabel,
-  portionUrl,
   positionFor,
 } from './readingPlan';
 
@@ -70,11 +69,9 @@ describe('reading plan at2-nt1', () => {
     expect(NT_BOOKS).toHaveLength(27);
   });
 
-  it('labels and links portions', () => {
+  it('labels portions', () => {
     expect(portionLabel(ot, ot.portions[0]!)).toBe('1. Mose 1–2');
-    expect(portionUrl(ot, ot.portions[0]!)).toBe('https://www.bibleserver.com/LUT/1.Mose1-2');
     expect(portionLabel(nt, nt.portions[0]!)).toBe('Matthäus 1');
-    expect(portionUrl(nt, nt.portions[0]!)).toBe(`https://www.bibleserver.com/LUT/${encodeURIComponent('Matthäus')}1`);
   });
 
   it('finds the portion containing a chapter', () => {

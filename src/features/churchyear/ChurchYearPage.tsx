@@ -12,7 +12,7 @@ import { CIRCLE_GUIDE, DAY_GUIDE, EXTRA_DAYS, GROUP_REFS, optionalDays, SEASON_G
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { churchDay, churchYearOutline, CIRCLES, SEASON_LABEL, type Circle, type OutlineEntry, type Season } from '../../domain/churchYear';
 import { fromKey, MONTH_LONG, formatShort, type DateKey } from '../../domain/dates';
-import { BibleLink } from '../../ui/BibleLink';
+import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { Section } from '../../ui/Section';
 import { setOpen } from '../../ui/collapseState';
@@ -76,13 +76,13 @@ function EntryList({
                 <div>
                   <dt>Evangelium</dt>
                   <dd>
-                    <BibleLink reference={info.gospel} />
+                    <BibleRef reference={info.gospel} />
                   </dd>
                 </div>
                 <div>
                   <dt>Epistel</dt>
                   <dd>
-                    <BibleLink reference={info.epistle} />
+                    <BibleRef reference={info.epistle} />
                   </dd>
                 </div>
               </dl>
@@ -197,7 +197,7 @@ export function ChurchYearPage() {
           <blockquote className="cy-motto">
             <p>{guide.motto.text}</p>
             <footer>
-              <BibleLink reference={guide.motto.ref} />
+              <BibleRef reference={guide.motto.ref} />
             </footer>
           </blockquote>
         )}
@@ -234,7 +234,7 @@ export function ChurchYearPage() {
                   {GROUP_REFS[g.title] && (
                     <p className="cy-group-refs">
                       {GROUP_REFS[g.title]!.map((r) => (
-                        <BibleLink key={r} reference={r} />
+                        <BibleRef key={r} reference={r} />
                       ))}
                     </p>
                   )}
