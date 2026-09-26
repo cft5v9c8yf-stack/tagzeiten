@@ -1,0 +1,595 @@
+/* ---------------------------------------------------------------- timer */
+.timer {
+  position: sticky;
+  top: var(--safe-top);
+  z-index: 5;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 10px var(--gutter);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+}
+/* Once stuck at the top: paint over the status bar area above it (iPhone notch). */
+.timer.is-stuck {
+  box-shadow: 0 calc(-1 * var(--safe-top)) 0 0 var(--paper);
+}
+.timer-inline {
+  position: static;
+  margin: 12px 0 0;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+}
+.timer .clock {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.3rem;
+  font-weight: 600;
+  min-width: 4.4ch;
+}
+.timer .hint {
+  flex: 1;
+  color: var(--muted);
+  font-size: 0.85rem;
+  min-width: 0;
+}
+.timer .btn {
+  border-radius: 999px;
+  min-height: 36px;
+  padding: 6px 16px;
+}
+
+/* ---------------------------------------------------------------- step flow */
+/* The sequence of an order as a row of marks; below it only the step in view. */
+.flow {
+  scroll-margin-top: calc(var(--safe-top) + 66px);
+}
+.flow-chain ol {
+  position: relative;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 14px 0 6px;
+  padding: 0;
+}
+/* The thread through the marks, at the height of their centres */
+.flow-chain ol::before {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 23px;
+  height: 2px;
+  background: var(--rule);
+}
+.flow-chain li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+/* The marks grow: the chosen step is large, the others stay small. */
+.flow-chain button {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: 10px 0;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: var(--paper);
+  color: var(--rubric);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    margin 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+.flow-chain button .flow-icon {
+  width: 16px;
+  height: 16px;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
+}
+.flow-chain li.point button {
+  width: 16px;
+  height: 16px;
+  margin: 16px 0;
+  border-color: var(--muted);
+}
+.flow-chain li.done button {
+  border-color: var(--done);
+  background: var(--done-soft);
+  color: var(--done);
+}
+.flow-chain li.current button {
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  border: 2px solid var(--gold);
+  background: var(--gold-soft);
+  color: var(--rubric);
+  font-size: 1.05rem;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+.flow-chain li.current button .flow-icon {
+  width: 26px;
+  height: 26px;
+}
+.flow-chain li.point.current button {
+  width: 22px;
+  height: 22px;
+  margin: 13px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flow-chain button,
+  .flow-chain button .flow-icon {
+    transition: none;
+  }
+}
+/* What the step is, in the gold of Luther's rose */
+.flow-icon {
+  color: var(--icon-gold);
+  flex: none;
+}
+/* The step in view: a card of its own below the row */
+.flow-step {
+  margin-top: 12px;
+  padding: 4px 18px 18px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+}
+.flow-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 10px;
+  font-size: 1.25rem;
+}
+.flow-title .flow-icon {
+  color: var(--icon-gold);
+  flex: none;
+}
+.flow-title:focus {
+  outline: none;
+}
+.flow-subtitle {
+  margin: 24px 0 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-size: 1.05rem;
+}
+.flow-footer {
+  margin-top: 22px;
+}
+.flow-footer .btn {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+  font-size: 0.98rem;
+}
+.flow + .panel {
+  margin-top: 14px;
+}
+.part + .part {
+  margin-top: 14px;
+}
+.part-title {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 18px 0 6px;
+}
+
+/* ---------------------------------------------------------------- liturgical text */
+.pray {
+  margin: 8px 0 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+  font-size: 1.02rem;
+}
+.pray p {
+  margin: 0 0 8px;
+}
+.pray .line {
+  display: block;
+}
+.pray .attribution {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.pray.absolution {
+  border-left-color: var(--done);
+}
+.pray-line {
+  padding-left: 14px;
+}
+.vr {
+  display: grid;
+  grid-template-columns: 1.4em 1fr;
+  gap: 4px;
+  margin: 2px 0;
+}
+.vr b {
+  color: var(--rubric);
+  font-family: var(--sans);
+}
+.versicles > div + div {
+  margin-top: 6px;
+}
+.rubric-inline {
+  color: var(--rubric);
+  font-style: italic;
+}
+.antiphon {
+  font-style: italic;
+}
+.psalm-ref {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.note {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin: 6px 0 10px;
+}
+.send-off {
+  margin-top: 10px;
+  font-weight: 600;
+}
+.station {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.examen-question {
+  font-size: 1.1rem;
+}
+.field-like {
+  display: grid;
+  gap: 2px;
+  margin: 12px 0 0;
+}
+.field-label {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.placeholder-text {
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------- folds */
+details.fold {
+  margin: 8px 0;
+}
+details.fold > summary {
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--accent);
+  padding: 4px 0;
+  min-height: 32px;
+}
+details.fold[open] > summary {
+  margin-bottom: 4px;
+}
+.plain-list {
+  padding-left: 1.2em;
+  margin: 6px 0;
+}
+.plain-list li {
+  margin: 4px 0;
+}
+.mark-sign {
+  display: inline-block;
+  min-width: 1.4em;
+  font-family: var(--sans);
+}
+.color-code {
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  margin: 8px 0;
+}
+.color-code th {
+  text-align: left;
+  font-family: var(--sans);
+  font-weight: 600;
+  padding: 3px 14px 3px 0;
+  vertical-align: top;
+}
+.color-code td {
+  padding: 3px 0;
+}
+/* A short stroke of the coloured pencil before its name */
+.pencil {
+  display: inline-block;
+  width: 22px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 4px 2px 4px 2px;
+  vertical-align: 0.05em;
+}
+/* Margin marks: the mark itself stands in front, no bullet */
+.marks-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+}
+.marks-list li {
+  display: flex;
+  gap: 10px;
+  margin: 4px 0;
+}
+.marks-list .mark-sign {
+  flex: none;
+  min-width: 1.4em;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------- catechism */
+.cat-piece h5 {
+  font-size: 1rem;
+  margin: 12px 0 4px;
+}
+.cat-words {
+  font-weight: 600;
+  font-style: italic;
+}
+.cat-q {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--rubric);
+  margin: 8px 0 2px;
+}
+.cat-a {
+  margin: 0 0 8px;
+}
+
+/* ---------------------------------------------------------------- reading */
+/* Today's portions: Old and New Testament as two tiles side by side. */
+.reading-refs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 10px 0;
+}
+.reading-refs:has(> .ref:only-child) {
+  grid-template-columns: 1fr;
+}
+.reading-refs .ref {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  color: inherit;
+  text-decoration: none;
+  line-height: 1.25;
+}
+.reading-refs .track {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.reading-refs .ref-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.reading-refs.large .ref-text {
+  font-size: 1.3rem;
+}
+/* A reference only: read in the printed Bible (rule 13). */
+.bible-ref {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- fields */
+.field {
+  margin: 12px 0 0;
+}
+.field label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+textarea,
+input[type='text'],
+input[type='time'],
+input[type='search'],
+select {
+  width: 100%;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-s);
+  padding: 9px 11px;
+  font-family: var(--serif);
+  font-size: 1rem; /* 16px+ keeps iOS from zooming */
+  line-height: 1.45;
+  resize: none;
+}
+textarea {
+  min-height: 2.8em;
+  overflow: hidden;
+}
+select {
+  font-family: var(--sans);
+}
+::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 10px 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  min-height: 40px;
+  cursor: pointer;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--done);
+}
+
+/* ---------------------------------------------------------------- choice, chips */
+.choice {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.choice button {
+  appearance: none;
+  border: 1.5px solid var(--rule);
+  background: transparent;
+  border-radius: var(--radius-s);
+  min-width: 44px;
+  min-height: 40px;
+  padding: 5px 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+}
+.choice.marks button {
+  font-size: 1.1rem;
+}
+.choice button[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.choice button[data-v='plus'][aria-pressed='true'] {
+  background: var(--done);
+  border-color: var(--done);
+  color: var(--sheet);
+}
+.choice button[data-v='tilde'][aria-pressed='true'] {
+  background: var(--half);
+  border-color: var(--half);
+  color: var(--sheet);
+}
+.choice button[data-v='minus'][aria-pressed='true'] {
+  background: var(--muted);
+  border-color: var(--muted);
+  color: var(--sheet);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+.chip {
+  appearance: none;
+  border: 1px dashed var(--accent);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+.chip-source {
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- review */
+.review {
+  display: grid;
+  gap: 16px;
+  margin: 10px 0;
+}
+.review-key {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.review-text {
+  margin: 2px 0 6px;
+}
+.review .carry {
+  margin-top: 6px;
+}
+
+/* ---------------------------------------------------------------- orders */
+.order + .order {
+  margin-top: 40px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+}
+.order.fold-section:not(.is-open) + .order {
+  margin-top: 12px;
+}
+.order-end {
+  margin: 20px 0 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.done-note {
+  margin: 0;
+  color: var(--done);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.done-panel {
+  border-color: var(--done);
+  background: var(--done-soft);
+}
+/* Family mode: large type, clear alternation of V and A for children. */
+
+
+/* Fields always show where the cursor is, also for time fields whose
+   inner segments hold the focus (they never match :focus-visible). */
+textarea:focus,
+input[type='text']:focus,
+input[type='time']:focus,
+input[type='time']:focus-within,
+input[type='search']:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.timer-inline.is-stuck {
+  box-shadow: none;
+}

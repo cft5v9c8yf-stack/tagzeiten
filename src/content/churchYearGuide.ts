@@ -1,0 +1,264 @@
+/**
+ * Explanations of the church year: festal circles, seasons and every Sunday
+ * and major feast, with Gospel and Epistle.
+ *
+ * Readings: Lutheran order of pericopes of 1978 (valid until 2018), series I
+ * (Gospel) and II (Epistle), which largely follows the historic one-year
+ * lectionary. Only references are given; the text is read in the Bible
+ * (rule 13). Explanations are written in our own words.
+ */
+import type { Circle, Season } from '../domain/churchYear';
+
+export const LECTIONARY_NOTE =
+  'Evangelium und Epistel nach der lutherischen Perikopenordnung von 1978 (Reihe I und II), die weitgehend der altkirchlichen Leseordnung folgt.';
+
+/**
+ * The festal circles after Georg Christian Dieffenbach, Evangelische Haus-Agende
+ * (Mainz 1853): each circle celebrates the work of one person of the Trinity.
+ */
+export const CIRCLE_INFO: Record<Circle, { title: string; of: string; range: string; intro: string }> = {
+  christmas: {
+    title: 'Weihnachtskreis',
+    of: 'Der Festkreis Gottes des Vaters',
+    range: 'Vom 1. Advent bis Sonnabend nach Epiphanias',
+    intro:
+      'Der Weihnachtskreis feiert, was Gott der Vater zur Erlösung getan hat: die Verheißung und Vorbereitung auf Christus, die Sendung des Sohnes selbst und seine Darstellung als Heiland der Welt. Er feiert die stille Vorbereitung des Erlösungswerkes.',
+  },
+  easter: {
+    title: 'Osterkreis',
+    of: 'Der Festkreis Gottes des Sohnes',
+    range: 'Vom 1. Sonntag nach Epiphanias bis Himmelfahrt',
+    intro:
+      'Der Osterkreis feiert, was Gott der Sohn zur Erlösung der Welt getan hat, in seinem dreifachen Amt: als Prophet, der lehrt und sich durch Zeichen erweist; als Hoherpriester, der am Kreuz das Opfer für die Sünden der Welt vollbringt; als König, der aus Grab und Tod siegreich hervorgeht. Er feiert das Werk der Erlösung selbst.',
+  },
+  pentecost: {
+    title: 'Pfingstkreis',
+    of: 'Der Festkreis Gottes des Heiligen Geistes',
+    range: 'Vom Freitag vor Exaudi bis zum letzten Tag des Kirchenjahres',
+    intro:
+      'Der Pfingstkreis feiert, was Gott der Heilige Geist zur Erlösung wirkt: nach einer kurzen Wartezeit seine Ausgießung, danach sein Walten in der Berufung und Sammlung, der Erleuchtung, Bekehrung, Heiligung und Vollendung der Gemeinde. Er feiert, wie die erworbenen Gnadengüter angeeignet werden und reifen bis zur Vollendung.',
+  },
+};
+
+/** What each season celebrates, in Dieffenbach's words (Haus-Agende 1853). */
+export const SEASON_THEME: Record<Season, string> = {
+  advent: 'Die Vorbereitung auf Christi Ankunft',
+  christmastide: 'Die Erscheinung Christi im Fleische',
+  presentation: 'Die Darstellung Christi als des Heilands der Welt',
+  epiphany: 'Christus als Prophet',
+  lent: 'Christus als Hoherpriester',
+  eastertide: 'Christus als König',
+  waiting: 'Das Harren auf die Erscheinung des verheißenen Geistes',
+  pentecost: 'Die Ausgießung des heiligen Geistes',
+  trinity: 'Das Walten und Wirken des heiligen Geistes',
+};
+
+export const SEASON_INFO: Record<Season, string> = {
+  advent:
+    'Vom 1. Advent bis zum Heiligen Abend. Advent heißt Ankunft: Die vier Sonntage bereiten auf das Christfest vor und blicken zugleich nach vorn – Christus kam in Bethlehem, er kommt heute in Wort und Sakrament, und er wird wiederkommen.',
+  christmastide:
+    'Vom Christfest bis zum folgenden Sonnabend. Gott wird Mensch: Der ewige Sohn kommt in unser Fleisch.',
+  presentation:
+    'Vom Sonntag nach dem Christfest bis zum Sonnabend nach Epiphanias. Der Mensch gewordene Sohn wird der Welt dargestellt – im Tempel, vor den Weisen aus den Völkern, als Heiland für alle.',
+  epiphany:
+    'Vom 1. Sonntag nach Epiphanias bis Fastnacht. Christus erweist sich als der Prophet: Er lehrt das Volk und offenbart seine Herrlichkeit durch Wunder und Zeichen. Dazu gehören die drei Vorfastensonntage Septuagesimae, Sexagesimae und Estomihi. Die Zahl der Sonntage hängt vom Osterdatum ab.',
+  lent:
+    'Von Aschermittwoch bis zum Ostersonnabend. Christus als der Hohepriester: Er steigt hinab in das tiefste Leiden und vollbringt am Kreuz das Versöhnungsopfer für die Sünden der Welt. Die Karwoche mit Gründonnerstag und Karfreitag steht am Ende. Das Halleluja schweigt.',
+  eastertide:
+    'Vom Ostertag bis Himmelfahrt. Christus als der König: Er geht aus Grab und Tod siegreich hervor, offenbart sich den Seinen und steigt auf zur Rechten des Vaters. Die Sonntage tragen die lateinischen Anfangsworte ihrer alten Eingangspsalmen.',
+  waiting:
+    'Vom Freitag vor Exaudi bis zum Pfingstsonnabend. Die kleine Schar der Jünger harrt auf den verheißenen Tröster, im Gebet beieinander.',
+  pentecost:
+    'Die Pfingstwoche. Gott gießt seinen Geist aus, und die Kirche beginnt. Der Geist führt zu Christus und schafft Glauben durch das Wort.',
+  trinity:
+    'Von Trinitatis bis zum letzten Tag des Kirchenjahres – die lange, festlose Hälfte. Der Heilige Geist beruft und sammelt, erleuchtet, bekehrt, heiligt und vollendet die Gemeinde. Die letzten Sonntage richten den Blick auf die Vollendung: Wiederkunft, Gericht und ewiges Leben.',
+};
+
+/**
+ * The Sundays after Trinity in five groups, after Dieffenbach's Haus-Agende. Trinitatis itself counts as 0.
+ * The last three Sundays of the church year take the places of the 24th to
+ * 27th Sunday and belong to the last group.
+ */
+export const TRINITY_GROUPS: readonly { from: number; to: number; title: string; range: string }[] = [
+  { from: 0, to: 5, title: 'Berufung und Sammlung', range: 'Trinitatis – 5. Sonntag' },
+  { from: 6, to: 10, title: 'Erleuchtung', range: '6. – 10. Sonntag' },
+  { from: 11, to: 14, title: 'Bekehrung', range: '11. – 14. Sonntag' },
+  { from: 15, to: 23, title: 'Heiligung', range: '15. – 23. Sonntag' },
+  { from: 24, to: 27, title: 'Vollendung', range: '24. – 27. Sonntag' },
+];
+
+const END_OF_YEAR_KEYS = new Set(['thirdLast', 'secondLast', 'eternity']);
+
+/** The Trinity group of a week key, or undefined outside the Trinity season and the end of the year. */
+export function trinityGroupOf(key: string): (typeof TRINITY_GROUPS)[number] | undefined {
+  if (END_OF_YEAR_KEYS.has(key)) return TRINITY_GROUPS[TRINITY_GROUPS.length - 1];
+  const m = /^trinity(\d*)$/.exec(key);
+  if (!m) return undefined;
+  const n = m[1] ? Number(m[1]) : 0;
+  return TRINITY_GROUPS.find((g) => n >= g.from && n <= g.to) ?? TRINITY_GROUPS[TRINITY_GROUPS.length - 1];
+}
+
+export interface SundayInfo {
+  /** What the name means, for the Latin names. */
+  meaning?: string;
+  /** The theme of the day, in a few words. */
+  theme: string;
+  gospel: string;
+  epistle: string;
+}
+
+/** Keys follow the week keys of domain/churchYear.ts and its major feast keys. */
+export const SUNDAY_INFO: Record<string, SundayInfo> = {
+  // Weihnachtskreis
+  advent1: { theme: 'Der Herr kommt zu seinem Volk: Einzug in Jerusalem.', gospel: 'Matthäus 21,1-9', epistle: 'Römer 13,8-12' },
+  advent2: { theme: 'Der kommende Erlöser: Zeichen seiner Wiederkunft.', gospel: 'Lukas 21,25-33', epistle: 'Jakobus 5,7-8' },
+  advent3: { theme: 'Der Vorläufer des Herrn: Johannes der Täufer.', gospel: 'Matthäus 11,2-10', epistle: '1. Korinther 4,1-5' },
+  advent4: { theme: 'Die nahende Freude: Maria und der verheißene Sohn.', gospel: 'Lukas 1,26-38', epistle: 'Philipper 4,4-7' },
+  christmas: { theme: 'Das Wort ward Fleisch: die Geburt des Herrn.', gospel: 'Lukas 2,1-20', epistle: 'Titus 3,4-7' },
+  christmas1: { theme: 'Simeon und Hanna erkennen das Heil Gottes.', gospel: 'Lukas 2,25-38', epistle: '1. Johannes 1,1-4' },
+  christmas2: { theme: 'Der zwölfjährige Jesus im Tempel: im Hause des Vaters.', gospel: 'Lukas 2,41-52', epistle: '1. Johannes 5,11-13' },
+  epiphany: { theme: 'Die Weisen aus dem Morgenland: Christus, das Licht der Völker.', gospel: 'Matthäus 2,1-12', epistle: 'Epheser 3,2-6' },
+  epiphany1: { theme: 'Die Taufe Jesu: der geliebte Sohn.', gospel: 'Matthäus 3,13-17', epistle: 'Römer 12,1-3' },
+  epiphany2: { theme: 'Die Hochzeit zu Kana: Jesus offenbart seine Herrlichkeit.', gospel: 'Johannes 2,1-11', epistle: 'Römer 12,9-16' },
+  epiphany3: { theme: 'Der Hauptmann von Kapernaum: Glaube aus den Völkern.', gospel: 'Matthäus 8,5-13', epistle: 'Römer 1,16-17' },
+  epiphany4: { theme: 'Die Stillung des Sturms: der Herr über die Mächte.', gospel: 'Markus 4,35-41', epistle: '2. Korinther 1,8-11' },
+  epiphany5: { theme: 'Unkraut unter dem Weizen: Gottes Geduld bis zur Ernte.', gospel: 'Matthäus 13,24-30', epistle: '1. Korinther 1,4-9' },
+  epiphanyLast: { theme: 'Die Verklärung Christi auf dem Berg.', gospel: 'Matthäus 17,1-9', epistle: '2. Korinther 4,6-10' },
+  // Osterkreis
+  septuagesimae: {
+    meaning: 'Der siebzigste Tag vor Ostern (gerundet).',
+    theme: 'Die Arbeiter im Weinberg: Gnade statt Lohn.',
+    gospel: 'Matthäus 20,1-16',
+    epistle: '1. Korinther 9,24-27',
+  },
+  sexagesimae: {
+    meaning: 'Der sechzigste Tag vor Ostern (gerundet).',
+    theme: 'Das Gleichnis vom Sämann: die Kraft des Wortes.',
+    gospel: 'Lukas 8,4-15',
+    epistle: 'Hebräer 4,12-13',
+  },
+  estomihi: {
+    meaning: '„Sei mir ein starker Fels“ (Psalm 31,3).',
+    theme: 'Jesus kündigt sein Leiden an; das Hohelied der Liebe.',
+    gospel: 'Markus 8,31-38',
+    epistle: '1. Korinther 13,1-13',
+  },
+  invokavit: {
+    meaning: '„Er ruft mich an, so will ich ihn erhören“ (Psalm 91,15).',
+    theme: 'Die Versuchung Jesu in der Wüste.',
+    gospel: 'Matthäus 4,1-11',
+    epistle: 'Hebräer 4,14-16',
+  },
+  reminiszere: {
+    meaning: '„Gedenke, HERR, an deine Barmherzigkeit“ (Psalm 25,6).',
+    theme: 'Die bösen Weingärtner: der verworfene Sohn.',
+    gospel: 'Markus 12,1-12',
+    epistle: 'Römer 5,1-5',
+  },
+  okuli: {
+    meaning: '„Meine Augen sehen stets auf den HERRN“ (Psalm 25,15).',
+    theme: 'Nachfolge ohne Zurückschauen.',
+    gospel: 'Lukas 9,57-62',
+    epistle: 'Epheser 5,1-8',
+  },
+  laetare: {
+    meaning: '„Freuet euch mit Jerusalem“ (Jesaja 66,10) – das „kleine Ostern“ mitten in der Passionszeit.',
+    theme: 'Das Weizenkorn, das stirbt und Frucht bringt.',
+    gospel: 'Johannes 12,20-26',
+    epistle: '2. Korinther 1,3-7',
+  },
+  judika: {
+    meaning: '„Richte mich, Gott“ (Psalm 43,1).',
+    theme: 'Des Menschen Sohn ist gekommen, um zu dienen.',
+    gospel: 'Markus 10,35-45',
+    epistle: 'Hebräer 5,7-9',
+  },
+  palmarum: {
+    meaning: 'Palmsonntag: das Volk empfängt Jesus mit Palmzweigen.',
+    theme: 'Der Einzug in Jerusalem: der König auf dem Weg ans Kreuz.',
+    gospel: 'Johannes 12,12-19',
+    epistle: 'Philipper 2,5-11',
+  },
+  maundyThursday: { theme: 'Die Einsetzung des heiligen Abendmahls; die Fußwaschung.', gospel: 'Johannes 13,1-15', epistle: '1. Korinther 11,23-26' },
+  goodFriday: { theme: 'Die Kreuzigung des Herrn: „Es ist vollbracht.“', gospel: 'Johannes 19,16-30', epistle: '2. Korinther 5,14-21' },
+  easter: { theme: 'Die Auferstehung des Herrn: das leere Grab.', gospel: 'Markus 16,1-8', epistle: '1. Korinther 15,1-11' },
+  easterMonday: { theme: 'Die Emmausjünger: der Auferstandene geht mit.', gospel: 'Lukas 24,13-35', epistle: '1. Korinther 15,12-20' },
+  quasimodogeniti: {
+    meaning: '„Wie die neugeborenen Kindlein“ (1. Petrus 2,2).',
+    theme: 'Der Auferstandene und Thomas: neugeboren zu lebendiger Hoffnung.',
+    gospel: 'Johannes 20,19-29',
+    epistle: '1. Petrus 1,3-9',
+  },
+  misericordias: {
+    meaning: '„Die Erde ist voll der Güte des HERRN“ (Psalm 33,5).',
+    theme: 'Der gute Hirte.',
+    gospel: 'Johannes 10,11-16',
+    epistle: '1. Petrus 2,21-25',
+  },
+  jubilate: {
+    meaning: '„Jauchzet Gott, alle Lande“ (Psalm 66,1).',
+    theme: 'Der Weinstock und die Reben: die neue Schöpfung.',
+    gospel: 'Johannes 15,1-8',
+    epistle: '1. Johannes 5,1-4',
+  },
+  kantate: {
+    meaning: '„Singet dem HERRN ein neues Lied“ (Psalm 98,1).',
+    theme: 'Das Lob Gottes; Jesu Heilandsruf.',
+    gospel: 'Matthäus 11,25-30',
+    epistle: 'Kolosser 3,12-17',
+  },
+  rogate: {
+    meaning: '„Betet!“',
+    theme: 'Das Gebet im Namen Jesu.',
+    gospel: 'Johannes 16,23-33',
+    epistle: '1. Timotheus 2,1-6',
+  },
+  ascension: { theme: 'Christi Himmelfahrt: der Herr zur Rechten des Vaters.', gospel: 'Lukas 24,50-53', epistle: 'Apostelgeschichte 1,3-11' },
+  exaudi: {
+    meaning: '„HERR, höre meine Stimme“ (Psalm 27,7).',
+    theme: 'Die Verheißung des Trösters: zwischen Himmelfahrt und Pfingsten.',
+    gospel: 'Johannes 15,26-16,4',
+    epistle: 'Epheser 3,14-21',
+  },
+  // Pfingstkreis
+  pentecost: { theme: 'Die Ausgießung des Heiligen Geistes; die Geburtsstunde der Kirche.', gospel: 'Johannes 14,23-27', epistle: 'Apostelgeschichte 2,1-18' },
+  pentecostMonday: { theme: 'Das Bekenntnis des Petrus: die Kirche auf dem Felsen.', gospel: 'Matthäus 16,13-19', epistle: '1. Korinther 12,4-11' },
+  trinity: {
+    meaning: 'Das Fest der Heiligen Dreifaltigkeit.',
+    theme: 'Der dreieinige Gott; Nikodemus und die neue Geburt.',
+    gospel: 'Johannes 3,1-8',
+    epistle: 'Römer 11,33-36',
+  },
+  trinity1: { theme: 'Der reiche Mann und der arme Lazarus: Gottes Wort ernst nehmen.', gospel: 'Lukas 16,19-31', epistle: '1. Johannes 4,16-21' },
+  trinity2: { theme: 'Das große Abendmahl: die Einladung Gottes.', gospel: 'Lukas 14,16-24', epistle: 'Epheser 2,17-22' },
+  trinity3: { theme: 'Das verlorene Schaf: Gottes Freude über den Sünder.', gospel: 'Lukas 15,1-10', epistle: '1. Timotheus 1,12-17' },
+  trinity4: { theme: 'Seid barmherzig: die Gemeinschaft der Sünder.', gospel: 'Lukas 6,36-42', epistle: 'Römer 12,17-21' },
+  trinity5: { theme: 'Der Fischzug des Petrus: Nachfolge auf Christi Wort.', gospel: 'Lukas 5,1-11', epistle: '1. Korinther 1,18-25' },
+  trinity6: { theme: 'Die Taufe: in Christus begraben und auferweckt.', gospel: 'Matthäus 28,16-20', epistle: 'Römer 6,3-11' },
+  trinity7: { theme: 'Die Speisung der Fünftausend: Gott sorgt.', gospel: 'Johannes 6,1-15', epistle: 'Apostelgeschichte 2,41-47' },
+  trinity8: { theme: 'Salz der Erde und Licht der Welt.', gospel: 'Matthäus 5,13-16', epistle: 'Epheser 5,8-14' },
+  trinity9: { theme: 'Die anvertrauten Pfunde: treue Haushalter.', gospel: 'Matthäus 25,14-30', epistle: 'Philipper 3,7-14' },
+  trinity10: { theme: 'Jesus weint über Jerusalem: Gott und sein Volk Israel.', gospel: 'Lukas 19,41-48', epistle: 'Römer 11,25-32' },
+  trinity11: { theme: 'Pharisäer und Zöllner: Gnade für den Sünder.', gospel: 'Lukas 18,9-14', epistle: 'Epheser 2,4-10' },
+  trinity12: { theme: 'Die Heilung des Taubstummen: „Hephata – tu dich auf!“', gospel: 'Markus 7,31-37', epistle: 'Apostelgeschichte 9,1-20' },
+  trinity13: { theme: 'Der barmherzige Samariter: wer ist mein Nächster?', gospel: 'Lukas 10,25-37', epistle: '1. Johannes 4,7-12' },
+  trinity14: { theme: 'Die zehn Aussätzigen: der eine, der dankt.', gospel: 'Lukas 17,11-19', epistle: 'Römer 8,14-17' },
+  trinity15: { theme: 'Sorget nicht: vom Vertrauen auf den Vater.', gospel: 'Matthäus 6,25-34', epistle: '1. Petrus 5,5-11' },
+  trinity16: { theme: 'Die Auferweckung des Lazarus: Christus, der Herr über den Tod.', gospel: 'Johannes 11,1-3.17-27', epistle: '2. Timotheus 1,7-10' },
+  trinity17: { theme: 'Die kanaanäische Frau: Glaube, der sich nicht abweisen lässt.', gospel: 'Matthäus 15,21-28', epistle: 'Römer 10,9-17' },
+  trinity18: { theme: 'Das höchste Gebot: Gott lieben und den Nächsten.', gospel: 'Markus 12,28-34', epistle: 'Römer 14,17-19' },
+  trinity19: { theme: 'Die Heilung des Gelähmten: Vergebung der Sünden.', gospel: 'Markus 2,1-12', epistle: 'Epheser 4,22-32' },
+  trinity20: { theme: 'Ehe und Kinder: Gottes gute Ordnung.', gospel: 'Markus 10,2-16', epistle: '1. Thessalonicher 4,1-8' },
+  trinity21: { theme: 'Liebet eure Feinde; die geistliche Waffenrüstung.', gospel: 'Matthäus 5,38-48', epistle: 'Epheser 6,10-17' },
+  trinity22: { theme: 'Der Schalksknecht: Vergebung empfangen und weitergeben.', gospel: 'Matthäus 18,21-35', epistle: 'Philipper 1,3-11' },
+  trinity23: { theme: 'Der Zinsgroschen: Bürger zweier Reiche.', gospel: 'Matthäus 22,15-22', epistle: 'Philipper 3,17-21' },
+  trinity24: { theme: 'Die Tochter des Jaïrus: Hoffnung über den Tod hinaus.', gospel: 'Matthäus 9,18-26', epistle: 'Kolosser 1,13-20' },
+  thirdLast: { theme: 'Das Kommen des Reiches Gottes.', gospel: 'Lukas 17,20-30', epistle: 'Römer 8,18-25' },
+  secondLast: { theme: 'Das Weltgericht: was ihr getan habt …', gospel: 'Matthäus 25,31-46', epistle: 'Römer 14,10-13' },
+  eternity: {
+    meaning: 'Ewigkeitssonntag, auch Totensonntag: Gedenken der Verstorbenen im Licht der Ewigkeit.',
+    theme: 'Die klugen und törichten Jungfrauen; der neue Himmel und die neue Erde.',
+    gospel: 'Matthäus 25,1-13',
+    epistle: 'Offenbarung 21,1-7',
+  },
+};

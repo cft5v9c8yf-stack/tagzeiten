@@ -1,0 +1,415 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  scroll-padding-top: var(--safe-top);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  /* iOS home-screen apps with a translucent status bar report a viewport that is
+     short by the status bar. On pages shorter than the screen (Archiv, Mehr) the
+     fixed tab bar then floats above the bottom edge. Never let a page be shorter. */
+  min-height: calc(100% + var(--safe-top) + 1px);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Links without underline: gold from Luther's rose; inside running text also bold,
+   so they do not depend on colour alone. */
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+p a,
+li > a:only-child:not([class]),
+dd a:not([class]) {
+  font-weight: 600;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 8px;
+  top: calc(var(--safe-top) + 8px);
+  z-index: 30;
+  padding: 6px 12px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-s);
+  font-family: var(--sans);
+  font-weight: 600;
+  /* Fully above the screen, also behind a translucent status bar. */
+  transform: translateY(calc(-100% - var(--safe-top) - 16px));
+}
+.skip-link:focus {
+  transform: none;
+}
+
+/* Layout */
+.wrap {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  /* At least one screen high, so the solas close every page just above the rose. */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh + var(--safe-top));
+  padding: var(--safe-top) calc(var(--gutter) + var(--safe-right))
+    calc(var(--tabbar-height) + var(--safe-bottom) + 48px) calc(var(--gutter) + var(--safe-left));
+}
+
+/* The four solas: a quiet colophon above the rose at the end of every page */
+.wrap > main {
+  flex: 1 0 auto;
+}
+.solas {
+  margin: 40px 0 -20px;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 0.72rem;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+  color: var(--gold);
+  text-wrap: balance;
+}
+.solas span {
+  white-space: nowrap;
+}
+
+header.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
+  padding: 18px 0 6px;
+}
+.top-motto {
+  font-size: 1.05rem;
+  font-weight: 600;
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+header.top .date {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+header.top .date a {
+  color: var(--accent);
+  font-weight: 600;
+  margin-left: 8px;
+  text-decoration: none;
+}
+
+/* Typography */
+h2 {
+  font-size: 1.45rem;
+  line-height: 1.25;
+  font-weight: 600;
+  margin: 26px 0 6px;
+}
+h3 {
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin: 22px 0 6px;
+}
+p {
+  margin: 0 0 10px;
+}
+.sans {
+  font-family: var(--sans);
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 0.88rem;
+}
+.rubric {
+  font-style: italic;
+  color: var(--rubric);
+  font-size: 0.93rem;
+}
+.empty {
+  color: var(--muted);
+  font-style: italic;
+  padding: 16px 0;
+}
+
+/* Surfaces */
+.panel {
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-l);
+  padding: 14px 16px;
+  margin: 12px 0;
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  border-radius: var(--radius-s);
+  padding: 8px 14px;
+  min-height: 40px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+.btn.quiet {
+  background: transparent;
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Segmented control: a quiet capsule; the chosen option in the gold of the rose */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  margin: 6px 0 12px;
+}
+.seg button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px 14px;
+  min-height: 36px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+.seg button[aria-pressed='true'],
+.seg button[aria-selected='true'] {
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+/* Bottom navigation */
+nav.tabs {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background: var(--sheet);
+  border-top: 1px solid var(--rule);
+  padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+/* Fills any gap below the bar with its own colour, whatever the viewport reports. */
+nav.tabs::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 120px;
+  background: var(--sheet);
+}
+nav.tabs ul {
+  list-style: none;
+  margin: 0 auto;
+  /* room for the large circle of the chosen tab at either end */
+  padding: 0 8px;
+  max-width: var(--content-width);
+  display: grid;
+  /* "Sonntag" in the middle, three sections on either side; both halves equally
+     wide, "Katechismus" gets the widest column. */
+  grid-template-columns: 1fr 1fr 1fr 1fr 0.85fr 1.3fr 0.85fr;
+}
+nav.tabs li {
+  min-width: 0;
+}
+nav.tabs a {
+  position: relative;
+  white-space: nowrap;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 0 9px;
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+/* One size for every icon, the rose included. The chosen one grows to a large
+   circle with a gold ring that rises a little above the bar (as the rose did). */
+nav.tabs .tab-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-top: 0;
+  border-radius: 50%;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    margin 0.25s ease,
+    box-shadow 0.25s ease;
+}
+nav.tabs .tab-icon svg {
+  display: block;
+  width: 34px;
+  height: 34px;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
+}
+nav.tabs a[aria-current='page'] .tab-icon {
+  width: 50px;
+  height: 50px;
+  /* keeps the label on the line of the others */
+  margin-top: -16px;
+  background: var(--sheet);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+nav.tabs a[aria-current='page'] .tab-icon svg {
+  width: 30px;
+  height: 30px;
+}
+nav.tabs a[aria-current='page'] .tab-icon .luther-rose {
+  width: 46px;
+  height: 46px;
+}
+nav.tabs a[aria-current='page']::before {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  nav.tabs .tab-icon,
+  nav.tabs .tab-icon svg {
+    transition: none;
+  }
+}
+nav.tabs a[aria-current='page'] {
+  color: var(--ink);
+}
+nav.tabs a[aria-current='page']::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 22%;
+  right: 22%;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Status */
+.loading {
+  padding: 60px var(--gutter);
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 18px);
+  transform: translateX(-50%);
+  max-width: calc(100% - 2 * var(--gutter));
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 7px 14px;
+  border-radius: 999px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 20;
+}
+.toast.show {
+  opacity: 0.94;
+}
+
+.demo-banner {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+  margin: 4px 0 8px;
+}
+
+.update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-s);
+  padding: 8px 12px;
+  margin: 4px 0 8px;
+}
