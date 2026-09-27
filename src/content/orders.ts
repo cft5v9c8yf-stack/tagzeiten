@@ -93,7 +93,6 @@ const AT_BED: Order = {
         p('lords-prayer', 'Vaterunser'),
         p('baptism', 'Taufgedächtnis'),
         p('morning-blessing', 'Morgensegen'),
-        p('armor', 'Die geistliche Waffenrüstung'),
       ],
     },
   ],
@@ -108,7 +107,7 @@ const AT_BED_SHORT: Order = {
       id: 'atBed',
       title: 'Am Bett',
       minutes: 1,
-      parts: [p('lords-prayer', 'Vaterunser'), p('morning-blessing', 'Morgensegen'), p('armor', 'Die geistliche Waffenrüstung')],
+      parts: [p('lords-prayer', 'Vaterunser'), p('morning-blessing', 'Morgensegen')],
     },
   ],
 };
@@ -182,6 +181,8 @@ const MORNING_FULL: Order = {
       title: 'Die Ausrichtung',
       minutes: 3,
       parts: [
+        // Put on the armour for the day before the day is ordered (Word → prayer → alignment).
+        p('armor', 'Die geistliche Waffenrüstung'),
         p('alignment', 'Die drei Dinge', {
           fields: ['morning.three.word', 'morning.three.house', 'morning.three.work'],
         }),

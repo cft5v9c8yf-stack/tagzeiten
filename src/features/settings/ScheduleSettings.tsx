@@ -168,7 +168,7 @@ export function DisplaySettings() {
         ]}
       />
       <p className="small muted">
-        Epheser 6,10–18: nach dem Morgensegen ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und
+        Epheser 6,10–18: in der Stillen Zeit vor der Ausrichtung ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und
         eine Frage in der Prüfung.
       </p>
       </Section>

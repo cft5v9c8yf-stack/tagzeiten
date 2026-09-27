@@ -65,15 +65,21 @@ describe('Stille Zeit as a flow', () => {
     expect(document.querySelector('.flow-step')).toBeNull();
   });
 
-  it('puts on the armour of the day after the morning blessing, unless switched off', async () => {
+  it('puts on the armour of the day in the Stille Zeit before the alignment, not at the bed, unless switched off', async () => {
     const store = await renderMorning();
     const step = () => document.querySelector('.flow-step')!;
-    const parts = [...step().querySelectorAll('.part-title')].map((h) => h.textContent);
-    expect(parts.slice(-2)).toEqual(['Morgensegen', 'Die geistliche Waffenrüstung']);
+    const titles = () => [...step().querySelectorAll('.part-title')].map((h) => h.textContent);
+    // At the bed: the morning blessing closes it, without the armour.
+    expect(titles().at(-1)).toBe('Morgensegen');
+    expect(step().textContent).not.toContain('Harnisch');
+    // In the Stille Zeit: the step "Die Ausrichtung" opens with it, before the three things.
+    fireEvent.click(within(chain()).getAllByRole('button').at(-2)!);
+    await waitFor(() => expect(titles()).toEqual(['Die geistliche Waffenrüstung', 'Die drei Dinge']));
     // 25 September 2026 is a Friday.
     expect(step().textContent).toContain('Freitag: Der Helm des Heils');
     expect(step().textContent).toContain('Ziehet an den Harnisch Gottes');
     store.updateProfile((p) => ({ ...p, armor: false }));
     await waitFor(() => expect(step().textContent).not.toContain('Harnisch'));
   });
+
 });
