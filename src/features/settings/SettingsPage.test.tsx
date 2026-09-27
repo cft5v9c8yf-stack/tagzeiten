@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Flugmodus beim Beten', 'Versionen', 'Impressum']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Flugmodus beim Beten', 'App installieren', 'Versionen', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -468,6 +468,17 @@ describe('Rückblick', () => {
     expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toEqual(expect.arrayContaining(['[Straße und Hausnummer]', '[E-Mail-Adresse]']));
     expect(document.body.textContent).toContain('Andreas Dykau');
     expect(document.body.textContent).toContain('bleibt auf deinem Gerät');
+  });
+
+  it('explains how to install the app on Android and on the iPhone', async () => {
+    await renderAt('/mehr/installieren', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /App installieren/ });
+    for (const t of ['Android mit Chrome', 'Android mit Samsung Internet', 'iPhone mit Safari']) {
+      expect(screen.getByRole('heading', { level: 3, name: t })).toBeTruthy();
+    }
+    const text = document.body.textContent!;
+    expect(text).toContain('„App installieren“');
+    expect(text).toContain('https://cft5v9c8yf-stack.github.io/tagzeiten/');
   });
 
   it('explains how the iPhone switches airplane mode while the app is open', async () => {

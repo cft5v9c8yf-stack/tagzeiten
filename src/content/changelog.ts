@@ -22,7 +22,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Kirchenjahr', text: 'Einteilung, Einleitung und Erklärung der drei Festkreise nach Georg Christian Dieffenbachs Evangelischer Haus-Agende (Mainz 1853), dazu die Deutung jedes Sonn- und Festtags. Die Sonntagsseite zeigt sie für die laufende Woche.' },
       { area: 'Vesper und Familienandacht', text: 'Die Vesper ist der persönliche Abschluss des Tages. Die Familienandacht steht als eigene Gewohnheit.' },
       { area: 'Rückblick', text: 'Unter „Mehr“. Tage, Verse und archivierte Einträge der Arena stehen als Liste, nach Jahr und Monat geordnet.' },
-      { area: 'Mehr', text: 'Neu sind das Impressum mit Hinweisen zum Datenschutz, die Anleitung „Flugmodus beim Beten“ für das iPhone und diese Übersicht der Versionen.' },
+      { area: 'Mehr', text: 'Neu sind das Impressum mit Hinweisen zum Datenschutz, die Anleitungen „Flugmodus beim Beten“ und „App installieren“ (Android und iPhone) und diese Übersicht der Versionen.' },
       { area: 'Deine Daten', text: 'Zeigt, ob der Browser die Einträge dauerhaft behält, und bittet ihn auf Wunsch erneut darum.' },
       { area: 'Bibel', text: 'Die Seite heißt „Mein Bibelleseplan“.' },
       { area: 'Geistliche Waffenrüstung', text: 'Steht nicht mehr am Bett, sondern in der Stillen Zeit im Schritt „Die Ausrichtung“, vor den drei Dingen.' },
