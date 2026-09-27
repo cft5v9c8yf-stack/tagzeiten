@@ -15,7 +15,7 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'about']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about']) setOpen(`more.${id}`, true);
 }
 
 let blobs: Blob[] = [];
@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Flugmodus beim Beten', 'App installieren', 'Versionen', 'Impressum']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -87,7 +87,7 @@ describe('Mehr: Aufbau', () => {
     await waitFor(() => expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Mehr'));
   });
 
-  it('gathers Darstellung, Deine Daten and Über under "Einstellungen", folded and remembered', async () => {
+  it('gathers Darstellung, Deine Daten, the two guides and Über under "Einstellungen", folded and remembered', async () => {
     resetOpenState();
     const db = new TagzeitenDB(`m6-fold-${++n}`);
     const store = new Store({ db, journal: memoryJournal() });
@@ -105,7 +105,7 @@ describe('Mehr: Aufbau', () => {
     const view = render(page());
     await screen.findByRole('heading', { level: 2, name: /Einstellungen/ });
     const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'Über Tagzeiten']);
+    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Tagzeiten']);
     // No verse above the settings, only their explanations.
     expect(document.querySelector('.section-verse')).toBeNull();
     expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
@@ -471,23 +471,28 @@ describe('Rückblick', () => {
   });
 
   it('explains how to install the app on Android and on the iPhone', async () => {
-    await renderAt('/mehr/installieren', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /App installieren/ });
+    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await screen.findByRole('heading', { level: 3, name: /App installieren/ });
     for (const t of ['Android mit Chrome', 'Android mit Samsung Internet', 'iPhone mit Safari']) {
-      expect(screen.getByRole('heading', { level: 3, name: t })).toBeTruthy();
+      expect(screen.getByRole('heading', { level: 4, name: t })).toBeTruthy();
     }
     const text = document.body.textContent!;
     expect(text).toContain('„App installieren“');
     expect(text).toContain('https://cft5v9c8yf-stack.github.io/tagzeiten/');
   });
 
-  it('explains how the iPhone switches airplane mode while the app is open', async () => {
-    await renderAt('/mehr/flugmodus', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Flugmodus beim Beten/ });
+  it('explains, under Einstellungen, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
+    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await screen.findByRole('heading', { level: 3, name: /Flugmodus beim Beten/ });
     const text = document.body.textContent!;
     expect(text).toContain('„Wird geöffnet“');
     expect(text).toContain('„Wird geschlossen“');
     expect(text).toContain('Flugmodus festlegen');
-    expect(screen.getByRole('heading', { level: 3, name: 'Wenn Tagzeiten nicht in der Liste steht' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 4, name: 'iPhone: Wenn Tagzeiten nicht in der Liste steht' })).toBeTruthy();
+    // Android: Samsung routine on opening the app, and the nearest thing elsewhere.
+    expect(screen.getByRole('heading', { level: 4, name: 'Android (Samsung): Flugmodus, solange Tagzeiten offen ist' })).toBeTruthy();
+    expect(text).toContain('„Modi und Routinen“');
+    expect(text).toContain('„App geöffnet“');
+    expect(screen.getByRole('heading', { level: 4, name: 'Andere Android-Geräte (z. B. Pixel)' })).toBeTruthy();
   });
 });

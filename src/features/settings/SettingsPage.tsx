@@ -18,7 +18,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'airplane' | 'changelog' | 'install';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -77,9 +77,9 @@ const AREAS: readonly Area[] = [
     slug: 'einstellungen',
     id: 'settings',
     title: 'Einstellungen',
-    line: 'Darstellung, Daten, über die App',
+    line: 'Darstellung, Daten, Installation, Flugmodus',
     icon: 'sliders',
-    info: <p>Darstellung, deine Daten und Angaben zur App.</p>,
+    info: <p>Darstellung, deine Daten, Installation und Flugmodus, Angaben zur App.</p>,
     body: () => (
       <>
         <Sub
@@ -97,30 +97,28 @@ const AREAS: readonly Area[] = [
         <Sub id="data" title="Deine Daten" info={DATA_INFO}>
           <DataSettings />
         </Sub>
+        <Sub
+          id="install"
+          title="App installieren"
+          info={<p>Wie Tagzeiten als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>}
+        >
+          <InstallGuide level={4} />
+        </Sub>
+        <Sub
+          id="airplane"
+          title="Flugmodus beim Beten"
+          info={<p>Wie das Telefon den Flugmodus einschaltet, solange Tagzeiten offen ist, und danach wieder aus.</p>}
+        >
+          <AirplaneGuide level={4} />
+        </Sub>
         <Sub id="about" title="Über Tagzeiten" info={ABOUT_INFO}>
           <About />
         </Sub>
       </>
     ),
   },
-  {
-    slug: 'flugmodus',
-    id: 'airplane',
-    title: 'Flugmodus beim Beten',
-    line: 'Anleitung fürs iPhone',
-    icon: 'moon',
-    info: <p>Wie das iPhone den Flugmodus einschaltet, solange Tagzeiten offen ist, und danach wieder aus.</p>,
-    body: () => <AirplaneGuide />,
-  },
-  {
-    slug: 'installieren',
-    id: 'install',
-    title: 'App installieren',
-    line: 'Android und iPhone',
-    icon: 'install',
-    info: <p>Wie Tagzeiten als App auf den Startbildschirm kommt, ohne Store.</p>,
-    body: () => <InstallGuide />,
-  },
+
+
   {
     slug: 'versionen',
     id: 'changelog',
