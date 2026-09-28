@@ -28,3 +28,29 @@ Stand:
   Angabe ohne Link (Regel 13).
 - **Suche und Filter.** Volltextsuche über alle Schriften; Filter nach Schrift,
   Thema (z. B. Rechtfertigung, Taufe, Abendmahl, Beichte) und Bibelbuch.
+
+## Widgets für Startbildschirm und Sperrbildschirm
+
+Gewünscht (28.09.2026). Entwurf mit Beispieldaten:
+https://claude.ai/artifact/5NL6udynWnCejjAorL6grt
+
+- **Klein:** die nächste Gebetszeit („Vesper 18:30“, darunter die folgende).
+- **Mittel:** Datum und Woche im Kirchenjahr, der Tagesbogen mit den drei
+  Zeiten, „Heute lesen“ nach dem Leseplan.
+- **Groß:** dazu Wochenspruch (Luther 1912), die drei Zeiten mit Stand und die
+  drei Dinge (Wort, Haus, Werk).
+- **Sperrbildschirm:** rund, rechteckig und einzeilig, nur Zeit und Name.
+
+Regeln: offene Zeiten neutral, keine Zähler, kein Hinweis auf Versäumtes
+(Regeln 4, 5, 7). Ohne Nachtgebet nur Stille Zeit und Vesper.
+
+Stand:
+
+- **Braucht eine native App.** Eine Web-App kann auf iPhone und Android keine
+  Widgets anbieten. Nötig ist eine native Hülle (z. B. Capacitor) mit einem
+  Widget-Teil in Swift/WidgetKit (iPhone, Apple-Entwicklerkonto) und
+  Kotlin (Android).
+- **Speicher.** Das Widget kann die IndexedDB des Browsers nicht lesen. Die
+  Einträge müssten in einen lokalen Speicher, den App und Widget teilen (App
+  Group auf dem iPhone, gemeinsamer Speicher auf Android). Weiter nur auf dem
+  Gerät (Regel 10).
