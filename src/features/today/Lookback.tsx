@@ -1,4 +1,4 @@
-import { useDayLookup, useAllDays } from '../../data/hooks';
+import { useAllDays, useDayLookup, useProfile } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
 import { MARK_SYMBOL } from '../../domain/review';
 import { collectedVerses, lookback, markCounts, stillTimesIn } from '../../domain/stats';
@@ -12,7 +12,8 @@ const STATE_LABEL = { none: 'nichts eingetragen', one: 'Morgen oder Abend gebete
 export function Lookback({ date }: { date: DateKey }) {
   const lookup = useDayLookup();
   const days = useAllDays();
-  const dots = lookback(lookup, date, 28);
+  const profile = useProfile();
+  const dots = lookback(lookup, date, 28, profile.showCompline);
   const marks = markCounts(lookup, date, 30);
 
   return (

@@ -118,6 +118,17 @@ describe('Mehr: Aufbau', () => {
     expect((await screen.findByRole('button', { name: 'Darstellung' })).getAttribute('aria-expanded')).toBe('true');
   });
 
+  it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />);
+    const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
+    const night = screen.getByRole('group', { name: 'Nachtgebet am Bett' });
+    expect(within(bed).getByRole('button', { name: 'Anzeigen' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(within(bed).getByRole('button', { name: 'Ausblenden' }));
+    fireEvent.click(within(night).getByRole('button', { name: 'Ausblenden' }));
+    await waitFor(() => expect(store.getProfile().showAtBed).toBe(false));
+    expect(store.getProfile().showCompline).toBe(false);
+  });
+
   it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
     await renderAt('/mehr/zeiten', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Zeiten/ });

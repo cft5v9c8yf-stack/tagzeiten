@@ -13,12 +13,16 @@ export interface LookbackDot {
   state: DotState;
 }
 
-/** The last `n` days up to and including `end`: morning and compline prayed? */
-export function lookback(lookup: DayLookup, end: DateKey, n = 28): LookbackDot[] {
+/** The evening is closed: by the Nachtgebet, or by the Vesper when the Nachtgebet is switched off. */
+export const eveningClosed = (d: Day, withCompline: boolean) =>
+  withCompline ? d.evening.complineDone : d.evening.vespersDone;
+
+/** The last `n` days up to and including `end`: morning prayed, evening closed? */
+export function lookback(lookup: DayLookup, end: DateKey, n = 28, withCompline = true): LookbackDot[] {
   return Array.from({ length: n }, (_, i) => {
     const date = addDays(end, i - (n - 1));
     const d = lookup(date);
-    const count = Number(!!d?.morning.done) + Number(!!d?.evening.complineDone);
+    const count = Number(!!d?.morning.done) + Number(!!d && eveningClosed(d, withCompline));
     return { date, state: count === 2 ? 'both' : count === 1 ? 'one' : 'none' };
   });
 }

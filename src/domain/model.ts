@@ -214,6 +214,13 @@ export interface Profile {
   arena: ArenaEntry[];
   /** The spiritual armour in morning and night prayer. */
   armor: boolean;
+  /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */
+  showAtBed: boolean;
+  /**
+   * The Nachtgebet at the bed is part of the evening. When off, the Vesper takes
+   * its review, examination, confession and absolution (rules 1 and 3).
+   */
+  showCompline: boolean;
   theme: Theme;
   texts: TextVariant;
   createdAt: DateKey;

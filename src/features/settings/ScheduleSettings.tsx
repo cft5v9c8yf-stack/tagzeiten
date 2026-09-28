@@ -157,6 +157,33 @@ export function DisplaySettings() {
         ]}
       />
       </Section>
+      <Section id="more.display.atBed" title="Am Bett am Morgen" level={4}>
+      <Segmented
+        label="Am Bett am Morgen"
+        value={profile.showAtBed ? 'on' : 'off'}
+        onChange={(v) => store.updateProfile((p) => ({ ...p, showAtBed: v === 'on' }), { immediate: true })}
+        options={[
+          { value: 'on', label: 'Anzeigen' },
+          { value: 'off', label: 'Ausblenden' },
+        ]}
+      />
+      <p className="small muted">Kreuzzeichen, Vaterunser, Taufgedächtnis und Morgensegen vor der Stillen Zeit. Ausgeblendet beginnt die Andacht gleich mit der Stillen Zeit.</p>
+      </Section>
+      <Section id="more.display.compline" title="Nachtgebet am Bett" level={4}>
+      <Segmented
+        label="Nachtgebet am Bett"
+        value={profile.showCompline ? 'on' : 'off'}
+        onChange={(v) => store.updateProfile((p) => ({ ...p, showCompline: v === 'on' }), { immediate: true })}
+        options={[
+          { value: 'on', label: 'Anzeigen' },
+          { value: 'off', label: 'Ausblenden' },
+        ]}
+      />
+      <p className="small muted">
+        Ausgeblendet stehen Rückschau, Prüfung, Bekenntnis und Zuspruch am Ende der Vesper, und die Vesper schließt den
+        Tag.
+      </p>
+      </Section>
       <Section id="more.display.armor" title="Geistliche Waffenrüstung" level={4}>
       <Segmented
         label="Geistliche Waffenrüstung"

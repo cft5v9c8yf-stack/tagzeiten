@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { arcPosition, buildArc, fromMinutes } from '../../domain/dayArc';
+import { useProfile } from '../../data/hooks';
 import type { Day, Schedule } from '../../domain/model';
 
 const nowMinutes = () => {
@@ -14,7 +15,7 @@ const pct = (v: number) => `${(v * 100).toFixed(2)}%`;
  * Prayed times are filled; open ones stay neutral – never red (rule 5).
  */
 export function DayArc({ schedule, day, isToday }: { schedule: Schedule; day: Day; isToday: boolean }) {
-  const arc = buildArc(schedule, day);
+  const arc = buildArc(schedule, day, useProfile().showCompline);
   const [now, setNow] = useState(nowMinutes);
   useEffect(() => {
     if (!isToday) return;

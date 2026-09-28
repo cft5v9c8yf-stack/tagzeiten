@@ -19,8 +19,13 @@ beforeEach(() => {
 afterEach(cleanup);
 
 let n = 0;
-async function renderMorning() {
+async function renderMorning(prepare?: (s: Store) => void) {
   const store = new Store({ db: new TagzeitenDB(`morning-${++n}`), journal: memoryJournal(), now: () => new Date(2026, 8, 25, 5) });
+  if (prepare) {
+    await store.load();
+    prepare(store);
+    await store.flush();
+  }
   const router = createMemoryRouter([{ path: '/morgen', element: <MorningPage /> }], { initialEntries: ['/morgen'] });
   render(
     <ToastProvider>
@@ -82,4 +87,14 @@ describe('Stille Zeit as a flow', () => {
     await waitFor(() => expect(step().textContent).not.toContain('Harnisch'));
   });
 
+});
+
+describe('Stille Zeit without the bed', () => {
+  it('begins with the opening when Am Bett is hidden', async () => {
+    await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));
+    expect(title()).toBe('Eröffnung');
+    expect(within(chain()).queryByRole('button', { name: /Am Bett/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /^Weiter zu: / }));
+    await waitFor(() => expect(title()).not.toBe('Eröffnung'));
+  });
 });

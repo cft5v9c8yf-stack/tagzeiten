@@ -12,6 +12,7 @@ import { DayHeader } from './DayHeader';
 import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
+import { eveningClosed } from '../../domain/stats';
 
 function morningStatus(day: Day): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -20,7 +21,8 @@ function morningStatus(day: Day): string {
   return n === 0 ? 'offen' : `${n} von ${order.steps.length} Schritten`;
 }
 
-function eveningStatus(day: Day): string {
+function eveningStatus(day: Day, withCompline: boolean): string {
+  if (!withCompline) return day.evening.vespersDone ? 'abgeschlossen' : 'offen';
   if (day.evening.complineDone) return day.evening.vespersDone ? 'abgeschlossen' : 'Nachtgebet gebetet';
   return day.evening.vespersDone ? 'Vesper gebetet' : 'offen';
 }
@@ -99,13 +101,13 @@ export function TodayPage() {
         </Link>
         <Link
           to={withDate('/andacht/abend', date, isToday)}
-          className={`tile${day.evening.vespersDone && day.evening.complineDone ? ' is-done' : ''}`}
+          className={`tile${day.evening.vespersDone && eveningClosed(day, profile.showCompline) ? ' is-done' : ''}`}
         >
           <span className="tile-time">
-            {s.vespers} · {s.compline}
+            {profile.showCompline ? `${s.vespers} · ${s.compline}` : s.vespers}
           </span>
-          <span className="tile-name">Vesper und Nachtgebet</span>
-          <span className="tile-state">{eveningStatus(day)}</span>
+          <span className="tile-name">{profile.showCompline ? 'Vesper und Nachtgebet' : 'Vesper'}</span>
+          <span className="tile-state">{eveningStatus(day, profile.showCompline)}</span>
         </Link>
       </div>
 

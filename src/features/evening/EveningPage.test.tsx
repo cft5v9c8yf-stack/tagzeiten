@@ -18,8 +18,13 @@ beforeEach(() => {
 afterEach(cleanup);
 
 let n = 0;
-async function renderEvening(date: string) {
+async function renderEvening(date: string, prepare?: (s: Store) => void) {
   const store = new Store({ db: new TagzeitenDB(`evening-${date}-${++n}`), journal: memoryJournal() });
+  if (prepare) {
+    await store.load();
+    prepare(store);
+    await store.flush();
+  }
   const router = createMemoryRouter([{ path: '/abend', element: <EveningPage /> }], {
     initialEntries: [`/abend?d=${date}`],
   });
@@ -147,5 +152,29 @@ describe('Vesper', () => {
     await openVespers();
     expect(screen.queryByRole('switch')).toBeNull();
     expect(document.querySelector('.vespers')!.textContent).toContain('für dich allein');
+  });
+});
+
+describe('Evening without the Nachtgebet', () => {
+  const noCompline = (s: Store) => s.updateProfile((p) => ({ ...p, showCompline: false }), { immediate: true });
+
+  it('ends the Vesper with review, then examination with confession and absolution, and closes the day (rules 1, 3)', async () => {
+    const store = await renderEvening('2026-09-24', noCompline);
+    const names = within(chainOf('Vesper'))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent);
+    expect(names.join(' | ')).not.toMatch(/Nachtgebet/);
+    const review = names.findIndex((x) => /Rückschau/.test(x!));
+    const exam = names.findIndex((x) => /Prüfung, Bekenntnis und Zuspruch/.test(x!));
+    expect(review).toBeGreaterThan(0);
+    expect(exam).toBe(names.length - 1);
+    expect(review).toBeLessThan(exam);
+
+    fireEvent.click(within(chainOf('Vesper')).getByRole('button', { name: /Prüfung, Bekenntnis und Zuspruch/ }));
+    await screen.findByRole('heading', { name: 'Prüfung, Bekenntnis und Zuspruch', level: 3 });
+    expect(screen.getByText('Wird gebetet, nicht notiert.')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Tag abschließen' }));
+    await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
+    expect(screen.queryByRole('button', { name: /Weiter zum Nachtgebet/ })).toBeNull();
   });
 });

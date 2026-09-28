@@ -35,9 +35,9 @@ export interface Arc {
   ticks: number[];
 }
 
-export function buildArc(schedule: Schedule, day: Day): Arc {
+export function buildArc(schedule: Schedule, day: Day, withCompline = true): Arc {
   let start = Math.min(toMinutes(schedule.rise), toMinutes(schedule.stillTime));
-  let end = Math.max(toMinutes(schedule.lightsOut), toMinutes(schedule.compline) + 10);
+  let end = Math.max(toMinutes(schedule.lightsOut), withCompline ? toMinutes(schedule.compline) + 10 : 0);
   if (end - start < 60) end = start + 60;
   start = Math.floor(start / 60) * 60;
   end = Math.ceil(end / 60) * 60;
@@ -51,7 +51,7 @@ export function buildArc(schedule: Schedule, day: Day): Arc {
     block('stillTime', 'Stille Zeit', schedule.stillTime, morningMin, day.morning.done),
     block('vespers', 'Vesper', schedule.vespers, ORDER_MINUTES.vespers[day.evening.vespersForm], day.evening.vespersDone),
     block('compline', 'Nachtgebet', schedule.compline, ORDER_MINUTES.compline[day.evening.complineForm], day.evening.complineDone),
-  ];
+  ].filter((b) => withCompline || b.id !== 'compline');
 
   const hours = (end - start) / 60;
   const step = hours <= 8 ? 2 : 4;

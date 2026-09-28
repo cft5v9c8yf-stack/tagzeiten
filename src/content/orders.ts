@@ -379,9 +379,12 @@ export const RUBRICS = {
   sendOff: 'Und dann, wie Luther schreibt: mit Freuden an dein Werk gegangen.',
   vespers: 'Der persönliche Abschluss des Tages, für dich allein. Gebet der Kirche, nicht Selbstprüfung.',
   vespersShort: 'Hymnus – Psalm – kurze Lesung – Vaterunser – Segen. Fünf Minuten.',
+  /** Without the Nachtgebet, the Vesper closes the day with its review (and examination). */
+  vespersClosing: 'Der persönliche Abschluss des Tages, für dich allein. Erst das Gebet der Kirche, dann Rückschau, Prüfung und Zuspruch.',
+  vespersShortClosing: 'Hymnus – Psalm – kurze Lesung – Vaterunser – Segen, dann die Rückschau auf den Tag.',
   vespersReading: 'Ein kurzer Abschnitt, ohne Auslegung. Nicht die Bibellese vom Morgen – hier genügen wenige Verse.',
   vespersIntercession: 'Für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde, für das eigene Haus.',
-  magnificat: 'Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn im Nachtgebet von deinem her prüfst.',
+  magnificat: 'Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn von deinem her prüfst.',
   complineShort: 'Kurzform an müden Tagen: Kreuzzeichen, Rückschau, Vaterunser, Abendsegen. Das genügt vollkommen.',
   complineCreed: 'Der Tag wird nicht an deinem Gewissen gemessen, sondern an dem, was bekannt und gebetet wird.',
   thanks: 'Zwei oder drei Dinge dieses Tages. Konkret, nicht pauschal. Auch das Kleine, gerade das Kleine.',

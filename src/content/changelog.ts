@@ -25,6 +25,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Mehr', text: 'Neu sind das Impressum mit Hinweisen zum Datenschutz und diese Übersicht der Versionen. Unter „Einstellungen“ stehen die Anleitungen „App installieren“ und „Flugmodus beim Beten“, beide für Android und iPhone.' },
       { area: 'Deine Daten', text: 'Zeigt, ob der Browser die Einträge dauerhaft behält, und bittet ihn auf Wunsch erneut darum.' },
       { area: 'Bibel', text: 'Die Seite heißt „Mein Bibelleseplan“.' },
+      { area: 'Gebet am Bett', text: 'Am Bett am Morgen und das Nachtgebet lassen sich unter „Einstellungen“ › „Darstellung“ ausblenden. Ohne Nachtgebet stehen Rückschau, Prüfung, Bekenntnis und Zuspruch am Ende der Vesper, und die Vesper schließt den Tag.' },
       { area: 'Geistliche Waffenrüstung', text: 'Steht nicht mehr am Bett, sondern in der Stillen Zeit im Schritt „Die Ausrichtung“, vor den drei Dingen.' },
       { area: 'Bibelstellen', text: 'Stehen nur noch als Angabe, ohne Link zu bibleserver.com. Die gedruckte Bibel ist das führende Element; die App braucht kein Internet mehr.' },
       { area: 'Lehre', text: 'Der Bereich „Katechismus“ in der Leiste heißt jetzt „Lehre“. Im Anhang steht Dieffenbachs ganze Beschreibung des Kirchenjahres zum Durchlesen.' },

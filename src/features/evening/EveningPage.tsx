@@ -1,13 +1,14 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS, type Step as OrderStep } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, RUBRICS, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import { toMinutes } from '../../domain/dayArc';
 import type { DateKey } from '../../domain/dates';
 import type { EveningEntry, OrderForm } from '../../domain/model';
+import type { FlowIconName } from '../../ui/FlowIcon';
 import { Segmented } from '../../ui/Choice';
 import { StepFlow, type FlowStep } from '../../ui/StepFlow';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
@@ -52,7 +53,44 @@ function complinePages(steps: readonly OrderStep[]): ComplinePage[] {
   return pages;
 }
 
-/** The Vesper, one part at a time; the last mark of its row leads to the Nachtgebet. */
+/** A page of the Vesper: one part, or the steps taken over from the Nachtgebet. */
+interface VespersPage {
+  id: string;
+  title: string;
+  icon?: FlowIconName;
+  sections: { id: string; title: string; order: OrderId; parts: readonly Part[] }[];
+}
+
+/**
+ * The pages of the Vesper. Without the Nachtgebet, its review and – in the full
+ * form – examination, confession and absolution follow at the end: the review
+ * before the examination, never mixed (rule 3), and the examination always on
+ * one page with the word of forgiveness (rule 1).
+ */
+function vespersPages(form: OrderForm, withCompline: boolean): VespersPage[] {
+  const pages: VespersPage[] = getOrder('vespers', form).steps[0]!.parts.map((p) => ({
+    id: p.kind,
+    title: p.title,
+    icon: VESPERS_ICONS[p.kind],
+    sections: [{ id: p.kind, title: p.title, order: 'vespers', parts: [p] }],
+  }));
+  if (withCompline) return pages;
+  const taken = getOrder('compline', form).steps.filter((st) => ['review', 'examination', 'confession'].includes(st.id));
+  for (const page of complinePages(taken)) {
+    pages.push({
+      id: `compline-${page.id}`,
+      title: page.title,
+      icon: COMPLINE_ICONS[page.id],
+      sections: page.steps.map((st) => ({ id: st.id, title: st.title, order: 'compline', parts: st.parts })),
+    });
+  }
+  return pages;
+}
+
+/**
+ * The Vesper, one page at a time. With the Nachtgebet, the last mark of its row
+ * leads there; without it, the Vesper closes the day.
+ */
 function VespersView({
   date,
   current,
@@ -65,26 +103,29 @@ function VespersView({
   onOpenCompline: () => void;
 }) {
   const day = useDay(date);
+  const withCompline = useProfile().showCompline;
   const form = day.evening.vespersForm;
-  const parts = getOrder('vespers', form).steps[0]!.parts;
+  const pages = vespersPages(form, withCompline);
   const setForm = useFormSetter(date, 'vespersForm');
-  const complete = useCompletion(date, 'vespersDone', 'Vesper gebetet');
+  const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;
   const steps: FlowStep[] = [
-    ...parts.map((p) => ({ id: p.kind, title: p.title, icon: VESPERS_ICONS[p.kind], done })),
-    { id: 'compline', title: 'Nachtgebet', icon: 'moon', done: day.evening.complineDone },
+    ...pages.map((p) => ({ id: p.id, title: p.title, icon: p.icon, done })),
+    ...(withCompline ? [{ id: 'compline', title: 'Nachtgebet', icon: 'moon' as const, done: day.evening.complineDone }] : []),
   ];
-  const part = current === null ? undefined : parts[current];
-  const next = current === null ? undefined : parts[current + 1];
+  const page = current === null ? undefined : pages[current];
+  const next = current === null ? undefined : pages[current + 1];
 
   const footer = next ? (
     <button type="button" className="btn primary" onClick={() => setCurrent(current! + 1)}>
       Weiter zu: {next.title}
     </button>
   ) : done ? (
-    <button type="button" className="btn primary" onClick={onOpenCompline}>
-      Weiter zum Nachtgebet
-    </button>
+    withCompline ? (
+      <button type="button" className="btn primary" onClick={onOpenCompline}>
+        Weiter zum Nachtgebet
+      </button>
+    ) : null
   ) : (
     <button
       type="button"
@@ -92,16 +133,27 @@ function VespersView({
       onClick={() => {
         complete(true);
         setCurrent(null);
-        onOpenCompline();
+        if (withCompline) onOpenCompline();
       }}
     >
-      Vesper abschließen
+      {withCompline ? 'Vesper abschließen' : 'Tag abschließen'}
     </button>
   );
 
   return (
     <div className="order vespers">
-      <OrderHead title="Vesper" rubric={form === 'full' ? RUBRICS.vespers : RUBRICS.vespersShort}>
+      <OrderHead
+        title="Vesper"
+        rubric={
+          withCompline
+            ? form === 'full'
+              ? RUBRICS.vespers
+              : RUBRICS.vespersShort
+            : form === 'full'
+              ? RUBRICS.vespersClosing
+              : RUBRICS.vespersShortClosing
+        }
+      >
         <Segmented
           label="Form der Vesper"
           value={form}
@@ -119,18 +171,31 @@ function VespersView({
         label="Vesper"
         steps={steps}
         current={current}
-        onSelect={(i) => (i === parts.length ? onOpenCompline() : setCurrent(i))}
-        footer={part && footer}
+        onSelect={(i) => (i === pages.length ? onOpenCompline() : setCurrent(i))}
+        footer={page && footer}
       >
-        {part && <OrderPart part={part} ctx={{ order: 'vespers', form, date }} showTitle={false} />}
+        {page?.sections.map((sec, k) => (
+          <div key={sec.id} className={`${sec.order === 'compline' ? 'compline-part ' : ''}step-${sec.id}`}>
+            {k > 0 && <h4 className="flow-subtitle">{sec.title}</h4>}
+            {sec.parts.map((p) => (
+              <OrderPart
+                key={p.kind}
+                part={p}
+                ctx={{ order: sec.order, form, date }}
+                showTitle={sec.parts.length > 1}
+                headingLevel={k > 0 ? 5 : 4}
+              />
+            ))}
+          </div>
+        ))}
       </StepFlow>
       {done && current === null && (
         <DonePanel
-          note="Vesper gebetet."
-          next={{ label: 'Weiter zum Nachtgebet', onClick: onOpenCompline }}
+          note={withCompline ? 'Vesper gebetet.' : 'Tag abgeschlossen.'}
+          next={withCompline ? { label: 'Weiter zum Nachtgebet', onClick: onOpenCompline } : undefined}
           onReopen={() => {
             complete(false);
-            setCurrent(parts.length - 1);
+            setCurrent(pages.length - 1);
           }}
         />
       )}
@@ -241,6 +306,7 @@ function Evening({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const day = useDay(date);
   const profile = useProfile();
   const [view, setView] = useState<'vespers' | 'compline'>(() => {
+    if (!profile.showCompline) return 'vespers';
     const now = new Date();
     const lateEnough = isToday && now.getHours() * 60 + now.getMinutes() >= toMinutes(scheduleFor(profile, date).compline) - 30;
     return day.evening.vespersDone || day.evening.complineDone || lateEnough ? 'compline' : 'vespers';
@@ -248,7 +314,7 @@ function Evening({ date, isToday }: { date: DateKey; isToday: boolean }) {
   const [vespersStep, setVespersStep] = useState<number | null>(day.evening.vespersDone ? null : 0);
   const [complineStep, setComplineStep] = useState<number | null>(day.evening.complineDone ? null : 0);
 
-  return view === 'vespers' ? (
+  return view === 'vespers' || !profile.showCompline ? (
     <VespersView
       date={date}
       current={vespersStep}

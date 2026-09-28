@@ -46,6 +46,17 @@ describe('Today', () => {
     expect(document.querySelector('.cy-feast')!.textContent).toBe('Karfreitag');
   });
 
+  it('shows the Vesper alone, closing the day, when the Nachtgebet is hidden', async () => {
+    await renderToday('2026-09-24', (s) => {
+      s.updateProfile((p) => ({ ...p, showCompline: false }), { immediate: true });
+      s.updateDay('2026-09-24', (d) => ({ ...d, evening: { ...d.evening, vespersDone: true } }));
+    });
+    const tile = document.querySelectorAll('.tile')[1]!;
+    expect(tile.querySelector('.tile-name')!.textContent).toBe('Vesper');
+    expect(tile.querySelector('.tile-state')!.textContent).toBe('abgeschlossen');
+    expect(tile.classList.contains('is-done')).toBe(true);
+  });
+
   it('shows the orders as tiles with their state', async () => {
     await renderToday('2026-09-24', (s) =>
       s.updateDay('2026-09-24', (d) => ({
