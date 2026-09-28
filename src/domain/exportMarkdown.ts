@@ -17,6 +17,7 @@ import {
 } from './model';
 import { isEmptyDay } from './normalizeDay';
 import { isEmptyEntry } from './arena';
+import { inkToSvg } from './ink';
 import { getPlan, portionLabel } from './readingPlan';
 import { CARRY_LABEL, MARK_SYMBOL, THREE_LABEL } from './review';
 
@@ -116,6 +117,7 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
     const points = (e.points ?? []).filter((p) => p.text.trim());
     if (points.length) out.push('**Zum Besprechen:**', ...points.map((p) => `- [${p.done ? 'x' : ' '}] ${p.text.trim()}`), '');
     if (e.text.trim()) out.push(e.text.trim(), '');
+    if (e.ink?.length) out.push(`![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(e.ink))})`, '');
   }
   return out;
 }

@@ -32,3 +32,19 @@ describe('Eisenschmiede points', () => {
     expect(j!.text).toBe('Was mich bewegt');
   });
 });
+
+describe('Handwriting', () => {
+  const ink = [{ tool: 'pen', color: 'sky', points: [10, 20, 50, 30, 40, 60] }];
+
+  it('keeps well-formed strokes and counts a page with handwriting as written', () => {
+    const [e] = normalizeArena([
+      { id: 'a', createdAt: 1, verses: [], concerns: [], text: '', ink: [...ink, { tool: 'brush', color: 'red', points: [1, 2, 3] }] },
+    ]);
+    expect(e!.ink).toEqual(ink);
+    expect(entryTitle(e!)).toBe('Handschrift');
+  });
+
+  it('drops strokes with a broken point list, and the entry when nothing else is left', () => {
+    expect(normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', ink: [{ tool: 'pen', color: 'ink', points: [1, 'x', 3] }] }])).toEqual([]);
+  });
+});

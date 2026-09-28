@@ -7,6 +7,7 @@ import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { SectionVerse } from '../../ui/SectionVerse';
+import { InkPad } from './InkPad';
 
 type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
@@ -48,6 +49,78 @@ const PLACES = {
     ],
   },
 } as const;
+
+type Writing = 'text' | 'ink';
+const WRITING_KEY = 'tz:arena-writing';
+
+/** How the last entry was written, on this device: a convenience only. */
+const lastWriting = (): Writing => {
+  try {
+    return localStorage.getItem(WRITING_KEY) === 'ink' ? 'ink' : 'text';
+  } catch {
+    return 'text';
+  }
+};
+
+/** Typed text or handwriting: an entry may hold both; one is shown at a time. */
+function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: ArenaEntry) => ArenaEntry) => void }) {
+  const textId = useId();
+  const hasText = !!entry.text.trim();
+  const hasInk = !!entry.ink?.length;
+  const [writing, setWriting] = useState<Writing>(() =>
+    hasInk && !hasText ? 'ink' : hasText && !hasInk ? 'text' : lastWriting(),
+  );
+  const choose = (w: Writing) => {
+    setWriting(w);
+    try {
+      localStorage.setItem(WRITING_KEY, w);
+    } catch {
+      // Only a convenience.
+    }
+  };
+  return (
+    <fieldset className="arena-lines arena-text">
+      <legend>{PLACES.journal.textLabel}</legend>
+      <Segmented<Writing>
+        label="Schreiben mit"
+        value={writing}
+        onChange={choose}
+        options={[
+          { value: 'text', label: 'Tastatur' },
+          { value: 'ink', label: 'Handschrift' },
+        ]}
+      />
+      {writing === 'text' ? (
+        <div className="field">
+          <label htmlFor={textId} className="visually-hidden">
+            {PLACES.journal.textLabel}
+          </label>
+          <textarea
+            id={textId}
+            rows={14}
+            value={entry.text}
+            placeholder={PLACES.journal.textHint}
+            onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
+          />
+          {hasInk && <p className="small muted">Dazu gibt es Handschrift.</p>}
+        </div>
+      ) : (
+        <>
+          <InkPad
+            strokes={entry.ink ?? []}
+            onChange={(ink) =>
+              update((x) => {
+                const { ink: _, ...rest } = x;
+                return ink.length ? { ...rest, ink } : rest;
+              })
+            }
+          />
+          {hasText && <p className="small muted">Dazu gibt es getippten Text.</p>}
+        </>
+      )}
+    </fieldset>
+  );
+}
 
 const arenaPath = (k: Kind) => (k === 'forge' ? `/arena?${FORGE_PARAM}=${FORGE_SLUG}` : '/arena');
 
@@ -212,7 +285,6 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const store = useStore();
   const profile = useProfile();
   const navigate = useNavigate();
-  const textId = useId();
   const dateId = useId();
   const toast = useToast();
   const [confirm, setConfirm] = useState(false);
@@ -269,16 +341,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       {kind === 'forge' ? (
         <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
       ) : (
-        <div className="field arena-text">
-          <label htmlFor={textId}>{PLACES.journal.textLabel}</label>
-          <textarea
-            id={textId}
-            rows={14}
-            value={entry.text}
-            placeholder={PLACES.journal.textHint}
-            onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
-          />
-        </div>
+        <JournalText entry={entry} update={update} />
       )}
 
       <aside className="arena-comfort" aria-label="Zuspruch">

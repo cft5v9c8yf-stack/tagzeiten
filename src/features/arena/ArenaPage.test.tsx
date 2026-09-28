@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -192,5 +192,59 @@ describe('Arena', () => {
     await waitFor(() => expect(screen.queryByLabelText('Punkt 4')).toBeNull());
     // The journal keeps its free text.
     expect(screen.queryByLabelText('Was dich bewegt')).toBeNull();
+  });
+});
+
+describe('Handwriting in the Gebetskammer', () => {
+  it('switches to a page for the pencil and keeps strokes, pen and marker, with undo and eraser', async () => {
+    const width = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => 500 });
+    try {
+      const store = await renderArena();
+      fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Handschrift' }));
+      const page = await screen.findByRole('img', { name: 'Leere Seite für Handschrift' });
+      // No red among the colours (rule 5).
+      const colours = within(screen.getByRole('group', { name: 'Farbe' }))
+        .getAllByRole('button')
+        .map((b) => b.getAttribute('aria-label'));
+      expect(colours).toEqual(['Tinte', 'Gold', 'Blau']);
+
+      const stroke = (x0: number, x1: number, y: number) => {
+        fireEvent.pointerDown(page, { pointerId: 1, pointerType: 'pen', clientX: x0, clientY: y, pressure: 0.5 });
+        fireEvent.pointerMove(page, { pointerId: 1, pointerType: 'pen', clientX: x1, clientY: y, pressure: 0.8 });
+        fireEvent.pointerUp(page, { pointerId: 1, pointerType: 'pen', clientX: x1, clientY: y });
+      };
+      stroke(10, 100, 50);
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toHaveLength(1));
+      const first = store.getProfile().arena[0]!.ink![0]!;
+      expect(first.tool).toBe('pen');
+      expect(first.color).toBe('ink');
+      // On a page 1000 units wide, shown 500 px wide.
+      expect(first.points.slice(0, 2)).toEqual([20, 100]);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Textmarker' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Gold' }));
+      stroke(10, 100, 150);
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toHaveLength(2));
+      expect(store.getProfile().arena[0]!.ink![1]).toMatchObject({ tool: 'marker', color: 'gold' });
+
+      fireEvent.click(screen.getByRole('button', { name: 'Rückgängig' }));
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toHaveLength(1));
+
+      fireEvent.click(screen.getByRole('button', { name: 'Radierer' }));
+      stroke(50, 55, 50);
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toBeUndefined());
+
+      stroke(10, 100, 50);
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toBeUndefined()); // the eraser still in hand
+      fireEvent.click(screen.getByRole('button', { name: 'Stift' }));
+      stroke(10, 100, 50);
+      await waitFor(() => expect(store.getProfile().arena[0]!.ink).toHaveLength(1));
+      fireEvent.click(screen.getByRole('button', { name: 'Eintrag sichern und zurück' }));
+      expect(await screen.findByRole('link', { name: /Handschrift/ })).toBeTruthy();
+    } finally {
+      if (width) Object.defineProperty(HTMLElement.prototype, 'clientWidth', width);
+    }
   });
 });

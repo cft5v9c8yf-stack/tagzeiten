@@ -4,6 +4,7 @@
  * (rule 9); it is prayed in the confession of the night prayer.
  */
 import { formatLong, isDateKey, type DateKey } from './dates';
+import { normalizeInk } from './ink';
 import type { ArenaEntry, ArenaPoint } from './model';
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
@@ -27,7 +28,8 @@ export const isEmptyEntry = (e: ArenaEntry) =>
   !e.text.trim() &&
   e.verses.every((v) => !v.trim()) &&
   e.concerns.every((c) => !c.trim()) &&
-  (e.points ?? []).every((p) => !p.text.trim());
+  (e.points ?? []).every((p) => !p.text.trim()) &&
+  !e.ink?.length;
 
 function points(v: unknown): ArenaPoint[] {
   if (!Array.isArray(v)) return [];
@@ -57,6 +59,8 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     };
     if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
     if (x.kind === 'forge') e.kind = 'forge';
+    const ink = e.kind === 'forge' ? [] : normalizeInk(x.ink);
+    if (ink.length) e.ink = ink;
     if (e.kind === 'forge' && isDateKey(x.meetingDate)) e.meetingDate = x.meetingDate;
     if (e.kind === 'forge') {
       e.points = points(x.points);
@@ -81,7 +85,7 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
 export function entryTitle(e: ArenaEntry): string {
   const line = (e.text.split('\n').find((l) => l.trim()) ?? e.points?.find((p) => p.text.trim())?.text)?.trim();
   if (line) return line.length > 80 ? `${line.slice(0, 79)}…` : line;
-  return e.concerns.find((c) => c.trim()) ?? e.verses.find((v) => v.trim()) ?? '';
+  return e.concerns.find((c) => c.trim()) ?? e.verses.find((v) => v.trim()) ?? (e.ink?.length ? 'Handschrift' : '');
 }
 
 /** Looks like a Bible reference ("Römer 8,37", "1. Korinther 10,13"), so it can be linked. */

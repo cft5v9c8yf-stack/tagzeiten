@@ -18,6 +18,7 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Arena, Eisenschmiede und das Kirchenjahr nach Dieffenbach',
     changes: [
       { area: 'Arena', text: 'Die Gebetskammer: ein Ort für den Kampf des Glaubens, mit Bibelversen, Gebetsanliegen und freiem Text. Einträge lassen sich in den Rückblick archivieren und zurückholen. Was du bekennst, gehört ins Gebet, nicht in die App.' },
+      { area: 'Handschrift', text: 'In der Gebetskammer schreibst du wahlweise mit der Tastatur oder von Hand, wie in einem Notizbuch: Stift in Tinte, Gold oder Blau, Textmarker, Radierer und Rückgängig. Mit dem Apple Pencil schreibt der Stift und der Finger blättert. Die Handschrift bleibt auf dem Gerät und steht im Export.' },
       { area: 'Eisenschmiede', text: 'Anliegen für das Treffen mit den Brüdern, nach dem Tag des Treffens benannt und geordnet. Was du besprechen willst, steht als Liste zum Abhaken; Enter oder „+“ legt den nächsten Punkt an.' },
       { area: 'Kirchenjahr', text: 'Einteilung, Einleitung und Erklärung der drei Festkreise nach Georg Christian Dieffenbachs Evangelischer Haus-Agende (Mainz 1853), dazu die Deutung jedes Sonn- und Festtags. Die Sonntagsseite zeigt sie für die laufende Woche.' },
       { area: 'Vesper und Familienandacht', text: 'Die Vesper ist der persönliche Abschluss des Tages. Die Familienandacht steht als eigene Gewohnheit.' },

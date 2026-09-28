@@ -1430,6 +1430,77 @@ body.is-sorting * {
   min-height: 16rem;
   line-height: 1.5;
 }
+.arena-text .field {
+  margin-top: 10px;
+}
+
+/* Handwriting: a page like paper, the tools above it. */
+.ink {
+  margin-top: 10px;
+}
+.ink-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+.ink-colors {
+  display: flex;
+  gap: 6px;
+}
+.ink-color {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--rule);
+  background: var(--sheet);
+  cursor: pointer;
+  position: relative;
+}
+.ink-color::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: var(--swatch);
+}
+.ink-ink {
+  --swatch: var(--ink);
+}
+.ink-gold {
+  --swatch: var(--rose-gold);
+}
+.ink-sky {
+  --swatch: var(--sky);
+}
+.ink-color[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.ink-color:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.ink-undo {
+  margin-left: auto;
+}
+.ink-hint {
+  margin: 8px 0;
+}
+.ink-page {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  overflow: hidden;
+}
+.ink-page canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
 .arena-comfort {
   margin: 16px 0;
   padding: 12px 14px;

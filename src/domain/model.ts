@@ -5,6 +5,7 @@
  * TypeScript types are derived from them. This lets tests inspect the complete
  * schema at runtime (rule 9: there is no field for confessing sins, anywhere).
  */
+import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
 
 /* ---------------------------------------------------------------- fields */
@@ -177,6 +178,8 @@ export interface ArenaEntry {
   /** Prayer concerns for this struggle. */
   concerns: string[];
   text: string;
+  /** Gebetskammer: handwriting, as drawn with the pencil. */
+  ink?: InkStroke[];
   /** Eisenschmiede: what to bring to the meeting, one point each, ticked off when spoken of. */
   points?: ArenaPoint[];
   /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
