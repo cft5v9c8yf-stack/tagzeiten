@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.0',
+    date: '2026-09-29',
+    title: 'Kacheln statt Listen',
+    changes: [
+      { area: 'Einstellungen und Gebet', text: 'Die Abschnitte stehen als Kacheln, je zwei nebeneinander, mit Symbol, Titel und dem, was gerade eingestellt ist oder darin steht. Ein Tipp öffnet die Kachel darunter über die ganze Breite. So auch in Darstellung, Deine Daten, Über Henoch, Mein Haus und im Gebetsschatz.' },
+      { area: 'Vaterunser und Glaubensbekenntnis', text: 'Stehen jetzt immer in Luthers Fassung aus dem Kleinen Katechismus; die Wahl der Fassung entfällt.' },
+    ],
+  },
+  {
     version: '0.5.1',
     date: '2026-09-29',
     title: 'Name oben, Kirchenjahr als Karten',

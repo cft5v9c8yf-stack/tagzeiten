@@ -48,3 +48,8 @@ export function useOpen(id: string, defaultOpen: boolean): [boolean, (open: bool
   const set = useCallback((open: boolean) => setOpen(id, open), [id]);
   return [stored ?? defaultOpen, set];
 }
+
+/** All remembered open states at once (for a group that lays out several). */
+export function useOpenStates(): Readonly<Record<string, boolean>> {
+  return useSyncExternalStore(subscribe, () => state);
+}

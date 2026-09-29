@@ -24,7 +24,6 @@ export function defaultProfile(today: DateKey): Profile {
     showCompline: true,
     arena: [],
     theme: 'system',
-    texts: 'ecumenical',
     createdAt: today,
     updatedAt: 0,
   };
@@ -59,7 +58,6 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     showCompline: raw.showCompline !== false,
     arena: normalizeArena(raw.arena),
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
-    texts: raw.texts === 'luther' ? 'luther' : 'ecumenical',
     createdAt: raw.createdAt ?? today,
     updatedAt: raw.updatedAt ?? 0,
   };

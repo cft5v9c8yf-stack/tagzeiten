@@ -6,7 +6,7 @@ import { useStore } from '../../data/hooks';
 import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
 import { BackupError, parseBackup } from '../../domain/backup';
 import { resetOpenState } from '../../ui/collapseState';
-import { Section } from '../../ui/Section';
+import { TileGroup } from '../../ui/TileGroup';
 
 type Pending = { json: string; days: number; exportedAt?: string };
 
@@ -86,7 +86,17 @@ export function DataSettings() {
 
   return (
     <>
-      <Section id="more.data.keep" title="Speicherung" level={4}>
+      <TileGroup
+        level={4}
+        label="Deine Daten"
+        items={[
+        {
+          id: 'more.data.keep',
+          title: 'Speicherung',
+          line: kept === 'persisted' ? 'Dauerhaft' : kept === 'best-effort' ? 'Noch nicht zugesagt' : 'Nicht verfügbar',
+          icon: 'check',
+          content: (
+            <>
         {kept === 'persisted' && (
           <p>Dein Browser behält die Einträge dauerhaft. Er löscht sie nicht von sich aus, auch nicht bei knappem Speicher.</p>
         )}
@@ -106,8 +116,16 @@ export function DataSettings() {
           Eine Sicherung als JSON schützt in jedem Fall, auch beim Wechsel des Geräts oder wenn du den Browserverlauf
           löschst.
         </p>
-      </Section>
-      <Section id="more.data.export" title="Exportieren" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.data.export',
+          title: 'Exportieren',
+          line: 'Als Text oder Sicherung',
+          icon: 'scroll',
+          content: (
+            <>
       <div className="button-row">
         <button type="button" className="btn" onClick={exportMarkdown}>
           Als Text exportieren (Markdown)
@@ -118,8 +136,16 @@ export function DataSettings() {
       </div>
       <p className="small muted">Der Text ist zum Lesen und Aufheben. Die Sicherung kannst du hier oder auf einem anderen Gerät wieder einspielen.</p>
 
-      </Section>
-      <Section id="more.data.import" title="Sicherung einspielen" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.data.import',
+          title: 'Sicherung einspielen',
+          line: 'Aus einer Datei',
+          icon: 'review',
+          content: (
+            <>
       <label className="btn file-btn">
         Datei wählen …
         <input
@@ -152,8 +178,16 @@ export function DataSettings() {
         </div>
       )}
 
-      </Section>
-      <Section id="more.data.delete" title="Alles löschen" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.data.delete',
+          title: 'Alles löschen',
+          line: 'Alle Einträge',
+          icon: 'changes',
+          content: (
+            <>
       {confirmDelete ? (
         <div className="panel confirm-panel danger-panel" role="alertdialog" aria-labelledby="delete-confirm">
           <p id="delete-confirm">
@@ -174,7 +208,11 @@ export function DataSettings() {
           Alle Einträge löschen …
         </button>
       )}
-      </Section>
+            </>
+          ),
+        },
+        ]}
+      />
     </>
   );
 }

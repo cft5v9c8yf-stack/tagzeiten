@@ -30,21 +30,6 @@ export const AFTER_READING = 'Gott sei ewiglich Dank.';
 
 /* ------------------------------------------------ Lord's Prayer and Creed */
 
-/** Ecumenical wording as prayed in the congregations (default). */
-export const LORDS_PRAYER_ECUMENICAL = text([
-  'Vater unser im Himmel.',
-  'Geheiligt werde dein Name.',
-  'Dein Reich komme.',
-  'Dein Wille geschehe, wie im Himmel, so auf Erden.',
-  'Unser tägliches Brot gib uns heute.',
-  'Und vergib uns unsere Schuld,',
-  'wie auch wir vergeben unsern Schuldigern.',
-  'Und führe uns nicht in Versuchung,',
-  'sondern erlöse uns von dem Bösen.',
-  'Denn dein ist das Reich und die Kraft',
-  'und die Herrlichkeit in Ewigkeit. Amen.',
-]);
-
 /** Luther's wording from the Small Catechism. */
 export const LORDS_PRAYER_LUTHER = text([
   'Vater unser, der du bist im Himmel.',
@@ -58,28 +43,6 @@ export const LORDS_PRAYER_LUTHER = text([
   'sondern erlöse uns von dem Übel.',
   'Denn dein ist das Reich und die Kraft',
   'und die Herrlichkeit in Ewigkeit. Amen.',
-]);
-
-export const CREED_ECUMENICAL = text([
-  'Ich glaube an Gott, den Vater, den Allmächtigen,',
-  'Schöpfer des Himmels und der Erde.',
-  'Und an Jesus Christus,',
-  'seinen eingeborenen Sohn, unsern Herrn,',
-  'empfangen durch den Heiligen Geist,',
-  'geboren von der Jungfrau Maria,',
-  'gelitten unter Pontius Pilatus,',
-  'gekreuzigt, gestorben und begraben,',
-  'hinabgestiegen in das Reich des Todes,',
-  'am dritten Tage auferstanden von den Toten,',
-  'aufgefahren in den Himmel;',
-  'er sitzt zur Rechten Gottes, des allmächtigen Vaters;',
-  'von dort wird er kommen, zu richten die Lebenden und die Toten.',
-  'Ich glaube an den Heiligen Geist,',
-  'die heilige christliche Kirche,',
-  'Gemeinschaft der Heiligen,',
-  'Vergebung der Sünden,',
-  'Auferstehung der Toten',
-  'und das ewige Leben. Amen.',
 ]);
 
 export const CREED_LUTHER = text([

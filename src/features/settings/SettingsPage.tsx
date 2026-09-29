@@ -1,10 +1,12 @@
 import { useLayoutEffect, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
+import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { setOpen } from '../../ui/collapseState';
-import { InfoToggle, Section } from '../../ui/Section';
+import { InfoToggle } from '../../ui/Section';
+import { TileGroup } from '../../ui/TileGroup';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
@@ -39,12 +41,40 @@ const ALIASES: Record<string, { slug: string; open: string }> = {
   gebetsschatz: { slug: 'gebet', open: 'more.treasury' },
 };
 
-function Sub({ id, title, info, children }: { id: string; title: string; info: ReactNode; children: ReactNode }) {
-  // Within an area of several parts they start folded, so the page opens as an overview.
+/** "Gebet": Mein Haus, the prayer list and the treasury of prayers as tiles. */
+function PrayerTiles() {
+  const house = useProfile().house;
+  const names = [house.wife.name, ...house.children.map((c) => c.name)].map((n) => n.trim()).filter(Boolean);
   return (
-    <Section id={`more.${id}`} title={title} level={3} info={info} defaultOpen={false} className="more-section">
-      {children}
-    </Section>
+    <TileGroup
+      label="Gebet"
+      items={[
+        {
+          id: 'more.house',
+          title: 'Mein Haus',
+          line: names.length ? names.join(', ') : 'Frau und Kinder',
+          icon: 'house',
+          info: HOUSE_INFO,
+          content: <HouseSettings />,
+        },
+        {
+          id: 'more.prayerlist',
+          title: 'Gebetsübersicht',
+          line: 'Anliegen nach Tagen',
+          icon: 'people',
+          info: PRAYER_INFO,
+          content: <PrayerSettings />,
+        },
+        {
+          id: 'more.treasury',
+          title: 'Gebetsschatz',
+          line: 'Gebete der Väter',
+          icon: 'foldedHands',
+          info: TREASURY_INFO,
+          content: <PrayerTreasury />,
+        },
+      ]}
+    />
   );
 }
 
@@ -70,19 +100,7 @@ const AREAS: readonly Area[] = [
         Anliegen nach Tagen, und die Gebete, die du immer zur Hand haben willst.
       </p>
     ),
-    body: () => (
-      <>
-        <Sub id="house" title="Mein Haus" info={HOUSE_INFO}>
-          <HouseSettings />
-        </Sub>
-        <Sub id="prayerlist" title="Gebetsübersicht" info={PRAYER_INFO}>
-          <PrayerSettings />
-        </Sub>
-        <Sub id="treasury" title="Gebetsschatz" info={TREASURY_INFO}>
-          <PrayerTreasury />
-        </Sub>
-      </>
-    ),
+    body: () => <PrayerTiles />,
   },
   {
     slug: 'zeiten',
@@ -121,40 +139,51 @@ const AREAS: readonly Area[] = [
     icon: 'sliders',
     info: <p>Darstellung, deine Daten, Installation und Flugmodus, Angaben zur App.</p>,
     body: () => (
-      <>
-        <Sub
-          id="display"
-          title="Darstellung"
-          info={
-            <p>
-              „System“ folgt der Einstellung deines Geräts. Die Fassung von Vaterunser und Glaubensbekenntnis gilt in
-              allen Gebetsordnungen der App.
-            </p>
-          }
-        >
-          <DisplaySettings />
-        </Sub>
-        <Sub id="data" title="Deine Daten" info={DATA_INFO}>
-          <DataSettings />
-        </Sub>
-        <Sub
-          id="install"
-          title="App installieren"
-          info={<p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>}
-        >
-          <InstallGuide level={4} />
-        </Sub>
-        <Sub
-          id="airplane"
-          title="Flugmodus beim Beten"
-          info={<p>Wie das Telefon den Flugmodus einschaltet, solange Henoch offen ist, und danach wieder aus.</p>}
-        >
-          <AirplaneGuide level={4} />
-        </Sub>
-        <Sub id="about" title="Über Henoch" info={ABOUT_INFO}>
-          <About />
-        </Sub>
-      </>
+      <TileGroup
+        label="Einstellungen"
+        items={[
+          {
+            id: 'more.display',
+            title: 'Darstellung',
+            line: 'Farben und Teile der Andacht',
+            icon: 'sliders',
+            info: <p>Das Farbschema und welche Teile der Andacht erscheinen.</p>,
+            content: <DisplaySettings />,
+          },
+          {
+            id: 'more.data',
+            title: 'Deine Daten',
+            line: 'Sichern, einspielen, löschen',
+            icon: 'changes',
+            info: DATA_INFO,
+            content: <DataSettings />,
+          },
+          {
+            id: 'more.install',
+            title: 'App installieren',
+            line: 'Android und iPhone',
+            icon: 'check',
+            info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
+            content: <InstallGuide level={4} />,
+          },
+          {
+            id: 'more.airplane',
+            title: 'Flugmodus beim Beten',
+            line: 'Stille ohne Störung',
+            icon: 'moon',
+            info: <p>Wie das Telefon den Flugmodus einschaltet, solange Henoch offen ist, und danach wieder aus.</p>,
+            content: <AirplaneGuide level={4} />,
+          },
+          {
+            id: 'more.about',
+            title: 'Über Henoch',
+            line: 'Bogen, Quellen, Privatsphäre',
+            icon: 'cross',
+            info: ABOUT_INFO,
+            content: <About />,
+          },
+        ]}
+      />
     ),
   },
 

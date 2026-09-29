@@ -1,5 +1,5 @@
 import { MOTTO, PRIVACY, SOURCES, THE_ARC } from '../../content/about';
-import { Section } from '../../ui/Section';
+import { TileGroup } from '../../ui/TileGroup';
 
 export function About() {
   return (
@@ -9,7 +9,17 @@ export function About() {
           {m.text} <span className="muted">({m.ref})</span>
         </blockquote>
       ))}
-      <Section id="more.about.arc" title="Der Bogen" level={4}>
+      <TileGroup
+        level={4}
+        label="Über Henoch"
+        items={[
+        {
+          id: 'more.about.arc',
+          title: 'Der Bogen',
+          line: 'Morgen und Abend',
+          icon: 'sunrise',
+          content: (
+            <>
       <p className="arc-lines">
         {THE_ARC.morning.map((l) => (
           <span key={l}>{l}</span>
@@ -21,21 +31,41 @@ export function About() {
         ))}
       </p>
       <p>{THE_ARC.monthly}</p>
-      </Section>
-      <Section id="more.about.sources" title="Quellen" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.about.sources',
+          title: 'Quellen',
+          line: 'Texte und Methode',
+          icon: 'bible',
+          content: (
+            <>
       <ul className="plain-list">
         {SOURCES.map((s) => (
           <li key={s}>{s}</li>
         ))}
       </ul>
-      </Section>
-      <Section id="more.about.privacy" title="Privatsphäre" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.about.privacy',
+          title: 'Privatsphäre',
+          line: 'Alles auf dem Gerät',
+          icon: 'check',
+          content: (
+            <>
       <ul className="plain-list">
         {PRIVACY.map((s) => (
           <li key={s}>{s}</li>
         ))}
       </ul>
-      </Section>
+            </>
+          ),
+        },
+        ]}
+      />
       <p className="small muted">Version {__APP_VERSION__}</p>
     </>
   );

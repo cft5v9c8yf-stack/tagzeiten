@@ -138,8 +138,6 @@ export interface Habit {
 }
 
 export type Theme = 'system' | 'light' | 'dark';
-/** Wording of Lord's Prayer and Creed in the orders. */
-export type TextVariant = 'ecumenical' | 'luther';
 
 export interface Schedule {
   /** "HH:MM" */
@@ -232,7 +230,6 @@ export interface Profile {
    */
   showCompline: boolean;
   theme: Theme;
-  texts: TextVariant;
   createdAt: DateKey;
   updatedAt: number;
 }

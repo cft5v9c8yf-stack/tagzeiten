@@ -11,7 +11,7 @@ import {
 } from '../../domain/house';
 import { Segmented } from '../../ui/Choice';
 import { GripIcon } from '../../ui/Icons';
-import { Section } from '../../ui/Section';
+import { TileGroup } from '../../ui/TileGroup';
 import { useSortable } from '../../ui/useSortable';
 
 export const HOUSE_INFO = (
@@ -139,6 +139,11 @@ function ChildRow({
   );
 }
 
+const childrenLine = (h: House) => {
+  const names = h.children.map((c) => c.name.trim()).filter(Boolean);
+  return names.length ? names.join(', ') : 'Namen, Sohn oder Tochter, Anliegen';
+};
+
 /** "Mein Haus": the wife and the children, sortable, each with a current concern. */
 export function HouseSettings() {
   const store = useStore();
@@ -207,7 +212,17 @@ export function HouseSettings() {
       <p id={hintId} className="visually-hidden">
         Zum Verschieben ziehen oder mit den Pfeiltasten nach oben und unten bewegen.
       </p>
-      <Section id="more.house.wife" title="Ehefrau" level={4}>
+      <TileGroup
+        level={4}
+        label="Mein Haus"
+        items={[
+        {
+          id: 'more.house.wife',
+          title: 'Ehefrau',
+          line: house.wife.name.trim() || 'Name und Anliegen',
+          icon: 'heart', defaultOpen: true,
+          content: (
+            <>
         <div className="field">
           <label htmlFor={wifeId}>Name</label>
           <input
@@ -224,8 +239,16 @@ export function HouseSettings() {
           onChange={(concern) => setHouse((h) => ({ ...h, wife: { ...h.wife, concern } }), false)}
           onAnswered={() => answer('wife')}
         />
-      </Section>
-      <Section id="more.house.children" title="Kinder" level={4}>
+            </>
+          ),
+        },
+        {
+          id: 'more.house.children',
+          title: 'Kinder',
+          line: childrenLine(house),
+          icon: 'people', defaultOpen: true,
+          content: (
+            <>
         <p className="small muted">
           In dieser Reihenfolge stehen sie dienstags bis freitags im Mittelpunkt. Zum Sortieren am Griff ziehen.
         </p>
@@ -265,7 +288,11 @@ export function HouseSettings() {
         >
           +
         </button>
-      </Section>
+            </>
+          ),
+        },
+        ]}
+      />
     </>
   );
 }

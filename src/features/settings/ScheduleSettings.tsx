@@ -1,10 +1,10 @@
 import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
-import type { Schedule, ScheduleGroup, TextVariant, Theme } from '../../domain/model';
+import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model';
+import { TileGroup } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
-import { Section } from '../../ui/Section';
 
 const TIMES = TIME_ORDER;
 
@@ -138,98 +138,115 @@ export function ScheduleSettings() {
   );
 }
 
+const THEME_LABEL: Record<Theme, string> = { system: 'System', light: 'Hell', dark: 'Dunkel' };
+
+/** Show or hide a part of the orders, with a note on what that means. */
+function ShowHide({ label, on, set, note }: { label: string; on: boolean; set: (on: boolean) => void; note: string }) {
+  return (
+    <>
+      <Segmented
+        label={label}
+        value={on ? 'on' : 'off'}
+        onChange={(v) => set(v === 'on')}
+        options={[
+          { value: 'on', label: 'Anzeigen' },
+          { value: 'off', label: 'Ausblenden' },
+        ]}
+      />
+      <p className="small muted">{note}</p>
+    </>
+  );
+}
+
+/** "Darstellung" as tiles: each setting with what is set now; it opens beneath. */
 export function DisplaySettings() {
   const store = useStore();
   const profile = useProfile();
-  const set = <K extends 'theme' | 'texts'>(k: K, v: K extends 'theme' ? Theme : TextVariant) =>
-    store.updateProfile((p) => ({ ...p, [k]: v }), { immediate: true });
+  const update = (fn: (p: Profile) => Profile) => store.updateProfile(fn, { immediate: true });
+  const state = (on: boolean) => (on ? 'Anzeigen' : 'Ausblenden');
   return (
-    <>
-      <Section id="more.display.theme" title="Farbschema" level={4}>
-      <Segmented
-        label="Farbschema"
-        value={profile.theme}
-        onChange={(v) => set('theme', v)}
-        options={[
-          { value: 'system', label: 'System' },
-          { value: 'light', label: 'Hell' },
-          { value: 'dark', label: 'Dunkel' },
-        ]}
-      />
-      </Section>
-      <Section id="more.display.habitHistory" title="Gewohnheiten im Rückblick" level={4}>
-      <Segmented
-        label="Gewohnheiten im Rückblick"
-        value={profile.showHabitHistory ? 'on' : 'off'}
-        onChange={(v) => store.updateProfile((p) => ({ ...p, showHabitHistory: v === 'on' }), { immediate: true })}
-        options={[
-          { value: 'on', label: 'Anzeigen' },
-          { value: 'off', label: 'Ausblenden' },
-        ]}
-      />
-      <p className="small muted">
-        Unten im Rückblick: jede Gewohnheit in den letzten acht Wochen, an wie vielen Tagen sie gehalten wurde. Nur
-        festgehalten, nicht bewertet.
-      </p>
-      </Section>
-      <Section id="more.display.atBed" title="Am Bett am Morgen" level={4}>
-      <Segmented
-        label="Am Bett am Morgen"
-        value={profile.showAtBed ? 'on' : 'off'}
-        onChange={(v) => store.updateProfile((p) => ({ ...p, showAtBed: v === 'on' }), { immediate: true })}
-        options={[
-          { value: 'on', label: 'Anzeigen' },
-          { value: 'off', label: 'Ausblenden' },
-        ]}
-      />
-      <p className="small muted">Kreuzzeichen, Vaterunser, Taufgedächtnis und Morgensegen vor der Stillen Zeit. Ausgeblendet beginnt die Andacht gleich mit der Stillen Zeit.</p>
-      </Section>
-      <Section id="more.display.compline" title="Nachtgebet am Bett" level={4}>
-      <Segmented
-        label="Nachtgebet am Bett"
-        value={profile.showCompline ? 'on' : 'off'}
-        onChange={(v) => store.updateProfile((p) => ({ ...p, showCompline: v === 'on' }), { immediate: true })}
-        options={[
-          { value: 'on', label: 'Anzeigen' },
-          { value: 'off', label: 'Ausblenden' },
-        ]}
-      />
-      <p className="small muted">
-        Ausgeblendet stehen Rückschau, Prüfung, Bekenntnis und Zuspruch am Ende der Vesper, und die Vesper schließt den
-        Tag.
-      </p>
-      </Section>
-      <Section id="more.display.armor" title="Geistliche Waffenrüstung" level={4}>
-      <Segmented
-        label="Geistliche Waffenrüstung"
-        value={profile.armor ? 'on' : 'off'}
-        onChange={(v) => store.updateProfile((p) => ({ ...p, armor: v === 'on' }), { immediate: true })}
-        options={[
-          { value: 'on', label: 'Anzeigen' },
-          { value: 'off', label: 'Ausblenden' },
-        ]}
-      />
-      <p className="small muted">
-        Epheser 6,10–18: in der Stillen Zeit vor der Ausrichtung ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und
-        eine Frage in der Prüfung.
-      </p>
-      </Section>
-      <Section id="more.display.texts" title="Vaterunser und Glaubensbekenntnis" level={4}>
-      <Segmented
-        label="Fassung von Vaterunser und Glaubensbekenntnis"
-        value={profile.texts}
-        onChange={(v) => set('texts', v)}
-        options={[
-          { value: 'ecumenical', label: 'Wie in der Gemeinde' },
-          { value: 'luther', label: 'Nach Luthers Katechismus' },
-        ]}
-      />
-      <p className="small muted">
-        {profile.texts === 'luther'
-          ? '„Vater unser, der du bist im Himmel … erlöse uns von dem Übel.“ – „… niedergefahren zur Hölle …“'
-          : '„Vater unser im Himmel … erlöse uns von dem Bösen.“ – „… hinabgestiegen in das Reich des Todes …“'}
-      </p>
-      </Section>
-    </>
+    <TileGroup
+      level={4}
+      label="Darstellung"
+      items={[
+        {
+          id: 'more.display.theme',
+          title: 'Farbschema',
+          line: THEME_LABEL[profile.theme],
+          icon: 'sunset',
+          content: (
+            <>
+              <Segmented
+                label="Farbschema"
+                value={profile.theme}
+                onChange={(v) => update((p) => ({ ...p, theme: v }))}
+                options={[
+                  { value: 'system', label: 'System' },
+                  { value: 'light', label: 'Hell' },
+                  { value: 'dark', label: 'Dunkel' },
+                ]}
+              />
+              <p className="small muted">„System“ folgt der Einstellung deines Geräts.</p>
+            </>
+          ),
+        },
+        {
+          id: 'more.display.habitHistory',
+          title: 'Gewohnheiten im Rückblick',
+          line: state(profile.showHabitHistory),
+          icon: 'review',
+          content: (
+            <ShowHide
+              label="Gewohnheiten im Rückblick"
+              on={profile.showHabitHistory}
+              set={(on) => update((p) => ({ ...p, showHabitHistory: on }))}
+              note="Unten im Rückblick: jede Gewohnheit in den letzten acht Wochen. Nur festgehalten, nicht bewertet."
+            />
+          ),
+        },
+        {
+          id: 'more.display.atBed',
+          title: 'Am Bett am Morgen',
+          line: state(profile.showAtBed),
+          icon: 'bed',
+          content: (
+            <ShowHide
+              label="Am Bett am Morgen"
+              on={profile.showAtBed}
+              set={(on) => update((p) => ({ ...p, showAtBed: on }))}
+              note="Kreuzzeichen, Vaterunser, Taufgedächtnis und Morgensegen vor der Stillen Zeit. Ausgeblendet beginnt die Andacht gleich mit der Stillen Zeit."
+            />
+          ),
+        },
+        {
+          id: 'more.display.compline',
+          title: 'Nachtgebet am Bett',
+          line: state(profile.showCompline),
+          icon: 'moon',
+          content: (
+            <ShowHide
+              label="Nachtgebet am Bett"
+              on={profile.showCompline}
+              set={(on) => update((p) => ({ ...p, showCompline: on }))}
+              note="Ausgeblendet stehen Rückschau, Prüfung, Bekenntnis und Zuspruch am Ende der Vesper, und die Vesper schließt den Tag."
+            />
+          ),
+        },
+        {
+          id: 'more.display.armor',
+          title: 'Geistliche Waffenrüstung',
+          line: state(profile.armor),
+          icon: 'cross',
+          content: (
+            <ShowHide
+              label="Geistliche Waffenrüstung"
+              on={profile.armor}
+              set={(on) => update((p) => ({ ...p, armor: on }))}
+              note="Epheser 6,10–18: in der Stillen Zeit vor der Ausrichtung ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und eine Frage in der Prüfung."
+            />
+          ),
+        },
+      ]}
+    />
   );
 }

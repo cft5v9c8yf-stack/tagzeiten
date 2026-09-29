@@ -14,7 +14,6 @@ import {
   BLESSING,
   COLLECT_EVENING,
   COLLECT_MORNING,
-  CREED_ECUMENICAL,
   CREED_LUTHER,
   EVENING_BLESSING,
   GENERAL_CONFESSION,
@@ -26,7 +25,6 @@ import {
   HYMN_MORNING,
   HYMN_MORNING_ALTERNATIVES,
   KYRIE,
-  LORDS_PRAYER_ECUMENICAL,
   LORDS_PRAYER_LUTHER,
   MAGNIFICAT,
   MAGNIFICAT_ANTIPHON,
@@ -92,8 +90,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
   const profile = useProfile();
   const wd = weekdayOf(ctx.date);
   const morning = ctx.order === 'morning' || ctx.order === 'atBed';
-  const lordsPrayer = profile.texts === 'luther' ? LORDS_PRAYER_LUTHER : LORDS_PRAYER_ECUMENICAL;
-  const creed = profile.texts === 'luther' ? CREED_LUTHER : CREED_ECUMENICAL;
+  // Lord's Prayer and Creed always as in Luther's catechism.
+  const lordsPrayer = LORDS_PRAYER_LUTHER;
+  const creed = CREED_LUTHER;
 
   switch (part.kind) {
     case 'sign-of-cross':

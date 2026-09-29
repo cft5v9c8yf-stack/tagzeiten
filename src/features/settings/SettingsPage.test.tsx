@@ -15,7 +15,7 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
 let blobs: Blob[] = [];
@@ -100,11 +100,13 @@ describe('Mehr: Aufbau', () => {
       </ToastProvider>,
     );
     await screen.findByRole('heading', { level: 2, name: /Gebet/ });
-    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(['Mein Haus', 'Gebetsübersicht', 'Gebetsschatz']);
-    expect(screen.getByRole('button', { name: 'Gebetsübersicht' }).getAttribute('aria-expanded')).toBe('false');
-    expect(screen.getByRole('button', { name: 'Mein Haus' }).getAttribute('aria-expanded')).toBe('true');
-    expect(screen.getByRole('button', { name: 'Gebetsschatz' }).getAttribute('aria-expanded')).toBe('false');
+    const tiles = [...document.querySelectorAll('.tile-group > .tile-card .tile-card-title')].map((t) => t.textContent);
+    expect(tiles.slice(0, 3)).toEqual(['Mein Haus', 'Gebetsübersicht', 'Gebetsschatz']);
+    expect(screen.getByRole('button', { name: /^Gebetsübersicht/ }).getAttribute('aria-expanded')).toBe('false');
+    expect(screen.getByRole('button', { name: /^Mein Haus/ }).getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getByRole('button', { name: /^Gebetsschatz/ }).getAttribute('aria-expanded')).toBe('false');
+    // The opened tile shows its content beneath, under its own heading.
+    expect(screen.getByRole('heading', { level: 3, name: 'Mein Haus' })).toBeTruthy();
   });
 
   it('gathers Darstellung, Deine Daten, the two guides and Über under "Einstellungen", folded and remembered', async () => {
@@ -124,18 +126,27 @@ describe('Mehr: Aufbau', () => {
     );
     const view = render(page());
     await screen.findByRole('heading', { level: 2, name: /Einstellungen/ });
-    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Henoch']);
+    const tiles = [...document.querySelectorAll('.tile-card-title')].map((t) => t.textContent);
+    expect(tiles).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Henoch']);
     // No verse above the settings, only their explanations.
     expect(document.querySelector('.section-verse')).toBeNull();
-    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
-    const display = screen.getByRole('button', { name: 'Darstellung' });
+    const display = screen.getByRole('button', { name: /^Darstellung/ });
     expect(display.getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(display);
     await waitFor(() => expect(display.getAttribute('aria-expanded')).toBe('true'));
+    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
+    // Inside: the settings as tiles with what is set now; no choice of wording for Lord's Prayer and Creed.
+    const inner = [...document.querySelectorAll('.tile-panel .tile-card')].map((t) => t.textContent);
+    expect(inner).toEqual([
+      'FarbschemaSystem',
+      'Gewohnheiten im RückblickAusblenden',
+      'Am Bett am MorgenAnzeigen',
+      'Nachtgebet am BettAnzeigen',
+      'Geistliche WaffenrüstungAnzeigen',
+    ]);
     view.unmount();
     render(page());
-    expect((await screen.findByRole('button', { name: 'Darstellung' })).getAttribute('aria-expanded')).toBe('true');
+    expect((await screen.findByRole('button', { name: /^Darstellung/ })).getAttribute('aria-expanded')).toBe('true');
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
@@ -505,10 +516,10 @@ describe('Rückblick', () => {
 
   it('keeps the two old prayers in the Gebetsschatz, with title and author', async () => {
     await renderAt('/mehr/gebetsschatz', <SettingsPage />);
-    expect(await screen.findByRole('button', { name: 'Gebet für meine Frau' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: /^Gebet für meine Frau/ })).toBeTruthy();
     expect(screen.getByText(/ich danke dir für meine liebe Frau N\./)).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Gebet eines Ehemannes' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Gebet der Eltern für ihre Kinder' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Gebet eines Ehemannes/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Gebet der Eltern für ihre Kinder/ })).toBeTruthy();
     expect(screen.getByText('Johann Habermann († 1590)')).toBeTruthy();
     expect(screen.getByText('Johann Arndt († 1621)')).toBeTruthy();
     expect(screen.getByText(/Wehre dem Eheteufel/)).toBeTruthy();
@@ -578,7 +589,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.5\.1/);
+    expect(versions[0]).toMatch(/^Version 0\.6\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
   });

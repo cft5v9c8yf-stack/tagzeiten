@@ -8,7 +8,6 @@ describe('profile', () => {
     expect(p.habits).toHaveLength(HABIT_PRESETS.length);
     expect(p.plan).toEqual({ planId: 'at2-nt1', positions: { at: 0, nt: 0 } });
     expect(p.theme).toBe('system');
-    expect(p.texts).toBe('ecumenical');
     expect(p.schedule.stillTime).toBe('04:15');
   });
 
