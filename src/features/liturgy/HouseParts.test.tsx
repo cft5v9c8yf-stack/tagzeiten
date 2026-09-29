@@ -76,8 +76,14 @@ describe('Fürbitte für das Haus through the week, with a son and a daughter', 
     ]);
     expect(text()).toContain('Herr, ich befehle dir meine liebe Frau Anna.');
     expect(text()).toContain('Ich bringe dir Paul und Marie. Du hast sie in der Taufe zu deinen Kindern gemacht');
-    expect(titles()).toEqual(['Für Anna']);
-    expect(text()).toContain('Herr, heute bringe ich dir besonders Anna.');
+    expect(titles()).toEqual(['Gebet für meine Frau']);
+    expect(text()).toContain('Herr, himmlischer Vater, ich danke dir für meine liebe Frau Anna. Du hast sie mir geschenkt');
+    expect(text()).not.toContain('heute bringe ich dir besonders');
+    // Three paragraphs as given, the reference under them.
+    expect(document.querySelectorAll('.pray')[1]!.querySelectorAll('p')).toHaveLength(3);
+    expect(refs()).toEqual(['Epheser 5,25']);
+    // The concern stands as a rubric right above the text.
+    expect(document.querySelector('.house-focus-title')!.nextElementSibling!.textContent).toBe('Anliegen: Kraft für die Nachtdienste');
   });
 
   it('Tuesday: Paul, the son, with his concern and references', async () => {

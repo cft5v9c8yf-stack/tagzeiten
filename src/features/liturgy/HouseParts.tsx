@@ -7,6 +7,7 @@ import {
   houseBlessing,
   houseForAll,
   sonPrayer,
+  WIFE_PRAYER_TITLE,
   wifePrayer,
   type FocusPrayer,
 } from '../../content/house';
@@ -31,7 +32,7 @@ function HouseHint({ children }: { children?: React.ReactNode }) {
   );
 }
 
-function Focused({ prayer }: { prayer: FocusPrayer }) {
+export function Focused({ prayer }: { prayer: FocusPrayer }) {
   return (
     <>
       <PrayerText text={{ lines: prayer.lines }} />
@@ -66,7 +67,7 @@ function FocusBody({ focus, withChildren }: { focus: Focus; withChildren: boolea
     case 'wife':
       return (
         <>
-          <h5 className="house-focus-title">Für {focus.person.name.trim()}</h5>
+          <h5 className="house-focus-title">{WIFE_PRAYER_TITLE}</h5>
           {concernRubric}
           <Focused prayer={wifePrayer(focus.person.name.trim())} />
         </>

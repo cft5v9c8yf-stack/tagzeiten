@@ -15,7 +15,7 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
 }
 
 let blobs: Blob[] = [];
@@ -457,7 +457,9 @@ describe('Rückblick', () => {
 
   it('keeps the two old prayers in the Gebetsschatz, with title and author', async () => {
     await renderAt('/mehr/gebetsschatz', <SettingsPage />);
-    expect(await screen.findByRole('button', { name: 'Gebet eines Ehemannes' })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Gebet für meine Frau' })).toBeTruthy();
+    expect(screen.getByText(/ich danke dir für meine liebe Frau N\./)).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Gebet eines Ehemannes' })).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Gebet der Eltern für ihre Kinder' })).toBeTruthy();
     expect(screen.getByText('Johann Habermann († 1590)')).toBeTruthy();
     expect(screen.getByText('Johann Arndt († 1621)')).toBeTruthy();

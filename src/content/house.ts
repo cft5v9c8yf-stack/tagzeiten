@@ -51,10 +51,15 @@ export interface FocusPrayer {
   refs?: readonly string[];
 }
 
+export const WIFE_PRAYER_TITLE = 'Gebet für meine Frau';
+
 export const wifePrayer = (name: string): FocusPrayer => ({
-  lines: [
-    `Herr, heute bringe ich dir besonders ${name}. Gib ihr Freude an dir, Kraft für ihren Tag und Frieden im Herzen. Mach mich zu einem Mann, der ihr dient und sie nicht belastet. Amen.`,
-  ],
+  lines: paragraphs([
+    `Herr, himmlischer Vater, ich danke dir für meine liebe Frau ${name}. Du hast sie mir geschenkt, und ich habe sie nicht verdient. Ich bringe sie dir heute: Umgib sie mit deiner Liebe und fülle ihr Herz mit deinem Frieden. Stärke sie in allem, was heute auf ihr liegt, und lass sie erkennen, wozu du sie berufen hast.`,
+    'Gib ihr Freude im Herzen, Klarheit in den Gedanken und Zuversicht im Geist. Schenke ihr Weisheit und Mut für ihr Tagewerk. Nimm von ihr, was sie niederdrückt, behüte sie, leite ihre Schritte und lass sie deine Nähe spüren.',
+    'Und mich mach zu einem Mann, der sie liebt, wie du es mir geboten hast: der sie ermutigt, ihr dankt und sie trägt. Lass sie nie daran zweifeln, wie sehr sie geliebt ist, von dir und von mir. Amen.',
+  ]),
+  refs: ['Epheser 5,25'],
 });
 
 export const daughterPrayer = (name: string): FocusPrayer => ({
