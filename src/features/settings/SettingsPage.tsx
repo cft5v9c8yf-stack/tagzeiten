@@ -230,7 +230,7 @@ export function SettingsPage() {
           {AREAS.map((a) => (
             <li key={a.slug}>
               <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
-                <FlowIcon name={a.icon} size={26} />
+                <FlowIcon name={a.icon} size={22} />
                 <span className="more-tile-title">{a.title}</span>
                 <span className="more-tile-line">{a.line}</span>
               </Link>

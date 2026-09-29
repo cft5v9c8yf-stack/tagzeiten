@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.4',
+    date: '2026-09-29',
+    title: 'Symbol und Name nebeneinander',
+    changes: [
+      { area: 'Kacheln', text: 'Der Name steht jetzt direkt neben dem Symbol, die Zeile darunter. Die Kacheln unter „Mehr“ und in den Bereichen haben dieselbe Größe, Schrift und denselben Abstand.' },
+    ],
+  },
+  {
     version: '0.6.3',
     date: '2026-09-29',
     title: 'Eine Kachel zur Zeit',
