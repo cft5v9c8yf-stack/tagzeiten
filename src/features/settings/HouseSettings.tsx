@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -28,6 +28,13 @@ export const HOUSE_INFO = (
   </>
 );
 
+/** Grow a text area with its text, so a longer concern stays readable. */
+function autosize(el: HTMLTextAreaElement | null) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = `${el.scrollHeight + 2}px`;
+}
+
 /** The current concern of one person, with "Erhört" to keep it as answered. */
 function ConcernField({
   label,
@@ -41,17 +48,20 @@ function ConcernField({
   onAnswered: () => void;
 }) {
   const id = useId();
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => autosize(ref.current), [person.concern]);
   return (
     <div className="field house-concern">
       <label htmlFor={id}>{label}</label>
-      <div className="house-concern-row">
-        <input
-          id={id}
-          type="text"
-          value={person.concern}
-          placeholder="Aktuelles Anliegen"
-          onChange={(e) => onChange(e.target.value)}
-        />
+      <textarea
+        ref={ref}
+        id={id}
+        rows={1}
+        value={person.concern}
+        placeholder="Aktuelles Anliegen"
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <div className="house-concern-actions">
         <button type="button" className="btn" disabled={!person.concern.trim()} onClick={onAnswered}>
           Erhört
         </button>
@@ -107,6 +117,7 @@ function ChildRow({
           />
         </div>
         <Segmented<ChildSex | ''>
+          grid
           label={`${label}: Sohn oder Tochter`}
           value={child.sex ?? ''}
           onChange={(sex) => update((c) => (sex ? { ...c, sex } : c))}

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.6',
+    date: '2026-09-29',
+    title: 'Mein Haus aufgeräumt',
+    changes: [
+      { area: 'Mein Haus', text: 'Sohn oder Tochter wählst du in zwei gleich breiten Feldern wie im Rückblick. Das Anliegen wächst mit dem Text und wird nicht mehr abgeschnitten; „Erhört“ steht darunter.' },
+    ],
+  },
+  {
     version: '0.6.5',
     date: '2026-09-29',
     title: 'Kacheln auf schmalen Handys',

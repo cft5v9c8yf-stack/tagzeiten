@@ -1928,14 +1928,14 @@ mark.placeholder {
 .house-required {
   margin: 0;
 }
-.house-concern-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.house-concern textarea {
+  resize: none;
+  overflow: hidden;
 }
-.house-concern-row input {
-  flex: 1;
-  min-width: 0;
+.house-concern-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 .archive-answered {
   margin: 0;
