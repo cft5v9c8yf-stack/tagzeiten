@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.2',
+    date: '2026-09-29',
+    title: 'Die Schrift, wie sie steht',
+    changes: [
+      { area: 'Bibeltexte', text: 'Alle Bibelverse der App stehen jetzt Wort für Wort nach der Lutherbibel 1912, nichts mehr geglättet: Benedictus, Magnificat und Nunc dimittis, die Versikel, die Antiphonen der Psalmen, die Tischgebete, das Wort nach der Prüfung (1. Johannes 1,9) und die Kurzzitate im Kirchenjahr. Im Benedictus steht wieder der ausgelassene Vers vom Eid an Abraham.' },
+      { area: 'Über Henoch', text: 'Die Quellenangabe sagt es: Bibeltexte wortgetreu nach der Lutherbibel 1912.' },
+    ],
+  },
+  {
     version: '0.6.1',
     date: '2026-09-29',
     title: 'Gewohnheiten im neuen Kleid',

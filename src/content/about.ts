@@ -27,7 +27,7 @@ export const THE_ARC = {
 };
 
 export const SOURCES = [
-  'Bibeltexte in der Fassung Luthers (1912), sprachlich behutsam geglättet. Bibelstellen stehen als Angabe; gelesen wird in der gedruckten Bibel.',
+  'Bibeltexte wortgetreu nach der Lutherbibel 1912. Bibelstellen stehen als Angabe; gelesen wird in der gedruckten Bibel.',
   'Gebetstexte aus Luthers Kleinem Katechismus (traditionelle Fassung), der Deutschen Messe und „Eine einfältige Weise zu beten“ (1535).',
   'Lieder: Nikolaus Herman (1560), Erasmus Alber (1556), Georg Niege (1592), Paul Gerhardt (1647).',
   METHOD_CREDIT,

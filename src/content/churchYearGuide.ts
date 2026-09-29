@@ -156,7 +156,7 @@ export const SUNDAY_INFO: Record<string, SundayInfo> = {
     epistle: 'Römer 5,1-5',
   },
   okuli: {
-    meaning: '„Meine Augen sehen stets auf den HERRN“ (Psalm 25,15).',
+    meaning: '„Meine Augen sehen stets zu dem HERRN“ (Psalm 25,15).',
     theme: 'Nachfolge ohne Zurückschauen.',
     gospel: 'Lukas 9,57-62',
     epistle: 'Epheser 5,1-8',
@@ -180,11 +180,11 @@ export const SUNDAY_INFO: Record<string, SundayInfo> = {
     epistle: 'Philipper 2,5-11',
   },
   maundyThursday: { theme: 'Die Einsetzung des heiligen Abendmahls; die Fußwaschung.', gospel: 'Johannes 13,1-15', epistle: '1. Korinther 11,23-26' },
-  goodFriday: { theme: 'Die Kreuzigung des Herrn: „Es ist vollbracht.“', gospel: 'Johannes 19,16-30', epistle: '2. Korinther 5,14-21' },
+  goodFriday: { theme: 'Die Kreuzigung des Herrn: „Es ist vollbracht!“', gospel: 'Johannes 19,16-30', epistle: '2. Korinther 5,14-21' },
   easter: { theme: 'Die Auferstehung des Herrn: das leere Grab.', gospel: 'Markus 16,1-8', epistle: '1. Korinther 15,1-11' },
   easterMonday: { theme: 'Die Emmausjünger: der Auferstandene geht mit.', gospel: 'Lukas 24,13-35', epistle: '1. Korinther 15,12-20' },
   quasimodogeniti: {
-    meaning: '„Wie die neugeborenen Kindlein“ (1. Petrus 2,2).',
+    meaning: '„als die jetzt geborenen Kindlein“ (1. Petrus 2,2).',
     theme: 'Der Auferstandene und Thomas: neugeboren zu lebendiger Hoffnung.',
     gospel: 'Johannes 20,19-29',
     epistle: '1. Petrus 1,3-9',

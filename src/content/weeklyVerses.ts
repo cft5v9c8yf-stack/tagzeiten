@@ -18,10 +18,16 @@ export interface WeeklyVerse {
   parts: readonly string[];
 }
 
-/** Obvious typos of the digital source, corrected against the printed 1912 text. */
+/**
+ * Obvious typos of the digital source, corrected against the printed 1912 text,
+ * and one footnote the source carries inside the verse.
+ */
 export const CORRECTIONS: readonly { source: string; from: string; to: string }[] = [
   { source: 'Joh 3,15', from: 'auf das alle', to: 'auf daß alle' },
   { source: 'Ps 119,105', from: 'meine Fußes', to: 'meines Fußes' },
+  { source: 'Ps 141,2', from: 'vor dir Taugen', to: 'vor dir taugen' },
+  { source: 'Lk 2,31', from: 'du bereitest hast', to: 'du bereitet hast' },
+  { source: 'Lk 1,78', from: 'Andre Überlieferung: "besuchen wird". ', to: '' },
 ];
 
 const v = (ref: string, source: string, ...parts: string[]): WeeklyVerse => ({ ref, source, parts });

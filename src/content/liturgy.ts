@@ -1,6 +1,6 @@
 /**
  * Liturgical texts. Sources: Luther's Small Catechism, the Deutsche Messe,
- * Luther Bible 1912 (lightly smoothed as in the booklet), hymns before 1900.
+ * Luther Bible 1912 (verbatim, never smoothed), hymns before 1900.
  * No texts from Luther 2017/1984 or the modern Evangelisches Gesangbuch (rule 12).
  */
 import { text, type Text, type Versicle } from './types';
@@ -17,12 +17,12 @@ export const HALLELUJA = 'Halleluja.';
 export const HALLELUJA_RUBRIC = 'In der Passionszeit entfällt das Halleluja.';
 
 export const VERSICLE_OPEN_LIPS: Versicle = {
-  v: 'Herr, tue meine Lippen auf,',
+  v: 'HERR, tue meine Lippen auf,',
   a: 'daß mein Mund deinen Ruhm verkündige.',
 };
 export const VERSICLE_HELP: Versicle = {
-  v: 'O Gott, komm mir zu Hilfe.',
-  a: 'Herr, eile, mir zu helfen.',
+  v: 'Eile, Gott, mich zu erretten,',
+  a: 'HERR, mir zu helfen!',
 };
 export const KYRIE: Versicle = { v: 'Kyrie eleison.', a: 'Christe eleison. Kyrie eleison.' };
 export const BENEDICAMUS: Versicle = { v: 'Lasset uns preisen den Herrn.', a: 'Gott sei ewiglich Dank.' };
@@ -139,27 +139,28 @@ export const HYMN_EVENING_ALTERNATIVES = 'Oder: Nun ruhen alle Wälder (Paul Ger
 
 /* ------------------------------------------------ canticles */
 
-export const BENEDICTUS_ANTIPHON = 'Gelobt sei der Herr, der Gott Israels.';
+export const BENEDICTUS_ANTIPHON = 'Gelobet sei der HERR, der Gott Israels!';
 export const BENEDICTUS = text(
   [
-    'Gelobt sei der Herr, der Gott Israels,',
+    'Gelobet sei der HERR, der Gott Israels!',
     'denn er hat besucht und erlöst sein Volk',
     'und hat uns aufgerichtet ein Horn des Heils',
     'in dem Hause seines Dieners David,',
     'wie er vorzeiten geredet hat',
-    'durch den Mund seiner heiligen Propheten:',
-    'daß er uns errettete von unsern Feinden',
+    'durch den Mund des Propheten:',
+    'daß er uns errettete von unseren Feinden',
     'und von der Hand aller, die uns hassen,',
     'und Barmherzigkeit erzeigte unsern Vätern',
-    'und gedächte an seinen heiligen Bund,',
+    'und gedächte an seinen heiligen Bund',
+    'und an den Eid, den er geschworen hat unserm Vater Abraham, uns zu geben,',
     'daß wir, erlöst aus der Hand unserer Feinde,',
     'ihm dienten ohne Furcht unser Leben lang',
     'in Heiligkeit und Gerechtigkeit, die ihm gefällig ist.',
-    'Und du, Kindlein, wirst ein Prophet des Höchsten heißen;',
-    'du wirst vor dem Herrn hergehen, daß du seinen Weg bereitest',
+    'Und du, Kindlein, wirst ein Prophet des Höchsten heißen.',
+    'Du wirst vor dem HERRN her gehen, daß du seinen Weg bereitest',
     'und Erkenntnis des Heils gebest seinem Volk,',
-    'die da ist in Vergebung ihrer Sünden,',
-    'durch die herzliche Barmherzigkeit unseres Gottes,',
+    'das da ist in Vergebung ihrer Sünden;',
+    'durch die herzliche Barmherzigkeit unsers Gottes,',
     'durch welche uns besucht hat der Aufgang aus der Höhe,',
     'auf daß er erscheine denen, die da sitzen in Finsternis',
     'und Schatten des Todes,',
@@ -168,15 +169,15 @@ export const BENEDICTUS = text(
   { ref: 'Lukas 1,68–79' },
 );
 
-export const MAGNIFICAT_ANTIPHON = 'Meine Seele erhebt den Herrn.';
+export const MAGNIFICAT_ANTIPHON = 'Meine Seele erhebt den HERRN.';
 export const MAGNIFICAT = text(
   [
-    'Meine Seele erhebt den Herrn,',
-    'und mein Geist freuet sich Gottes, meines Heilandes;',
+    'Meine Seele erhebt den HERRN,',
+    'und mein Geist freuet sich Gottes, meines Heilands;',
     'denn er hat die Niedrigkeit seiner Magd angesehen.',
-    'Siehe, von nun an werden mich selig preisen alle Kindeskinder.',
-    'Denn er hat große Dinge an mir getan,',
-    'der da mächtig ist und dessen Name heilig ist.',
+    'Siehe, von nun an werden mich selig preisen alle Kindeskinder;',
+    'denn er hat große Dinge an mir getan,',
+    'der da mächtig ist und des Name heilig ist.',
     'Und seine Barmherzigkeit währet immer für und für',
     'bei denen, die ihn fürchten.',
     'Er übet Gewalt mit seinem Arm',
@@ -185,7 +186,7 @@ export const MAGNIFICAT = text(
     'und erhebt die Niedrigen.',
     'Die Hungrigen füllt er mit Gütern',
     'und läßt die Reichen leer.',
-    'Er denkt der Barmherzigkeit und hilft seinem Diener Israel auf,',
+    'Er denkt der Barmherzigkeit und hilft seinem Diener Israel wieder auf,',
     'wie er geredet hat unsern Vätern, Abraham und seinem Samen ewiglich.',
   ],
   { ref: 'Lukas 1,46–55' },
@@ -193,7 +194,7 @@ export const MAGNIFICAT = text(
 
 export const NUNC_DIMITTIS = text(
   [
-    'Herr, nun lässest du deinen Diener in Frieden fahren,',
+    'HERR, nun läßt du deinen Diener in Frieden fahren,',
     'wie du gesagt hast;',
     'denn meine Augen haben deinen Heiland gesehen,',
     'welchen du bereitet hast vor allen Völkern,',
@@ -256,8 +257,8 @@ export const GENERAL_CONFESSION = text([
 /** Word of forgiveness after the evening examination (rule 1). */
 export const ABSOLUTION_EVENING = text(
   [
-    'So wir aber unsere Sünde bekennen, so ist er treu und gerecht,',
-    'daß er uns die Sünde vergibt und reinigt uns von aller Untugend.',
+    'So wir aber unsre Sünden bekennen, so ist er treu und gerecht,',
+    'daß er uns die Sünden vergibt und reinigt uns von aller Untugend.',
   ],
   { ref: '1. Johannes 1,9' },
 );
@@ -281,10 +282,10 @@ export const ABSOLUTION_WREATH = text(
 export const TABLE_PRAYER_BEFORE = {
   verse: text(
     [
-      'Aller Augen warten auf dich, HERR,',
+      'Aller Augen warten auf dich,',
       'und du gibst ihnen ihre Speise zu seiner Zeit.',
-      'Du tust deine milde Hand auf',
-      'und erfüllest alles, was lebet, mit Wohlgefallen.',
+      'Du tust deine Hand auf',
+      'und erfüllst alles, was lebt, mit Wohlgefallen.',
     ],
     { ref: 'Psalm 145,15–16' },
   ),
