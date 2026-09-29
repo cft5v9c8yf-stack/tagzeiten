@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
-import { formatShort } from '../domain/dates';
+import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
 import { LutherRose } from '../ui/LutherRose';
 import { SectionIcon } from '../ui/SectionIcon';
@@ -43,18 +43,25 @@ export function Layout() {
       </a>
       <div className="wrap">
         <header className="top">
-          {isToday ? (
-            // The name and line of the app; the date heads the Today page itself.
+          {isToday && pathname.startsWith('/mehr') ? (
+            // Under "Mehr", the name and line of the app.
             <h1 className="app-name">
               Henoch <span className="app-line">– mit Gott durch den Tag</span>
             </h1>
           ) : (
             <>
-              {/* Another day is open: say which, with the way back to today. */}
               <h1 className="visually-hidden">Henoch</h1>
               <div className="date">
-                {formatShort(date)}
-                <Link to={pathname}>Heute</Link>
+                {isToday ? (
+                  // Today and the Sunday head their pages themselves; elsewhere the date.
+                  pathname === '/' || pathname.startsWith(SUNDAY_PATH) ? null : formatLong(date)
+                ) : (
+                  // Another day is open: say which, with the way back to today.
+                  <>
+                    {formatShort(date)}
+                    <Link to={pathname}>Heute</Link>
+                  </>
+                )}
               </div>
             </>
           )}

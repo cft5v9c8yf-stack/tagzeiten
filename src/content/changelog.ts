@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-09-29',
     title: 'Name oben, Kirchenjahr als Karten',
     changes: [
-      { area: 'Kopfzeile', text: 'Oben auf jeder Seite steht „Henoch – mit Gott durch den Tag“ statt des Datums. Ist ein anderer Tag geöffnet, steht dort weiter dessen Datum mit dem Weg zurück zu heute. Über dem Sonntag steht kein eigener Leitsatz mehr.' },
+      { area: 'Kopfzeile', text: 'Unter „Mehr“ steht oben „Henoch – mit Gott durch den Tag“, auf den anderen Seiten wie bisher das Datum; über dem Sonntag steht nichts. Ist ein anderer Tag geöffnet, steht überall dessen Datum mit dem Weg zurück zu heute.' },
       { area: 'Kirchenjahr', text: 'Unter „Lehre“ › „Das Kirchenjahr“ stehen Einleitung und die drei Festkreise als Karten: mit Nummer, dem Festkreis und seiner Zeit auf einen Blick; ein Tipp klappt den Text auf.' },
     ],
   },
