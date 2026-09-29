@@ -170,7 +170,7 @@ export function toMarkdown(
 ): string {
   const kept = days.filter((d) => !isEmptyDay(d)).sort((a, b) => (a.date < b.date ? -1 : 1));
   const head = [
-    '# Tagzeiten – Export',
+    '# Henoch – Export',
     '',
     `Exportiert am ${exportedAt.toLocaleDateString('de-DE')} · ${kept.length} Tage`,
     '',

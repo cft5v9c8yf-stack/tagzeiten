@@ -38,7 +38,7 @@ export function parseBackup(json: string, today: DateKey): { profile: Profile; d
     throw new BackupError('Die Datei ist kein gültiges JSON.');
   }
   const r = (raw ?? {}) as Partial<Backup>;
-  if (r.format !== BACKUP_FORMAT) throw new BackupError('Das ist keine Sicherung aus Tagzeiten.');
+  if (r.format !== BACKUP_FORMAT) throw new BackupError('Das ist keine Sicherung aus Henoch.');
   if (typeof r.version !== 'number' || r.version > BACKUP_VERSION) {
     throw new BackupError('Diese Sicherung stammt aus einer neueren Version der App.');
   }

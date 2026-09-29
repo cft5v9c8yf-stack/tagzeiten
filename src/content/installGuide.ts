@@ -1,5 +1,5 @@
 /**
- * How to put Tagzeiten on the home screen as an app: Android first (Chrome,
+ * How to put Henoch on the home screen as an app: Android first (Chrome,
  * Samsung Internet), then the iPhone. Once installed it opens without the
  * browser bar, works without internet and keeps its entries on the device.
  */
@@ -8,7 +8,7 @@ import type { GuidePart } from './airplaneGuide';
 export const APP_URL = 'https://cft5v9c8yf-stack.github.io/tagzeiten/';
 
 export const INSTALL_INTRO =
-  'Tagzeiten ist eine Web-App: Sie kommt nicht aus dem Play Store, sondern wird aus dem Browser heraus installiert. Danach liegt sie wie jede andere App auf dem Startbildschirm, öffnet sich ohne Adressleiste und läuft ohne Internet.';
+  'Henoch ist eine Web-App: Sie kommt nicht aus dem Play Store, sondern wird aus dem Browser heraus installiert. Danach liegt sie wie jede andere App auf dem Startbildschirm, öffnet sich ohne Adressleiste und läuft ohne Internet.';
 
 export const INSTALL_GUIDE: readonly GuidePart[] = [
   {
@@ -16,14 +16,14 @@ export const INSTALL_GUIDE: readonly GuidePart[] = [
     steps: [
       { text: `Öffne Chrome und rufe die Adresse auf: ${APP_URL}` },
       {
-        text: 'Warte, bis die Seite ganz geladen ist. Oft erscheint unten von selbst der Hinweis „Tagzeiten installieren“ – dann tippe darauf und bestätige mit „Installieren“.',
+        text: 'Warte, bis die Seite ganz geladen ist. Oft erscheint unten von selbst der Hinweis „Henoch installieren“ – dann tippe darauf und bestätige mit „Installieren“.',
       },
       {
         text: 'Erscheint kein Hinweis: Tippe oben rechts auf das Menü (⋮) und wähle „App installieren“.',
         note: 'Steht dort nur „Zum Startbildschirm hinzufügen“, wähle das und dann „Installieren“ bzw. „Hinzufügen“.',
       },
-      { text: 'Bestätige mit „Installieren“. Nach wenigen Sekunden liegt Tagzeiten mit Luthers Rose auf dem Startbildschirm.' },
-      { text: 'Öffne Tagzeiten ab jetzt über dieses Symbol, nicht mehr über Chrome.' },
+      { text: 'Bestätige mit „Installieren“. Nach wenigen Sekunden liegt Henoch mit Luthers Rose auf dem Startbildschirm.' },
+      { text: 'Öffne Henoch ab jetzt über dieses Symbol, nicht mehr über Chrome.' },
     ],
   },
   {

@@ -23,7 +23,7 @@ css = css.replace(/url\(\/?\.?\/?(?:assets\/)?([^)]+\.woff2)\)/g, (_, f) => {
 const js = readFileSync(join(dir, jsSrc), 'utf8').replace(/<\/script/gi, '<\\/script');
 const themeScript = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? '';
 
-const out = `<title>Tagzeiten</title>
+const out = `<title>Henoch</title>
 <meta name="description" content="Eine Ordnung für Morgen und Abend">
 <script>${themeScript}</script>
 <style>${css}</style>

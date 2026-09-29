@@ -44,7 +44,7 @@ export function Layout() {
       <div className="wrap">
         <header className="top">
           {/* The app's name stays the page heading for screen readers; the header shows only the date. */}
-          <h1 className="visually-hidden">Tagzeiten</h1>
+          <h1 className="visually-hidden">Henoch</h1>
           <div className="date">
             {isToday ? (
               // On Today, the date heads the page itself (with the church year).

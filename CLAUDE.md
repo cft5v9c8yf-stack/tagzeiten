@@ -1,4 +1,4 @@
-# CLAUDE.md – Dauerhafte Regeln für „Tagzeiten"
+# CLAUDE.md – Dauerhafte Regeln für „Henoch" (früher „Tagzeiten")
 
 Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine Anforderung mit ihnen kollidiert, halte an und frage.
 

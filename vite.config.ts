@@ -25,8 +25,8 @@ export default defineConfig(({ mode }) => ({
       includeAssets: ['icons/apple-touch-icon.png', 'icons/icon.svg'],
       manifest: {
         id: base,
-        name: 'Tagzeiten',
-        short_name: 'Tagzeiten',
+        name: 'Henoch',
+        short_name: 'Henoch',
         description: 'Eine Ordnung für Morgen und Abend',
         lang: 'de',
         start_url: base,

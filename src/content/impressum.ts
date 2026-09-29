@@ -24,7 +24,7 @@ export const IMPRINT: readonly ImprintSection[] = [
   {
     title: 'Art des Angebots',
     lines: [
-      'Tagzeiten ist ein privates, nicht kommerzielles Angebot: eine Ordnung für Gebet und Bibellese am Morgen und am Abend. Die App ist kostenlos, enthält keine Werbung und verfolgt keine wirtschaftlichen Zwecke.',
+      'Henoch ist ein privates, nicht kommerzielles Angebot: eine Ordnung für Gebet und Bibellese am Morgen und am Abend. Die App ist kostenlos, enthält keine Werbung und verfolgt keine wirtschaftlichen Zwecke.',
     ],
   },
   {

@@ -38,11 +38,11 @@ export function DataSettings() {
   };
 
   const exportMarkdown = async () => {
-    downloadText(`tagzeiten-${stamp}.md`, await store.exportMarkdown(), 'text/markdown');
+    downloadText(`henoch-${stamp}.md`, await store.exportMarkdown(), 'text/markdown');
     toast('Export als Markdown erstellt');
   };
   const exportJson = async () => {
-    downloadText(`tagzeiten-${stamp}.json`, JSON.stringify(await store.exportBackup(), null, 2), 'application/json');
+    downloadText(`henoch-${stamp}.json`, JSON.stringify(await store.exportBackup(), null, 2), 'application/json');
     toast('Sicherung als JSON erstellt');
   };
 
@@ -94,7 +94,7 @@ export function DataSettings() {
           <>
             <p>
               Dein Browser hat noch nicht zugesagt, die Einträge dauerhaft zu behalten. Bei knappem Speicher darf er sie
-              entfernen. Auf dem iPhone hilft es, Tagzeiten zum Home-Bildschirm hinzuzufügen und nur von dort zu öffnen.
+              entfernen. Auf dem iPhone hilft es, Henoch zum Home-Bildschirm hinzuzufügen und nur von dort zu öffnen.
             </p>
             <button type="button" className="btn" onClick={askToKeep}>
               Dauerhafte Speicherung erbitten

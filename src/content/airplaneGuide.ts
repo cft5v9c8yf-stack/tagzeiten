@@ -1,5 +1,5 @@
 /**
- * How to let the phone switch airplane mode on while Tagzeiten is open and off
+ * How to let the phone switch airplane mode on while Henoch is open and off
  * again when it is closed: on the iPhone with the Shortcuts app (Kurzbefehle),
  * on Samsung phones with "Modi und Routinen". Other Android phones have no such
  * trigger without extra apps; there "Bitte nicht stören" at the time of the
@@ -24,14 +24,14 @@ export const AIRPLANE_INTRO =
 
 export const AIRPLANE_GUIDE: readonly GuidePart[] = [
   {
-    title: 'iPhone: Flugmodus an, wenn Tagzeiten geöffnet wird',
+    title: 'iPhone: Flugmodus an, wenn Henoch geöffnet wird',
     steps: [
       { text: 'Öffne die App „Kurzbefehle“ und tippe unten auf „Automation“.' },
       { text: 'Tippe auf „Neue Automation“ (oder oben rechts auf „+“).' },
       { text: 'Wähle in der Liste „App“.' },
       {
-        text: 'Tippe bei „App“ auf „Auswählen“, wähle „Tagzeiten“ und tippe auf „Fertig“.',
-        note: 'Steht Tagzeiten nicht in der Liste, lies unten „iPhone: Wenn Tagzeiten nicht in der Liste steht“.',
+        text: 'Tippe bei „App“ auf „Auswählen“, wähle „Henoch“ und tippe auf „Fertig“.',
+        note: 'Steht Henoch nicht in der Liste, lies unten „iPhone: Wenn Henoch nicht in der Liste steht“.',
       },
       { text: 'Setze den Haken bei „Wird geöffnet“ – nicht bei „Wird geschlossen“.' },
       {
@@ -44,7 +44,7 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
     ],
   },
   {
-    title: 'iPhone: Flugmodus aus, wenn Tagzeiten geschlossen wird',
+    title: 'iPhone: Flugmodus aus, wenn Henoch geschlossen wird',
     intro: 'Eine zweite Automation, genauso angelegt, mit zwei Unterschieden:',
     steps: [
       { text: 'Setze den Haken bei „Wird geschlossen“ statt bei „Wird geöffnet“.' },
@@ -52,9 +52,9 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
     ],
   },
   {
-    title: 'iPhone: Wenn Tagzeiten nicht in der Liste steht',
+    title: 'iPhone: Wenn Henoch nicht in der Liste steht',
     intro:
-      'Tagzeiten ist eine Web-App vom Home-Bildschirm. Je nach iOS-Version erscheint sie nicht in der Liste der Apps. Dann legst du zwei Kurzbefehle an und startest die Andacht über den ersten:',
+      'Henoch ist eine Web-App vom Home-Bildschirm. Je nach iOS-Version erscheint sie nicht in der Liste der Apps. Dann legst du zwei Kurzbefehle an und startest die Andacht über den ersten:',
     steps: [
       { text: 'In „Kurzbefehle“ unten „Kurzbefehle“ wählen und oben rechts auf „+“ tippen.' },
       { text: 'Aktion „Flugmodus festlegen“ hinzufügen, auf „Ein“ lassen.' },
@@ -68,23 +68,23 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
     ],
   },
   {
-    title: 'Android (Samsung): Flugmodus, solange Tagzeiten offen ist',
+    title: 'Android (Samsung): Flugmodus, solange Henoch offen ist',
     intro:
-      'Samsung-Geräte haben dafür „Modi und Routinen“. Eine Routine schaltet den Flugmodus ein, sobald Tagzeiten geöffnet wird, und stellt ihn wieder zurück, wenn du die App verlässt.',
+      'Samsung-Geräte haben dafür „Modi und Routinen“. Eine Routine schaltet den Flugmodus ein, sobald Henoch geöffnet wird, und stellt ihn wieder zurück, wenn du die App verlässt.',
     steps: [
       {
-        text: 'Installiere Tagzeiten zuerst über Chrome als App (siehe „App installieren“).',
-        note: 'Nur dann steht Tagzeiten als eigene App in der Auswahl.',
+        text: 'Installiere Henoch zuerst über Chrome als App (siehe „App installieren“).',
+        note: 'Nur dann steht Henoch als eigene App in der Auswahl.',
       },
       { text: 'Öffne die Einstellungen und tippe auf „Modi und Routinen“, dann unten auf „Routinen“.' },
       { text: 'Tippe oben auf „+“, um eine neue Routine anzulegen.' },
-      { text: 'Tippe bei „Wenn“ auf „+“, wähle „App geöffnet“ und dann „Tagzeiten“. Tippe auf „Fertig“.' },
+      { text: 'Tippe bei „Wenn“ auf „+“, wähle „App geöffnet“ und dann „Henoch“. Tippe auf „Fertig“.' },
       {
         text: 'Tippe bei „Dann“ auf „+“, wähle „Verbindungen“ und dann „Flugmodus“. Stelle ihn auf „Ein“ und tippe auf „Fertig“.',
       },
       {
         text: 'Achte darauf, dass beim Ende der Routine die Einstellungen zurückgesetzt werden.',
-        note: 'Dann geht der Flugmodus von selbst wieder aus, sobald du Tagzeiten verlässt. Je nach Version heißt die Option „Einstellungen zurücksetzen“ oder sie ist schon eingeschaltet.',
+        note: 'Dann geht der Flugmodus von selbst wieder aus, sobald du Henoch verlässt. Je nach Version heißt die Option „Einstellungen zurücksetzen“ oder sie ist schon eingeschaltet.',
       },
       { text: 'Tippe auf „Speichern“ und gib der Routine einen Namen, etwa „Stille“.' },
     ],
@@ -106,6 +106,6 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
 
 export const AIRPLANE_NOTES: readonly string[] = [
   'Im Flugmodus erreicht dich niemand – auch Frau und Kinder nicht. Wer erreichbar bleiben will, nimmt statt des Flugmodus „Nicht stören“ (iPhone: „Fokus festlegen“) und lässt dort Anrufe von bestimmten Personen zu.',
-  'Tagzeiten läuft ganz ohne Internet. Die Bibel liegt ohnehin auf dem Tisch.',
+  'Henoch läuft ganz ohne Internet. Die Bibel liegt ohnehin auf dem Tisch.',
   'Die Bezeichnungen können je nach Version leicht abweichen. Beschrieben ist der Stand von iOS 17 und 18 und von Android 14 (Samsung One UI 6).',
 ];

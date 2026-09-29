@@ -125,7 +125,7 @@ describe('Mehr: Aufbau', () => {
     const view = render(page());
     await screen.findByRole('heading', { level: 2, name: /Einstellungen/ });
     const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Tagzeiten']);
+    expect(sub).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Henoch']);
     // No verse above the settings, only their explanations.
     expect(document.querySelector('.section-verse')).toBeNull();
     expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
@@ -244,7 +244,7 @@ describe('Mehr: Daten', () => {
     await act(async () => {
       fireEvent.change(input, { target: { files: [new File(['{"a":1}'], 'x.json')] } });
     });
-    expect((await screen.findByRole('alert')).textContent).toBe('Das ist keine Sicherung aus Tagzeiten.');
+    expect((await screen.findByRole('alert')).textContent).toBe('Das ist keine Sicherung aus Henoch.');
   });
 });
 
@@ -611,9 +611,9 @@ describe('Rückblick', () => {
     expect(text).toContain('„Wird geöffnet“');
     expect(text).toContain('„Wird geschlossen“');
     expect(text).toContain('Flugmodus festlegen');
-    expect(screen.getByRole('heading', { level: 4, name: 'iPhone: Wenn Tagzeiten nicht in der Liste steht' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 4, name: 'iPhone: Wenn Henoch nicht in der Liste steht' })).toBeTruthy();
     // Android: Samsung routine on opening the app, and the nearest thing elsewhere.
-    expect(screen.getByRole('heading', { level: 4, name: 'Android (Samsung): Flugmodus, solange Tagzeiten offen ist' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 4, name: 'Android (Samsung): Flugmodus, solange Henoch offen ist' })).toBeTruthy();
     expect(text).toContain('„Modi und Routinen“');
     expect(text).toContain('„App geöffnet“');
     expect(screen.getByRole('heading', { level: 4, name: 'Andere Android-Geräte (z. B. Pixel)' })).toBeTruthy();

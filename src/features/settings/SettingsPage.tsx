@@ -140,18 +140,18 @@ const AREAS: readonly Area[] = [
         <Sub
           id="install"
           title="App installieren"
-          info={<p>Wie Tagzeiten als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>}
+          info={<p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>}
         >
           <InstallGuide level={4} />
         </Sub>
         <Sub
           id="airplane"
           title="Flugmodus beim Beten"
-          info={<p>Wie das Telefon den Flugmodus einschaltet, solange Tagzeiten offen ist, und danach wieder aus.</p>}
+          info={<p>Wie das Telefon den Flugmodus einschaltet, solange Henoch offen ist, und danach wieder aus.</p>}
         >
           <AirplaneGuide level={4} />
         </Sub>
-        <Sub id="about" title="Über Tagzeiten" info={ABOUT_INFO}>
+        <Sub id="about" title="Über Henoch" info={ABOUT_INFO}>
           <About />
         </Sub>
       </>
