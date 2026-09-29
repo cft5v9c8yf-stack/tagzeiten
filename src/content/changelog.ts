@@ -22,7 +22,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Eisenschmiede', text: 'Anliegen für das Treffen mit den Brüdern, nach dem Tag des Treffens benannt und geordnet. Was du besprechen willst, steht als Liste zum Abhaken; Enter oder „+“ legt den nächsten Punkt an.' },
       { area: 'Kirchenjahr', text: 'Einteilung, Einleitung und Erklärung der drei Festkreise nach Georg Christian Dieffenbachs Evangelischer Haus-Agende (Mainz 1853), dazu die Deutung jedes Sonn- und Festtags. Die Sonntagsseite zeigt sie für die laufende Woche.' },
       { area: 'Vesper und Familienandacht', text: 'Die Vesper ist der persönliche Abschluss des Tages. Die Familienandacht steht als eigene Gewohnheit.' },
-      { area: 'Rückblick', text: 'Unter „Mehr“. Tage, Verse und archivierte Einträge der Arena stehen als Liste, nach Jahr und Monat geordnet.' },
+      { area: 'Rückblick', text: 'Unter „Mehr“. Tage, Verse und archivierte Einträge der Arena stehen als Liste, nach Jahr und Monat geordnet. Ein Tipp auf einen Tag zeigt alle Eingaben dieses Tages untereinander.' },
       { area: 'Mehr', text: 'Neu sind das Impressum mit Hinweisen zum Datenschutz und diese Übersicht der Versionen. Unter „Einstellungen“ stehen die Anleitungen „App installieren“ und „Flugmodus beim Beten“, beide für Android und iPhone.' },
       { area: 'Deine Daten', text: 'Zeigt, ob der Browser die Einträge dauerhaft behält, und bittet ihn auf Wunsch erneut darum.' },
       { area: 'Bibel', text: 'Die Seite heißt „Mein Bibelleseplan“.' },

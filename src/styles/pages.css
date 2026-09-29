@@ -289,6 +289,55 @@ body.no-scroll {
 .archive-verse .muted {
   font-style: normal;
 }
+/* The whole entry opens the list of its inputs. */
+.archive-toggle {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.archive-more {
+  font: 600 0.85rem var(--sans);
+  color: var(--link);
+}
+.archive-summary {
+  margin: 6px 0 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+}
+.archive-summary > p {
+  margin: 0 0 8px;
+}
+.archive-summary h5 {
+  margin: 12px 0 6px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.archive-summary section:first-of-type h5 {
+  margin-top: 0;
+}
+.archive-summary dl {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.archive-summary dt {
+  font: 600 0.85rem var(--sans);
+}
+.archive-summary dd {
+  margin: 2px 0 0;
+  white-space: pre-line;
+}
 .archive-links {
   display: flex;
   flex-wrap: wrap;

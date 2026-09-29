@@ -402,6 +402,27 @@ describe('Rückblick', () => {
     expect(screen.getByText('Sei stille dem HERRN')).toBeTruthy();
   });
 
+  it('opens a day in the Rückblick to a list of everything written that day', async () => {
+    await renderAt('/mehr/rueckblick', <SettingsPage />, fill);
+    const day = await screen.findByRole('button', { name: /24\. September/ });
+    expect(day.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(day);
+    expect(day.getAttribute('aria-expanded')).toBe('true');
+    const summary = document.getElementById(day.getAttribute('aria-controls')!)!;
+    expect(summary.textContent).toContain('Gebetet: Stille Zeit');
+    const sections = [...summary.querySelectorAll('h5')].map((h) => h.textContent);
+    expect(sections).toEqual(['Stille Zeit', 'Die drei Dinge', 'Abend']);
+    const rows = [...summary.querySelectorAll('dt')].map((dt) => `${dt.textContent}: ${dt.nextElementSibling!.textContent}`);
+    expect(rows).toEqual([
+      'Stelle: Psalm 37,7',
+      'Vers, den ich mitnehme: Sei stille dem HERRN',
+      'Haus: Mit Anna spazieren',
+      'Dank: das Gespräch mit Paul',
+    ]);
+    fireEvent.click(day);
+    expect(summary.hidden).toBe(true);
+  });
+
   it('sets times per weekday: working days and weekend, and further days with +', async () => {
     const { store } = await renderAt('/mehr/zeiten', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Zeiten/ });

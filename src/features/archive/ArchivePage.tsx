@@ -4,8 +4,8 @@ import { useAllDays, useProfile } from '../../data/hooks';
 import { entryTitle, forgeTitle, searchArena } from '../../domain/arena';
 import { byYearAndMonth } from '../../domain/byMonth';
 import { formatLong, toKey, type DateKey } from '../../domain/dates';
-import { readingLabel } from '../../domain/exportMarkdown';
-import type { ArenaEntry, Day } from '../../domain/model';
+import { dayEntries, prayedOrders, readingLabel, type DaySection } from '../../domain/exportMarkdown';
+import type { ArenaEntry, Day, Habit } from '../../domain/model';
 import { isEmptyDay } from '../../domain/normalizeDay';
 import { searchDays } from '../../domain/search';
 import { collectedVerses } from '../../domain/stats';
@@ -22,23 +22,68 @@ function prayed(d: Day): string {
   return parts.join(' · ');
 }
 
-function DayItem({ d }: { d: Day }) {
+const SECTIONS: readonly DaySection[] = ['Stille Zeit', 'Die drei Dinge', 'Abend', 'Gewohnheiten'];
+
+/** Everything written on a day, listed under the part of the day it belongs to. */
+function DaySummary({ d, habits }: { d: Day; habits: readonly Habit[] }) {
+  const entries = dayEntries(d, habits, 'word');
+  const done = prayedOrders(d);
+  return (
+    <div className="archive-summary">
+      {done.length > 0 && <p className="small">Gebetet: {done.join(', ')}</p>}
+      {SECTIONS.map((sec) => {
+        const rows = entries.filter((x) => x.section === sec);
+        if (!rows.length) return null;
+        return (
+          <section key={sec}>
+            <h5>{sec}</h5>
+            <dl>
+              {rows.map((x, i) => (
+                <div key={`${x.label}-${i}`}>
+                  <dt>{x.label}</dt>
+                  <dd>{x.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
+      {entries.length === 0 && <p className="small muted">An diesem Tag ist nichts eingetragen.</p>}
+    </div>
+  );
+}
+
+function DayItem({ d, habits }: { d: Day; habits: readonly Habit[] }) {
+  const [open, setOpen] = useState(false);
+  const summaryId = useId();
   const reading = readingLabel(d);
   const status = prayed(d);
   return (
-    <li className="archive-item">
-      <div className="archive-date">
-        {formatLong(d.date)}
-        {status && <span className="archive-status"> · {status}</span>}
+    <li className={`archive-item${open ? ' is-open' : ''}`}>
+      <button
+        type="button"
+        className="archive-toggle"
+        aria-expanded={open}
+        aria-controls={summaryId}
+        onClick={() => setOpen(!open)}
+      >
+        <span className="archive-date">
+          {formatLong(d.date)}
+          {status && <span className="archive-status"> · {status}</span>}
+        </span>
+        {reading && <span className="archive-reading">{reading}</span>}
+        {d.morning.verse && (
+          <span className="archive-verse">
+            {d.morning.verse}
+            {d.morning.verseRef && <span className="muted"> ({d.morning.verseRef})</span>}
+          </span>
+        )}
+        {d.morning.mainPoint && <span className="small muted archive-main">{d.morning.mainPoint}</span>}
+        <span className="archive-more">{open ? 'Eingaben ausblenden' : 'Alle Eingaben anzeigen'}</span>
+      </button>
+      <div id={summaryId} hidden={!open}>
+        {open && <DaySummary d={d} habits={habits} />}
       </div>
-      {reading && <div className="archive-reading">{reading}</div>}
-      {d.morning.verse && (
-        <blockquote className="archive-verse">
-          {d.morning.verse}
-          {d.morning.verseRef && <span className="muted"> ({d.morning.verseRef})</span>}
-        </blockquote>
-      )}
-      {d.morning.mainPoint && <p className="small muted">{d.morning.mainPoint}</p>}
       <div className="archive-links">
         <Link to={`/andacht/morgen?d=${d.date}`}>Morgen öffnen</Link>
         <Link to={`/andacht/abend?d=${d.date}`}>Abend öffnen</Link>
@@ -169,7 +214,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
             items={found.slice(0, limit)}
             dateOf={(d) => d.date}
             keyOf={(d) => d.date}
-            render={(d) => <DayItem d={d} />}
+            render={(d) => <DayItem d={d} habits={profile.habits} />}
           />
         ) : (
           <p className="empty">
