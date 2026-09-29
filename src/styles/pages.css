@@ -2039,9 +2039,3 @@ mark.placeholder {
   padding-top: 20px;
   border-top: 2px solid var(--rule);
 }
-.top-motto-ref {
-  font: 600 0.8rem var(--sans);
-  font-style: normal;
-  color: var(--link);
-  white-space: nowrap;
-}
