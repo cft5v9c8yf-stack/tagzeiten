@@ -207,7 +207,7 @@ export function HouseSettings() {
       <p id={hintId} className="visually-hidden">
         Zum Verschieben ziehen oder mit den Pfeiltasten nach oben und unten bewegen.
       </p>
-      <Section id="more.house.wife" title="Ehefrau" level={3}>
+      <Section id="more.house.wife" title="Ehefrau" level={4}>
         <div className="field">
           <label htmlFor={wifeId}>Name</label>
           <input
@@ -225,7 +225,7 @@ export function HouseSettings() {
           onAnswered={() => answer('wife')}
         />
       </Section>
-      <Section id="more.house.children" title="Kinder" level={3}>
+      <Section id="more.house.children" title="Kinder" level={4}>
         <p className="small muted">
           In dieser Reihenfolge stehen sie dienstags bis freitags im Mittelpunkt. Zum Sortieren am Griff ziehen.
         </p>

@@ -27,7 +27,7 @@ function HouseHint({ children }: { children?: React.ReactNode }) {
   return (
     <p className="small muted house-hint">
       {children ?? 'Trage deine Frau und deine Kinder mit Namen ein, dann stehen sie hier im Gebet.'}{' '}
-      <Link to={HOUSE_PATH}>Mehr → Mein Haus</Link>
+      <Link to={HOUSE_PATH}>Mehr → Gebet → Mein Haus</Link>
     </p>
   );
 }

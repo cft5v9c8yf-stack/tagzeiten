@@ -277,7 +277,7 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
               {weekly.length ? (
                 weekly.join(' · ')
               ) : (
-                <span className="muted">in der Gebetsübersicht unter „Mehr“ eintragen</span>
+                <span className="muted">unter „Mehr → Gebet → Gebetsübersicht“ eintragen</span>
               )}
             </p>
             {profile.prayer.daily.length > 0 && (

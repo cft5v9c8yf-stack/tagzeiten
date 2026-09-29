@@ -15,7 +15,7 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
 }
 
 let blobs: Blob[] = [];
@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Mein Haus', 'Gebetsschatz', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Impressum']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -85,6 +85,26 @@ describe('Mehr: Aufbau', () => {
 
     fireEvent.click(screen.getByRole('link', { name: '‹ Mehr' }));
     await waitFor(() => expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Mehr'));
+  });
+
+  it('gathers Gebetsübersicht, Mein Haus and Gebetsschatz under "Gebet"; the old address opens Mein Haus', async () => {
+    resetOpenState();
+    const store = new Store({ db: new TagzeitenDB(`m6-prayer-${++n}`), journal: memoryJournal() });
+    render(
+      <ToastProvider>
+        <StoreProvider store={store}>
+          <RouterProvider
+            router={createMemoryRouter([{ path: '/mehr/:bereich', element: <SettingsPage /> }], { initialEntries: ['/mehr/haus'] })}
+          />
+        </StoreProvider>
+      </ToastProvider>,
+    );
+    await screen.findByRole('heading', { level: 2, name: /Gebet/ });
+    const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(sub).toEqual(['Gebetsübersicht', 'Mein Haus', 'Gebetsschatz']);
+    expect(screen.getByRole('button', { name: 'Gebetsübersicht' }).getAttribute('aria-expanded')).toBe('false');
+    expect(screen.getByRole('button', { name: 'Mein Haus' }).getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getByRole('button', { name: 'Gebetsschatz' }).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('gathers Darstellung, Deine Daten, the two guides and Über under "Einstellungen", folded and remembered', async () => {
@@ -425,7 +445,7 @@ describe('Rückblick', () => {
 
   it('keeps wife and children in "Mein Haus", and an answered concern in the Rückblick', async () => {
     const { store } = await renderAt('/mehr/haus', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Mein Haus/ });
+    await screen.findByRole('heading', { level: 2, name: /Gebet/ });
     expect(screen.getAllByLabelText(/^Kind \d$/)).toHaveLength(4);
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Anna' } });
     fireEvent.change(screen.getByLabelText('Kind 1'), { target: { value: 'Marie' } });
@@ -506,7 +526,7 @@ describe('Rückblick', () => {
 
   it('writes concerns as tags and sets them on days, several a day', async () => {
     const { store } = await renderAt('/mehr/gebet', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Gebetsübersicht/ });
+    await screen.findByRole('heading', { level: 2, name: /Gebet/ });
     fireEvent.change(screen.getByLabelText('Neues Anliegen'), { target: { value: 'Verfolgte Kirche' } });
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen anlegen' }));
     await waitFor(() => expect(store.getProfile().prayer.concerns).toEqual(['Verfolgte Kirche']));

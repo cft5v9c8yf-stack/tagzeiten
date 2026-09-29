@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
+import { useLayoutEffect, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
+import { setOpen } from '../../ui/collapseState';
 import { InfoToggle, Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
@@ -20,7 +21,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog' | 'house' | 'treasury';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -29,8 +30,17 @@ interface Area {
   body: () => ReactNode;
 }
 
+/**
+ * Former areas, now parts of another: "/mehr/haus" opens "Gebet" with
+ * "Mein Haus" unfolded, so links from the prayers keep working.
+ */
+const ALIASES: Record<string, { slug: string; open: string }> = {
+  haus: { slug: 'gebet', open: 'more.house' },
+  gebetsschatz: { slug: 'gebet', open: 'more.treasury' },
+};
+
 function Sub({ id, title, info, children }: { id: string; title: string; info: ReactNode; children: ReactNode }) {
-  // Within "Einstellungen" the parts start folded, so the page opens as an overview.
+  // Within an area of several parts they start folded, so the page opens as an overview.
   return (
     <Section id={`more.${id}`} title={title} level={3} info={info} defaultOpen={false} className="more-section">
       {children}
@@ -51,29 +61,28 @@ const AREAS: readonly Area[] = [
   {
     slug: 'gebet',
     id: 'prayer',
-    title: 'Gebetsübersicht',
-    line: 'Anliegen für jeden Wochentag',
+    title: 'Gebet',
+    line: 'Übersicht, Mein Haus, Gebetsschatz',
     icon: 'people',
-    info: PRAYER_INFO,
-    body: () => <PrayerSettings />,
-  },
-  {
-    slug: 'haus',
-    id: 'house',
-    title: 'Mein Haus',
-    line: 'Frau und Kinder, mit Anliegen',
-    icon: 'house',
-    info: HOUSE_INFO,
-    body: () => <HouseSettings />,
-  },
-  {
-    slug: 'gebetsschatz',
-    id: 'treasury',
-    title: 'Gebetsschatz',
-    line: 'Gebete der Väter, wortgetreu',
-    icon: 'foldedHands',
-    info: TREASURY_INFO,
-    body: () => <PrayerTreasury />,
+    info: (
+      <p>
+        Alles, was in der Stillen Zeit gebetet wird und von dir kommt: deine Anliegen nach Tagen, deine Frau und deine
+        Kinder mit Namen, und die Gebete, die du immer zur Hand haben willst.
+      </p>
+    ),
+    body: () => (
+      <>
+        <Sub id="prayerlist" title="Gebetsübersicht" info={PRAYER_INFO}>
+          <PrayerSettings />
+        </Sub>
+        <Sub id="house" title="Mein Haus" info={HOUSE_INFO}>
+          <HouseSettings />
+        </Sub>
+        <Sub id="treasury" title="Gebetsschatz" info={TREASURY_INFO}>
+          <PrayerTreasury />
+        </Sub>
+      </>
+    ),
   },
   {
     slug: 'zeiten',
@@ -163,7 +172,11 @@ const AREAS: readonly Area[] = [
 export function SettingsPage() {
   const { bereich } = useParams();
   const { date, isToday } = useSelectedDate();
-  const area = AREAS.find((a) => a.slug === bereich);
+  const alias = bereich ? ALIASES[bereich] : undefined;
+  const area = AREAS.find((a) => a.slug === (alias?.slug ?? bereich));
+  useLayoutEffect(() => {
+    if (alias) setOpen(alias.open, true);
+  }, [alias]);
 
   if (!area) {
     return (

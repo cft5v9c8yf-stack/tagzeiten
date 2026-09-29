@@ -149,7 +149,7 @@ describe('Fürbitte für das Haus through the week, with a son and a daughter', 
 describe('Fürbitte für das Haus without names', () => {
   it('points to "Mein Haus" when nobody is entered', async () => {
     await morning('2026-09-28', 'full', { wife: { name: '', concern: '' }, children: [] });
-    expect(screen.getByRole('link', { name: 'Mehr → Mein Haus' }).getAttribute('href')).toBe('/mehr/haus');
+    expect(screen.getByRole('link', { name: 'Mehr → Gebet → Mein Haus' }).getAttribute('href')).toBe('/mehr/haus');
     expect(document.querySelector('.pray')).toBeNull();
   });
 

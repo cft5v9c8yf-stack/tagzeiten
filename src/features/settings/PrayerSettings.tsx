@@ -70,7 +70,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
   const name = dayName(day);
   return (
     <div className={`prayer-day${day === 'daily' ? ' prayer-day-daily' : ''}`}>
-      <h4 className="prayer-day-name">{name}</h4>
+      <h5 className="prayer-day-name">{name}</h5>
       <ul className="concern-chips">
         {on.map((c) => (
           <li key={c} className="concern-chip">
@@ -127,7 +127,7 @@ export function PrayerSettings() {
   return (
     <>
       <section className="concerns" aria-labelledby="concerns-title">
-        <h3 id="concerns-title">Deine Anliegen</h3>
+        <h4 id="concerns-title">Deine Anliegen</h4>
         {prayer.concerns.length > 0 && (
           <ul className="concern-chips">
             {prayer.concerns.map((c) => (
@@ -148,7 +148,7 @@ export function PrayerSettings() {
         />
       </section>
       <section className="prayer-days" aria-labelledby="prayer-days-title">
-        <h3 id="prayer-days-title">Nach Tagen</h3>
+        <h4 id="prayer-days-title">Nach Tagen</h4>
         <div className="prayer-tiles">
           {DAYS.map((d) => (
             <PrayerDayRow key={d} day={d} prayer={prayer} update={update} />

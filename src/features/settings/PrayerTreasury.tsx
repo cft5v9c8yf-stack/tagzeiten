@@ -19,11 +19,11 @@ export function PrayerTreasury() {
   const wife = useProfile().house.wife.name.trim() || 'N.';
   return (
     <>
-      <Section id="more.treasury.ehefrau" title={WIFE_PRAYER_TITLE} level={3} defaultOpen={false}>
+      <Section id="more.treasury.ehefrau" title={WIFE_PRAYER_TITLE} level={4} defaultOpen={false}>
         <Focused prayer={wifePrayer(wife)} />
       </Section>
       {TREASURY.map((p) => (
-        <Section key={p.id} id={`more.treasury.${p.id}`} title={p.title} level={3} defaultOpen={false}>
+        <Section key={p.id} id={`more.treasury.${p.id}`} title={p.title} level={4} defaultOpen={false}>
           <p className="small muted treasury-author">{p.author}</p>
           <PrayerText text={{ lines: p.text.lines }} />
         </Section>
