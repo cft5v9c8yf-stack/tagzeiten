@@ -2039,3 +2039,85 @@ mark.placeholder {
   padding-top: 20px;
   border-top: 2px solid var(--rule);
 }
+
+/* Lehre / Anhang, "Das Kirchenjahr": the introduction and the three circles as cards,
+   like the parts of "Einstellungen"; a gold numeral, the title, a quiet line under it. */
+.book-source {
+  margin: -4px 0 14px;
+  font: 0.82rem var(--sans);
+  color: var(--muted);
+  line-height: 1.45;
+}
+.dieffenbach-book .book-card {
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.book-card > .fold-head .fold-title {
+  flex: 1 1 auto;
+  margin: 0;
+}
+.book-card > .fold-head .fold-title button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+}
+/* A chevron at the right that turns when the card opens. */
+.book-card > .fold-head .fold-title button::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 auto;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.15s ease;
+}
+.book-card.is-open > .fold-head .fold-title button::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.book-card-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font: 600 0.95rem var(--serif);
+}
+.book-card-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.book-card-title {
+  font-size: 1.12rem;
+}
+.book-card-sub {
+  font: 400 0.8rem var(--sans);
+  color: var(--muted);
+  line-height: 1.35;
+}
+.book-card > .fold-body {
+  padding: 2px 0 16px;
+  border-top: 1px solid var(--rule);
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-card > .fold-head .fold-title button::after {
+    transition: none;
+  }
+}
+.book-card > .fold-head .fold-text {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+}

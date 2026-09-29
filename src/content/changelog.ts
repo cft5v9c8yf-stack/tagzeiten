@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.5.1',
+    date: '2026-09-29',
+    title: 'Name oben, Kirchenjahr als Karten',
+    changes: [
+      { area: 'Kopfzeile', text: 'Oben auf jeder Seite steht „Henoch – mit Gott durch den Tag“ statt des Datums. Ist ein anderer Tag geöffnet, steht dort weiter dessen Datum mit dem Weg zurück zu heute. Über dem Sonntag steht kein eigener Leitsatz mehr.' },
+      { area: 'Kirchenjahr', text: 'Unter „Lehre“ › „Das Kirchenjahr“ stehen Einleitung und die drei Festkreise als Karten: mit Nummer, dem Festkreis und seiner Zeit auf einen Blick; ein Tipp klappt den Text auf.' },
+    ],
+  },
+  {
     version: '0.5.0',
     date: '2026-09-29',
     title: 'Henoch: Fürbitte für das Haus, Gebetsschatz und Handschrift',

@@ -81,8 +81,6 @@ export function SundayPage() {
 
   return (
     <div className="sunday-page">
-      {/* The name and line of the app, over the Sunday only. */}
-      <p className="top-motto">Henoch – mit Gott durch den Tag</p>
       <header className="sunday-head">
         <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Letzter Sonntag: ${churchDay(prev).week}`}>
           <span className="sunday-step-circle">

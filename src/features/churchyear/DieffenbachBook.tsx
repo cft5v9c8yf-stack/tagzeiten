@@ -7,7 +7,24 @@ import {
 import { BOOK_ORDER, bookDayText, CIRCLE_GUIDE, DIEFFENBACH_SOURCE, GROUP_REFS, SEASON_GUIDE, type BookDay } from '../../content/dieffenbach';
 import { CIRCLES, SEASON_CIRCLE, SEASON_LABEL, type Circle, type Season } from '../../domain/churchYear';
 import { BibleRef } from '../../ui/BibleRef';
+import type { ReactNode } from 'react';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { Section } from '../../ui/Section';
+
+/** The heading of a card: a mark (numeral or icon), the title, and a quiet line under it. */
+function CardTitle({ mark, title, sub }: { mark: ReactNode; title: string; sub: string }) {
+  return (
+    <>
+      <span className="book-card-mark" aria-hidden="true">
+        {mark}
+      </span>
+      <span className="book-card-text">
+        <span className="book-card-title">{title}</span>
+        <span className="book-card-sub">{sub}</span>
+      </span>
+    </>
+  );
+}
 
 const SEASONS = Object.keys(SEASON_CIRCLE) as Season[];
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
@@ -65,12 +82,17 @@ function SeasonText({ season, n }: { season: Season; n: number }) {
   );
 }
 
-function CircleText({ circle }: { circle: Circle }) {
+function CircleText({ circle, n }: { circle: Circle; n: number }) {
   const guide = CIRCLE_GUIDE[circle];
+  const info = CIRCLE_INFO[circle];
   const seasons = SEASONS.filter((s) => SEASON_CIRCLE[s] === circle);
   return (
-    <Section id={`book.${circle}`} title={`Der heilige ${CIRCLE_INFO[circle].title}`} defaultOpen={false} className="book-circle">
-      <p className="cy-circle-of">{CIRCLE_INFO[circle].of}</p>
+    <Section
+      id={`book.${circle}`}
+      title={<CardTitle mark={['I', 'II', 'III'][n]} title={`Der heilige ${info.title}`} sub={`${info.of} · ${info.range}`} />}
+      defaultOpen={false}
+      className="book-card"
+    >
       {guide.motto && (
         <blockquote className="cy-motto">
           <p>{guide.motto.text}</p>
@@ -106,9 +128,19 @@ function CircleText({ circle }: { circle: Circle }) {
 export function DieffenbachBook() {
   return (
     <div className="dieffenbach-book">
-      <p className="small muted">{DIEFFENBACH_SOURCE} In der Rechtschreibung des Originals.</p>
-      <Section id="book.intro" title="Einleitung" defaultOpen={false} className="book-circle">
-        <p className="cy-intro-title">{CHURCH_YEAR_INTRO_TITLE}</p>
+      <p className="book-source">{DIEFFENBACH_SOURCE} In der Rechtschreibung des Originals.</p>
+      <Section
+        id="book.intro"
+        title={
+          <CardTitle
+            mark={<FlowIcon name="scroll" size={18} />}
+            title="Einleitung"
+            sub={CHURCH_YEAR_INTRO_TITLE}
+          />
+        }
+        defaultOpen={false}
+        className="book-card"
+      >
         {CHURCH_YEAR_INTRO.map((part) => (
           <section key={part.heading} className="cy-intro-part">
             <h4>{part.heading}</h4>
@@ -119,8 +151,8 @@ export function DieffenbachBook() {
         ))}
         <p className="cy-intro-gloria">{CHURCH_YEAR_INTRO_GLORIA}</p>
       </Section>
-      {CIRCLES.map((c) => (
-        <CircleText key={c} circle={c} />
+      {CIRCLES.map((c, i) => (
+        <CircleText key={c} circle={c} n={i} />
       ))}
     </div>
   );

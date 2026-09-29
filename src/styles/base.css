@@ -431,3 +431,16 @@ nav.tabs a[aria-current='page']::before {
   padding: 8px 12px;
   margin: 4px 0 8px;
 }
+/* The name and line of the app at the top of every page. */
+header.top .app-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+header.top .app-line {
+  font-weight: 400;
+  font-style: italic;
+  color: var(--muted);
+}

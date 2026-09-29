@@ -359,7 +359,7 @@ describe('Katechismus', () => {
     expect(text).toContain('Georg Christian Dieffenbach');
     // Introduction, the three circles, and every day in the order of the book.
     for (const t of ['Einleitung', 'Der heilige Weihnachtskreis', 'Der heilige Osterkreis', 'Der heilige Pfingstkreis']) {
-      expect(screen.getByRole('button', { name: t })).toBeTruthy();
+      expect(screen.getByRole('button', { name: new RegExp(`^${t}`) })).toBeTruthy();
     }
     for (const t of ['Des Herrn Einzug in Jerusalem', 'Christi Höllenfahrt', 'Wache und bete!', '27. Woche nach Trinitatis']) {
       expect(text).toContain(t);
@@ -578,7 +578,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.5\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.5\.1/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
   });

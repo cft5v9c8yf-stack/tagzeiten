@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
-import { formatLong, formatShort } from '../domain/dates';
+import { formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
 import { LutherRose } from '../ui/LutherRose';
 import { SectionIcon } from '../ui/SectionIcon';
@@ -43,19 +43,21 @@ export function Layout() {
       </a>
       <div className="wrap">
         <header className="top">
-          {/* The app's name stays the page heading for screen readers; the header shows only the date. */}
-          <h1 className="visually-hidden">Henoch</h1>
-          <div className="date">
-            {isToday ? (
-              // On Today, the date heads the page itself (with the church year).
-              pathname === '/' ? null : formatLong(date)
-            ) : (
-              <>
+          {isToday ? (
+            // The name and line of the app; the date heads the Today page itself.
+            <h1 className="app-name">
+              Henoch <span className="app-line">– mit Gott durch den Tag</span>
+            </h1>
+          ) : (
+            <>
+              {/* Another day is open: say which, with the way back to today. */}
+              <h1 className="visually-hidden">Henoch</h1>
+              <div className="date">
                 {formatShort(date)}
                 <Link to={pathname}>Heute</Link>
-              </>
-            )}
-          </div>
+              </div>
+            </>
+          )}
         </header>
         <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
           {import.meta.env.MODE === 'demo' && <DemoBanner />}

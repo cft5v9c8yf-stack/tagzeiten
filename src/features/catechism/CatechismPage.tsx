@@ -105,7 +105,7 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className="cat-part">
+      <div className={slug === 'kirchenjahr' ? undefined : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'tischgebete' && (
           <>
