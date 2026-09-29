@@ -2009,3 +2009,35 @@ mark.placeholder {
   background: color-mix(in srgb, var(--ink) 70%, transparent);
   border-color: transparent;
 }
+/* Daily habits: the course of the weeks as a quiet line between 0 and 7 days. */
+.hh-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+}
+.hh-scale {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font: 0.62rem var(--sans);
+  color: var(--muted);
+  line-height: 1;
+}
+.hh-chart svg {
+  display: block;
+  overflow: visible;
+}
+.hh-guide {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.hh-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 75%, transparent);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.hh-dot {
+  fill: color-mix(in srgb, var(--ink) 75%, transparent);
+}

@@ -490,12 +490,14 @@ describe('Rückblick', () => {
 
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
       s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
-      s.updateDay('2026-09-24', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } }));
+      s.updateDay('2026-09-17', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } }));
     });
     await screen.findByRole('heading', { name: 'Gewohnheiten' });
     const row = screen.getByRole('list', { name: 'Tischgebet mit der Familie, die letzten 8 Wochen' });
     expect(within(row).getAllByRole('listitem')).toHaveLength(8);
-    expect(row.textContent).toContain('Woche ab Mo 21.9.: an 1 von 5 Tagen bisher');
+    expect(row.textContent).toContain('Woche ab Mo 14.9.: an 1 von 7 Tagen');
+    // The running week (from Monday 21) is not part of the course yet.
+    expect(row.textContent).not.toContain('21.9.');
     // Documentation only: no percentages, no trend (rule 4).
     expect(document.querySelector('.hh-list')!.textContent).not.toMatch(/%|besser|schlechter|Serie/);
     void store;
