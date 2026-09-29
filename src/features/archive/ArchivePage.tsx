@@ -198,6 +198,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
     <>
       {!embedded && <h2>Rückblick</h2>}
       <Segmented
+        grid
         label="Ansicht"
         value={tab}
         onChange={(t) => {

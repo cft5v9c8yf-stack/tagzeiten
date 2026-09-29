@@ -37,14 +37,17 @@ export function Segmented<T extends string>({
   options,
   value,
   onChange,
+  grid = false,
 }: {
   label: string;
   options: readonly { value: T; label: string }[];
   value: T;
   onChange: (v: T) => void;
+  /** Equal cells that fit the width (two per row on the phone) instead of a capsule that wraps. */
+  grid?: boolean;
 }) {
   return (
-    <div className="seg" role="group" aria-label={label}>
+    <div className={`seg${grid ? ' seg-grid' : ''}`} role="group" aria-label={label}>
       {options.map((o) => (
         <button key={o.value} type="button" aria-pressed={value === o.value} onClick={() => onChange(o.value)}>
           {o.label}

@@ -240,6 +240,24 @@ p {
   color: var(--ink);
   box-shadow: inset 0 0 0 1.5px var(--gold);
 }
+/* Many options: equal cells in a rounded panel, two per row on the phone, one row when there is room. */
+.seg.seg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 3px;
+  width: 100%;
+  border-radius: var(--radius-l);
+}
+.seg.seg-grid button {
+  border-radius: var(--radius-s);
+  padding: 6px 8px;
+  text-align: center;
+}
+@media (min-width: 560px) {
+  .seg.seg-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 
 /* Bottom navigation */
 nav.tabs {
