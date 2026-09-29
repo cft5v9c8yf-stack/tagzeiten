@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.3',
+    date: '2026-09-29',
+    title: 'Eine Kachel zur Zeit',
+    changes: [
+      { area: 'Kacheln', text: 'In jeder Kachelgruppe ist nur eine Kachel offen. Wer „Gebetsübersicht“ öffnet, schließt damit „Mein Haus“; so auch in Einstellungen, Darstellung, Deine Daten, Über Henoch, Mein Haus und im Gebetsschatz.' },
+    ],
+  },
+  {
     version: '0.6.2',
     date: '2026-09-29',
     title: 'Die Schrift, wie sie steht',

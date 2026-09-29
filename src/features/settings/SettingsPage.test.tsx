@@ -18,6 +18,20 @@ function openAllMore() {
   for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
+/** Tiles open one at a time within their group; these are the groups. */
+const TILE_GROUPS = [
+  ['display', 'data', 'install', 'airplane', 'about'],
+  ['house', 'prayerlist', 'treasury'],
+  ['display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor'],
+  ['data.keep', 'data.export', 'data.import', 'data.delete'],
+  ['about.arc', 'about.sources', 'about.privacy'],
+].map((g) => g.map((id) => `more.${id}`));
+
+/** Open these tiles (e.g. "more.data", "more.data.export"), closing the others in their groups. */
+function openTiles(ids: readonly string[]) {
+  for (const id of ids) for (const other of TILE_GROUPS.find((g) => g.includes(id)) ?? [id]) setOpen(other, other === id);
+}
+
 let blobs: Blob[] = [];
 beforeEach(() => {
   localStorage.clear();
@@ -34,13 +48,14 @@ beforeEach(() => {
 afterEach(cleanup);
 
 let n = 0;
-async function renderAt(path: string, element: React.ReactNode, prepare?: (s: Store) => void) {
+async function renderAt(path: string, element: React.ReactNode, prepare?: (s: Store) => void, tiles: readonly string[] = []) {
   const db = new TagzeitenDB(`m6-${++n}`);
   const store = new Store({ db, journal: memoryJournal(), now: () => new Date(2026, 8, 25, 9) });
   await store.load();
   prepare?.(store);
   await store.flush();
   if (path.startsWith('/mehr')) openAllMore();
+  openTiles(tiles);
   const base = ['/mehr', '/katechismus'].find((b) => path.startsWith(b));
   const routes = base
     ? [
@@ -150,11 +165,14 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />);
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
-    const night = screen.getByRole('group', { name: 'Nachtgebet am Bett' });
     expect(within(bed).getByRole('button', { name: 'Anzeigen' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(bed).getByRole('button', { name: 'Ausblenden' }));
+    // One tile at a time: opening the Nachtgebet closes Am Bett.
+    fireEvent.click(screen.getByRole('button', { name: /^Nachtgebet am Bett/ }));
+    expect(screen.queryByRole('group', { name: 'Am Bett am Morgen' })).toBeNull();
+    const night = screen.getByRole('group', { name: 'Nachtgebet am Bett' });
     fireEvent.click(within(night).getByRole('button', { name: 'Ausblenden' }));
     await waitFor(() => expect(store.getProfile().showAtBed).toBe(false));
     expect(store.getProfile().showCompline).toBe(false);
@@ -185,7 +203,7 @@ describe('Mehr: Daten', () => {
       value: { persisted: () => Promise.resolve(granted), persist },
     });
     try {
-      await renderAt('/mehr/einstellungen', <SettingsPage />);
+      await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data']);
       // Asked once on start; the browser declined.
       await waitFor(() => expect(persist).toHaveBeenCalledOnce());
       expect(await screen.findByText(/noch nicht zugesagt/)).toBeTruthy();
@@ -199,7 +217,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('exports every entry as Markdown and as JSON', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />, fill);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, fill, ['more.data', 'more.data.export']);
     fireEvent.click(await screen.findByText('Als Text exportieren (Markdown)'));
     await waitFor(() => expect(blobs).toHaveLength(1));
     const md = await blobs[0]!.text();
@@ -213,7 +231,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('asks on the page before deleting, then leaves the database empty', async () => {
-    const { db } = await renderAt('/mehr/einstellungen', <SettingsPage />, fill);
+    const { db } = await renderAt('/mehr/einstellungen', <SettingsPage />, fill, ['more.data', 'more.data.delete']);
     expect(await db.days.count()).toBe(2);
     fireEvent.click(await screen.findByText('Alle Einträge löschen …'));
     expect(screen.getByText(/lässt sich nicht rückgängig machen/)).toBeTruthy();
@@ -233,7 +251,7 @@ describe('Mehr: Daten', () => {
     fill(source);
     const backup = JSON.stringify(await source.exportBackup());
 
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />);
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
     const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
     const file = new File([backup], 'sicherung.json', { type: 'application/json' });
     await act(async () => {
@@ -250,7 +268,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('rejects a file that is not a backup', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
     const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
     await act(async () => {
       fireEvent.change(input, { target: { files: [new File(['{"a":1}'], 'x.json')] } });
@@ -457,8 +475,11 @@ describe('Rückblick', () => {
   it('keeps wife and children in "Mein Haus", and an answered concern in the Rückblick', async () => {
     const { store } = await renderAt('/mehr/haus', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Gebet/ });
-    expect(screen.getAllByLabelText(/^Kind \d$/)).toHaveLength(4);
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Anna' } });
+    // One tile at a time: the children replace the wife.
+    fireEvent.click(screen.getByRole('button', { name: /^Kinder/ }));
+    expect(screen.queryByLabelText('Name')).toBeNull();
+    expect(screen.getAllByLabelText(/^Kind \d$/)).toHaveLength(4);
     fireEvent.change(screen.getByLabelText('Kind 1'), { target: { value: 'Marie' } });
     // Son or daughter is required: until chosen, a note asks for it.
     expect(await screen.findByText(/Bitte wählen: Sohn oder Tochter/)).toBeTruthy();
@@ -494,7 +515,7 @@ describe('Rückblick', () => {
     expect(screen.queryByRole('heading', { name: 'Gewohnheiten' })).toBeNull();
     cleanup();
 
-    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.habitHistory']);
     const group = await screen.findByRole('group', { name: 'Gewohnheiten im Rückblick' });
     expect(within(group).getByRole('button', { name: 'Ausblenden' }).getAttribute('aria-pressed')).toBe('true');
     cleanup();
@@ -522,7 +543,10 @@ describe('Rückblick', () => {
     expect(screen.getByRole('button', { name: /^Gebet der Eltern für ihre Kinder/ })).toBeTruthy();
     expect(screen.getByText('Johann Habermann († 1590)')).toBeTruthy();
     expect(screen.getByText('Johann Arndt († 1621)')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /^Gebet eines Ehemannes/ }));
     expect(screen.getByText(/Wehre dem Eheteufel/)).toBeTruthy();
+    // One prayer open at a time.
+    expect(screen.queryByText(/ich danke dir für meine liebe Frau N\./)).toBeNull();
   });
 
   it('sets times per weekday: working days and weekend, and further days with +', async () => {
@@ -564,7 +588,7 @@ describe('Rückblick', () => {
   });
 
   it('writes concerns as tags and sets them on days, several a day', async () => {
-    const { store } = await renderAt('/mehr/gebet', <SettingsPage />);
+    const { store } = await renderAt('/mehr/gebet', <SettingsPage />, undefined, ['more.prayerlist']);
     await screen.findByRole('heading', { level: 2, name: /Gebet/ });
     fireEvent.change(screen.getByLabelText('Neues Anliegen'), { target: { value: 'Verfolgte Kirche' } });
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen anlegen' }));
@@ -589,7 +613,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.6\.2/);
+    expect(versions[0]).toMatch(/^Version 0\.6\.3/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
   });
@@ -605,7 +629,7 @@ describe('Rückblick', () => {
   });
 
   it('explains how to install the app on Android and on the iPhone', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.install']);
     await screen.findByRole('heading', { level: 3, name: /App installieren/ });
     for (const t of ['Android mit Chrome', 'Android mit Samsung Internet', 'iPhone mit Safari']) {
       expect(screen.getByRole('heading', { level: 4, name: t })).toBeTruthy();
@@ -616,7 +640,7 @@ describe('Rückblick', () => {
   });
 
   it('explains, under Einstellungen, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.airplane']);
     await screen.findByRole('heading', { level: 3, name: /Flugmodus beim Beten/ });
     const text = document.body.textContent!;
     expect(text).toContain('„Wird geöffnet“');

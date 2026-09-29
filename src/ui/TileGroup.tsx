@@ -22,8 +22,8 @@ const PER_ROW = 2;
 /**
  * A group of settings or parts as tiles, two side by side, each with its icon,
  * title and a line of what it holds. A tile opens its content beneath its row,
- * across the full width; several may be open. Open states are remembered on
- * the device like the folding headings.
+ * across the full width. One tile is open at a time: opening another closes the
+ * one before. The open tile is remembered on the device like the folding headings.
  */
 export function TileGroup({ items, level = 3, label }: { items: readonly TileItem[]; level?: 3 | 4 | 5; label?: string }) {
   const base = useId();
@@ -31,7 +31,14 @@ export function TileGroup({ items, level = 3, label }: { items: readonly TileIte
   const Heading = `h${level}` as 'h3' | 'h4' | 'h5';
   const rows: TileItem[][] = [];
   for (let i = 0; i < items.length; i += PER_ROW) rows.push(items.slice(i, i + PER_ROW));
-  const isOpen = (it: TileItem) => open[it.id] ?? !!it.defaultOpen;
+  // One at a time; should several be remembered open, the first one wins.
+  const openId = items.find((it) => open[it.id] ?? !!it.defaultOpen)?.id;
+  const isOpen = (it: TileItem) => it.id === openId;
+  const toggle = (it: TileItem) => {
+    if (isOpen(it)) return setOpen(it.id, false);
+    for (const other of items) if (other.id !== it.id) setOpen(other.id, false);
+    setOpen(it.id, true);
+  };
   const panelId = (it: TileItem) => `${base}-${it.id.replace(/\W/g, '-')}`;
 
   return (
@@ -47,7 +54,7 @@ export function TileGroup({ items, level = 3, label }: { items: readonly TileIte
                 className={`tile-card${opened ? ' is-open' : ''}`}
                 aria-expanded={opened}
                 aria-controls={panelId(it)}
-                onClick={() => setOpen(it.id, !opened)}
+                onClick={() => toggle(it)}
               >
                 <FlowIcon name={it.icon} size={22} />
                 <span className="tile-card-title">{it.title}</span>

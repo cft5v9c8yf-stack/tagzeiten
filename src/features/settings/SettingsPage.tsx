@@ -36,6 +36,9 @@ interface Area {
  * Former areas, now parts of another: "/mehr/haus" opens "Gebet" with
  * "Mein Haus" unfolded, so links from the prayers keep working.
  */
+/** The tiles under "Gebet", in order; one of them is open at a time. */
+const PRAYER_TILES = ['more.house', 'more.prayerlist', 'more.treasury'] as const;
+
 const ALIASES: Record<string, { slug: string; open: string }> = {
   haus: { slug: 'gebet', open: 'more.house' },
   gebetsschatz: { slug: 'gebet', open: 'more.treasury' },
@@ -215,7 +218,8 @@ export function SettingsPage() {
   const alias = bereich ? ALIASES[bereich] : undefined;
   const area = AREAS.find((a) => a.slug === (alias?.slug ?? bereich));
   useLayoutEffect(() => {
-    if (alias) setOpen(alias.open, true);
+    if (!alias) return;
+    for (const id of PRAYER_TILES) setOpen(id, id === alias.open);
   }, [alias]);
 
   if (!area) {

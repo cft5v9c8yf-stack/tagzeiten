@@ -246,7 +246,7 @@ export function HouseSettings() {
           id: 'more.house.children',
           title: 'Kinder',
           line: childrenLine(house),
-          icon: 'people', defaultOpen: true,
+          icon: 'people',
           content: (
             <>
         <p className="small muted">
