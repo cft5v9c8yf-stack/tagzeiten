@@ -157,6 +157,21 @@ export function DisplaySettings() {
         ]}
       />
       </Section>
+      <Section id="more.display.habitHistory" title="Gewohnheiten im Rückblick" level={4}>
+      <Segmented
+        label="Gewohnheiten im Rückblick"
+        value={profile.showHabitHistory ? 'on' : 'off'}
+        onChange={(v) => store.updateProfile((p) => ({ ...p, showHabitHistory: v === 'on' }), { immediate: true })}
+        options={[
+          { value: 'on', label: 'Anzeigen' },
+          { value: 'off', label: 'Ausblenden' },
+        ]}
+      />
+      <p className="small muted">
+        Oben im Rückblick: jede Gewohnheit in den letzten acht Wochen, an wie vielen Tagen sie gehalten wurde. Nur
+        festgehalten, nicht bewertet.
+      </p>
+      </Section>
       <Section id="more.display.atBed" title="Am Bett am Morgen" level={4}>
       <Segmented
         label="Am Bett am Morgen"

@@ -475,6 +475,32 @@ describe('Rückblick', () => {
     expect(screen.getByText(/Marie \(Tochter\)/)).toBeTruthy();
   });
 
+  it('shows the habits of the last weeks in the Rückblick only when switched on, counted, not rated', async () => {
+    const { store } = await renderAt('/mehr/rueckblick', <SettingsPage />, (s) =>
+      s.updateDay('2026-09-24', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } })),
+    );
+    await screen.findAllByText(/mit Einträgen/);
+    expect(screen.queryByRole('heading', { name: 'Gewohnheiten' })).toBeNull();
+    cleanup();
+
+    await renderAt('/mehr/einstellungen', <SettingsPage />);
+    const group = await screen.findByRole('group', { name: 'Gewohnheiten im Rückblick' });
+    expect(within(group).getByRole('button', { name: 'Ausblenden' }).getAttribute('aria-pressed')).toBe('true');
+    cleanup();
+
+    await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
+      s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
+      s.updateDay('2026-09-24', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } }));
+    });
+    await screen.findByRole('heading', { name: 'Gewohnheiten' });
+    const row = screen.getByRole('list', { name: 'Tischgebet mit der Familie, die letzten 8 Wochen' });
+    expect(within(row).getAllByRole('listitem')).toHaveLength(8);
+    expect(row.textContent).toContain('Woche ab Mo 21.9.: an 1 von 5 Tagen bisher');
+    // Documentation only: no percentages, no trend (rule 4).
+    expect(document.querySelector('.hh-list')!.textContent).not.toMatch(/%|besser|schlechter|Serie/);
+    void store;
+  });
+
   it('keeps the two old prayers in the Gebetsschatz, with title and author', async () => {
     await renderAt('/mehr/gebetsschatz', <SettingsPage />);
     expect(await screen.findByRole('button', { name: 'Gebet für meine Frau' })).toBeTruthy();

@@ -1933,3 +1933,79 @@ mark.placeholder {
 .treasury-author {
   margin: 0 0 6px;
 }
+
+/* ---------------------------------------------------------------- Rückblick: habits */
+/* Neutral throughout: kept weeks in quiet ink, empty ones in the grey of the rule (rules 4 and 5). */
+.hh-note {
+  margin: 0 0 8px;
+}
+.hh-group-title {
+  margin: 12px 0 4px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hh-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hh-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 6px 0;
+  border-top: 1px solid var(--rule);
+}
+.hh-name {
+  font-size: 0.95rem;
+  align-self: center;
+  min-width: 0;
+}
+.hh-cells {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+.hh-cell {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 18px;
+}
+.hh-months .hh-cell {
+  width: 30px;
+}
+.hh-bar {
+  display: flex;
+  align-items: flex-end;
+  width: 12px;
+  height: 28px;
+  border-radius: 3px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.hh-fill {
+  display: block;
+  width: 100%;
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+.hh-count {
+  font: 0.68rem var(--sans);
+  color: var(--muted);
+  line-height: 1;
+}
+.hh-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+}
+.hh-mark.is-done {
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+  border-color: transparent;
+}

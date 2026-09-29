@@ -11,6 +11,7 @@ import { searchDays } from '../../domain/search';
 import { collectedVerses } from '../../domain/stats';
 import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from '../../domain/house';
 import { Segmented } from '../../ui/Choice';
+import { HabitHistory } from './HabitHistory';
 
 type Tab = 'days' | 'verses' | 'arena' | 'answered';
 const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered' };
@@ -197,6 +198,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   return (
     <>
       {!embedded && <h2>Rückblick</h2>}
+      {profile.showHabitHistory && <HabitHistory />}
       <Segmented
         grid
         label="Ansicht"

@@ -222,6 +222,8 @@ export interface Profile {
   answered: AnsweredPrayer[];
   /** The spiritual armour in morning and night prayer. */
   armor: boolean;
+  /** The overview of the habits in the Rückblick; off unless switched on. */
+  showHabitHistory: boolean;
   /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */
   showAtBed: boolean;
   /**

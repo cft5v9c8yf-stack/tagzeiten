@@ -32,10 +32,23 @@ export function DemoSetup() {
       },
     }), { immediate: true });
     store.updateDay(addDays(today, -3), (d) => ({ ...d, morning: { ...d.morning, done: true } }), { immediate: true });
+    // Some weeks of habits, for the overview in the Rückblick: an even, human pattern, not perfect.
+    for (let i = 2; i < 56; i++) {
+      const k = addDays(today, -i);
+      const wd = new Date(`${k}T12:00:00`).getDay();
+      const habits: Record<string, boolean> = {};
+      if ((i * i + 3 * i) % 10 < 6) habits.tablePrayer = true;
+      if ((i * i) % 7 < 3) habits.blessChildren = true;
+      if (wd === 0 && i % 21 !== 0) habits.worship = true;
+      if (wd === 3 && i % 14 < 7) habits.catechismChildren = true;
+      if (i === 12 || i === 40) habits.lordsSupper = true;
+      store.updateDay(k, (d) => ({ ...d, habits: { ...d.habits, ...habits } }), { immediate: true });
+    }
     store.updateProfile(
       (p) => ({
         ...p,
         habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
+        showHabitHistory: true,
         arena: [
           {
             id: 'demo-1',
