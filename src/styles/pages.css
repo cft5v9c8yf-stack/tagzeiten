@@ -487,6 +487,25 @@ body.no-scroll {
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 0 12px;
 }
+.times-grid > .field {
+  min-width: 0;
+}
+/* A time is five characters: a compact field, not a full-width box. Safari on
+   the iPhone gives time fields their own minimum width and height; reset them. */
+.times-grid input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 8.5rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
+  text-align: left;
+}
+.times-grid input[type='time']::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.45em;
+}
 .plan-track {
   border: 0;
   padding: 0;
