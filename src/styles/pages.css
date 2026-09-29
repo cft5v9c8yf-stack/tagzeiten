@@ -2015,14 +2015,6 @@ mark.placeholder {
   align-items: stretch;
   gap: 4px;
 }
-.hh-scale {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font: 0.62rem var(--sans);
-  color: var(--muted);
-  line-height: 1;
-}
 .hh-chart svg {
   display: block;
   overflow: visible;

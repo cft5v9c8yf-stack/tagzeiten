@@ -13,7 +13,7 @@ const PAD = 3;
 
 /**
  * A daily habit: its course over the last completed weeks as a line, 7 days at
- * the top, 0 at the bottom, without numbers. The running week is left out, so
+ * the top, 0 at the bottom, without numbers or scale. The running week is left out, so
  * a week just begun does not look like a drop.
  */
 function DailyRow({ habit, today }: { habit: Habit; today: string }) {
@@ -26,10 +26,6 @@ function DailyRow({ habit, today }: { habit: Habit; today: string }) {
     <li className="hh-row">
       <span className="hh-name">{habit.name}</span>
       <span className="hh-chart">
-        <span className="hh-scale" aria-hidden="true">
-          <span>7</span>
-          <span>0</span>
-        </span>
         <svg width={CHART_W} height={CHART_H} viewBox={`0 0 ${CHART_W} ${CHART_H}`} aria-hidden="true">
           <line className="hh-guide" x1={0} x2={CHART_W} y1={PAD} y2={PAD} />
           <line className="hh-guide" x1={0} x2={CHART_W} y1={CHART_H - PAD} y2={CHART_H - PAD} />
@@ -109,7 +105,7 @@ export function HabitHistory() {
   return (
     <Section id="review.habits" title="Gewohnheiten" level={3}>
       <p className="small muted hh-note">
-        Die letzten {HISTORY_WEEKS} Wochen, die neueste rechts. Täglich als Verlauf von 0 bis 7 Tagen über die abgeschlossenen Wochen. Festgehalten, nicht bewertet.
+        Die letzten {HISTORY_WEEKS} Wochen, die neueste rechts. Täglich als Verlauf über die abgeschlossenen Wochen: oben alle sieben Tage, unten keiner. Festgehalten, nicht bewertet.
       </p>
       {active.length === 0 ? (
         <p className="small muted">Keine Gewohnheit eingeschaltet.</p>
