@@ -81,8 +81,11 @@ export function SundayPage() {
 
   return (
     <div className="sunday-page">
-      {/* Luther's word at Worms stands over the Sunday only. */}
-      <p className="top-motto">Hier stehe ich und kann nicht anders!</p>
+      {/* The word the app is named after (Henoch), Luther 1912; over the Sunday only. */}
+      <p className="top-motto">
+        Und dieweil er ein göttliches Leben führte, nahm ihn Gott hinweg.{' '}
+        <span className="top-motto-ref">1. Mose 5,24</span>
+      </p>
       <header className="sunday-head">
         <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Letzter Sonntag: ${churchDay(prev).week}`}>
           <span className="sunday-step-circle">
