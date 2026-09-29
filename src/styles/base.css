@@ -254,7 +254,10 @@ p {
   text-align: center;
 }
 @media (min-width: 560px) {
-  .seg.seg-grid {
+  .seg.seg-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .seg.seg-grid-4 {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }

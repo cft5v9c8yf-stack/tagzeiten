@@ -83,7 +83,7 @@ function HabitRow({
           </>
         )}
         <span className="habit-meta">
-          {habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : 'eigene'}
+          <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : 'eigene'}</span>
           {!habit.preset &&
             (confirming ? (
               <span className="confirm-inline">
@@ -145,7 +145,13 @@ function HabitGroup({
     },
   });
   return (
-    <Section id={`more.habits.${rhythm}`} title={GROUP_TITLE[rhythm]} level={3}>
+    <Section
+      id={`more.habits.${rhythm}`}
+      title={GROUP_TITLE[rhythm]}
+      level={3}
+      className="habit-card"
+      aside={`${habits.filter((h) => h.active).length} von ${habits.length} eingeschaltet`}
+    >
       <ul className={`habit-list${drag ? ' sorting' : ''}`} ref={(el) => (listRef.current = el)}>
         {habits.map((h) => (
           <HabitRow
@@ -208,7 +214,7 @@ export function HabitSettings() {
       {RHYTHMS.map((r) => (
         <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(profile.habits, r)} hintId={hintId} onMoved={moved} />
       ))}
-      <Section id="more.habits.add" title="Eigene anlegen" level={3}>
+      <Section id="more.habits.add" title="Eigene anlegen" level={3} className="habit-card">
       <form className="add-habit" onSubmit={add}>
         <div className="field">
           <label htmlFor={nameId}>Name</label>

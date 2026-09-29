@@ -67,6 +67,7 @@ export function ScheduleSettings() {
   return (
     <>
       <Segmented<Mode>
+        grid
         label="Zeiten"
         value={mode}
         onChange={setMode}

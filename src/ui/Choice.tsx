@@ -47,7 +47,7 @@ export function Segmented<T extends string>({
   grid?: boolean;
 }) {
   return (
-    <div className={`seg${grid ? ' seg-grid' : ''}`} role="group" aria-label={label}>
+    <div className={`seg${grid ? ` seg-grid seg-grid-${Math.min(options.length, 4)}` : ''}`} role="group" aria-label={label}>
       {options.map((o) => (
         <button key={o.value} type="button" aria-pressed={value === o.value} onClick={() => onChange(o.value)}>
           {o.label}

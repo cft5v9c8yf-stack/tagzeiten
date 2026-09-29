@@ -607,3 +607,19 @@ a.cy-week-name {
 .next-list li {
   padding: 7px 0;
 }
+/* "Im Blick": the starred habits on top, the heading in gold with its star. */
+.habits .habit-group-focus .group-row th {
+  color: var(--gold);
+}
+.focus-group-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.focus-star {
+  color: var(--icon-gold);
+}
+/* Under "Im Blick" the heading carries the star already. */
+.habit-group-focus .focus-star {
+  display: none;
+}

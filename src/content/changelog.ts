@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.1',
+    date: '2026-09-29',
+    title: 'Gewohnheiten im neuen Kleid',
+    changes: [
+      { area: 'Heute', text: 'Gewohnheiten mit Stern stehen oben unter „Im Blick“, die übrigen darunter nach Täglich, Wöchentlich und Monatlich.' },
+      { area: 'Gewohnheiten', text: 'Unter „Mehr“ steht jeder Rhythmus als Karte, mit der Zahl der eingeschalteten; die Schalter im Gold der App, die Art als kleines Etikett.' },
+      { area: 'Zeiten', text: 'Der Umschalter „Alle Tage gleich / Tage unterschiedlich“ sieht aus wie die Ansichten im Rückblick.' },
+    ],
+  },
+  {
     version: '0.6.0',
     date: '2026-09-29',
     title: 'Kacheln statt Listen',

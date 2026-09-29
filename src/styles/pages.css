@@ -2192,3 +2192,48 @@ mark.placeholder {
 .tile-panel .tile-panel {
   background: var(--paper);
 }
+
+/* ---------------------------------------------------------------- Gewohnheiten as cards */
+/* Each rhythm a card like the tiles; switches in the gold of the rose, the kind as a small label. */
+.habit-card {
+  margin: 12px 0;
+  padding: 0 16px 6px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.habit-card > .fold-head {
+  justify-content: space-between;
+  align-items: center;
+}
+.habit-card > .fold-head h3 {
+  margin: 14px 0 10px;
+}
+.habit-card .fold-aside {
+  font-size: 0.78rem;
+}
+.habit-card .habit-edit {
+  background: var(--sheet);
+  padding: 12px 0;
+}
+.habit-card .habit-list .habit-edit:first-child {
+  border-top: 0;
+}
+.habit-card .add-habit {
+  padding-bottom: 12px;
+}
+.habit-kind {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.switch:checked {
+  background: var(--icon-gold);
+}
+.star-btn[aria-pressed='true'] {
+  color: var(--icon-gold);
+}

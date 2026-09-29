@@ -38,6 +38,55 @@ export function HabitsWeek({ date }: { date: DateKey }) {
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
 
+  // The starred habits stand on their own at the top, and not again in their group.
+  const focus = active.filter((h) => h.focus);
+  const rest = active.filter((h) => !h.focus);
+
+  const row = (h: Habit) => {
+    if (h.rhythm === 'daily') {
+      return (
+        <tr key={h.id}>
+          <HabitName habit={h} note={h.auto ? 'aus dem Ablauf' : h.id === READING_HABIT ? 'nach dem Leseplan' : undefined} />
+          {week.map((k) => {
+            const on = isDoneOn(h, lookup(k));
+            const enabled = canToggle(h, k, today, lookup);
+            return (
+              <td key={k}>
+                <button
+                  type="button"
+                  className={`cell${k === today ? ' today' : ''}${k > today ? ' future' : ''}`}
+                  aria-pressed={on}
+                  disabled={!enabled}
+                  aria-label={`${h.name}, ${formatShort(k)}`}
+                  onClick={() => toggle(h, k)}
+                />
+              </td>
+            );
+          })}
+        </tr>
+      );
+    }
+    const on = isDoneInPeriod(h, date, lookup);
+    const period = h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat';
+    return (
+      <tr key={h.id}>
+        <HabitName habit={h} />
+        <td colSpan={7} className="period-cell">
+          <button
+            type="button"
+            className="pill"
+            aria-pressed={on}
+            aria-label={`${h.name}, ${period}`}
+            disabled={!canToggle(h, date, today, lookup)}
+            onClick={() => toggle(h, date)}
+          >
+            {on ? `✓ ${period}` : period}
+          </button>
+        </td>
+      </tr>
+    );
+  };
+
   if (active.length === 0) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
@@ -57,8 +106,20 @@ export function HabitsWeek({ date }: { date: DateKey }) {
             ))}
           </tr>
         </thead>
+        {focus.length > 0 && (
+          <tbody className="habit-group habit-group-focus">
+            <tr className="group-row">
+              <th scope="rowgroup" colSpan={8}>
+                <span className="focus-group-title">
+                  <StarIcon filled size={14} /> Im Blick
+                </span>
+              </th>
+            </tr>
+            {focus.map(row)}
+          </tbody>
+        )}
         {RHYTHM_ORDER.map((rhythm) => {
-          const group = habitsOfRhythm(active, rhythm);
+          const group = habitsOfRhythm(rest, rhythm);
           if (group.length === 0) return null;
           return (
             <tbody key={rhythm} className={`habit-group habit-group-${rhythm}`}>
@@ -67,50 +128,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
                   {GROUP_TITLE[rhythm]}
                 </th>
               </tr>
-              {group.map((h) => {
-                if (rhythm === 'daily') {
-                  return (
-                    <tr key={h.id}>
-                      <HabitName habit={h} note={h.auto ? 'aus dem Ablauf' : h.id === READING_HABIT ? 'nach dem Leseplan' : undefined} />
-                      {week.map((k) => {
-                        const on = isDoneOn(h, lookup(k));
-                        const enabled = canToggle(h, k, today, lookup);
-                        return (
-                          <td key={k}>
-                            <button
-                              type="button"
-                              className={`cell${k === today ? ' today' : ''}${k > today ? ' future' : ''}`}
-                              aria-pressed={on}
-                              disabled={!enabled}
-                              aria-label={`${h.name}, ${formatShort(k)}`}
-                              onClick={() => toggle(h, k)}
-                            />
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                }
-                const on = isDoneInPeriod(h, date, lookup);
-                const period = rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat';
-                return (
-                  <tr key={h.id}>
-                    <HabitName habit={h} />
-                    <td colSpan={7} className="period-cell">
-                      <button
-                        type="button"
-                        className="pill"
-                        aria-pressed={on}
-                        aria-label={`${h.name}, ${period}`}
-                        disabled={!canToggle(h, date, today, lookup)}
-                        onClick={() => toggle(h, date)}
-                      >
-                        {on ? `✓ ${period}` : period}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {group.map(row)}
             </tbody>
           );
         })}
