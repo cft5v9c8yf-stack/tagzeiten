@@ -198,7 +198,6 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   return (
     <>
       {!embedded && <h2>Rückblick</h2>}
-      {profile.showHabitHistory && <HabitHistory />}
       <Segmented
         grid
         label="Ansicht"
@@ -313,6 +312,11 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
         <button type="button" className="btn" onClick={() => setLimit((l) => l + PAGE)}>
           Weitere {Math.min(PAGE, count - limit)} anzeigen
         </button>
+      )}
+      {profile.showHabitHistory && (
+        <div className="review-habits">
+          <HabitHistory />
+        </div>
       )}
     </>
   );

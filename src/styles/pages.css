@@ -2033,3 +2033,9 @@ mark.placeholder {
 .hh-dot {
   fill: color-mix(in srgb, var(--ink) 75%, transparent);
 }
+/* The habits stand apart, below the entries: a clear rule and room above. */
+.review-habits {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid var(--rule);
+}

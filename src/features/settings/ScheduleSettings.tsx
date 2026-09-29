@@ -168,7 +168,7 @@ export function DisplaySettings() {
         ]}
       />
       <p className="small muted">
-        Oben im Rückblick: jede Gewohnheit in den letzten acht Wochen, an wie vielen Tagen sie gehalten wurde. Nur
+        Unten im Rückblick: jede Gewohnheit in den letzten acht Wochen, an wie vielen Tagen sie gehalten wurde. Nur
         festgehalten, nicht bewertet.
       </p>
       </Section>

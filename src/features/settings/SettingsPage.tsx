@@ -99,7 +99,18 @@ const AREAS: readonly Area[] = [
     title: 'Rückblick',
     line: 'Tage, Verse, Arena, Erhörungen',
     icon: 'review',
-    info: <p>Alle Tage mit Einträgen, die Verse, die du dir notiert hast, die archivierten Einträge der Arena und die Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar.</p>,
+    info: (
+      <>
+        <p>
+          Alle Tage mit Einträgen, die Verse, die du dir notiert hast, die archivierten Einträge der Arena und die
+          Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar.
+        </p>
+        <p>
+          Darunter auf Wunsch deine Gewohnheiten der letzten acht Wochen. Ein- und ausschalten unter „Einstellungen“ ›
+          „Darstellung“ › „Gewohnheiten im Rückblick“.
+        </p>
+      </>
+    ),
     body: () => <ArchivePage embedded />,
   },
   {
