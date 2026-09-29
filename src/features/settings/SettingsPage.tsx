@@ -62,21 +62,21 @@ const AREAS: readonly Area[] = [
     slug: 'gebet',
     id: 'prayer',
     title: 'Gebet',
-    line: 'Übersicht, Mein Haus, Gebetsschatz',
+    line: 'Mein Haus, Übersicht, Gebetsschatz',
     icon: 'people',
     info: (
       <p>
-        Alles, was in der Stillen Zeit gebetet wird und von dir kommt: deine Anliegen nach Tagen, deine Frau und deine
-        Kinder mit Namen, und die Gebete, die du immer zur Hand haben willst.
+        Alles, was in der Stillen Zeit gebetet wird und von dir kommt: deine Frau und deine Kinder mit Namen, deine
+        Anliegen nach Tagen, und die Gebete, die du immer zur Hand haben willst.
       </p>
     ),
     body: () => (
       <>
-        <Sub id="prayerlist" title="Gebetsübersicht" info={PRAYER_INFO}>
-          <PrayerSettings />
-        </Sub>
         <Sub id="house" title="Mein Haus" info={HOUSE_INFO}>
           <HouseSettings />
+        </Sub>
+        <Sub id="prayerlist" title="Gebetsübersicht" info={PRAYER_INFO}>
+          <PrayerSettings />
         </Sub>
         <Sub id="treasury" title="Gebetsschatz" info={TREASURY_INFO}>
           <PrayerTreasury />

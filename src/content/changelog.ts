@@ -18,7 +18,7 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Arena, Eisenschmiede und das Kirchenjahr nach Dieffenbach',
     changes: [
       { area: 'Arena', text: 'Die Gebetskammer: ein Ort für den Kampf des Glaubens, mit Bibelversen, Gebetsanliegen und freiem Text. Einträge lassen sich in den Rückblick archivieren und zurückholen. Was du bekennst, gehört ins Gebet, nicht in die App.' },
-      { area: 'Gebet', text: 'Unter „Mehr“ fasst die Kachel „Gebet“ die Gebetsübersicht, „Mein Haus“ und den Gebetsschatz zusammen, jedes als eigener Abschnitt.' },
+      { area: 'Gebet', text: 'Unter „Mehr“ fasst die Kachel „Gebet“ „Mein Haus“, die Gebetsübersicht und den Gebetsschatz zusammen, jedes als eigener Abschnitt.' },
       { area: 'Mein Haus', text: 'Unter „Mehr → Gebet“ trägst du deine Frau und deine Kinder ein, die Kinder sortierbar und jeweils als Sohn oder Tochter, jeder mit einem aktuellen Anliegen. In der Stillen Zeit steht im Schritt „Die Antwort“ nach dem Benedictus die Fürbitte für das Haus: täglich für alle mit Namen, dazu einer im Mittelpunkt – montags deine Frau, dienstags bis freitags je ein Kind, samstags eure Ehe, sonntags das ganze Haus. Im Nachtgebet folgt nach Luthers Abendsegen der Segen über das Haus.' },
       { area: 'Gebetserhörungen', text: 'Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du mit „Erhört“ fest. Es steht mit Datum und Person im Rückblick.' },
       { area: 'Gebetsschatz', text: 'Neu unter „Mehr → Gebet“: das Gebet für deine Frau (montags in der Stillen Zeit), das Gebet eines Ehemannes von Johann Habermann und das Gebet der Eltern für ihre Kinder von Johann Arndt, wortgetreu. Die beiden alten Gebete stehen auch am Samstag und am Sonntag in der Fürbitte für das Haus.' },

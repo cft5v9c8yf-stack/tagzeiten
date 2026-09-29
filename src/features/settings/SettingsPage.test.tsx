@@ -87,7 +87,7 @@ describe('Mehr: Aufbau', () => {
     await waitFor(() => expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Mehr'));
   });
 
-  it('gathers Gebetsübersicht, Mein Haus and Gebetsschatz under "Gebet"; the old address opens Mein Haus', async () => {
+  it('gathers Mein Haus, Gebetsübersicht and Gebetsschatz under "Gebet"; the old address opens Mein Haus', async () => {
     resetOpenState();
     const store = new Store({ db: new TagzeitenDB(`m6-prayer-${++n}`), journal: memoryJournal() });
     render(
@@ -101,7 +101,7 @@ describe('Mehr: Aufbau', () => {
     );
     await screen.findByRole('heading', { level: 2, name: /Gebet/ });
     const sub = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(sub).toEqual(['Gebetsübersicht', 'Mein Haus', 'Gebetsschatz']);
+    expect(sub).toEqual(['Mein Haus', 'Gebetsübersicht', 'Gebetsschatz']);
     expect(screen.getByRole('button', { name: 'Gebetsübersicht' }).getAttribute('aria-expanded')).toBe('false');
     expect(screen.getByRole('button', { name: 'Mein Haus' }).getAttribute('aria-expanded')).toBe('true');
     expect(screen.getByRole('button', { name: 'Gebetsschatz' }).getAttribute('aria-expanded')).toBe('false');
