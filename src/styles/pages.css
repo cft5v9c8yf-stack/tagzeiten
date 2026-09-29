@@ -2254,3 +2254,16 @@ mark.placeholder {
 .star-btn[aria-pressed='true'] {
   color: var(--icon-gold);
 }
+
+/* Narrow phones: the tile names a little smaller, so they stay on one line beside the icon. */
+@media (max-width: 400px) {
+  .more-tile,
+  .tile-card {
+    padding: 12px;
+    column-gap: 8px;
+  }
+  .more-tile-title,
+  .tile-card-title {
+    font-size: 0.9rem;
+  }
+}

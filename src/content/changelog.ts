@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.5',
+    date: '2026-09-29',
+    title: 'Kacheln auf schmalen Handys',
+    changes: [
+      { area: 'Kacheln', text: 'Auf schmalen Handys sind die Namen der Kacheln etwas kleiner, damit sie neben dem Symbol auf einer Zeile bleiben.' },
+    ],
+  },
+  {
     version: '0.6.4',
     date: '2026-09-29',
     title: 'Symbol und Name nebeneinander',
