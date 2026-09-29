@@ -15,7 +15,7 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'treasury.ehemann', 'treasury.eltern']) setOpen(`more.${id}`, true);
 }
 
 let blobs: Blob[] = [];
@@ -76,7 +76,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Impressum']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebetsübersicht', 'Mein Haus', 'Gebetsschatz', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Impressum']);
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
@@ -421,6 +421,47 @@ describe('Rückblick', () => {
     ]);
     fireEvent.click(day);
     expect(summary.hidden).toBe(true);
+  });
+
+  it('keeps wife and children in "Mein Haus", and an answered concern in the Rückblick', async () => {
+    const { store } = await renderAt('/mehr/haus', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: /Mein Haus/ });
+    expect(screen.getAllByLabelText(/^Kind \d$/)).toHaveLength(4);
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Anna' } });
+    fireEvent.change(screen.getByLabelText('Kind 1'), { target: { value: 'Marie' } });
+    // Son or daughter is required: until chosen, a note asks for it.
+    expect(await screen.findByText(/Bitte wählen: Sohn oder Tochter/)).toBeTruthy();
+    fireEvent.click(within(screen.getByRole('group', { name: 'Marie: Sohn oder Tochter' })).getByRole('button', { name: 'Tochter' }));
+    await waitFor(() => expect(screen.queryByText(/Bitte wählen: Sohn oder Tochter/)).toBeNull());
+    fireEvent.change(screen.getByLabelText('Anliegen für Marie'), { target: { value: 'Freundin in der neuen Klasse' } });
+    const answered = within(screen.getByLabelText('Anliegen für Marie').closest('.house-concern')! as HTMLElement).getByRole('button', {
+      name: 'Erhört',
+    });
+    fireEvent.click(answered);
+    await waitFor(() => expect(store.getProfile().answered).toHaveLength(1));
+    expect(store.getProfile().answered[0]).toMatchObject({ date: '2026-09-25', person: 'Marie', role: 'daughter', concern: 'Freundin in der neuen Klasse' });
+    expect((screen.getByLabelText('Anliegen für Marie') as HTMLInputElement).value).toBe('');
+    expect(store.getProfile().house.wife.name).toBe('Anna');
+    fireEvent.click(screen.getByRole('button', { name: 'Weiteres Kind hinzufügen' }));
+    expect(await screen.findByLabelText('Kind 5')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Kind 5 entfernen' }));
+    await waitFor(() => expect(screen.queryByLabelText('Kind 5')).toBeNull());
+
+    cleanup();
+    await renderAt('/mehr/rueckblick?ansicht=erhoerungen', <SettingsPage />, (s) =>
+      s.updateProfile((p) => ({ ...p, answered: store.getProfile().answered }), { immediate: true }),
+    );
+    expect(await screen.findByText('Freundin in der neuen Klasse')).toBeTruthy();
+    expect(screen.getByText(/Marie \(Tochter\)/)).toBeTruthy();
+  });
+
+  it('keeps the two old prayers in the Gebetsschatz, with title and author', async () => {
+    await renderAt('/mehr/gebetsschatz', <SettingsPage />);
+    expect(await screen.findByRole('button', { name: 'Gebet eines Ehemannes' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Gebet der Eltern für ihre Kinder' })).toBeTruthy();
+    expect(screen.getByText('Johann Habermann († 1590)')).toBeTruthy();
+    expect(screen.getByText('Johann Arndt († 1621)')).toBeTruthy();
+    expect(screen.getByText(/Wehre dem Eheteufel/)).toBeTruthy();
   });
 
   it('sets times per weekday: working days and weekend, and further days with +', async () => {

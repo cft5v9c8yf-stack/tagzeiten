@@ -13,12 +13,14 @@ import { Changelog } from './Changelog';
 import { InstallGuide } from './InstallGuide';
 import { DATA_INFO, DataSettings } from './DataSettings';
 import { HABITS_INFO, HabitSettings } from './HabitSettings';
+import { HOUSE_INFO, HouseSettings } from './HouseSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
+import { PrayerTreasury, TREASURY_INFO } from './PrayerTreasury';
 import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog';
+  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog' | 'house' | 'treasury';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -56,6 +58,24 @@ const AREAS: readonly Area[] = [
     body: () => <PrayerSettings />,
   },
   {
+    slug: 'haus',
+    id: 'house',
+    title: 'Mein Haus',
+    line: 'Frau und Kinder, mit Anliegen',
+    icon: 'house',
+    info: HOUSE_INFO,
+    body: () => <HouseSettings />,
+  },
+  {
+    slug: 'gebetsschatz',
+    id: 'treasury',
+    title: 'Gebetsschatz',
+    line: 'Gebete der Väter, wortgetreu',
+    icon: 'foldedHands',
+    info: TREASURY_INFO,
+    body: () => <PrayerTreasury />,
+  },
+  {
     slug: 'zeiten',
     id: 'times',
     title: 'Zeiten',
@@ -68,9 +88,9 @@ const AREAS: readonly Area[] = [
     slug: 'rueckblick',
     id: 'review',
     title: 'Rückblick',
-    line: 'Tage, Verse und archivierte Einträge',
+    line: 'Tage, Verse, Arena, Erhörungen',
     icon: 'review',
-    info: <p>Alle Tage mit Einträgen, die Verse, die du dir notiert hast, und die archivierten Einträge der Arena – alles durchsuchbar.</p>,
+    info: <p>Alle Tage mit Einträgen, die Verse, die du dir notiert hast, die archivierten Einträge der Arena und die Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar.</p>,
     body: () => <ArchivePage embedded />,
   },
   {

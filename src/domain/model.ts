@@ -5,6 +5,7 @@
  * TypeScript types are derived from them. This lets tests inspect the complete
  * schema at runtime (rule 9: there is no field for confessing sins, anywhere).
  */
+import type { AnsweredPrayer, House } from './house';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
 
@@ -215,6 +216,10 @@ export interface Profile {
   scheduleDays?: { on: boolean; groups: ScheduleGroup[] };
   /** Journal of the Arena, newest first; kept on the device like everything else. */
   arena: ArenaEntry[];
+  /** "Mein Haus": wife and children, prayed for by name morning and night. */
+  house: House;
+  /** Concerns of the house marked as answered, for the Rückblick. */
+  answered: AnsweredPrayer[];
   /** The spiritual armour in morning and night prayer. */
   armor: boolean;
   /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */

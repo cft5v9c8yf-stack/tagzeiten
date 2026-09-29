@@ -3,6 +3,7 @@ import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
 import { normalizeArena } from './arena';
+import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays } from './schedule';
 import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
@@ -15,6 +16,8 @@ export function defaultProfile(today: DateKey): Profile {
     prayer: emptyPrayer(),
     catechism: { memorized: {}, weekOffset: 0 },
     schedule: { ...DEFAULT_SCHEDULE },
+    house: emptyHouse(),
+    answered: [],
     armor: true,
     showAtBed: true,
     showCompline: true,
@@ -47,6 +50,8 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     },
     schedule,
     ...cleanScheduleDays(raw.scheduleDays, schedule),
+    house: raw.house ? normalizeHouse(raw.house) : base.house,
+    answered: normalizeAnswered(raw.answered),
     armor: raw.armor !== false,
     showAtBed: raw.showAtBed !== false,
     showCompline: raw.showCompline !== false,

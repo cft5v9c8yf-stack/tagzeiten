@@ -54,6 +54,7 @@ import { Section } from '../../ui/Section';
 import { Alignment } from './Alignment';
 import { CatechismOfDay } from './CatechismOfDay';
 import { Examination } from './Examination';
+import { HouseBlessing, HouseIntercession } from './HouseParts';
 import { MorningReading } from './MorningReading';
 import { PartFields } from './PartFields';
 import { Review } from './Review';
@@ -402,12 +403,14 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       return <PrayerText text={MORNING_BLESSING} />;
 
     case 'evening-blessing':
-      return (
-        <>
-          <PrayerText text={EVENING_BLESSING} />
-          <p className="send-off">{RUBRICS.goodNight}</p>
-        </>
-      );
+      // "Flugs und fröhlich geschlafen" follows after the blessing over the house.
+      return <PrayerText text={EVENING_BLESSING} />;
+
+    case 'house-intercession':
+      return <HouseIntercession date={ctx.date} form={ctx.form} />;
+
+    case 'house-blessing':
+      return <HouseBlessing />;
   }
 }
 

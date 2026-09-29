@@ -353,7 +353,7 @@ export class Store {
 
   async exportMarkdown(): Promise<string> {
     await this.flush();
-    return toMarkdown(this.allDays(), this.profile.habits, this.now(), this.profile.arena);
+    return toMarkdown(this.allDays(), this.profile.habits, this.now(), this.profile.arena, this.profile.answered);
   }
 
   /** Replaces all data with the content of a backup file. */

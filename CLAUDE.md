@@ -24,7 +24,7 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 
 ## Texte und Urheberrecht
 
-12. **Nur gemeinfreie Texte einbetten:** Lutherbibel 1912, Luthers Kleiner Katechismus in traditioneller Fassung, Lieder vor 1900 (Herman, Alber, Gerhardt, Niege). **Keine** Texte aus Luther 2017, Luther 1984, dem Evangelischen Gesangbuch in moderner Bearbeitung oder anderen geschützten Ausgaben.
+12. **Nur gemeinfreie Texte einbetten:** Lutherbibel 1912, Luthers Kleiner Katechismus in traditioneller Fassung, Lieder vor 1900 (Herman, Alber, Gerhardt, Niege), Gebete lutherischer Verfasser vor 1900 (z. B. Habermann, Arndt), wortgetreu. **Keine** Texte aus Luther 2017, Luther 1984, dem Evangelischen Gesangbuch in moderner Bearbeitung oder anderen geschützten Ausgaben.
 13. **Keinen vollständigen Bibeltext einbetten.** Die App nennt Bibelstellen nur als Text, ohne Links. Die gedruckte Bibel ist das führende Element; der Nutzer liest auf Papier mit Farbstiften.
 14. Die Lesemethode stammt von **Hanniel Strebel** („Überblick: Hanniel zum Lesen der Bibel", hanniel.ch, 31.08.2026). In der App mit Quellenangabe nennen, in eigenen Worten beschreiben, nicht wörtlich übernehmen.
 

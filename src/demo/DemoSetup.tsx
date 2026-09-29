@@ -69,6 +69,16 @@ export function DemoSetup() {
             text: 'Die Frage nach der neuen Stelle lässt mich nicht los.',
           },
         ],
+        house: {
+          wife: { name: 'Anna', concern: 'Kraft für die neue Woche' },
+          children: [
+            { id: 'demo-paul', name: 'Paul', sex: 'son', concern: 'Prüfung am Freitag' },
+            { id: 'demo-marie', name: 'Marie', sex: 'daughter', concern: '' },
+          ],
+        },
+        answered: [
+          { id: 'demo-a1', date: addDays(today, -5), person: 'Marie', role: 'daughter', concern: 'Freundin in der neuen Klasse' },
+        ],
         prayer: {
           concerns: ['Frau und Kinder', 'Gemeinde', 'Verfolgte Kirche', 'Missionare', 'Obrigkeit', 'Nachbarn'],
           daily: ['Frau und Kinder', 'Gemeinde'],

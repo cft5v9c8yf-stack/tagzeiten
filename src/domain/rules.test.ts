@@ -147,7 +147,7 @@ describe('rule 2: Word first, resolutions last', () => {
 
   it('the short compline (booklet order) holds no examination at all', () => {
     const o = ORDERS.find((x) => x.id === 'compline' && x.form === 'short')!;
-    expect(partsOf(o).map((p) => p.kind)).toEqual(['sign-of-cross', 'review', 'lords-prayer', 'evening-blessing']);
+    expect(partsOf(o).map((p) => p.kind)).toEqual(['sign-of-cross', 'review', 'lords-prayer', 'evening-blessing', 'house-blessing']);
   });
 });
 

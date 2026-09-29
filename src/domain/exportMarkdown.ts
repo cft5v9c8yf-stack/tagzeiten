@@ -17,6 +17,7 @@ import {
 } from './model';
 import { isEmptyDay } from './normalizeDay';
 import { isEmptyEntry } from './arena';
+import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from './house';
 import { inkToSvg } from './ink';
 import { getPlan, portionLabel } from './readingPlan';
 import { CARRY_LABEL, MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from './review';
@@ -146,11 +147,26 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
   return out;
 }
 
+function answeredToMarkdown(answered: readonly AnsweredPrayer[]): string[] {
+  if (!answered.length) return [];
+  return [
+    '',
+    '# Gebetserhörungen',
+    '',
+    ...answeredNewestFirst(answered).map(
+      (a) =>
+        `- ${new Date(`${a.date}T12:00:00`).toLocaleDateString('de-DE')} · ${a.person ? `${a.person} (${ROLE_LABEL[a.role]})` : ROLE_LABEL[a.role]}: ${oneLine(a.concern)}`,
+    ),
+    '',
+  ];
+}
+
 export function toMarkdown(
   days: readonly Day[],
   habits: readonly Habit[],
   exportedAt: Date,
   arena: readonly ArenaEntry[] = [],
+  answered: readonly AnsweredPrayer[] = [],
 ): string {
   const kept = days.filter((d) => !isEmptyDay(d)).sort((a, b) => (a.date < b.date ? -1 : 1));
   const head = [
@@ -159,5 +175,10 @@ export function toMarkdown(
     `Exportiert am ${exportedAt.toLocaleDateString('de-DE')} · ${kept.length} Tage`,
     '',
   ];
-  return [...head, ...kept.map((d) => dayToMarkdown(d, habits)), ...arenaToMarkdown(arena)].join('\n');
+  return [
+    ...head,
+    ...kept.map((d) => dayToMarkdown(d, habits)),
+    ...arenaToMarkdown(arena),
+    ...answeredToMarkdown(answered),
+  ].join('\n');
 }

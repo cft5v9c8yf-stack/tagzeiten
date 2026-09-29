@@ -9,9 +9,11 @@ import type { ArenaEntry, Day, Habit } from '../../domain/model';
 import { isEmptyDay } from '../../domain/normalizeDay';
 import { searchDays } from '../../domain/search';
 import { collectedVerses } from '../../domain/stats';
+import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from '../../domain/house';
 import { Segmented } from '../../ui/Choice';
 
-type Tab = 'days' | 'verses' | 'arena';
+type Tab = 'days' | 'verses' | 'arena' | 'answered';
+const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered' };
 const PAGE = 40;
 
 function prayed(d: Day): string {
@@ -109,6 +111,26 @@ function ArenaItem({ e }: { e: ArenaEntry }) {
   );
 }
 
+function AnsweredItem({ a }: { a: AnsweredPrayer }) {
+  return (
+    <li className="archive-item">
+      <div className="archive-date">
+        {formatLong(a.date)} · {a.person ? `${a.person} (${ROLE_LABEL[a.role]})` : ROLE_LABEL[a.role]}
+      </div>
+      <p className="archive-answered">{a.concern}</p>
+    </li>
+  );
+}
+
+/** Answered concerns whose person or concern contain every word of the query. */
+function searchAnswered(list: readonly AnsweredPrayer[], query: string): AnsweredPrayer[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return list.filter((a) => {
+    const hay = `${a.person} ${ROLE_LABEL[a.role]} ${a.concern} ${formatLong(a.date)}`.toLowerCase();
+    return words.every((w) => hay.includes(w));
+  });
+}
+
 /** A list under headings for year and month, newest first. */
 function MonthList<T>({
   items,
@@ -148,7 +170,7 @@ function MonthList<T>({
 export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const all = useAllDays();
   const [params] = useSearchParams();
-  const [tab, setTab] = useState<Tab>(params.get('ansicht') === 'arena' ? 'arena' : 'days');
+  const [tab, setTab] = useState<Tab>(TAB_PARAM[params.get('ansicht') ?? ''] ?? 'days');
   const profile = useProfile();
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
@@ -165,7 +187,12 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
       ).sort((a, b) => b.createdAt - a.createdAt),
     [profile.arena, query],
   );
-  const count = tab === 'days' ? found.length : tab === 'verses' ? verses.length : archived.length;
+  const answered = useMemo(
+    () => searchAnswered(answeredNewestFirst(profile.answered), query),
+    [profile.answered, query],
+  );
+  const count =
+    tab === 'days' ? found.length : tab === 'verses' ? verses.length : tab === 'arena' ? archived.length : answered.length;
 
   return (
     <>
@@ -181,6 +208,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'days', label: 'Tage' },
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
+          { value: 'answered', label: 'Gebetserhörungen' },
         ]}
       />
       <div className="field search-field">
@@ -205,7 +233,9 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
             ? `${count} ${count === 1 ? 'Tag' : 'Tage'} mit Einträgen`
             : tab === 'verses'
               ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
-              : `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`}
+              : tab === 'arena'
+                ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
+                : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
       </p>
 
       {tab === 'days' &&
@@ -257,6 +287,22 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
             {query.trim()
               ? 'Nichts gefunden.'
               : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
+          </p>
+        ))}
+
+      {tab === 'answered' &&
+        (answered.length ? (
+          <MonthList
+            items={answered.slice(0, limit)}
+            dateOf={(a) => a.date}
+            keyOf={(a) => a.id}
+            render={(a) => <AnsweredItem a={a} />}
+          />
+        ) : (
+          <p className="empty">
+            {query.trim()
+              ? 'Nichts gefunden.'
+              : 'Noch keine. Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du dort mit „Erhört“ fest.'}
           </p>
         ))}
 

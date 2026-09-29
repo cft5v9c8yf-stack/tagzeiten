@@ -42,7 +42,9 @@ export type PartKind =
   | 'collect'
   | 'blessing'
   | 'morning-blessing'
-  | 'evening-blessing';
+  | 'evening-blessing'
+  | 'house-intercession'
+  | 'house-blessing';
 
 /**
  * Path of a stored value within a Day, e.g. "morning.verse",
@@ -172,6 +174,7 @@ const MORNING_FULL: Order = {
       minutes: 5,
       parts: [
         p('canticle', 'Benedictus'),
+        p('house-intercession', 'Fürbitte für das Haus'),
         p('intercession', 'Fürbitte', { fields: ['morning.peopleToday'] }),
         p('lords-prayer', 'Vaterunser'),
       ],
@@ -224,7 +227,13 @@ const MORNING_SHORT: Order = {
       minutes: 3,
       parts: [p('free-prayer', 'Freies Gebet', { fields: ['morning.onMyHeart'] })],
     },
-    { id: 'lordsPrayer', title: 'Vaterunser', minutes: 1, parts: [p('lords-prayer', 'Vaterunser')] },
+    {
+      id: 'lordsPrayer',
+      title: 'Fürbitte und Vaterunser',
+      minutes: 1,
+      // The short form prays only the prayer for all, without the one in the centre.
+      parts: [p('house-intercession', 'Fürbitte für das Haus'), p('lords-prayer', 'Vaterunser')],
+    },
     {
       id: 'alignment',
       title: 'Die drei Dinge',
@@ -313,7 +322,12 @@ const COMPLINE_FULL: Order = {
     one('baptism', p('baptism', 'Taufgedächtnis')),
     one('intercession', p('intercession', 'Fürbitte', { fields: ['evening.people', 'evening.passedOnTo'] })),
     one('nunc', p('canticle', 'Nunc dimittis', { optional: true })),
-    one('blessing', p('evening-blessing', 'Abendsegen')),
+    {
+      id: 'blessing',
+      title: 'Abendsegen',
+      minutes: 0,
+      parts: [p('evening-blessing', 'Abendsegen'), p('house-blessing', 'Segen über das Haus')],
+    },
   ],
 };
 
@@ -326,7 +340,12 @@ const COMPLINE_SHORT: Order = {
     one('sign', p('sign-of-cross', 'Kreuzzeichen')),
     one('review', p('review', 'Rückschau', { fields: ['evening.marks', 'evening.carry'] })),
     one('lordsPrayer', p('lords-prayer', 'Vaterunser')),
-    one('blessing', p('evening-blessing', 'Abendsegen')),
+    {
+      id: 'blessing',
+      title: 'Abendsegen',
+      minutes: 0,
+      parts: [p('evening-blessing', 'Abendsegen'), p('house-blessing', 'Segen über das Haus')],
+    },
   ],
 };
 

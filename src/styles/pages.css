@@ -1831,3 +1831,86 @@ mark.placeholder {
   margin: 3px 0 0;
   line-height: 1.55;
 }
+
+/* ---------------------------------------------------------------- Mein Haus */
+/* Morning: who stands in the centre today, then the prayers. */
+.house-focus {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-l);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.house-focus p {
+  margin: 0;
+}
+.house-focus p + p {
+  margin-top: 4px;
+}
+.house-focus-title {
+  margin: 16px 0 6px;
+  font-size: 1.05rem;
+}
+/* Bible references under a prayer, like the attribution inside a prayed text. */
+.house-refs {
+  margin: -4px 0 10px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.house-hint {
+  margin: 8px 0;
+}
+
+/* Settings: wife and children. */
+.house-children {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.house-child {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: start;
+  border-top: 1px solid var(--rule);
+  padding: 12px 0;
+  position: relative;
+  background: var(--paper);
+}
+.house-child-main {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.house-child-main .field {
+  margin: 0;
+}
+.house-children.sorting .house-child {
+  transition: transform 0.15s ease;
+}
+.house-children.sorting .house-child.is-dragging {
+  transition: none;
+  z-index: 3;
+  background: var(--sheet);
+  border-radius: var(--radius-s);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.house-required {
+  margin: 0;
+}
+.house-concern-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.house-concern-row input {
+  flex: 1;
+  min-width: 0;
+}
+.archive-answered {
+  margin: 0;
+}
+.treasury-author {
+  margin: 0 0 6px;
+}
