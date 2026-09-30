@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
       // A new version waits until the user chooses to update – never a reload mid-prayer.
       registerType: 'prompt',
       injectRegister: false,
-      includeAssets: ['icons/apple-touch-icon.png', 'icons/icon.svg'],
+      includeAssets: ['icons/apple-touch-icon.png', 'icons/favicon-64.png'],
       manifest: {
         id: base,
         name: 'Henoch',

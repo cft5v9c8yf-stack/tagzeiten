@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.8.1',
+    date: '2026-09-30',
+    title: 'Ein neues Zeichen',
+    changes: [
+      { area: 'App-Symbol', text: 'Henoch hat ein eigenes Zeichen: die Sonne über dem Horizont, der Weg, der zu ihr führt. Dasselbe Zeichen steht unten in der Leiste bei „Heute“.' },
+    ],
+  },
+  {
     version: '0.8.0',
     date: '2026-09-30',
     title: 'Ein eigener Platz für die Gebetskammer',

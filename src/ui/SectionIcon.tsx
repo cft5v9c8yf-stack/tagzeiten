@@ -8,12 +8,14 @@ const PATHS: Record<Name, JSX.Element> = {
       <path d="M11.5 7v7M9 9.5h5" />
     </>
   ),
-  // A day arc over the horizon
+  // The app's sign: the sun over the horizon, its light in rings, and the way that leads to it
   today: (
     <>
-      <path d="M4 16a8 8 0 0 1 16 0" />
-      <path d="M2 16h20" />
-      <circle cx="12" cy="16" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M4 10a8 8 0 0 1 16 0M7 10a5 5 0 0 1 10 0" strokeWidth="1" opacity="0.45" />
+      <path d="M9 10a3 3 0 0 1 6 0Z" fill="var(--icon-gold)" stroke="none" />
+      <path d="M12 10.4c-.6 4.4-2.6 8.2-7.2 11.1h14.1c-1.5-4.9-6-7.3-6.9-11.1Z" fill="currentColor" opacity="0.14" stroke="none" />
+      <path d="M1.5 10h21" />
+      <path d="M12 10.4c-.6 4.4-2.6 8.2-7.2 11.1M12 10.4c.9 3.8 5.4 6.2 6.9 11.1" />
     </>
   ),
   // Folded hands: Stille Zeit, Vesper and Nachtgebet
