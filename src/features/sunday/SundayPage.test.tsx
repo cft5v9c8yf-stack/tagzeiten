@@ -34,6 +34,21 @@ describe('Sonntag', () => {
     expect(SECTIONS.map((s) => s.label)).toEqual(['Arena', 'Andacht', 'Heute', 'Sonntag', 'Bibel', 'Lehre', 'Mehr']);
   });
 
+  it('opens Löhe’s meditation from the Epistle on the 17th and 18th Sunday after Trinity', async () => {
+    await renderSunday('/sonntag?s=2026-09-27');
+    fireEvent.click(screen.getByRole('button', { name: /Epheser 4,1-6/ }));
+    let dialog = screen.getByRole('dialog', { name: 'Am siebzehnten Sonntage nach Trinitatis.' });
+    expect(dialog.textContent).toContain('Ein Leib und Ein Geist!');
+    expect(dialog.textContent).toContain('Wilhelm Löhe');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Betrachtung schließen' }));
+    cleanup();
+    await renderSunday('/sonntag?s=2026-10-04');
+    fireEvent.click(screen.getByRole('button', { name: /1\. Korinther 1,4-9/ }));
+    dialog = screen.getByRole('dialog', { name: 'Am achtzehnten Sonntage nach Trinitatis.' });
+    expect(dialog.querySelectorAll('.lection-paragraphs p')).toHaveLength(2);
+    expect(dialog.textContent).toContain('wie sie St. Paulus in seinen Briefen behandelt!');
+  });
+
   it('opens the lesson of the Haus-Agende from the Gospel, where the book has one', async () => {
     await renderSunday('/sonntag?s=2026-10-04');
     expect(title()).toContain('18. Sonntag nach Trinitatis');

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.10.0',
+    date: '2026-09-30',
+    title: 'Löhe zur Epistel',
+    changes: [
+      { area: 'Sonntag', text: 'Auch die Epistel kann nun eine Betrachtung öffnen: Wilhelm Löhe, lutherischer Pfarrer, zu den Episteln des 17. und 18. Sonntags nach Trinitatis, Wort für Wort in der alten Schreibweise.' },
+    ],
+  },
+  {
     version: '0.9.1',
     date: '2026-09-30',
     title: 'Die Andacht ohne Nummern',

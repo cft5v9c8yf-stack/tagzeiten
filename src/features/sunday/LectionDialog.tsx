@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
-import { DIEFFENBACH_SOURCE } from '../../content/dieffenbach';
 import type { Lection } from '../../content/lections';
 
-/** The Sunday's lesson from the Haus-Agende, over the page, to be read through. */
+/** A reading on the Sunday's Gospel or Epistle, over the page, to be read through. */
 export function LectionDialog({ lection, onClose }: { lection: Lection; onClose: () => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -46,12 +45,12 @@ export function LectionDialog({ lection, onClose }: { lection: Lection; onClose:
             ))}
           </div>
           <p className="small muted lection-source">
-            {DIEFFENBACH_SOURCE} {lection.page} In der Rechtschreibung des Originals.
+            {lection.source} In der Rechtschreibung des Originals.
           </p>
         </div>
         <div className="chooser-foot">
           <button type="button" className="btn quiet" ref={closeRef} onClick={onClose}>
-            Andacht schließen
+            {lection.kind} schließen
           </button>
         </div>
       </div>
