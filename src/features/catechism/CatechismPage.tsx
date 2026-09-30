@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
+import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
 import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -100,13 +101,39 @@ function ChiefPart({ ci }: { ci: number }) {
   );
 }
 
+const CREED_IDS = CREEDS.map((c) => `creed.${c.id}`);
+
+/** The three creeds of the early church: one card each, one open at a time. */
+function Creeds() {
+  return (
+    <>
+      <p className="book-source">Die drei altkirchlichen Bekenntnisse, wie sie am Anfang des lutherischen Konkordienbuchs stehen.</p>
+      {CREEDS.map((c) => (
+        <Section key={c.id} id={`creed.${c.id}`} group={CREED_IDS} defaultOpen={false} className="book-card creed-card" title={
+          <span className="book-card-text">
+            <span className="book-card-title">{c.title}</span>
+            <span className="book-card-sub">{c.line}</span>
+          </span>
+        }>
+          {c.text && <PrayerText text={c.text} />}
+          <h4>Zur Erklärung</h4>
+          {c.explanation.map((p) => (
+            <p key={p.slice(0, 40)}>{p}</p>
+          ))}
+        </Section>
+      ))}
+    </>
+  );
+}
+
 function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   const title = APPENDICES.find((a) => a.slug === slug)!.title;
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
+        {slug === 'bekenntnisse' && <Creeds />}
         {slug === 'tischgebete' && (
           <>
             <TablePrayer id="before" title="Vor dem Essen" prayer={TABLE_PRAYER_BEFORE} />

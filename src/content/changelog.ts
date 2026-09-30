@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.11.0',
+    date: '2026-09-30',
+    title: 'Die drei Bekenntnisse',
+    changes: [
+      { area: 'Lehre', text: 'Im Anhang stehen die drei altkirchlichen Bekenntnisse, je mit einer Erklärung: das Apostolische in Luthers Wortlaut, das Nizänische in der heutigen Fassung und das Athanasianische. Dessen Wortlaut folgt, sobald eine alte Fassung vorliegt.' },
+    ],
+  },
+  {
     version: '0.10.1',
     date: '2026-09-30',
     title: 'Löhes Buch beim Namen',
