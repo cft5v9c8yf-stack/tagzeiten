@@ -1,6 +1,7 @@
 import 'fake-indexeddb/auto';
+import Dexie from 'dexie';
 import { afterEach, describe, expect, it } from 'vitest';
-import { THREE_KEYS, WREATH_FIELDS, MORNING_TEXT_FIELDS, EVENING_TEXT_FIELDS, type Day } from '../domain/model';
+import { THREE_KEYS, WREATH_FIELDS, MORNING_TEXT_FIELDS, EVENING_TEXT_FIELDS, emptyDay, type ArenaEntry, type Day } from '../domain/model';
 import { TagzeitenDB } from './db';
 import { memoryJournal } from './journal';
 import { Store } from './store';
@@ -258,5 +259,100 @@ describe('a new day while the app stays open', () => {
     expect(store.today()).toBe('2026-09-26');
     expect(store.checkDayChange()).toBe(false);
     expect(emitted).toBe(1);
+  });
+});
+
+describe('the Arena in its own table (v2)', () => {
+  const entry = (id: string, createdAt: number, text: string): ArenaEntry => ({
+    id,
+    createdAt,
+    updatedAt: createdAt,
+    verses: [''],
+    concerns: ['Geduld'],
+    text,
+    ink: [{ tool: 'pen', color: 'ink', points: [10, 10, 50, 20, 20, 60] }],
+  });
+
+  it('moves the entries of an older database out of the profile, keeping everything else', async () => {
+    const name = `test-${++n}`;
+    // A database as version 0.7 left it: the entries inside the profile.
+    const old = new Dexie(name);
+    old.version(1).stores({ profile: 'id', days: 'date, updatedAt' });
+    await old.open();
+    const profile = { ...(await (async () => {
+      const s = new Store({ db: new TagzeitenDB(`seed-${n}`), journal: memoryJournal() });
+      await s.load();
+      s.db.close();
+      return s.getProfile();
+    })()), arena: [entry('a', 1000, 'älter'), entry('b', 2000, 'neuer')], armor: false };
+    await old.table('profile').put({ ...profile, id: 'me' });
+    await old.table('days').put({ ...fillDay(emptyDay('2026-09-24')) });
+    old.close();
+
+    const db = new TagzeitenDB(name);
+    dbs.push(db);
+    const store = new Store({ db, journal: memoryJournal() });
+    await store.load();
+    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['neuer', 'älter']);
+    expect(store.getProfile().arena[0]!.ink).toHaveLength(1);
+    expect(store.getProfile().armor).toBe(false);
+    expect(store.findDay('2026-09-24')).toBeDefined();
+    expect(await db.arena.count()).toBe(2);
+    expect('arena' in (await db.profile.get('me'))!).toBe(false);
+  });
+
+  it('writes only the entry that changed, not the profile, and removes deleted and empty entries', async () => {
+    const { db, store } = freshStore();
+    await store.load();
+    const id = store.addArenaEntry();
+    store.updateArenaEntry(id, (e) => ({ ...e, text: 'Was mich bewegt' }), { immediate: true });
+    await store.flush();
+    const profileRow = await db.profile.get('me');
+    expect('arena' in profileRow!).toBe(false);
+    expect((await db.arena.get(id))!.text).toBe('Was mich bewegt');
+
+    const stamp = profileRow!.updatedAt;
+    store.updateArenaEntry(id, (e) => ({ ...e, text: 'Weiter' }), { immediate: true });
+    await store.flush();
+    expect((await db.profile.get('me'))!.updatedAt).toBe(stamp);
+    expect((await db.arena.get(id))!.text).toBe('Weiter');
+
+    // A new entry left empty is not kept.
+    const empty = store.addArenaEntry();
+    await store.flush();
+    expect(await db.arena.get(empty)).toBeUndefined();
+
+    store.deleteArenaEntry(id);
+    await store.flush();
+    expect(await db.arena.count()).toBe(0);
+  });
+
+  it('recovers an unsaved entry from the journal', async () => {
+    const { db } = freshStore();
+    const journal = memoryJournal();
+    journal.save([['arena:x', entry('x', 5000, 'noch nicht gespeichert')]]);
+    const store = new Store({ db, journal });
+    await store.load();
+    expect(store.getProfile().arena.map((e) => e.id)).toEqual(['x']);
+    expect((await db.arena.get('x'))!.text).toBe('noch nicht gespeichert');
+  });
+
+  it('keeps the entries through export, import and deleting everything', async () => {
+    const { store } = freshStore();
+    await store.load();
+    store.updateProfile((p) => ({ ...p, arena: [entry('k', 3000, 'Gebetskammer')] }), { immediate: true });
+    const backup = await store.exportBackup();
+    expect(backup.profile.arena.map((e) => e.id)).toEqual(['k']);
+
+    const { db: otherDb, store: other } = freshStore();
+    await other.load();
+    await other.importBackup(JSON.stringify(backup));
+    expect(await otherDb.arena.count()).toBe(1);
+    expect('arena' in (await otherDb.profile.get('me'))!).toBe(false);
+    expect(other.getProfile().arena[0]!.text).toBe('Gebetskammer');
+
+    await other.deleteAll();
+    expect(await otherDb.arena.count()).toBe(0);
+    expect(other.getProfile().arena).toEqual([]);
   });
 });

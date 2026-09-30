@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.8.0',
+    date: '2026-09-30',
+    title: 'Ein eigener Platz für die Gebetskammer',
+    changes: [
+      { area: 'Gebetskammer', text: 'Die Einträge der Gebetskammer und der Eisenschmiede liegen jetzt in einem eigenen Speicher, jeder für sich. Auch viele Seiten Handschrift machen die App nicht langsamer, und beim Schreiben wird nur der Eintrag gespeichert, an dem du gerade schreibst.' },
+      { area: 'Deine Daten', text: 'Beim ersten Start zieht die App die vorhandenen Einträge einmal um, in einem Schritt: Die alte Ablage wird erst geleert, wenn alles am neuen Platz liegt. Sicherungen aus früheren Versionen lassen sich weiter einspielen.' },
+    ],
+  },
+  {
     version: '0.7.1',
     date: '2026-09-30',
     title: 'Durchgesehen',

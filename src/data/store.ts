@@ -10,12 +10,12 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
-import { isEmptyEntry, newEntry, nextMeeting } from '../domain/arena';
+import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
 import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
-import { PROFILE_KEY, TagzeitenDB } from './db';
+import { PROFILE_KEY, TagzeitenDB, type StoredProfile } from './db';
 import { localJournal, type Journal } from './journal';
 import { WriteQueue } from './writeQueue';
 
@@ -41,6 +41,18 @@ export interface UpdateOptions {
 }
 
 const DAY_PREFIX = 'day:';
+const ARENA_PREFIX = 'arena:';
+
+/** What the write queue stores: a day, the profile (without the Arena), an Arena entry, or null for a deleted entry. */
+type Doc = Day | ProfileDoc | ArenaEntry | null;
+type ProfileDoc = Omit<Profile, 'arena'>;
+
+const withoutArena = ({ arena: _, ...rest }: Profile): ProfileDoc => rest;
+
+/** Whether anything besides the Arena (and the time stamp) changed. */
+const profileChanged = (a: Profile, b: Profile) =>
+  (Object.keys(b) as (keyof Profile)[]).some((k) => k !== 'arena' && k !== 'updatedAt' && a[k] !== b[k]) ||
+  Object.keys(a).length !== Object.keys(b).length;
 
 export class Store {
   readonly db: TagzeitenDB;
@@ -50,12 +62,12 @@ export class Store {
   private blanks = new Map<DateKey, Day>();
   private listeners = new Set<Listener>();
   private version = 0;
-  private readonly queue: WriteQueue<Day | Profile>;
+  private readonly queue: WriteQueue<Doc>;
   private readonly now: () => Date;
   private readonly seed: Partial<Profile>;
   private readonly journal: Journal;
   /** Documents changed in memory whose latest value is not yet in IndexedDB. */
-  private dirty = new Map<string, Day | Profile>();
+  private dirty = new Map<string, Doc>();
   /** The day the views were last drawn for; see checkDayChange. */
   private shownDay: DateKey;
 
@@ -66,7 +78,7 @@ export class Store {
     this.journal = opts.journal ?? localJournal;
     this.profile = defaultProfile(this.today());
     this.shownDay = this.today();
-    this.queue = new WriteQueue<Day | Profile>(
+    this.queue = new WriteQueue<Doc>(
       (key, value) => this.persist(key, value),
       opts.debounceMs ?? 500,
       (key, error) => opts.onError?.({ kind: 'save', key, error }),
@@ -86,8 +98,11 @@ export class Store {
   private async doLoad(): Promise<void> {
     const today = this.today();
     const stored = await this.db.profile.get(PROFILE_KEY);
-    this.profile = normalizeProfile(stored ?? { ...defaultProfile(today), ...this.seed }, today);
-    if (!stored) await this.persist('profile', this.profile);
+    const arena = await this.db.arena.toArray();
+    this.profile = stored
+      ? normalizeProfile({ ...(stored as Omit<StoredProfile, 'arena'>), arena }, today)
+      : normalizeProfile({ ...defaultProfile(today), ...this.seed }, today);
+    if (!stored) await this.persist('profile', withoutArena(this.profile));
     const rows = await this.db.days.toArray();
     this.days.clear();
     for (const r of rows) {
@@ -119,11 +134,13 @@ export class Store {
     if (entries.length === 0) return;
     for (const [key, value] of entries) {
       if (key === 'profile') {
-        const p = normalizeProfile(value as Partial<Profile>, this.today());
+        const p = normalizeProfile({ ...(value as Partial<Profile>), arena: this.profile.arena }, this.today());
         if (p.updatedAt > this.profile.updatedAt) {
           this.profile = p;
-          await this.persist(key, p);
+          await this.persist(key, withoutArena(p));
         }
+      } else if (key.startsWith(ARENA_PREFIX)) {
+        await this.recoverArenaEntry(key.slice(ARENA_PREFIX.length), value);
       } else if (key.startsWith(DAY_PREFIX)) {
         const d = normalizeDay(value);
         if (d && d.updatedAt > (this.days.get(d.date)?.updatedAt ?? -1)) {
@@ -133,6 +150,18 @@ export class Store {
       }
     }
     this.journal.clear();
+  }
+
+  /** An Arena entry from the journal: newer than the stored one, or deleted since. */
+  private async recoverArenaEntry(id: string, value: unknown): Promise<void> {
+    const current = this.profile.arena.find((e) => e.id === id);
+    const [entry] = value === null ? [] : normalizeArena([value]);
+    if (value === null) {
+      if (!current) return;
+    } else if (!entry || entry.updatedAt <= (current?.updatedAt ?? -1)) return;
+    const others = this.profile.arena.filter((e) => e.id !== id);
+    this.profile = { ...this.profile, arena: normalizeArena(entry ? [entry, ...others] : others) };
+    await this.persist(ARENA_PREFIX + id, entry ?? null);
   }
 
   get hasPendingWrites(): boolean {
@@ -211,9 +240,17 @@ export class Store {
   }
 
   updateProfile(fn: (p: Profile) => Profile, opts: UpdateOptions = {}): Profile {
-    const next = { ...fn(this.profile), updatedAt: this.now().getTime() };
+    const prev = this.profile;
+    const next = { ...fn(prev), updatedAt: this.now().getTime() };
     this.profile = next;
-    this.schedule('profile', next, opts.immediate);
+    // The Arena is stored entry by entry: only what changed is written.
+    if (next.arena !== prev.arena) {
+      const before = new Map(prev.arena.map((e) => [e.id, e]));
+      for (const e of next.arena) if (before.get(e.id) !== e) this.schedule(ARENA_PREFIX + e.id, e, opts.immediate);
+      const kept = new Set(next.arena.map((e) => e.id));
+      for (const id of before.keys()) if (!kept.has(id)) this.schedule(ARENA_PREFIX + id, null, opts.immediate);
+    }
+    if (profileChanged(prev, next)) this.schedule('profile', withoutArena(next), opts.immediate);
     this.emit();
     return next;
   }
@@ -257,7 +294,7 @@ export class Store {
     this.updateProfile((p) => ({ ...p, arena: p.arena.filter((e) => e.id !== id) }), { immediate: true });
   }
 
-  private schedule(key: string, value: Day | Profile, immediate?: boolean) {
+  private schedule(key: string, value: Doc, immediate?: boolean) {
     this.dirty.set(key, value);
     this.queue.schedule(key, value, immediate);
   }
@@ -378,11 +415,13 @@ export class Store {
     await this.queue.cancelAll();
     this.dirty.clear();
     this.journal.clear();
-    await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
+    await this.db.transaction('rw', this.db.profile, this.db.days, this.db.arena, async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
-      await this.db.profile.put({ ...profile, id: PROFILE_KEY });
+      await this.db.arena.clear();
+      await this.db.profile.put({ ...withoutArena(profile), id: PROFILE_KEY });
       await this.db.days.bulkPut(days);
+      await this.db.arena.bulkPut(profile.arena);
     });
     this.profile = profile;
     this.days = new Map(days.map((d) => [d.date, d]));
@@ -396,9 +435,10 @@ export class Store {
     await this.queue.cancelAll();
     this.dirty.clear();
     this.journal.clear();
-    await this.db.transaction('rw', this.db.profile, this.db.days, async () => {
+    await this.db.transaction('rw', this.db.profile, this.db.days, this.db.arena, async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
+      await this.db.arena.clear();
     });
     this.days.clear();
     this.blanks.clear();
@@ -408,9 +448,14 @@ export class Store {
 
   /* ------------------------------------------------------------ persistence */
 
-  private async persist(key: string, value: Day | Profile): Promise<void> {
+  private async persist(key: string, value: Doc): Promise<void> {
     if (key === 'profile') {
-      await this.db.profile.put({ ...(value as Profile), id: PROFILE_KEY });
+      await this.db.profile.put({ ...(value as ProfileDoc), id: PROFILE_KEY });
+    } else if (key.startsWith(ARENA_PREFIX)) {
+      // Entries left empty are not kept, as before.
+      const entry = value as ArenaEntry | null;
+      if (!entry || isEmptyEntry(entry)) await this.db.arena.delete(key.slice(ARENA_PREFIX.length));
+      else await this.db.arena.put(entry);
     } else {
       const day = value as Day;
       if (isEmptyDay(day)) await this.db.days.delete(day.date);
