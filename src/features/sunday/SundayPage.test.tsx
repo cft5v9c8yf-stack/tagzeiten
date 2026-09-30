@@ -64,6 +64,19 @@ describe('Sonntag', () => {
     expect(dialog.textContent).toContain('Das gebe Gott durch Jesum Christum! Amen.');
   });
 
+  it('adds Löhe’s lessons for the 2nd Christmas Day and New Year in the week they fall in', async () => {
+    await renderSunday('/sonntag?s=2026-12-25');
+    fireEvent.click(screen.getByRole('button', { name: /Epistel am 2\. Christtag, Sa 26\.12\..*Titus 3,4-7/ }));
+    let dialog = screen.getByRole('dialog', { name: 'Am zweiten Weihnachtstage.' });
+    expect(dialog.textContent).toContain('durch den wir Weihnachten am seligsten feiern! Amen.');
+    cleanup();
+    await renderSunday('/sonntag?s=2026-12-27');
+    expect(screen.queryByRole('button', { name: /2\. Christtag/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Epistel am Neujahrstag, Fr 1\.1\..*Galater 3,23-29/ }));
+    dialog = screen.getByRole('dialog', { name: 'Am Neujahrstage, als dem Beschneidungsfeste Christi.' });
+    expect(dialog.textContent).toContain('ihr ewiger Preis sein. Halleluja.');
+  });
+
   it('gives every Epistle meditation a Sunday of the church year', () => {
     for (const key of Object.keys(EPISTLE_LECTIONS)) expect(SUNDAY_INFO[key], key).toBeDefined();
   });

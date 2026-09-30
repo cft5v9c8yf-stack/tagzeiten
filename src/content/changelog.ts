@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.13.0',
+    date: '2026-09-30',
+    title: 'Löhe am 2. Christtag und zu Neujahr',
+    changes: [
+      { area: 'Sonntag', text: 'In der Woche, in die der 2. Christtag oder der Neujahrstag fällt, steht unter Evangelium und Epistel eine eigene Kachel mit der Epistel des Festtags. Sie öffnet Löhes Betrachtung aus der Winterpostille.' },
+    ],
+  },
+  {
     version: '0.12.0',
     date: '2026-09-30',
     title: 'Löhe im Advent und zu Weihnachten',

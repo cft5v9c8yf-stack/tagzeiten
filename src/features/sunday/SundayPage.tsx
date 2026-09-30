@@ -2,18 +2,28 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import { DAY_GUIDE } from '../../content/dieffenbach';
-import { EPISTLE_LECTIONS, LECTIONS, type Lection } from '../../content/lections';
+import { EPISTLE_LECTIONS, FEAST_EPISTLE_LECTIONS, LECTIONS, type Lection } from '../../content/lections';
 import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { churchDay, CIRCLE_LABEL, CIRCLES, nextWeekStart, previousWeekStart, SEASON_LABEL } from '../../domain/churchYear';
-import { formatLong, type DateKey } from '../../domain/dates';
+import { addDays, formatLong, formatShort, type DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleRef } from '../../ui/BibleRef';
 import { LectionDialog } from './LectionDialog';
 import { SundayChooser } from './SundayOverview';
 
 const SUNDAY_PARAM = 's';
+
+/** The fixed feasts with their own Epistle lesson that fall between `from` and the day before `until`. */
+function feastsInWeek(from: DateKey, until: DateKey) {
+  const found: { date: DateKey; feast: (typeof FEAST_EPISTLE_LECTIONS)[number] }[] = [];
+  for (let d = from; d < until; d = addDays(d, 1)) {
+    const feast = FEAST_EPISTLE_LECTIONS.find((f) => d.slice(5) === f.monthDay);
+    if (feast) found.push({ date: d, feast });
+  }
+  return found;
+}
 
 /** Gospel or Epistle; where a book has a reading on it, the tile opens that reading. */
 function ReadingTile({
@@ -112,6 +122,7 @@ export function SundayPage() {
   const verse = WEEKLY_VERSES[c.weekKey];
   const group = trinityGroupOf(c.weekKey);
   const summary = READING_SUMMARIES[c.weekKey];
+  const feasts = feastsInWeek(s, next);
   const toChurchYear = (circle: string) =>
     withDate('/kirchenjahr', date, isToday) + (isToday ? '?' : '&') + `kreis=${circle}&woche=${c.weekKey}`;
 
@@ -191,6 +202,16 @@ export function SundayPage() {
           <div className="sunday-readings">
             <ReadingTile track="Evangelium" reference={info.gospel} summary={summary?.gospel} lection={LECTIONS[c.weekKey]} onOpen={setReading} />
             <ReadingTile track="Epistel" reference={info.epistle} summary={summary?.epistle} lection={EPISTLE_LECTIONS[c.weekKey]} onOpen={setReading} />
+            {feasts.map(({ date: d, feast }) => (
+              <ReadingTile
+                key={d}
+                track={`Epistel am ${feast.name}, ${formatShort(d)}`}
+                reference={feast.epistle}
+                summary={feast.summary}
+                lection={feast.lection}
+                onOpen={setReading}
+              />
+            ))}
           </div>
         </section>
       )}
