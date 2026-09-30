@@ -43,7 +43,9 @@ describe('Sonntag', () => {
     // Word for word, in the spelling of 1853, and it ends in the Gospel (rule 1).
     expect(dialog.textContent).toContain('Meister, welches ist das vornehmste Gebot?');
     expect(dialog.textContent).toContain('O Herr Jesu nimm uns auf in Gnaden! Amen.');
-    expect(within(dialog).getAllByRole('listitem')).toHaveLength(7);
+    // Seven paragraphs, without the book's numbers.
+    expect(dialog.querySelectorAll('.lection-paragraphs p')).toHaveLength(7);
+    expect(within(dialog).queryByRole('list')).toBeNull();
     fireEvent.click(within(dialog).getByRole('button', { name: 'Andacht schließen' }));
     expect(screen.queryByRole('dialog')).toBeNull();
     // A Sunday without a lesson keeps the plain tile.

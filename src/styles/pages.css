@@ -1224,17 +1224,10 @@ body.is-sorting * {
   padding: 12px 20px 8px;
 }
 .lection-paragraphs {
-  margin: 0;
-  padding-left: 1.6em;
   line-height: 1.6;
 }
-.lection-paragraphs li {
+.lection-paragraphs p {
   margin: 0 0 12px;
-}
-.lection-paragraphs li::marker {
-  color: var(--gold);
-  font-family: var(--sans);
-  font-weight: 600;
 }
 .lection-source {
   margin: 4px 0 8px;

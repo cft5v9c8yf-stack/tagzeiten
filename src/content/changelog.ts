@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.9.1',
+    date: '2026-09-30',
+    title: 'Die Andacht ohne Nummern',
+    changes: [
+      { area: 'Sonntag', text: 'Die Andacht aus der Haus-Agende steht als fortlaufender Text, ohne die Nummern der Abschnitte.' },
+    ],
+  },
+  {
     version: '0.9.0',
     date: '2026-09-30',
     title: 'Die alte Leseordnung',

@@ -12,7 +12,7 @@ export interface Lection {
   ref: string;
   /** The heading of the lesson. */
   title: string;
-  /** Numbered paragraphs, in order. */
+  /** The paragraphs, in order (shown without their numbers). */
   paragraphs: readonly string[];
   /** Page in the book. */
   page: string;

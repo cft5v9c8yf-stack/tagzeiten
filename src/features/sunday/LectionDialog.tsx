@@ -40,11 +40,11 @@ export function LectionDialog({ lection, onClose }: { lection: Lection; onClose:
           </div>
         </div>
         <div className="chooser-list lection-body">
-          <ol className="lection-paragraphs">
+          <div className="lection-paragraphs">
             {lection.paragraphs.map((p, i) => (
-              <li key={i}>{p}</li>
+              <p key={i}>{p}</p>
             ))}
-          </ol>
+          </div>
           <p className="small muted lection-source">
             {DIEFFENBACH_SOURCE} {lection.page} In der Rechtschreibung des Originals.
           </p>
