@@ -402,6 +402,10 @@ describe('Katechismus', () => {
     fireEvent.click(card(/^Das Apostolische Glaubensbekenntnis/));
     expect(card(/^Das Nizänische/).getAttribute('aria-expanded')).toBe('false');
     expect(document.body.textContent).toContain('Ich glaube an Gott, den Vater, den Allmächtigen,');
+    fireEvent.click(card(/^Das Athanasianische Glaubensbekenntnis/));
+    expect(document.body.textContent).toContain('Wer da will selig werden, der muß vor allen Dingen den rechten christlichen Glauben haben.');
+    expect(document.body.textContent).toContain('der kann nicht selig werden.');
+    expect(document.body.textContent).toContain('Concordienbuch');
   });
 
   it('shows the answer in the house father mode only after a tap', async () => {
@@ -648,16 +652,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.13\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.14\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.13\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.14\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.13\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.14\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

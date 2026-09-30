@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.14.0',
+    date: '2026-09-30',
+    title: 'Das Athanasianum im Wortlaut',
+    changes: [
+      { area: 'Lehre', text: 'Das Athanasianische Glaubensbekenntnis steht jetzt vollständig im Anhang „Die drei Bekenntnisse“, wortgetreu nach dem Konkordienbuch (St. Louis 1881, nach dem Urtext von 1580).' },
+    ],
+  },
+  {
     version: '0.13.0',
     date: '2026-09-30',
     title: 'Löhe am 2. Christtag und zu Neujahr',
