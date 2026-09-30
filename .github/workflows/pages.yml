@@ -33,7 +33,9 @@ jobs:
           cd ../lut1912
           npm pack xmlbible-lut1912
           tar xzf xmlbible-lut1912-*.tgz
-          ls package/text | wc -l
+          # The tarball's folders carry no permissions; make them readable.
+          chmod -R u+rwX package
+          test "$(ls package/text | wc -l)" -gt 60
       - run: npm test
         env:
           LUT1912_DIR: ../lut1912/package/text
