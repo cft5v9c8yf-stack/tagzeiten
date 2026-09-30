@@ -2195,6 +2195,8 @@ mark.placeholder {
   border-radius: 16px;
 }
 .tile-panel-head {
+  /* The info bubble hangs from this row. */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;

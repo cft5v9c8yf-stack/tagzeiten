@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.6.7',
+    date: '2026-09-30',
+    title: 'Infotexte am rechten Ort',
+    changes: [
+      { area: 'Infotexte', text: 'Jeder Infotext öffnet direkt unter seinem „i“ und steht ganz im Bild. Wo unten kein Platz mehr ist, öffnet er darüber. Vorher erschien er in den Kacheln manchmal unten am Bildschirm, abgeschnitten.' },
+      { area: 'Kirchenjahr', text: 'Nur eine Karte ist offen: Wer den nächsten Kreis öffnet, schließt den vorigen. Die Zeit „Vom … bis …“ steht in einer eigenen Zeile.' },
+      { area: 'Gebetsschatz', text: 'Das Sterbejahr bleibt mit seinem Kreuz in einer Zeile, etwa „Habermann († 1590)“.' },
+    ],
+  },
+  {
     version: '0.6.6',
     date: '2026-09-29',
     title: 'Mein Haus aufgeräumt',

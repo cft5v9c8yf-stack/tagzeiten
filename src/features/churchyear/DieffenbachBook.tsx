@@ -12,7 +12,11 @@ import { FlowIcon } from '../../ui/FlowIcon';
 import { Section } from '../../ui/Section';
 
 /** The heading of a card: a mark (numeral or icon), the title, and a quiet line under it. */
-function CardTitle({ mark, title, sub }: { mark: ReactNode; title: string; sub: string }) {
+/** The cards of the book: one open at a time. */
+const BOOK_CARDS = ['book.intro', ...CIRCLES.map((c) => `book.${c}`)];
+
+/** Title of a card, with one or more quiet lines beneath (each on its own line). */
+function CardTitle({ mark, title, sub }: { mark: ReactNode; title: string; sub: readonly string[] }) {
   return (
     <>
       <span className="book-card-mark" aria-hidden="true">
@@ -20,7 +24,11 @@ function CardTitle({ mark, title, sub }: { mark: ReactNode; title: string; sub: 
       </span>
       <span className="book-card-text">
         <span className="book-card-title">{title}</span>
-        <span className="book-card-sub">{sub}</span>
+        {sub.map((line) => (
+          <span key={line} className="book-card-sub">
+            {line}
+          </span>
+        ))}
       </span>
     </>
   );
@@ -89,8 +97,9 @@ function CircleText({ circle, n }: { circle: Circle; n: number }) {
   return (
     <Section
       id={`book.${circle}`}
-      title={<CardTitle mark={['I', 'II', 'III'][n]} title={`Der heilige ${info.title}`} sub={`${info.of} · ${info.range}`} />}
+      title={<CardTitle mark={['I', 'II', 'III'][n]} title={`Der heilige ${info.title}`} sub={[info.of, info.range]} />}
       defaultOpen={false}
+      group={BOOK_CARDS}
       className="book-card"
     >
       {guide.motto && (
@@ -135,10 +144,11 @@ export function DieffenbachBook() {
           <CardTitle
             mark={<FlowIcon name="scroll" size={18} />}
             title="Einleitung"
-            sub={CHURCH_YEAR_INTRO_TITLE}
+            sub={[CHURCH_YEAR_INTRO_TITLE]}
           />
         }
         defaultOpen={false}
+        group={BOOK_CARDS}
         className="book-card"
       >
         {CHURCH_YEAR_INTRO.map((part) => (

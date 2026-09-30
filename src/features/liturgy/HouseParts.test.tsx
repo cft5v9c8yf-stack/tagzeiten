@@ -120,7 +120,7 @@ describe('Fürbitte für das Haus through the week, with a son and a daughter', 
     expect(text()).toContain('Allmächtiger, gütiger Gott, der du den heiligen Ehestand selbst eingesetzt');
     expect(text()).toContain('bei meinem Weibe, als dem schwächsten Werkzeug, wohne');
     expect(text()).toContain('ohn’ anderer Leute Schaden und Nachteil gemehrt werde');
-    expect(text()).toContain('von Ewigkeit zu Ewigkeit. Amen.Johann Habermann († 1590)');
+    expect(text()).toContain('von Ewigkeit zu Ewigkeit. Amen.Johann Habermann\u00a0(†\u00a01590)');
     expect(text()).not.toContain('Herr, du hast uns zusammengefügt');
   });
 
@@ -131,7 +131,7 @@ describe('Fürbitte für das Haus through the week, with a son and a daughter', 
     expect(text()).toContain('ich komme zu dir als Hausvater');
     expect(refs()).toEqual(['Jesaja 54,17']);
     expect(text()).toContain('wer darnach tut, deß Lob bleibet ewiglich');
-    expect(text()).toContain('durch Jesum Christum, unsern Herrn. Amen.Johann Arndt († 1621)');
+    expect(text()).toContain('durch Jesum Christum, unsern Herrn. Amen.Johann Arndt\u00a0(†\u00a01621)');
   });
 
   it('the short form prays only the prayer for all, without the centre and without the old prayers', async () => {
