@@ -408,6 +408,18 @@ describe('Katechismus', () => {
     expect(document.body.textContent).toContain('Concordienbuch');
   });
 
+  it('keeps the Augsburg Confession in the appendix, article by article', async () => {
+    await renderAt('/katechismus/augsburgische-konfession', <CatechismPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Die Augsburgische Konfession' });
+    const card = (name: RegExp) => screen.getByRole('button', { name });
+    fireEvent.click(card(/^Der IV\. Artikel/));
+    expect(document.body.textContent).toContain('aus Gnaden um Christus willen durch den Glauben');
+    fireEvent.click(card(/^Der VII\. Artikel/));
+    expect(card(/^Der IV\. Artikel/).getAttribute('aria-expanded')).toBe('false');
+    expect(document.body.textContent).toContain('Eine heilige christliche Kirche sein und bleiben');
+    expect(screen.getAllByRole('button', { name: /^Der [IVX]+\. Artikel/ })).toHaveLength(27);
+  });
+
   it('shows the answer in the house father mode only after a tap', async () => {
     await renderAt('/katechismus', <CatechismPage />);
     fireEvent.click(await screen.findByText('Hausvater-Modus: am Tisch abfragen'));
@@ -453,7 +465,7 @@ describe('Katechismus', () => {
     await renderAt('/katechismus', <CatechismPage />);
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
-    expect(document.querySelectorAll('.overview-row')).toHaveLength(11); // 6 chief parts, 4 appendices
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(12); // 6 chief parts, 6 appendices
     expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
     expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.
@@ -652,16 +664,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.14\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.15\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.14\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.15\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.14\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.15\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

@@ -2,6 +2,7 @@ import { useEffect, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
+import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE } from '../../content/augsburgConfession';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
 import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
@@ -126,13 +127,49 @@ function Creeds() {
   );
 }
 
+const AUGSBURG_IDS = AUGSBURG_CONFESSION.flatMap((p) => p.sections.map((s) => `ca.${s.id}`));
+
+/** The Augsburg Confession: preface and articles as cards, one open at a time. */
+function AugsburgConfession() {
+  return (
+    <>
+      <p className="book-source">
+        Übergeben dem Kaiser Karl V. auf dem Reichstag zu Augsburg am 25. Juni 1530. Wortgetreu in der Rechtschreibung der
+        Ausgabe.
+      </p>
+      {AUGSBURG_CONFESSION.map((part, i) => (
+        <div key={part.heading ?? i}>
+          {part.heading && <h3 className="book-circle">{part.heading}</h3>}
+          {part.sections.map((s) => (
+            <Section key={s.id} id={`ca.${s.id}`} group={AUGSBURG_IDS} defaultOpen={false} className="book-card creed-card" title={
+              <span className="book-card-text">
+                <span className="book-card-title">{s.title}</span>
+                {s.sub && <span className="book-card-sub">{s.sub}</span>}
+              </span>
+            }>
+              {s.paragraphs.map((p) => (
+                <p key={p.slice(0, 60)}>{p}</p>
+              ))}
+            </Section>
+          ))}
+        </div>
+      ))}
+      <p className="small muted">
+        Der XXVIII. Artikel „Von der Bischöfe Gewalt“ und der Beschluss folgen.
+      </p>
+      <p className="small muted">{AUGSBURG_SOURCE}</p>
+    </>
+  );
+}
+
 function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   const title = APPENDICES.find((a) => a.slug === slug)!.title;
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
+        {slug === 'augsburgische-konfession' && <AugsburgConfession />}
         {slug === 'bekenntnisse' && <Creeds />}
         {slug === 'tischgebete' && (
           <>

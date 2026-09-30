@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.15.0',
+    date: '2026-09-30',
+    title: 'Die Augsburgische Konfession',
+    changes: [
+      { area: 'Lehre', text: 'Im Anhang steht die Augsburgische Konfession von 1530: die Vorrede und die Artikel I bis XXVII, jeder für sich aufzuklappen, wortgetreu nach dem Konkordienbuch (St. Louis 1881). Der XXVIII. Artikel und der Beschluss folgen.' },
+    ],
+  },
+  {
     version: '0.14.0',
     date: '2026-09-30',
     title: 'Das Athanasianum im Wortlaut',

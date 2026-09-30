@@ -9,6 +9,7 @@ export const APPENDICES = [
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum' },
+  { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530' },
   { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
 ] as const;
 
