@@ -79,7 +79,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Wir haben einen Hohenpriester, der versucht wurde wie wir, doch ohne Sünde; lasst uns hinzutreten zum Thron der Gnade.',
   },
   reminiszere: {
-    gospel: 'Die Weingärtner misshandeln die Knechte und töten zuletzt den Sohn des Herrn – der verworfene Stein wird zum Eckstein.',
+    gospel: 'Die Weingärtner misshandeln die Knechte des Weinbergbesitzers und töten zuletzt seinen lieben Sohn – der verworfene Stein wird zum Eckstein.',
     epistle: 'Gerecht geworden durch den Glauben, haben wir Frieden mit Gott; Trübsal bringt Geduld, Bewährung und Hoffnung.',
   },
   okuli: {
@@ -107,7 +107,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Gott versöhnte in Christus die Welt mit sich selbst; lasst euch versöhnen mit Gott.',
   },
   easter: {
-    gospel: 'Die Frauen finden das Grab leer; ein Engel sagt ihnen: Er ist auferstanden, er ist nicht hier.',
+    gospel: 'Die Frauen finden das Grab leer; ein Jüngling in weißem Kleid sagt ihnen: Er ist auferstanden, er ist nicht hier.',
     epistle: 'Paulus überliefert das Evangelium: Christus starb für unsre Sünden, wurde begraben, ist auferstanden und vielen erschienen.',
   },
   easterMonday: {
@@ -136,7 +136,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   ascension: {
     gospel: 'Jesus segnet seine Jünger und wird gen Himmel aufgehoben; sie kehren mit großer Freude nach Jerusalem zurück.',
-    epistle: 'Der Auferstandene verheißt den Heiligen Geist und fährt vor ihren Augen auf; Engel kündigen seine Wiederkunft an.',
+    epistle: 'Der Auferstandene verheißt den Heiligen Geist und fährt vor ihren Augen auf; zwei Männer in weißen Kleidern kündigen seine Wiederkunft an.',
   },
   exaudi: {
     gospel: 'Jesus verheißt den Tröster, der von ihm zeugen wird, und bereitet die Jünger auf Verfolgung vor.',
@@ -160,7 +160,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Gott ist Liebe; wer sagt, er liebe Gott, und hasst seinen Bruder, der lügt.',
   },
   trinity2: {
-    gospel: 'Die Geladenen entschuldigen sich; so lädt der Hausherr die Armen und Fremden zum großen Abendmahl.',
+    gospel: 'Die Geladenen entschuldigen sich; so lädt der Hausherr die Armen, Krüppel, Lahmen und Blinden und zuletzt die Leute von den Landstraßen zum großen Abendmahl.',
     epistle: 'Christus hat Nahe und Ferne versöhnt; ihr seid nicht mehr Fremde, sondern Hausgenossen Gottes.',
   },
   trinity3: {
@@ -220,7 +220,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Gott gab uns nicht den Geist der Furcht; Christus hat dem Tode die Macht genommen und das Leben ans Licht gebracht.',
   },
   trinity17: {
-    gospel: 'Eine kanaanäische Frau lässt sich nicht abweisen und bittet um Brosamen; Jesus lobt ihren großen Glauben.',
+    gospel: 'Eine kanaanäische Frau bittet Jesus um Hilfe für ihre Tochter, die schwer geplagt ist; sie lässt sich nicht abweisen, Jesus lobt ihren großen Glauben, und die Tochter wird gesund.',
     epistle: 'Wer mit dem Mund bekennt und im Herzen glaubt, wird gerettet; der Glaube kommt aus der Predigt des Wortes.',
   },
   trinity18: {
@@ -236,7 +236,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Gott hat uns zur Heiligung berufen: Jeder halte seinen Leib in Ehren und übervorteile den Bruder nicht.',
   },
   trinity21: {
-    gospel: 'Widersteht nicht dem Übel mit Gewalt; liebt eure Feinde und bittet für die, die euch verfolgen.',
+    gospel: 'Vergeltet nicht Gleiches mit Gleichem: Wer dich auf die rechte Backe schlägt, dem biete auch die andere; liebt eure Feinde und bittet für die, die euch verfolgen.',
     epistle: 'Zieht die Waffenrüstung Gottes an: Wahrheit, Gerechtigkeit, Glauben, das Heil und das Schwert des Geistes, das Wort Gottes.',
   },
   trinity22: {
@@ -248,7 +248,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
     epistle: 'Unser Bürgerrecht ist im Himmel; von dort erwarten wir den Heiland, der unseren Leib verwandeln wird.',
   },
   trinity24: {
-    gospel: 'Jesus erweckt die Tochter des Jairus, und eine kranke Frau wird gesund, weil sie seinen Mantel berührt.',
+    gospel: 'Jesus erweckt die Tochter eines Obersten; unterwegs wird eine kranke Frau gesund, die im Glauben den Saum seines Kleides anrührt.',
     epistle: 'Gott hat uns in das Reich seines lieben Sohnes versetzt; in ihm ist alles geschaffen, er ist das Haupt der Gemeinde.',
   },
   thirdLast: {

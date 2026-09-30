@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.8.3',
+    date: '2026-09-30',
+    title: 'Genauer nacherzählt',
+    changes: [
+      { area: 'Sonntag', text: 'Die Kurzfassungen von Evangelium und Epistel sind durchgesehen und näher am Text: Die kanaanäische Frau bittet für ihre kranke Tochter; am Ostermorgen spricht ein Jüngling in weißem Kleid; bei der Himmelfahrt zwei Männer in weißen Kleidern; bei Matthäus die Tochter eines Obersten (ohne den Namen Jairus). Auch das große Abendmahl, die Weingärtner und die Bergpredigt vom Vergelten sind genauer gefasst.' },
+    ],
+  },
+  {
     version: '0.8.2',
     date: '2026-09-30',
     title: 'Versionen zum Aufklappen',
