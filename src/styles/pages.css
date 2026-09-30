@@ -1778,11 +1778,42 @@ mark.placeholder {
 }
 .changelog-release {
   border-top: 1px solid var(--rule);
-  padding-top: 10px;
-  margin-top: 16px;
+  padding-top: 6px;
+  margin-top: 6px;
 }
 .changelog-release h3 {
   margin: 0;
+}
+/* Version and date, the title beneath: seen also when folded. */
+.changelog-head {
+  display: grid;
+  gap: 2px;
+}
+.changelog-release > .fold-head .fold-title,
+.changelog-release > .fold-head .fold-title .fold-text {
+  width: 100%;
+}
+.changelog-release > .fold-head .fold-title button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 0;
+  text-align: left;
+}
+/* The same chevron as the cards of the church year. */
+.changelog-release > .fold-head .fold-title button::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 auto;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.15s ease;
+}
+.changelog-release.is-open > .fold-head .fold-title button::after {
+  transform: rotate(-135deg) translateY(-2px);
 }
 .changelog-date {
   font: 400 0.85rem var(--sans);
@@ -1790,8 +1821,11 @@ mark.placeholder {
   margin-left: 6px;
 }
 .changelog-title {
-  margin: 4px 0 8px;
-  font-style: italic;
+  font: italic 400 0.95rem var(--serif);
+  color: var(--muted);
+}
+.changelog-changes {
+  padding-bottom: 8px;
 }
 .changelog-changes {
   margin: 0;

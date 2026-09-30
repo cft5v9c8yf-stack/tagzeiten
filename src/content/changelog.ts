@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.8.2',
+    date: '2026-09-30',
+    title: 'Versionen zum Aufklappen',
+    changes: [
+      { area: 'Versionen', text: 'Die Versionen stehen als Liste mit Nummer, Datum und Titel. Ein Tipp klappt auf, was sie gebracht hat; die neueste ist offen, und es ist immer nur eine aufgeklappt.' },
+    ],
+  },
+  {
     version: '0.8.1',
     date: '2026-09-30',
     title: 'Ein neues Zeichen',
