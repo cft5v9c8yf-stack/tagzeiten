@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.17.0',
+    date: '2026-09-30',
+    title: 'Der Kleine Katechismus nach dem Konkordienbuch',
+    changes: [
+      { area: 'Lehre', text: 'Luthers Kleiner Katechismus steht jetzt wortgetreu im Wortlaut des Konkordienbuchs (St. Louis 1881, nach dem Urtext von 1580): „Du sollst nicht andere Götter haben“, „Geheiligt werde dein Name“, „Und verlaß uns unsere Schuld“, in der Rechtschreibung der Ausgabe.' },
+    ],
+  },
+  {
     version: '0.16.0',
     date: '2026-09-30',
     title: 'Suchen',

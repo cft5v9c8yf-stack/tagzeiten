@@ -1,7 +1,7 @@
 /**
- * Luther's Small Catechism in the traditional wording (public domain),
+ * Luther's Small Catechism word for word after the Book of Concord, St. Louis
+ * 1881 (after the text of 1580), pp. 259–266, in the spelling of the edition;
  * the Table of Duties and the weekday table for the six-week cycle.
- * Transcribed from reference/prototype.html.
  */
 
 export type ChiefPartId = 'commandments' | 'creed' | 'lordsPrayer' | 'baptism' | 'confession' | 'lordsSupper';
@@ -28,112 +28,79 @@ export const CATECHISM: readonly ChiefPart[] = [
     pieces: [
       {
         title: 'Das erste Gebot',
-        words: 'Du sollst keine anderen Götter haben.',
+        words: 'Du sollst nicht andere Götter haben.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott über alle Dinge fürchten, lieben und vertrauen.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott über alle Dinge fürchten, lieben und vertrauen.'],
         ],
       },
       {
-        title: 'Das zweite Gebot',
-        words: 'Du sollst den Namen deines Gottes nicht unnützlich führen.',
+        title: 'Das andere Gebot',
+        words: 'Du sollst den Namen deines Gottes nicht mißbrauchen.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir bei seinem Namen nicht fluchen, schwören, zaubern, lügen oder trügen, sondern denselben in allen Nöten anrufen, beten, loben und danken.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir bei seinem Namen nicht fluchen, schwören, zaubern, lügen oder trügen, sondern denselbigen in allen Nöthen anrufen, beten, loben und danken.'],
         ],
       },
       {
         title: 'Das dritte Gebot',
         words: 'Du sollst den Feiertag heiligen.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir die Predigt und sein Wort nicht verachten, sondern dasselbe heilig halten, gerne hören und lernen.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir die Predigt und sein Wort nicht verachten, sondern dasselbige heilig halten, gerne hören und lernen.'],
         ],
       },
       {
         title: 'Das vierte Gebot',
         words: 'Du sollst deinen Vater und deine Mutter ehren.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unsere Eltern und Herren nicht verachten noch erzürnen, sondern sie in Ehren halten, ihnen dienen, gehorchen, sie lieb und wert haben.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unsere Eltern und Herren nicht verachten noch erzürnen, sondern sie in Ehren halten, ihnen dienen, gehorchen, lieb und werth haben.'],
         ],
       },
       {
         title: 'Das fünfte Gebot',
-        words: 'Du sollst nicht töten.',
+        words: 'Du sollst nicht tödten.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten an seinem Leibe keinen Schaden noch Leid tun, sondern ihm helfen und fördern in allen Leibesnöten.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten an seinem Leibe keinen Schaden noch Leid thun, sondern ihm helfen und fördern in allen Leibesnöthen.'],
         ],
       },
       {
         title: 'Das sechste Gebot',
         words: 'Du sollst nicht ehebrechen.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir keusch und züchtig leben in Worten und Werken und ein jeglicher sein Gemahl liebe und ehre.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir keusch und züchtig leben in Worten und Werken, und ein jeglicher sein Gemahl lieben und ehren.'],
         ],
       },
       {
         title: 'Das siebente Gebot',
         words: 'Du sollst nicht stehlen.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unsers Nächsten Geld oder Gut nicht nehmen noch mit falscher Ware oder Handel an uns bringen, sondern ihm sein Gut und Nahrung helfen bessern und behüten.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unsers Nächsten Geld oder Gut nicht nehmen, noch mit falscher Waare oder Handel an uns bringen, sondern ihm sein Gut und Nahrung helfen bessern und behüten.'],
         ],
       },
       {
         title: 'Das achte Gebot',
-        words: 'Du sollst nicht falsch Zeugnis reden wider deinen Nächsten.',
+        words: 'Du sollst nicht falsch Gezeugniß reden wider deinen Nächsten.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unsern Nächsten nicht fälschlich belügen, verraten, afterreden oder bösen Leumund machen, sondern sollen ihn entschuldigen, Gutes von ihm reden und alles zum Besten kehren.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unsern Nächsten nicht fälschlich belügen, verrathen, afterreden oder bösen Leumund machen, sondern sollen ihn entschuldigen, Gutes von ihm reden und alles zum Besten kehren.'],
         ],
       },
       {
         title: 'Das neunte Gebot',
         words: 'Du sollst nicht begehren deines Nächsten Haus.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht mit List nach seinem Erbe oder Hause stehen und mit einem Schein des Rechts an uns bringen, sondern ihm dasselbe zu behalten förderlich und dienstlich sein.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht mit List nach seinem Erbe oder Hause stehen und mit einem Schein des Rechten an uns bringen etc., sondern ihm dasselbige zu behalten, förderlich und dienstlich sein.'],
         ],
       },
       {
         title: 'Das zehnte Gebot',
         words: 'Du sollst nicht begehren deines Nächsten Weib, Knecht, Magd, Vieh oder was sein ist.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht sein Weib, Gesinde oder Vieh abspannen, abdringen oder abwendig machen, sondern dieselben anhalten, daß sie bleiben und tun, was sie schuldig sind.',
-          ],
+          ['Was ist das?', 'Wir sollen Gott fürchten und lieben, daß wir unserm Nächsten nicht sein Weib, Gesinde oder Vieh abspannen, abdringen oder abwendig machen, sondern dieselbigen anhalten, daß sie bleiben und thun, was sie schuldig sind.'],
         ],
       },
       {
-        title: 'Der Beschluß der Gebote',
-        words: 'Was sagt nun Gott von diesen Geboten allen? Er sagt so: Ich, der HERR, dein Gott, bin ein eifriger Gott, der über die, so mich hassen, die Sünde der Väter heimsucht an den Kindern bis ins dritte und vierte Glied; aber denen, so mich lieben und meine Gebote halten, tue ich wohl in tausend Glied.',
+        title: 'Was sagt nun Gott von diesen Geboten allen?',
+        words: 'Er sagt also: Ich, der HErr dein Gott, bin ein eifriger Gott, der über die, so mich hassen, die Sünde der Väter heimsucht an den Kindern bis ins dritte und vierte Glied, aber denen, so mich lieben und meine Gebote halten, denen thue ich wohl in tausend Glied.',
         qa: [
-          [
-            'Was ist das?',
-            'Gott dräuet zu strafen alle, die diese Gebote übertreten; darum sollen wir uns fürchten vor seinem Zorn und nicht wider solche Gebote tun. Er verheißt aber Gnade und alles Gute allen, die solche Gebote halten; darum sollen wir ihn auch lieben und vertrauen und gerne tun nach seinen Geboten.',
-          ],
+          ['Was ist das?', 'Gott dräuet zu strafen alle, die diese Gebote übertreten; darum sollen wir uns fürchten vor seinem Zorn und nicht wider solche Gebote thun. Er verheißet aber Gnade und alles Gutes allen, die solche Gebote halten; darum sollen wir ihn auch lieben und vertrauen und gerne thun nach seinen Geboten.'],
         ],
       },
     ],
@@ -143,33 +110,24 @@ export const CATECHISM: readonly ChiefPart[] = [
     title: 'Der Glaube',
     pieces: [
       {
-        title: 'Der erste Artikel: Von der Schöpfung',
-        words: 'Ich glaube an Gott, den Vater, den Allmächtigen, Schöpfer Himmels und der Erde.',
+        title: 'Der erste Artikel. Von der Schöpfung',
+        words: 'Ich glaube an Gott den Vater allmächtigen, Schöpfer Himmels und der Erden.',
         qa: [
-          [
-            'Was ist das?',
-            'Ich glaube, daß mich Gott geschaffen hat samt allen Kreaturen, mir Leib und Seele, Augen, Ohren und alle Glieder, Vernunft und alle Sinne gegeben hat und noch erhält; dazu Kleider und Schuh, Essen und Trinken, Haus und Hof, Weib und Kind, Acker, Vieh und alle Güter; mit allem, was not tut für Leib und Leben, mich reichlich und täglich versorgt, wider alle Fährlichkeit beschirmt und vor allem Übel behütet und bewahrt; und das alles aus lauter väterlicher, göttlicher Güte und Barmherzigkeit, ohn all mein Verdienst und Würdigkeit; des alles ich ihm zu danken und zu loben und dafür zu dienen und gehorsam zu sein schuldig bin. Das ist gewißlich wahr.',
-          ],
+          ['Was ist das?', 'Ich glaube, daß mich Gott geschaffen hat sammt allen Kreaturen, mir Leib und Seele, Augen, Ohren und alle Glieder, Vernunft und alle Sinne gegeben hat und noch erhält; dazu Kleider und Schuh, Essen und Trinken, Haus und Hof, Weib und Kind, Acker, Vieh und alle Güter, mit aller Nothdurft und Nahrung dieses Leibes und Lebens reichlich und täglich versorget, wider alle Fährlichkeit beschirmet und vor allem Uebel behütet und bewahret; und das alles aus lauter väterlicher, göttlicher Güte und Barmherzigkeit, ohne alle mein Verdienst und Würdigkeit: deß alles ich ihm zu danken und zu loben und dafür zu dienen und gehorsam zu sein schuldig bin. Das ist gewißlich wahr.'],
         ],
       },
       {
-        title: 'Der zweite Artikel: Von der Erlösung',
-        words: 'Und an Jesum Christum, seinen eingebornen Sohn, unsern Herrn, der empfangen ist von dem Heiligen Geist, geboren von der Jungfrau Maria, gelitten unter Pontio Pilato, gekreuzigt, gestorben und begraben, niedergefahren zur Hölle, am dritten Tage wieder auferstanden von den Toten, aufgefahren gen Himmel, sitzend zur Rechten Gottes, des allmächtigen Vaters, von dannen er kommen wird, zu richten die Lebendigen und die Toten.',
+        title: 'Der andere Artikel. Von der Erlösung',
+        words: 'Und an JEsum Christum, seinen einigen Sohn, unsern HErrn, der empfangen ist von dem Heiligen Geist, geboren aus Maria der Jungfrauen, gelitten unter Pontio Pilato, gekreuzigt, gestorben und begraben, niedergefahren zur Höllen, am dritten Tage wieder auferstanden von den Todten, aufgefahren gen Himmel, sitzend zur Rechten Gottes, des allmächtigen Vaters, von dannen er kommen wird, zu richten die Lebendigen und die Todten.',
         qa: [
-          [
-            'Was ist das?',
-            'Ich glaube, daß Jesus Christus, wahrhaftiger Gott, vom Vater in Ewigkeit geboren, und auch wahrhaftiger Mensch, von der Jungfrau Maria geboren, sei mein Herr, der mich verlornen und verdammten Menschen erlöst hat, erworben, gewonnen von allen Sünden, vom Tode und von der Gewalt des Teufels; nicht mit Gold oder Silber, sondern mit seinem heiligen, teuren Blut und mit seinem unschuldigen Leiden und Sterben; auf daß ich sein eigen sei und in seinem Reich unter ihm lebe und ihm diene in ewiger Gerechtigkeit, Unschuld und Seligkeit, gleichwie er ist auferstanden vom Tode, lebet und regieret in Ewigkeit. Das ist gewißlich wahr.',
-          ],
+          ['Was ist das?', 'Ich glaube, daß JEsus Christus wahrhaftiger Gott, vom Vater in Ewigkeit geboren, und auch wahrhaftiger Mensch, von der Jungfrauen Maria geboren, sei mein HErr, der mich verlornen und verdammten Menschen erlöset hat, erworben und gewonnen von allen Sünden, vom Tod und von der Gewalt des Teufels, nicht mit Gold oder Silber, sondern mit seinem heiligen theuern Blut und mit seinem unschuldigen Leiden und Sterben, auf daß ich sein eigen sei und in seinem Reich unter ihm lebe und ihm diene in ewiger Gerechtigkeit, Unschuld und Seligkeit, gleichwie er ist auferstanden vom Tod, lebet und regieret in Ewigkeit. Das ist gewißlich wahr.'],
         ],
       },
       {
-        title: 'Der dritte Artikel: Von der Heiligung',
-        words: 'Ich glaube an den Heiligen Geist, eine heilige christliche Kirche, die Gemeinde der Heiligen, Vergebung der Sünden, Auferstehung des Fleisches und ein ewiges Leben. Amen.',
+        title: 'Der dritte Artikel. Von der Heiligung',
+        words: 'Ich glaube an den Heiligen Geist, eine heilige christliche Kirche, die Gemeine der Heiligen, Vergebung der Sünden, Auferstehung des Fleisches, und ein ewiges Leben. Amen.',
         qa: [
-          [
-            'Was ist das?',
-            'Ich glaube, daß ich nicht aus eigener Vernunft noch Kraft an Jesum Christum, meinen Herrn, glauben oder zu ihm kommen kann; sondern der Heilige Geist hat mich durch das Evangelium berufen, mit seinen Gaben erleuchtet, im rechten Glauben geheiligt und erhalten; gleichwie er die ganze Christenheit auf Erden beruft, sammelt, erleuchtet, heiligt und bei Jesu Christo erhält im rechten, einigen Glauben; in welcher Christenheit er mir und allen Gläubigen täglich alle Sünden reichlich vergibt und am Jüngsten Tage mich und alle Toten auferwecken wird und mir samt allen Gläubigen in Christo ein ewiges Leben geben wird. Das ist gewißlich wahr.',
-          ],
+          ['Was ist das?', 'Ich glaube, daß ich nicht aus eigener Vernunft noch Kraft an JEsum Christum, meinen HErrn, glauben oder zu ihm kommen kann; sondern der Heilige Geist hat mich durchs Evangelium berufen, mit seinen Gaben erleuchtet, im rechten Glauben geheiligt und erhalten; gleichwie er die ganze Christenheit auf Erden beruft, sammelt, erleuchtet, heiligt und bei JEsu Christo erhält im rechten einigen Glauben; in welcher Christenheit er mir und allen Gläubigen täglich alle Sünden reichlich vergibt, und am jüngsten Tage mich und alle Todten auferwecken wird, und mir sammt allen Gläubigen in Christo ein ewiges Leben geben wird. Das ist gewißlich wahr.'],
         ],
       },
     ],
@@ -182,106 +140,67 @@ export const CATECHISM: readonly ChiefPart[] = [
         title: 'Die Anrede',
         words: 'Vater unser, der du bist im Himmel.',
         qa: [
-          [
-            'Was ist das?',
-            'Gott will damit uns locken, daß wir glauben sollen, er sei unser rechter Vater und wir seine rechten Kinder, auf daß wir getrost und mit aller Zuversicht ihn bitten sollen wie die lieben Kinder ihren lieben Vater.',
-          ],
+          ['Was ist das?', 'Gott will damit uns locken, daß wir glauben sollen, er sei unser rechter Vater und wir seine rechten Kinder, auf daß wir getrost und mit aller Zuversicht ihn bitten sollen, wie die lieben Kinder ihren lieben Vater.'],
         ],
       },
       {
         title: 'Die erste Bitte',
-        words: 'Geheiliget werde dein Name.',
+        words: 'Geheiligt werde dein Name.',
         qa: [
-          [
-            'Was ist das?',
-            'Gottes Name ist zwar an ihm selbst heilig; aber wir bitten in diesem Gebet, daß er auch bei uns heilig werde.',
-          ],
-          [
-            'Wie geschieht das?',
-            'Wo das Wort Gottes lauter und rein gelehrt wird und wir auch heilig als die Kinder Gottes danach leben. Dazu hilf uns, lieber Vater im Himmel! Wer aber anders lehrt und lebt, denn das Wort Gottes lehrt, der entheiligt unter uns den Namen Gottes. Davor behüt uns, lieber himmlischer Vater!',
-          ],
+          ['Was ist das?', 'Gottes Name ist zwar an ihm selbst heilig, aber wir bitten in diesem Gebet, daß er bei uns auch heilig werde.'],
+          ['Wie geschieht das?', 'Wo das Wort Gottes lauter und rein gelehret wird und wir auch heilig als die Kinder Gottes darnach leben; das hilf uns, lieber Vater im Himmel. Wer aber anders lehret und lebet, denn das Wort Gottes lehret, der entheiliget unter uns den Namen Gottes; da behüt uns für, himmlischer Vater.'],
         ],
       },
       {
-        title: 'Die zweite Bitte',
+        title: 'Die andere Bitte',
         words: 'Dein Reich komme.',
         qa: [
-          [
-            'Was ist das?',
-            'Gottes Reich kommt wohl ohne unser Gebet von ihm selbst; aber wir bitten in diesem Gebet, daß es auch zu uns komme.',
-          ],
-          [
-            'Wie geschieht das?',
-            'Wenn der himmlische Vater uns seinen Heiligen Geist gibt, daß wir seinem heiligen Wort durch seine Gnade glauben und göttlich leben, hier zeitlich und dort ewiglich.',
-          ],
+          ['Was ist das?', 'Gottes Reich kommt wohl ohne unser Gebet von ihm selbst, aber wir bitten in diesem Gebet, daß es auch zu uns komme.'],
+          ['Wie geschieht das?', 'Wenn der himmlische Vater uns seinen Heiligen Geist gibt, daß wir seinem heiligen Wort durch seine Gnade glauben und göttlich leben, hie zeitlich und dort ewiglich.'],
         ],
       },
       {
         title: 'Die dritte Bitte',
-        words: 'Dein Wille geschehe wie im Himmel, also auch auf Erden.',
+        words: 'Dein Wille geschehe, wie im Himmel, also auch auf Erden.',
         qa: [
-          [
-            'Was ist das?',
-            'Gottes guter, gnädiger Wille geschieht wohl ohne unser Gebet; aber wir bitten in diesem Gebet, daß er auch bei uns geschehe.',
-          ],
-          [
-            'Wie geschieht das?',
-            'Wenn Gott allen bösen Rat und Willen bricht und hindert, so uns den Namen Gottes nicht heiligen und sein Reich nicht kommen lassen wollen, als da ist des Teufels, der Welt und unsers Fleisches Wille; sondern stärkt und behält uns fest in seinem Wort und Glauben bis an unser Ende. Das ist sein gnädiger, guter Wille.',
-          ],
+          ['Was ist das?', 'Gottes guter gnädiger Wille geschieht wohl ohne unser Gebet, aber wir bitten in diesem Gebet, daß er auch bei uns geschehe.'],
+          ['Wie geschieht das?', 'Wenn Gott allen bösen Rath und Willen bricht und hindert, so uns den Namen Gottes nicht heiligen und sein Reich nicht kommen lassen wollen; als da ist des Teufels, der Welt und unsers Fleisches Wille, sondern stärket und behält uns fest in seinem Wort und Glauben, bis an unser Ende; das ist sein gnädiger guter Wille.'],
         ],
       },
       {
         title: 'Die vierte Bitte',
         words: 'Unser täglich Brot gib uns heute.',
         qa: [
-          [
-            'Was ist das?',
-            'Gott gibt täglich Brot auch wohl ohne unsere Bitte allen bösen Menschen; aber wir bitten in diesem Gebet, daß er’s uns erkennen lasse und mit Danksagung empfangen unser täglich Brot.',
-          ],
-          [
-            'Was heißt denn täglich Brot?',
-            'Alles, was zur Leibesnahrung und -notdurft gehört, wie Essen, Trinken, Kleider, Schuh, Haus, Hof, Acker, Vieh, Geld, Gut, fromm Gemahl, fromme Kinder, fromm Gesinde, fromme und getreue Oberherren, gut Regiment, gut Wetter, Friede, Gesundheit, Zucht, Ehre, gute Freunde, getreue Nachbarn und desgleichen.',
-          ],
+          ['Was ist das?', 'Gott gibt täglich Brot, auch wohl ohne unsere Bitte, allen bösen Menschen; aber wir bitten in diesem Gebet, daß er uns erkennen lasse und mit Danksagung empfahen unser täglich Brot.'],
+          ['Was heißt denn täglich Brot?', 'Alles, was zur Leibes Nahrung und Nothdurft gehört, als Essen, Trinken, Kleider, Schuh, Haus, Hof, Acker, Vieh, Geld, Gut, fromm Gemahl, fromme Kinder, fromm Gesinde, fromme und treue Oberherren, gut Regiment, gut Wetter, Friede, Gesundheit, Zucht, Ehre, gute Freunde, getreue Nachbarn und desgleichen.'],
         ],
       },
       {
         title: 'Die fünfte Bitte',
-        words: 'Und vergib uns unsere Schuld, als wir vergeben unsern Schuldigern.',
+        words: 'Und verlaß uns unsere Schuld, als wir verlassen unsern Schuldigern.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir bitten in diesem Gebet, daß der Vater im Himmel nicht ansehen wolle unsere Sünden und um derselben willen solche Bitte nicht versagen; denn wir sind der keines wert, das wir bitten, haben’s auch nicht verdient; sondern er wolle es uns alles aus Gnaden geben; denn wir täglich viel sündigen und wohl eitel Strafe verdienen. So wollen wir zwar wiederum auch herzlich vergeben und gerne wohltun denen, die sich an uns versündigen.',
-          ],
+          ['Was ist das?', 'Wir bitten in diesem Gebet, daß der Vater im Himmel nicht ansehen wolle unsere Sünde, und um derselbigen willen solche Bitte nicht versagen; denn wir sind der keines werth, das wir bitten, haben es auch nicht verdienet; sondern er wolle es uns alles aus Gnaden geben, denn wir täglich viel sündigen und wohl eitel Strafe verdienen; so wollen wir zwar wiederum auch herzlich vergeben und gerne wohlthun denen, die sich an uns versündigen.'],
         ],
       },
       {
         title: 'Die sechste Bitte',
         words: 'Und führe uns nicht in Versuchung.',
         qa: [
-          [
-            'Was ist das?',
-            'Gott versucht zwar niemand; aber wir bitten in diesem Gebet, daß uns Gott wolle behüten und erhalten, auf daß uns der Teufel, die Welt und unser Fleisch nicht betrüge noch verführe in Mißglauben, Verzweiflung und andere große Schande und Laster; und ob wir damit angefochten würden, daß wir doch endlich gewinnen und den Sieg behalten.',
-          ],
+          ['Was ist das?', 'Gott versucht zwar niemand, aber wir bitten in diesem Gebet, daß uns Gott wolle behüten und erhalten, auf daß uns der Teufel, die Welt und unser Fleisch nicht betrüge, noch verführe in Mißglauben, Verzweifeln und andere große Schande und Laster; und ob wir damit angefochten würden, daß wir doch endlich gewinnen und den Sieg behalten.'],
         ],
       },
       {
         title: 'Die siebente Bitte',
-        words: 'Sondern erlöse uns von dem Übel.',
+        words: 'Sondern erlöse uns von dem Uebel.',
         qa: [
-          [
-            'Was ist das?',
-            'Wir bitten in diesem Gebet, als in der Summa, daß uns der Vater im Himmel von allerlei Übel an Leib und Seele, Gut und Ehre erlöse und zuletzt, wenn unser Stündlein kommt, ein seliges Ende beschere und mit Gnaden von diesem Jammertal zu sich nehme in den Himmel.',
-          ],
+          ['Was ist das?', 'Wir bitten in diesem Gebet, als in der Summa, daß uns der Vater im Himmel von allerlei Uebel Leibes und Seele, Gutes und Ehre erlöse, und zuletzt, wenn unser Stündlein kommt, ein seliges Ende beschere, und mit Gnaden von diesem Jammerthal zu sich nehme in den Himmel.'],
         ],
       },
       {
-        title: 'Der Beschluß',
-        words: 'Denn dein ist das Reich und die Kraft und die Herrlichkeit in Ewigkeit. Amen.',
+        title: 'Amen',
+        words: 'Amen.',
         qa: [
-          [
-            'Was heißt Amen?',
-            'Daß ich soll gewiß sein, solche Bitten sind dem Vater im Himmel angenehm und erhört; denn er selbst hat uns geboten, also zu beten, und verheißen, daß er uns will erhören. Amen, Amen, das heißt: Ja, ja, es soll also geschehen.',
-          ],
+          ['Was ist das?', 'Daß ich soll gewiß sein, solche Bitten sind dem Vater im Himmel angenehm und erhöret; denn er selbst hat uns geboten, also zu beten, und verheißen, daß er uns will erhören. Amen, Amen, das heißt, ja, ja, es soll also geschehen.'],
         ],
       },
     ],
@@ -291,55 +210,34 @@ export const CATECHISM: readonly ChiefPart[] = [
     title: 'Das Sakrament der heiligen Taufe',
     pieces: [
       {
-        title: 'Zum Ersten',
+        title: 'Zum ersten',
         words: '',
         qa: [
-          [
-            'Was ist die Taufe?',
-            'Die Taufe ist nicht allein schlicht Wasser, sondern sie ist das Wasser in Gottes Gebot gefaßt und mit Gottes Wort verbunden.',
-          ],
-          [
-            'Welches ist denn solch Wort Gottes?',
-            'Da unser Herr Christus spricht Matthäi am letzten: Gehet hin in alle Welt, lehret alle Heiden und taufet sie im Namen des Vaters und des Sohnes und des Heiligen Geistes.',
-          ],
+          ['Was ist die Taufe?', 'Die Taufe ist nicht allein schlecht Wasser, sondern sie ist das Wasser in Gottes Gebot gefasset und mit Gottes Wort verbunden.'],
+          ['Welches ist denn solch Wort Gottes?', 'Da unser HErr Christus spricht Matthäi am letzten: Gehet hin in alle Welt, lehret alle Heiden, und taufet sie im Namen des Vaters und des Sohnes und des Heiligen Geistes.'],
         ],
       },
       {
-        title: 'Zum Andern',
+        title: 'Zum andern',
         words: '',
         qa: [
-          [
-            'Was gibt oder nützet die Taufe?',
-            'Sie wirkt Vergebung der Sünden, erlöst vom Tode und Teufel und gibt die ewige Seligkeit allen, die es glauben, wie die Worte und Verheißung Gottes lauten.',
-          ],
-          [
-            'Welches sind denn solche Worte und Verheißung Gottes?',
-            'Da unser Herr Christus spricht Markus am letzten: Wer da glaubet und getauft wird, der wird selig werden; wer aber nicht glaubet, der wird verdammt werden.',
-          ],
+          ['Was gibt oder nützt die Taufe?', 'Sie wirket Vergebung der Sünden, erlöset vom Tod und Teufel und gibt die ewige Seligkeit allen, die es glauben, wie die Worte und Verheißung Gottes lauten.'],
+          ['Welches sind solche Worte und Verheißung Gottes?', 'Da unser HErr Christus spricht Marci am letzten: Wer da glaubet und getauft wird, der wird selig; wer aber nicht glaubet, der wird verdammt.'],
         ],
       },
       {
-        title: 'Zum Dritten',
+        title: 'Zum dritten',
         words: '',
         qa: [
-          [
-            'Wie kann Wasser solch große Dinge tun?',
-            'Wasser tut’s freilich nicht, sondern das Wort Gottes, so mit und bei dem Wasser ist, und der Glaube, so solchem Wort Gottes im Wasser traut. Denn ohne Gottes Wort ist das Wasser schlicht Wasser und keine Taufe; aber mit dem Worte Gottes ist’s eine Taufe, das ist ein gnadenreich Wasser des Lebens und ein Bad der neuen Geburt im Heiligen Geist, wie St. Paulus sagt zu Titus im dritten Kapitel: Gott macht uns selig durch das Bad der Wiedergeburt und Erneuerung des Heiligen Geistes, welchen er ausgegossen hat über uns reichlich durch Jesum Christum, unsern Heiland, auf daß wir durch desselben Gnade gerecht und Erben seien des ewigen Lebens nach der Hoffnung. Das ist gewißlich wahr.',
-          ],
+          ['Wie kann Wasser solche große Dinge thun?', 'Wasser thuts freilich nicht, sondern das Wort Gottes, so mit und bei dem Wasser ist, und der Glaube, so solchem Worte Gottes im Wasser trauet. Denn ohne Gottes Wort ist das Wasser schlecht Wasser, und keine Taufe; aber mit dem Wort Gottes ists eine Taufe, das ist, ein gnadenreich Wasser des Lebens und ein Bad der neuen Geburt im Heiligen Geist, wie St. Paulus sagt zu Tito am 3. Kapitel: Durch das Bad der Wiedergeburt und Erneuerung des Heiligen Geistes, welchen er ausgegossen hat über uns reichlich durch JEsum Christum, unsern Heiland, auf daß wir durch desselben Gnade gerecht und Erben seien des ewigen Lebens nach der Hoffnung. Das ist je gewißlich wahr.'],
         ],
       },
       {
-        title: 'Zum Vierten',
+        title: 'Zum vierten',
         words: '',
         qa: [
-          [
-            'Was bedeutet denn solch Wassertaufen?',
-            'Es bedeutet, daß der alte Adam in uns durch tägliche Reue und Buße soll ersäuft werden und sterben mit allen Sünden und bösen Lüsten; und wiederum täglich herauskommen und auferstehen ein neuer Mensch, der in Gerechtigkeit und Reinigkeit vor Gott ewiglich lebe.',
-          ],
-          [
-            'Wo steht das geschrieben?',
-            'St. Paulus zu den Römern im sechsten Kapitel spricht: Wir sind samt Christus durch die Taufe begraben in den Tod, auf daß, gleichwie Christus ist auferweckt von den Toten durch die Herrlichkeit des Vaters, also sollen auch wir in einem neuen Leben wandeln.',
-          ],
+          ['Was bedeutet denn solch Wassertaufen?', 'Es bedeutet, daß der alte Adam in uns durch tägliche Reue und Buße soll ersäuft werden und sterben mit allen Sünden und bösen Lüsten, und wiederum täglich heraus kommen und auferstehen ein neuer Mensch, der in Gerechtigkeit und Reinigkeit vor Gott ewiglich lebe.'],
+          ['Wo steht das geschrieben?', 'St. Paulus zu den Römern am 6. spricht: Wir sind sammt Christo durch die Taufe begraben in den Tod, daß, gleichwie Christus ist von den Todten auferwecket durch die Herrlichkeit des Vaters, also sollen wir auch in einem neuen Leben wandeln.'],
         ],
       },
     ],
@@ -352,40 +250,28 @@ export const CATECHISM: readonly ChiefPart[] = [
         title: 'Was ist die Beichte?',
         words: '',
         qa: [
-          [
-            'Was ist die Beichte?',
-            'Die Beichte begreift zwei Stücke in sich: eins, daß man die Sünde bekenne; das andere, daß man die Absolution oder Vergebung vom Beichtiger empfange als von Gott selbst und ja nicht daran zweifle, sondern fest glaube, die Sünden seien dadurch vergeben vor Gott im Himmel.',
-          ],
+          ['Was ist die Beichte?', 'Die Beichte begreift zwei Stücke in sich: eines, daß man die Sünde bekenne; das andere, daß man die absolutio oder Vergebung von dem Beichtiger empfahe als von Gott selbst, und ja nicht daran zweifele, sondern fest glaube, die Sünden seien dadurch vergeben vor Gott im Himmel.'],
         ],
       },
       {
-        title: 'Welche Sünden soll man beichten?',
+        title: 'Welche Sünden soll man denn beichten?',
         words: '',
         qa: [
-          [
-            'Welche Sünden soll man denn beichten?',
-            'Vor Gott soll man sich aller Sünden schuldig geben, auch die wir nicht erkennen, wie wir im Vaterunser tun; aber vor dem Beichtiger sollen wir allein die Sünden bekennen, die wir wissen und fühlen im Herzen.',
-          ],
+          ['Welche Sünden soll man denn beichten?', 'Vor Gott soll man aller Sünden sich schuldig geben, auch die wir nicht erkennen, wie wir im Vater Unser thun; aber vor dem Beichtiger sollen wir allein die Sünden bekennen, die wir wissen und fühlen im Herzen.'],
         ],
       },
       {
         title: 'Welche sind die?',
         words: '',
         qa: [
-          [
-            'Welche sind die?',
-            'Da siehe deinen Stand an nach den Zehn Geboten, ob du Vater, Mutter, Sohn, Tochter, Herr, Frau, Knecht seiest, ob du ungehorsam, untreu, unfleißig gewesen seiest, ob du jemand Leid getan hast mit Worten oder Werken, ob du gestohlen, versäumt, verwahrlost oder Schaden getan hast.',
-          ],
+          ['Welche sind die?', 'Da siehe deinen Stand an nach den zehn Geboten: ob du Vater, Mutter, Sohn, Tochter, Herr, Frau, Knecht seiest, ob du ungehorsam, untreu, unfleißig gewesen seiest, ob du jemand Leid gethan hast mit Worten oder Werken, ob du gestohlen, versäumet, verwahrlost, Schaden gethan hast.'],
         ],
       },
       {
-        title: 'Die Absolution',
+        title: 'Darauf soll der Beichtiger sagen',
         words: '',
         qa: [
-          [
-            'Was spricht der Beichtiger?',
-            'Gott sei dir gnädig und stärke deinen Glauben. Amen. Glaubst du auch, daß meine Vergebung Gottes Vergebung sei? – Ja, lieber Herr. – Wie du glaubst, so geschehe dir. Und ich aus dem Befehl unsers Herrn Jesu Christi vergebe dir deine Sünde im Namen des Vaters und des Sohnes und des Heiligen Geistes. Amen. Gehe hin im Frieden.',
-          ],
+          ['Darauf soll der Beichtiger sagen:', 'Gott sei dir gnädig und stärke deinen Glauben! Amen. Weiter: Glaubest du auch, daß meine Vergebung Gottes Vergebung sei? Antwort: Ja, lieber Herr. Darauf spreche er: Wie du glaubest, so geschehe dir. Und ich aus dem Befehl unsers HErrn JEsu Christi vergebe dir deine Sünden im Namen des Vaters und des Sohnes und des Heiligen Geistes! Amen. Gehe hin im Friede.'],
         ],
       },
     ],
@@ -395,47 +281,32 @@ export const CATECHISM: readonly ChiefPart[] = [
     title: 'Das Sakrament des Altars',
     pieces: [
       {
-        title: 'Was ist das Sakrament des Altars?',
+        title: 'Was ist das Sacrament des Altars?',
         words: '',
         qa: [
-          [
-            'Was ist das Sakrament des Altars?',
-            'Es ist der wahre Leib und Blut unsers Herrn Jesu Christi, unter dem Brot und Wein uns Christen zu essen und zu trinken von Christus selbst eingesetzt.',
-          ],
-          [
-            'Wo steht das geschrieben?',
-            'So schreiben die heiligen Evangelisten Matthäus, Markus, Lukas und St. Paulus: Unser Herr Jesus Christus, in der Nacht, da er verraten ward, nahm er das Brot, dankte und brach’s und gab’s seinen Jüngern und sprach: Nehmet hin und esset; das ist mein Leib, der für euch gegeben wird. Solches tut zu meinem Gedächtnis. Desselbengleichen nahm er auch den Kelch nach dem Abendmahl, dankte, gab ihnen den und sprach: Nehmet hin und trinket alle daraus; dieser Kelch ist das neue Testament in meinem Blut, das für euch vergossen wird zur Vergebung der Sünden. Solches tut, sooft ihr’s trinket, zu meinem Gedächtnis.',
-          ],
+          ['Was ist das Sacrament des Altars?', 'Es ist der wahre Leib und Blut unsers HErrn JEsu Christi, unter dem Brot und Wein uns Christen zu essen und zu trinken von Christo selbst eingesetzt.'],
+          ['Wo steht das geschrieben?', 'So schreiben die heiligen Evangelisten Matthäus, Marcus, Lucas und St. Paulus: Unser HErr JEsus Christus in der Nacht, da er verrathen ward, nahm er das Brot, dankte und brachs, und gabs seinen Jüngern und sprach: Nehmet hin, esset, das ist mein Leib, der für euch gegeben wird; solches thut zu meinem Gedächtniß. Desselbigen gleichen nahm er auch den Kelch nach dem Abendmahl, dankte und gab ihnen den und sprach: Nehmet hin und trinket alle daraus, dieser Kelch ist das neue Testament in meinem Blut, das für euch vergossen wird zur Vergebung der Sünden; solches thut, so oft ihrs trinket, zu meinem Gedächtniß.'],
         ],
       },
       {
-        title: 'Was nützt solch Essen und Trinken?',
+        title: 'Was nützt denn solch Essen und Trinken?',
         words: '',
         qa: [
-          [
-            'Was nützt denn solch Essen und Trinken?',
-            'Das zeigen uns diese Worte: Für euch gegeben und vergossen zur Vergebung der Sünden; nämlich, daß uns im Sakrament Vergebung der Sünden, Leben und Seligkeit durch solche Worte gegeben wird; denn wo Vergebung der Sünden ist, da ist auch Leben und Seligkeit.',
-          ],
+          ['Was nützt denn solch Essen und Trinken?', 'Das zeigen uns diese Worte: „Für euch gegeben und vergossen zur Vergebung der Sünden“, nämlich, daß uns im Sacrament Vergebung der Sünden, Leben und Seligkeit durch solche Worte gegeben wird; denn wo Vergebung der Sünden ist, da ist auch Leben und Seligkeit.'],
         ],
       },
       {
-        title: 'Wie kann leiblich Essen solch große Dinge tun?',
+        title: 'Wie kann leiblich Essen und Trinken solche große Dinge thun?',
         words: '',
         qa: [
-          [
-            'Wie kann leiblich Essen und Trinken solch große Dinge tun?',
-            'Essen und Trinken tut’s freilich nicht, sondern die Worte, so da stehen: Für euch gegeben und vergossen zur Vergebung der Sünden. Welche Worte sind neben dem leiblichen Essen und Trinken das Hauptstück im Sakrament; und wer denselben Worten glaubt, der hat, was sie sagen und wie sie lauten, nämlich: Vergebung der Sünden.',
-          ],
+          ['Wie kann leiblich Essen und Trinken solche große Dinge thun?', 'Essen und Trinken thuts freilich nicht, sondern die Worte, so da stehen: „Für euch gegeben und vergossen zur Vergebung der Sünden.“ Welche Worte sind neben dem leiblichen Essen und Trinken als das Hauptstück im Sacrament, und wer denselbigen Worten glaubet, der hat, was sie sagen und wie sie lauten, nämlich Vergebung der Sünden.'],
         ],
       },
       {
-        title: 'Wer empfängt es würdig?',
+        title: 'Wer empfähet denn solch Sacrament würdiglich?',
         words: '',
         qa: [
-          [
-            'Wer empfängt denn solch Sakrament würdiglich?',
-            'Fasten und leiblich sich bereiten ist wohl eine feine äußerliche Zucht; aber der ist recht würdig und wohl geschickt, wer den Glauben hat an diese Worte: Für euch gegeben und vergossen zur Vergebung der Sünden. Wer aber diesen Worten nicht glaubt oder zweifelt, der ist unwürdig und ungeschickt; denn das Wort ‚Für euch‘ fordert eitel gläubige Herzen.',
-          ],
+          ['Wer empfähet denn solch Sacrament würdiglich?', 'Fasten und leiblich sich bereiten ist wohl eine feine äußerliche Zucht, aber der ist recht würdig und wohlgeschickt, wer den Glauben hat an diese Worte: „Für euch gegeben und vergossen zur Vergebung der Sünden.“ Wer aber diesen Worten nicht glaubet oder zweifelt, der ist unwürdig und ungeschickt; denn das Wort: FÜR EUCH, fordert eitel gläubige Herzen.'],
         ],
       },
     ],

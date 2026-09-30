@@ -28,7 +28,7 @@ export const THE_ARC = {
 
 export const SOURCES = [
   'Bibeltexte wortgetreu nach der Lutherbibel 1912. Bibelstellen stehen als Angabe; gelesen wird in der gedruckten Bibel.',
-  'Gebetstexte aus Luthers Kleinem Katechismus (traditionelle Fassung), der Deutschen Messe und „Eine einfältige Weise zu beten“ (1535).',
+  'Gebetstexte aus Luthers Kleinem Katechismus (Wortlaut des Konkordienbuchs, St. Louis 1881), der Deutschen Messe und „Eine einfältige Weise zu beten“ (1535).',
   'Lieder: Nikolaus Herman (1560), Erasmus Alber (1556), Georg Niege (1592), Paul Gerhardt (1647).',
   METHOD_CREDIT,
 ];
