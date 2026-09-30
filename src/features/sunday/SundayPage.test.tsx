@@ -5,6 +5,8 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
 import { SECTIONS } from '../../app/routes';
+import { SUNDAY_INFO } from '../../content/churchYearGuide';
+import { EPISTLE_LECTIONS } from '../../content/lections';
 import { TagzeitenDB } from '../../data/db';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
@@ -47,6 +49,23 @@ describe('Sonntag', () => {
     dialog = screen.getByRole('dialog', { name: 'Am achtzehnten Sonntage nach Trinitatis.' });
     expect(dialog.querySelectorAll('.lection-paragraphs p')).toHaveLength(2);
     expect(dialog.textContent).toContain('wie sie St. Paulus in seinen Briefen behandelt!');
+  });
+
+  it('opens Löhe’s Winterpostille from the Epistle in Advent and after New Year', async () => {
+    await renderSunday('/sonntag?s=2026-11-29');
+    fireEvent.click(screen.getByRole('button', { name: /Römer 13,11-14/ }));
+    let dialog = screen.getByRole('dialog', { name: 'Am ersten Sonntage des Advents.' });
+    expect(dialog.textContent).toContain('„Es ist Zeit, aufzustehen vom Schlafe!“');
+    expect(dialog.textContent).toContain('Winterpostille');
+    cleanup();
+    await renderSunday('/sonntag?s=2027-01-03');
+    fireEvent.click(screen.getByRole('button', { name: /1\. Petrus 4,12-19/ }));
+    dialog = screen.getByRole('dialog', { name: 'Am Sonntage nach dem Neujahre.' });
+    expect(dialog.textContent).toContain('Das gebe Gott durch Jesum Christum! Amen.');
+  });
+
+  it('gives every Epistle meditation a Sunday of the church year', () => {
+    for (const key of Object.keys(EPISTLE_LECTIONS)) expect(SUNDAY_INFO[key], key).toBeDefined();
   });
 
   it('opens the lesson of the Haus-Agende from the Gospel, where the book has one', async () => {

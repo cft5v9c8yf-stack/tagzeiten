@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.12.0',
+    date: '2026-09-30',
+    title: 'Löhe im Advent und zu Weihnachten',
+    changes: [
+      { area: 'Sonntag', text: 'Die Epistel-Kachel öffnet Löhes Betrachtungen aus der Winterpostille für die vier Adventssonntage, das Christfest, den Sonntag nach dem Christfest und den Sonntag nach Neujahr, im Wortlaut und in der Rechtschreibung des Originals.' },
+    ],
+  },
+  {
     version: '0.11.0',
     date: '2026-09-30',
     title: 'Die drei Bekenntnisse',
