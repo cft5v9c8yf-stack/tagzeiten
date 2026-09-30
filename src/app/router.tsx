@@ -3,6 +3,7 @@ import { ArenaPage } from '../features/arena/ArenaPage';
 import { BiblePage } from '../features/bible/BiblePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
+import { SearchPage } from '../features/search/SearchPage';
 import { DevotionIndex, DevotionPage, DevotionRedirect } from '../features/devotion/DevotionPage';
 import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
@@ -45,6 +46,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'mehr', element: <SettingsPage /> },
       { path: 'mehr/:bereich', element: <SettingsPage /> },
       { path: 'kirchenjahr', element: <ChurchYearPage /> },
+      { path: 'suche', element: <SearchPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.16.0',
+    date: '2026-09-30',
+    title: 'Suchen',
+    changes: [
+      { area: 'Suchen', text: 'Oben rechts steht auf jeder Seite die Lupe. Die Suche geht durch Katechismus, Bekenntnisse, Augsburgische Konfession, Sonntage, Betrachtungen, Gebete und deine eigenen Einträge und öffnet die Stelle mit einem Tipp.' },
+      { area: 'Suchen', text: 'Alte Schreibweisen werden mitgefunden („Teil“ findet „Theil“, „Sakrament“ findet „Sacrament“), ebenso ein Wort mit einem Tippfehler. Die Suche läuft ganz auf deinem Gerät.' },
+    ],
+  },
+  {
     version: '0.15.0',
     date: '2026-09-30',
     title: 'Die Augsburgische Konfession',

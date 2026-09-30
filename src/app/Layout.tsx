@@ -65,6 +65,14 @@ export function Layout() {
               </div>
             </>
           )}
+          {!pathname.startsWith('/suche') && (
+            <Link className="search-link" to="/suche" aria-label="Suchen">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false">
+                <circle cx="10.5" cy="10.5" r="6" />
+                <path d="m15 15 5.5 5.5" />
+              </svg>
+            </Link>
+          )}
         </header>
         <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
           {import.meta.env.MODE === 'demo' && <DemoBanner />}
