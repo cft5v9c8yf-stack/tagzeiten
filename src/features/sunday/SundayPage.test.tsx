@@ -34,6 +34,24 @@ describe('Sonntag', () => {
     expect(SECTIONS.map((s) => s.label)).toEqual(['Arena', 'Andacht', 'Heute', 'Sonntag', 'Bibel', 'Lehre', 'Mehr']);
   });
 
+  it('opens the lesson of the Haus-Agende from the Gospel, where the book has one', async () => {
+    await renderSunday('/sonntag?s=2026-10-04');
+    expect(title()).toContain('18. Sonntag nach Trinitatis');
+    const gospel = screen.getByRole('button', { name: /Matthäus 22,34-46/ });
+    fireEvent.click(gospel);
+    const dialog = screen.getByRole('dialog', { name: 'Des Gesetzes und des Evangeliums Summe.' });
+    // Word for word, in the spelling of 1853, and it ends in the Gospel (rule 1).
+    expect(dialog.textContent).toContain('Meister, welches ist das vornehmste Gebot?');
+    expect(dialog.textContent).toContain('O Herr Jesu nimm uns auf in Gnaden! Amen.');
+    expect(within(dialog).getAllByRole('listitem')).toHaveLength(7);
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Andacht schließen' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    // A Sunday without a lesson keeps the plain tile.
+    cleanup();
+    await renderSunday('/sonntag?d=2026-09-24');
+    expect(screen.queryByRole('button', { name: /Lukas 7,11-17/ })).toBeNull();
+  });
+
   it('shows the Sunday of the week with verse, meaning, readings and its place in the church year', async () => {
     await renderSunday('/sonntag?d=2026-09-24');
     expect(title()).toBe('16. Sonntag nach Trinitatis');
@@ -42,14 +60,14 @@ describe('Sonntag', () => {
     expect(screen.getByRole('heading', { name: 'Bedeutung' })).toBeTruthy();
     // Gospel and Epistle as references only: no full text, no links (rule 13).
     const refs = [...document.querySelectorAll('.sunday-readings .bible-ref')].map((r) => r.textContent);
-    expect(refs).toEqual(['Johannes 11,1-3.17-27', '2. Timotheus 1,7-10']);
+    expect(refs).toEqual(['Lukas 7,11-17', 'Epheser 3,13-21']);
     expect(document.querySelector('.sunday-readings a')).toBeNull();
     expect(document.querySelector('.cy-circles [aria-current]')!.textContent).toBe('PfingstkreisTrinitatiszeit');
     // The Trinity group stands above the name of the Sunday.
     expect(document.querySelector('.sunday-group')!.textContent).toContain('Heiligung');
     // A short summary of each text, in our own words.
     expect([...document.querySelectorAll('.sunday-summary')].map((p) => p.textContent)).toHaveLength(2);
-    expect(document.querySelector('.sunday-summary')!.textContent).toContain('Auferstehung und das Leben');
+    expect(document.querySelector('.sunday-summary')!.textContent).toContain('Nain');
   });
 
   it('goes to the Sunday before and after, also across the turn of the church year', async () => {

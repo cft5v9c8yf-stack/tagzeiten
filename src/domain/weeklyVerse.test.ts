@@ -42,14 +42,14 @@ describe('weekly verse', () => {
 
 describe('readings of the day', () => {
   it('gives Gospel and Epistle of the week', () => {
-    expect(readingsOfDay('2026-09-25')).toEqual({ gospel: 'Johannes 11,1-3.17-27', epistle: '2. Timotheus 1,7-10', kind: 'week' });
-    expect(readingsOfDay('2026-09-20')).toMatchObject({ kind: 'week', gospel: 'Johannes 11,1-3.17-27' });
+    expect(readingsOfDay('2026-09-25')).toEqual({ gospel: 'Lukas 7,11-17', epistle: 'Epheser 3,13-21', kind: 'week' });
+    expect(readingsOfDay('2026-09-20')).toMatchObject({ kind: 'week', gospel: 'Lukas 7,11-17' });
   });
 
   it('gives feasts on weekdays their own readings', () => {
-    expect(readingsOfDay('2026-04-03')).toEqual({ gospel: 'Johannes 19,16-30', epistle: '2. Korinther 5,14-21', kind: 'feast' });
-    expect(readingsOfDay('2026-05-14')).toMatchObject({ kind: 'feast', gospel: 'Lukas 24,50-53' });
+    expect(readingsOfDay('2026-04-03')).toEqual({ gospel: 'Johannes 19,16-30', epistle: 'Jesaja 52,13-53,12', kind: 'feast' });
+    expect(readingsOfDay('2026-05-14')).toMatchObject({ kind: 'feast', gospel: 'Markus 16,14-20' });
     // Other feasts (Michaelis) keep the readings of the week.
-    expect(readingsOfDay('2026-09-29')).toMatchObject({ kind: 'week', gospel: 'Matthäus 15,21-28' });
+    expect(readingsOfDay('2026-09-29')).toMatchObject({ kind: 'week', gospel: 'Lukas 14,1-11' });
   });
 });

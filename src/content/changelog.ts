@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.9.0',
+    date: '2026-09-30',
+    title: 'Die alte Leseordnung',
+    changes: [
+      { area: 'Sonntag', text: 'Evangelium und Epistel folgen jetzt der altkirchlichen Leseordnung, wie in der lutherischen Kirche seit der Reformation und in Dieffenbachs Haus-Agende – am 18. Sonntag nach Trinitatis also Matthäus 22,34-46. Themen und Kurzfassungen sind dazu neu geschrieben. Die letzten drei Sonntage sind der 25. bis 27. nach Trinitatis.' },
+      { area: 'Haus-Agende', text: 'Wo die Haus-Agende eine Bibellection zum Sonntag hat, öffnet ein Tipp auf das Evangelium diese Andacht, Wort für Wort in der Schreibweise von 1853. Den Anfang macht der 18. Sonntag nach Trinitatis: „Des Gesetzes und des Evangeliums Summe“.' },
+    ],
+  },
+  {
     version: '0.8.4',
     date: '2026-09-30',
     title: 'Auch die Episteln durchgesehen',

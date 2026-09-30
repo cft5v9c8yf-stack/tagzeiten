@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { SEASON_INFO, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import { DAY_GUIDE } from '../../content/dieffenbach';
+import { LECTIONS } from '../../content/lections';
 import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -9,6 +10,7 @@ import { churchDay, CIRCLE_LABEL, CIRCLES, nextWeekStart, previousWeekStart, SEA
 import { formatLong, type DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleRef } from '../../ui/BibleRef';
+import { LectionDialog } from './LectionDialog';
 import { SundayChooser } from './SundayOverview';
 
 const SUNDAY_PARAM = 's';
@@ -68,6 +70,7 @@ export function SundayPage() {
   const links = useSundayLinks();
   const navigate = useNavigate();
   const [choosing, setChoosing] = useState(false);
+  const [reading, setReading] = useState(false);
   const s = links.shown;
   const c = churchDay(s);
   const prev = previousWeekStart(s);
@@ -76,6 +79,7 @@ export function SundayPage() {
   const verse = WEEKLY_VERSES[c.weekKey];
   const group = trinityGroupOf(c.weekKey);
   const summary = READING_SUMMARIES[c.weekKey];
+  const lection = LECTIONS[c.weekKey];
   const toChurchYear = (circle: string) =>
     withDate('/kirchenjahr', date, isToday) + (isToday ? '?' : '&') + `kreis=${circle}&woche=${c.weekKey}`;
 
@@ -153,11 +157,26 @@ export function SundayPage() {
         <section className="block block-hero" aria-labelledby="sunday-readings">
           <h3 id="sunday-readings">Evangelium und Epistel</h3>
           <div className="sunday-readings">
-            <div className="sunday-reading">
-              <span className="track">Evangelium</span>
-              <BibleRef reference={info.gospel} />
-              {summary && <p className="sunday-summary">{summary.gospel}</p>}
-            </div>
+            {lection ? (
+              // With a lesson from the Haus-Agende, the Gospel opens it.
+              <button
+                type="button"
+                className="sunday-reading sunday-reading-open"
+                aria-haspopup="dialog"
+                onClick={() => setReading(true)}
+              >
+                <span className="track">Evangelium</span>
+                <BibleRef reference={info.gospel} />
+                {summary && <span className="sunday-summary">{summary.gospel}</span>}
+                <span className="sunday-lection-hint">Andacht aus der Haus-Agende lesen</span>
+              </button>
+            ) : (
+              <div className="sunday-reading">
+                <span className="track">Evangelium</span>
+                <BibleRef reference={info.gospel} />
+                {summary && <p className="sunday-summary">{summary.gospel}</p>}
+              </div>
+            )}
             <div className="sunday-reading">
               <span className="track">Epistel</span>
               <BibleRef reference={info.epistle} />
@@ -166,6 +185,8 @@ export function SundayPage() {
           </div>
         </section>
       )}
+
+      {reading && lection && <LectionDialog lection={lection} onClose={() => setReading(false)} />}
 
       {choosing && (
         <SundayChooser

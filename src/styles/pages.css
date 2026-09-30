@@ -1191,6 +1191,54 @@ body.is-sorting * {
 .sunday-reading .bible-ref {
   font-size: 1.05rem;
 }
+/* The Gospel opens the lesson from the Haus-Agende. */
+.sunday-reading-open {
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sunday-reading-open .sunday-summary {
+  display: block;
+}
+.sunday-lection-hint {
+  margin-top: 6px;
+  font: 600 0.85rem var(--sans);
+  color: var(--link);
+}
+.sunday-lection-hint::after {
+  content: ' ›';
+}
+.sunday-reading-open:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+/* The lesson: a title, then numbered paragraphs to read straight through. */
+.lection-head {
+  grid-template-columns: 1fr;
+}
+.lection-body {
+  overflow-y: auto;
+  padding: 12px 20px 8px;
+}
+.lection-paragraphs {
+  margin: 0;
+  padding-left: 1.6em;
+  line-height: 1.6;
+}
+.lection-paragraphs li {
+  margin: 0 0 12px;
+}
+.lection-paragraphs li::marker {
+  color: var(--gold);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.lection-source {
+  margin: 4px 0 8px;
+}
 .sunday-page .cy-circles {
   margin-top: 4px;
 }

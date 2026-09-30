@@ -64,7 +64,7 @@ describe('Kirchenjahr', () => {
     expect(invokavit.textContent).toContain('„Er ruft mich an, so will ich ihn erhören“');
     // References as text only, no links (rule 13).
     const refs = [...invokavit.querySelectorAll('.bible-ref')].map((r) => r.textContent);
-    expect(refs).toEqual(['Matthäus 4,1-11', 'Hebräer 4,14-16']);
+    expect(refs).toEqual(['Matthäus 4,1-11', '2. Korinther 6,1-10']);
     expect(invokavit.querySelector('a')).toBeNull();
     expect(document.getElementById('entry-goodFriday')!.textContent).toContain('Johannes 19,16-30');
   });
@@ -75,7 +75,7 @@ describe('Kirchenjahr', () => {
     const li = entry.closest('li')!;
     expect(li.classList.contains('current')).toBe(true);
     expect(li.textContent).toContain('diese Woche');
-    expect(li.textContent).toContain('Johannes 11,1-3.17-27');
+    expect(li.textContent).toContain('Lukas 7,11-17');
     expect(document.querySelectorAll('.cy-entry.current')).toHaveLength(1);
     await waitFor(() => expect(document.activeElement).toBe(li));
   });
