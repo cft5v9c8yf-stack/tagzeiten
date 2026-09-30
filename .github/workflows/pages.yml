@@ -27,10 +27,16 @@ jobs:
           cache: npm
       - run: npm ci
       # The Luther 1912 text (public domain, CC0) for checking every Bible verse word for word.
-      - run: npm pack xmlbible-lut1912 --pack-destination "$RUNNER_TEMP" && tar xzf "$RUNNER_TEMP"/xmlbible-lut1912-*.tgz -C "$RUNNER_TEMP"
+      - name: Fetch Luther 1912
+        run: |
+          mkdir -p ../lut1912
+          cd ../lut1912
+          npm pack xmlbible-lut1912
+          tar xzf xmlbible-lut1912-*.tgz
+          ls package/text | wc -l
       - run: npm test
         env:
-          LUT1912_DIR: ${{ runner.temp }}/package/text
+          LUT1912_DIR: ../lut1912/package/text
       - run: npm run build
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
