@@ -23,7 +23,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   christmas: {
     gospel: 'Jesus wird in Bethlehem geboren und in eine Krippe gelegt; Engel verkünden es den Hirten, die hingehen und Gott loben.',
-    epistle: 'Gottes Freundlichkeit ist erschienen: Er rettet nicht um unserer Werke willen, sondern aus Barmherzigkeit durch die Taufe.',
+    epistle: 'Gottes Freundlichkeit ist erschienen: Er macht uns selig nicht um unserer Werke willen, sondern nach seiner Barmherzigkeit durch das Bad der Wiedergeburt und Erneuerung des Heiligen Geistes.',
   },
   christmas1: {
     gospel: 'Simeon und Hanna erkennen im Tempel im Kind Jesus den Heiland, auf den sie gewartet haben.',
@@ -59,12 +59,12 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   epiphanyLast: {
     gospel: 'Auf dem Berg wird Jesus vor drei Jüngern verklärt; die Stimme aus der Wolke sagt: Den sollt ihr hören.',
-    epistle: 'Gottes Licht leuchtet im Angesicht Christi; wir tragen diesen Schatz in irdenen Gefäßen.',
+    epistle: 'Gottes Licht leuchtet im Angesicht Christi; wir haben diesen Schatz in irdischen Gefäßen, damit die Kraft von Gott sei und nicht von uns.',
   },
   // Osterkreis
   septuagesimae: {
     gospel: 'Arbeiter, die zu verschiedenen Stunden in den Weinberg kamen, erhalten denselben Lohn: Gott ist gütig.',
-    epistle: 'Lauft so, dass ihr den Preis erlangt: Paulus hält sich in Zucht, um nicht selbst verwerflich zu werden.',
+    epistle: 'Lauft so, dass ihr das Kleinod ergreift: Paulus zähmt seinen Leib, damit er nicht anderen predigt und selbst verwerflich wird.',
   },
   sexagesimae: {
     gospel: 'Das Wort Gottes ist wie Same, der auf verschiedenen Boden fällt; im guten Herzen bringt es Frucht in Geduld.',
@@ -76,11 +76,11 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   invokavit: {
     gospel: 'Jesus wird in der Wüste vom Teufel versucht und widersteht ihm jedes Mal mit dem Wort der Schrift.',
-    epistle: 'Wir haben einen Hohenpriester, der versucht wurde wie wir, doch ohne Sünde; lasst uns hinzutreten zum Thron der Gnade.',
+    epistle: 'Wir haben einen Hohenpriester, der versucht wurde wie wir, doch ohne Sünde; lasst uns mit Freudigkeit hinzutreten zum Gnadenstuhl.',
   },
   reminiszere: {
     gospel: 'Die Weingärtner misshandeln die Knechte des Weinbergbesitzers und töten zuletzt seinen lieben Sohn – der verworfene Stein wird zum Eckstein.',
-    epistle: 'Gerecht geworden durch den Glauben, haben wir Frieden mit Gott; Trübsal bringt Geduld, Bewährung und Hoffnung.',
+    epistle: 'Gerecht geworden durch den Glauben, haben wir Frieden mit Gott; Trübsal bringt Geduld, Geduld Erfahrung, Erfahrung Hoffnung.',
   },
   okuli: {
     gospel: 'Wer Jesus nachfolgen will und zurückschaut, ist nicht geschickt zum Reich Gottes.',
@@ -92,7 +92,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   judika: {
     gospel: 'Jakobus und Johannes wollen Ehrenplätze; Jesus sagt: Wer groß sein will, sei der Diener aller – er gibt sein Leben als Lösegeld.',
-    epistle: 'Christus hat unter Tränen gebetet und Gehorsam gelernt; so ist er Urheber des ewigen Heils geworden.',
+    epistle: 'Christus hat mit starkem Geschrei und Tränen gebetet und an dem, was er litt, Gehorsam gelernt; so ist er allen, die ihm gehorchen, eine Ursache zur ewigen Seligkeit geworden.',
   },
   palmarum: {
     gospel: 'Jesus reitet auf einem Esel in Jerusalem ein; die Menge empfängt ihn mit Palmzweigen und Hosianna.',
@@ -116,7 +116,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   quasimodogeniti: {
     gospel: 'Der Auferstandene kommt zu den Jüngern durch verschlossene Türen; Thomas zweifelt, bis er ihn sieht und bekennt: Mein Herr und mein Gott.',
-    epistle: 'Gott hat uns wiedergeboren zu einer lebendigen Hoffnung durch die Auferstehung Jesu; darum freut ihr euch auch in Anfechtung.',
+    epistle: 'Gott hat uns wiedergeboren zu einer lebendigen Hoffnung durch die Auferstehung Jesu; in mancherlei Anfechtung wird der Glaube bewährt wie Gold im Feuer.',
   },
   misericordias: {
     gospel: 'Jesus ist der gute Hirte, der sein Leben für die Schafe lässt und sie kennt.',
@@ -177,7 +177,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   trinity6: {
     gospel: 'Der Auferstandene sendet die Jünger: Macht zu Jüngern alle Völker, tauft sie und lehrt sie – ich bin bei euch alle Tage.',
-    epistle: 'In der Taufe sind wir mit Christus begraben und auferweckt, damit wir in einem neuen Leben wandeln.',
+    epistle: 'In der Taufe sind wir mit Christus in seinen Tod begraben, damit wir, wie er auferweckt ist, in einem neuen Leben wandeln.',
   },
   trinity7: {
     gospel: 'Jesus speist fünftausend Menschen mit fünf Broten und zwei Fischen; es bleiben zwölf Körbe übrig.',
@@ -185,7 +185,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   trinity8: {
     gospel: 'Ihr seid das Salz der Erde und das Licht der Welt; lasst euer Licht leuchten, damit der Vater gepriesen wird.',
-    epistle: 'Wandelt als Kinder des Lichts; die Frucht des Lichts ist Güte, Gerechtigkeit und Wahrheit.',
+    epistle: 'Wandelt wie die Kinder des Lichts; die Frucht des Geistes ist Gütigkeit, Gerechtigkeit und Wahrheit.',
   },
   trinity9: {
     gospel: 'Ein Herr vertraut seinen Knechten Talente an; wer damit wirtschaftet, wird gelobt, wer sie vergräbt, verliert sie.',
@@ -229,7 +229,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   trinity19: {
     gospel: 'Freunde lassen einen Gelähmten durchs Dach herab; Jesus vergibt ihm die Sünden und heilt ihn.',
-    epistle: 'Legt den alten Menschen ab und zieht den neuen an: redet die Wahrheit, zürnt nicht bis zur Nacht, vergebt einander.',
+    epistle: 'Legt den alten Menschen ab und zieht den neuen an: redet die Wahrheit, lasst die Sonne nicht über eurem Zorn untergehen, vergebt einander.',
   },
   trinity20: {
     gospel: 'Jesus bekräftigt die Ehe als Gottes Ordnung – was Gott zusammengefügt hat, soll der Mensch nicht scheiden – und segnet die Kinder.',
@@ -245,7 +245,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   trinity23: {
     gospel: 'Gefragt nach der Steuer, antwortet Jesus: Gebt dem Kaiser, was des Kaisers ist, und Gott, was Gottes ist.',
-    epistle: 'Unser Bürgerrecht ist im Himmel; von dort erwarten wir den Heiland, der unseren Leib verwandeln wird.',
+    epistle: 'Unser Wandel ist im Himmel; von dort warten wir auf den Heiland, der unseren nichtigen Leib verklären wird.',
   },
   trinity24: {
     gospel: 'Jesus erweckt die Tochter eines Obersten; unterwegs wird eine kranke Frau gesund, die im Glauben den Saum seines Kleides anrührt.',
@@ -257,7 +257,7 @@ export const READING_SUMMARIES: Record<string, { gospel: string; epistle: string
   },
   secondLast: {
     gospel: 'Beim Weltgericht scheidet der König die Völker: Was ihr einem dieser Geringsten getan habt, das habt ihr mir getan.',
-    epistle: 'Richte deinen Bruder nicht, denn wir werden alle vor dem Richterstuhl Gottes stehen.',
+    epistle: 'Richte deinen Bruder nicht, denn wir werden alle vor den Richtstuhl Christi gestellt; gib ihm keinen Anstoß.',
   },
   eternity: {
     gospel: 'Zehn Jungfrauen warten auf den Bräutigam; nur die klugen haben Öl und gehen mit ihm zur Hochzeit: Wachet.',

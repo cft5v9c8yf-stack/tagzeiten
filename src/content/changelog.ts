@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.8.4',
+    date: '2026-09-30',
+    title: 'Auch die Episteln durchgesehen',
+    changes: [
+      { area: 'Sonntag', text: 'Die Kurzfassungen der Episteln sind mit dem Text der Lutherbibel 1912 abgeglichen und stehen näher an seinem Wortlaut: etwa „Gnadenstuhl“ statt „Thron der Gnade“, „Geduld bringt Erfahrung“, „das Bad der Wiedergeburt“, „Richtstuhl Christi“, „Unser Wandel ist im Himmel“, „lasst die Sonne nicht über eurem Zorn untergehen“.' },
+    ],
+  },
+  {
     version: '0.8.3',
     date: '2026-09-30',
     title: 'Genauer nacherzählt',
