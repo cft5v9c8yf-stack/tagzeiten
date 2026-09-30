@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.10.1',
+    date: '2026-09-30',
+    title: 'Löhes Buch beim Namen',
+    changes: [
+      { area: 'Sonntag', text: 'Unter Löhes Betrachtungen zur Epistel steht jetzt der Titel seines Buches: „Kurze Lectionen zu den sonn- und festtäglichen Episteln des Kirchenjahres. Neben der Evangelienpostille zu lesen.“' },
+    ],
+  },
+  {
     version: '0.10.0',
     date: '2026-09-30',
     title: 'Löhe zur Epistel',

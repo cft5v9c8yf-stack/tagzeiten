@@ -45,9 +45,13 @@ export const LECTIONS: Record<string, Lection> = {
   },
 };
 
-const LOEHE = 'Wilhelm Löhe, lutherischer Pfarrer';
+const LOEHE =
+  'Wilhelm Löhe, lutherischer Pfarrer: Kurze Lectionen zu den sonn- und festtäglichen Episteln des Kirchenjahres. Neben der Evangelienpostille zu lesen. Stuttgart, Samuel Gottlieb Liesching';
 
-/** On the Epistle: Wilhelm Löhe's meditations on the Sunday Epistles. */
+/**
+ * On the Epistle: Wilhelm Löhe's "Kurze Lectionen" on the Sunday Epistles,
+ * bound with his Evangelien-Postille (Stuttgart, Liesching).
+ */
 export const EPISTLE_LECTIONS: Record<string, Lection> = {
   trinity17: {
     kind: 'Betrachtung',
