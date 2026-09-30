@@ -1,6 +1,6 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
-import { canToggle, habitsOfRhythm, isDoneInPeriod, isDoneOn, RHYTHM_ORDER } from '../../domain/habits';
+import { canToggle, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { StarIcon } from '../../ui/Icons';
@@ -24,9 +24,19 @@ function HabitName({ habit, note }: { habit: Habit; note?: string }) {
   );
 }
 
+/** The quiet line under a habit's name: where it comes from, or how often it is meant. */
+function noteOf(h: Habit, date: DateKey, lookup: ReturnType<typeof useDayLookup>): string | undefined {
+  if (h.auto) return 'aus dem Ablauf';
+  if (h.id === READING_HABIT) return 'nach dem Leseplan';
+  // Documented, not rated: how many days are entered, never what is "missing" (rules 3–5).
+  if (h.rhythm === 'weekly' && h.timesPerWeek) return `${h.timesPerWeek}-mal die Woche · ${daysDoneInWeek(h, date, lookup)}\u00a0eingetragen`;
+  return undefined;
+}
+
 /**
- * This week's habits: daily ones as seven dots Mo–So, weekly and monthly ones
- * as one mark for the period. No streaks, no counting (rule 4).
+ * This week's habits: daily ones (and weekly ones meant for several days) as
+ * seven dots Mo–So, the other weekly and monthly ones as one mark for the
+ * period. No streaks, no score (rule 4).
  */
 export function HabitsWeek({ date }: { date: DateKey }) {
   const store = useStore();
@@ -43,10 +53,10 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const rest = active.filter((h) => !h.focus);
 
   const row = (h: Habit) => {
-    if (h.rhythm === 'daily') {
+    if (isPerDay(h)) {
       return (
         <tr key={h.id}>
-          <HabitName habit={h} note={h.auto ? 'aus dem Ablauf' : h.id === READING_HABIT ? 'nach dem Leseplan' : undefined} />
+          <HabitName habit={h} note={noteOf(h, date, lookup)} />
           {week.map((k) => {
             const on = isDoneOn(h, lookup(k));
             const enabled = canToggle(h, k, today, lookup);

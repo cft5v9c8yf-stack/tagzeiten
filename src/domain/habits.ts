@@ -39,6 +39,26 @@ export function mergePresets(habits: readonly Habit[]): Habit[] {
   return out;
 }
 
+/** How many days a week a weekly habit may be meant for (1 = once, the default). */
+export const TIMES_PER_WEEK = [1, 2, 3, 4, 5, 6] as const;
+
+export function isTimesPerWeek(n: unknown): n is number {
+  return typeof n === 'number' && Number.isInteger(n) && n >= 2 && n <= 6;
+}
+
+/**
+ * Whether the habit is recorded day by day: daily habits, and weekly habits meant
+ * for several days of the week ("3-mal in der Woche").
+ */
+export function isPerDay(habit: Habit): boolean {
+  return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && isTimesPerWeek(habit.timesPerWeek));
+}
+
+/** Days of the week containing `date` on which the habit was recorded. */
+export function daysDoneInWeek(habit: Habit, date: DateKey, lookup: DayLookup): number {
+  return periodDates('weekly', date).filter((k) => isDoneOn(habit, lookup(k))).length;
+}
+
 /** Whether the habit was done on this very day. Auto habits follow the orders. */
 export function isDoneOn(habit: Habit, day: Day | undefined): boolean {
   if (!day) return false;
@@ -87,7 +107,7 @@ export function canToggle(habit: Habit, date: DateKey, today: DateKey, lookup: D
   if (date > today) return false;
   // A past day can only be ticked if it had a portion; nothing is owed for the others (rule 6).
   if (habit.id === READING_HABIT) return date === today || !!lookup(date)?.reading;
-  if (habit.rhythm === 'daily') return true;
+  if (isPerDay(habit)) return true;
   const doneOn = doneDateInPeriod(habit, date, lookup);
   return doneOn === undefined || doneOn === date;
 }
@@ -102,10 +122,21 @@ export function toggleHabit(day: Day, habit: Habit): Day {
   return { ...day, habits: { ...day.habits, [habit.id]: !day.habits[habit.id] } };
 }
 
-export function addHabit(habits: readonly Habit[], name: string, rhythm: Rhythm, id: string): Habit[] {
+export function addHabit(habits: readonly Habit[], name: string, rhythm: Rhythm, id: string, timesPerWeek = 1): Habit[] {
   const trimmed = name.trim();
   if (!trimmed) return [...habits];
-  return [...habits, { id, name: trimmed, rhythm, auto: null, active: true, preset: false, focus: false }];
+  const habit: Habit = { id, name: trimmed, rhythm, auto: null, active: true, preset: false, focus: false };
+  return [...habits, withTimesPerWeek(habit, timesPerWeek)];
+}
+
+function withTimesPerWeek(habit: Habit, times: number): Habit {
+  const { timesPerWeek: _, ...rest } = habit;
+  return habit.rhythm === 'weekly' && !habit.auto && isTimesPerWeek(times) ? { ...rest, timesPerWeek: times } : rest;
+}
+
+/** How many days a week a weekly habit is meant for; 1 sets it back to once a week. */
+export function setHabitTimes(habits: readonly Habit[], id: string, times: number): Habit[] {
+  return habits.map((h) => (h.id === id ? withTimesPerWeek(h, times) : h));
 }
 
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {

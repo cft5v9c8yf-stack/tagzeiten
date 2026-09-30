@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -118,6 +118,26 @@ describe('Today', () => {
     const pill = row.querySelector('button')!;
     expect(pill.textContent).toBe('✓ diese Woche');
     expect(pill.disabled).toBe(true); // recorded on Monday, toggled there
+  });
+
+  it('shows a weekly habit meant for three days as days, with how often it is entered', async () => {
+    await renderToday('2026-09-24', (s) => {
+      s.updateProfile((p) => ({
+        ...p,
+        habits: [...p.habits, { id: 'own-sport', name: 'Sport', rhythm: 'weekly', auto: null, active: true, preset: false, focus: false, timesPerWeek: 3 }],
+      }));
+      s.updateDay('2026-09-21', (d) => ({ ...d, habits: { ...d.habits, 'own-sport': true } }));
+    });
+    const row = screen.getByText('Sport').closest('tr')!;
+    expect(row.closest('tbody')!.classList.contains('habit-group-weekly')).toBe(true);
+    expect(row.textContent).toMatch(/3-mal die Woche · 1\seingetragen/);
+    const cells = row.querySelectorAll('button.cell');
+    expect(cells).toHaveLength(7);
+    expect(cells[0]!.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(cells[2]!);
+    expect(await screen.findByText(/2 eingetragen/)).toBeTruthy();
+    // Documented, not rated: nothing says what is missing.
+    expect(row.textContent).not.toMatch(/fehlt|noch|offen/);
   });
 
   it('puts the starred habits on top under "Im Blick", then the rest by rhythm in the user\'s order', async () => {

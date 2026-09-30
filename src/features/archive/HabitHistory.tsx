@@ -1,7 +1,7 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
-import { habitsOfRhythm, RHYTHM_ORDER } from '../../domain/habits';
+import { habitsOfRhythm, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { Section } from '../../ui/Section';
 
@@ -113,14 +113,15 @@ export function HabitHistory() {
         RHYTHM_ORDER.map((r) => {
           const list = habitsOfRhythm(active, r);
           if (!list.length) return null;
-          const Row = ROW[r];
           return (
             <div key={r} className="hh-group">
               <h4 className="hh-group-title">{GROUP_TITLE[r]}</h4>
               <ul className="hh-list">
-                {list.map((h) => (
-                  <Row key={h.id} habit={h} today={today} />
-                ))}
+                {list.map((h) => {
+                  // Weekly habits meant for several days are kept day by day, like the daily ones.
+                  const Row = isPerDay(h) ? DailyRow : ROW[r];
+                  return <Row key={h.id} habit={h} today={today} />;
+                })}
               </ul>
             </div>
           );

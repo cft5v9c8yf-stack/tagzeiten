@@ -2241,6 +2241,16 @@ mark.placeholder {
 .habit-card .add-habit {
   padding-bottom: 12px;
 }
+/* How often a weekly habit is meant: a small select beside the kind label. */
+.habit-meta select.habit-times {
+  width: auto;
+  min-height: 0;
+  padding: 1px 22px 1px 8px;
+  border-radius: 999px;
+  font: 0.72rem/1.5 var(--sans);
+  background-position: right 6px center;
+  background-size: 10px;
+}
 .habit-kind {
   display: inline-block;
   padding: 1px 8px;

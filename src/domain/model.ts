@@ -135,6 +135,11 @@ export interface Habit {
   preset: boolean;
   /** Marked with a star by the user as a current focus. A bookmark, not an award. */
   focus: boolean;
+  /**
+   * Weekly habits only: how many days a week it is meant for (2–6), recorded day by
+   * day. Absent means once a week. A plan, not a quota: a week with fewer is not a failure (rule 3).
+   */
+  timesPerWeek?: number;
 }
 
 export type Theme = 'system' | 'light' | 'dark';

@@ -9,7 +9,10 @@ import {
   moveHabitTo,
   setHabitFocus,
   canToggle,
+  daysDoneInWeek,
   doneDateInPeriod,
+  isPerDay,
+  setHabitTimes,
   habitsFromPresets,
   isDoneInPeriod,
   isDoneOn,
@@ -74,6 +77,31 @@ describe('weekly and monthly habits', () => {
     expect(canToggle(worship, '2026-09-20', '2026-09-25', lookup)).toBe(true);
     expect(canToggle(worship, '2026-09-18', '2026-09-25', lookup)).toBe(false);
     expect(canToggle(worship, '2026-09-25', '2026-09-25', store([]))).toBe(true);
+  });
+});
+
+describe('weekly habits meant for several days', () => {
+  const sport = addHabit([], 'Sport', 'weekly', 'own-sport', 3)[0]!;
+
+  it('keeps how often, and only for weekly habits', () => {
+    expect(sport.timesPerWeek).toBe(3);
+    expect(isPerDay(sport)).toBe(true);
+    expect(isPerDay(byId('worship'))).toBe(false);
+    // Once a week is the default and needs no number.
+    expect(setHabitTimes([sport], 'own-sport', 1)[0]!.timesPerWeek).toBeUndefined();
+    expect(addHabit([], 'Lesen', 'daily', 'own-read', 3)[0]!.timesPerWeek).toBeUndefined();
+  });
+
+  it('is recorded day by day and counted for the week, with nothing marked missing', () => {
+    const lookup = store([
+      { ...emptyDay('2026-09-21'), habits: { 'own-sport': true } },
+      { ...emptyDay('2026-09-23'), habits: { 'own-sport': true } },
+    ]);
+    expect(daysDoneInWeek(sport, '2026-09-25', lookup)).toBe(2);
+    // Any day of the week can be entered, also beside a day already entered.
+    expect(canToggle(sport, '2026-09-24', '2026-09-25', lookup)).toBe(true);
+    expect(canToggle(sport, '2026-09-26', '2026-09-25', lookup)).toBe(false);
+    expect(daysDoneInWeek(sport, '2026-09-28', lookup)).toBe(0);
   });
 });
 

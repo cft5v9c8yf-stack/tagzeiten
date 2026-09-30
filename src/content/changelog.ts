@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.7.0',
+    date: '2026-09-30',
+    title: 'Wie oft in der Woche',
+    changes: [
+      { area: 'Gewohnheiten', text: 'Bei wöchentlichen Gewohnheiten legst du fest, wie oft in der Woche – etwa Sport dreimal. Beim Anlegen und danach in der Liste, von „einmal“ bis „6-mal die Woche“.' },
+      { area: 'Heute', text: 'Eine solche Gewohnheit trägst du Tag für Tag ein, wie die täglichen. Darunter steht, wie oft sie diese Woche eingetragen ist. Eine Woche mit weniger ist kein Versäumnis und wird nicht markiert.' },
+      { area: 'Rückblick', text: 'In der Übersicht der Gewohnheiten erscheint sie als Verlauf über die Wochen, wie die täglichen.' },
+    ],
+  },
+  {
     version: '0.6.7',
     date: '2026-09-30',
     title: 'Infotexte am rechten Ort',

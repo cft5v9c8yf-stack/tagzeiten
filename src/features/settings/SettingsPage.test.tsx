@@ -278,6 +278,21 @@ describe('Mehr: Daten', () => {
 });
 
 describe('Mehr: Gewohnheiten', () => {
+  it('sets how often in the week a weekly habit is meant, when adding and afterwards', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Sport' } });
+    expect(screen.queryByLabelText('Wie oft in der Woche')).toBeNull();
+    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
+    fireEvent.change(screen.getByLabelText('Wie oft in der Woche'), { target: { value: '3' } });
+    fireEvent.click(screen.getByText('Gewohnheit anlegen'));
+    const sport = () => store.getProfile().habits.find((h) => h.name === 'Sport')!;
+    expect(sport()).toMatchObject({ rhythm: 'weekly', timesPerWeek: 3 });
+    const select = await screen.findByLabelText('Wie oft in der Woche: Sport');
+    expect((select as HTMLSelectElement).value).toBe('3');
+    fireEvent.change(select, { target: { value: '1' } });
+    await waitFor(() => expect(sport().timesPerWeek).toBeUndefined());
+  });
+
   it('adds, switches and deletes an own habit', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
@@ -613,7 +628,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.6\.7/);
+    expect(versions[0]).toMatch(/^Version 0\.7\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
   });

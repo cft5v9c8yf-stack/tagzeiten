@@ -1,6 +1,6 @@
 import { DEFAULT_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
-import { habitsFromPresets, mergePresets } from './habits';
+import { habitsFromPresets, isTimesPerWeek, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
 import { normalizeArena } from './arena';
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
@@ -112,6 +112,7 @@ function cleanHabit(h: Habit): Habit {
     active: h.active !== false,
     preset: h.preset === true,
     focus: h.focus === true,
+    ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) ? { timesPerWeek: h.timesPerWeek } : {}),
   };
 }
 
