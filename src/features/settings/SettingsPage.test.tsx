@@ -238,11 +238,19 @@ describe('Mehr: Daten', () => {
     fireEvent.click(screen.getByText('Abbrechen'));
     expect(await db.days.count()).toBe(2);
 
+    // Device conveniences go too, also those not listed anywhere (rule 11).
+    localStorage.setItem('tz:pen-seen', '1');
+    localStorage.setItem('tz:arena-writing', 'ink');
+    sessionStorage.setItem('tz:timer', '{}');
+    localStorage.setItem('other-app', 'stays');
     fireEvent.click(screen.getByText('Alle Einträge löschen …'));
     fireEvent.click(screen.getByText('Endgültig löschen'));
     await screen.findByText('Start');
     expect(await db.days.count()).toBe(0);
     expect(await db.profile.count()).toBe(0);
+    expect(Object.keys(localStorage).filter((k) => k.startsWith('tz:'))).toEqual([]);
+    expect(sessionStorage.getItem('tz:timer')).toBeNull();
+    expect(localStorage.getItem('other-app')).toBe('stays');
   });
 
   it('shows what an import will replace before replacing it', async () => {
@@ -628,7 +636,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.7\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.7\.1/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
   });

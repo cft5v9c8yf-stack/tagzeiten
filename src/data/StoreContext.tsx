@@ -45,12 +45,18 @@ export function StoreProvider({ children, store: injected }: { children: ReactNo
 
   useEffect(() => {
     const flush = () => void store.suspend();
-    const onVisibility = () => document.visibilityState === 'hidden' && flush();
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') flush();
+      else store.checkDayChange();
+    };
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('pagehide', flush);
+    // Also when the app stays in front over midnight.
+    const tick = setInterval(() => store.checkDayChange(), 60_000);
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('pagehide', flush);
+      clearInterval(tick);
     };
   }, [store]);
 

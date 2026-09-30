@@ -11,19 +11,17 @@ export function downloadText(filename: string, text: string, mime: string): void
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-/** Per-device conveniences that are not part of the user's entries. */
+/**
+ * Per-device conveniences that are not part of the user's entries: everything
+ * the app keeps under "tz:" in local and session storage (rule 11: deleting
+ * means all of it, also what a later version adds).
+ */
 export function clearDevicePreferences(): void {
-  for (const [store, key] of [
-    [localStorage, 'tz:family'],
-    [localStorage, 'tz:catOverview'],
-    [localStorage, 'tz:collapsed'],
-    [localStorage, 'tz:theme'],
-    [localStorage, 'tz:journal'],
-    [sessionStorage, 'tz:timer'],
-    [sessionStorage, 'tz:timer:reading'],
-  ] as const) {
+  for (const get of [() => localStorage, () => sessionStorage]) {
     try {
-      store.removeItem(key);
+      const store = get();
+      const keys = Array.from({ length: store.length }, (_, i) => store.key(i)).filter((k): k is string => !!k?.startsWith('tz:'));
+      for (const k of keys) store.removeItem(k);
     } catch {
       // storage unavailable: nothing to clear
     }

@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.7.1',
+    date: '2026-09-30',
+    title: 'Durchgesehen',
+    changes: [
+      { area: 'Neuer Tag', text: 'Bleibt die App über Nacht offen, zeigt sie beim Wiederöffnen den neuen Tag. Vorher stand unter „Heute“ noch der Vortag, und ein Tipp wurde dort eingetragen.' },
+      { area: 'Alles löschen', text: 'Löscht jetzt auch die letzten Geräte-Einstellungen, etwa ob du zuletzt mit dem Stift geschrieben hast.' },
+      { area: 'Bibeltexte', text: 'Jeder Bibelvers der App wird bei jeder neuen Version automatisch Wort für Wort mit der Lutherbibel 1912 abgeglichen.' },
+    ],
+  },
+  {
     version: '0.7.0',
     date: '2026-09-30',
     title: 'Wie oft in der Woche',

@@ -242,3 +242,21 @@ describe('Store', () => {
     expect(store.allDays()).toEqual([]);
   });
 });
+
+describe('a new day while the app stays open', () => {
+  it('redraws once when the date has changed, so Heute is today and not yesterday', async () => {
+    let now = new Date(2026, 8, 25, 22, 0);
+    const db = new TagzeitenDB(`test-${++n}`);
+    dbs.push(db);
+    const store = new Store({ db, journal: memoryJournal(), now: () => now });
+    await store.load();
+    let emitted = 0;
+    store.subscribe(() => emitted++);
+    expect(store.checkDayChange()).toBe(false);
+    now = new Date(2026, 8, 26, 4, 10);
+    expect(store.checkDayChange()).toBe(true);
+    expect(store.today()).toBe('2026-09-26');
+    expect(store.checkDayChange()).toBe(false);
+    expect(emitted).toBe(1);
+  });
+});

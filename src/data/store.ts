@@ -56,6 +56,8 @@ export class Store {
   private readonly journal: Journal;
   /** Documents changed in memory whose latest value is not yet in IndexedDB. */
   private dirty = new Map<string, Day | Profile>();
+  /** The day the views were last drawn for; see checkDayChange. */
+  private shownDay: DateKey;
 
   constructor(opts: StoreOptions = {}) {
     this.db = opts.db ?? new TagzeitenDB();
@@ -63,6 +65,7 @@ export class Store {
     this.seed = opts.seedProfile ?? {};
     this.journal = opts.journal ?? localJournal;
     this.profile = defaultProfile(this.today());
+    this.shownDay = this.today();
     this.queue = new WriteQueue<Day | Profile>(
       (key, value) => this.persist(key, value),
       opts.debounceMs ?? 500,
@@ -155,6 +158,19 @@ export class Store {
 
   today(): DateKey {
     return currentTodayKey(this.now());
+  }
+
+  /**
+   * Redraws the views when a new day has begun while the app stayed open (e.g.
+   * left open in the evening, brought back in the morning). Otherwise "Heute"
+   * would still show yesterday, and a tap would be entered for yesterday.
+   */
+  checkDayChange(): boolean {
+    const today = this.today();
+    if (today === this.shownDay) return false;
+    this.shownDay = today;
+    this.emit();
+    return true;
   }
 
   getProfile(): Profile {

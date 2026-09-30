@@ -4,6 +4,8 @@
  *
  *   npm pack xmlbible-lut1912 && tar xzf xmlbible-lut1912-*.tgz
  *   LUT1912_DIR=package/text npx vitest run src/content/weeklyVerses.source.test.ts
+ *
+ * The build on GitHub (.github/workflows/pages.yml) downloads the source and runs it every time.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -17,6 +19,8 @@ import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
 
 const dir = process.env.LUT1912_DIR;
 const available = !!dir && existsSync(dir);
+// On the build server the source must be there: a missing download must not pass as "skipped".
+if (process.env.CI && !available) throw new Error(`Luther 1912 source not found (LUT1912_DIR=${dir ?? ''})`);
 
 function loadBible(path: string): Record<string, Record<string, Record<string, string>>> {
   const books: Record<string, Record<string, Record<string, string>>> = {};
