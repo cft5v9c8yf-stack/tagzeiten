@@ -7,12 +7,17 @@ import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { SectionVerse } from '../../ui/SectionVerse';
+import { activeRun } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
+import { Streithalle } from './Streithalle';
 
 type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
 const FORGE_PARAM = 'bereich';
 const FORGE_SLUG = 'eisenschmiede';
+/** The Winter Arc's place in the Arena, there only while it is switched on. */
+const HALL_SLUG = 'streithalle';
+type Place = Kind | 'hall';
 
 /** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
 const PLACES = {
@@ -122,7 +127,8 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   );
 }
 
-const arenaPath = (k: Kind) => (k === 'forge' ? `/arena?${FORGE_PARAM}=${FORGE_SLUG}` : '/arena');
+const arenaPath = (k: Place) =>
+  k === 'forge' ? `/arena?${FORGE_PARAM}=${FORGE_SLUG}` : k === 'hall' ? `/arena?${FORGE_PARAM}=${HALL_SLUG}` : '/arena';
 
 /** Archived entries stand in the Rückblick under "Mehr". */
 export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
@@ -482,22 +488,33 @@ export function ArenaPage() {
     );
   }
 
-  const kind: Kind = params.get(FORGE_PARAM) === FORGE_SLUG ? 'forge' : 'journal';
+  const hall = !!activeRun(profile.winterArc);
+  const param = params.get(FORGE_PARAM);
+  const shownPlace: Place = param === FORGE_SLUG ? 'forge' : param === HALL_SLUG && hall ? 'hall' : 'journal';
+  const kind: Kind = shownPlace === 'forge' ? 'forge' : 'journal';
   const place = PLACES[kind];
   const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === kind);
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
     <div className="arena">
       <h2>Arena</h2>
-      <Segmented<Kind>
+      <Segmented<Place>
         label="Bereich der Arena"
-        value={kind}
+        value={shownPlace}
         onChange={(k) => navigate(arenaPath(k), { replace: true })}
         options={[
           { value: 'journal', label: PLACES.journal.title },
           { value: 'forge', label: PLACES.forge.title },
+          ...(hall ? [{ value: 'hall' as const, label: 'Streithalle' }] : []),
         ]}
       />
+      {shownPlace === 'hall' ? <Streithalle /> : placeBody()}
+    </div>
+  );
+
+  function placeBody() {
+    return (
+      <>
       <SectionVerse id={place.verse} />
       <p className="arena-note">{place.note}</p>
       <button
@@ -535,6 +552,7 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
-    </div>
-  );
+      </>
+    );
+  }
 }

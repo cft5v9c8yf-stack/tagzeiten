@@ -2468,3 +2468,95 @@ header.top .search-link:focus-visible {
 .overview-row.pending .overview-link {
   color: var(--muted);
 }
+
+/* ------------------------------------------------------------ Streithalle (Winter Arc) */
+/* Open things are a plain outline, never red (rules 4 and 5). */
+.wa-title {
+  margin: 8px 0 4px;
+}
+.wa-heading {
+  margin: 20px 0 8px;
+}
+.wa-verse blockquote {
+  font-style: italic;
+}
+.wa-guide-part p,
+.wa-guide-part li {
+  line-height: 1.5;
+}
+.wa-list {
+  padding-left: 1.2em;
+}
+.wa-list li {
+  margin: 6px 0;
+}
+.wa-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 12px;
+  font-size: 0.92rem;
+}
+.wa-table th,
+.wa-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 6px 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.wa-table th {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wa-nowrap {
+  white-space: nowrap;
+}
+.wa-block h5 {
+  margin: 16px 0 4px;
+}
+.wa-rows {
+  margin: 8px 0;
+}
+.wa-rows > div {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.wa-rows dt {
+  font-weight: 600;
+}
+.wa-rows dd {
+  margin: 2px 0 0;
+}
+.wa-when {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.wa-weeks {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.wa-week {
+  padding: 8px 10px;
+  margin: 6px 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+}
+.wa-week p {
+  margin: 2px 0;
+}
+.wa-week.is-current {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.wa-week-no,
+.wa-week-now {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wa-week-verse {
+  font-style: italic;
+}

@@ -175,7 +175,10 @@ export function isInRun(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, d
 }
 
 /** Before the start, during the round, or after its last day. */
-export function stageOf(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, today: DateKey): 'before' | 'during' | 'after' {
+export function stageOf(
+  run: Pick<WinterArcRun, 'startDate' | 'durationDays'>,
+  today: DateKey,
+): 'before' | 'during' | 'after' {
   const n = dayNumber(run.startDate, today);
   if (n < 1) return 'before';
   return n > run.durationDays ? 'after' : 'during';
@@ -262,7 +265,10 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
     .filter((d): d is WinterArcDay => isObj(d) && known.has(d.runId as string) && isDateKey(d.date as string))
     .map((d) => ({ runId: d.runId, date: d.date, checks: flags(d.checks, DAILY_ITEMS), updatedAt: num(d.updatedAt) }));
   const weeks = (Array.isArray(raw.weeks) ? raw.weeks : [])
-    .filter((w): w is WinterArcWeek => isObj(w) && known.has(w.runId as string) && Number.isInteger(w.week) && (w.week as number) >= 1)
+    .filter(
+      (w): w is WinterArcWeek =>
+        isObj(w) && known.has(w.runId as string) && Number.isInteger(w.week) && (w.week as number) >= 1,
+    )
     .map((w) => ({
       runId: w.runId,
       week: w.week,
@@ -273,7 +279,10 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
       updatedAt: num(w.updatedAt),
     }));
   const months = (Array.isArray(raw.months) ? raw.months : [])
-    .filter((m): m is WinterArcMonth => isObj(m) && known.has(m.runId as string) && /^\d{4}-(0[1-9]|1[0-2])$/.test(str(m.month)))
+    .filter(
+      (m): m is WinterArcMonth =>
+        isObj(m) && known.has(m.runId as string) && /^\d{4}-(0[1-9]|1[0-2])$/.test(str(m.month)),
+    )
     .map((m) => ({ runId: m.runId, month: m.month, served: m.served === true, updatedAt: num(m.updatedAt) }));
   return { runs, days, weeks, months };
 }

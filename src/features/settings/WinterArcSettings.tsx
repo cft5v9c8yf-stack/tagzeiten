@@ -1,7 +1,15 @@
 import { useId, useState } from 'react';
 import { WINTER_ARC_ITEMS, WINTER_ARC_TIME_LABELS } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
-import { fromKey, isDateKey, MONTH_LONG, WEEKDAY_LONG, WEEKDAY_SHORT, type DateKey, type Weekday } from '../../domain/dates';
+import {
+  fromKey,
+  isDateKey,
+  MONTH_LONG,
+  WEEKDAY_LONG,
+  WEEKDAY_SHORT,
+  type DateKey,
+  type Weekday,
+} from '../../domain/dates';
 import type { Profile } from '../../domain/model';
 import { WEEK } from '../../domain/schedule';
 import {
@@ -89,9 +97,7 @@ export function WinterArcStartPanel({
         </p>
       ) : (
         <p className="small muted" role="status">
-          {validStart
-            ? `Die Dauer liegt zwischen ${MIN_DURATION} und ${MAX_DURATION} Tagen.`
-            : 'Wähle ein Startdatum.'}
+          {validStart ? `Die Dauer liegt zwischen ${MIN_DURATION} und ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
       <div className="button-row">

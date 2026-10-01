@@ -15,6 +15,7 @@ import { ARMOR_CALL, ARMOR_EVENING, ARMOR_WEEK } from './armor';
 import * as L from './liturgy';
 import { EVENING_PSALMS, MORNING_PSALMS } from './psalms';
 import { SETTINGS_VERSES } from './settingsVerses';
+import { WINTER_ARC_VERSES } from './winterArc';
 import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
 
 const dir = process.env.LUT1912_DIR;
@@ -124,6 +125,8 @@ const SCRIPTURE: readonly (readonly [string, string])[] = [
   ['Eph 6,18', ARMOR_WEEK[6]!.word],
   ['Mk 1,35', MOTTO[0].text],
   ['Ps 119,105', MOTTO[1].text],
+  // The Winter Arc and the Streithalle.
+  ...WINTER_ARC_VERSES.map((v) => [v.source, v.text] as const),
 ];
 
 describe.skipIf(!available)('other Bible texts against Luther 1912', () => {
