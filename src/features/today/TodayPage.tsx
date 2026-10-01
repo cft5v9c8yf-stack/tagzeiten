@@ -72,8 +72,8 @@ function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: 
           })
         ) : (
           <p className="muted three-empty">
-            Werden in der Stille Zeit festgelegt, nach dem Wort.{' '}
-            <Link to={withDate('/andacht/morgen', date, isToday)}>Zur Stille Zeit</Link>
+            Sie werden in der Stillen Zeit festgelegt, nach dem Wort.{' '}
+            <Link to={withDate('/andacht/morgen', date, isToday)}>Zur Stillen Zeit</Link>
           </p>
         )}
       </div>
@@ -120,7 +120,7 @@ export function TodayPage() {
         <HabitsWeek date={date} />
         {hallMode && (
           <p className="small muted habits-mode-note">
-            Solange eine Runde der Streithalle läuft, stehen hier ihre Gewohnheiten.{' '}
+            Während der Runde stehen hier die Gewohnheiten der Streithalle.{' '}
             <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
           </p>
         )}

@@ -60,6 +60,14 @@ const lastView = (): View => {
   }
 };
 
+function Chevron({ dir }: { dir: 'left' | 'right' }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d={dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'} />
+    </svg>
+  );
+}
+
 /** A point to tick: the whole row is the target; open is a plain ring, done a filled one. Never red (rule 5). */
 function Tick({
   checked,
@@ -128,7 +136,7 @@ function JournalEntry({ date }: { date: DateKey }) {
       <DayField date={date} path="evening.thanks.1" />
       <DayField date={date} path="evening.thanks.2" />
       <p className="small muted">
-        Der Satz steht auch in der Andacht und in der Versesammlung, der Dank im Nachtgebet.
+        Der Satz erscheint auch in der Andacht und in der Versesammlung, der Dank im Nachtgebet.
       </p>
       <button type="button" className="btn quiet" onClick={() => navigate(`/arena/${store.addArenaEntry()}`)}>
         Lieber in der Gebetskammer schreiben
@@ -162,7 +170,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           disabled={date <= run.startDate}
           onClick={() => setShown(addDays(date, -1))}
         >
-          ‹
+          <Chevron dir="left" />
         </button>
         <h4 id="wa-day-title">
           {date === today ? 'Heute' : formatLong(date)}
@@ -175,10 +183,10 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           disabled={date >= end}
           onClick={() => setShown(addDays(date, 1))}
         >
-          ›
+          <Chevron dir="right" />
         </button>
       </div>
-      {future && <p className="small muted wa-back">Dieser Tag kommt noch. Abhaken kannst du an ihm selbst.</p>}
+      {future && <p className="small muted wa-back">Dieser Tag liegt noch vor dir. Abhaken kannst du erst an ihm.</p>}
       {date !== today && (
         <p className="wa-back">
           <button type="button" className="link-btn" onClick={() => setShown(today)}>
@@ -203,30 +211,30 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
             }
             return (
               <div key={it.id} className="wa-row">
-                <Tick
-                  checked={!!checks[it.id]}
-                  disabled={future}
-                  onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
-                >
-                  {text}
-                </Tick>
-                {/* A hint only: the tick is always set by hand. */}
-                {it.id === 'word' && day.morning.done && !checks.word && (
-                  <p className="small muted wa-hint">Morgengebet heute gebetet – abhaken?</p>
-                )}
-                {it.id === 'journal' && !future && (
-                  <>
+                <div className="wa-row-line">
+                  <Tick
+                    checked={!!checks[it.id]}
+                    disabled={future}
+                    onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
+                  >
+                    {text}
+                  </Tick>
+                  {it.id === 'journal' && !future && (
                     <button
                       type="button"
-                      className="link-btn wa-hint"
+                      className="wa-row-action"
                       aria-expanded={writing}
                       onClick={() => setWriting(!writing)}
                     >
-                      {writing ? 'Eintrag schließen' : 'Eintragen'}
+                      {writing ? 'Schließen' : 'Aufschreiben'}
                     </button>
-                    {writing && <JournalEntry date={date} />}
-                  </>
+                  )}
+                </div>
+                {/* A hint only: the tick is always set by hand. */}
+                {it.id === 'word' && day.morning.done && !checks.word && (
+                  <p className="wa-hint">Das Morgengebet hast du heute schon gebetet – abhaken?</p>
                 )}
+                {it.id === 'journal' && writing && !future && <JournalEntry date={date} />}
               </div>
             );
           })}
@@ -279,7 +287,12 @@ function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today
               <tr key={it.id}>
                 <th scope="row">{text}</th>
                 {dates.map((d) => {
-                  if (!isInRun(run, d)) return <td key={d} className="is-outside" aria-label="außerhalb der Runde" />;
+                  if (!isInRun(run, d))
+                    return (
+                      <td key={d} className="is-outside" aria-label="außerhalb der Runde">
+                        <span className="wa-void" aria-hidden="true" />
+                      </td>
+                    );
                   if (!appliesOn(settings, it.id, d))
                     return (
                       <td key={d} className="wa-off">
@@ -385,7 +398,7 @@ function WeekView({ run, today, current }: { run: WinterArcRun; today: DateKey; 
             disabled={week <= 1}
             onClick={() => setShown(week - 1)}
           >
-            ‹
+            <Chevron dir="left" />
           </button>
           <h4 id="wa-week-title">
             {week === current ? 'Diese Woche' : `Woche ${week}`}
@@ -400,7 +413,7 @@ function WeekView({ run, today, current }: { run: WinterArcRun; today: DateKey; 
             disabled={week >= current}
             onClick={() => setShown(week + 1)}
           >
-            ›
+            <Chevron dir="right" />
           </button>
         </div>
         <div className="wa-grid-wrap">

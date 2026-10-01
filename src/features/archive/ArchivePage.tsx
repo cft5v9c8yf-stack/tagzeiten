@@ -278,7 +278,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           />
         ) : (
           <p className="empty">
-            {query.trim() ? 'Nichts gefunden.' : 'Noch keine Einträge. Der erste entsteht mit der ersten Stille Zeit.'}
+            {query.trim() ? 'Nichts gefunden.' : 'Noch keine Einträge. Der erste entsteht mit deiner ersten Stillen Zeit.'}
           </p>
         ))}
 
@@ -316,7 +316,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           <p className="empty">
             {query.trim()
               ? 'Nichts gefunden.'
-              : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
+              : 'Noch nichts archiviert. Einen Eintrag der Arena archivierst du im Eintrag selbst.'}
           </p>
         ))}
 

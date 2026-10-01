@@ -3,9 +3,10 @@
 <!-- Transcribed word for word from „Winter Arc – Der 90-Tage-Standard.pdf“ (main).
      Left out on request: the sentence on the source plan and the author's day,
      the document header (date, author) and the page numbers.
-     Changed on request: Phil 2,4 reads „sondern auch auf das“ as in Luther 1912. -->
+     Changed on request: Phil 2,4 reads „sondern auch auf das“ as in Luther 1912;
+     the house stands before the work (CLAUDE.md, rule 18) in the opening line and in „Worum es geht“. -->
 
-Gott zuerst, dann die Arbeit, dann das Haus: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.
+Gott zuerst, dann das Haus, dann die Arbeit: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.
 
 ## Worum es geht
 
@@ -13,7 +14,7 @@ Dieser Plan bringt keine neuen Erkenntnisse. Er ist ein Maßstab: eine kurze Lis
 
 Die meisten Männer scheitern nicht, weil sie es nicht besser wüssten. Sie scheitern, weil in ihrem Tag nichts feststeht. Das Handy bestimmt den Morgen, die Arbeit den Abend, und Gott und die Familie bekommen den Rest.
 
-Der Winter Arc dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Die Arbeit bekommt ihre Stunden, aber nur diese. Das Haus bekommt den Rest von dir, wach und gegenwärtig.
+Der Winter Arc dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Das Haus bekommt den Rest von dir, wach und gegenwärtig. Die Arbeit bekommt ihre Stunden, aber nur diese.
 
 | Wochen | Phase | Leitfrage |
 | --- | --- | --- |

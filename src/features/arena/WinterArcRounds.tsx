@@ -16,7 +16,7 @@ export function RoundReviews({ run }: { run: WinterArcRun }) {
   const weeks = Array.from({ length: W }, (_, i) => i + 1)
     .map((w) => ({ w, week: weekOf(profile.winterArc, run.id, w) }))
     .filter(({ week }) => hasReview(week));
-  if (!weeks.length) return <p className="small muted">In dieser Runde ist kein Wochenrückblick geschrieben.</p>;
+  if (!weeks.length) return <p className="small muted">In dieser Runde hast du keinen Wochenrückblick geschrieben.</p>;
   return (
     <div className="wa-reviews">
       {weeks.map(({ w, week }) => (

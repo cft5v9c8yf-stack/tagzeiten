@@ -273,6 +273,16 @@ describe('Mehr: Aufbau', () => {
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ name: 'Fastenzeit 2027', startDate: '2027-02-17', durationDays: 46 });
   });
 
+  it('leads from the habits in the Rückblick to the dashboard of the Streithalle', async () => {
+    await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
+      s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
+      s.startWinterArc('2026-09-21', 90, 'Winter Arc');
+    }, ['review.habits']);
+    await screen.findAllByText(/mit Einträgen/);
+    const link = await screen.findByRole('link', { name: /Winter Arc\s*·\s*Tag 5 von 90/ });
+    expect(link.getAttribute('href')).toBe('/arena?bereich=streithalle');
+  });
+
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
     const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
@@ -825,10 +835,10 @@ describe('Rückblick', () => {
     await waitFor(() => expect(store.getProfile().prayer.concerns).toEqual(['Verfolgte Kirche']));
 
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen am Montag hinzufügen' }));
-    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu'), { target: { value: 'Verfolgte Kirche' } });
+    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu anlegen'), { target: { value: 'Verfolgte Kirche' } });
     fireEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen am Montag hinzufügen' }));
-    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu'), { target: { value: 'Missionare' } });
+    fireEvent.change(screen.getByLabelText('Anliegen wählen oder neu anlegen'), { target: { value: 'Missionare' } });
     fireEvent.click(screen.getByRole('button', { name: 'Hinzufügen' }));
     await waitFor(() => expect(store.getProfile().prayer.weekly[1]).toEqual(['Verfolgte Kirche', 'Missionare']));
     expect(store.getProfile().prayer.concerns).toEqual(['Verfolgte Kirche', 'Missionare']);
@@ -843,16 +853,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.28\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.29\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.28\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.29\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.28\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.29\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

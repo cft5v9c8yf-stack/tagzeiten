@@ -123,7 +123,7 @@ describe('Streithalle', () => {
     });
     const run = store.getProfile().winterArc.runs[0]!;
     const today = within(document.querySelector('.wa-day') as HTMLElement);
-    expect(today.getByText('Morgengebet heute gebetet – abhaken?')).toBeTruthy();
+    expect(today.getByText('Das Morgengebet hast du heute schon gebetet – abhaken?')).toBeTruthy();
     const word = today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' });
     expect(word.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(word);
@@ -132,7 +132,7 @@ describe('Streithalle', () => {
       date: '2026-09-26',
       checks: { word: true },
     });
-    expect(today.queryByText('Morgengebet heute gebetet – abhaken?')).toBeNull();
+    expect(today.queryByText('Das Morgengebet hast du heute schon gebetet – abhaken?')).toBeNull();
     fireEvent.click(today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' }));
     expect(store.getProfile().winterArc.days[0]!.checks).toEqual({});
     // 26 September 2026 is a Saturday: rest from training, no work blocks.
@@ -238,7 +238,7 @@ describe('Streithalle', () => {
     // Later days of the round can be seen, but are ticked only when they come.
     fireEvent.click(screen.getByRole('button', { name: 'Folgetag' }));
     expect(screen.getByRole('heading', { name: /^Sonntag, 27\. September/ })).toBeTruthy();
-    expect(screen.getByText('Dieser Tag kommt noch. Abhaken kannst du an ihm selbst.')).toBeTruthy();
+    expect(screen.getByText('Dieser Tag liegt noch vor dir. Abhaken kannst du erst an ihm.')).toBeTruthy();
     expect((screen.getByRole('checkbox', { name: '04:00 auf, kein Handy' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
     fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
@@ -254,7 +254,7 @@ describe('Streithalle', () => {
 
   it('lets the journal be written right there, or in the Gebetskammer', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
-    fireEvent.click(screen.getByRole('button', { name: 'Eintragen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
     fireEvent.change(screen.getByLabelText('Der Satz, der mich trifft'), { target: { value: 'Seid stark' } });
     fireEvent.change(screen.getByLabelText('Ich danke dir, mein Gott, für …'), { target: { value: 'den Morgen' } });
     expect(store.getDay('2026-09-26').morning.verse).toBe('Seid stark');

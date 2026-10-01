@@ -1,3 +1,6 @@
+import { Link } from 'react-router';
+import { activeRun, runName } from '../../domain/winterArc';
+import { winterArcLine } from '../settings/WinterArcSettings';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
@@ -102,6 +105,8 @@ export function HabitHistory() {
   const profile = useProfile();
   const today = store.today();
   const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
+  // The habits of the Streithalle are kept in its own dashboard; a link leads there.
+  const run = activeRun(profile.winterArc);
   return (
     <Section id="review.habits" title="Gewohnheiten" level={3}>
       <p className="small muted hh-note">
@@ -126,6 +131,22 @@ export function HabitHistory() {
             </div>
           );
         })
+      )}
+      {run && (
+        <div className="hh-group">
+          <h4 className="hh-group-title">Streithalle</h4>
+          <ul className="hh-list">
+            <li>
+              <Link className="hh-hall-link" to="/arena?bereich=streithalle">
+                <span>
+                  <strong>{runName(run)}</strong>
+                  <span className="small muted"> · {winterArcLine(profile, today)}</span>
+                </span>
+                <span aria-hidden="true">›</span>
+              </Link>
+            </li>
+          </ul>
+        </div>
       )}
     </Section>
   );

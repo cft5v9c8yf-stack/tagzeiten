@@ -174,7 +174,7 @@ const AREAS: readonly Area[] = [
             title: 'Flugmodus beim Beten',
             line: 'Stille ohne Störung',
             icon: 'moon',
-            info: <p>Wie das Telefon den Flugmodus einschaltet, solange Henoch offen ist, und danach wieder aus.</p>,
+            info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
             content: <AirplaneGuide level={4} />,
           },
           {

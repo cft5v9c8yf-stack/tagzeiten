@@ -128,7 +128,7 @@ export function WinterArcStartPanel({
         </p>
       ) : (
         <p className="small muted" role="status">
-          {validStart ? `Die Dauer liegt zwischen ${MIN_DURATION} und ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
+          {validStart ? `Wähle eine Dauer von ${MIN_DURATION} bis ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
       <div className="button-row">
@@ -210,9 +210,9 @@ export function WinterArcSettings() {
         ]}
       />
       <p className="small muted">
-        Eine Runde mit festem Tagesstandard, für jeden Zeitraum, den du wählst, nach dem Plan des Winter Arc. Die
-        Reihenfolge: Gott, Familie und Haus, Gemeinde, Arbeit, ich. Eingeschaltet steht die Streithalle in der Arena,
-        ihre Gewohnheiten unter „Heute“. Unabhängig von der Waffenrüstung.
+        In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard, nach dem Plan des
+        Winter Arc. Die Reihenfolge ist: Gott, Familie und Haus, Gemeinde, Arbeit, ich. Eingeschaltet findest du die
+        Streithalle in der Arena und ihre Gewohnheiten unter „Heute“. Die Waffenrüstung bleibt davon unberührt.
       </p>
       {run && !panel && (
         <p>
@@ -254,8 +254,8 @@ export function WinterArcSettings() {
       )}
       {run && (
         <>
-          <h5>Wochentage je Punkt</h5>
-          <p className="small muted">An Tagen, für die ein Punkt nicht gilt, steht im Tracker „–“.</p>
+          <h5>An welchen Tagen</h5>
+          <p className="small muted">Tippe die Tage an, an denen ein Punkt gilt. An den übrigen steht im Tracker ein Strich.</p>
           {WINTER_ARC_ITEMS.map((item) => (
             <fieldset key={item.id} className="schedule-group winter-arc-days">
               <legend>{item.text(settings.times)}</legend>
@@ -275,7 +275,7 @@ export function WinterArcSettings() {
             </fieldset>
           ))}
           <h5>Meine Zeiten</h5>
-          <p className="small muted">Die Uhrzeiten, wie sie im Tracker stehen. Die Anleitung bleibt, wie sie ist.</p>
+          <p className="small muted">Deine Uhrzeiten für die Liste. Der Text der Anleitung bleibt dabei unverändert.</p>
           <div className="times-grid">
             {(Object.keys(WINTER_ARC_TIME_LABELS) as (keyof WinterArcTimes)[]).map((k) => (
               <TimeField

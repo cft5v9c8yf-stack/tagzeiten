@@ -623,10 +623,22 @@ a.cy-week-name {
 .habit-group-focus .focus-star {
   display: none;
 }
-/* The Streithalle among the habits: days outside the round neutral grey; "–" or "Ruhe" where a point does not apply. */
-.habits td.wa-outside {
+/* The Streithalle among the habits: days outside the round keep their width and show a quiet dot; "–" or "Ruhe" where a point does not apply. */
+.cell-void {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+}
+.cell-void::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
   background: var(--rule);
-  opacity: 0.5;
+}
+.habits thead th.is-outside {
+  opacity: 0.4;
 }
 .habits td.wa-off {
   color: var(--muted);

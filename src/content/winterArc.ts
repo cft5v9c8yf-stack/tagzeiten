@@ -77,14 +77,14 @@ export const STREITHALLE_VERSE = verse(
 export const WINTER_ARC_TITLE = 'Winter Arc – Der 90-Tage-Standard';
 
 export const WINTER_ARC_LEAD =
-  'Gott zuerst, dann die Arbeit, dann das Haus: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.';
+  'Gott zuerst, dann das Haus, dann die Arbeit: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.';
 
 export const WINTER_ARC_ABOUT = {
   title: 'Worum es geht',
   paragraphs: [
     'Dieser Plan bringt keine neuen Erkenntnisse. Er ist ein Maßstab: eine kurze Liste dessen, was du jeden Tag tust, aufgeschrieben, abends abgehakt und 90 Tage lang gehalten.',
     'Die meisten Männer scheitern nicht, weil sie es nicht besser wüssten. Sie scheitern, weil in ihrem Tag nichts feststeht. Das Handy bestimmt den Morgen, die Arbeit den Abend, und Gott und die Familie bekommen den Rest.',
-    'Der Winter Arc dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Die Arbeit bekommt ihre Stunden, aber nur diese. Das Haus bekommt den Rest von dir, wach und gegenwärtig.',
+    'Der Winter Arc dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Das Haus bekommt den Rest von dir, wach und gegenwärtig. Die Arbeit bekommt ihre Stunden, aber nur diese.',
   ],
   phases: [
     { weeks: '1 bis 4', phase: 'Disziplin', question: 'Kann ich es halten?' },

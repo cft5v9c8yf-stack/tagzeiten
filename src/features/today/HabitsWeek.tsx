@@ -3,7 +3,7 @@ import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey 
 import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
-import { hallModeIn } from '../../domain/winterArc';
+import { activeRun, hallModeIn, isInRun } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
 import { StreithalleHabits } from './StreithalleHabits';
 
@@ -49,6 +49,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   // While a round of the Winter Arc runs in this week, "Heute" is in its mode: its habits
   // stand in place of the usual ones, which keep their ticks and come back afterwards.
   const hallMode = hallModeIn(profile.winterArc, date);
+  const run = activeRun(profile.winterArc);
   const active = hallMode ? [] : profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
@@ -115,7 +116,15 @@ export function HabitsWeek({ date }: { date: DateKey }) {
               <span className="visually-hidden">Gewohnheit</span>
             </th>
             {week.map((k) => (
-              <th key={k} scope="col" className={k === today ? 'is-today' : undefined}>
+              <th
+                key={k}
+                scope="col"
+                className={
+                  [k === today ? 'is-today' : '', hallMode && run && !isInRun(run, k) ? 'is-outside' : '']
+                    .join(' ')
+                    .trim() || undefined
+                }
+              >
                 {WEEKDAY_SHORT[weekdayOf(k)]}
               </th>
             ))}

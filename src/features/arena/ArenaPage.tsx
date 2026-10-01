@@ -107,7 +107,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
             placeholder={PLACES.journal.textHint}
             onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
           />
-          {hasInk && <p className="small muted">Dazu gibt es Handschrift.</p>}
+          {hasInk && <p className="small muted">Dazu gibt es auch Handgeschriebenes.</p>}
         </div>
       ) : (
         <>
@@ -120,7 +120,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
               })
             }
           />
-          {hasText && <p className="small muted">Dazu gibt es getippten Text.</p>}
+          {hasText && <p className="small muted">Dazu gibt es auch Getipptes.</p>}
         </>
       )}
     </fieldset>

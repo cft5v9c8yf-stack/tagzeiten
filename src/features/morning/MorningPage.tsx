@@ -44,7 +44,7 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
       {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} />}
 
       <OrderHead title="Stille Zeit" rubric={form === 'short' ? RUBRICS.morningShort : undefined}>
-        <Segmented label="Form der Stille Zeit" options={FORMS} value={form} onChange={setForm} />
+        <Segmented label="Form der Stillen Zeit" options={FORMS} value={form} onChange={setForm} />
       </OrderHead>
       {form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
       {/* The other form has other steps: it starts afresh. */}

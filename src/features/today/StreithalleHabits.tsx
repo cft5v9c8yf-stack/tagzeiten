@@ -23,7 +23,6 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
   const name = (text: string) => (
     <th scope="row">
       <span className="habit-name">{text}</span>
-      <span className="auto">Streithalle</span>
     </th>
   );
   return (
@@ -42,7 +41,13 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
             <tr key={it.id}>
               {name(text)}
               {week.map((k) => {
-                if (!isInRun(run, k)) return <td key={k} className="wa-outside" />;
+                // Before the start or after the end: a quiet dot in the width of a day, nothing to tick.
+                if (!isInRun(run, k))
+                  return (
+                    <td key={k} className="wa-outside" aria-label="außerhalb der Runde">
+                      <span className="cell-void" aria-hidden="true" />
+                    </td>
+                  );
                 if (!appliesOn(settings, it.id, k))
                   return (
                     <td key={k} className="wa-off">

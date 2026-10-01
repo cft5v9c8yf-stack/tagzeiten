@@ -341,9 +341,9 @@ function StreithalleGroup() {
       aside={`${count.filter((id) => isOn(settings, id)).length} von ${count.length} eingeschaltet`}
     >
       <p className="small muted">
-        Solange eine Runde der Streithalle läuft, stehen diese Gewohnheiten unter „Heute“ an Stelle der übrigen und in der Streithalle. Ein Haken dort
-        gilt auch hier. Was du ausschaltest, verschwindet aus beiden; seine Haken bleiben. Wochentage und Zeiten stellst
-        du unter Darstellung bei der Streithalle ein.
+        Solange eine Runde läuft, stehen diese Gewohnheiten unter „Heute“ statt der übrigen und zugleich in der
+        Streithalle. Ein Haken gilt an beiden Stellen. Was du ausschaltest, verschwindet aus beiden; die Haken bleiben
+        erhalten. Wochentage und Uhrzeiten stellst du unter Darstellung bei der Streithalle ein.
       </p>
       <ul className="habit-list">
         {WINTER_ARC_ITEMS.map((it) => (

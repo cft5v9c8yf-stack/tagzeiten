@@ -99,7 +99,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
       {adding && (
         <ConcernInput
           autoFocus
-          label="Anliegen wählen oder neu"
+          label="Anliegen wählen oder neu anlegen"
           placeholder="Anliegen"
           button="Hinzufügen"
           suggestions={prayer.concerns.filter((c) => !on.includes(c))}
@@ -162,7 +162,7 @@ export function PrayerSettings() {
 export const PRAYER_INFO = (
   <>
     <p>
-      Erscheint in der Stille Zeit bei der Fürbitte. Schreibe deine Anliegen einmal auf und lege sie auf die Tage, an
+      Erscheint in der Stillen Zeit bei der Fürbitte. Schreibe deine Anliegen einmal auf und lege sie auf die Tage, an
       denen du für sie betest; ein Tag kann mehrere tragen.
     </p>
     <p>Zum Beispiel: verfolgte Kirche, Missionare, Obrigkeit, Nachbarn, Ungläubige im Bekanntenkreis, Kranke, Patenkinder.</p>

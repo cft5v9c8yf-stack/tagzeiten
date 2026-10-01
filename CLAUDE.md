@@ -8,6 +8,10 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 2. **Gottes Wort steht vorn, der Vorsatz hinten.** Die Reihenfolge in allen Abläufen ist: Wort → Gebet → Ausrichtung. Nie beginnt ein Ablauf mit Zielen, Plänen oder Selbstprüfung.
 3. **Rückschau ist nicht Beichte.** Die abendliche Rückschau auf die drei Vorsätze („Was ist geschehen?") und die Prüfung am Dekalog („Wo bin ich schuldig geblieben?") sind zwei getrennte Schritte in dieser Reihenfolge, nie vermischt. Ein nicht erreichtes Ziel ist keine Sünde und wird nie so behandelt.
 
+## Ordnung des Lebens
+
+18. **Die Reihenfolge gilt immer: Gott, Familie (Haus), Gemeinde, Arbeit, ich.** Wo die App Lebensbereiche nennt, ordnet oder gegeneinander abwägt, steht das Haus vor der Gemeinde und die Gemeinde vor der Arbeit. Das gilt auch für übernommene Pläne; Abweichungen werden angepasst und im Kopf der Quelldatei vermerkt.
+
 ## Keine Leistungsmechanik
 
 4. **Keine Serienzähler (Streaks), keine Ketten, keine Abzeichen, keine Punkte, keine Ranglisten.** Auch nicht „dezent". Fortschritt wird dokumentiert (Kapitel gelesen, Katechismusstücke auswendig, Stille Zeiten in 30 Tagen), aber nie als Leistung bewertet.

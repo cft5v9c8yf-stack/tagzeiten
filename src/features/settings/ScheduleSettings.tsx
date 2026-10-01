@@ -85,7 +85,7 @@ export function ScheduleSettings() {
       ) : (
         <>
           <p className="small muted">
-            Tippe einen Tag an, um ihn diesen Zeiten zuzuordnen; noch einmal getippt, nimmst du ihn wieder heraus.
+            Tippe einen Tag an, um ihn diesen Zeiten zuzuordnen. Tippst du noch einmal, nimmst du ihn wieder heraus.
           </p>
           {groups.map((g, i) => (
             <fieldset key={i} className="schedule-group">
@@ -244,7 +244,7 @@ export function DisplaySettings() {
               label="Geistliche Waffenrüstung"
               on={profile.armor}
               set={(on) => update((p) => ({ ...p, armor: on }))}
-              note="Epheser 6,10–18: in der Stillen Zeit vor der Ausrichtung ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und eine Frage in der Prüfung."
+              note="Epheser 6,10–18: In der Stillen Zeit steht vor der Ausrichtung ein Stück der Rüstung für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und eine Frage in der Prüfung."
             />
           ),
         },
