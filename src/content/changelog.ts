@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.20.0',
+    date: '2026-10-01',
+    title: 'Die Lehre neu geordnet',
+    changes: [
+      { area: 'Lehre', text: 'Die Seite heißt jetzt „Lehre“ und hat zwei Bereiche. Unter „Lernen“ stehen die Karte der Woche, schlanker als bisher, und die sechs Hauptstücke. Unter „Lesen“ steht das Konkordienbuch über die ganze Breite, darunter Kirchenjahr, Haustafel, Tischgebete und Privatbeichte.' },
+      { area: 'Lehre', text: 'Ein anderes Hauptstück für die Woche wählst du jetzt auf seiner eigenen Seite mit „Für diese Woche nehmen“.' },
+    ],
+  },
+  {
     version: '0.19.0',
     date: '2026-10-01',
     title: 'Das Konkordienbuch',

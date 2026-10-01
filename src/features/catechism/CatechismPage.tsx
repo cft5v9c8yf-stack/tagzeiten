@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
@@ -18,7 +18,7 @@ import { Section } from '../../ui/Section';
 import { setOpen } from '../../ui/collapseState';
 import { DieffenbachBook } from '../churchyear/DieffenbachBook';
 import { PieceText } from '../liturgy/CatechismOfDay';
-import { APPENDICES, CatechismOverview } from './CatechismOverview';
+import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
 import { HouseFatherMode } from './HouseFatherMode';
 
 function TablePrayer({ id, title, prayer }: { id: string; title: string; prayer: typeof TABLE_PRAYER_BEFORE }) {
@@ -55,6 +55,12 @@ function ChiefPart({ ci }: { ci: number }) {
   const toggleMemorized = useMemorize();
   const chief = CATECHISM[ci]!;
   const target = params.get('stueck');
+  const store = useStore();
+  const chooseChief = (i: number) =>
+    store.updateProfile(
+      (p) => ({ ...p, catechism: { ...p.catechism, weekOffset: offsetForChiefPart(date, i) } }),
+      { immediate: true },
+    );
 
   // Jump to the piece asked for (after the layout's reset to the top).
   useEffect(() => {
@@ -74,6 +80,13 @@ function ChiefPart({ ci }: { ci: number }) {
         <span className="no">{ci + 1}</span> {chief.title}
         {ci === day.chiefIndex && <span className="ktag">diese Woche</span>}
       </h2>
+      {ci !== day.chiefIndex && (
+        <p className="cat-part-choose">
+          <button type="button" className="pill" onClick={() => chooseChief(ci)}>
+            Für diese Woche nehmen
+          </button>
+        </p>
+      )}
       <div className="cat-part">
         {chief.pieces.map((piece, pi) => {
           const id = pieceId(chief, pi);
@@ -317,7 +330,6 @@ function CatechismHome() {
   const store = useStore();
   const profile = useProfile();
   const lookup = useDayLookup();
-  const selectId = useId();
   const day = catechismFor(date, profile.catechism.weekOffset);
   const memorized = profile.catechism.memorized;
   const [houseFather, setHouseFather] = useState(false);
@@ -327,61 +339,57 @@ function CatechismHome() {
   const todayPiece = pieceId(day.chief, day.pieceIndices[0] ?? 0);
   const partLink = withDate(`/katechismus/${day.chief.id}`, date, isToday);
 
-  const chooseChief = (i: number) =>
-    store.updateProfile(
-      (p) => ({
-        ...p,
-        catechism: { ...p.catechism, weekOffset: offsetForChiefPart(date, i) },
-      }),
-      { immediate: true },
-    );
 
   return (
     <>
-      <h2>Der Kleine Katechismus</h2>
-      <Rubric>{CATECHISM_SUBTITLE}</Rubric>
+      <h2>Lehre</h2>
 
-      {/* This week's chief part: what is learned today, and the table. */}
-      <section className="block block-hero cat-week" aria-labelledby="cat-week-title">
-        <p className="cat-week-kicker">Diese Woche</p>
-        <h3 id="cat-week-title" className="cat-week-title">
-          <Link to={partLink}>
-            <span className="no">{day.chiefIndex + 1}</span> {day.chief.title}
-          </Link>
-        </h3>
-        <p className="cat-today">
-          Heute:{' '}
-          <Link to={`${partLink}${partLink.includes('?') ? '&' : '?'}stueck=${todayPiece}`}>{day.label}</Link>
-        </p>
-        <div className="cat-actions">
-          <button type="button" className="btn primary" onClick={() => setHouseFather(true)}>
-            Hausvater-Modus: am Tisch abfragen
-          </button>
-          {habit && (
-            <button
-              type="button"
-              className="pill"
-              aria-pressed={withChildren}
-              disabled={!canToggle(habit, date, store.today(), lookup)}
-              onClick={() => store.toggleHabit(date, habit)}
-            >
-              {withChildren ? '✓ Diese Woche mit den Kindern gelernt' : 'Mit den Kindern gelernt'}
+      <section className="cat-area" aria-labelledby="cat-learn">
+        <div className="cat-area-head">
+          <h3 id="cat-learn">Lernen</h3>
+          <p className="cat-area-line">Der Kleine Katechismus, {CATECHISM_SUBTITLE.charAt(0).toLowerCase() + CATECHISM_SUBTITLE.slice(1)}</p>
+        </div>
+
+        {/* This week's chief part: what is learned today, and the table. */}
+        <section className="block block-hero cat-week" aria-labelledby="cat-week-title">
+          <p className="cat-week-kicker">Diese Woche</p>
+          <h4 id="cat-week-title" className="cat-week-title">
+            <Link to={partLink}>
+              <span className="no">{day.chiefIndex + 1}</span> {day.chief.title}
+            </Link>
+          </h4>
+          <p className="cat-today">
+            Heute:{' '}
+            <Link to={`${partLink}${partLink.includes('?') ? '&' : '?'}stueck=${todayPiece}`}>{day.label}</Link>
+          </p>
+          <div className="cat-actions">
+            <button type="button" className="btn primary" onClick={() => setHouseFather(true)}>
+              Am Tisch abfragen
             </button>
-          )}
-        </div>
-        <div className="field cat-choose">
-          <label htmlFor={selectId}>Anderes Hauptstück für diese Woche</label>
-          <select id={selectId} value={day.chiefIndex} onChange={(e) => chooseChief(Number(e.target.value))}>
-            {CATECHISM.map((c, i) => (
-              <option key={c.id} value={i}>
-                {i + 1}. {c.title}
-              </option>
-            ))}
-          </select>
-        </div>
+            {habit && (
+              <button
+                type="button"
+                className="pill"
+                aria-pressed={withChildren}
+                disabled={!canToggle(habit, date, store.today(), lookup)}
+                onClick={() => store.toggleHabit(date, habit)}
+              >
+                {withChildren ? '✓ Mit den Kindern gelernt' : 'Mit den Kindern gelernt'}
+              </button>
+            )}
+          </div>
+        </section>
+
+        <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
       </section>
 
-      <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
+      <section className="cat-area" aria-labelledby="cat-read">
+        <div className="cat-area-head">
+          <h3 id="cat-read">Lesen</h3>
+          <p className="cat-area-line">Die Bekenntnisse der Kirche und Bücher für das Haus</p>
+        </div>
+        <ReadingOverview />
+      </section>
 
       {houseFather && (
         <HouseFatherMode

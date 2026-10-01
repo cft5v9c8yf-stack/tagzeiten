@@ -2438,9 +2438,32 @@ header.top .search-link:focus-visible {
   margin: 6px 0 0;
 }
 
-/* Lehre: the Book of Concord as one tile at the top */
-.concordia-tile {
-  margin: 0 0 18px;
+/* Lehre: two areas, Lernen and Lesen */
+.cat-area {
+  margin: 18px 0 28px;
+}
+.cat-area-head h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.cat-area-line {
+  margin: 2px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.cat-area .cat-week {
+  margin-top: 12px;
+}
+.cat-area .cat-overview-head h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.overview-row.wide {
+  grid-column: 1 / -1;
+}
+.cat-part-choose {
+  margin: 0 0 12px;
 }
 .overview-row.pending .overview-link {
   color: var(--muted);

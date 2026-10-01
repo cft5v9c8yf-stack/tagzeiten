@@ -5,14 +5,14 @@ import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay
 
 /** The appendices, opened like the chief parts. `book`: part of the Book of Concord, listed there. */
 export const APPENDICES = [
-  { slug: 'konkordienbuch', title: 'Das Konkordienbuch', line: 'Die Bekenntnisschriften der lutherischen Kirche, 1580' },
-  { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
+  { slug: 'konkordienbuch', title: 'Das Konkordienbuch', line: 'Die Bekenntnisse der lutherischen Kirche, 1580: altkirchliche Bekenntnisse, Augsburgische Konfession, Kleiner und Großer Katechismus' },
+  { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
+  { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
-  { slug: 'grosser-katechismus', title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke', book: true },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
   { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
-  { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
+  { slug: 'grosser-katechismus', title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke', book: true },
 ] as const;
 
 /**
@@ -31,17 +31,9 @@ export function CatechismOverview({
   const to = (slug: string) => withDate(`/katechismus/${slug}`, date, isToday);
   return (
     <>
-      <ul className="overview-list concordia-tile">
-        <li className="overview-row">
-          <Link className="overview-link" to={to('konkordienbuch')}>
-            <span className="overview-title">Das Konkordienbuch</span>
-            <span className="overview-count">Bekenntnisse, Augsburgische Konfession, Kleiner und Großer Katechismus</span>
-          </Link>
-        </li>
-      </ul>
       <section className="cat-overview" aria-labelledby="cat-parts">
         <div className="cat-overview-head">
-          <h3 id="cat-parts">Hauptstücke</h3>
+          <h4 id="cat-parts">Hauptstücke</h4>
           <span className="overview-total">
             {memorizedCount(memorized)} von {TOTAL_PIECES} Stücken auswendig
           </span>
@@ -69,21 +61,28 @@ export function CatechismOverview({
           })}
         </ol>
       </section>
-      <section className="cat-overview" aria-labelledby="cat-appendix">
-        <div className="cat-overview-head">
-          <h3 id="cat-appendix">Anhang</h3>
-        </div>
-        <ul className="overview-list">
-          {APPENDICES.filter((a) => a.slug !== 'konkordienbuch' && !('book' in a)).map((a) => (
-            <li key={a.slug} className="overview-row">
-              <Link className="overview-link" to={to(a.slug)}>
-                <span className="overview-title">{a.title}</span>
-                <span className="overview-count">{a.line}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
     </>
+  );
+}
+
+/**
+ * What is read rather than learned: the Book of Concord across the whole
+ * width, then the books for the house.
+ */
+export function ReadingOverview() {
+  const { date, isToday } = useSelectedDate();
+  const to = (slug: string) => withDate(`/katechismus/${slug}`, date, isToday);
+  const rows = APPENDICES.filter((a) => !('book' in a));
+  return (
+    <ul className="overview-list">
+      {rows.map((a) => (
+        <li key={a.slug} className={`overview-row${a.slug === 'konkordienbuch' ? ' wide' : ''}`}>
+          <Link className="overview-link" to={to(a.slug)}>
+            <span className="overview-title">{a.title}</span>
+            <span className="overview-count">{a.line}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

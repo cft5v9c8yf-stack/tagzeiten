@@ -443,7 +443,7 @@ describe('Katechismus', () => {
 
   it('shows the answer in the house father mode only after a tap', async () => {
     await renderAt('/katechismus', <CatechismPage />);
-    fireEvent.click(await screen.findByText('Hausvater-Modus: am Tisch abfragen'));
+    fireEvent.click(await screen.findByText('Am Tisch abfragen'));
     const dialog = screen.getByRole('dialog');
     expect(dialog.querySelector('.hf-answer')).toBeNull();
     fireEvent.click(screen.getByText('Antwort zeigen'));
@@ -504,11 +504,20 @@ describe('Katechismus', () => {
     await waitFor(() => expect(document.activeElement!.id).toMatch(/^piece-confession\./));
   });
 
-  it('lets the chief part of the week be chosen', async () => {
+  it('lets the chief part of the week be chosen on its own page', async () => {
+    const store = await renderAt('/katechismus/lordsPrayer', <CatechismPage />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Für diese Woche nehmen' }));
+    await waitFor(() => expect(document.querySelector('.cat-part-title')!.textContent).toContain('diese Woche'));
+    expect(screen.queryByRole('button', { name: 'Für diese Woche nehmen' })).toBeNull();
+    expect(store).toBeTruthy();
+  });
+
+  it('parts the page into Lernen and Lesen', async () => {
     await renderAt('/katechismus', <CatechismPage />);
-    fireEvent.change(await screen.findByLabelText('Anderes Hauptstück für diese Woche'), { target: { value: '2' } });
-    expect(screen.getByText(/Heute:/).textContent).toMatch(/Bitte|Anrede|Beschluß/);
-    expect(document.querySelector('.cat-week-title')!.textContent).toContain('Das Vaterunser');
+    expect(await screen.findByRole('heading', { level: 2, name: 'Lehre' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Lernen' })).toBeTruthy();
+    const read = screen.getByRole('region', { name: 'Lesen' });
+    expect(read.querySelector('.overview-row.wide')!.textContent).toContain('Das Konkordienbuch');
   });
 });
 
@@ -685,16 +694,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.19\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.20\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.19\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.20\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.19\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.20\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {
