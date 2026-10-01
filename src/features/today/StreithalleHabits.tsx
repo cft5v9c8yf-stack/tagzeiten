@@ -1,8 +1,9 @@
-import { WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
+import { WINTER_ARC_GROUPS, WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
+import { Tick } from '../../ui/Tick';
 import { useProfile, useStore } from '../../data/hooks';
-import { houseHas } from '../../domain/house';
+import { houseHas, type HouseNeed } from '../../domain/house';
 import { formatShort, type DateKey } from '../../domain/dates';
-import { activeRun, appliesOn, dayOf, isInRun, isOn, monthOf, positionOf, servedIn, weekOf } from '../../domain/winterArc';
+import { activeRun, appliesOn, dayOf, isInRun, isOn, monthOf, positionOf, servedIn, weekOf, type WinterArcPointId } from '../../domain/winterArc';
 
 /**
  * The points of the Streithalle (Winter Arc) among the habits of "Heute", while
@@ -117,6 +118,75 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
           </tr>
         )}
       </tbody>
+    </>
+  );
+}
+
+/**
+ * The day's points of the Streithalle as a list to tick, for "Heute" in its mode:
+ * the daily ones by Morgen and Haus, then the week of the round and the month.
+ */
+export function StreithalleDay({ date }: { date: DateKey }) {
+  const store = useStore();
+  const profile = useProfile();
+  const run = activeRun(profile.winterArc);
+  if (!run) return null;
+  const today = store.today();
+  const settings = profile.winterArcSettings;
+  const inRun = isInRun(run, date);
+  const shown = (it: { id: WinterArcPointId; needs?: HouseNeed }) =>
+    houseHas(profile.house, it.needs) && isOn(settings, it.id);
+  const checks = dayOf(profile.winterArc, run.id, date)?.checks ?? {};
+  const roundWeek = inRun ? positionOf(run, date).week : undefined;
+  const weekly = roundWeek ? (weekOf(profile.winterArc, run.id, roundWeek)?.weeklyChecks ?? {}) : {};
+  const month = monthOf(date);
+  if (!inRun) return <p className="small muted">An diesem Tag läuft keine Runde.</p>;
+  return (
+    <>
+      {WINTER_ARC_GROUPS.map((g) => (
+        <div key={g} className="wa-group">
+          <h5>{g}</h5>
+          {WINTER_ARC_ITEMS.filter((it) => it.group === g && shown(it)).map((it) =>
+            appliesOn(settings, it.id, date) ? (
+              <Tick
+                key={it.id}
+                checked={!!checks[it.id]}
+                disabled={date > today}
+                onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
+              >
+                {it.text(settings.times)}
+              </Tick>
+            ) : (
+              <p key={it.id} className="wa-tick is-off">
+                <span className="wa-off-mark">{it.off}</span>
+                <span className="wa-tick-text">{it.text(settings.times)}</span>
+              </p>
+            ),
+          )}
+        </div>
+      ))}
+      <div className="wa-group">
+        <h5>Woche und Monat</h5>
+        {WINTER_ARC_WEEKLY.filter(shown).map((it) => (
+          <Tick
+            key={it.id}
+            checked={!!weekly[it.id]}
+            note={`Woche ${roundWeek} der Runde`}
+            onToggle={() => store.toggleWinterArcWeekly(run.id, roundWeek!, it.id)}
+          >
+            {it.text}
+          </Tick>
+        ))}
+        {isOn(settings, 'serve') && (
+          <Tick
+            checked={servedIn(profile.winterArc, run.id, month)}
+            note="diesen Monat"
+            onToggle={() => store.toggleWinterArcServed(run.id, month)}
+          >
+            {WINTER_ARC_MONTHLY}
+          </Tick>
+        )}
+      </div>
     </>
   );
 }

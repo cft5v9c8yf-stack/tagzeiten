@@ -2731,6 +2731,12 @@ header.top .search-link:focus-visible {
   cursor: default;
   opacity: 0.55;
 }
+.wa-tick-note {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
 .wa-tick.is-off {
   cursor: default;
   color: var(--muted);
@@ -2861,4 +2867,67 @@ header.top .search-link:focus-visible {
   padding: 10px 0;
   color: inherit;
   text-decoration: none;
+}
+
+/* ------------------------------------------------------------ Arena: the entrance */
+.arena-places {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 12px;
+}
+.arena-place-tile {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-l);
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.arena-place-tile:hover,
+.arena-place-tile:focus-visible {
+  border-color: var(--gold);
+}
+.arena-place-tile:active {
+  transform: scale(0.99);
+}
+.arena-place-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--gold-soft);
+  color: var(--icon-gold);
+}
+.arena-place-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.arena-place-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.15rem;
+}
+.arena-place-line {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arena-place-go {
+  font-size: 1.4rem;
+  color: var(--muted);
+}
+.wa-invite .btn {
+  margin-top: 4px;
 }

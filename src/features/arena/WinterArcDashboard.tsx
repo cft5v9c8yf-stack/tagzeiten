@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   WINTER_ARC_COMFORT,
@@ -40,6 +40,7 @@ import {
   type WinterArcRun,
 } from '../../domain/winterArc';
 import { DayField } from '../../ui/DayField';
+import { Tick } from '../../ui/Tick';
 import { Segmented } from '../../ui/Choice';
 import { formatFullDate } from '../settings/WinterArcSettings';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
@@ -65,33 +66,6 @@ function Chevron({ dir }: { dir: 'left' | 'right' }) {
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d={dir === 'left' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'} />
     </svg>
-  );
-}
-
-/** A point to tick: the whole row is the target; open is a plain ring, done a filled one. Never red (rule 5). */
-function Tick({
-  checked,
-  onToggle,
-  disabled = false,
-  children,
-}: {
-  checked: boolean;
-  onToggle: () => void;
-  disabled?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      role="checkbox"
-      aria-checked={checked}
-      className="wa-tick"
-      disabled={disabled}
-      onClick={onToggle}
-    >
-      <span className="wa-ring" aria-hidden="true" />
-      <span className="wa-tick-text">{children}</span>
-    </button>
   );
 }
 

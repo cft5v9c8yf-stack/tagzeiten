@@ -121,7 +121,7 @@ describe('Today', () => {
     await renderToday('2026-09-24', (s) =>
       s.updateDay('2026-09-21', (d) => ({ ...d, habits: { worship: true } })),
     );
-    const row = screen.getByText('Gottesdienst – den Feiertag heiligen').closest('tr')!;
+    const row = within(document.querySelector('table.habits') as HTMLElement).getByText('Gottesdienst – den Feiertag heiligen').closest('tr')!;
     const pill = row.querySelector('button')!;
     expect(pill.textContent).toBe('✓ diese Woche');
     expect(pill.disabled).toBe(true); // recorded on Monday, toggled there
@@ -135,14 +135,14 @@ describe('Today', () => {
       }));
       s.updateDay('2026-09-21', (d) => ({ ...d, habits: { ...d.habits, 'own-sport': true } }));
     });
-    const row = screen.getByText('Sport').closest('tr')!;
+    const row = within(document.querySelector('table.habits') as HTMLElement).getByText('Sport').closest('tr')!;
     expect(row.closest('tbody')!.classList.contains('habit-group-weekly')).toBe(true);
     expect(row.textContent).toMatch(/3-mal die Woche · 1\seingetragen/);
     const cells = row.querySelectorAll('button.cell');
     expect(cells).toHaveLength(7);
     expect(cells[0]!.getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(cells[2]!);
-    expect(await screen.findByText(/2 eingetragen/)).toBeTruthy();
+    expect((await screen.findAllByText(/2 eingetragen/)).length).toBeGreaterThan(0);
     // Documented, not rated: nothing says what is missing.
     expect(row.textContent).not.toMatch(/fehlt|noch|offen/);
   });
@@ -233,5 +233,17 @@ describe('Today', () => {
     await renderToday('2026-09-25', (s) => s.startWinterArc('2026-10-05', 90));
     expect(document.querySelector('.habit-group-streithalle')).toBeNull();
     expect(screen.getByRole('button', { name: /^Gewohnheiten/ })).toBeTruthy();
+  });
+
+  it('lists the habits of the day to tick, above the week', async () => {
+    const store = await renderToday('2026-09-24', withHouse);
+    const day = within(screen.getByRole('region', { name: /^Gewohnheiten, Heute|^Gewohnheiten, Donnerstag/ }));
+    const table = day.getByRole('checkbox', { name: 'Tischgebet mit der Familie' });
+    expect(table.getAttribute('aria-checked')).toBe('false');
+    fireEvent.click(table);
+    expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
+    // From the order, not by hand: shown, but not to tick.
+    expect((day.getByRole('checkbox', { name: /^Stille Zeit/ }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByRole('heading', { name: 'Die Woche' })).toBeTruthy();
   });
 });

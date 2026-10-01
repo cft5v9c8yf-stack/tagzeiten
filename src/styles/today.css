@@ -646,3 +646,25 @@ a.cy-week-name {
   font-size: 0.7rem;
   text-align: center;
 }
+
+/* The habits of the day as a list to tick, above the week. */
+.habits-day-title {
+  margin: 0 0 4px;
+}
+.habits-day .wa-group:first-of-type h5 {
+  margin-top: 6px;
+}
+.habits-week-title {
+  margin: 18px 0 0;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.habits-day .wa-tick:disabled {
+  opacity: 1;
+}
+.habits-day .wa-tick:disabled .wa-ring {
+  border-style: dashed;
+}

@@ -20,6 +20,12 @@ beforeEach(() => {
 afterEach(cleanup);
 
 let n = 0;
+
+/** From a place back to the Arena's entrance, and into another place. */
+function goTo(place: string) {
+  fireEvent.click(screen.getByRole('link', { name: '‹ Arena' }));
+  fireEvent.click(screen.getByRole('link', { name: new RegExp(`^${place}`) }));
+}
 async function renderArena() {
   const store = new Store({ db: new TagzeitenDB(`arena-${++n}`), journal: memoryJournal(), now: () => new Date(2026, 8, 26, 7) });
   await store.load();
@@ -29,7 +35,7 @@ async function renderArena() {
       { path: '/arena/:eintrag', element: <ArenaPage /> },
       { path: '/mehr/:bereich', element: <SettingsPage /> },
     ],
-    { initialEntries: ['/arena'] },
+    { initialEntries: ['/arena?bereich=gebetskammer'] },
   );
   render(
     <ToastProvider>
@@ -38,7 +44,7 @@ async function renderArena() {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { level: 2, name: 'Arena' });
+  await screen.findAllByRole('heading', { level: 2 });
   return store;
 }
 
@@ -83,7 +89,7 @@ describe('Arena', () => {
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Etwas' } });
     fireEvent.click(screen.getByRole('button', { name: 'Eintrag löschen' }));
     fireEvent.click(screen.getByRole('button', { name: 'Ja, Eintrag löschen' }));
-    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
     expect(store.getProfile().arena).toEqual([]);
 
     store.addArenaEntry();
@@ -97,7 +103,7 @@ describe('Arena', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Ein alter Kampf' } });
     fireEvent.click(screen.getByRole('button', { name: 'Eintrag archivieren' }));
-    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
     expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number');
     expect(screen.queryByRole('link', { name: /Ein alter Kampf/ })).toBeNull();
 
@@ -114,15 +120,15 @@ describe('Arena', () => {
     fireEvent.click(link);
 
     expect(await screen.findByText(/Steht im Rückblick/)).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Zurück in die Arena holen' }));
-    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück in die Gebetskammer holen' }));
+    await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
     expect(store.getProfile().arena[0]!.archivedAt).toBeUndefined();
     expect(screen.getByRole('link', { name: /Ein alter Kampf/ })).toBeTruthy();
   });
 
   it('has the Eisenschmiede: concerns for the meeting with the brothers, apart from the journal', async () => {
     const store = await renderArena();
-    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    goTo('Eisenschmiede');
     expect(await screen.findByText(/Ein Messer wetzt das andere/)).toBeTruthy();
     expect(document.querySelector('.arena-note')!.textContent).toContain('Treffen mit deinen Brüdern');
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
@@ -139,11 +145,11 @@ describe('Arena', () => {
     expect(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull();
     // The journal does not show it.
-    fireEvent.click(screen.getByRole('button', { name: 'Gebetskammer' }));
+    goTo('Gebetskammer');
     await waitFor(() => expect(screen.queryByRole('link', { name: 'Treffen noch ohne Termin' })).toBeNull());
 
     // After the meeting: discussed and archived.
-    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    goTo('Eisenschmiede');
     fireEvent.click(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Besprochen – archivieren' }));
     await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
@@ -151,7 +157,7 @@ describe('Arena', () => {
 
   it('assigns concerns to a meeting, names them by it, and suggests the next one', async () => {
     const store = await renderArena();
-    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    goTo('Eisenschmiede');
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Für das Treffen am'), { target: { value: '2026-10-01' } });
     fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Erstes' } });
@@ -171,7 +177,7 @@ describe('Arena', () => {
 
   it('keeps the points for the meeting as a list: Enter or + for the next, a tick when spoken of', async () => {
     const store = await renderArena();
-    fireEvent.click(screen.getByRole('button', { name: 'Eisenschmiede' }));
+    goTo('Eisenschmiede');
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     const first = await screen.findByLabelText('Punkt 1');
     fireEvent.change(first, { target: { value: 'Beruf' } });

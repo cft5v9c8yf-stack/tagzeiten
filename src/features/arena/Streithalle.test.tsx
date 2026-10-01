@@ -42,37 +42,34 @@ async function renderArena(path: string, prepare?: (s: Store) => void) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { level: 2, name: 'Arena' });
+  await screen.findAllByRole('heading', { level: 2 });
   return store;
 }
 
 const tab = (name: string) =>
   fireEvent.click(within(screen.getByRole('group', { name: 'Ansicht der Streithalle' })).getByRole('button', { name }));
 
-const places = () =>
-  within(screen.getByRole('group', { name: 'Bereich der Arena' }))
-    .getAllByRole('button')
-    .map((b) => b.textContent);
 
 describe('Streithalle', () => {
-  it('is not there while the Winter Arc is off', async () => {
-    await renderArena('/arena?bereich=streithalle');
-    expect(places()).toEqual(['Gebetskammer', 'Eisenschmiede']);
-    // The old Arena stands as it was.
-    expect(document.querySelector('.arena-note')!.textContent).toContain('Sünde wird gebetet, nicht notiert');
-    expect(document.querySelector('.streithalle')).toBeNull();
+  it('stands in the Arena as a third place and invites to begin a round', async () => {
+    const store = await renderArena('/arena');
+    const tiles = [...document.querySelectorAll('.arena-place-title')].map((t) => t.textContent);
+    expect(tiles).toEqual(['Gebetskammer', 'Eisenschmiede', 'Streithalle']);
+    expect(screen.getByRole('link', { name: /^Streithalle/ }).textContent).toContain('Keine Runde – eine beginnen');
+    fireEvent.click(screen.getByRole('link', { name: /^Streithalle/ }));
+    expect(screen.getByRole('heading', { level: 2, name: 'Streithalle' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Runde beginnen' }));
+    expect(store.getProfile().winterArc.runs).toHaveLength(1);
+    expect(document.querySelector('.wa-head')!.textContent).toContain('Tag 1 von 90');
   });
 
-  it('stands third in the Arena while the Winter Arc is on, with the guide', async () => {
+  it('shows the round on its tile, and the guide in the Streithalle', async () => {
     await renderArena('/arena', (s) => s.startWinterArc('2026-09-14', 90));
-    expect(places()).toEqual(['Gebetskammer', 'Eisenschmiede', 'Streithalle']);
-    // The Gebetskammer stays first and unchanged.
-    expect(
-      within(screen.getByRole('group', { name: 'Bereich der Arena' }))
-        .getByRole('button', { name: 'Gebetskammer' })
-        .getAttribute('aria-pressed'),
-    ).toBe('true');
-    fireEvent.click(screen.getByRole('button', { name: 'Streithalle' }));
+    // The Gebetskammer stays first.
+    expect(document.querySelector('.arena-place-title')!.textContent).toBe('Gebetskammer');
+    expect(screen.getByRole('link', { name: /^Streithalle/ }).textContent).toContain('Winter Arc · Tag 13 von 90');
+    fireEvent.click(screen.getByRole('link', { name: /^Streithalle/ }));
     const hall = document.querySelector('.streithalle')!;
     // Word first: Psalm 144,1 above the plan.
     expect(hall.querySelector('.wa-verse')!.textContent).toContain('der meine Hände lehrt streiten');

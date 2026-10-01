@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.30.0',
+    date: '2026-10-01',
+    title: 'Arena und Gewohnheiten neu gestaltet',
+    changes: [
+      { area: 'Arena', text: 'Die Arena beginnt mit drei Kacheln: Gebetskammer, Eisenschmiede und Streithalle, jede mit dem, was dort gerade steht. Ein Tipp öffnet den Ort auf einer eigenen Seite.' },
+      { area: 'Arena', text: 'Die Streithalle steht immer in der Arena. Läuft keine Runde, beginnst du dort eine, und die Anleitung ist schon zu lesen.' },
+      { area: 'Heute', text: 'Die Gewohnheiten stehen oben als Liste für den Tag, abgehakt mit einem Antippen der ganzen Zeile. Darunter folgt die Woche als Übersicht zum Nachtragen.' },
+    ],
+  },
+  {
     version: '0.29.0',
     date: '2026-10-01',
     title: 'Haus vor Arbeit, schönere Streithalle, besseres Deutsch',

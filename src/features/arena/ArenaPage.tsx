@@ -6,8 +6,11 @@ import { byMeeting, entryTitle, forgeTitle, isReference } from '../../domain/are
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
+import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
+import { formatLong } from '../../domain/dates';
+import { winterArcLine } from '../settings/WinterArcSettings';
 import { SectionVerse } from '../../ui/SectionVerse';
-import { activeRun } from '../../domain/winterArc';
+import { activeRun, runName } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
 import { Streithalle } from './Streithalle';
 
@@ -127,8 +130,9 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   );
 }
 
-const arenaPath = (k: Place) =>
-  k === 'forge' ? `/arena?${FORGE_PARAM}=${FORGE_SLUG}` : k === 'hall' ? `/arena?${FORGE_PARAM}=${HALL_SLUG}` : '/arena';
+const JOURNAL_SLUG = 'gebetskammer';
+const SLUG: Record<Place, string> = { journal: JOURNAL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG };
+const arenaPath = (k: Place) => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
 
 /** Archived entries stand in the Rückblick under "Mehr". */
 export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
@@ -413,11 +417,11 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
             className="btn"
             onClick={() => {
               store.archiveArenaEntry(entry.id, false);
-              toast(`Eintrag steht wieder in der ${kind === 'forge' ? 'Eisenschmiede' : 'Arena'}`);
+              toast(`Eintrag steht wieder in der ${place.title}`);
               navigate(arenaPath(kind));
             }}
           >
-            {kind === 'forge' ? 'Zurück in die Eisenschmiede holen' : 'Zurück in die Arena holen'}
+            {`Zurück in die ${place.title} holen`}
           </button>
         ) : (
           <button
@@ -488,33 +492,25 @@ export function ArenaPage() {
     );
   }
 
-  const hall = !!activeRun(profile.winterArc);
   const param = params.get(FORGE_PARAM);
-  const shownPlace: Place = param === FORGE_SLUG ? 'forge' : param === HALL_SLUG && hall ? 'hall' : 'journal';
-  const kind: Kind = shownPlace === 'forge' ? 'forge' : 'journal';
+  const shownPlace: Place | undefined =
+    param === FORGE_SLUG ? 'forge' : param === HALL_SLUG ? 'hall' : param === JOURNAL_SLUG ? 'journal' : undefined;
+  if (!shownPlace) return <ArenaHome />;
+  if (shownPlace === 'hall') {
+    return (
+      <div className="arena arena-place">
+        <PlaceHead title="Streithalle" />
+        <Streithalle />
+      </div>
+    );
+  }
+  const kind: Kind = shownPlace;
   const place = PLACES[kind];
   const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === kind);
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
-    <div className="arena">
-      <h2>Arena</h2>
-      <Segmented<Place>
-        label="Bereich der Arena"
-        value={shownPlace}
-        onChange={(k) => navigate(arenaPath(k), { replace: true })}
-        options={[
-          { value: 'journal', label: PLACES.journal.title },
-          { value: 'forge', label: PLACES.forge.title },
-          ...(hall ? [{ value: 'hall' as const, label: 'Streithalle' }] : []),
-        ]}
-      />
-      {shownPlace === 'hall' ? <Streithalle /> : placeBody()}
-    </div>
-  );
-
-  function placeBody() {
-    return (
-      <>
+    <div className="arena arena-place">
+      <PlaceHead title={place.title} />
       <SectionVerse id={place.verse} />
       <p className="arena-note">{place.note}</p>
       <button
@@ -552,7 +548,81 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
-      </>
-    );
-  }
+    </div>
+  );
+}
+
+/** The head of a place: the way back to the Arena, and the place's name. */
+function PlaceHead({ title }: { title: string }) {
+  return (
+    <>
+      <p className="back-link">
+        <Link to="/arena">‹ Arena</Link>
+      </p>
+      <h2>{title}</h2>
+    </>
+  );
+}
+
+/**
+ * The Arena's entrance: three places as tiles, each with what stands there now.
+ * A tap opens the place on a page of its own.
+ */
+function ArenaHome() {
+  const store = useStore();
+  const profile = useProfile();
+  const today = store.today();
+  const live = profile.arena.filter((e) => entryTitle(e) && e.archivedAt === undefined);
+  const lastJournal = live.filter((e) => kindOf(e) === 'journal').sort((a, b) => b.createdAt - a.createdAt)[0];
+  const forge = live.filter((e) => kindOf(e) === 'forge');
+  const meeting = byMeeting(forge).find((g) => g.date && g.date >= today)?.date;
+  const run = activeRun(profile.winterArc);
+  const places: { place: Place; title: string; icon: FlowIconName; line: string }[] = [
+    {
+      place: 'journal',
+      title: PLACES.journal.title,
+      icon: 'candle',
+      line: lastJournal ? `Zuletzt: ${entryTitle(lastJournal)}` : 'Was dich belastet und womit du ringst',
+    },
+    {
+      place: 'forge',
+      title: PLACES.forge.title,
+      icon: 'people',
+      line: meeting
+        ? `Treffen am ${formatLong(meeting)}`
+        : forge.length
+          ? 'Anliegen fürs nächste Treffen'
+          : 'Für das Treffen mit deinen Brüdern',
+    },
+    {
+      place: 'hall',
+      title: 'Streithalle',
+      icon: 'sunrise',
+      line: run ? `${runName(run)} · ${winterArcLine(profile, today)}` : 'Keine Runde – eine beginnen',
+    },
+  ];
+  return (
+    <div className="arena arena-home">
+      <h2>Arena</h2>
+      <SectionVerse id="arena" />
+      <ul className="arena-places">
+        {places.map((p) => (
+          <li key={p.place}>
+            <Link className={`arena-place-tile arena-place-${p.place}`} to={arenaPath(p.place)}>
+              <span className="arena-place-icon" aria-hidden="true">
+                <FlowIcon name={p.icon} size={26} />
+              </span>
+              <span className="arena-place-text">
+                <span className="arena-place-title">{p.title}</span>
+                <span className="arena-place-line">{p.line}</span>
+              </span>
+              <span className="arena-place-go" aria-hidden="true">
+                ›
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }

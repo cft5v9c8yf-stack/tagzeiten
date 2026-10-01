@@ -1,11 +1,12 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
-import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
+import { addDays, formatLong, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
 import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun, hallModeIn, isInRun } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
-import { StreithalleHabits } from './StreithalleHabits';
+import { StreithalleDay, StreithalleHabits } from './StreithalleHabits';
+import { Tick } from '../../ui/Tick';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
@@ -107,7 +108,49 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
 
+  const dayTitle = date === today ? 'Heute' : formatLong(date);
+  const perDay = rest.filter(isPerDay);
+  const weekly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'weekly');
+  const monthly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'monthly');
+  const tick = (h: Habit) => {
+    const per = isPerDay(h);
+    return (
+      <Tick
+        key={h.id}
+        checked={per ? isDoneOn(h, lookup(date)) : isDoneInPeriod(h, date, lookup)}
+        disabled={!canToggle(h, date, today, lookup)}
+        note={per ? noteOf(h, date, lookup) : h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat'}
+        onToggle={() => toggle(h, date)}
+      >
+        {h.name}
+      </Tick>
+    );
+  };
+  const groups: [string, Habit[]][] = [
+    ['Im Blick', focus],
+    ['Täglich', perDay],
+    ['Wöchentlich', weekly],
+    ['Monatlich', monthly],
+  ];
+
   return (
+    <>
+    <section className="panel habits-day" aria-label={`Gewohnheiten, ${dayTitle}`}>
+      <h4 className="habits-day-title">{dayTitle}</h4>
+      {hallMode ? (
+        <StreithalleDay date={date} />
+      ) : (
+        groups
+          .filter(([, list]) => list.length > 0)
+          .map(([title, list]) => (
+            <div key={title} className="wa-group">
+              <h5>{title}</h5>
+              {list.map(tick)}
+            </div>
+          ))
+      )}
+    </section>
+    <h4 className="habits-week-title">Die Woche</h4>
     <div className="panel habits-panel">
       <table className="habits">
         <thead>
@@ -159,5 +202,6 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         <StreithalleHabits week={week} date={date} />
       </table>
     </div>
+    </>
   );
 }
