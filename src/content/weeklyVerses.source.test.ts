@@ -126,10 +126,7 @@ const SCRIPTURE: readonly (readonly [string, string])[] = [
   ['Mk 1,35', MOTTO[0].text],
   ['Ps 119,105', MOTTO[1].text],
   // The Winter Arc and the Streithalle.
-  // Phil 2,4, 2Mo 20,8-9 and Hebr 12,11 differ from the source; held back until it is decided which wording stands.
-  ...WINTER_ARC_VERSES.filter((v) => !['Phil 2,4', '2Mo 20,8-9', 'Hebr 12,11'].includes(v.source)).map(
-    (v) => [v.source, v.text] as const,
-  ),
+  ...WINTER_ARC_VERSES.map((v) => [v.source, v.text] as const),
 ];
 
 describe.skipIf(!available)('other Bible texts against Luther 1912', () => {

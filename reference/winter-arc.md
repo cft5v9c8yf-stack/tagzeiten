@@ -2,7 +2,8 @@
 
 <!-- Transcribed word for word from „Winter Arc – Der 90-Tage-Standard.pdf“ (main).
      Left out on request: the sentence on the source plan and the author's day,
-     the document header (date, author) and the page numbers. -->
+     the document header (date, author) and the page numbers.
+     Changed on request: Phil 2,4 reads „sondern auch auf das“ as in Luther 1912. -->
 
 Gott zuerst, dann die Arbeit, dann das Haus: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.
 
@@ -129,7 +130,7 @@ Die Gewohnheiten bleiben gleich, nur die Tiefe wächst. Jede Phase stellt dersel
 | 3 | Die Arbeit schützen | Beide Fokusblöcke wie Termine halten. „Nicht stören“ an, schwerste Aufgabe zuerst. | „Die Anschläge eines Emsigen bringen Überfluß.“ (Spr 21,5) |
 | 4 | Den Tag schließen | Küche um 20:00 zu, um 21:00 Licht aus. Rückblick: Welches Kästchen blieb am häufigsten leer? | „Ich liege und schlafe ganz mit Frieden.“ (Ps 4,9) |
 | 5 | Zu Hause dienen | Die Geste für deine Frau wird etwas, worum sie nie bitten würde. | „Durch die Liebe diene einer dem andern.“ (Gal 5,13) |
-| 6 | Bei der Arbeit dienen | Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen. | „Ein jeglicher sehe nicht auf das Seine, sondern auf das, was des andern ist.“ (Phil 2,4) |
+| 6 | Bei der Arbeit dienen | Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen. | „Ein jeglicher sehe nicht auf das Seine, sondern auch auf das, was des andern ist.“ (Phil 2,4) |
 | 7 | In der Gemeinde dienen | Fragen, wo Hilfe fehlt, und zu einer Sache Ja sagen, die nicht schon deine Aufgabe ist. | „Dienet einander, ein jeglicher mit der Gabe, die er empfangen hat.“ (1 Petr 4,10) |
 | 8 | Einem Fremden dienen | Etwas für jemanden tun, der es dir nie zurückgeben kann. Niemandem davon erzählen. | „So laß deine linke Hand nicht wissen, was die rechte tut.“ (Mt 6,3) |
 | 9 | Dich selbst führen | Niemand prüft deine Haken außer dir. Das eine Kästchen festziehen, das du noch schleifen lässt. | „Ein Geduldiger ist besser denn ein Starker, und der seines Mutes Herr ist, denn der Städte gewinnt.“ (Spr 16,32) |

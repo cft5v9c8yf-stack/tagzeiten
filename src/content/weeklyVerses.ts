@@ -28,6 +28,10 @@ export const CORRECTIONS: readonly { source: string; from: string; to: string }[
   { source: 'Ps 141,2', from: 'vor dir Taugen', to: 'vor dir taugen' },
   { source: 'Lk 2,31', from: 'du bereitest hast', to: 'du bereitet hast' },
   { source: 'Lk 1,78', from: 'Andre Überlieferung: "besuchen wird". ', to: '' },
+  // Taken as typos of the digital source for the Winter Arc; not yet checked against a printed copy.
+  { source: '2Mo 20,8', from: 'daß Du ihn', to: 'daß du ihn' },
+  { source: '2Mo 20,9', from: 'alle dein Dinge', to: 'alle deine Dinge' },
+  { source: 'Hebr 12,11', from: 'dünkt uns nicht', to: 'dünkt sie uns nicht' },
 ];
 
 const v = (ref: string, source: string, ...parts: string[]): WeeklyVerse => ({ ref, source, parts });

@@ -359,7 +359,7 @@ export const WINTER_ARC_FOCUS: readonly WinterArcFocus[] = [
     focus: 'Bei der Arbeit dienen',
     task: 'Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen.',
     verse: verse(
-      'Ein jeglicher sehe nicht auf das Seine, sondern auf das, was des andern ist.',
+      'Ein jeglicher sehe nicht auf das Seine, sondern auch auf das, was des andern ist.',
       'Phil 2,4',
       'Phil 2,4',
     ),
