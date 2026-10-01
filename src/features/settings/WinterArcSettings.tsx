@@ -210,9 +210,9 @@ export function WinterArcSettings() {
         ]}
       />
       <p className="small muted">
-        Eine Runde mit festem Tagesstandard, für jeden Zeitraum, den du wählst, nach dem Plan des Winter Arc: Gott
-        zuerst, dann die Arbeit, dann das Haus. Eingeschaltet steht die Streithalle in der Arena, ihre Gewohnheiten
-        unter „Heute“. Unabhängig von der Waffenrüstung.
+        Eine Runde mit festem Tagesstandard, für jeden Zeitraum, den du wählst, nach dem Plan des Winter Arc. Die
+        Reihenfolge: Gott, Familie und Haus, Gemeinde, Arbeit, ich. Eingeschaltet steht die Streithalle in der Arena,
+        ihre Gewohnheiten unter „Heute“. Unabhängig von der Waffenrüstung.
       </p>
       {run && !panel && (
         <p>
