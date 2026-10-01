@@ -189,6 +189,10 @@ describe('Today', () => {
     const store = await renderToday('2026-09-25', (s) => s.startWinterArc('2026-09-23', 90));
     const group = document.querySelector('.habit-group-streithalle') as HTMLElement;
     expect(group.querySelector('.group-row')!.textContent).toBe('Streithalle');
+    // "Heute" is in the mode of the Streithalle: the usual habits give way to it.
+    expect(screen.getByRole('button', { name: /^Streithalle/ })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Bibel lesen, Fr 25.9.' })).toBeNull();
+    expect(document.querySelectorAll('.habit-group')).toHaveLength(1);
     // Monday and Tuesday lie before the round: neutral grey, nothing to tick.
     const wake = within(group).getByRole('row', { name: /04:00 auf, kein Handy/ });
     expect(wake.querySelectorAll('td.wa-outside')).toHaveLength(2);
@@ -218,5 +222,11 @@ describe('Today', () => {
     // With a wife: the family habits, but not yet those about children.
     expect(screen.getByRole('button', { name: 'Tischgebet mit der Familie, Do 24.9.' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: /^Die Kinder segnen/ })).toBeNull();
+  });
+
+  it('keeps the usual habits in weeks the round does not touch', async () => {
+    await renderToday('2026-09-25', (s) => s.startWinterArc('2026-10-05', 90));
+    expect(document.querySelector('.habit-group-streithalle')).toBeNull();
+    expect(screen.getByRole('button', { name: /^Gewohnheiten/ })).toBeTruthy();
   });
 });

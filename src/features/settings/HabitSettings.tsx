@@ -341,7 +341,7 @@ function StreithalleGroup() {
       aside={`${count.filter((id) => isOn(settings, id)).length} von ${count.length} eingeschaltet`}
     >
       <p className="small muted">
-        Solange der Winter Arc läuft, stehen diese Gewohnheiten unter „Heute“ und in der Streithalle. Ein Haken dort
+        Solange der Winter Arc läuft, stehen diese Gewohnheiten unter „Heute“ an Stelle der übrigen und in der Streithalle. Ein Haken dort
         gilt auch hier. Was du ausschaltest, verschwindet aus beiden; seine Haken bleiben. Wochentage und Zeiten stellst
         du unter Darstellung beim Winter Arc ein.
       </p>

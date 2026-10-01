@@ -428,3 +428,14 @@ export function toggleServed(data: WinterArcData, runId: string, month: string, 
 
 export const hasReview = (w: WinterArcWeek | undefined): boolean =>
   !!w && !!(w.review.win.trim() || w.review.slipped.trim() || w.review.lesson.trim());
+
+/**
+ * "Heute" is in the mode of the Streithalle for a calendar week (Mo–So) when a
+ * round under way touches it: its habits then stand in place of the usual ones.
+ */
+export function hallModeIn(data: WinterArcData, date: DateKey): boolean {
+  const run = activeRun(data);
+  if (!run) return false;
+  const monday = addDays(date, -((fromKey(date).getDay() + 6) % 7));
+  return Array.from({ length: 7 }, (_, i) => addDays(monday, i)).some((d) => isInRun(run, d));
+}

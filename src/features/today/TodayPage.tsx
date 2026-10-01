@@ -13,6 +13,7 @@ import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
 import { eveningClosed } from '../../domain/stats';
+import { hallModeIn } from '../../domain/winterArc';
 
 function morningStatus(day: Day): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -85,6 +86,7 @@ export function TodayPage() {
   const day = useDay(date);
   const profile = useProfile();
   const s = scheduleFor(profile, date);
+  const hallMode = hallModeIn(profile.winterArc, date);
 
   return (
     <>
@@ -114,8 +116,14 @@ export function TodayPage() {
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} date={date} isToday={isToday} />
 
-      <Section id="today.habits" title="Gewohnheiten">
+      <Section id="today.habits" title={hallMode ? 'Streithalle' : 'Gewohnheiten'}>
         <HabitsWeek date={date} />
+        {hallMode && (
+          <p className="small muted habits-mode-note">
+            Solange der Winter Arc läuft, stehen hier die Gewohnheiten der Streithalle.{' '}
+            <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
+          </p>
+        )}
       </Section>
 
       <Section id="today.lookback" title="Rückblick">

@@ -3,7 +3,7 @@ import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey 
 import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
-import { activeRun } from '../../domain/winterArc';
+import { hallModeIn } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
 import { StreithalleHabits } from './StreithalleHabits';
 
@@ -46,7 +46,10 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const lookup = useDayLookup();
   const today = store.today();
   const week = Array.from({ length: 7 }, (_, i) => addDays(mondayOf(date), i));
-  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
+  // While a round of the Winter Arc runs in this week, "Heute" is in its mode: its habits
+  // stand in place of the usual ones, which keep their ticks and come back afterwards.
+  const hallMode = hallModeIn(profile.winterArc, date);
+  const active = hallMode ? [] : profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
 
@@ -99,7 +102,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     );
   };
 
-  if (active.length === 0 && !activeRun(profile.winterArc)) {
+  if (active.length === 0 && !hallMode) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
 

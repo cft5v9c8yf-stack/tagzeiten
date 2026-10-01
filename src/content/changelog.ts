@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.27.0',
+    date: '2026-10-01',
+    title: '„Heute“ im Modus der Streithalle',
+    changes: [
+      { area: 'Heute', text: 'Solange der Winter Arc läuft, stehen unter „Heute“ die Gewohnheiten der Streithalle an Stelle der übrigen, mit einem Weg zur Streithalle. Deine übrigen Gewohnheiten bleiben gespeichert und kommen zurück, wenn die Runde endet oder du den Winter Arc ausschaltest.' },
+    ],
+  },
+  {
     version: '0.26.0',
     date: '2026-10-01',
     title: 'Gewohnheiten der Streithalle abschalten',
