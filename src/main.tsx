@@ -16,6 +16,9 @@ import { App } from './app/App';
 const root = document.getElementById('root');
 if (!root) throw new Error('#root missing');
 
+// German, also where the page is served in a frame without it: hyphenation of long words depends on it.
+document.documentElement.lang = 'de';
+
 createRoot(root).render(
   <StrictMode>
     <App />

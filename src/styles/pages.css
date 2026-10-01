@@ -2684,6 +2684,10 @@ header.top .search-link:focus-visible {
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
+.wa-tick:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
 .wa-tick.is-off {
   cursor: default;
   color: var(--muted);

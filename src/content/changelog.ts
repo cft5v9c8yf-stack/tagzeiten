@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.25.1',
+    date: '2026-10-01',
+    title: 'Durch die ganze Runde blättern',
+    changes: [
+      { area: 'Arena', text: 'Unter „Tag“ blätterst du jetzt durch die ganze Runde, auch nach vorn. Künftige Tage siehst du, abhaken kannst du sie erst an ihnen selbst.' },
+      { area: 'Darstellung', text: 'Lange Wörter in Kacheln werden mit Bindestrich getrennt, auch in der Vorschau.' },
+    ],
+  },
+  {
     version: '0.25.0',
     date: '2026-10-01',
     title: 'Die Streithalle neu geordnet',

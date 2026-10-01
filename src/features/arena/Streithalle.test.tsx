@@ -235,7 +235,12 @@ describe('Streithalle', () => {
 
   it('pages through the days of the round to fill in what was', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-24', 90));
-    expect((screen.getByRole('button', { name: 'Folgetag' }) as HTMLButtonElement).disabled).toBe(true);
+    // Later days of the round can be seen, but are ticked only when they come.
+    fireEvent.click(screen.getByRole('button', { name: 'Folgetag' }));
+    expect(screen.getByRole('heading', { name: /^Sonntag, 27\. September/ })).toBeTruthy();
+    expect(screen.getByText('Dieser Tag kommt noch. Abhaken kannst du an ihm selbst.')).toBeTruthy();
+    expect((screen.getByRole('checkbox', { name: '04:00 auf, kein Handy' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
     fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
     expect(screen.getByRole('heading', { name: /^Freitag, 25\. September/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('checkbox', { name: '04:00 auf, kein Handy' }));

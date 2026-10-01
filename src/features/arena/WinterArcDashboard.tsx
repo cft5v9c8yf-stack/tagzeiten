@@ -52,9 +52,26 @@ const lastView = (): View => {
 };
 
 /** A point to tick: the whole row is the target; open is a plain ring, done a filled one. Never red (rule 5). */
-function Tick({ checked, onToggle, children }: { checked: boolean; onToggle: () => void; children: ReactNode }) {
+function Tick({
+  checked,
+  onToggle,
+  disabled = false,
+  children,
+}: {
+  checked: boolean;
+  onToggle: () => void;
+  disabled?: boolean;
+  children: ReactNode;
+}) {
   return (
-    <button type="button" role="checkbox" aria-checked={checked} className="wa-tick" onClick={onToggle}>
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={checked}
+      className="wa-tick"
+      disabled={disabled}
+      onClick={onToggle}
+    >
       <span className="wa-ring" aria-hidden="true" />
       <span className="wa-tick-text">{children}</span>
     </button>
@@ -109,14 +126,17 @@ function JournalEntry({ date }: { date: DateKey }) {
   );
 }
 
-/** One day's checklist by Morgen and Haus, with a pager to the days before and back. */
+/**
+ * One day's checklist by Morgen and Haus, with a pager through the whole round:
+ * earlier days can be filled in, later ones are shown but ticked only when they come.
+ */
 function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const store = useStore();
   const profile = useProfile();
   const end = endDateOf(run.startDate, run.durationDays);
-  const last = end < today ? end : today;
-  const [shown, setShown] = useState<DateKey>(last);
-  const date = shown < run.startDate ? run.startDate : shown > last ? last : shown;
+  const [shown, setShown] = useState<DateKey>(end < today ? end : today);
+  const date = shown < run.startDate ? run.startDate : shown > end ? end : shown;
+  const future = date > today;
   const day = useDay(date);
   const [writing, setWriting] = useState(false);
   const checks = dayOf(profile.winterArc, run.id, date)?.checks ?? {};
@@ -141,12 +161,13 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           type="button"
           className="icon-btn wa-pager-btn"
           aria-label="Folgetag"
-          disabled={date >= last}
+          disabled={date >= end}
           onClick={() => setShown(addDays(date, 1))}
         >
           ›
         </button>
       </div>
+      {future && <p className="small muted wa-back">Dieser Tag kommt noch. Abhaken kannst du an ihm selbst.</p>}
       {date !== today && (
         <p className="wa-back">
           <button type="button" className="link-btn" onClick={() => setShown(today)}>
@@ -169,14 +190,18 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
             }
             return (
               <div key={it.id} className="wa-row">
-                <Tick checked={!!checks[it.id]} onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}>
+                <Tick
+                  checked={!!checks[it.id]}
+                  disabled={future}
+                  onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
+                >
                   {text}
                 </Tick>
                 {/* A hint only: the tick is always set by hand. */}
                 {it.id === 'word' && day.morning.done && !checks.word && (
                   <p className="small muted wa-hint">Morgengebet heute gebetet – abhaken?</p>
                 )}
-                {it.id === 'journal' && (
+                {it.id === 'journal' && !future && (
                   <>
                     <button
                       type="button"
