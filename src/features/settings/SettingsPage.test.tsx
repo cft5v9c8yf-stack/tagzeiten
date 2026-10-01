@@ -208,6 +208,14 @@ describe('Mehr: Aufbau', () => {
     expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
   });
 
+  it('lists the points of the Streithalle among the habits while the Winter Arc runs', async () => {
+    await renderAt('/mehr/gewohnheiten', <SettingsPage />, (s) => s.startWinterArc('2026-09-21', 90), ['more.habits.streithalle']);
+    const group = (await screen.findByRole('button', { name: /^Streithalle/ })).closest('section') as HTMLElement;
+    expect(group.textContent).toContain('04:00 auf, kein Handy');
+    expect(group.textContent).toContain('täglich · Streithalle');
+    expect(group.textContent).toContain('Gedient (einmal im Monat)');
+  });
+
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
     const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });

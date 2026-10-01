@@ -3,7 +3,9 @@ import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey 
 import { canToggle, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
+import { activeRun } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
+import { StreithalleHabits } from './StreithalleHabits';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
@@ -97,7 +99,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     );
   };
 
-  if (active.length === 0) {
+  if (active.length === 0 && !activeRun(profile.winterArc)) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
 
@@ -142,6 +144,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
             </tbody>
           );
         })}
+        <StreithalleHabits week={week} date={date} />
       </table>
     </div>
   );

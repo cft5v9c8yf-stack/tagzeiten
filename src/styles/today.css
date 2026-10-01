@@ -623,3 +623,14 @@ a.cy-week-name {
 .habit-group-focus .focus-star {
   display: none;
 }
+/* The Streithalle among the habits: days outside the round neutral grey; "–" or "Ruhe" where a point does not apply. */
+.habits td.wa-outside {
+  background: var(--rule);
+  opacity: 0.5;
+}
+.habits td.wa-off {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  text-align: center;
+}

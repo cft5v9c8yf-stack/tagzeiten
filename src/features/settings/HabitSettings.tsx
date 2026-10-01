@@ -1,6 +1,8 @@
 import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { RHYTHM_LABEL } from '../../content/habits';
+import { WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
+import { activeRun } from '../../domain/winterArc';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -241,6 +243,7 @@ export function HabitSettings() {
       {RHYTHMS.map((r) => (
         <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(profile.habits, r)} hintId={hintId} onMoved={moved} />
       ))}
+      <StreithalleGroup />
       <Section id="more.habits.add" title="Eigene anlegen" level={3} className="habit-card">
       <form className="add-habit" onSubmit={add}>
         <div className="field">
@@ -269,6 +272,45 @@ export function HabitSettings() {
       </form>
       </Section>
     </>
+  );
+}
+
+/** While the Winter Arc runs, its points stand here as habits of the Streithalle; they are set there. */
+function StreithalleGroup() {
+  const profile = useProfile();
+  if (!activeRun(profile.winterArc)) return null;
+  const t = profile.winterArcSettings.times;
+  return (
+    <Section id="more.habits.streithalle" title="Streithalle" level={3} className="habit-card" aside="Winter Arc">
+      <p className="small muted">
+        Solange der Winter Arc läuft, stehen seine Punkte unter „Heute“ bei den Gewohnheiten. Ein Haken dort gilt auch in
+        der Streithalle. Wochentage und Zeiten stellst du unter Darstellung beim Winter Arc ein.
+      </p>
+      <ul className="habit-list">
+        {WINTER_ARC_ITEMS.map((it) => (
+          <li key={it.id} className="habit-row">
+            <span className="habit-name">{it.text(t)}</span>{' '}
+            <span className="habit-meta">
+              <span className="habit-kind">täglich · Streithalle</span>
+            </span>
+          </li>
+        ))}
+        {WINTER_ARC_WEEKLY.map((it) => (
+          <li key={it.id} className="habit-row">
+            <span className="habit-name">{it.text}</span>{' '}
+            <span className="habit-meta">
+              <span className="habit-kind">wöchentlich · Streithalle</span>
+            </span>
+          </li>
+        ))}
+        <li className="habit-row">
+          <span className="habit-name">{WINTER_ARC_MONTHLY}</span>{' '}
+          <span className="habit-meta">
+            <span className="habit-kind">monatlich · Streithalle</span>
+          </span>
+        </li>
+      </ul>
+    </Section>
   );
 }
 

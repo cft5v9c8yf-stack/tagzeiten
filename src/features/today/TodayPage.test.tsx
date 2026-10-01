@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
-import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -174,5 +174,27 @@ describe('Today', () => {
     expect(dots.filter((d) => d.classList.contains('both'))).toHaveLength(1);
     expect(dots.filter((d) => d.classList.contains('none'))).toHaveLength(27);
     expect(document.body.textContent).not.toMatch(/Serie|in Folge|verpasst|versäumt|Rückstand/i);
+  });
+
+  it('shows the points of the Streithalle among the habits while the Winter Arc runs, with one tick for both', async () => {
+    // 25 September 2026 is a Friday; the round began on Wednesday the 23rd.
+    const store = await renderToday('2026-09-25', (s) => s.startWinterArc('2026-09-23', 90));
+    const group = document.querySelector('.habit-group-streithalle') as HTMLElement;
+    expect(group.querySelector('.group-row')!.textContent).toBe('Streithalle');
+    // Monday and Tuesday lie before the round: neutral grey, nothing to tick.
+    const wake = within(group).getByRole('row', { name: /04:00 auf, kein Handy/ });
+    expect(wake.querySelectorAll('td.wa-outside')).toHaveLength(2);
+    fireEvent.click(within(group).getByRole('button', { name: '04:00 auf, kein Handy, Fr 25.9.' }));
+    const run = store.getProfile().winterArc.runs[0]!;
+    expect(store.getProfile().winterArc.days).toMatchObject([{ runId: run.id, date: '2026-09-25', checks: { wake: true } }]);
+    // Saturday: rest from training.
+    expect(within(group).getByRole('row', { name: /Trainiert/ }).textContent).toContain('Ruhe');
+    fireEvent.click(within(group).getByRole('button', { name: 'Gottesdienst und Sonntagsruhe, Woche 1 der Runde' }));
+    expect(store.getProfile().winterArc.weeks).toMatchObject([{ week: 1, weeklyChecks: { church: true } }]);
+  });
+
+  it('has no Streithalle among the habits while the Winter Arc is off', async () => {
+    await renderToday('2026-09-25');
+    expect(document.querySelector('.habit-group-streithalle')).toBeNull();
   });
 });
