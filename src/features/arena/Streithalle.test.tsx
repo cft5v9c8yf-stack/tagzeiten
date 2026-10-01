@@ -227,7 +227,7 @@ describe('Streithalle', () => {
     expect(document.querySelector('.wa-day')).toBeNull();
     expect(within(closing).getByRole('button', { name: 'Als Markdown exportieren' })).toBeTruthy();
     fireEvent.click(within(closing).getByRole('button', { name: 'Neue Runde starten' }));
-    fireEvent.click(within(closing).getByRole('button', { name: 'Winter Arc beginnen' }));
+    fireEvent.click(within(closing).getByRole('button', { name: 'Runde beginnen' }));
     expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
     expect(document.querySelector('.wa-closing')).toBeNull();
     expect(document.querySelector('.wa-head')!.textContent).toContain('Tag 1 von 90');

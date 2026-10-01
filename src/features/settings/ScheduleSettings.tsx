@@ -250,7 +250,7 @@ export function DisplaySettings() {
         },
         {
           id: 'more.display.winterArc',
-          title: 'Winter Arc',
+          title: 'Streithalle',
           line: winterArcLine(profile, store.today()),
           icon: 'sunrise',
           content: <WinterArcSettings />,

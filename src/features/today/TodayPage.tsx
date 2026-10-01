@@ -120,7 +120,7 @@ export function TodayPage() {
         <HabitsWeek date={date} />
         {hallMode && (
           <p className="small muted habits-mode-note">
-            Solange der Winter Arc läuft, stehen hier die Gewohnheiten der Streithalle.{' '}
+            Solange eine Runde der Streithalle läuft, stehen hier ihre Gewohnheiten.{' '}
             <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
           </p>
         )}

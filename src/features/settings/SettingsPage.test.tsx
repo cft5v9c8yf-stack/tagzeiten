@@ -158,7 +158,7 @@ describe('Mehr: Aufbau', () => {
       'Am Bett am MorgenAnzeigen',
       'Nachtgebet am BettAnzeigen',
       'Geistliche WaffenrüstungAnzeigen',
-      'Winter ArcAus',
+      'StreithalleAus',
     ]);
     view.unmount();
     render(page());
@@ -167,21 +167,21 @@ describe('Mehr: Aufbau', () => {
 
   it('switches the Winter Arc on with start and duration, and off without deleting', async () => {
     const { store, db } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
-    const toggle = await screen.findByRole('group', { name: 'Winter Arc' });
+    const toggle = await screen.findByRole('group', { name: 'Streithalle' });
     expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
-    const dialog = screen.getByRole('dialog', { name: 'Neue Runde des Winter Arc' });
+    const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
     expect(within(dialog).getByText('Ein Start an einem Montag passt am besten zum Wochen-Tracker.')).toBeTruthy();
     expect((within(dialog).getByLabelText('Startdatum') as HTMLInputElement).value).toBe('2026-09-25');
     expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('90');
-    expect(dialog.textContent).toContain('Letzter Tag: Mittwoch, 23. Dezember 2026');
+    expect(dialog.textContent).toContain('Bis Mittwoch, 23. Dezember 2026');
     fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2026-10-05' } });
     fireEvent.click(within(dialog).getByRole('button', { name: '40' }));
-    expect(dialog.textContent).toContain('Letzter Tag: Freitag, 13. November 2026');
+    expect(dialog.textContent).toContain('Bis Freitag, 13. November 2026');
     fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '400' } });
-    expect((within(dialog).getByRole('button', { name: 'Winter Arc beginnen' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((within(dialog).getByRole('button', { name: 'Runde beginnen' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '90' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Winter Arc beginnen' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(1));
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-10-05', durationDays: 90, status: 'active' });
     expect(screen.getByText(/Beginnt am Montag, 5\. Oktober 2026/)).toBeTruthy();
@@ -195,15 +195,15 @@ describe('Mehr: Aufbau', () => {
     expect(screen.getByRole('group', { name: 'Tage für 05:00 auf, kein Handy' })).toBeTruthy();
 
     // Off: asked first, the round stays as ended.
-    fireEvent.click(within(screen.getByRole('group', { name: 'Winter Arc' })).getByRole('button', { name: 'Aus' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Winter Arc beenden' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Aus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Runde beenden' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs[0]!.status).toBe('ended'));
     await store.flush();
     expect(await db.winterArcRuns.count()).toBe(1);
 
     // On again: a new round.
-    fireEvent.click(within(screen.getByRole('group', { name: 'Winter Arc' })).getByRole('button', { name: 'Ein' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Winter Arc beginnen' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(2));
     expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
   });
@@ -248,11 +248,29 @@ describe('Mehr: Aufbau', () => {
       s.endWinterArc();
       s.startWinterArc('2026-09-21', 90);
     });
-    expect(await screen.findByText('2 Runden des Winter Arc')).toBeTruthy();
-    const old = screen.getByRole('button', { name: /^Runde vom Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
+    expect(await screen.findByText('2 Runden der Streithalle')).toBeTruthy();
+    const old = screen.getByRole('button', { name: /^Winter Arc: Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
     fireEvent.click(old);
     expect(screen.getByText('Morgens zuerst das Wort')).toBeTruthy();
     expect(screen.getByText(/alle Morgen neu/)).toBeTruthy();
+  });
+
+  it('starts a round of any name and any span, by end date or by days', async () => {
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
+    fireEvent.click(within(await screen.findByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
+    const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
+    expect((within(dialog).getByLabelText('Name der Runde') as HTMLInputElement).value).toBe('Winter Arc');
+    fireEvent.change(within(dialog).getByLabelText('Name der Runde'), { target: { value: '  Fastenzeit  2027 ' } });
+    fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2027-02-17' } });
+    fireEvent.change(within(dialog).getByLabelText('Letzter Tag'), { target: { value: '2027-04-03' } });
+    expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('46');
+    // A single day is a round too.
+    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '1' } });
+    expect((within(dialog).getByLabelText('Letzter Tag') as HTMLInputElement).value).toBe('2027-02-17');
+    fireEvent.change(within(dialog).getByLabelText('Letzter Tag'), { target: { value: '2027-04-03' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
+    await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(1));
+    expect(store.getProfile().winterArc.runs[0]).toMatchObject({ name: 'Fastenzeit 2027', startDate: '2027-02-17', durationDays: 46 });
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
@@ -825,16 +843,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.27\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.28\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.27\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.28\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.27\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.28\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

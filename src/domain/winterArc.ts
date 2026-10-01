@@ -53,6 +53,8 @@ export type WinterArcStatus = 'active' | 'ended';
 
 export interface WinterArcRun {
   id: string;
+  /** What the user calls the round, e.g. "Winter Arc" or "Fastenzeit"; empty means the plan's name. */
+  name?: string;
   startDate: DateKey;
   durationDays: number;
   status: WinterArcStatus;
@@ -100,7 +102,7 @@ export type WinterArcPhase = 'Disziplin' | 'Dienst' | 'Leitung';
 
 /* ------------------------------------------------------------ defaults */
 
-export const MIN_DURATION = 7;
+export const MIN_DURATION = 1;
 export const MAX_DURATION = 365;
 export const DEFAULT_DURATION = 90;
 export const QUICK_DURATIONS = [40, 60, 90] as const;
@@ -215,8 +217,11 @@ export function startRun(
   durationDays: number,
   now: number,
   id = `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+  name = '',
 ): WinterArcData {
   const run: WinterArcRun = { id, startDate, durationDays, status: 'active', createdAt: now, updatedAt: now };
+  const n = cleanName(name);
+  if (n) run.name = n;
   const ended = endRun(data, now);
   return { ...ended, runs: [...ended.runs, run] };
 }
@@ -231,6 +236,12 @@ export function endRun(data: WinterArcData, now: number): WinterArcData {
 }
 
 /* ------------------------------------------------------------ normalizing */
+
+export const NAME_MAX = 60;
+export const DEFAULT_RUN_NAME = 'Winter Arc';
+const cleanName = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX);
+/** The name a round goes by. */
+export const runName = (run: Pick<WinterArcRun, 'name'>): string => run.name || DEFAULT_RUN_NAME;
 
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object';
 const num = (x: unknown, fallback = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : fallback);
@@ -251,8 +262,10 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
     if (!isObj(r) || typeof r.id !== 'string' || !r.id || r.id.includes('|')) continue;
     if (!isDateKey(r.startDate as string) || !isValidDuration(r.durationDays as number)) continue;
     if (runs.some((x) => x.id === r.id)) continue;
+    const name = cleanName(str(r.name));
     runs.push({
       id: r.id,
+      ...(name ? { name } : {}),
       startDate: r.startDate as DateKey,
       durationDays: r.durationDays as number,
       status: r.status === 'active' ? 'active' : 'ended',

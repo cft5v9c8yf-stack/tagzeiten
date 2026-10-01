@@ -264,7 +264,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               : tab === 'arena'
                 ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
                 : tab === 'streithalle'
-                  ? `${count} ${count === 1 ? 'Runde des Winter Arc' : 'Runden des Winter Arc'}`
+                  ? `${count} ${count === 1 ? 'Runde der Streithalle' : 'Runden der Streithalle'}`
                 : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
       </p>
 

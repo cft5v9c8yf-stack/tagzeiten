@@ -375,9 +375,11 @@ export class Store {
   /* ------------------------------------------------------------ winter arc */
 
   /** Begins a new round of the Winter Arc; a round under way is ended, nothing is deleted. */
-  startWinterArc(startDate: DateKey, durationDays: number): void {
+  startWinterArc(startDate: DateKey, durationDays: number, name = ''): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: startRun(p.winterArc, startDate, durationDays, t) }), { immediate: true });
+    this.updateProfile((p) => ({ ...p, winterArc: startRun(p.winterArc, startDate, durationDays, t, undefined, name) }), {
+      immediate: true,
+    });
   }
 
   /** Switches the Winter Arc off: the round is marked as ended, its entries stay. */

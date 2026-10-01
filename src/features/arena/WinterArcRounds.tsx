@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { downloadText } from '../../app/files';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_REVIEW } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
-import { endDateOf, focusOf, hasReview, totalWeeks, weekOf, type WinterArcRun } from '../../domain/winterArc';
+import { endDateOf, focusOf, hasReview, runName, totalWeeks, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { formatFullDate, WinterArcStartPanel } from '../settings/WinterArcSettings';
 import { EndText } from './WinterArcGuide';
 
 export const roundTitle = (run: WinterArcRun) =>
-  `Runde vom ${formatFullDate(run.startDate)} bis ${formatFullDate(endDateOf(run.startDate, run.durationDays))}`;
+  `${runName(run)}: ${formatFullDate(run.startDate)} bis ${formatFullDate(endDateOf(run.startDate, run.durationDays))}`;
 
 /** The weekly reviews of a round, to read again; at the end the word of comfort (rule 1). */
 export function RoundReviews({ run }: { run: WinterArcRun }) {
@@ -66,8 +66,8 @@ export function WinterArcClosing({ run }: { run: WinterArcRun }) {
         <WinterArcStartPanel
           today={store.today()}
           onCancel={() => setStarting(false)}
-          onStart={(s, d) => {
-            store.startWinterArc(s, d);
+          onStart={(s, d, n) => {
+            store.startWinterArc(s, d, n);
             setStarting(false);
           }}
         />

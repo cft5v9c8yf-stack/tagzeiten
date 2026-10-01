@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.28.0',
+    date: '2026-10-01',
+    title: 'Die Streithalle für jeden Zeitraum',
+    changes: [
+      { area: 'Einstellungen', text: 'Unter Darstellung heißt der Schalter jetzt „Streithalle“. Eine Runde bekommt einen Namen, etwa „Winter Arc“ oder „Fastenzeit“, ein Startdatum und einen letzten Tag oder eine Dauer, von einem Tag bis zu einem Jahr. Der Plan des Winter Arc bleibt die Anleitung.' },
+      { area: 'Arena', text: 'Der Name der Runde steht über der Streithalle, im Rückblick und im Export.' },
+    ],
+  },
+  {
     version: '0.27.0',
     date: '2026-10-01',
     title: '„Heute“ im Modus der Streithalle',

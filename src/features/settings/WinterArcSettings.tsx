@@ -15,6 +15,10 @@ import { WEEK } from '../../domain/schedule';
 import {
   activeRun,
   DEFAULT_DURATION,
+  DEFAULT_RUN_NAME,
+  daysBetween,
+  NAME_MAX,
+  runName,
   endDateOf,
   isValidDuration,
   isValidTime,
@@ -44,31 +48,59 @@ export function winterArcLine(profile: Profile, today: DateKey): string {
   return `Tag ${day} von ${days}`;
 }
 
-/** The start of a round: start date, duration in calendar days, and the end date that follows. */
+/**
+ * The start of a round in the Streithalle: a name, the start date, and the end
+ * date or the duration in calendar days (each follows the other).
+ */
 export function WinterArcStartPanel({
   today,
   onStart,
   onCancel,
 }: {
   today: DateKey;
-  onStart: (startDate: DateKey, durationDays: number) => void;
+  onStart: (startDate: DateKey, durationDays: number, name: string) => void;
   onCancel: () => void;
 }) {
   const id = useId();
+  const [name, setName] = useState(DEFAULT_RUN_NAME);
   const [start, setStart] = useState<DateKey>(today);
   const [duration, setDuration] = useState(String(DEFAULT_DURATION));
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
   const validStart = isDateKey(start);
+  const end = validDays && validStart ? endDateOf(start, days) : '';
   return (
     <div className="panel confirm-panel winter-arc-start" role="dialog" aria-labelledby={`${id}-title`}>
       <p id={`${id}-title`}>
-        <strong>Neue Runde des Winter Arc</strong>
+        <strong>Neue Runde in der Streithalle</strong>
       </p>
+      <div className="field">
+        <label htmlFor={`${id}-name`}>Name der Runde</label>
+        <input
+          id={`${id}-name`}
+          type="text"
+          maxLength={NAME_MAX}
+          value={name}
+          placeholder={DEFAULT_RUN_NAME}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
       <div className="field">
         <label htmlFor={`${id}-start`}>Startdatum</label>
         <input id={`${id}-start`} type="date" value={start} onChange={(e) => setStart(e.target.value)} />
         <p className="small muted">Ein Start an einem Montag passt am besten zum Wochen-Tracker.</p>
+      </div>
+      <div className="field">
+        <label htmlFor={`${id}-end`}>Letzter Tag</label>
+        <input
+          id={`${id}-end`}
+          type="date"
+          value={end}
+          min={validStart ? start : undefined}
+          onChange={(e) => {
+            if (validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
+          }}
+        />
       </div>
       <div className="field">
         <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
@@ -90,9 +122,9 @@ export function WinterArcStartPanel({
           ))}
         </div>
       </div>
-      {validDays && validStart ? (
+      {end ? (
         <p>
-          Letzter Tag: <strong>{formatFullDate(endDateOf(start, days))}</strong>
+          Bis <strong>{formatFullDate(end)}</strong>
         </p>
       ) : (
         <p className="small muted" role="status">
@@ -100,13 +132,8 @@ export function WinterArcStartPanel({
         </p>
       )}
       <div className="button-row">
-        <button
-          type="button"
-          className="btn primary"
-          disabled={!validDays || !validStart}
-          onClick={() => onStart(start, days)}
-        >
-          Winter Arc beginnen
+        <button type="button" className="btn primary" disabled={!end} onClick={() => onStart(start, days, name)}>
+          Runde beginnen
         </button>
         <button type="button" className="btn quiet" onClick={onCancel}>
           Abbrechen
@@ -171,7 +198,7 @@ export function WinterArcSettings() {
   return (
     <>
       <Segmented
-        label="Winter Arc"
+        label="Streithalle"
         value={run ? 'on' : 'off'}
         onChange={(v) => {
           if (v === 'on' && !run) setPanel('start');
@@ -183,20 +210,22 @@ export function WinterArcSettings() {
         ]}
       />
       <p className="small muted">
-        Der 90-Tage-Standard: Gott zuerst, dann die Arbeit, dann das Haus. Eingeschaltet stehen Anleitung und Tracker in
-        der Arena. Unabhängig von der Waffenrüstung.
+        Eine Runde mit festem Tagesstandard, für jeden Zeitraum, den du wählst, nach dem Plan des Winter Arc: Gott
+        zuerst, dann die Arbeit, dann das Haus. Eingeschaltet steht die Streithalle in der Arena, ihre Gewohnheiten
+        unter „Heute“. Unabhängig von der Waffenrüstung.
       </p>
       {run && !panel && (
         <p>
-          Diese Runde: {formatFullDate(run.startDate)} bis {formatFullDate(endDateOf(run.startDate, run.durationDays))}
+          {runName(run)}: {formatFullDate(run.startDate)} bis{' '}
+          {formatFullDate(endDateOf(run.startDate, run.durationDays))}
         </p>
       )}
       {panel === 'start' && (
         <WinterArcStartPanel
           today={today}
           onCancel={() => setPanel(null)}
-          onStart={(s, d) => {
-            store.startWinterArc(s, d);
+          onStart={(s, d, n) => {
+            store.startWinterArc(s, d, n);
             setPanel(null);
           }}
         />
@@ -215,7 +244,7 @@ export function WinterArcSettings() {
                 setPanel(null);
               }}
             >
-              Winter Arc beenden
+              Runde beenden
             </button>
             <button type="button" className="btn quiet" onClick={() => setPanel(null)}>
               Abbrechen

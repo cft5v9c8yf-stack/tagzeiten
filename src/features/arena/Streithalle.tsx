@@ -1,6 +1,6 @@
-import { STREITHALLE_VERSE, WINTER_ARC_LEAD, WINTER_ARC_TITLE } from '../../content/winterArc';
+import { STREITHALLE_VERSE, WINTER_ARC_LEAD } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
-import { activeRun, stageOf } from '../../domain/winterArc';
+import { activeRun, runName, stageOf } from '../../domain/winterArc';
 import { WinterArcDashboard } from './WinterArcDashboard';
 import { WinterArcClosing } from './WinterArcRounds';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
@@ -19,7 +19,7 @@ export function Streithalle() {
   return (
     <div className="streithalle">
       <WaVerse verse={STREITHALLE_VERSE} />
-      <h3 className="wa-title">{WINTER_ARC_TITLE}</h3>
+      <h3 className="wa-title">{runName(run)}</h3>
       <p className="arena-note">{WINTER_ARC_LEAD}</p>
       {stage === 'after' ? (
         <>

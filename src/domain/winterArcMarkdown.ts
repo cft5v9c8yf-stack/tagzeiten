@@ -21,6 +21,7 @@ import {
   totalWeeks,
   weekDates,
   weekOf,
+  runName,
   type WinterArcData,
   type WinterArcRun,
   type WinterArcSettings,
@@ -33,7 +34,7 @@ const short = (k: DateKey) =>
 export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: WinterArcSettings): string[] {
   const W = totalWeeks(run.durationDays);
   const out = [
-    `## Runde vom ${de(run.startDate)} bis ${de(endDateOf(run.startDate, run.durationDays))} · ${run.durationDays} Tage · ${run.status === 'active' ? 'läuft' : 'beendet'}`,
+    `## ${runName(run)} · ${de(run.startDate)} bis ${de(endDateOf(run.startDate, run.durationDays))} · ${run.durationDays} Tage · ${run.status === 'active' ? 'läuft' : 'beendet'}`,
     '',
   ];
   // The monthly point stands once, in the first week of its month that is written out.
@@ -67,5 +68,5 @@ export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: 
 export function winterArcToMarkdown(data: WinterArcData, settings: WinterArcSettings): string[] {
   if (!data.runs.length) return [];
   const runs = [...data.runs].sort((a, b) => a.createdAt - b.createdAt);
-  return ['', '# Winter Arc (Streithalle)', '', ...runs.flatMap((r) => runToMarkdown(r, data, settings))];
+  return ['', '# Streithalle', '', ...runs.flatMap((r) => runToMarkdown(r, data, settings))];
 }
