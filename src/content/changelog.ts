@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.25.0',
+    date: '2026-10-01',
+    title: 'Die Streithalle neu geordnet',
+    changes: [
+      { area: 'Arena', text: 'Die Streithalle hat oben eine Karte mit Tag, Phase, Woche, Vers und Auftrag, darunter drei Reiter: Tag, Woche und Anleitung. Die Anleitung steht als Kacheln.' },
+      { area: 'Arena', text: 'Unter „Tag“ blätterst du durch die Tage der Runde und trägst nach, was war. Abgehakt wird mit einem Antippen der ganzen Zeile.' },
+      { area: 'Arena', text: 'Beim Tagebuch trägst du den Satz, der dich trifft, und drei Dankpunkte gleich dort ein, oder du schreibst in der Gebetskammer.' },
+    ],
+  },
+  {
     version: '0.24.0',
     date: '2026-10-01',
     title: 'Streithalle: Abschluss, Rückblick und Gewohnheiten',

@@ -28,7 +28,13 @@ async function renderArena(path: string, prepare?: (s: Store) => void) {
   });
   await store.load();
   prepare?.(store);
-  const router = createMemoryRouter([{ path: '/arena', element: <ArenaPage /> }], { initialEntries: [path] });
+  const router = createMemoryRouter(
+    [
+      { path: '/arena', element: <ArenaPage /> },
+      { path: '/arena/:eintrag', element: <ArenaPage /> },
+    ],
+    { initialEntries: [path] },
+  );
   render(
     <ToastProvider>
       <StoreProvider store={store}>
@@ -39,6 +45,9 @@ async function renderArena(path: string, prepare?: (s: Store) => void) {
   await screen.findByRole('heading', { level: 2, name: 'Arena' });
   return store;
 }
+
+const tab = (name: string) =>
+  fireEvent.click(within(screen.getByRole('group', { name: 'Ansicht der Streithalle' })).getByRole('button', { name }));
 
 const places = () =>
   within(screen.getByRole('group', { name: 'Bereich der Arena' }))
@@ -68,7 +77,8 @@ describe('Streithalle', () => {
     // Word first: Psalm 144,1 above the plan.
     expect(hall.querySelector('.wa-verse')!.textContent).toContain('der meine Hände lehrt streiten');
     expect(hall.firstElementChild!.classList.contains('wa-verse')).toBe(true);
-    const parts = [...hall.querySelectorAll('.wa-guide-part .fold-title')].map((t) => t.textContent);
+    tab('Anleitung');
+    const parts = [...hall.querySelectorAll('.wa-guide .tile-card-title')].map((t) => t.textContent);
     expect(parts).toEqual([
       'Worum es geht',
       'Die vier Regeln',
@@ -77,7 +87,7 @@ describe('Streithalle', () => {
       'Die drei Phasen',
       'Tag 90 – und danach',
     ]);
-    fireEvent.click(screen.getByRole('button', { name: 'Die drei Phasen' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Die drei Phasen/ }));
     // 26 September is day 13 of a round from 14 September: week 2.
     const current = hall.querySelector('.wa-week[aria-current="true"]')!;
     expect(current.textContent).toContain('Woche 2');
@@ -87,7 +97,8 @@ describe('Streithalle', () => {
 
   it('marks no week before the round has begun', async () => {
     await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-10-05', 90));
-    fireEvent.click(screen.getByRole('button', { name: 'Die drei Phasen' }));
+    // Before the start the guide stands open.
+    fireEvent.click(screen.getByRole('button', { name: /^Die drei Phasen/ }));
     expect(document.querySelector('.wa-week[aria-current]')).toBeNull();
   });
 
@@ -97,7 +108,7 @@ describe('Streithalle', () => {
     expect(head.textContent).toContain('Tag 13 von 90');
     expect(head.textContent).toContain('Disziplin');
     expect(head.textContent).toContain('Woche 2 von 13');
-    expect(head.textContent).toContain('Schwerpunkt: Den Morgen gewinnen');
+    expect(head.textContent).toContain('Den Morgen gewinnen');
     const verse = head.querySelector('.wa-verse')!;
     const task = head.querySelector('.wa-head-task')!;
     expect(verse.textContent).toContain('HERR, frühe wollest du meine Stimme hören.');
@@ -111,10 +122,10 @@ describe('Streithalle', () => {
       s.updateDay(s.today(), (d) => ({ ...d, morning: { ...d.morning, done: true } }));
     });
     const run = store.getProfile().winterArc.runs[0]!;
-    const today = within(document.querySelector('.wa-today') as HTMLElement);
+    const today = within(document.querySelector('.wa-day') as HTMLElement);
     expect(today.getByText('Morgengebet heute gebetet – abhaken?')).toBeTruthy();
-    const word = today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' }) as HTMLInputElement;
-    expect(word.checked).toBe(false);
+    const word = today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' });
+    expect(word.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(word);
     expect(store.getProfile().winterArc.days[0]).toMatchObject({
       runId: run.id,
@@ -126,15 +137,16 @@ describe('Streithalle', () => {
     expect(store.getProfile().winterArc.days[0]!.checks).toEqual({});
     // 26 September 2026 is a Saturday: rest from training, no work blocks.
     expect(today.queryByRole('checkbox', { name: 'Trainiert' })).toBeNull();
-    expect(document.querySelector('.wa-today')!.textContent).toContain('Ruhe Trainiert');
+    expect(document.querySelector('.wa-day')!.textContent).toContain('RuheTrainiert');
     // Without a wife under "Mein Haus" the points about her wait.
-    expect(document.querySelector('.wa-today')!.textContent).not.toContain('Eine Geste für meine Frau');
+    expect(document.querySelector('.wa-day')!.textContent).not.toContain('Eine Geste für meine Frau');
     // The work blocks of the tracker are left out.
-    expect(document.querySelector('.wa-today')!.textContent).not.toContain('Fokusblock');
+    expect(document.querySelector('.wa-day')!.textContent).not.toContain('Fokusblock');
   });
 
   it('shows the week as a grid with the real weekdays; past days can be filled in', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-15', 90));
+    tab('Woche');
     const grid = document.querySelector('.wa-grid')!;
     // The week runs from the start (a Tuesday), not from Monday.
     expect([...grid.querySelectorAll('thead th span:first-child')].map((t) => t.textContent)).toEqual([
@@ -158,6 +170,7 @@ describe('Streithalle', () => {
   it('greys out the days after the end of a short round', async () => {
     // Nine days from 19 September: today (26th) is in week 2, which has two days in the round, five outside.
     await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-19', 9));
+    tab('Woche');
     const outside = document.querySelectorAll('.wa-grid thead th.is-outside');
     expect(outside).toHaveLength(5);
     expect(document.querySelector('.wa-grid td.is-outside button')).toBeNull();
@@ -165,22 +178,23 @@ describe('Streithalle', () => {
 
   it('counts the monthly point for every week of the calendar month', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
-    const served = () =>
-      screen.getByRole('checkbox', { name: /^Gedient \(einmal im Monat\)\s*·\s*September$/ }) as HTMLInputElement;
+    tab('Woche');
+    const served = () => screen.getByRole('checkbox', { name: /^Gedient \(einmal im Monat\)\s*·\s*September$/ });
     fireEvent.click(served());
     expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', served: true }]);
-    fireEvent.click(screen.getByRole('button', { name: '‹ Frühere Woche' }));
-    expect(screen.getByRole('heading', { name: 'Woche 1' })).toBeTruthy();
-    expect(served().checked).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
+    expect(screen.getByRole('heading', { name: /^Woche 1/ })).toBeTruthy();
+    expect(served().getAttribute('aria-checked')).toBe('true');
     fireEvent.click(screen.getByRole('checkbox', { name: 'Gottesdienst und Sonntagsruhe' }));
     expect(store.getProfile().winterArc.weeks).toMatchObject([{ week: 1, weeklyChecks: { church: true } }]);
   });
 
   it('asks for the weekly review on the last day of a week, ending in the word of comfort', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    tab('Woche');
     // 26 September is the sixth day of week 2: no review yet.
     expect(document.querySelector('.wa-review')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: '‹ Frühere Woche' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     const review = document.querySelector('.wa-review') as HTMLElement;
     fireEvent.change(within(review).getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen auf' } });
     within(review).getByLabelText('Das Kästchen, das ich schleifen ließ');
@@ -210,12 +224,38 @@ describe('Streithalle', () => {
     expect(closing.textContent).toContain('Woche 3 · Die Arbeit schützen');
     expect(closing.textContent).toContain('Er trägt mich.');
     expect(closing.querySelector('.wa-reviews')!.lastElementChild!.textContent).toContain('alle Morgen neu');
-    expect(document.querySelector('.wa-today')).toBeNull();
+    expect(document.querySelector('.wa-day')).toBeNull();
     expect(within(closing).getByRole('button', { name: 'Als Markdown exportieren' })).toBeTruthy();
     fireEvent.click(within(closing).getByRole('button', { name: 'Neue Runde starten' }));
     fireEvent.click(within(closing).getByRole('button', { name: 'Winter Arc beginnen' }));
     expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
     expect(document.querySelector('.wa-closing')).toBeNull();
     expect(document.querySelector('.wa-head')!.textContent).toContain('Tag 1 von 90');
+  });
+
+  it('pages through the days of the round to fill in what was', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-24', 90));
+    expect((screen.getByRole('button', { name: 'Folgetag' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
+    expect(screen.getByRole('heading', { name: /^Freitag, 25\. September/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('checkbox', { name: '04:00 auf, kein Handy' }));
+    expect(store.getProfile().winterArc.days).toMatchObject([{ date: '2026-09-25', checks: { wake: true } }]);
+    fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
+    // The start is the first day there is.
+    expect((screen.getByRole('button', { name: 'Vortag' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
+    expect(screen.getByRole('heading', { name: /^Heute/ })).toBeTruthy();
+  });
+
+  it('lets the journal be written right there, or in the Gebetskammer', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    fireEvent.click(screen.getByRole('button', { name: 'Eintragen' }));
+    fireEvent.change(screen.getByLabelText('Der Satz, der mich trifft'), { target: { value: 'Seid stark' } });
+    fireEvent.change(screen.getByLabelText('Ich danke dir, mein Gott, für …'), { target: { value: 'den Morgen' } });
+    expect(store.getDay('2026-09-26').morning.verse).toBe('Seid stark');
+    expect(store.getDay('2026-09-26').evening.thanks[0]).toBe('den Morgen');
+    fireEvent.click(screen.getByRole('button', { name: 'Lieber in der Gebetskammer schreiben' }));
+    expect(store.getProfile().arena).toHaveLength(1);
+    expect(await screen.findByText(/Gebetskammer/)).toBeTruthy();
   });
 });

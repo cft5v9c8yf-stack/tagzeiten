@@ -2560,62 +2560,161 @@ header.top .search-link:focus-visible {
 .wa-week-verse {
   font-style: italic;
 }
+.wa-dashboard .seg {
+  margin: 4px 0 8px;
+}
+/* The head: where the round stands. */
 .wa-head {
-  margin: 12px 0 8px;
+  border-color: var(--gold);
 }
 .wa-head p {
   margin: 4px 0;
 }
+.wa-head-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  font-size: 1.15rem;
+}
+.wa-head-week {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.wa-chip {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--ink);
+}
+.wa-head-focus strong {
+  font-size: 1.1rem;
+}
+.wa-head .wa-verse {
+  margin: 8px 0;
+}
 .wa-label {
   display: block;
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
   color: var(--muted);
 }
-.wa-today h4,
-.wa-week-view h4 {
-  margin: 20px 0 6px;
+/* A pager: ‹ title › */
+.wa-pager {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 4px;
+}
+.wa-pager h4 {
+  margin: 0;
+  text-align: center;
+}
+.wa-pager-sub {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.wa-pager-btn {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.wa-back {
+  text-align: center;
+  margin: 2px 0 0;
 }
 .wa-group h5,
 .wa-weekly h5,
 .wa-review h5 {
-  margin: 12px 0 4px;
-}
-.wa-checks {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.wa-check {
-  padding: 6px 0;
-  border-bottom: 1px solid var(--rule);
-}
-.wa-check label {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.wa-check input[type='checkbox'] {
-  width: 22px;
-  height: 22px;
-  flex: none;
-  accent-color: var(--accent);
-}
-.wa-check.is-off {
+  margin: 14px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--muted);
+}
+/* A point to tick: the whole row, with a ring; done is a filled ring with a check. */
+.wa-tick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wa-row:last-child .wa-tick,
+.wa-weekly .wa-tick:last-child {
+  border-bottom: 0;
+}
+.wa-ring {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.wa-tick[aria-checked='true'] .wa-ring {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.wa-tick[aria-checked='true'] .wa-ring::after {
+  content: '';
+  width: 6px;
+  height: 11px;
+  margin-top: -2px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.wa-tick.is-off {
+  cursor: default;
+  color: var(--muted);
+}
+.wa-off-mark {
+  flex: none;
+  width: 26px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+}
+.wa-hint {
+  display: block;
+  margin: -4px 0 8px 38px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.wa-dashboard > .seg {
+  display: flex;
+  width: 100%;
+}
+.wa-dashboard > .seg button {
+  flex: 1;
+}
+.wa-journal {
+  margin: 0 0 12px 38px;
 }
 .wa-off {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.8rem;
-}
-.wa-hint {
-  margin: 4px 0 0 32px;
-}
-.wa-week-nav {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
+  font-size: 0.7rem;
 }
 .wa-grid-wrap {
   overflow-x: auto;
@@ -2643,6 +2742,9 @@ header.top .search-link:focus-visible {
   color: var(--muted);
   font-weight: 600;
 }
+.wa-grid thead th.is-today {
+  color: var(--ink);
+}
 .wa-grid-date {
   display: block;
   font-weight: 400;
@@ -2650,7 +2752,9 @@ header.top .search-link:focus-visible {
 .wa-grid-group th {
   text-align: left;
   font-family: var(--sans);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--muted);
   padding-top: 10px;
 }
