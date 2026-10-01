@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.19.0',
+    date: '2026-10-01',
+    title: 'Das Konkordienbuch',
+    changes: [
+      { area: 'Lehre', text: 'Oben in der Lehre steht das Konkordienbuch als eigene Kachel: was es ist und wie es entstand, dazu sein Inhalt. Die drei Bekenntnisse, die Augsburgische Konfession, der Kleine und der Große Katechismus öffnen sich von dort; Apologie, Schmalkaldische Artikel, Traktat und Konkordienformel folgen.' },
+    ],
+  },
+  {
     version: '0.18.0',
     date: '2026-10-01',
     title: 'Der Große Katechismus',

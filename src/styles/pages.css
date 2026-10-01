@@ -2437,3 +2437,11 @@ header.top .search-link:focus-visible {
   gap: 6px;
   margin: 6px 0 0;
 }
+
+/* Lehre: the Book of Concord as one tile at the top */
+.concordia-tile {
+  margin: 0 0 18px;
+}
+.overview-row.pending .overview-link {
+  color: var(--muted);
+}

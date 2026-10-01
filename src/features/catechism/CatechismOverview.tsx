@@ -3,14 +3,15 @@ import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { CATECHISM } from '../../content/catechism';
 import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
 
-/** The appendices, opened like the chief parts. */
+/** The appendices, opened like the chief parts. `book`: part of the Book of Concord, listed there. */
 export const APPENDICES = [
+  { slug: 'konkordienbuch', title: 'Das Konkordienbuch', line: 'Die Bekenntnisschriften der lutherischen Kirche, 1580' },
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
-  { slug: 'grosser-katechismus', title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke' },
-  { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum' },
-  { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530' },
+  { slug: 'grosser-katechismus', title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke', book: true },
+  { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
+  { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
   { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
 ] as const;
 
@@ -30,6 +31,14 @@ export function CatechismOverview({
   const to = (slug: string) => withDate(`/katechismus/${slug}`, date, isToday);
   return (
     <>
+      <ul className="overview-list concordia-tile">
+        <li className="overview-row">
+          <Link className="overview-link" to={to('konkordienbuch')}>
+            <span className="overview-title">Das Konkordienbuch</span>
+            <span className="overview-count">Bekenntnisse, Augsburgische Konfession, Kleiner und Großer Katechismus</span>
+          </Link>
+        </li>
+      </ul>
       <section className="cat-overview" aria-labelledby="cat-parts">
         <div className="cat-overview-head">
           <h3 id="cat-parts">Hauptstücke</h3>
@@ -65,7 +74,7 @@ export function CatechismOverview({
           <h3 id="cat-appendix">Anhang</h3>
         </div>
         <ul className="overview-list">
-          {APPENDICES.map((a) => (
+          {APPENDICES.filter((a) => a.slug !== 'konkordienbuch' && !('book' in a)).map((a) => (
             <li key={a.slug} className="overview-row">
               <Link className="overview-link" to={to(a.slug)}>
                 <span className="overview-title">{a.title}</span>

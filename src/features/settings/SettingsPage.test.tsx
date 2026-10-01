@@ -420,6 +420,17 @@ describe('Katechismus', () => {
     expect(screen.getAllByRole('button', { name: /^Der [IVX]+\. Artikel/ })).toHaveLength(27);
   });
 
+  it('gathers the confessions under the Book of Concord, with what it is and what is in it', async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    fireEvent.click(await screen.findByRole('link', { name: /^Das Konkordienbuch/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Das Konkordienbuch' })).toBeTruthy();
+    expect(document.body.textContent).toContain('25. Juni 1580 in Dresden');
+    expect(document.body.textContent).toContain('Die Konkordienformel');
+    fireEvent.click(screen.getByRole('link', { name: /^Der Große Katechismus/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Der Große Katechismus' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: '‹ Konkordienbuch' })).toBeTruthy();
+  });
+
   it('keeps the Large Catechism in the appendix, word for word after 1580', async () => {
     await renderAt('/katechismus/grosser-katechismus', <CatechismPage />);
     await screen.findByRole('heading', { level: 2, name: 'Der Große Katechismus' });
@@ -475,7 +486,7 @@ describe('Katechismus', () => {
     await renderAt('/katechismus', <CatechismPage />);
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
-    expect(document.querySelectorAll('.overview-row')).toHaveLength(13); // 6 chief parts, 7 appendices
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(11); // the Book of Concord, 6 chief parts, 4 appendices
     expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
     expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.
@@ -674,16 +685,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.18\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.19\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.18\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.19\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.18\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.19\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

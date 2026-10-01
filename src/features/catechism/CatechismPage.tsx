@@ -4,6 +4,7 @@ import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
 import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE, type BookPart } from '../../content/augsburgConfession';
 import { LARGE_CATECHISM, LARGE_CATECHISM_SOURCE } from '../../content/largeCatechism';
+import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
 import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
@@ -184,13 +185,49 @@ function LargeCatechism() {
   );
 }
 
+/** The Book of Concord: what it is, and its contents; parts at hand open their page. */
+function Concordia() {
+  const { date, isToday } = useSelectedDate();
+  return (
+    <>
+      {CONCORDIA_INTRO.map((p) => (
+        <p key={p.slice(0, 40)}>{p}</p>
+      ))}
+      {CONCORDIA_CONTENTS.map((g) => (
+        <section key={g.heading} className="cat-overview" aria-label={g.heading}>
+          <h3 className="book-circle">{g.heading}</h3>
+          <ul className="overview-list">
+            {g.parts.map((p) => (
+              <li key={p.title} className={`overview-row${p.to ? '' : ' pending'}`}>
+                {p.to ? (
+                  <Link className="overview-link" to={withDate(p.to, date, isToday)}>
+                    <span className="overview-title">{p.title}</span>
+                    <span className="overview-count">{p.line}</span>
+                  </Link>
+                ) : (
+                  <span className="overview-link">
+                    <span className="overview-title">{p.title}</span>
+                    <span className="overview-count">{p.line} · folgt</span>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p className="small muted">{CONCORDIA_NOTE}</p>
+    </>
+  );
+}
+
 function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   const title = APPENDICES.find((a) => a.slug === slug)!.title;
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
+        {slug === 'konkordienbuch' && <Concordia />}
         {slug === 'augsburgische-konfession' && <AugsburgConfession />}
         {slug === 'grosser-katechismus' && <LargeCatechism />}
         {slug === 'bekenntnisse' && <Creeds />}
@@ -262,7 +299,11 @@ export function CatechismPage() {
     return (
       <div className="cat-page">
         <p className="back-link">
-          <Link to={withDate('/katechismus', date, isToday)}>‹ Lehre</Link>
+          {appendix && 'book' in appendix ? (
+            <Link to={withDate('/katechismus/konkordienbuch', date, isToday)}>‹ Konkordienbuch</Link>
+          ) : (
+            <Link to={withDate('/katechismus', date, isToday)}>‹ Lehre</Link>
+          )}
         </p>
         {ci >= 0 ? <ChiefPart ci={ci} /> : <Appendix slug={appendix!.slug} />}
       </div>
