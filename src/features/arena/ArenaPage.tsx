@@ -10,7 +10,7 @@ import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { formatLong } from '../../domain/dates';
 import { winterArcLine } from '../settings/WinterArcSettings';
 import { SectionVerse } from '../../ui/SectionVerse';
-import { activeRun, runName } from '../../domain/winterArc';
+import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
 import { Streithalle } from './Streithalle';
 
@@ -497,9 +497,10 @@ export function ArenaPage() {
     param === FORGE_SLUG ? 'forge' : param === HALL_SLUG ? 'hall' : param === JOURNAL_SLUG ? 'journal' : undefined;
   if (!shownPlace) return <ArenaHome />;
   if (shownPlace === 'hall') {
+    const hallRun = activeRun(profile.winterArc);
     return (
       <div className="arena arena-place">
-        <PlaceHead title="Streithalle" />
+        <PlaceHead title="Streithalle" sub={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined} />
         <Streithalle />
       </div>
     );
@@ -553,13 +554,16 @@ export function ArenaPage() {
 }
 
 /** The head of a place: the way back to the Arena, and the place's name. */
-function PlaceHead({ title }: { title: string }) {
+function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
       <p className="back-link">
         <Link to="/arena">‹ Arena</Link>
       </p>
-      <h2>{title}</h2>
+      <h2 className="place-title">
+        {title}
+        {sub && <span className="place-sub">{sub}</span>}
+      </h2>
     </>
   );
 }

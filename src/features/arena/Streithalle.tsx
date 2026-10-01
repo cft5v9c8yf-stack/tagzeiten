@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { STREITHALLE_VERSE, WINTER_ARC_LEAD } from '../../content/winterArc';
+import { STREITHALLE_VERSE } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
-import { activeRun, runName, stageOf } from '../../domain/winterArc';
+import { activeRun, stageOf } from '../../domain/winterArc';
 import { WinterArcStartPanel } from '../settings/WinterArcSettings';
 import { WinterArcDashboard } from './WinterArcDashboard';
 import { WinterArcClosing } from './WinterArcRounds';
@@ -68,8 +68,6 @@ export function Streithalle() {
   return (
     <div className="streithalle">
       <WaVerse verse={STREITHALLE_VERSE} />
-      <h3 className="wa-title">{runName(run)}</h3>
-      <p className="arena-note">{WINTER_ARC_LEAD}</p>
       {stage === 'after' ? (
         <>
           <WinterArcClosing run={run} />

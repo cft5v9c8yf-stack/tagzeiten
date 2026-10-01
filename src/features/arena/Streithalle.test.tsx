@@ -247,6 +247,8 @@ describe('Streithalle', () => {
     expect((screen.getByRole('button', { name: 'Vortag' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
     expect(screen.getByRole('heading', { name: /^Heute/ })).toBeTruthy();
+    // "Heute" leads to the page of the day.
+    expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
   });
 
   it('lets the journal be written right there, or in the Gebetskammer', async () => {

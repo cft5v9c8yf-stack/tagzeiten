@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import {
   WINTER_ARC_COMFORT,
   WINTER_ARC_FOCUS,
@@ -100,7 +100,7 @@ function Head({ run, today }: { run: WinterArcRun; today: DateKey }) {
  * The journal point: write the marked sentence and three thanks right here (the
  * same fields as in the Andacht), or go to the Gebetskammer and write there.
  */
-function JournalEntry({ date }: { date: DateKey }) {
+export function JournalEntry({ date }: { date: DateKey }) {
   const store = useStore();
   const navigate = useNavigate();
   return (
@@ -147,7 +147,13 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           <Chevron dir="left" />
         </button>
         <h4 id="wa-day-title">
-          {date === today ? 'Heute' : formatLong(date)}
+          {date === today ? (
+            <Link to="/" className="wa-today-link">
+              Heute
+            </Link>
+          ) : (
+            formatLong(date)
+          )}
           <span className="wa-pager-sub">Tag {positionOf(run, date).day}</span>
         </h4>
         <button

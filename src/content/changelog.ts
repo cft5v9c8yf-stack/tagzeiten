@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.30.1',
+    date: '2026-10-01',
+    title: 'Feinschliff der Streithalle',
+    changes: [
+      { area: 'Arena', text: 'Name und Zeitraum der Runde stehen als Unterzeile unter „Streithalle“; die Einleitung des Plans steht am Anfang der Anleitung. Der Beginn einer Runde steht ohne doppelten Rahmen.' },
+      { area: 'Arena', text: 'Ein Tipp auf „Heute“ in der Tagesansicht der Streithalle führt zur Seite „Heute“.' },
+      { area: 'Heute', text: 'Auch unter „Heute“ lässt sich beim Tagebuch der Streithalle gleich aufschreiben.' },
+    ],
+  },
+  {
     version: '0.30.0',
     date: '2026-10-01',
     title: 'Arena und Gewohnheiten neu gestaltet',

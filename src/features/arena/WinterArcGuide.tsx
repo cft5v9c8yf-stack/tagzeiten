@@ -3,6 +3,7 @@ import {
   WINTER_ARC_DAY,
   WINTER_ARC_END,
   WINTER_ARC_FOCUS,
+  WINTER_ARC_LEAD,
   WINTER_ARC_PHASES,
   WINTER_ARC_RULES,
   WINTER_ARC_WEEK,
@@ -52,6 +53,7 @@ export function FocusWeeks({ current }: { current?: number }) {
 export function WinterArcGuide({ currentFocus }: { currentFocus?: number }) {
   return (
     <div className="wa-guide">
+      <p className="arena-note wa-lead">{WINTER_ARC_LEAD}</p>
       <TileGroup
         level={4}
         label="Anleitung"

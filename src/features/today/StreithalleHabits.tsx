@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { JournalEntry } from '../arena/WinterArcDashboard';
 import { WINTER_ARC_GROUPS, WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
 import { Tick } from '../../ui/Tick';
 import { useProfile, useStore } from '../../data/hooks';
@@ -128,6 +130,7 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
  */
 export function StreithalleDay({ date }: { date: DateKey }) {
   const store = useStore();
+  const [writing, setWriting] = useState(false);
   const profile = useProfile();
   const run = activeRun(profile.winterArc);
   if (!run) return null;
@@ -148,14 +151,28 @@ export function StreithalleDay({ date }: { date: DateKey }) {
           <h5>{g}</h5>
           {WINTER_ARC_ITEMS.filter((it) => it.group === g && shown(it)).map((it) =>
             appliesOn(settings, it.id, date) ? (
-              <Tick
-                key={it.id}
-                checked={!!checks[it.id]}
-                disabled={date > today}
-                onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
-              >
-                {it.text(settings.times)}
-              </Tick>
+              <div key={it.id} className="wa-row">
+                <div className="wa-row-line">
+                  <Tick
+                    checked={!!checks[it.id]}
+                    disabled={date > today}
+                    onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
+                  >
+                    {it.text(settings.times)}
+                  </Tick>
+                  {it.id === 'journal' && date <= today && (
+                    <button
+                      type="button"
+                      className="wa-row-action"
+                      aria-expanded={writing}
+                      onClick={() => setWriting(!writing)}
+                    >
+                      {writing ? 'Schließen' : 'Aufschreiben'}
+                    </button>
+                  )}
+                </div>
+                {it.id === 'journal' && writing && date <= today && <JournalEntry date={date} />}
+              </div>
             ) : (
               <p key={it.id} className="wa-tick is-off">
                 <span className="wa-off-mark">{it.off}</span>

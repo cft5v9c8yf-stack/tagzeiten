@@ -2931,3 +2931,29 @@ header.top .search-link:focus-visible {
 .wa-invite .btn {
   margin-top: 4px;
 }
+
+/* A place's name with a quiet second line (the round of the Streithalle). */
+.place-title .place-sub {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 2px;
+}
+/* The start of a round inside the invitation: no box in a box. */
+.wa-invite .winter-arc-start {
+  border: 0;
+  padding: 0;
+  margin: 12px 0 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* "Heute" in the day of the Streithalle leads to the page of the day. */
+.wa-today-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 4px;
+}
