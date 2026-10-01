@@ -283,7 +283,7 @@ function StreithalleGroup() {
   return (
     <Section id="more.habits.streithalle" title="Streithalle" level={3} className="habit-card" aside="Winter Arc">
       <p className="small muted">
-        Solange der Winter Arc läuft, stehen seine Punkte unter „Heute“ bei den Gewohnheiten. Ein Haken dort gilt auch in
+        Solange der Winter Arc läuft, stehen diese Gewohnheiten unter „Heute“. Ein Haken dort gilt auch in
         der Streithalle. Wochentage und Zeiten stellst du unter Darstellung beim Winter Arc ein.
       </p>
       <ul className="habit-list">
