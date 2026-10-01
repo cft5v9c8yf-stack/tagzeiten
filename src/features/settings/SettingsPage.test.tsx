@@ -15,14 +15,14 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
 /** Tiles open one at a time within their group; these are the groups. */
 const TILE_GROUPS = [
   ['display', 'data', 'install', 'airplane', 'about'],
   ['house', 'prayerlist', 'treasury'],
-  ['display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor'],
+  ['display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc'],
   ['data.keep', 'data.export', 'data.import', 'data.delete'],
   ['about.arc', 'about.sources', 'about.privacy'],
 ].map((g) => g.map((id) => `more.${id}`));
@@ -158,10 +158,54 @@ describe('Mehr: Aufbau', () => {
       'Am Bett am MorgenAnzeigen',
       'Nachtgebet am BettAnzeigen',
       'Geistliche WaffenrüstungAnzeigen',
+      'Winter ArcAus',
     ]);
     view.unmount();
     render(page());
     expect((await screen.findByRole('button', { name: /^Darstellung/ })).getAttribute('aria-expanded')).toBe('true');
+  });
+
+  it('switches the Winter Arc on with start and duration, and off without deleting', async () => {
+    const { store, db } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
+    const toggle = await screen.findByRole('group', { name: 'Winter Arc' });
+    expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
+    const dialog = screen.getByRole('dialog', { name: 'Neue Runde des Winter Arc' });
+    expect(within(dialog).getByText('Ein Start an einem Montag passt am besten zum Wochen-Tracker.')).toBeTruthy();
+    expect((within(dialog).getByLabelText('Startdatum') as HTMLInputElement).value).toBe('2026-09-25');
+    expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('90');
+    expect(dialog.textContent).toContain('Letzter Tag: Mittwoch, 23. Dezember 2026');
+    fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2026-10-05' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: '40' }));
+    expect(dialog.textContent).toContain('Letzter Tag: Freitag, 13. November 2026');
+    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '400' } });
+    expect((within(dialog).getByRole('button', { name: 'Winter Arc beginnen' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '90' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Winter Arc beginnen' }));
+    await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(1));
+    expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-10-05', durationDays: 90, status: 'active' });
+    expect(screen.getByText(/Beginnt am Montag, 5\. Oktober 2026/)).toBeTruthy();
+
+    // Weekdays per point and "Meine Zeiten" appear while it is on.
+    const train = screen.getByRole('group', { name: 'Tage für Trainiert' });
+    fireEvent.click(within(train).getByRole('button', { name: 'Samstag' }));
+    expect(store.getProfile().winterArcSettings.weekdays.train).toEqual([1, 2, 3, 4, 5, 6]);
+    fireEvent.change(screen.getByLabelText('Aufstehen'), { target: { value: '05:00' } });
+    expect(store.getProfile().winterArcSettings.times.wake).toBe('05:00');
+    expect(screen.getByRole('group', { name: 'Tage für 05:00 auf, kein Handy' })).toBeTruthy();
+
+    // Off: asked first, the round stays as ended.
+    fireEvent.click(within(screen.getByRole('group', { name: 'Winter Arc' })).getByRole('button', { name: 'Aus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Winter Arc beenden' }));
+    await waitFor(() => expect(store.getProfile().winterArc.runs[0]!.status).toBe('ended'));
+    await store.flush();
+    expect(await db.winterArcRuns.count()).toBe(1);
+
+    // On again: a new round.
+    fireEvent.click(within(screen.getByRole('group', { name: 'Winter Arc' })).getByRole('button', { name: 'Ein' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Winter Arc beginnen' }));
+    await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(2));
+    expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {

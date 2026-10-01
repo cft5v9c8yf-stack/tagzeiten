@@ -3,6 +3,7 @@ import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, isTimesPerWeek, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
 import { normalizeArena } from './arena';
+import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalizeWinterArcSettings } from './winterArc';
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays } from './schedule';
@@ -23,6 +24,8 @@ export function defaultProfile(today: DateKey): Profile {
     showAtBed: true,
     showCompline: true,
     arena: [],
+    winterArc: emptyWinterArc(),
+    winterArcSettings: defaultWinterArcSettings(),
     theme: 'system',
     createdAt: today,
     updatedAt: 0,
@@ -57,6 +60,8 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     showAtBed: raw.showAtBed !== false,
     showCompline: raw.showCompline !== false,
     arena: normalizeArena(raw.arena),
+    winterArc: normalizeWinterArc(raw.winterArc),
+    winterArcSettings: normalizeWinterArcSettings(raw.winterArcSettings),
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
     createdAt: raw.createdAt ?? today,
     updatedAt: raw.updatedAt ?? 0,

@@ -5,11 +5,12 @@
 import Dexie, { type Table } from 'dexie';
 import { normalizeArena } from '../domain/arena';
 import type { ArenaEntry, Day, Profile } from '../domain/model';
+import type { WinterArcDay, WinterArcMonth, WinterArcRun, WinterArcWeek } from '../domain/winterArc';
 
 export const PROFILE_KEY = 'me';
 
-/** The profile as stored: the Arena entries live in their own table (v2). */
-export interface StoredProfile extends Omit<Profile, 'arena'> {
+/** The profile as stored: the Arena entries (v2) and the Winter Arc (v3) live in their own tables. */
+export interface StoredProfile extends Omit<Profile, 'arena' | 'winterArc'> {
   id: typeof PROFILE_KEY;
   /** Only in databases from before v2; moved into the arena table on upgrade. */
   arena?: unknown;
@@ -19,6 +20,10 @@ export class TagzeitenDB extends Dexie {
   profile!: Table<StoredProfile, string>;
   days!: Table<Day, string>;
   arena!: Table<ArenaEntry, string>;
+  winterArcRuns!: Table<WinterArcRun, string>;
+  winterArcDays!: Table<WinterArcDay, [string, string]>;
+  winterArcWeeks!: Table<WinterArcWeek, [string, number]>;
+  winterArcMonths!: Table<WinterArcMonth, [string, string]>;
 
   constructor(name = 'tagzeiten') {
     super(name);
@@ -45,5 +50,16 @@ export class TagzeitenDB extends Dexie {
         const { arena: _, ...rest } = p;
         await profile.put(rest);
       });
+    // v3: the Winter Arc, one table each for its rounds, days, weeks and months.
+    // Only new tables: nothing stored before is touched.
+    this.version(3).stores({
+      profile: 'id',
+      days: 'date, updatedAt',
+      arena: 'id, updatedAt',
+      winterArcRuns: 'id, updatedAt',
+      winterArcDays: '[runId+date], runId, updatedAt',
+      winterArcWeeks: '[runId+week], runId, updatedAt',
+      winterArcMonths: '[runId+month], runId, updatedAt',
+    });
   }
 }

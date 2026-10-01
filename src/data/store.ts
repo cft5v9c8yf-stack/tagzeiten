@@ -12,6 +12,16 @@ import { toMarkdown } from '../domain/exportMarkdown';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
+import {
+  endRun,
+  normalizeWinterArc,
+  startRun,
+  type WinterArcData,
+  type WinterArcDay,
+  type WinterArcMonth,
+  type WinterArcRun,
+  type WinterArcWeek,
+} from '../domain/winterArc';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
 import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
@@ -43,16 +53,33 @@ export interface UpdateOptions {
 const DAY_PREFIX = 'day:';
 const ARENA_PREFIX = 'arena:';
 
-/** What the write queue stores: a day, the profile (without the Arena), an Arena entry, or null for a deleted entry. */
-type Doc = Day | ProfileDoc | ArenaEntry | null;
-type ProfileDoc = Omit<Profile, 'arena'>;
+/**
+ * The Winter Arc is stored row by row in four tables, like the Arena: a key
+ * prefix per table, and a key per row ("runId|date" and so on).
+ */
+type WaKind = keyof WinterArcData;
+type WaRow = WinterArcRun | WinterArcDay | WinterArcWeek | WinterArcMonth;
+const WA_KINDS: readonly WaKind[] = ['runs', 'days', 'weeks', 'months'];
+const WA_PREFIX: Record<WaKind, string> = { runs: 'wa-run:', days: 'wa-day:', weeks: 'wa-week:', months: 'wa-month:' };
+const waRowKey = (kind: WaKind, r: WaRow): string => {
+  if (kind === 'runs') return (r as WinterArcRun).id;
+  if (kind === 'days') return `${(r as WinterArcDay).runId}|${(r as WinterArcDay).date}`;
+  if (kind === 'weeks') return `${(r as WinterArcWeek).runId}|${(r as WinterArcWeek).week}`;
+  return `${(r as WinterArcMonth).runId}|${(r as WinterArcMonth).month}`;
+};
+const waKindOf = (key: string): WaKind | undefined => WA_KINDS.find((k) => key.startsWith(WA_PREFIX[k]));
 
-const withoutArena = ({ arena: _, ...rest }: Profile): ProfileDoc => rest;
+/** What the write queue stores: a day, the profile (without the Arena and the Winter Arc), an entry or row of those, or null for a deleted one. */
+type Doc = Day | ProfileDoc | ArenaEntry | WaRow | null;
+type ProfileDoc = Omit<Profile, 'arena' | 'winterArc'>;
 
-/** Whether anything besides the Arena (and the time stamp) changed. */
+const withoutArena = ({ arena: _, winterArc: __, ...rest }: Profile): ProfileDoc => rest;
+
+/** Whether anything besides the Arena, the Winter Arc (and the time stamp) changed. */
 const profileChanged = (a: Profile, b: Profile) =>
-  (Object.keys(b) as (keyof Profile)[]).some((k) => k !== 'arena' && k !== 'updatedAt' && a[k] !== b[k]) ||
-  Object.keys(a).length !== Object.keys(b).length;
+  (Object.keys(b) as (keyof Profile)[]).some(
+    (k) => k !== 'arena' && k !== 'winterArc' && k !== 'updatedAt' && a[k] !== b[k],
+  ) || Object.keys(a).length !== Object.keys(b).length;
 
 export class Store {
   readonly db: TagzeitenDB;
@@ -99,8 +126,9 @@ export class Store {
     const today = this.today();
     const stored = await this.db.profile.get(PROFILE_KEY);
     const arena = await this.db.arena.toArray();
+    const winterArc = await this.loadWinterArc();
     this.profile = stored
-      ? normalizeProfile({ ...(stored as Omit<StoredProfile, 'arena'>), arena }, today)
+      ? normalizeProfile({ ...(stored as Omit<StoredProfile, 'arena'>), arena, winterArc }, today)
       : normalizeProfile({ ...defaultProfile(today), ...this.seed }, today);
     if (!stored) await this.persist('profile', withoutArena(this.profile));
     const rows = await this.db.days.toArray();
@@ -111,6 +139,15 @@ export class Store {
     }
     await this.recoverJournal();
     this.emit();
+  }
+
+  private async loadWinterArc(): Promise<WinterArcData> {
+    return {
+      runs: await this.db.winterArcRuns.toArray(),
+      days: await this.db.winterArcDays.toArray(),
+      weeks: await this.db.winterArcWeeks.toArray(),
+      months: await this.db.winterArcMonths.toArray(),
+    };
   }
 
   /** Writes everything pending into IndexedDB. */
@@ -134,13 +171,18 @@ export class Store {
     if (entries.length === 0) return;
     for (const [key, value] of entries) {
       if (key === 'profile') {
-        const p = normalizeProfile({ ...(value as Partial<Profile>), arena: this.profile.arena }, this.today());
+        const p = normalizeProfile(
+          { ...(value as Partial<Profile>), arena: this.profile.arena, winterArc: this.profile.winterArc },
+          this.today(),
+        );
         if (p.updatedAt > this.profile.updatedAt) {
           this.profile = p;
           await this.persist(key, withoutArena(p));
         }
       } else if (key.startsWith(ARENA_PREFIX)) {
         await this.recoverArenaEntry(key.slice(ARENA_PREFIX.length), value);
+      } else if (waKindOf(key)) {
+        await this.recoverWinterArcRow(key, value);
       } else if (key.startsWith(DAY_PREFIX)) {
         const d = normalizeDay(value);
         if (d && d.updatedAt > (this.days.get(d.date)?.updatedAt ?? -1)) {
@@ -162,6 +204,23 @@ export class Store {
     const others = this.profile.arena.filter((e) => e.id !== id);
     this.profile = { ...this.profile, arena: normalizeArena(entry ? [entry, ...others] : others) };
     await this.persist(ARENA_PREFIX + id, entry ?? null);
+  }
+
+  /** A Winter Arc row from the journal, if newer than the stored one. */
+  private async recoverWinterArcRow(key: string, value: unknown): Promise<void> {
+    const kind = waKindOf(key)!;
+    if (value === null) return;
+    const rowKey = key.slice(WA_PREFIX[kind].length);
+    const list = this.profile.winterArc[kind] as WaRow[];
+    const current = list.find((r) => waRowKey(kind, r) === rowKey);
+    const merged = normalizeWinterArc({
+      ...this.profile.winterArc,
+      [kind]: [...list.filter((r) => r !== current), value],
+    } as WinterArcData);
+    const row = (merged[kind] as WaRow[]).find((r) => waRowKey(kind, r) === rowKey);
+    if (!row || row.updatedAt <= (current?.updatedAt ?? -1)) return;
+    this.profile = { ...this.profile, winterArc: merged };
+    await this.persist(key, row);
   }
 
   get hasPendingWrites(): boolean {
@@ -250,6 +309,17 @@ export class Store {
       const kept = new Set(next.arena.map((e) => e.id));
       for (const id of before.keys()) if (!kept.has(id)) this.schedule(ARENA_PREFIX + id, null, opts.immediate);
     }
+    if (next.winterArc !== prev.winterArc) {
+      for (const kind of WA_KINDS) {
+        const before = new Map((prev.winterArc[kind] as WaRow[]).map((r) => [waRowKey(kind, r), r]));
+        for (const r of next.winterArc[kind] as WaRow[]) {
+          const k = waRowKey(kind, r);
+          if (before.get(k) !== r) this.schedule(WA_PREFIX[kind] + k, r, opts.immediate);
+          before.delete(k);
+        }
+        for (const k of before.keys()) this.schedule(WA_PREFIX[kind] + k, null, opts.immediate);
+      }
+    }
     if (profileChanged(prev, next)) this.schedule('profile', withoutArena(next), opts.immediate);
     this.emit();
     return next;
@@ -292,6 +362,20 @@ export class Store {
 
   deleteArenaEntry(id: string): void {
     this.updateProfile((p) => ({ ...p, arena: p.arena.filter((e) => e.id !== id) }), { immediate: true });
+  }
+
+  /* ------------------------------------------------------------ winter arc */
+
+  /** Begins a new round of the Winter Arc; a round under way is ended, nothing is deleted. */
+  startWinterArc(startDate: DateKey, durationDays: number): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: startRun(p.winterArc, startDate, durationDays, t) }), { immediate: true });
+  }
+
+  /** Switches the Winter Arc off: the round is marked as ended, its entries stay. */
+  endWinterArc(): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
   }
 
   private schedule(key: string, value: Doc, immediate?: boolean) {
@@ -415,13 +499,18 @@ export class Store {
     await this.queue.cancelAll();
     this.dirty.clear();
     this.journal.clear();
-    await this.db.transaction('rw', this.db.profile, this.db.days, this.db.arena, async () => {
+    await this.db.transaction('rw', [this.db.profile, this.db.days, this.db.arena, ...this.waTables()], async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
       await this.db.arena.clear();
       await this.db.profile.put({ ...withoutArena(profile), id: PROFILE_KEY });
       await this.db.days.bulkPut(days);
       await this.db.arena.bulkPut(profile.arena);
+      for (const t of this.waTables()) await t.clear();
+      await this.db.winterArcRuns.bulkPut(profile.winterArc.runs);
+      await this.db.winterArcDays.bulkPut(profile.winterArc.days);
+      await this.db.winterArcWeeks.bulkPut(profile.winterArc.weeks);
+      await this.db.winterArcMonths.bulkPut(profile.winterArc.months);
     });
     this.profile = profile;
     this.days = new Map(days.map((d) => [d.date, d]));
@@ -435,10 +524,11 @@ export class Store {
     await this.queue.cancelAll();
     this.dirty.clear();
     this.journal.clear();
-    await this.db.transaction('rw', this.db.profile, this.db.days, this.db.arena, async () => {
+    await this.db.transaction('rw', [this.db.profile, this.db.days, this.db.arena, ...this.waTables()], async () => {
       await this.db.days.clear();
       await this.db.profile.clear();
       await this.db.arena.clear();
+      for (const t of this.waTables()) await t.clear();
     });
     this.days.clear();
     this.blanks.clear();
@@ -448,8 +538,32 @@ export class Store {
 
   /* ------------------------------------------------------------ persistence */
 
+  private waTables() {
+    return [this.db.winterArcRuns, this.db.winterArcDays, this.db.winterArcWeeks, this.db.winterArcMonths];
+  }
+
+  private async persistWinterArc(kind: WaKind, rowKey: string, row: WaRow | null): Promise<void> {
+    const [a, b] = rowKey.split('|') as [string, string];
+    if (kind === 'runs') {
+      if (row) await this.db.winterArcRuns.put(row as WinterArcRun);
+      else await this.db.winterArcRuns.delete(a);
+    } else if (kind === 'days') {
+      if (row) await this.db.winterArcDays.put(row as WinterArcDay);
+      else await this.db.winterArcDays.delete([a, b]);
+    } else if (kind === 'weeks') {
+      if (row) await this.db.winterArcWeeks.put(row as WinterArcWeek);
+      else await this.db.winterArcWeeks.delete([a, Number(b)]);
+    } else {
+      if (row) await this.db.winterArcMonths.put(row as WinterArcMonth);
+      else await this.db.winterArcMonths.delete([a, b]);
+    }
+  }
+
   private async persist(key: string, value: Doc): Promise<void> {
-    if (key === 'profile') {
+    const kind = waKindOf(key);
+    if (kind) {
+      await this.persistWinterArc(kind, key.slice(WA_PREFIX[kind].length), value as WaRow | null);
+    } else if (key === 'profile') {
       await this.db.profile.put({ ...(value as ProfileDoc), id: PROFILE_KEY });
     } else if (key.startsWith(ARENA_PREFIX)) {
       // Entries left empty are not kept, as before.

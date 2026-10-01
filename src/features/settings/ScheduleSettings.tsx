@@ -5,6 +5,7 @@ import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model
 import { TileGroup } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
+import { WinterArcSettings, winterArcLine } from './WinterArcSettings';
 
 const TIMES = TIME_ORDER;
 
@@ -246,6 +247,13 @@ export function DisplaySettings() {
               note="Epheser 6,10–18: in der Stillen Zeit vor der Ausrichtung ein Stück für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und eine Frage in der Prüfung."
             />
           ),
+        },
+        {
+          id: 'more.display.winterArc',
+          title: 'Winter Arc',
+          line: winterArcLine(profile, store.today()),
+          icon: 'sunrise',
+          content: <WinterArcSettings />,
         },
       ]}
     />

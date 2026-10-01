@@ -8,6 +8,7 @@
 import type { AnsweredPrayer, House } from './house';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
+import type { WinterArcData, WinterArcSettings } from './winterArc';
 
 /* ---------------------------------------------------------------- fields */
 
@@ -234,6 +235,13 @@ export interface Profile {
    * its review, examination, confession and absolution (rules 1 and 3).
    */
   showCompline: boolean;
+  /**
+   * The rounds of the Winter Arc with their ticks and reviews; stored in tables
+   * of their own, like the Arena, not in the profile row.
+   */
+  winterArc: WinterArcData;
+  /** Weekdays per point of the Winter Arc and "Meine Zeiten"; kept with the profile. */
+  winterArcSettings: WinterArcSettings;
   theme: Theme;
   createdAt: DateKey;
   updatedAt: number;

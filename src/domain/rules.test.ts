@@ -204,7 +204,8 @@ describe('rules 4, 6 and 16: no performance language, no emojis', () => {
 
   it.each([
     ['streaks', /streak|serie in folge|tage in folge/i],
-    ['badges and points', /abzeichen|badge|punkte|\bscore\b|rangliste|leaderboard/i],
+    // "Dankpunkte" in the Winter Arc are things to thank for, not a score.
+    ['badges and points', /abzeichen|badge|(?<!dank)punkte|\bscore\b|rangliste|leaderboard/i],
     ['backlog', /rückstand|im verzug|nachholen müssen|hinterher/i],
     ['motivational phrases', /du schaffst das|level up|weiter so|super gemacht|fertig!/i],
   ])('no %s', (_name, re) => {
