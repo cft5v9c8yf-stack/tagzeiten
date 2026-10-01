@@ -670,7 +670,7 @@ describe('Katechismus', () => {
 
   it('parts the page into Lernen and Lesen', async () => {
     await renderAt('/katechismus', <CatechismPage />);
-    expect(await screen.findByRole('heading', { level: 2, name: 'Lehre' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { level: 2, name: 'Wort' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Lernen' })).toBeTruthy();
     const read = screen.getByRole('region', { name: 'Lesen' });
     expect(read.querySelector('.overview-row.wide')!.textContent).toContain('Das Konkordienbuch');

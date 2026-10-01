@@ -357,7 +357,6 @@ function CatechismHome() {
   return (
     <>
       <WordSwitch current="teaching" />
-      <h2>Lehre</h2>
 
       <section className="cat-area" aria-labelledby="cat-learn">
         <div className="cat-area-head">

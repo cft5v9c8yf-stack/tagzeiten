@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.32.1',
+    date: '2026-10-01',
+    title: 'Einheitliche Überschriften unter „Wort“',
+    changes: [
+      { area: 'Wort', text: 'Die Seite heißt wie ihr Bereich „Wort“; darunter wählst du Bibel oder Lehre. Doppelte Überschriften sind weggefallen.' },
+    ],
+  },
+  {
     version: '0.32.0',
     date: '2026-10-01',
     title: 'Fünf Bereiche, ruhigeres „Heute“',

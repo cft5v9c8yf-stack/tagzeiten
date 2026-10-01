@@ -9,16 +9,15 @@ export function WordSwitch({ current }: { current: 'bible' | 'teaching' }) {
     { key: 'teaching', label: 'Lehre', to: '/katechismus' },
   ] as const;
   return (
-    <nav className="seg word-switch" aria-label="Wort">
-      {items.map((it) => (
-        <Link
-          key={it.key}
-          to={withDate(it.to, date, isToday)}
-          aria-current={it.key === current ? 'page' : undefined}
-        >
-          {it.label}
-        </Link>
-      ))}
-    </nav>
+    <>
+      <h2>Wort</h2>
+      <nav className="seg word-switch" aria-label="Bibel oder Lehre">
+        {items.map((it) => (
+          <Link key={it.key} to={withDate(it.to, date, isToday)} aria-current={it.key === current ? 'page' : undefined}>
+            {it.label}
+          </Link>
+        ))}
+      </nav>
+    </>
   );
 }
