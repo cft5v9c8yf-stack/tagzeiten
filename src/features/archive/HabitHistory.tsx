@@ -1,7 +1,7 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
-import { habitsOfRhythm, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
+import { habitsOfRhythm, isPerDay, RHYTHM_ORDER, fitsHouse } from '../../domain/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { Section } from '../../ui/Section';
 
@@ -101,7 +101,7 @@ export function HabitHistory() {
   const store = useStore();
   const profile = useProfile();
   const today = store.today();
-  const active = profile.habits.filter((h) => h.active);
+  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
   return (
     <Section id="review.habits" title="Gewohnheiten" level={3}>
       <p className="small muted hh-note">

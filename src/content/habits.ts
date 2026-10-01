@@ -3,6 +3,7 @@
  * No streaks and no chains (rule 4) – a habit is only ever "done" for a day,
  * a week or a month.
  */
+import type { HouseNeed } from '../domain/house';
 import type { AutoSource, Rhythm } from '../domain/model';
 
 export interface HabitPreset {
@@ -39,6 +40,19 @@ export const HABIT_PRESETS: readonly HabitPreset[] = [
   { id: 'offering', name: 'Opfer und Gaben', rhythm: 'monthly', auto: null, active: false },
   { id: 'mercy', name: 'Werk der Barmherzigkeit', rhythm: 'monthly', auto: null, active: false },
 ];
+
+/**
+ * Habits about the wife, the children or the family appear only once "Mein Haus"
+ * holds them (see domain/house.ts).
+ */
+export const HABIT_NEEDS: Readonly<Record<string, HouseNeed>> = {
+  tablePrayer: 'family',
+  familyDevotion: 'family',
+  blessChildren: 'children',
+  prayWithWife: 'wife',
+  timeWithWife: 'wife',
+  catechismChildren: 'children',
+};
 
 /** Preset names that changed; a habit still carrying the old name gets the new one. */
 export const RENAMED_PRESETS: Readonly<Record<string, { from: string; to: string }>> = {

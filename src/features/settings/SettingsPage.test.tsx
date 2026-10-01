@@ -706,7 +706,11 @@ describe('Rückblick', () => {
     cleanup();
 
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
-      s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
+      // Table prayer with the family: shown once the family is entered under "Mein Haus".
+      s.updateProfile(
+        (p) => ({ ...p, showHabitHistory: true, house: { ...p.house, wife: { name: 'Anna', concern: '' } } }),
+        { immediate: true },
+      );
       s.updateDay('2026-09-17', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } }));
     });
     await screen.findByRole('heading', { name: 'Gewohnheiten' });
@@ -798,16 +802,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.23\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.24\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.23\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.24\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.23\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.24\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

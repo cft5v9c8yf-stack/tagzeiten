@@ -2,6 +2,7 @@
  * The Winter Arc ("Der 90-Tage-Standard"), word for word after
  * reference/winter-arc.md. Bible verses after Luther 1912, as given there.
  */
+import type { HouseNeed } from '../domain/house';
 import type { WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
 
 export type WinterArcGroup = 'Morgen' | 'Haus';
@@ -13,6 +14,8 @@ export interface WinterArcItem {
   text: (t: WinterArcTimes) => string;
   /** What stands on days the point does not apply to ("Ruhe" for training, as in the tracker). */
   off: string;
+  /** About the wife: shown only once she is entered under "Mein Haus". */
+  needs?: HouseNeed;
 }
 
 /**
@@ -27,7 +30,7 @@ export const WINTER_ARC_ITEMS: readonly WinterArcItem[] = [
   { id: 'train', group: 'Morgen', text: () => 'Trainiert', off: 'Ruhe' },
   { id: 'cook', group: 'Haus', text: () => 'Zu Hause gekocht', off: '–' },
   { id: 'dinner', group: 'Haus', text: () => 'Abendessen ohne Handy', off: '–' },
-  { id: 'wife', group: 'Haus', text: () => 'Eine Geste für meine Frau', off: '–' },
+  { id: 'wife', group: 'Haus', text: () => 'Eine Geste für meine Frau', off: '–', needs: 'wife' },
   { id: 'kitchen', group: 'Haus', text: (t) => `Küche um ${t.kitchen} zu`, off: '–' },
   { id: 'phone', group: 'Haus', text: () => 'Handy außerhalb des Schlafzimmers', off: '–' },
   { id: 'night', group: 'Haus', text: (t) => `Gebetet, ${t.night} Licht aus`, off: '–' },
@@ -36,10 +39,10 @@ export const WINTER_ARC_ITEMS: readonly WinterArcItem[] = [
 export const WINTER_ARC_GROUPS: readonly WinterArcGroup[] = ['Morgen', 'Haus'];
 
 /** The weekly standard, once in each week of the round. */
-export const WINTER_ARC_WEEKLY: readonly { id: WinterArcWeeklyId; text: string }[] = [
+export const WINTER_ARC_WEEKLY: readonly { id: WinterArcWeeklyId; text: string; needs?: HouseNeed }[] = [
   { id: 'church', text: 'Gottesdienst und Sonntagsruhe' },
-  { id: 'talk', text: 'Sonntagsgespräch mit meiner Frau' },
-  { id: 'date', text: 'Abend zu zweit, von mir geplant' },
+  { id: 'talk', text: 'Sonntagsgespräch mit meiner Frau', needs: 'wife' },
+  { id: 'date', text: 'Abend zu zweit, von mir geplant', needs: 'wife' },
   { id: 'money', text: '15 Minuten Finanzen' },
 ];
 

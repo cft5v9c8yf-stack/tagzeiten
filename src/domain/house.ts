@@ -171,3 +171,24 @@ export function answerConcern(
       : { ...h, children: h.children.map((c) => (c.id === who ? { ...c, concern: '' } : c)) };
   return { house, answered: [entry, ...answered] };
 }
+
+/** Who a habit is about: the wife, the children, or the family (wife or children). */
+export type HouseNeed = 'wife' | 'children' | 'family';
+
+export const hasWife = (h: House): boolean => !!h.wife.name.trim();
+export const hasChildren = (h: House): boolean => h.children.some((c) => !!c.name.trim());
+
+/** Whether "Mein Haus" holds the people a habit is about. */
+export function houseHas(h: House, need: HouseNeed | undefined): boolean {
+  if (!need) return true;
+  if (need === 'wife') return hasWife(h);
+  if (need === 'children') return hasChildren(h);
+  return hasWife(h) || hasChildren(h);
+}
+
+/** What the settings say about a habit that waits for "Mein Haus". */
+export const NEED_NOTE: Record<HouseNeed, string> = {
+  wife: 'erscheint, sobald unter „Mein Haus“ deine Frau eingetragen ist',
+  children: 'erscheint, sobald unter „Mein Haus“ ein Kind eingetragen ist',
+  family: 'erscheint, sobald unter „Mein Haus“ deine Frau oder ein Kind eingetragen ist',
+};

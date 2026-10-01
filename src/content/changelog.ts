@@ -13,6 +13,18 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.24.0',
+    date: '2026-10-01',
+    title: 'Streithalle: Abschluss, Rückblick und Gewohnheiten',
+    changes: [
+      { area: 'Arena', text: 'Nach dem letzten Tag einer Runde zeigt die Streithalle „Tag 90 – und danach“ mit den Wochenrückblicken der Runde. Von dort beginnst du eine neue Runde oder exportierst alles als Markdown.' },
+      { area: 'Rückblick', text: 'Unter „Streithalle“ stehen alle Runden des Winter Arc, auch beendete, zum Nachlesen.' },
+      { area: 'Heute', text: 'Solange der Winter Arc läuft, stehen seine Gewohnheiten unter „Heute“ in der Gruppe Streithalle. Ein Haken dort gilt auch in der Streithalle.' },
+      { area: 'Gewohnheiten', text: 'Gewohnheiten mit deiner Frau, deinen Kindern oder der Familie erscheinen erst, wenn sie unter „Mein Haus“ eingetragen sind.' },
+      { area: 'Arena', text: 'Die beiden Arbeitsblöcke sind aus der Liste des Winter Arc genommen.' },
+    ],
+  },
+  {
     version: '0.23.0',
     date: '2026-10-01',
     title: 'Der Winter Arc in der Streithalle',

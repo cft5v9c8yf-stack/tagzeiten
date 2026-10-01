@@ -127,6 +127,8 @@ describe('Streithalle', () => {
     // 26 September 2026 is a Saturday: rest from training, no work blocks.
     expect(today.queryByRole('checkbox', { name: 'Trainiert' })).toBeNull();
     expect(document.querySelector('.wa-today')!.textContent).toContain('Ruhe Trainiert');
+    // Without a wife under "Mein Haus" the points about her wait.
+    expect(document.querySelector('.wa-today')!.textContent).not.toContain('Eine Geste für meine Frau');
     // The work blocks of the tracker are left out.
     expect(document.querySelector('.wa-today')!.textContent).not.toContain('Fokusblock');
   });

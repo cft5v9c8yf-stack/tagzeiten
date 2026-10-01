@@ -1,6 +1,6 @@
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
-import { canToggle, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
+import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun } from '../../domain/winterArc';
@@ -46,7 +46,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const lookup = useDayLookup();
   const today = store.today();
   const week = Array.from({ length: 7 }, (_, i) => addDays(mondayOf(date), i));
-  const active = profile.habits.filter((h) => h.active);
+  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
 

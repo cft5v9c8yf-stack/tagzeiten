@@ -9,6 +9,7 @@ import {
   WINTER_ARC_TRACKER_NOTE,
   WINTER_ARC_WEEKLY,
 } from '../../content/winterArc';
+import { houseHas } from '../../domain/house';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import { fromKey, MONTH_LONG, WEEKDAY_LONG, WEEKDAY_SHORT, type DateKey } from '../../domain/dates';
 import {
@@ -71,7 +72,7 @@ function Today({ run, today }: { run: WinterArcRun; today: DateKey }) {
         <div key={g} className="wa-group">
           <h5>{g}</h5>
           <ul className="wa-checks">
-            {WINTER_ARC_ITEMS.filter((it) => it.group === g).map((it) => {
+            {WINTER_ARC_ITEMS.filter((it) => it.group === g && houseHas(profile.house, it.needs)).map((it) => {
               const text = it.text(settings.times);
               if (!appliesOn(settings, it.id, today)) {
                 return (
@@ -132,7 +133,7 @@ function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today
               {g}
             </th>
           </tr>
-          {WINTER_ARC_ITEMS.filter((it) => it.group === g).map((it) => {
+          {WINTER_ARC_ITEMS.filter((it) => it.group === g && houseHas(profile.house, it.needs)).map((it) => {
             const text = it.text(settings.times);
             return (
               <tr key={it.id}>
@@ -179,7 +180,7 @@ function WeeklyStandard({ run, week }: { run: WinterArcRun; week: number }) {
     <section className="wa-weekly" aria-labelledby="wa-weekly-title">
       <h5 id="wa-weekly-title">Wochenstandard</h5>
       <ul className="wa-checks">
-        {WINTER_ARC_WEEKLY.map((it) => (
+        {WINTER_ARC_WEEKLY.filter((it) => houseHas(profile.house, it.needs)).map((it) => (
           <li key={it.id} className="wa-check">
             <label>
               <input

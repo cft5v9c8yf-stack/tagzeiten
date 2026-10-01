@@ -1,6 +1,7 @@
 import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
-import { RHYTHM_LABEL } from '../../content/habits';
+import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
+import { houseHas, NEED_NOTE } from '../../domain/house';
 import { WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
 import { activeRun } from '../../domain/winterArc';
 import { useToast } from '../../app/Toast';
@@ -18,6 +19,7 @@ import {
   setHabitFocus,
   setHabitTimes,
   TIMES_PER_WEEK,
+  fitsHouse,
 } from '../../domain/habits';
 import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
@@ -58,6 +60,7 @@ function HabitRow({
   const store = useStore();
   const id = useId();
   const [confirming, setConfirming] = useState(false);
+  const profile = useProfile();
   const update = (fn: (hs: Habit[]) => Habit[], immediate = true) =>
     store.updateProfile((p) => ({ ...p, habits: fn(p.habits) }), { immediate });
 
@@ -103,6 +106,9 @@ function HabitRow({
         )}
         <span className="habit-meta">
           <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : 'eigene'}</span>
+          {habit.active && !fitsHouse(habit, profile.house) && (
+            <span className="habit-kind habit-waits">{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</span>
+          )}
           {habit.rhythm === 'weekly' && !habit.auto && (
             <TimesSelect
               label={`Wie oft in der Woche: ${habit.name}`}
@@ -292,6 +298,7 @@ function StreithalleGroup() {
             <span className="habit-name">{it.text(t)}</span>{' '}
             <span className="habit-meta">
               <span className="habit-kind">täglich · Streithalle</span>
+              {!houseHas(profile.house, it.needs) && <span className="habit-kind habit-waits">{NEED_NOTE[it.needs!]}</span>}
             </span>
           </li>
         ))}
@@ -300,6 +307,7 @@ function StreithalleGroup() {
             <span className="habit-name">{it.text}</span>{' '}
             <span className="habit-meta">
               <span className="habit-kind">wöchentlich · Streithalle</span>
+              {!houseHas(profile.house, it.needs) && <span className="habit-kind habit-waits">{NEED_NOTE[it.needs!]}</span>}
             </span>
           </li>
         ))}

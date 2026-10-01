@@ -13,6 +13,13 @@ import { TodayPage } from './TodayPage';
 afterEach(cleanup);
 
 let n = 0;
+/** A house with wife and child, so the habits about them appear. */
+const withHouse = (s: Store) =>
+  s.updateProfile((p) => ({
+    ...p,
+    house: { wife: { name: 'Anna', concern: '' }, children: [{ ...p.house.children[0]!, name: 'Paul' }] },
+  }));
+
 async function renderToday(date: string, prepare?: (s: Store) => void) {
   const store = new Store({
     db: new TagzeitenDB(`today-${++n}`),
@@ -85,7 +92,7 @@ describe('Today', () => {
   });
 
   it('does not let derived habits be toggled, but manual ones', async () => {
-    const store = await renderToday('2026-09-24');
+    const store = await renderToday('2026-09-24', withHouse);
     const still = screen.getByRole('button', { name: 'Stille Zeit, Do 24.9.' });
     expect((still as HTMLButtonElement).disabled).toBe(true);
     const table = screen.getByRole('button', { name: 'Tischgebet mit der Familie, Do 24.9.' });
@@ -142,6 +149,7 @@ describe('Today', () => {
 
   it('puts the starred habits on top under "Im Blick", then the rest by rhythm in the user\'s order', async () => {
     await renderToday('2026-09-24', (s) =>
+      withHouse(s) &&
       s.updateProfile((p) => {
         const habits = p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h));
         // Put "Familienandacht" before "Tischgebet mit der Familie".
@@ -196,5 +204,19 @@ describe('Today', () => {
   it('has no Streithalle among the habits while the Winter Arc is off', async () => {
     await renderToday('2026-09-25');
     expect(document.querySelector('.habit-group-streithalle')).toBeNull();
+  });
+
+  it('shows habits about wife and children only once they are entered under "Mein Haus"', async () => {
+    await renderToday('2026-09-24');
+    expect(screen.queryByRole('button', { name: 'Tischgebet mit der Familie, Do 24.9.' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Die Kinder segnen/ })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Stille Zeit, Do 24.9.' })).toBeTruthy();
+    cleanup();
+    await renderToday('2026-09-24', (s) =>
+      s.updateProfile((p) => ({ ...p, house: { ...p.house, wife: { name: 'Anna', concern: '' } } })),
+    );
+    // With a wife: the family habits, but not yet those about children.
+    expect(screen.getByRole('button', { name: 'Tischgebet mit der Familie, Do 24.9.' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /^Die Kinder segnen/ })).toBeNull();
   });
 });
