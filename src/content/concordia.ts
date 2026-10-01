@@ -26,9 +26,9 @@ export const CONCORDIA_CONTENTS: readonly { heading: string; parts: readonly Con
     heading: 'Die lutherischen Bekenntnisse',
     parts: [
       { title: 'Die Augsburgische Konfession', line: 'Vor Kaiser und Reich bekannt, 1530', to: '/katechismus/augsburgische-konfession' },
-      { title: 'Die Apologie der Augsburgischen Konfession', line: 'Melanchthons Verteidigung, 1531' },
+      { title: 'Die Apologie der Augsburgischen Konfession', line: 'Melanchthons Verteidigung, 1531', to: '/katechismus/apologie' },
       { title: 'Die Schmalkaldischen Artikel', line: 'Luther, 1537', to: '/katechismus/schmalkaldische-artikel' },
-      { title: 'Von der Gewalt und Obrigkeit des Papstes', line: 'Melanchthon, 1537' },
+      { title: 'Von der Gewalt und Obrigkeit des Papstes', line: 'Melanchthon, 1537', to: '/katechismus/traktat' },
       { title: 'Der Kleine Katechismus', line: 'Die Hauptstücke, hier in der Lehre zum Auswendiglernen', to: '/katechismus/commandments' },
       { title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke, 1529', to: '/katechismus/grosser-katechismus' },
       { title: 'Die Konkordienformel', line: 'Kurze Fassung und ausführliche Erklärung, 1577' },

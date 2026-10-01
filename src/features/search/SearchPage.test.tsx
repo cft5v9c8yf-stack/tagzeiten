@@ -44,6 +44,11 @@ describe('Suchen', () => {
     expect(router.state.location.pathname).toBe('/katechismus/augsburgische-konfession');
   });
 
+  it('finds in the Apology once it has been loaded', async () => {
+    await renderSearch('/suche?q=Potestate');
+    expect(await screen.findByRole('link', { name: /Artikel XXVIII\. \(XIV\.\)/ })).toBeTruthy();
+  });
+
   it('keeps the query in the address and says when nothing is found', async () => {
     await renderSearch('/suche?q=Xylophonkonzert');
     expect(await screen.findByText('Nichts gefunden.')).toBeTruthy();

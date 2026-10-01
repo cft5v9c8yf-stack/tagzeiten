@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
-import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE, type BookPart } from '../../content/augsburgConfession';
+import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE } from '../../content/augsburgConfession';
 import { LARGE_CATECHISM, LARGE_CATECHISM_SOURCE } from '../../content/largeCatechism';
 import { SMALCALD_ARTICLES, SMALCALD_SOURCE, SMALCALD_TITLE } from '../../content/smalcaldArticles';
+import { TRACTATUS, TRACTATUS_SOURCE } from '../../content/tractatus';
 import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
@@ -20,7 +21,11 @@ import { setOpen } from '../../ui/collapseState';
 import { DieffenbachBook } from '../churchyear/DieffenbachBook';
 import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
+import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
+
+/** The Apology is long: loaded only when opened. */
+const ApologyBook = lazy(() => import('./ApologyBook'));
 
 function TablePrayer({ id, title, prayer }: { id: string; title: string; prayer: typeof TABLE_PRAYER_BEFORE }) {
   return (
@@ -143,32 +148,6 @@ function Creeds() {
   );
 }
 
-/** A book of parts and sections: each section a card, one open at a time. */
-function BookParts({ parts, prefix }: { parts: readonly BookPart[]; prefix: string }) {
-  const ids = parts.flatMap((p) => p.sections.map((s) => `${prefix}.${s.id}`));
-  return (
-    <>
-      {parts.map((part, i) => (
-        <div key={part.heading ?? i}>
-          {part.heading && <h3 className="book-circle">{part.heading}</h3>}
-          {part.sections.map((s) => (
-            <Section key={s.id} id={`${prefix}.${s.id}`} group={ids} defaultOpen={false} className="book-card creed-card" title={
-              <span className="book-card-text">
-                <span className="book-card-title">{s.title}</span>
-                {s.sub && <span className="book-card-sub">{s.sub}</span>}
-              </span>
-            }>
-              {s.paragraphs.map((p, k) => (
-                <p key={k}>{p}</p>
-              ))}
-            </Section>
-          ))}
-        </div>
-      ))}
-    </>
-  );
-}
-
 /** The Augsburg Confession: preface and articles as cards. */
 function AugsburgConfession() {
   return (
@@ -207,6 +186,20 @@ function SmalcaldArticles() {
         nicht wiedergegeben.
       </p>
       <p className="small muted">{SMALCALD_SOURCE}</p>
+    </>
+  );
+}
+
+/** Melanchthon's treatise on the power and primacy of the pope, signed at Smalcald. */
+function Tractatus() {
+  return (
+    <>
+      <p className="book-source">
+        Von Melanchthon verfasst und zu Schmalkalden 1537 von den Theologen unterschrieben; im Buch den Schmalkaldischen
+        Artikeln angefügt.
+      </p>
+      <BookParts parts={TRACTATUS} prefix="tr" />
+      <p className="small muted">{TRACTATUS_SOURCE}</p>
     </>
   );
 }
@@ -251,12 +244,18 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'apologie' || slug === 'traktat' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'konkordienbuch' && <Concordia />}
         {slug === 'augsburgische-konfession' && <AugsburgConfession />}
         {slug === 'grosser-katechismus' && <LargeCatechism />}
         {slug === 'schmalkaldische-artikel' && <SmalcaldArticles />}
+        {slug === 'traktat' && <Tractatus />}
+        {slug === 'apologie' && (
+          <Suspense fallback={<p className="small muted">Die Apologie wird geladen …</p>}>
+            <ApologyBook />
+          </Suspense>
+        )}
         {slug === 'bekenntnisse' && <Creeds />}
         {slug === 'tischgebete' && (
           <>

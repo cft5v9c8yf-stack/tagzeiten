@@ -424,6 +424,23 @@ describe('Katechismus', () => {
     expect(document.body.textContent).toContain('Die Stadt Reutlingen.');
   });
 
+  it('loads the Apology when it is opened, article by article', async () => {
+    await renderAt('/katechismus/apologie', <CatechismPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Die Apologie der Augsburgischen Konfession' });
+    fireEvent.click(await screen.findByRole('button', { name: /^Artikel IV\. \(II\.\)/ }));
+    expect(document.body.textContent).toContain('Wie man vor Gott fromm und gerecht wird');
+    fireEvent.click(screen.getByRole('button', { name: /^Artikel XXVIII\. \(XIV\.\)/ }));
+    expect(document.body.textContent).toContain('von allen Artikeln weiter Bericht zu thun.');
+    expect(screen.getAllByRole('button', { name: /^(Art\.|Artikel|\(Artikel)/ }).length).toBeGreaterThanOrEqual(25);
+  });
+
+  it('keeps the treatise on the power of the pope next to the Smalcald Articles', async () => {
+    await renderAt('/katechismus/traktat', <CatechismPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Von der Gewalt und Oberkeit des Pabsts' });
+    fireEvent.click(screen.getByRole('button', { name: /^Von der Bischöfe Gewalt und Jurisdiction/ }));
+    expect(document.body.textContent).toContain('daß sie auch für diesen Raub Gott müssen Rechenschaft geben.');
+  });
+
   it('keeps the Smalcald Articles in the appendix, part by part', async () => {
     await renderAt('/katechismus/schmalkaldische-artikel', <CatechismPage />);
     await screen.findByRole('heading', { level: 2, name: 'Die Schmalkaldischen Artikel' });
@@ -713,16 +730,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.21\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.22\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.21\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.22\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.21\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.22\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

@@ -5,14 +5,16 @@ import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay
 
 /** The appendices, opened like the chief parts. `book`: part of the Book of Concord, listed there. */
 export const APPENDICES = [
-  { slug: 'konkordienbuch', title: 'Das Konkordienbuch', line: 'Die Bekenntnisse der lutherischen Kirche, 1580: altkirchliche Bekenntnisse, Augsburgische Konfession, Schmalkaldische Artikel, Kleiner und Großer Katechismus' },
+  { slug: 'konkordienbuch', title: 'Das Konkordienbuch', line: 'Die Bekenntnisse der lutherischen Kirche, 1580: altkirchliche Bekenntnisse, Augsburgische Konfession und Apologie, Schmalkaldische Artikel und Traktat, Kleiner und Großer Katechismus' },
   { slug: 'kirchenjahr', title: 'Das Kirchenjahr', line: 'Nach Dieffenbachs Haus-Agende (1853)' },
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
   { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
+  { slug: 'apologie', title: 'Die Apologie der Augsburgischen Konfession', line: 'Melanchthons Verteidigung, 1531', book: true },
   { slug: 'schmalkaldische-artikel', title: 'Die Schmalkaldischen Artikel', line: 'Luthers Artikel von 1537', book: true },
+  { slug: 'traktat', title: 'Von der Gewalt und Oberkeit des Pabsts', line: 'Melanchthon, 1537', book: true },
   { slug: 'grosser-katechismus', title: 'Der Große Katechismus', line: 'Luthers Auslegung der Hauptstücke', book: true },
 ] as const;
 

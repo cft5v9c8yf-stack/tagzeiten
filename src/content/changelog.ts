@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.22.0',
+    date: '2026-10-01',
+    title: 'Die Apologie und der Traktat',
+    changes: [
+      { area: 'Lehre', text: 'Im Konkordienbuch steht jetzt die Apologie der Augsburgischen Konfession in Justus Jonas’ Verdeutschung: Melanchthons Vorrede und alle Artikel, wortgetreu nach der Ausgabe von 1881. Weil sie lang ist, lädt sie erst, wenn du sie öffnest.' },
+      { area: 'Lehre', text: 'Dazu kommt Melanchthons Traktat „Von der Gewalt und Oberkeit des Pabsts“ von 1537, mit dem Abschnitt von der Bischöfe Gewalt und Jurisdiction.' },
+      { area: 'Suchen', text: 'Die Suche findet auch in Apologie und Traktat.' },
+    ],
+  },
+  {
     version: '0.21.0',
     date: '2026-10-01',
     title: 'Die Schmalkaldischen Artikel',

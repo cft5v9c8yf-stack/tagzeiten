@@ -10,9 +10,10 @@ import { isEmptyDay } from '../domain/normalizeDay';
 import type { SearchDoc } from '../domain/fulltext';
 import { composeVerse } from '../domain/weeklyVerse';
 import { ARMOR_WEEK } from './armor';
-import { AUGSBURG_CONFESSION } from './augsburgConfession';
+import { AUGSBURG_CONFESSION, type BookPart } from './augsburgConfession';
 import { LARGE_CATECHISM } from './largeCatechism';
 import { SMALCALD_ARTICLES } from './smalcaldArticles';
+import { TRACTATUS } from './tractatus';
 import { CATECHISM, TABLE_OF_DUTIES } from './catechism';
 import { CHURCH_YEAR_INTRO } from './churchYearIntro';
 import { SUNDAY_INFO } from './churchYearGuide';
@@ -45,6 +46,17 @@ function nextFeast(today: DateKey, monthDay: string): DateKey {
   return today;
 }
 
+/** One search entry per section of a book of the Book of Concord. */
+function bookDocs(parts: readonly BookPart[], area: string, to: string): SearchDoc[] {
+  return parts.flatMap((part) => part.sections.map((s) => ({ area, title: `${s.title} ${s.sub}`.trim(), text: s.paragraphs.join(' '), to })));
+}
+
+/** The long books, loaded apart from the app so that it starts quickly. */
+export async function lazyBookDocs(): Promise<SearchDoc[]> {
+  const { APOLOGY } = await import('./apology');
+  return bookDocs(APOLOGY, 'Lehre · Apologie', '/katechismus/apologie');
+}
+
 export function contentDocs(today: DateKey): SearchDoc[] {
   const docs: SearchDoc[] = [];
   const add = (area: string, title: string, text: string, to: string) => docs.push({ area, title, text, to });
@@ -68,6 +80,7 @@ export function contentDocs(today: DateKey): SearchDoc[] {
       add('Lehre · Schmalkaldische Artikel', `${s.title} ${s.sub}`.trim(), s.paragraphs.join(' '), '/katechismus/schmalkaldische-artikel');
     }
   }
+  docs.push(...bookDocs(TRACTATUS, 'Lehre · Von der Gewalt des Pabsts', '/katechismus/traktat'));
   for (const part of LARGE_CATECHISM) {
     for (const s of part.sections) {
       add('Lehre · Großer Katechismus', `${s.title} ${s.sub}`.trim(), s.paragraphs.join(' '), '/katechismus/grosser-katechismus');

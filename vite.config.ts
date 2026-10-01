@@ -15,7 +15,11 @@ export default defineConfig(({ mode }) => ({
     mode === 'demo' ? { alias: { 'virtual:pwa-register/react': '/src/demo/pwaRegisterStub.ts' } } : undefined,
   // The demo build is a single file without service worker and with hash routing.
   base: mode === 'demo' ? './' : base,
-  build: mode === 'demo' ? { outDir: 'dist-demo', assetsInlineLimit: 0 } : undefined,
+  // The demo is one file: chunks loaded later (the long books) are packed in as well.
+  build:
+    mode === 'demo'
+      ? { outDir: 'dist-demo', assetsInlineLimit: 0, rollupOptions: { output: { inlineDynamicImports: true } } }
+      : undefined,
   plugins: [
     react(),
     mode !== 'demo' && VitePWA({

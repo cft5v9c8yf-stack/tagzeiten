@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
-import { arenaDocs, contentDocs, dayDocs } from '../../content/searchIndex';
+import { arenaDocs, contentDocs, dayDocs, lazyBookDocs } from '../../content/searchIndex';
 import { todayKey } from '../../domain/dates';
 import { prepare, search, type SearchHit } from '../../domain/fulltext';
 import { useAllDays, useProfile } from '../../data/hooks';
@@ -11,6 +11,8 @@ const LIMIT = 60;
 /** The texts of the app are the same all session; built once, on first search. */
 let contentIndex: ReturnType<typeof prepare> | null = null;
 const content = () => (contentIndex ??= prepare(contentDocs(todayKey())));
+/** The long books arrive a moment later; kept once loaded. */
+let booksIndex: ReturnType<typeof prepare> | null = null;
 
 function Marked({ parts }: { parts: SearchHit['snippet'] }) {
   return (
@@ -35,11 +37,23 @@ export function SearchPage() {
   const input = useRef<HTMLInputElement>(null);
 
   useEffect(() => input.current?.focus(), []);
+  const [books, setBooks] = useState(booksIndex ?? []);
+  useEffect(() => {
+    if (booksIndex) return;
+    let live = true;
+    void lazyBookDocs().then((docs) => {
+      booksIndex = prepare(docs);
+      if (live) setBooks(booksIndex);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   const own = useMemo(() => prepare([...dayDocs(days), ...arenaDocs(profile.arena)]), [days, profile.arena]);
   const hits = useMemo(
-    () => (deferred.trim() ? search([...content(), ...own], deferred, LIMIT) : []),
-    [deferred, own],
+    () => (deferred.trim() ? search([...content(), ...books, ...own], deferred, LIMIT) : []),
+    [deferred, own, books],
   );
 
   return (
