@@ -17,6 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: 'Gewohnheiten: ein Tag, eine Liste',
     changes: [
+      { area: 'Mehr', text: 'Unter „Was sich geändert hat“ stehen die Versionen nach ihrer Nummer gruppiert: Nachbesserungen wie 0.30.1 stehen bei 0.30.' },
       { area: 'Heute', text: 'Die Gewohnheiten stehen nur noch einmal da: oben die sieben Tage der Woche zum Antippen, darunter die Liste des gewählten Tages. So trägst du auch frühere Tage nach. Die Wochenübersicht als Raster ist eingeklappt darunter.' },
       { area: 'Arena', text: 'In der Tagesansicht der Streithalle steht unter „Heute“ das Datum.' },
     ],

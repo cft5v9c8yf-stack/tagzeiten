@@ -3005,3 +3005,16 @@ header.top .search-link:focus-visible {
 .habits-week[open] > summary::after {
   content: ' ‹';
 }
+
+/* Under one number, each release of it with its own small head. */
+.changelog-patch + .changelog-patch {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.changelog-patch-head {
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
