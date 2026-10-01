@@ -244,6 +244,12 @@ describe('Today', () => {
     expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
     // From the order, not by hand: shown, but not to tick.
     expect((day.getByRole('checkbox', { name: /^Stille Zeit/ }) as HTMLButtonElement).disabled).toBe(true);
-    expect(screen.getByRole('heading', { name: 'Die Woche' })).toBeTruthy();
+    // The strip of the week chooses another day; its habits are listed in the same place.
+    fireEvent.click(screen.getByRole('button', { name: 'Montag, 21. September' }));
+    const monday = within(screen.getByRole('region', { name: 'Gewohnheiten, Montag, 21. September' }));
+    fireEvent.click(monday.getByRole('checkbox', { name: 'Tischgebet mit der Familie' }));
+    expect(store.getDay('2026-09-21').habits.tablePrayer).toBe(true);
+    // The grid of the week stays, folded away.
+    expect(document.querySelector('details.habits-week')!.hasAttribute('open')).toBe(false);
   });
 });

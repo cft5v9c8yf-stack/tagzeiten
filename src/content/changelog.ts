@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.31.0',
+    date: '2026-10-01',
+    title: 'Gewohnheiten: ein Tag, eine Liste',
+    changes: [
+      { area: 'Heute', text: 'Die Gewohnheiten stehen nur noch einmal da: oben die sieben Tage der Woche zum Antippen, darunter die Liste des gewählten Tages. So trägst du auch frühere Tage nach. Die Wochenübersicht als Raster ist eingeklappt darunter.' },
+      { area: 'Arena', text: 'In der Tagesansicht der Streithalle steht unter „Heute“ das Datum.' },
+    ],
+  },
+  {
     version: '0.30.1',
     date: '2026-10-01',
     title: 'Feinschliff der Streithalle',

@@ -154,7 +154,9 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           ) : (
             formatLong(date)
           )}
-          <span className="wa-pager-sub">Tag {positionOf(run, date).day}</span>
+          <span className="wa-pager-sub">
+            {date === today ? `${formatLong(date)} · ` : ''}Tag {positionOf(run, date).day}
+          </span>
         </h4>
         <button
           type="button"

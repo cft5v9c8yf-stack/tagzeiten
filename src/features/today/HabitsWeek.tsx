@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
-import { addDays, formatLong, formatShort, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
+import { addDays, formatLong, formatShort, fromKey, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
 import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
@@ -54,6 +55,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const active = hallMode ? [] : profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
+  const [picked, setPicked] = useState<DateKey | null>(null);
 
   // The starred habits stand on their own at the top, and not again in their group.
   const focus = active.filter((h) => h.focus);
@@ -108,7 +110,9 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
 
-  const dayTitle = date === today ? 'Heute' : formatLong(date);
+  // The day whose habits are listed: chosen in the strip of the week, at first the day shown.
+  const sel = picked && week.includes(picked) ? picked : date;
+  const dayTitle = sel === today ? 'Heute' : formatLong(sel);
   const perDay = rest.filter(isPerDay);
   const weekly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'weekly');
   const monthly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'monthly');
@@ -117,10 +121,10 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     return (
       <Tick
         key={h.id}
-        checked={per ? isDoneOn(h, lookup(date)) : isDoneInPeriod(h, date, lookup)}
-        disabled={!canToggle(h, date, today, lookup)}
-        note={per ? noteOf(h, date, lookup) : h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat'}
-        onToggle={() => toggle(h, date)}
+        checked={per ? isDoneOn(h, lookup(sel)) : isDoneInPeriod(h, sel, lookup)}
+        disabled={!canToggle(h, sel, today, lookup)}
+        note={per ? noteOf(h, sel, lookup) : h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat'}
+        onToggle={() => toggle(h, sel)}
       >
         {h.name}
       </Tick>
@@ -136,9 +140,24 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   return (
     <>
     <section className="panel habits-day" aria-label={`Gewohnheiten, ${dayTitle}`}>
+      <div className="day-strip" role="group" aria-label="Tag der Woche wählen">
+        {week.map((k) => (
+          <button
+            key={k}
+            type="button"
+            className={`day-strip-day${k === today ? ' is-today' : ''}`}
+            aria-pressed={k === sel}
+            aria-label={formatLong(k)}
+            onClick={() => setPicked(k)}
+          >
+            <span className="day-strip-wd">{WEEKDAY_SHORT[weekdayOf(k)]}</span>
+            <span className="day-strip-d">{fromKey(k).getDate()}</span>
+          </button>
+        ))}
+      </div>
       <h4 className="habits-day-title">{dayTitle}</h4>
       {hallMode ? (
-        <StreithalleDay date={date} />
+        <StreithalleDay key={sel} date={sel} />
       ) : (
         groups
           .filter(([, list]) => list.length > 0)
@@ -150,7 +169,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
           ))
       )}
     </section>
-    <h4 className="habits-week-title">Die Woche</h4>
+    <details className="habits-week">
+    <summary className="habits-week-title">Wochenübersicht</summary>
     <div className="panel habits-panel">
       <table className="habits">
         <thead>
@@ -202,6 +222,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         <StreithalleHabits week={week} date={date} />
       </table>
     </div>
+    </details>
     </>
   );
 }

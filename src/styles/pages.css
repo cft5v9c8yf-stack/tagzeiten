@@ -2953,7 +2953,55 @@ header.top .search-link:focus-visible {
 /* "Heute" in the day of the Streithalle leads to the page of the day. */
 .wa-today-link {
   color: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--rule);
-  text-underline-offset: 4px;
+  text-decoration: none;
+}
+
+/* The week as a strip of seven days; a tap chooses the day whose habits are listed. */
+.day-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin: 0 0 12px;
+}
+.day-strip-day {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  border-radius: var(--radius-m);
+  border: 1px solid transparent;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  cursor: pointer;
+}
+.day-strip-wd {
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.day-strip-d {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.day-strip-day.is-today .day-strip-d {
+  color: var(--icon-gold);
+}
+.day-strip-day[aria-pressed='true'] {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+}
+.habits-week > summary {
+  cursor: pointer;
+  list-style: none;
+  margin: 18px 0 0;
+}
+.habits-week > summary::-webkit-details-marker {
+  display: none;
+}
+.habits-week > summary::after {
+  content: ' ›';
+}
+.habits-week[open] > summary::after {
+  content: ' ‹';
 }
