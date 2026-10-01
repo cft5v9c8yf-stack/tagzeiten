@@ -4,6 +4,7 @@ import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
 import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE, type BookPart } from '../../content/augsburgConfession';
 import { LARGE_CATECHISM, LARGE_CATECHISM_SOURCE } from '../../content/largeCatechism';
+import { SMALCALD_ARTICLES, SMALCALD_SOURCE, SMALCALD_TITLE } from '../../content/smalcaldArticles';
 import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
@@ -177,9 +178,6 @@ function AugsburgConfession() {
         Ausgabe.
       </p>
       <BookParts parts={AUGSBURG_CONFESSION} prefix="ca" />
-      <p className="small muted">
-        Der XXVIII. Artikel „Von der Bischöfe Gewalt“ und der Beschluss folgen.
-      </p>
       <p className="small muted">{AUGSBURG_SOURCE}</p>
     </>
   );
@@ -194,6 +192,21 @@ function LargeCatechism() {
       </p>
       <BookParts parts={LARGE_CATECHISM} prefix="gk" />
       <p className="small muted">{LARGE_CATECHISM_SOURCE}</p>
+    </>
+  );
+}
+
+/** Luther's Smalcald Articles: preface, the three parts, the first signatures. */
+function SmalcaldArticles() {
+  return (
+    <>
+      <p className="book-source">{SMALCALD_TITLE}</p>
+      <BookParts parts={SMALCALD_ARTICLES} prefix="sa" />
+      <p className="small muted">
+        Im Buch folgen die Unterschriften weiterer Theologen, die zu Schmalkalden unterschrieben haben; sie sind hier
+        nicht wiedergegeben.
+      </p>
+      <p className="small muted">{SMALCALD_SOURCE}</p>
     </>
   );
 }
@@ -238,11 +251,12 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'konkordienbuch' && <Concordia />}
         {slug === 'augsburgische-konfession' && <AugsburgConfession />}
         {slug === 'grosser-katechismus' && <LargeCatechism />}
+        {slug === 'schmalkaldische-artikel' && <SmalcaldArticles />}
         {slug === 'bekenntnisse' && <Creeds />}
         {slug === 'tischgebete' && (
           <>

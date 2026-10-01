@@ -417,7 +417,22 @@ describe('Katechismus', () => {
     fireEvent.click(card(/^Der VII\. Artikel/));
     expect(card(/^Der IV\. Artikel/).getAttribute('aria-expanded')).toBe('false');
     expect(document.body.textContent).toContain('Eine heilige christliche Kirche sein und bleiben');
-    expect(screen.getAllByRole('button', { name: /^Der [IVX]+\. Artikel/ })).toHaveLength(27);
+    expect(screen.getAllByRole('button', { name: /^Der [IVX]+\. Artikel/ })).toHaveLength(28);
+    fireEvent.click(card(/^Der XXVIII\. Artikel/));
+    expect(document.body.textContent).toContain('Mein Reich ist nicht von dieser Welt');
+    fireEvent.click(card(/^Beschluß/));
+    expect(document.body.textContent).toContain('Die Stadt Reutlingen.');
+  });
+
+  it('keeps the Smalcald Articles in the appendix, part by part', async () => {
+    await renderAt('/katechismus/schmalkaldische-artikel', <CatechismPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Die Schmalkaldischen Artikel' });
+    expect(document.body.textContent).toContain('Durch D. Martin Luther geschrieben Anno 1537.');
+    fireEvent.click(screen.getByRole('button', { name: /^Das andere Theil\./ }));
+    expect(document.body.textContent).toContain('Von diesem Artikel kann man nichts weichen oder nachgeben, es falle Himmel und Erde');
+    fireEvent.click(screen.getByRole('button', { name: /^VIII\.\s*Von der Beichte/ }));
+    expect(document.body.textContent).toContain('so soll man die Beichte oder Absolution bei Leibe nicht lassen abkommen in der Kirche');
+    expect(screen.getAllByRole('button', { name: /^[IVX]+\.\s*Vo/ }).length).toBeGreaterThanOrEqual(14);
   });
 
   it('gathers the confessions under the Book of Concord, with what it is and what is in it', async () => {
@@ -426,6 +441,10 @@ describe('Katechismus', () => {
     expect(await screen.findByRole('heading', { level: 2, name: 'Das Konkordienbuch' })).toBeTruthy();
     expect(document.body.textContent).toContain('25. Juni 1580 in Dresden');
     expect(document.body.textContent).toContain('Die Konkordienformel');
+    fireEvent.click(screen.getByRole('link', { name: /^Die Schmalkaldischen Artikel/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Die Schmalkaldischen Artikel' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('link', { name: '‹ Konkordienbuch' }));
+    await screen.findByRole('heading', { level: 2, name: 'Das Konkordienbuch' });
     fireEvent.click(screen.getByRole('link', { name: /^Der Große Katechismus/ }));
     expect(await screen.findByRole('heading', { level: 2, name: 'Der Große Katechismus' })).toBeTruthy();
     expect(screen.getByRole('link', { name: '‹ Konkordienbuch' })).toBeTruthy();
@@ -694,16 +713,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.20\.0/);
+    expect(versions[0]).toMatch(/^Version 0\.21\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.20\.0/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.21\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.20\.0/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.21\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

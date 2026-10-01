@@ -12,6 +12,7 @@ import { composeVerse } from '../domain/weeklyVerse';
 import { ARMOR_WEEK } from './armor';
 import { AUGSBURG_CONFESSION } from './augsburgConfession';
 import { LARGE_CATECHISM } from './largeCatechism';
+import { SMALCALD_ARTICLES } from './smalcaldArticles';
 import { CATECHISM, TABLE_OF_DUTIES } from './catechism';
 import { CHURCH_YEAR_INTRO } from './churchYearIntro';
 import { SUNDAY_INFO } from './churchYearGuide';
@@ -60,6 +61,11 @@ export function contentDocs(today: DateKey): SearchDoc[] {
   for (const part of AUGSBURG_CONFESSION) {
     for (const s of part.sections) {
       add('Lehre · Augsburgische Konfession', `${s.title} ${s.sub}`.trim(), s.paragraphs.join(' '), '/katechismus/augsburgische-konfession');
+    }
+  }
+  for (const part of SMALCALD_ARTICLES) {
+    for (const s of part.sections) {
+      add('Lehre · Schmalkaldische Artikel', `${s.title} ${s.sub}`.trim(), s.paragraphs.join(' '), '/katechismus/schmalkaldische-artikel');
     }
   }
   for (const part of LARGE_CATECHISM) {

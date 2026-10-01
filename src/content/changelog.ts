@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.21.0',
+    date: '2026-10-01',
+    title: 'Die Schmalkaldischen Artikel',
+    changes: [
+      { area: 'Lehre', text: 'Im Konkordienbuch stehen jetzt Luthers Schmalkaldische Artikel von 1537: Vorrede, die drei Theile mit allen Artikeln und Melanchthons Unterschrift, wortgetreu nach der Ausgabe von 1881.' },
+      { area: 'Lehre', text: 'Die Augsburgische Konfession ist vollständig: Der XXVIII. Artikel „Von der Bischöfe Gewalt“ und der Beschluß mit den Unterschriften sind dazugekommen.' },
+      { area: 'Suchen', text: 'Die Suche findet auch in den Schmalkaldischen Artikeln und im XXVIII. Artikel.' },
+    ],
+  },
+  {
     version: '0.20.0',
     date: '2026-10-01',
     title: 'Die Lehre neu geordnet',

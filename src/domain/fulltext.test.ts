@@ -19,6 +19,8 @@ describe('full-text search', () => {
     expect(hits[0]!.doc.title).toBe('Der IV. Artikel. Von der Rechtfertigung.');
     expect(hits[0]!.doc.to).toBe('/katechismus/augsburgische-konfession');
     expect(titles('Sakrament Gestalt')).toContain('Der XXII. Artikel. Von beider Gestalt des Sacraments.');
+    expect(titles('Bischöfe Gewalt')).toContain('Der XXVIII. Artikel. Von der Bischöfe Gewalt.');
+    expect(titles('Hauptartikel Lamm Gottes')).toContain('Das andere Theil. Der I. und Hauptartikel.');
   });
 
   it('needs every word, forgives one slip and marks what it found', () => {
