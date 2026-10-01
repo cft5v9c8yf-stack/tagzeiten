@@ -1,6 +1,7 @@
 import { STREITHALLE_VERSE, WINTER_ARC_LEAD, WINTER_ARC_TITLE } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
 import { activeRun, positionOf, stageOf } from '../../domain/winterArc';
+import { WinterArcDashboard } from './WinterArcDashboard';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
 
 /**
@@ -20,6 +21,7 @@ export function Streithalle() {
       <WaVerse verse={STREITHALLE_VERSE} />
       <h3 className="wa-title">{WINTER_ARC_TITLE}</h3>
       <p className="arena-note">{WINTER_ARC_LEAD}</p>
+      <WinterArcDashboard run={run} />
       <h4 className="wa-heading">Anleitung</h4>
       <WinterArcGuide currentFocus={focus} />
     </div>

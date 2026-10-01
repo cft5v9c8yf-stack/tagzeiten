@@ -2560,3 +2560,125 @@ header.top .search-link:focus-visible {
 .wa-week-verse {
   font-style: italic;
 }
+.wa-head {
+  margin: 12px 0 8px;
+}
+.wa-head p {
+  margin: 4px 0;
+}
+.wa-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wa-today h4,
+.wa-week-view h4 {
+  margin: 20px 0 6px;
+}
+.wa-group h5,
+.wa-weekly h5,
+.wa-review h5 {
+  margin: 12px 0 4px;
+}
+.wa-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.wa-check {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.wa-check label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.wa-check input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  accent-color: var(--accent);
+}
+.wa-check.is-off {
+  color: var(--muted);
+}
+.wa-off {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+}
+.wa-hint {
+  margin: 4px 0 0 32px;
+}
+.wa-week-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.wa-grid-wrap {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.wa-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.wa-grid th,
+.wa-grid td {
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--rule);
+  text-align: center;
+}
+.wa-grid tbody th[scope='row'] {
+  text-align: left;
+  font-weight: 400;
+  padding-right: 6px;
+}
+.wa-grid thead th {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.wa-grid-date {
+  display: block;
+  font-weight: 400;
+}
+.wa-grid-group th {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding-top: 10px;
+}
+/* Days outside the round: neutral grey, nothing to tick. */
+.wa-grid .is-outside {
+  background: var(--rule);
+  opacity: 0.5;
+}
+.wa-dot {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.wa-dot.is-done {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.wa-dot:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.wa-review textarea {
+  width: 100%;
+}
+.wa-review-line p {
+  margin: 2px 0 8px;
+}

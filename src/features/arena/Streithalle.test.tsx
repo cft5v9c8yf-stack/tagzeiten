@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 import 'fake-indexeddb/auto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -56,7 +58,11 @@ describe('Streithalle', () => {
     await renderArena('/arena', (s) => s.startWinterArc('2026-09-14', 90));
     expect(places()).toEqual(['Gebetskammer', 'Eisenschmiede', 'Streithalle']);
     // The Gebetskammer stays first and unchanged.
-    expect(within(screen.getByRole('group', { name: 'Bereich der Arena' })).getByRole('button', { name: 'Gebetskammer' }).getAttribute('aria-pressed')).toBe('true');
+    expect(
+      within(screen.getByRole('group', { name: 'Bereich der Arena' }))
+        .getByRole('button', { name: 'Gebetskammer' })
+        .getAttribute('aria-pressed'),
+    ).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'Streithalle' }));
     const hall = document.querySelector('.streithalle')!;
     // Word first: Psalm 144,1 above the plan.
@@ -83,5 +89,110 @@ describe('Streithalle', () => {
     await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-10-05', 90));
     fireEvent.click(screen.getByRole('button', { name: 'Die drei Phasen' }));
     expect(document.querySelector('.wa-week[aria-current]')).toBeNull();
+  });
+
+  it('shows where the round stands, the verse before the task', async () => {
+    await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    const head = document.querySelector('.wa-head')!;
+    expect(head.textContent).toContain('Tag 13 von 90');
+    expect(head.textContent).toContain('Disziplin');
+    expect(head.textContent).toContain('Woche 2 von 13');
+    expect(head.textContent).toContain('Schwerpunkt: Den Morgen gewinnen');
+    const verse = head.querySelector('.wa-verse')!;
+    const task = head.querySelector('.wa-head-task')!;
+    expect(verse.textContent).toContain('HERR, frühe wollest du meine Stimme hören.');
+    expect(task.textContent).toContain('Um 04:00 auf, ohne zu verhandeln.');
+    expect(verse.compareDocumentPosition(task) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('ticks today by hand, and only hints at the morning prayer', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => {
+      s.startWinterArc('2026-09-14', 90);
+      s.updateDay(s.today(), (d) => ({ ...d, morning: { ...d.morning, done: true } }));
+    });
+    const run = store.getProfile().winterArc.runs[0]!;
+    const today = within(document.querySelector('.wa-today') as HTMLElement);
+    expect(today.getByText('Morgengebet heute gebetet – abhaken?')).toBeTruthy();
+    const word = today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' }) as HTMLInputElement;
+    expect(word.checked).toBe(false);
+    fireEvent.click(word);
+    expect(store.getProfile().winterArc.days[0]).toMatchObject({
+      runId: run.id,
+      date: '2026-09-26',
+      checks: { word: true },
+    });
+    expect(today.queryByText('Morgengebet heute gebetet – abhaken?')).toBeNull();
+    fireEvent.click(today.getByRole('checkbox', { name: 'Morgenzeit im Wort und Gebet' }));
+    expect(store.getProfile().winterArc.days[0]!.checks).toEqual({});
+    // 26 September 2026 is a Saturday: rest from training, no work blocks.
+    expect(today.queryByRole('checkbox', { name: 'Trainiert' })).toBeNull();
+    expect(document.querySelector('.wa-today')!.textContent).toContain('Ruhe Trainiert');
+    expect(document.querySelector('.wa-today')!.textContent).toContain('– Fokusblock 08–12');
+  });
+
+  it('shows the week as a grid with the real weekdays; past days can be filled in', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-15', 90));
+    const grid = document.querySelector('.wa-grid')!;
+    // The week runs from the start (a Tuesday), not from Monday.
+    expect([...grid.querySelectorAll('thead th span:first-child')].map((t) => t.textContent)).toEqual([
+      'Di',
+      'Mi',
+      'Do',
+      'Fr',
+      'Sa',
+      'So',
+      'Mo',
+    ]);
+    const past = screen.getByRole('button', { name: 'Trainiert, Dienstag, 22.9.' });
+    fireEvent.click(past);
+    expect(past.getAttribute('aria-pressed')).toBe('true');
+    expect(store.getProfile().winterArc.days.find((d) => d.date === '2026-09-22')!.checks).toEqual({ train: true });
+    expect(
+      (screen.getByRole('button', { name: '04:00 auf, kein Handy, Sonntag, 27.9.' }) as HTMLButtonElement).disabled,
+    ).toBe(true);
+  });
+
+  it('greys out the days after the end of a short round', async () => {
+    // Nine days from 19 September: today (26th) is in week 2, which has two days in the round, five outside.
+    await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-19', 9));
+    const outside = document.querySelectorAll('.wa-grid thead th.is-outside');
+    expect(outside).toHaveLength(5);
+    expect(document.querySelector('.wa-grid td.is-outside button')).toBeNull();
+  });
+
+  it('counts the monthly point for every week of the calendar month', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    const served = () =>
+      screen.getByRole('checkbox', { name: /^Gedient \(einmal im Monat\)\s*·\s*September$/ }) as HTMLInputElement;
+    fireEvent.click(served());
+    expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', served: true }]);
+    fireEvent.click(screen.getByRole('button', { name: '‹ Frühere Woche' }));
+    expect(screen.getByRole('heading', { name: 'Woche 1' })).toBeTruthy();
+    expect(served().checked).toBe(true);
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gottesdienst und Sonntagsruhe' }));
+    expect(store.getProfile().winterArc.weeks).toMatchObject([{ week: 1, weeklyChecks: { church: true } }]);
+  });
+
+  it('asks for the weekly review on the last day of a week, ending in the word of comfort', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    // 26 September is the sixth day of week 2: no review yet.
+    expect(document.querySelector('.wa-review')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: '‹ Frühere Woche' }));
+    const review = document.querySelector('.wa-review') as HTMLElement;
+    fireEvent.change(within(review).getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen auf' } });
+    within(review).getByLabelText('Das Kästchen, das ich schleifen ließ');
+    within(review).getByLabelText('Was Gott mich lehrt');
+    expect(store.getProfile().winterArc.weeks[0]!.review.win).toBe('Jeden Morgen auf');
+    expect(review.lastElementChild!.textContent).toContain('sie ist alle Morgen neu, und deine Treue ist groß.');
+  });
+
+  it('never marks anything in red or as a streak', async () => {
+    await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
+    const hall = document.querySelector('.streithalle')!;
+    expect(hall.querySelector('[class*="danger"], [class*="rubric"], [class*="warn"]')).toBeNull();
+    expect(hall.textContent).not.toMatch(/in Folge|Streak|%/i);
+    const css = readFileSync(resolve(process.cwd(), 'src/styles/pages.css'), 'utf8');
+    const waRules = css.slice(css.indexOf('Streithalle (Winter Arc)'));
+    expect(waRules).not.toMatch(/rubric|danger|rose-red|warn|#[a-f0-9]{3,6}/i);
   });
 });

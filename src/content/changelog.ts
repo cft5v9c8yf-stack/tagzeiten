@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.23.0',
+    date: '2026-10-01',
+    title: 'Der Winter Arc in der Streithalle',
+    changes: [
+      { area: 'Einstellungen', text: 'Unter Darstellung lässt sich der Winter Arc einschalten, der 90-Tage-Standard: mit Startdatum und Dauer in Kalendertagen, eigenen Wochentagen je Punkt und deinen Zeiten. Ausgeschaltet bleibt die Runde mit allen Haken und Rückblicken erhalten.' },
+      { area: 'Arena', text: 'Solange er läuft, steht neben Gebetskammer und Eisenschmiede die Streithalle: wo die Runde steht, Vers und Auftrag der Woche, die Liste für heute, die Woche als Raster zum Nachtragen, Wochenstandard und Wochenrückblick mit dem Zuspruch aus Klagelieder 3. Darunter die Anleitung.' },
+    ],
+  },
+  {
     version: '0.22.0',
     date: '2026-10-01',
     title: 'Die Apologie und der Traktat',

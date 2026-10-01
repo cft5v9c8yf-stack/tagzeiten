@@ -15,7 +15,14 @@ import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '.
 import {
   endRun,
   normalizeWinterArc,
+  setReview,
   startRun,
+  toggleCheck,
+  toggleServed,
+  toggleWeekly,
+  type WinterArcItemId,
+  type WinterArcReview,
+  type WinterArcWeeklyId,
   type WinterArcData,
   type WinterArcDay,
   type WinterArcMonth,
@@ -376,6 +383,29 @@ export class Store {
   endWinterArc(): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
+  }
+
+  /** Sets or takes away a tick of the daily standard; earlier days of the round may be filled in later. */
+  toggleWinterArcCheck(runId: string, date: DateKey, item: WinterArcItemId): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: toggleCheck(p.winterArc, runId, date, item, t) }), { immediate: true });
+  }
+
+  toggleWinterArcWeekly(runId: string, week: number, item: WinterArcWeeklyId): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: toggleWeekly(p.winterArc, runId, week, item, t) }), { immediate: true });
+  }
+
+  /** The monthly point, for the calendar month. */
+  toggleWinterArcServed(runId: string, month: string): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: toggleServed(p.winterArc, runId, month, t) }), { immediate: true });
+  }
+
+  /** A line of the weekly review; saved as you type. */
+  setWinterArcReview(runId: string, week: number, key: keyof WinterArcReview, text: string): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => ({ ...p, winterArc: setReview(p.winterArc, runId, week, key, text, t) }));
   }
 
   private schedule(key: string, value: Doc, immediate?: boolean) {

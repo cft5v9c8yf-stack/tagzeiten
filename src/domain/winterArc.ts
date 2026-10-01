@@ -6,7 +6,7 @@
  * Nothing here counts or rates (rules 4–6): a tick is kept, an open box is
  * simply open.
  */
-import { addDays, isDateKey, type DateKey, type Weekday } from './dates';
+import { addDays, fromKey, isDateKey, type DateKey, type Weekday } from './dates';
 
 /* ------------------------------------------------------------ types */
 
@@ -315,3 +315,108 @@ export function normalizeWinterArcSettings(raw: Partial<WinterArcSettings> | und
   }
   return base;
 }
+
+/* ------------------------------------------------------------ ticks */
+
+/** Whether a daily point applies on a date (by the weekdays chosen for it). */
+export function appliesOn(settings: WinterArcSettings, item: WinterArcItemId, date: DateKey): boolean {
+  return settings.weekdays[item].includes(fromKey(date).getDay() as Weekday);
+}
+
+export function dayOf(data: WinterArcData, runId: string, date: DateKey): WinterArcDay | undefined {
+  return data.days.find((d) => d.runId === runId && d.date === date);
+}
+
+export function weekOf(data: WinterArcData, runId: string, week: number): WinterArcWeek | undefined {
+  return data.weeks.find((w) => w.runId === runId && w.week === week);
+}
+
+/** The monthly point counts for the whole calendar month, in every week of it. */
+export function servedIn(data: WinterArcData, runId: string, month: string): boolean {
+  return data.months.some((m) => m.runId === runId && m.month === month && m.served);
+}
+
+/** The calendar months a week of the round touches, in order. */
+export function monthsOfWeek(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, week: number): string[] {
+  const out: string[] = [];
+  for (const d of weekDates(run.startDate, week)) {
+    if (isInRun(run, d) && !out.includes(monthOf(d))) out.push(monthOf(d));
+  }
+  return out;
+}
+
+/** The last day of a week that lies within the round (the last week may be shorter). */
+export function lastDayOfWeek(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, week: number): DateKey {
+  const days = weekDates(run.startDate, week).filter((d) => isInRun(run, d));
+  return days[days.length - 1] ?? run.startDate;
+}
+
+const replaceOrAdd = <T>(list: readonly T[], match: (x: T) => boolean, next: T): T[] =>
+  list.some(match) ? list.map((x) => (match(x) ? next : x)) : [...list, next];
+
+export function toggleCheck(
+  data: WinterArcData,
+  runId: string,
+  date: DateKey,
+  item: WinterArcItemId,
+  now: number,
+): WinterArcData {
+  const cur = dayOf(data, runId, date);
+  const checks = { ...(cur?.checks ?? {}) };
+  if (checks[item]) delete checks[item];
+  else checks[item] = true;
+  const next: WinterArcDay = { runId, date, checks, updatedAt: now };
+  return { ...data, days: replaceOrAdd(data.days, (d) => d.runId === runId && d.date === date, next) };
+}
+
+function updateWeek(
+  data: WinterArcData,
+  runId: string,
+  week: number,
+  fn: (w: WinterArcWeek) => WinterArcWeek,
+  now: number,
+): WinterArcData {
+  const cur = weekOf(data, runId, week) ?? { runId, week, weeklyChecks: {}, review: emptyReview(), updatedAt: 0 };
+  const next = { ...fn(cur), runId, week, updatedAt: now };
+  return { ...data, weeks: replaceOrAdd(data.weeks, (w) => w.runId === runId && w.week === week, next) };
+}
+
+export function toggleWeekly(
+  data: WinterArcData,
+  runId: string,
+  week: number,
+  item: WinterArcWeeklyId,
+  now: number,
+): WinterArcData {
+  return updateWeek(
+    data,
+    runId,
+    week,
+    (w) => {
+      const weeklyChecks = { ...w.weeklyChecks };
+      if (weeklyChecks[item]) delete weeklyChecks[item];
+      else weeklyChecks[item] = true;
+      return { ...w, weeklyChecks };
+    },
+    now,
+  );
+}
+
+export function setReview(
+  data: WinterArcData,
+  runId: string,
+  week: number,
+  key: keyof WinterArcReview,
+  text: string,
+  now: number,
+): WinterArcData {
+  return updateWeek(data, runId, week, (w) => ({ ...w, review: { ...w.review, [key]: text } }), now);
+}
+
+export function toggleServed(data: WinterArcData, runId: string, month: string, now: number): WinterArcData {
+  const next: WinterArcMonth = { runId, month, served: !servedIn(data, runId, month), updatedAt: now };
+  return { ...data, months: replaceOrAdd(data.months, (m) => m.runId === runId && m.month === month, next) };
+}
+
+export const hasReview = (w: WinterArcWeek | undefined): boolean =>
+  !!w && !!(w.review.win.trim() || w.review.slipped.trim() || w.review.lesson.trim());
