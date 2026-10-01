@@ -214,6 +214,29 @@ describe('Mehr: Aufbau', () => {
     expect(group.textContent).toContain('04:00 auf, kein Handy');
     expect(group.textContent).toContain('täglich · Streithalle');
     expect(group.textContent).toContain('Gedient (einmal im Monat)');
+    expect(group.textContent).toContain('15 von 15 eingeschaltet');
+  });
+
+  it('lets each habit of the Streithalle be switched off, keeping its ticks', async () => {
+    const { store } = await renderAt(
+      '/mehr/gewohnheiten',
+      <SettingsPage />,
+      (s) => {
+        s.startWinterArc('2026-09-21', 90);
+        const run = s.getProfile().winterArc.runs[0]!;
+        s.toggleWinterArcCheck(run.id, '2026-09-22', 'wake');
+      },
+      ['more.habits.streithalle'],
+    );
+    const wake = await screen.findByRole('switch', { name: '04:00 auf, kein Handy' });
+    expect((wake as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(wake);
+    expect(store.getProfile().winterArcSettings.off).toEqual(['wake']);
+    expect(store.getProfile().winterArc.days[0]!.checks).toEqual({ wake: true });
+    fireEvent.click(screen.getByRole('switch', { name: 'Gedient (einmal im Monat)' }));
+    expect(store.getProfile().winterArcSettings.off).toEqual(['wake', 'serve']);
+    fireEvent.click(screen.getByRole('switch', { name: '04:00 auf, kein Handy' }));
+    expect(store.getProfile().winterArcSettings.off).toEqual(['serve']);
   });
 
   it('keeps every round of the Winter Arc readable in the Rückblick', async () => {
@@ -802,16 +825,16 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.25\.1/);
+    expect(versions[0]).toMatch(/^Version 0\.26\.0/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1\.0/);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.25\.1/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.26\.0/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1\.0/));
     expect(toggle(/^Version 0\.1\.0/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.25\.1/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.26\.0/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

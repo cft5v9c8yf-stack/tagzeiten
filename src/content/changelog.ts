@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.26.0',
+    date: '2026-10-01',
+    title: 'Gewohnheiten der Streithalle abschalten',
+    changes: [
+      { area: 'Gewohnheiten', text: 'Jede Gewohnheit der Streithalle lässt sich unter Gewohnheiten einzeln aus- und wieder einschalten. Ausgeschaltet verschwindet sie aus „Heute“ und aus der Streithalle; ihre Haken bleiben.' },
+    ],
+  },
+  {
     version: '0.25.1',
     date: '2026-10-01',
     title: 'Durch die ganze Runde blättern',

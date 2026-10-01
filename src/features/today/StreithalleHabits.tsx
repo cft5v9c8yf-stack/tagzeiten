@@ -2,7 +2,7 @@ import { WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../c
 import { useProfile, useStore } from '../../data/hooks';
 import { houseHas } from '../../domain/house';
 import { formatShort, type DateKey } from '../../domain/dates';
-import { activeRun, appliesOn, dayOf, isInRun, monthOf, positionOf, servedIn, weekOf } from '../../domain/winterArc';
+import { activeRun, appliesOn, dayOf, isInRun, isOn, monthOf, positionOf, servedIn, weekOf } from '../../domain/winterArc';
 
 /**
  * The points of the Streithalle (Winter Arc) among the habits of "Heute", while
@@ -34,7 +34,9 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
             Streithalle
           </th>
         </tr>
-        {WINTER_ARC_ITEMS.filter((it) => houseHas(profile.house, it.needs)).map((it) => {
+        {WINTER_ARC_ITEMS.filter(
+          (it) => houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
+        ).map((it) => {
           const text = it.text(settings.times);
           return (
             <tr key={it.id}>
@@ -65,7 +67,9 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
           );
         })}
         {roundWeek &&
-          WINTER_ARC_WEEKLY.filter((it) => houseHas(profile.house, it.needs)).map((it) => {
+          WINTER_ARC_WEEKLY.filter(
+            (it) => houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
+          ).map((it) => {
             const on = !!weekly[it.id];
             return (
               <tr key={it.id}>
@@ -84,7 +88,7 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
               </tr>
             );
           })}
-        {inRun && (
+        {inRun && isOn(settings, 'serve') && (
           <tr>
             {name(WINTER_ARC_MONTHLY)}
             <td colSpan={7} className="period-cell">

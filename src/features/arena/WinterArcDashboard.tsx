@@ -11,10 +11,19 @@ import {
   WINTER_ARC_WEEKLY,
 } from '../../content/winterArc';
 import { useDay, useProfile, useStore } from '../../data/hooks';
-import { addDays, formatLong, fromKey, MONTH_LONG, WEEKDAY_LONG, WEEKDAY_SHORT, type DateKey } from '../../domain/dates';
+import {
+  addDays,
+  formatLong,
+  fromKey,
+  MONTH_LONG,
+  WEEKDAY_LONG,
+  WEEKDAY_SHORT,
+  type DateKey,
+} from '../../domain/dates';
 import { houseHas } from '../../domain/house';
 import {
   appliesOn,
+  isOn,
   dayOf,
   endDateOf,
   focusOf,
@@ -118,7 +127,9 @@ function JournalEntry({ date }: { date: DateKey }) {
       <DayField date={date} path="evening.thanks.0" label="Ich danke dir, mein Gott, für …" />
       <DayField date={date} path="evening.thanks.1" />
       <DayField date={date} path="evening.thanks.2" />
-      <p className="small muted">Der Satz steht auch in der Andacht und in der Versesammlung, der Dank im Nachtgebet.</p>
+      <p className="small muted">
+        Der Satz steht auch in der Andacht und in der Versesammlung, der Dank im Nachtgebet.
+      </p>
       <button type="button" className="btn quiet" onClick={() => navigate(`/arena/${store.addArenaEntry()}`)}>
         Lieber in der Gebetskammer schreiben
       </button>
@@ -178,7 +189,9 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
       {WINTER_ARC_GROUPS.map((g) => (
         <div key={g} className="wa-group">
           <h5>{g}</h5>
-          {WINTER_ARC_ITEMS.filter((it) => it.group === g && houseHas(profile.house, it.needs)).map((it) => {
+          {WINTER_ARC_ITEMS.filter(
+            (it) => it.group === g && houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
+          ).map((it) => {
             const text = it.text(settings.times);
             if (!appliesOn(settings, it.id, date)) {
               return (
@@ -240,7 +253,9 @@ function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today
             <th
               key={d}
               scope="col"
-              className={[isInRun(run, d) ? '' : 'is-outside', d === today ? 'is-today' : ''].join(' ').trim() || undefined}
+              className={
+                [isInRun(run, d) ? '' : 'is-outside', d === today ? 'is-today' : ''].join(' ').trim() || undefined
+              }
               title={formatFullDate(d)}
             >
               <span>{WEEKDAY_SHORT[fromKey(d).getDay()]}</span>
@@ -256,7 +271,9 @@ function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today
               {g}
             </th>
           </tr>
-          {WINTER_ARC_ITEMS.filter((it) => it.group === g && houseHas(profile.house, it.needs)).map((it) => {
+          {WINTER_ARC_ITEMS.filter(
+            (it) => it.group === g && houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
+          ).map((it) => {
             const text = it.text(settings.times);
             return (
               <tr key={it.id}>
@@ -301,21 +318,24 @@ function WeeklyStandard({ run, week }: { run: WinterArcRun; week: number }) {
   return (
     <section className="panel wa-weekly" aria-labelledby="wa-weekly-title">
       <h5 id="wa-weekly-title">Wochenstandard</h5>
-      {WINTER_ARC_WEEKLY.filter((it) => houseHas(profile.house, it.needs)).map((it) => (
+      {WINTER_ARC_WEEKLY.filter(
+        (it) => houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
+      ).map((it) => (
         <Tick key={it.id} checked={!!checks[it.id]} onToggle={() => store.toggleWinterArcWeekly(run.id, week, it.id)}>
           {it.text}
         </Tick>
       ))}
-      {months.map((m) => (
-        <Tick
-          key={m}
-          checked={servedIn(profile.winterArc, run.id, m)}
-          onToggle={() => store.toggleWinterArcServed(run.id, m)}
-        >
-          {WINTER_ARC_MONTHLY}
-          <span className="muted"> · {monthName(m)}</span>
-        </Tick>
-      ))}
+      {isOn(profile.winterArcSettings, 'serve') &&
+        months.map((m) => (
+          <Tick
+            key={m}
+            checked={servedIn(profile.winterArc, run.id, m)}
+            onToggle={() => store.toggleWinterArcServed(run.id, m)}
+          >
+            {WINTER_ARC_MONTHLY}
+            <span className="muted"> · {monthName(m)}</span>
+          </Tick>
+        ))}
     </section>
   );
 }

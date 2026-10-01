@@ -139,6 +139,11 @@ describe('Winter Arc settings', () => {
     expect(s.times).toEqual({ wake: '04:00', kitchen: '20:00', night: '21:00' });
   });
 
+  it('keeps the points switched off, and only known ones', () => {
+    expect(defaultWinterArcSettings().off).toEqual([]);
+    expect(normalizeWinterArcSettings({ off: ['serve', 'wake', 'nonsense', 'focus1'] as never }).off).toEqual(['wake', 'serve']);
+  });
+
   it('keeps valid own times and weekdays, and drops the rest', () => {
     const s = normalizeWinterArcSettings({
       weekdays: { train: [1, 3, 5, 9] } as never,

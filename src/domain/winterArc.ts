@@ -38,7 +38,16 @@ export interface WinterArcSettings {
   /** On which weekdays each daily point applies; on the others it shows "–". */
   weekdays: Record<WinterArcItemId, Weekday[]>;
   times: WinterArcTimes;
+  /** Points switched off by the user (daily, weekly, or "serve" for the monthly one); their ticks stay. */
+  off: WinterArcPointId[];
 }
+
+/** Every point of the Winter Arc that can be switched off. */
+export type WinterArcPointId = WinterArcItemId | WinterArcWeeklyId | 'serve';
+const POINT_IDS: readonly string[] = [...DAILY_ITEMS, ...WEEKLY_ITEMS, 'serve'];
+
+/** Whether a point is switched on. */
+export const isOn = (settings: WinterArcSettings, id: WinterArcPointId): boolean => !settings.off.includes(id);
 
 export type WinterArcStatus = 'active' | 'ended';
 
@@ -112,7 +121,7 @@ export function defaultWinterArcSettings(): WinterArcSettings {
   for (const id of DAILY_ITEMS) {
     weekdays[id] = id === 'train' ? [...WORKDAYS] : [...ALL_DAYS];
   }
-  return { weekdays, times: { ...DEFAULT_TIMES } };
+  return { weekdays, times: { ...DEFAULT_TIMES }, off: [] };
 }
 
 export const emptyWinterArc = (): WinterArcData => ({ runs: [], days: [], weeks: [], months: [] });
@@ -283,7 +292,6 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
 
 const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-
 export function isValidTime(key: keyof WinterArcTimes, value: string): boolean {
   return key in DEFAULT_TIMES && CLOCK_RE.test(value);
 }
@@ -304,7 +312,16 @@ export function normalizeWinterArcSettings(raw: Partial<WinterArcSettings> | und
       if (typeof v === 'string' && isValidTime(k, v)) base.times[k] = v;
     }
   }
+  if (Array.isArray(raw.off)) {
+    base.off = POINT_IDS.filter((id) => (raw.off as unknown[]).includes(id)) as WinterArcPointId[];
+  }
   return base;
+}
+
+/** Switches a point on or off. */
+export function setPointOn(settings: WinterArcSettings, id: WinterArcPointId, on: boolean): WinterArcSettings {
+  const off = settings.off.filter((x) => x !== id);
+  return { ...settings, off: on ? off : [...off, id] };
 }
 
 /* ------------------------------------------------------------ ticks */

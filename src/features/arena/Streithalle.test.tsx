@@ -263,4 +263,18 @@ describe('Streithalle', () => {
     expect(store.getProfile().arena).toHaveLength(1);
     expect(await screen.findByText(/Gebetskammer/)).toBeTruthy();
   });
+
+  it('leaves out the points switched off', async () => {
+    await renderArena('/arena?bereich=streithalle', (s) => {
+      s.startWinterArc('2026-09-14', 90);
+      s.updateProfile((p) => ({ ...p, winterArcSettings: { ...p.winterArcSettings, off: ['train', 'money', 'serve'] } }));
+    });
+    expect(screen.queryByRole('checkbox', { name: 'Trainiert' })).toBeNull();
+    expect(document.querySelector('.wa-day')!.textContent).not.toContain('Trainiert');
+    tab('Woche');
+    expect(document.querySelector('.wa-grid')!.textContent).not.toContain('Trainiert');
+    expect(screen.queryByRole('checkbox', { name: '15 Minuten Finanzen' })).toBeNull();
+    expect(screen.queryByRole('checkbox', { name: /^Gedient/ })).toBeNull();
+    expect(screen.getByRole('checkbox', { name: 'Gottesdienst und Sonntagsruhe' })).toBeTruthy();
+  });
 });
