@@ -227,7 +227,7 @@ export function SettingsPage() {
       <div className="settings">
         <h2>Mehr</h2>
         <ul className="more-tiles">
-          {AREAS.map((a) => (
+          {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
             <li key={a.slug}>
               <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
                 <FlowIcon name={a.icon} size={22} />
@@ -237,6 +237,9 @@ export function SettingsPage() {
             </li>
           ))}
         </ul>
+        <p className="more-imprint">
+          <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>
+        </p>
       </div>
     );
   }

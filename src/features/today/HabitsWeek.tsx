@@ -113,9 +113,16 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   // The day whose habits are listed: chosen in the strip of the week, at first the day shown.
   const sel = picked && week.includes(picked) ? picked : date;
   const dayTitle = sel === today ? 'Heute' : formatLong(sel);
-  const perDay = rest.filter(isPerDay);
-  const weekly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'weekly');
-  const monthly = rest.filter((h) => !isPerDay(h) && h.rhythm === 'monthly');
+  // Those from the order (Stille Zeit, Vesper, Nachtgebet) stand above as its tiles; the list
+  // keeps what is ticked by hand. Weekly and monthly ones already kept move to the end.
+  const listed = rest.filter((h) => !h.auto);
+  const keptLast = (list: Habit[]) => [
+    ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
+    ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
+  ];
+  const perDay = listed.filter(isPerDay);
+  const weekly = keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'weekly'));
+  const monthly = keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'monthly'));
   const tick = (h: Habit) => {
     const per = isPerDay(h);
     return (

@@ -1,3 +1,4 @@
+import { WordSwitch } from '../../ui/WordSwitch';
 import { useEffect } from 'react';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
@@ -58,6 +59,7 @@ export function BiblePage() {
 
   return (
     <div className="bible-page">
+      <WordSwitch current="bible" />
       <h2>Mein Bibelleseplan</h2>
       <SectionVerse id="plan" />
       {/* Marked as read through the habit "Bibel lesen" on Today. */}

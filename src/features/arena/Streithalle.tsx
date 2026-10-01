@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { STREITHALLE_VERSE } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
 import { activeRun, stageOf } from '../../domain/winterArc';
-import { WinterArcStartPanel } from '../settings/WinterArcSettings';
+import { WinterArcSettings, WinterArcStartPanel } from '../settings/WinterArcSettings';
 import { WinterArcDashboard } from './WinterArcDashboard';
 import { WinterArcClosing } from './WinterArcRounds';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
@@ -77,6 +77,11 @@ export function Streithalle() {
       ) : (
         <WinterArcDashboard key={run.id} run={run} />
       )}
+      {/* Everything to set for the Streithalle, in one place where it is used. */}
+      <details className="wa-settings">
+        <summary>Einstellungen der Streithalle</summary>
+        <WinterArcSettings />
+      </details>
     </div>
   );
 }

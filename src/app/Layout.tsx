@@ -1,29 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router';
+import { Link, Outlet, useLocation } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
-import { LutherRose } from '../ui/LutherRose';
 import { SectionIcon } from '../ui/SectionIcon';
 import { UpdateBanner } from './UpdateBanner';
-import { SECTIONS, SUNDAY_PATH } from './routes';
+import { inSection, SECTIONS, SUNDAY_PATH } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
-
-/** Set once the app has opened; the start page is chosen only then. */
-let launched = false;
 
 export function Layout() {
   const { date, isToday } = useSelectedDate();
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
-  const navigate = useNavigate();
 
-  // The app opens on the Sunday: the week comes from it. Only on launch – "Heute" stays reachable.
-  useEffect(() => {
-    if (launched) return;
-    launched = true;
-    if (pathname === '/' && !search) navigate(SUNDAY_PATH, { replace: true });
-  }, [pathname, search, navigate]);
 
   // On section change: back to the top, and move focus into the new content
   // so keyboard and screen-reader users land where the page begins.
@@ -88,13 +77,16 @@ export function Layout() {
         <ul>
           {SECTIONS.map((s) => (
             <li key={s.path}>
-              <NavLink to={withDate(s.path, date, isToday)} end={s.path === '/'}>
-                {/* All icons one size; the Sunday is Luther's rose. */}
+              <Link
+                to={withDate(s.path, date, isToday)}
+                className={inSection(s, pathname) ? 'active' : undefined}
+                aria-current={inSection(s, pathname) ? 'page' : undefined}
+              >
                 <span className="tab-icon">
-                  {s.path === SUNDAY_PATH ? <LutherRose size={34} /> : <SectionIcon name={s.icon} size={34} />}
+                  <SectionIcon name={s.icon} size={34} />
                 </span>
                 {s.label}
-              </NavLink>
+              </Link>
             </li>
           ))}
         </ul>

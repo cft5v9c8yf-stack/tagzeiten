@@ -1,6 +1,6 @@
 import { useAllDays, useDayLookup, useProfile } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
-import { MARK_SYMBOL } from '../../domain/review';
+import { MARK_LABEL, MARK_SYMBOL } from '../../domain/review';
 import { collectedVerses, lookback, markCounts, stillTimesIn } from '../../domain/stats';
 
 const STATE_LABEL = { none: 'nichts eingetragen', one: 'Morgen oder Abend gebetet', both: 'Morgen und Abend gebetet' } as const;
@@ -44,8 +44,11 @@ export function Lookback({ date }: { date: DateKey }) {
           <dt>Drei Dinge in 30 Tagen</dt>
           <dd className="marks-dist">
             {(['plus', 'tilde', 'minus'] as const).map((m) => (
-              <span key={m}>
-                <span className={`mark ${m}`}>{MARK_SYMBOL[m]}</span> {marks[m]}
+              <span key={m} title={MARK_LABEL[m]}>
+                <span className={`mark ${m}`} aria-hidden="true">
+                  {MARK_SYMBOL[m]}
+                </span>{' '}
+                {marks[m]} <span className="marks-word">{MARK_LABEL[m]}</span>
               </span>
             ))}
           </dd>

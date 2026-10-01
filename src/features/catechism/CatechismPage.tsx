@@ -1,3 +1,4 @@
+import { WordSwitch } from '../../ui/WordSwitch';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
@@ -355,6 +356,7 @@ function CatechismHome() {
 
   return (
     <>
+      <WordSwitch current="teaching" />
       <h2>Lehre</h2>
 
       <section className="cat-area" aria-labelledby="cat-learn">

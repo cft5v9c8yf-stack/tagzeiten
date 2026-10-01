@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
-import { SECTIONS } from '../../app/routes';
+import { inSection, SECTIONS } from '../../app/routes';
 import { SUNDAY_INFO } from '../../content/churchYearGuide';
 import { EPISTLE_LECTIONS } from '../../content/lections';
 import { TagzeitenDB } from '../../data/db';
@@ -32,8 +32,12 @@ async function renderSunday(path: string) {
 const title = () => document.querySelector('.sunday-name')!.textContent;
 
 describe('Sonntag', () => {
-  it('stands in the middle of the bar, with Andacht for morning and evening', () => {
-    expect(SECTIONS.map((s) => s.label)).toEqual(['Arena', 'Andacht', 'Heute', 'Sonntag', 'Bibel', 'Lehre', 'Mehr']);
+  it('belongs to "Heute" in a bar of five; Bible and teaching are the Word', () => {
+    expect(SECTIONS.map((s) => s.label)).toEqual(['Heute', 'Andacht', 'Wort', 'Arena', 'Mehr']);
+    const today = SECTIONS[0]!;
+    expect(inSection(today, '/sonntag')).toBe(true);
+    expect(inSection(SECTIONS[2]!, '/katechismus/apologie')).toBe(true);
+    expect(inSection(today, '/bibel')).toBe(false);
   });
 
   it('opens Löhe’s meditation from the Epistle on the 17th and 18th Sunday after Trinity', async () => {

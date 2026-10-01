@@ -242,8 +242,8 @@ describe('Today', () => {
     expect(table.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(table);
     expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
-    // From the order, not by hand: shown, but not to tick.
-    expect((day.getByRole('checkbox', { name: /^Stille Zeit/ }) as HTMLButtonElement).disabled).toBe(true);
+    // From the order (its tiles stand above): not again in the list.
+    expect(day.queryByRole('checkbox', { name: /^Stille Zeit/ })).toBeNull();
     // The strip of the week chooses another day; its habits are listed in the same place.
     fireEvent.click(screen.getByRole('button', { name: 'Montag, 21. September' }));
     const monday = within(screen.getByRole('region', { name: 'Gewohnheiten, Montag, 21. September' }));
@@ -251,5 +251,11 @@ describe('Today', () => {
     expect(store.getDay('2026-09-21').habits.tablePrayer).toBe(true);
     // The grid of the week stays, folded away.
     expect(document.querySelector('details.habits-week')!.hasAttribute('open')).toBe(false);
+  });
+
+  it('leads from "Heute" to the Sunday of the week', async () => {
+    await renderToday('2026-09-24');
+    const link = screen.getByRole('link', { name: /Diese Woche/ });
+    expect(link.textContent).toContain('16. Sonntag nach Trinitatis');
   });
 });

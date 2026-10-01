@@ -13,6 +13,8 @@ import { DayArc } from './DayArc';
 import { HabitsWeek } from './HabitsWeek';
 import { Lookback } from './Lookback';
 import { eveningClosed } from '../../domain/stats';
+import { churchDay } from '../../domain/churchYear';
+import { LutherRose } from '../../ui/LutherRose';
 import { activeRun, hallModeIn, runName, shortSpan } from '../../domain/winterArc';
 
 function morningStatus(day: Day): string {
@@ -87,6 +89,7 @@ export function TodayPage() {
   const profile = useProfile();
   const s = scheduleFor(profile, date);
   const hallMode = hallModeIn(profile.winterArc, date);
+  const church = churchDay(date);
   const hallRun = hallMode ? activeRun(profile.winterArc) : undefined;
 
   return (
@@ -113,6 +116,22 @@ export function TodayPage() {
           <span className="tile-state">{eveningStatus(day, profile.showCompline)}</span>
         </Link>
       </div>
+
+      <Link
+        className="sunday-link"
+        to={isToday ? '/sonntag' : `/sonntag?s=${church.weekStart}`}
+      >
+        <span className="sunday-link-rose" aria-hidden="true">
+          <LutherRose size={30} />
+        </span>
+        <span className="sunday-link-text">
+          <span className="sunday-link-label">Diese Woche</span>
+          <span className="sunday-link-week">{church.week}</span>
+        </span>
+        <span className="sunday-link-go" aria-hidden="true">
+          ›
+        </span>
+      </Link>
 
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} date={date} isToday={isToday} />

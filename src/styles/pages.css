@@ -2994,7 +2994,13 @@ header.top .search-link:focus-visible {
 .habits-week > summary {
   cursor: pointer;
   list-style: none;
-  margin: 18px 0 0;
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--ink);
 }
 .habits-week > summary::-webkit-details-marker {
   display: none;
@@ -3017,4 +3023,69 @@ header.top .search-link:focus-visible {
   font-family: var(--sans);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+/* Under "Wort": Bibel and Lehre as two halves, links styled like the segmented choice. */
+.word-switch {
+  display: flex;
+  width: 100%;
+  margin: 4px 0 12px;
+}
+.word-switch a {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-decoration: none;
+  color: var(--muted);
+}
+.word-switch a[aria-current='page'] {
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+/* The Impressum under the tiles of "Mehr": a quiet line, not a tile of its own. */
+.more-imprint {
+  margin: 16px 0 0;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.more-imprint a {
+  color: var(--muted);
+}
+
+.marks-word {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* The settings of the Streithalle, at its end: folded, opened by a quiet button. */
+.wa-settings {
+  margin: 20px 0 0;
+}
+.wa-settings > summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.wa-settings > summary::-webkit-details-marker {
+  display: none;
+}
+.wa-settings[open] > summary {
+  margin-bottom: 12px;
 }

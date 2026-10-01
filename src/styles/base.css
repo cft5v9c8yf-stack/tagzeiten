@@ -290,9 +290,8 @@ nav.tabs ul {
   padding: 0 8px;
   max-width: var(--content-width);
   display: grid;
-  /* "Sonntag" in the middle, three sections on either side; both halves equally
-     wide, "Katechismus" gets the widest column. */
-  grid-template-columns: 1fr 1fr 1fr 1fr 0.85fr 1.3fr 0.85fr;
+  /* Five sections of equal width. */
+  grid-template-columns: repeat(5, 1fr);
 }
 nav.tabs li {
   min-width: 0;
