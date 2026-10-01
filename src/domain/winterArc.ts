@@ -15,8 +15,6 @@ export const DAILY_ITEMS = [
   'word',
   'journal',
   'train',
-  'focus1',
-  'focus2',
   'cook',
   'dinner',
   'wife',
@@ -32,8 +30,6 @@ export type WinterArcWeeklyId = (typeof WEEKLY_ITEMS)[number];
 /** "Meine Zeiten": the times named in the checklist. */
 export interface WinterArcTimes {
   wake: string;
-  focus1: string;
-  focus2: string;
   kitchen: string;
   night: string;
 }
@@ -107,8 +103,6 @@ const WORKDAYS: Weekday[] = [1, 2, 3, 4, 5];
 
 export const DEFAULT_TIMES: WinterArcTimes = {
   wake: '04:00',
-  focus1: '08–12',
-  focus2: '13–17',
   kitchen: '20:00',
   night: '21:00',
 };
@@ -116,7 +110,7 @@ export const DEFAULT_TIMES: WinterArcTimes = {
 export function defaultWinterArcSettings(): WinterArcSettings {
   const weekdays = {} as Record<WinterArcItemId, Weekday[]>;
   for (const id of DAILY_ITEMS) {
-    weekdays[id] = id === 'train' || id === 'focus1' || id === 'focus2' ? [...WORKDAYS] : [...ALL_DAYS];
+    weekdays[id] = id === 'train' ? [...WORKDAYS] : [...ALL_DAYS];
   }
   return { weekdays, times: { ...DEFAULT_TIMES } };
 }
@@ -288,13 +282,10 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
 }
 
 const CLOCK_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-const SPAN_RE = /^([01]\d|2[0-3])(:[0-5]\d)?–([01]\d|2[0-4])(:[0-5]\d)?$/;
 
-/** A time span as the tracker writes it, "08–12"; a hyphen is taken for the dash. */
-export const cleanSpan = (s: string): string => s.trim().replace(/\s*[-–—]\s*/, '–');
 
 export function isValidTime(key: keyof WinterArcTimes, value: string): boolean {
-  return key === 'focus1' || key === 'focus2' ? SPAN_RE.test(cleanSpan(value)) : CLOCK_RE.test(value);
+  return key in DEFAULT_TIMES && CLOCK_RE.test(value);
 }
 
 export function normalizeWinterArcSettings(raw: Partial<WinterArcSettings> | undefined): WinterArcSettings {
@@ -310,7 +301,7 @@ export function normalizeWinterArcSettings(raw: Partial<WinterArcSettings> | und
   if (isObj(raw.times)) {
     for (const k of Object.keys(base.times) as (keyof WinterArcTimes)[]) {
       const v = (raw.times as Record<string, unknown>)[k];
-      if (typeof v === 'string' && isValidTime(k, v)) base.times[k] = k.startsWith('focus') ? cleanSpan(v) : v;
+      if (typeof v === 'string' && isValidTime(k, v)) base.times[k] = v;
     }
   }
   return base;

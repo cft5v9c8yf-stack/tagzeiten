@@ -167,6 +167,7 @@ export function toMarkdown(
   exportedAt: Date,
   arena: readonly ArenaEntry[] = [],
   answered: readonly AnsweredPrayer[] = [],
+  winterArc: string[] = [],
 ): string {
   const kept = days.filter((d) => !isEmptyDay(d)).sort((a, b) => (a.date < b.date ? -1 : 1));
   const head = [
@@ -180,5 +181,6 @@ export function toMarkdown(
     ...kept.map((d) => dayToMarkdown(d, habits)),
     ...arenaToMarkdown(arena),
     ...answeredToMarkdown(answered),
+    ...winterArc,
   ].join('\n');
 }

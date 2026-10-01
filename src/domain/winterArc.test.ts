@@ -136,17 +136,16 @@ describe('Winter Arc settings', () => {
     const s = defaultWinterArcSettings();
     expect(s.weekdays.wake).toEqual([1, 2, 3, 4, 5, 6, 0]);
     expect(s.weekdays.train).toEqual([1, 2, 3, 4, 5]);
-    expect(s.weekdays.focus2).toEqual([1, 2, 3, 4, 5]);
-    expect(s.times).toEqual({ wake: '04:00', focus1: '08–12', focus2: '13–17', kitchen: '20:00', night: '21:00' });
+    expect(s.times).toEqual({ wake: '04:00', kitchen: '20:00', night: '21:00' });
   });
 
   it('keeps valid own times and weekdays, and drops the rest', () => {
     const s = normalizeWinterArcSettings({
       weekdays: { train: [1, 3, 5, 9] } as never,
-      times: { wake: '05:30', focus1: '09-13', focus2: 'nachmittags', kitchen: '25:00', night: '22:00' },
+      times: { wake: '05:30', focus1: '09-13', kitchen: '25:00', night: '22:00' } as never,
     });
     expect(s.weekdays.train).toEqual([1, 3, 5]);
     expect(s.weekdays.wake).toEqual([1, 2, 3, 4, 5, 6, 0]);
-    expect(s.times).toEqual({ wake: '05:30', focus1: '09–13', focus2: '13–17', kitchen: '20:00', night: '22:00' });
+    expect(s.times).toEqual({ wake: '05:30', kitchen: '20:00', night: '22:00' });
   });
 });

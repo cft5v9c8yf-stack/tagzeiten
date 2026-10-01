@@ -127,7 +127,8 @@ describe('Streithalle', () => {
     // 26 September 2026 is a Saturday: rest from training, no work blocks.
     expect(today.queryByRole('checkbox', { name: 'Trainiert' })).toBeNull();
     expect(document.querySelector('.wa-today')!.textContent).toContain('Ruhe Trainiert');
-    expect(document.querySelector('.wa-today')!.textContent).toContain('– Fokusblock 08–12');
+    // The work blocks of the tracker are left out.
+    expect(document.querySelector('.wa-today')!.textContent).not.toContain('Fokusblock');
   });
 
   it('shows the week as a grid with the real weekdays; past days can be filled in', async () => {
@@ -194,5 +195,25 @@ describe('Streithalle', () => {
     const css = readFileSync(resolve(process.cwd(), 'src/styles/pages.css'), 'utf8');
     const waRules = css.slice(css.indexOf('Streithalle (Winter Arc)'));
     expect(waRules).not.toMatch(/rubric|danger|rose-red|warn|#[a-f0-9]{3,6}/i);
+  });
+
+  it('shows the closing page after the last day, with the reviews, a new round and the export', async () => {
+    const store = await renderArena('/arena?bereich=streithalle', (s) => {
+      s.startWinterArc('2026-06-01', 90);
+      const run = s.getProfile().winterArc.runs[0]!;
+      s.setWinterArcReview(run.id, 3, 'lesson', 'Er trägt mich.');
+    });
+    const closing = document.querySelector('.wa-closing') as HTMLElement;
+    expect(closing.textContent).toContain('Vor 90 Tagen war das eine Liste.');
+    expect(closing.textContent).toContain('Woche 3 · Die Arbeit schützen');
+    expect(closing.textContent).toContain('Er trägt mich.');
+    expect(closing.querySelector('.wa-reviews')!.lastElementChild!.textContent).toContain('alle Morgen neu');
+    expect(document.querySelector('.wa-today')).toBeNull();
+    expect(within(closing).getByRole('button', { name: 'Als Markdown exportieren' })).toBeTruthy();
+    fireEvent.click(within(closing).getByRole('button', { name: 'Neue Runde starten' }));
+    fireEvent.click(within(closing).getByRole('button', { name: 'Winter Arc beginnen' }));
+    expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
+    expect(document.querySelector('.wa-closing')).toBeNull();
+    expect(document.querySelector('.wa-head')!.textContent).toContain('Tag 1 von 90');
   });
 });

@@ -216,6 +216,22 @@ describe('Mehr: Aufbau', () => {
     expect(group.textContent).toContain('Gedient (einmal im Monat)');
   });
 
+  it('keeps every round of the Winter Arc readable in the Rückblick', async () => {
+    const { ArchivePage } = await import('../archive/ArchivePage');
+    await renderAt('/rueckblick?ansicht=streithalle', <ArchivePage />, (s) => {
+      s.startWinterArc('2026-06-01', 40);
+      const first = s.getProfile().winterArc.runs[0]!;
+      s.setWinterArcReview(first.id, 2, 'win', 'Morgens zuerst das Wort');
+      s.endWinterArc();
+      s.startWinterArc('2026-09-21', 90);
+    });
+    expect(await screen.findByText('2 Runden des Winter Arc')).toBeTruthy();
+    const old = screen.getByRole('button', { name: /^Runde vom Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
+    fireEvent.click(old);
+    expect(screen.getByText('Morgens zuerst das Wort')).toBeTruthy();
+    expect(screen.getByText(/alle Morgen neu/)).toBeTruthy();
+  });
+
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
     const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });

@@ -14,7 +14,6 @@ import type { Profile } from '../../domain/model';
 import { WEEK } from '../../domain/schedule';
 import {
   activeRun,
-  cleanSpan,
   DEFAULT_DURATION,
   endDateOf,
   isValidDuration,
@@ -121,7 +120,6 @@ export function WinterArcStartPanel({
 function TimeField({ k, value, onSave }: { k: keyof WinterArcTimes; value: string; onSave: (v: string) => void }) {
   const id = useId();
   const [draft, setDraft] = useState(value);
-  const span = k === 'focus1' || k === 'focus2';
   const valid = isValidTime(k, draft);
   return (
     <div className="field">
@@ -133,10 +131,10 @@ function TimeField({ k, value, onSave }: { k: keyof WinterArcTimes; value: strin
         autoComplete="off"
         value={draft}
         aria-invalid={!valid}
-        placeholder={span ? '08–12' : '04:00'}
+        placeholder="04:00"
         onChange={(e) => {
           setDraft(e.target.value);
-          if (isValidTime(k, e.target.value)) onSave(span ? cleanSpan(e.target.value) : e.target.value);
+          if (isValidTime(k, e.target.value)) onSave(e.target.value);
         }}
         onBlur={() => !valid && setDraft(value)}
       />

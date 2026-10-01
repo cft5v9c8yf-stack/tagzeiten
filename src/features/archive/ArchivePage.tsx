@@ -2,6 +2,8 @@ import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useAllDays, useProfile } from '../../data/hooks';
 import { entryTitle, forgeTitle, searchArena } from '../../domain/arena';
+import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
+import { Section } from '../../ui/Section';
 import { byYearAndMonth } from '../../domain/byMonth';
 import { formatLong, toKey, type DateKey } from '../../domain/dates';
 import { dayEntries, prayedOrders, readingLabel, type DaySection } from '../../domain/exportMarkdown';
@@ -13,8 +15,8 @@ import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from '../../doma
 import { Segmented } from '../../ui/Choice';
 import { HabitHistory } from './HabitHistory';
 
-type Tab = 'days' | 'verses' | 'arena' | 'answered';
-const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered' };
+type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'streithalle';
+const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered', streithalle: 'streithalle' };
 const PAGE = 40;
 
 function prayed(d: Day): string {
@@ -192,8 +194,31 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
     () => searchAnswered(answeredNewestFirst(profile.answered), query),
     [profile.answered, query],
   );
+  // Every round of the Winter Arc, newest first; searched in its weekly reviews.
+  const rounds = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return [...profile.winterArc.runs]
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .filter(
+        (r) =>
+          !q ||
+          profile.winterArc.weeks.some(
+            (w) =>
+              w.runId === r.id &&
+              [w.review.win, w.review.slipped, w.review.lesson].some((t) => t.toLowerCase().includes(q)),
+          ),
+      );
+  }, [profile.winterArc, query]);
   const count =
-    tab === 'days' ? found.length : tab === 'verses' ? verses.length : tab === 'arena' ? archived.length : answered.length;
+    tab === 'days'
+      ? found.length
+      : tab === 'verses'
+        ? verses.length
+        : tab === 'arena'
+          ? archived.length
+          : tab === 'streithalle'
+            ? rounds.length
+            : answered.length;
 
   return (
     <>
@@ -211,6 +236,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
           { value: 'answered', label: 'Gebetserhörungen' },
+          ...(profile.winterArc.runs.length ? [{ value: 'streithalle' as const, label: 'Streithalle' }] : []),
         ]}
       />
       <div className="field search-field">
@@ -237,6 +263,8 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
               : tab === 'arena'
                 ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
+                : tab === 'streithalle'
+                  ? `${count} ${count === 1 ? 'Runde des Winter Arc' : 'Runden des Winter Arc'}`
                 : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
       </p>
 
@@ -290,6 +318,28 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               ? 'Nichts gefunden.'
               : 'Noch nichts archiviert. Einträge der Arena legst du im Eintrag hierher.'}
           </p>
+        ))}
+
+      {tab === 'streithalle' &&
+        (rounds.length ? (
+          <ul className="archive-list wa-rounds">
+            {rounds.map((r) => (
+              <li key={r.id} className="archive-item">
+                <Section
+                  id={`archive.wa.${r.id}`}
+                  title={roundTitle(r)}
+                  level={4}
+                  defaultOpen={false}
+                  className="book-card"
+                  aside={r.status === 'active' ? 'läuft' : 'beendet'}
+                >
+                  <RoundReviews run={r} />
+                </Section>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="empty">Nichts gefunden.</p>
         ))}
 
       {tab === 'answered' &&

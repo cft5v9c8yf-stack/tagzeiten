@@ -4,7 +4,7 @@
  */
 import type { WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
 
-export type WinterArcGroup = 'Morgen' | 'Arbeit' | 'Haus';
+export type WinterArcGroup = 'Morgen' | 'Haus';
 
 export interface WinterArcItem {
   id: WinterArcItemId;
@@ -15,14 +15,16 @@ export interface WinterArcItem {
   off: string;
 }
 
-/** The daily standard, in the order and groups of the tracker. */
+/**
+ * The daily standard, in the order and groups of the tracker. The two work
+ * blocks of the tracker ("Fokusblock 08–12", "Block 13–17") are left out on
+ * request: the men who use it are employed, their working hours are set by others.
+ */
 export const WINTER_ARC_ITEMS: readonly WinterArcItem[] = [
   { id: 'wake', group: 'Morgen', text: (t) => `${t.wake} auf, kein Handy`, off: '–' },
   { id: 'word', group: 'Morgen', text: () => 'Morgenzeit im Wort und Gebet', off: '–' },
   { id: 'journal', group: 'Morgen', text: () => 'Tagebuch und drei Dankpunkte', off: '–' },
   { id: 'train', group: 'Morgen', text: () => 'Trainiert', off: 'Ruhe' },
-  { id: 'focus1', group: 'Arbeit', text: (t) => `Fokusblock ${t.focus1}`, off: '–' },
-  { id: 'focus2', group: 'Arbeit', text: (t) => `Block ${t.focus2}`, off: '–' },
   { id: 'cook', group: 'Haus', text: () => 'Zu Hause gekocht', off: '–' },
   { id: 'dinner', group: 'Haus', text: () => 'Abendessen ohne Handy', off: '–' },
   { id: 'wife', group: 'Haus', text: () => 'Eine Geste für meine Frau', off: '–' },
@@ -31,7 +33,7 @@ export const WINTER_ARC_ITEMS: readonly WinterArcItem[] = [
   { id: 'night', group: 'Haus', text: (t) => `Gebetet, ${t.night} Licht aus`, off: '–' },
 ];
 
-export const WINTER_ARC_GROUPS: readonly WinterArcGroup[] = ['Morgen', 'Arbeit', 'Haus'];
+export const WINTER_ARC_GROUPS: readonly WinterArcGroup[] = ['Morgen', 'Haus'];
 
 /** The weekly standard, once in each week of the round. */
 export const WINTER_ARC_WEEKLY: readonly { id: WinterArcWeeklyId; text: string }[] = [
@@ -47,8 +49,6 @@ export const WINTER_ARC_MONTHLY = 'Gedient (einmal im Monat)';
 /** "Meine Zeiten": what each time stands for. */
 export const WINTER_ARC_TIME_LABELS: Record<keyof WinterArcTimes, string> = {
   wake: 'Aufstehen',
-  focus1: 'Fokusblock',
-  focus2: 'Zweiter Block',
   kitchen: 'Küche zu',
   night: 'Licht aus',
 };

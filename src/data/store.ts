@@ -9,6 +9,7 @@ import { READING_HABIT } from '../content/habits';
 import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/dates';
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
+import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
@@ -520,7 +521,14 @@ export class Store {
 
   async exportMarkdown(): Promise<string> {
     await this.flush();
-    return toMarkdown(this.allDays(), this.profile.habits, this.now(), this.profile.arena, this.profile.answered);
+    return toMarkdown(
+      this.allDays(),
+      this.profile.habits,
+      this.now(),
+      this.profile.arena,
+      this.profile.answered,
+      winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
+    );
   }
 
   /** Replaces all data with the content of a backup file. */
