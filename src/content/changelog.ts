@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: 'Fünf Bereiche, ruhigeres „Heute“',
     changes: [
-      { area: 'Bedienung', text: 'Unten stehen fünf Bereiche: Heute, Andacht, Wort, Arena, Mehr. Die App öffnet immer bei „Heute“.' },
+      { area: 'Bedienung', text: 'Unten stehen fünf Bereiche: Wort, Andacht, Heute in der Mitte, Arena, Mehr. Die App öffnet immer bei „Heute“.' },
       { area: 'Heute', text: 'Der Sonntag der Woche ist eine Kachel unter „Heute“. In der Liste der Gewohnheiten stehen nur noch die, die du selbst abhakst; Stille Zeit, Vesper und Nachtgebet stehen oben als Kacheln. Erledigte wöchentliche und monatliche rücken ans Ende.' },
       { area: 'Wort', text: 'Bibel und Lehre stehen unter „Wort“ nebeneinander, oben umschaltbar.' },
       { area: 'Arena', text: 'Die Einstellungen der Streithalle sind auch in der Streithalle selbst zu finden, unten zum Aufklappen.' },

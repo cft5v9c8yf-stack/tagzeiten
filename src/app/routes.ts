@@ -11,11 +11,11 @@ export interface Section {
 /** The week comes from its Sunday: the app opens on it, and it belongs to "Heute". */
 export const SUNDAY_PATH = '/sonntag';
 
-/** Five tabs: the day, the order of prayer, the Word (Bible and teaching), the Arena, and more. */
+/** Five tabs, "Heute" in the middle: the Word (Bible and teaching) first, then the order of prayer, the day, the Arena, and more. */
 export const SECTIONS: readonly Section[] = [
-  { path: '/', label: 'Heute', icon: 'today', also: [SUNDAY_PATH] },
-  { path: '/andacht', label: 'Andacht', icon: 'prayer' },
   { path: '/bibel', label: 'Wort', icon: 'bible', also: ['/katechismus'] },
+  { path: '/andacht', label: 'Andacht', icon: 'prayer' },
+  { path: '/', label: 'Heute', icon: 'today', also: [SUNDAY_PATH] },
   { path: '/arena', label: 'Arena', icon: 'arena' },
   { path: '/mehr', label: 'Mehr', icon: 'more' },
 ];

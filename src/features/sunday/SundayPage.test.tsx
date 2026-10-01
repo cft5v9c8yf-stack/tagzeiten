@@ -33,10 +33,11 @@ const title = () => document.querySelector('.sunday-name')!.textContent;
 
 describe('Sonntag', () => {
   it('belongs to "Heute" in a bar of five; Bible and teaching are the Word', () => {
-    expect(SECTIONS.map((s) => s.label)).toEqual(['Heute', 'Andacht', 'Wort', 'Arena', 'Mehr']);
-    const today = SECTIONS[0]!;
+    // "Heute" in the middle.
+    expect(SECTIONS.map((s) => s.label)).toEqual(['Wort', 'Andacht', 'Heute', 'Arena', 'Mehr']);
+    const today = SECTIONS[2]!;
     expect(inSection(today, '/sonntag')).toBe(true);
-    expect(inSection(SECTIONS[2]!, '/katechismus/apologie')).toBe(true);
+    expect(inSection(SECTIONS[0]!, '/katechismus/apologie')).toBe(true);
     expect(inSection(today, '/bibel')).toBe(false);
   });
 
