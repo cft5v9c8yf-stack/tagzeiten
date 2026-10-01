@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
@@ -130,6 +130,38 @@ export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
 const dateOf = (ms: number) =>
   new Date(ms).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
+/** A one-line field that wraps and grows when the text reaches its end; Enter adds no line break. */
+const GrowField = forwardRef<
+  HTMLTextAreaElement,
+  Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'value' | 'onChange'> & { value: string; onValue: (v: string) => void }
+>(function GrowField({ value, onValue, onKeyDown, className, ...rest }, outer) {
+  const inner = useRef<HTMLTextAreaElement | null>(null);
+  useLayoutEffect(() => {
+    const el = inner.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight + 2}px`;
+  }, [value]);
+  return (
+    <textarea
+      {...rest}
+      ref={(el) => {
+        inner.current = el;
+        if (typeof outer === 'function') outer(el);
+        else if (outer) outer.current = el;
+      }}
+      rows={1}
+      className={className ? `grow-field ${className}` : 'grow-field'}
+      value={value}
+      onChange={(e) => onValue(e.target.value.replace(/\n/g, ' '))}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
+        onKeyDown?.(e);
+      }}
+    />
+  );
+});
+
 /** A list of short lines (verses, concerns) with "+" for one more and "×" to take one out. */
 function LineList({
   label,
@@ -151,6 +183,12 @@ function LineList({
   const id = useId();
   const list = values.length ? values : [''];
   const set = (i: number, v: string) => onChange(list.map((x, k) => (k === i ? v : x)));
+  const [focused, setFocused] = useState<number | null>(null);
+  // Known concerns that fit what is typed, as taps instead of a list the phone hides.
+  const matches = (v: string) => {
+    const q = v.trim().toLocaleLowerCase('de');
+    return suggestions.filter((s) => s.toLocaleLowerCase('de') !== q && s.toLocaleLowerCase('de').includes(q) && !list.includes(s)).slice(0, 5);
+  };
   return (
     <fieldset className="arena-lines">
       <legend>{label}</legend>
@@ -160,13 +198,13 @@ function LineList({
             <label htmlFor={`${id}-${i}`} className="visually-hidden">
               {`${label} ${i + 1}`}
             </label>
-            <input
+            <GrowField
               id={`${id}-${i}`}
-              type="text"
               value={v}
               placeholder={placeholder}
-              list={suggestions.length ? `${id}-list` : undefined}
-              onChange={(e) => set(i, e.target.value)}
+              onFocus={() => setFocused(i)}
+              onBlur={() => setFocused((f) => (f === i ? null : f))}
+              onValue={(x) => set(i, x)}
             />
             {list.length > 1 && (
               <button
@@ -179,16 +217,24 @@ function LineList({
               </button>
             )}
           </div>
+          {focused === i && matches(v).length > 0 && (
+            <div className="arena-suggest" role="group" aria-label="Vorschläge">
+              {matches(v).map((m) => (
+                <button
+                  key={m}
+                  type="button"
+                  className="chip"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => set(i, m)}
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          )}
           {render && v.trim() && <div className="arena-line-view">{render(v)}</div>}
         </div>
       ))}
-      {suggestions.length > 0 && (
-        <datalist id={`${id}-list`}>
-          {suggestions.map((s) => (
-            <option key={s} value={s} />
-          ))}
-        </datalist>
-      )}
       <button type="button" className="concern-add arena-add" aria-label={addLabel} onClick={() => onChange([...list, ''])}>
         +
       </button>
@@ -203,7 +249,7 @@ function LineList({
  */
 function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: ArenaPoint[]) => void }) {
   const id = useId();
-  const refs = useRef<(HTMLInputElement | null)[]>([]);
+  const refs = useRef<(HTMLTextAreaElement | null)[]>([]);
   const [focus, setFocus] = useState<number | null>(null);
   const list = values.length ? values : [{ text: '', done: false }];
   useEffect(() => {
@@ -233,16 +279,15 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
               onChange={(e) => set(i, { ...p, done: e.target.checked })}
             />
             <label htmlFor={`${id}-${i}`} className="visually-hidden">{`Punkt ${i + 1}`}</label>
-            <input
+            <GrowField
               id={`${id}-${i}`}
               ref={(el) => {
                 refs.current[i] = el;
               }}
-              type="text"
               enterKeyHint="next"
               value={p.text}
               placeholder={i === 0 ? 'Was dich umtreibt, wo du Rat brauchst …' : 'Weiterer Punkt'}
-              onChange={(e) => set(i, { ...p, text: e.target.value })}
+              onValue={(x) => set(i, { ...p, text: x })}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
                   e.preventDefault();

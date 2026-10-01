@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.18.0',
+    date: '2026-10-01',
+    title: 'Der Große Katechismus',
+    changes: [
+      { area: 'Lehre', text: 'Im Anhang steht Luthers Großer Katechismus vollständig: beide Vorreden, die Zehn Gebote, der Glaube, das Vater Unser, die Taufe mit der Kindertaufe und das Sacrament des Altars, jedes Stück für sich aufzuklappen, wortgetreu nach dem Konkordienbuch (St. Louis 1881). Die Suche findet ihn mit.' },
+      { area: 'Arena', text: 'Gebetsanliegen, Bibelstellen und was du mit den Brüdern besprechen willst, brechen am Ende der Zeile um, das Feld wächst mit. Bekannte Anliegen stehen beim Tippen als Vorschläge darunter.' },
+    ],
+  },
+  {
     version: '0.17.0',
     date: '2026-09-30',
     title: 'Der Kleine Katechismus nach dem Konkordienbuch',

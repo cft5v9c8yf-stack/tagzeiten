@@ -2403,3 +2403,37 @@ header.top .search-link:focus-visible {
   border-radius: 2px;
   padding: 0 1px;
 }
+
+/* Arena: one-line fields that wrap and grow with their text */
+.grow-field {
+  resize: none;
+  overflow: hidden;
+  min-height: 0;
+  line-height: 1.4;
+}
+.arena-line-input .grow-field,
+.arena-point .grow-field {
+  flex: 1;
+  min-width: 0;
+}
+.arena-line-input,
+.arena-point {
+  align-items: flex-start;
+}
+.arena-line-input .arena-remove,
+.arena-point .arena-remove {
+  margin-top: 6px;
+}
+.arena-point input[type='checkbox'] {
+  margin-top: 12px;
+}
+.arena-point.done .grow-field {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.arena-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 0;
+}

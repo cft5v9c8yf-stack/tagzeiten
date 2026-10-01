@@ -128,6 +128,9 @@ describe('Arena', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Punkt 1'), { target: { value: 'Entscheidung im Beruf' } });
     fireEvent.change(screen.getByLabelText('Gebetsanliegen 1'), { target: { value: 'Weisheit' } });
+    // Long concerns and points wrap and grow instead of running out of the field.
+    expect(screen.getByLabelText('Gebetsanliegen 1').tagName).toBe('TEXTAREA');
+    expect(screen.getByLabelText('Punkt 1').tagName).toBe('TEXTAREA');
     expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Einer trage des andern Last');
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', points: [{ text: 'Entscheidung im Beruf', done: false }] }));
 

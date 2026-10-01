@@ -2,7 +2,8 @@ import { useEffect, useId, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
-import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE } from '../../content/augsburgConfession';
+import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE, type BookPart } from '../../content/augsburgConfession';
+import { LARGE_CATECHISM, LARGE_CATECHISM_SOURCE } from '../../content/largeCatechism';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
 import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
@@ -127,9 +128,33 @@ function Creeds() {
   );
 }
 
-const AUGSBURG_IDS = AUGSBURG_CONFESSION.flatMap((p) => p.sections.map((s) => `ca.${s.id}`));
+/** A book of parts and sections: each section a card, one open at a time. */
+function BookParts({ parts, prefix }: { parts: readonly BookPart[]; prefix: string }) {
+  const ids = parts.flatMap((p) => p.sections.map((s) => `${prefix}.${s.id}`));
+  return (
+    <>
+      {parts.map((part, i) => (
+        <div key={part.heading ?? i}>
+          {part.heading && <h3 className="book-circle">{part.heading}</h3>}
+          {part.sections.map((s) => (
+            <Section key={s.id} id={`${prefix}.${s.id}`} group={ids} defaultOpen={false} className="book-card creed-card" title={
+              <span className="book-card-text">
+                <span className="book-card-title">{s.title}</span>
+                {s.sub && <span className="book-card-sub">{s.sub}</span>}
+              </span>
+            }>
+              {s.paragraphs.map((p, k) => (
+                <p key={k}>{p}</p>
+              ))}
+            </Section>
+          ))}
+        </div>
+      ))}
+    </>
+  );
+}
 
-/** The Augsburg Confession: preface and articles as cards, one open at a time. */
+/** The Augsburg Confession: preface and articles as cards. */
 function AugsburgConfession() {
   return (
     <>
@@ -137,27 +162,24 @@ function AugsburgConfession() {
         Übergeben dem Kaiser Karl V. auf dem Reichstag zu Augsburg am 25. Juni 1530. Wortgetreu in der Rechtschreibung der
         Ausgabe.
       </p>
-      {AUGSBURG_CONFESSION.map((part, i) => (
-        <div key={part.heading ?? i}>
-          {part.heading && <h3 className="book-circle">{part.heading}</h3>}
-          {part.sections.map((s) => (
-            <Section key={s.id} id={`ca.${s.id}`} group={AUGSBURG_IDS} defaultOpen={false} className="book-card creed-card" title={
-              <span className="book-card-text">
-                <span className="book-card-title">{s.title}</span>
-                {s.sub && <span className="book-card-sub">{s.sub}</span>}
-              </span>
-            }>
-              {s.paragraphs.map((p) => (
-                <p key={p.slice(0, 60)}>{p}</p>
-              ))}
-            </Section>
-          ))}
-        </div>
-      ))}
+      <BookParts parts={AUGSBURG_CONFESSION} prefix="ca" />
       <p className="small muted">
         Der XXVIII. Artikel „Von der Bischöfe Gewalt“ und der Beschluss folgen.
       </p>
       <p className="small muted">{AUGSBURG_SOURCE}</p>
+    </>
+  );
+}
+
+/** Luther's Large Catechism: prefaces, the five chief parts and their exposition. */
+function LargeCatechism() {
+  return (
+    <>
+      <p className="book-source">
+        Luthers Auslegung der Hauptstücke für Pfarrherren und Hausväter, 1529. Wortgetreu in der Rechtschreibung der Ausgabe.
+      </p>
+      <BookParts parts={LARGE_CATECHISM} prefix="gk" />
+      <p className="small muted">{LARGE_CATECHISM_SOURCE}</p>
     </>
   );
 }
@@ -167,9 +189,10 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'augsburgische-konfession' && <AugsburgConfession />}
+        {slug === 'grosser-katechismus' && <LargeCatechism />}
         {slug === 'bekenntnisse' && <Creeds />}
         {slug === 'tischgebete' && (
           <>
