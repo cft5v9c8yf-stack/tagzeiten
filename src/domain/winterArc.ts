@@ -452,3 +452,10 @@ export function hallModeIn(data: WinterArcData, date: DateKey): boolean {
   const monday = addDays(date, -((fromKey(date).getDay() + 6) % 7));
   return Array.from({ length: 7 }, (_, i) => addDays(monday, i)).some((d) => isInRun(run, d));
 }
+
+/** "1.10.–29.12.2026": the span of a round, short. */
+export function shortSpan(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>): string {
+  const [y1, m1, d1] = run.startDate.split('-').map(Number);
+  const [y2, m2, d2] = endDateOf(run.startDate, run.durationDays).split('-').map(Number);
+  return `${d1}.${m1}.${y1 === y2 ? '' : y1}–${d2}.${m2}.${y2}`;
+}

@@ -17,6 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: 'Haus vor Arbeit, schönere Streithalle, besseres Deutsch',
     changes: [
+      { area: 'Heute', text: 'Neben „Streithalle“ stehen der Name der Runde und ihr Zeitraum; die Gewohnheiten sind nach „Täglich“ und „Woche und Monat“ gegliedert.' },
       { area: 'Arena', text: 'Im Plan der Streithalle steht das Haus vor der Arbeit. Die Reihenfolge gilt in der ganzen App: Gott, Familie und Haus, Gemeinde, Arbeit, ich.' },
       { area: 'Arena', text: 'Die Tagesansicht der Streithalle ist ruhiger gestaltet: runde Knöpfe zum Blättern, „Aufschreiben“ beim Tagebuch direkt in der Zeile, das Eingabefeld in einer eigenen Fläche.' },
       { area: 'Heute', text: 'Tage vor dem Beginn einer Runde stehen in der Tabelle mit voller Breite und einem stillen Punkt statt eines grauen Streifens.' },

@@ -30,7 +30,7 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
       <tbody className="habit-group habit-group-streithalle">
         <tr className="group-row">
           <th scope="rowgroup" colSpan={8}>
-            Streithalle
+            Täglich
           </th>
         </tr>
         {WINTER_ARC_ITEMS.filter(
@@ -71,6 +71,13 @@ export function StreithalleHabits({ week, date }: { week: readonly DateKey[]; da
             </tr>
           );
         })}
+      </tbody>
+      <tbody className="habit-group habit-group-streithalle">
+        <tr className="group-row">
+          <th scope="rowgroup" colSpan={8}>
+            Woche und Monat
+          </th>
+        </tr>
         {roundWeek &&
           WINTER_ARC_WEEKLY.filter(
             (it) => houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),

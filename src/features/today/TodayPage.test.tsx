@@ -187,12 +187,17 @@ describe('Today', () => {
   it('shows the points of the Streithalle among the habits while the Winter Arc runs, with one tick for both', async () => {
     // 25 September 2026 is a Friday; the round began on Wednesday the 23rd.
     const store = await renderToday('2026-09-25', (s) => s.startWinterArc('2026-09-23', 90));
-    const group = document.querySelector('.habit-group-streithalle') as HTMLElement;
-    expect(group.querySelector('.group-row')!.textContent).toBe('Streithalle');
+    const group = document.querySelector('.habit-groups-hall, .habits') as HTMLElement;
+    expect([...document.querySelectorAll('.habit-group-streithalle .group-row')].map((r) => r.textContent)).toEqual([
+      'Täglich',
+      'Woche und Monat',
+    ]);
+    // Next to the title: the name of the round and its span.
+    expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Winter Arc · 23.9.–21.12.2026');
     // "Heute" is in the mode of the Streithalle: the usual habits give way to it.
     expect(screen.getByRole('button', { name: /^Streithalle/ })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Bibel lesen, Fr 25.9.' })).toBeNull();
-    expect(document.querySelectorAll('.habit-group')).toHaveLength(1);
+    expect(document.querySelectorAll('.habit-group')).toHaveLength(2);
     // Monday and Tuesday lie before the round: neutral grey, nothing to tick.
     const wake = within(group).getByRole('row', { name: /04:00 auf, kein Handy/ });
     expect(wake.querySelectorAll('td.wa-outside')).toHaveLength(2);
