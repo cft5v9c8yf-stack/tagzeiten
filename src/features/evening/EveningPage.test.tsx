@@ -177,4 +177,21 @@ describe('Evening without the Nachtgebet', () => {
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
     expect(screen.queryByRole('button', { name: /Weiter zum Nachtgebet/ })).toBeNull();
   });
+
+  it('reads a devotion instead of the reading, with a growing field for what became important', async () => {
+    localStorage.clear();
+    const store = await renderEvening('2026-09-24');
+    await openPage('Vesper', /^Lesung/);
+    const choice = within(screen.getByRole('group', { name: 'Was du liest' }));
+    fireEvent.click(choice.getByRole('button', { name: 'Andacht' }));
+    fireEvent.change(screen.getByLabelText('Welche Andacht?'), { target: { value: 'Spurgeon, Kleinod' } });
+    const notes = screen.getByLabelText('Was mir wichtig geworden ist') as HTMLTextAreaElement;
+    expect(notes.rows).toBe(4);
+    fireEvent.change(notes, { target: { value: 'Seine Gnade ist alle Morgen neu.' } });
+    await waitFor(() => expect(store.getDay('2026-09-24').evening.devotionNotes).toBe('Seine Gnade ist alle Morgen neu.'));
+    expect(store.getDay('2026-09-24').evening.devotion).toBe('Spurgeon, Kleinod');
+    // The reading of Scripture stays one tap away.
+    fireEvent.click(choice.getByRole('button', { name: 'Lesung' }));
+    expect(screen.getByLabelText('Lesung – wenige Verse, ohne Auslegung')).toBeTruthy();
+  });
 });

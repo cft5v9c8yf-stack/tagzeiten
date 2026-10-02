@@ -2,7 +2,7 @@
  * Renders one part of an order (content/orders.ts). Texts depend on the order
  * (morning or evening), fields come from the part definition.
  */
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
   ABSOLUTION_EVENING,
   ABSOLUTION_WREATH,
@@ -41,7 +41,7 @@ import { ARMOR_CALL, ARMOR_EVENING, ARMOR_WEEK, armorOf, refsOf } from '../../co
 import { WREATH_FREEDOM, WREATH_INTRO, WREATH_MATTER, WREATH_RULE_OF_THUMB } from '../../content/method';
 import { RUBRICS, type OrderId, type Part } from '../../content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS, PSALM_RUBRIC_ANTIPHON, PSALM_RUBRIC_MORNING } from '../../content/psalms';
-import { useProfile } from '../../data/hooks';
+import { useDay, useProfile } from '../../data/hooks';
 import { psalmRef } from '../../domain/bibleRef';
 import { isPassiontide } from '../../domain/churchYear';
 import { WEEKDAY_LONG, weekdayOf, type DateKey } from '../../domain/dates';
@@ -55,6 +55,8 @@ import { Examination } from './Examination';
 import { HouseBlessing, HouseIntercession } from './HouseParts';
 import { MorningReading } from './MorningReading';
 import { PartFields } from './PartFields';
+import { DayField } from '../../ui/DayField';
+import { Segmented } from '../../ui/Choice';
 import { Review } from './Review';
 
 export interface PartContext {
@@ -83,6 +85,63 @@ function Refs({ refs }: { refs: string }) {
         </span>
       ))}
     </span>
+  );
+}
+
+type EveningRead = 'reading' | 'devotion';
+const EVENING_READ_KEY = 'tz:vespers-read';
+
+/** What was read last in the Vesper, on this device: a convenience only. */
+function lastEveningRead(): EveningRead {
+  try {
+    return localStorage.getItem(EVENING_READ_KEY) === 'devotion' ? 'devotion' : 'reading';
+  } catch {
+    return 'reading';
+  }
+}
+
+/**
+ * The reading of the Vesper: a few verses of Scripture, or a devotion from a
+ * book at hand, with room to write down what became important in it.
+ */
+function VespersReading({ part, ctx }: { part: Part; ctx: PartContext }) {
+  const day = useDay(ctx.date);
+  const [what, setWhat] = useState<EveningRead>(() =>
+    day.evening.devotion?.trim() || day.evening.devotionNotes?.trim() ? 'devotion' : lastEveningRead(),
+  );
+  const choose = (w: EveningRead) => {
+    setWhat(w);
+    try {
+      localStorage.setItem(EVENING_READ_KEY, w);
+    } catch {
+      // Only a convenience.
+    }
+  };
+  return (
+    <>
+      <Segmented<EveningRead>
+        label="Was du liest"
+        value={what}
+        onChange={choose}
+        options={[
+          { value: 'reading', label: 'Lesung' },
+          { value: 'devotion', label: 'Andacht' },
+        ]}
+      />
+      {what === 'reading' ? (
+        <>
+          <Rubric>{RUBRICS.vespersReading}</Rubric>
+          <PartFields part={part} date={ctx.date} />
+        </>
+      ) : (
+        <>
+          <Rubric>{RUBRICS.vespersDevotion}</Rubric>
+          <DayField date={ctx.date} path="evening.devotion" />
+          <DayField date={ctx.date} path="evening.devotionNotes" />
+        </>
+      )}
+      <p className="pray-line">{AFTER_READING}</p>
+    </>
   );
 }
 
@@ -158,13 +217,7 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
 
     case 'reading':
       if (ctx.order === 'morning') return <MorningReading part={part} ctx={ctx} />;
-      return (
-        <>
-          <Rubric>{RUBRICS.vespersReading}</Rubric>
-          <PartFields part={part} date={ctx.date} />
-          <p className="pray-line">{AFTER_READING}</p>
-        </>
-      );
+      return <VespersReading part={part} ctx={ctx} />;
 
     case 'prayer-after-reading':
       return <PrayerText text={PRAYER_AFTER_READING} />;

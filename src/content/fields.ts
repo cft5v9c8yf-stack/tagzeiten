@@ -9,6 +9,8 @@ export interface FieldMeta {
   placeholder?: string;
   /** One line instead of a growing text area. */
   single?: boolean;
+  /** Lines a growing text area starts with (default one). */
+  rows?: number;
 }
 
 export const FIELDS: Record<FieldPath, FieldMeta> = {
@@ -37,6 +39,16 @@ export const FIELDS: Record<FieldPath, FieldMeta> = {
   'morning.three.work': { label: 'Werk – was morgen noch zählt', single: true },
   'evening.reading': { label: 'Lesung – wenige Verse, ohne Auslegung', placeholder: 'z. B. Lukas 24,13-35', single: true },
   'evening.intercession': { label: 'Fürbitte' },
+  'evening.devotion': {
+    label: 'Welche Andacht?',
+    placeholder: 'z. B. Spurgeon, Kleinod, 2. Oktober',
+    single: true,
+  },
+  'evening.devotionNotes': {
+    label: 'Was mir wichtig geworden ist',
+    placeholder: 'Ein Gedanke, ein Satz, eine Frage aus der Andacht …',
+    rows: 4,
+  },
   'evening.thanks.0': { label: 'Ich danke dir, mein Gott, für …', single: true },
   'evening.thanks.1': { label: 'und für …', single: true },
   'evening.thanks.2': { label: 'und für …', single: true },

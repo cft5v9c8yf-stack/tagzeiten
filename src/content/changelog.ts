@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.33.0',
+    date: '2026-10-02',
+    title: 'Eine Andacht in der Vesper',
+    changes: [
+      { area: 'Andacht', text: 'In der Vesper wählst du bei der Lesung zwischen „Lesung“ und „Andacht“. Für eine Andacht aus einem Buch trägst du ein, welche es war, und schreibst in ein mitwachsendes Feld, was dir wichtig geworden ist. Beides steht im Rückblick, in der Suche und im Export.' },
+    ],
+  },
+  {
     version: '0.32.2',
     date: '2026-10-02',
     title: 'Das Gebet verständlicher erklärt',

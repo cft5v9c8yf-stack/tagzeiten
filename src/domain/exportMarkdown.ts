@@ -46,6 +46,8 @@ export const WREATH_LABEL: Record<WreathField, string> = {
 
 export const EVENING_FIELD_LABEL: Record<EveningTextField, string> = {
   reading: 'Lesung (Vesper)',
+  devotion: 'Andacht (Vesper)',
+  devotionNotes: 'Aus der Andacht wichtig geworden',
   intercession: 'Fürbitte (Vesper)',
   people: 'Menschen des Tages',
   passedOnTo: 'Weitergegeben an',

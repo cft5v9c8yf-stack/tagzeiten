@@ -41,6 +41,8 @@ export const THREE_KEYS = ['word', 'house', 'work'] as const;
 /** Free-text fields of the evening (vespers and compline). */
 export const EVENING_TEXT_FIELDS = [
   'reading', // Vesper: Lesung
+  'devotion', // Vesper: which devotion was read (book, author, title)
+  'devotionNotes', // Vesper: what became important in it
   'intercession', // Vesper: Fürbitte
   'people', // Nachtgebet: Menschen des Tages
   'passedOnTo', // Nachtgebet: Weitergegeben an

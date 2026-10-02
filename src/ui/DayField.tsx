@@ -42,7 +42,7 @@ export function DayField({ date, path, label }: { date: DateKey; path: string; l
         <textarea
           id={id}
           ref={ref}
-          rows={1}
+          rows={meta.rows ?? 1}
           value={value}
           placeholder={meta.placeholder}
           onChange={(e) => onChange(e.target.value)}

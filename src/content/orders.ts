@@ -402,6 +402,7 @@ export const RUBRICS = {
   vespersClosing: 'Der persönliche Abschluss des Tages, für dich allein. Erst das Gebet der Kirche, dann Rückschau, Prüfung und Zuspruch.',
   vespersShortClosing: 'Hymnus – Psalm – kurze Lesung – Vaterunser – Segen, dann die Rückschau auf den Tag.',
   vespersReading: 'Ein kurzer Abschnitt, ohne Auslegung. Nicht die Bibellese vom Morgen – hier genügen wenige Verse.',
+  vespersDevotion: 'Eine Andacht aus einem Buch, das du zur Hand hast. Lies sie langsam und halte fest, was dir wichtig geworden ist.',
   vespersIntercession: 'Für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde, für das eigene Haus.',
   magnificat: 'Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn von deinem her prüfst.',
   complineShort: 'Kurzform an müden Tagen: Kreuzzeichen, Rückschau, Vaterunser, Abendsegen. Das genügt vollkommen.',
