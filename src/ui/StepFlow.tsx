@@ -9,6 +9,8 @@ export interface FlowStep {
   /** Gold icon in the circle: what happens in this step (replaces the mark). */
   icon?: FlowIconName;
   done?: boolean;
+  /** A short name shown under the mark, where a row has few of them ("Lob", "Wort"). */
+  short?: string;
 }
 
 /**
@@ -73,6 +75,11 @@ export function StepFlow({
                 {/* The icon names the step; numbers only where there is no icon. */}
                 {s.icon ? <FlowIcon name={s.icon} size={17} /> : <span aria-hidden="true">{s.mark}</span>}
               </button>
+              {s.short && (
+                <span className="flow-short" aria-hidden="true">
+                  {s.short}
+                </span>
+              )}
             </li>
           ))}
         </ol>

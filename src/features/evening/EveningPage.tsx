@@ -29,62 +29,51 @@ function useFormSetter(date: DateKey, key: 'vespersForm' | 'complineForm') {
     store.updateDay(date, (d) => ({ ...d, evening: { ...d.evening, [key]: f } as EveningEntry }), { immediate: true });
 }
 
-interface ComplinePage {
+/** A page of the evening: one step of an order, with its parts. */
+interface EveningPage {
   id: string;
   title: string;
-  steps: OrderStep[];
-}
-
-/**
- * The pages of the Nachtgebet. Examination and confession with absolution stand
- * on one page: the examination never ends without the word of forgiveness (rule 1).
- */
-function complinePages(steps: readonly OrderStep[]): ComplinePage[] {
-  const pages: ComplinePage[] = [];
-  for (const step of steps) {
-    const prev = pages.at(-1);
-    if (prev && prev.steps.at(-1)!.id === 'examination' && step.id === 'confession') {
-      prev.steps.push(step);
-      prev.title = 'Prüfung, Bekenntnis und Zuspruch';
-    } else {
-      pages.push({ id: step.id, title: step.title, steps: [step] });
-    }
-  }
-  return pages;
-}
-
-/** A page of the Vesper: one part, or the steps taken over from the Nachtgebet. */
-interface VespersPage {
-  id: string;
-  title: string;
+  short: string;
   icon?: FlowIconName;
   sections: { id: string; title: string; order: OrderId; parts: readonly Part[] }[];
 }
 
+/** The short names under the marks of the row. */
+const SHORT: Record<string, string> = {
+  praise: 'Lob',
+  word: 'Wort',
+  prayer: 'Gebet',
+  vespers: 'Vesper',
+  sign: 'Glaube',
+  review: 'Rückschau',
+  examination: 'Prüfung',
+  blessing: 'Segen',
+  compline: 'Nachtgebet',
+};
+
+const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
+  id: order === 'vespers' ? st.id : `compline-${st.id}`,
+  title: st.title,
+  short: SHORT[st.id] ?? st.title,
+  icon: (order === 'vespers' ? VESPERS_ICONS : COMPLINE_ICONS)[st.id],
+  sections: [{ id: st.id, title: st.title, order, parts: st.parts }],
+});
+
 /**
- * The pages of the Vesper. Without the Nachtgebet, its review and – in the full
- * form – examination, confession and absolution follow at the end: the review
- * before the examination, never mixed (rule 3), and the examination always on
- * one page with the word of forgiveness (rule 1).
+ * The pages of the Vesper. Without the Nachtgebet, its thanks and review and –
+ * in the full form – examination, confession and absolution follow at the end:
+ * the review before the examination, never mixed (rule 3), the examination
+ * always on one page with the word of forgiveness (rule 1).
  */
-function vespersPages(form: OrderForm, withCompline: boolean): VespersPage[] {
-  const pages: VespersPage[] = getOrder('vespers', form).steps[0]!.parts.map((p) => ({
-    id: p.kind,
-    title: p.title,
-    icon: VESPERS_ICONS[p.kind],
-    sections: [{ id: p.kind, title: p.title, order: 'vespers', parts: [p] }],
-  }));
+function vespersPages(form: OrderForm, withCompline: boolean): EveningPage[] {
+  const pages = getOrder('vespers', form).steps.map((st) => pageOf(st, 'vespers'));
   if (withCompline) return pages;
-  const taken = getOrder('compline', form).steps.filter((st) => ['review', 'examination', 'confession'].includes(st.id));
-  for (const page of complinePages(taken)) {
-    pages.push({
-      id: `compline-${page.id}`,
-      title: page.title,
-      icon: COMPLINE_ICONS[page.id],
-      sections: page.steps.map((st) => ({ id: st.id, title: st.title, order: 'compline', parts: st.parts })),
-    });
+  if (form === 'short') {
+    const review = getOrder('compline', 'short').steps[0]!.parts.find((p) => p.kind === 'review')!;
+    return [...pages, pageOf({ id: 'review', title: 'Rückschau', minutes: 0, parts: [review] }, 'compline')];
   }
-  return pages;
+  const taken = getOrder('compline', 'full').steps.filter((st) => st.id === 'review' || st.id === 'examination');
+  return [...pages, ...taken.map((st) => pageOf(st, 'compline'))];
 }
 
 /**
@@ -110,8 +99,10 @@ function VespersView({
   const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;
   const steps: FlowStep[] = [
-    ...pages.map((p) => ({ id: p.id, title: p.title, icon: p.icon, done })),
-    ...(withCompline ? [{ id: 'compline', title: 'Nachtgebet', icon: 'moon' as const, done: day.evening.complineDone }] : []),
+    ...pages.map((p) => ({ id: p.id, title: p.title, short: p.short, icon: p.icon, done })),
+    ...(withCompline
+      ? [{ id: 'compline', title: 'Nachtgebet', short: 'Nacht', icon: 'moon' as const, done: day.evening.complineDone }]
+      : []),
   ];
   const page = current === null ? undefined : pages[current];
   const next = current === null ? undefined : pages[current + 1];
@@ -217,14 +208,14 @@ function ComplineView({
 }) {
   const day = useDay(date);
   const form = day.evening.complineForm;
-  const pages = complinePages(getOrder('compline', form).steps);
+  const pages = getOrder('compline', form).steps.map((st) => pageOf(st, 'compline'));
   const setForm = useFormSetter(date, 'complineForm');
   const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
   const done = day.evening.complineDone;
 
   const steps: FlowStep[] = [
-    { id: 'vespers', title: 'Vesper', icon: 'sunset', done: day.evening.vespersDone },
-    ...pages.map((p) => ({ id: p.id, title: p.title, icon: COMPLINE_ICONS[p.id], done })),
+    { id: 'vespers', title: 'Vesper', short: 'Vesper', icon: 'sunset', done: day.evening.vespersDone },
+    ...pages.map((p) => ({ id: p.id, title: p.title, short: p.short, icon: p.icon, done })),
   ];
   const page = current === null ? undefined : pages[current];
   const next = current === null ? undefined : pages[current + 1];
@@ -269,17 +260,10 @@ function ComplineView({
         onSelect={(i) => (i === 0 ? onOpenVespers() : setCurrent(i - 1))}
         footer={page && footer}
       >
-        {page?.steps.map((step, k) => (
-          <div key={step.id} className={`compline-part step-${step.id}`}>
-            {k > 0 && <h4 className="flow-subtitle">{step.title}</h4>}
-            {step.parts.map((p) => (
-              <OrderPart
-                key={p.kind}
-                part={p}
-                ctx={{ order: 'compline', form, date }}
-                showTitle={step.parts.length > 1}
-                headingLevel={k > 0 ? 5 : 4}
-              />
+        {page?.sections.map((sec) => (
+          <div key={sec.id} className={`compline-part step-${sec.id}`}>
+            {sec.parts.map((p) => (
+              <OrderPart key={p.kind} part={p} ctx={{ order: 'compline', form, date }} showTitle={sec.parts.length > 1} />
             ))}
           </div>
         ))}

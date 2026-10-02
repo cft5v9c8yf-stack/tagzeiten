@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.34.0',
+    date: '2026-10-02',
+    title: 'Der Abend neu geordnet',
+    changes: [
+      { area: 'Andacht', text: 'Die Vesper hat drei Seiten nach der Ordnung der lutherischen Kirchenordnungen: Lob (Eröffnung, Psalm), Wort (Lesung oder Andacht, Hymnus, Magnificat) und Gebet (Fürbitte, Vaterunser, Kollekte, Segen). Die Kurzform steht auf einer Seite.' },
+      { area: 'Andacht', text: 'Das Nachtgebet folgt Luthers Abendsegen aus dem Kleinen Katechismus und hat vier Seiten: Kreuz, Glaube, Vaterunser – Dank und Rückschau – Prüfung und Zuspruch – Abendsegen. Die Kurzform steht auf einer Seite.' },
+      { area: 'Andacht', text: 'Unter den Zeichen der Leiste stehen die Namen der Seiten.' },
+    ],
+  },
+  {
     version: '0.33.0',
     date: '2026-10-02',
     title: 'Eine Andacht in der Vesper',

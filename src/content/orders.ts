@@ -250,21 +250,28 @@ const MORNING_SHORT: Order = {
 
 /* ---------------------------------------------------------------- evening */
 
+/**
+ * The Vesper after the Lutheran church orders, on three pages: praise (opening,
+ * psalm), the Word (reading or devotion, hymn, Magnificat), prayer (intercession,
+ * Lord's Prayer, collect, blessing). The hymn follows the reading, as there.
+ */
 const VESPERS_FULL: Order = {
   id: 'vespers',
   form: 'full',
   title: 'Vesper',
   steps: [
+    { id: 'praise', title: 'Lob', minutes: 3, parts: [p('versicles', 'Eröffnung'), p('psalm', 'Psalm')] },
     {
-      id: 'vespers',
-      title: 'Vesper',
-      minutes: 10,
+      id: 'word',
+      title: 'Wort',
+      minutes: 4,
+      parts: [p('reading', 'Lesung', { fields: ['evening.reading'] }), p('hymn', 'Hymnus'), p('canticle', 'Magnificat')],
+    },
+    {
+      id: 'prayer',
+      title: 'Gebet',
+      minutes: 3,
       parts: [
-        p('versicles', 'Eröffnung'),
-        p('hymn', 'Hymnus'),
-        p('psalm', 'Psalm'),
-        p('reading', 'Lesung', { fields: ['evening.reading'] }),
-        p('canticle', 'Magnificat'),
         p('intercession', 'Fürbitte', { fields: ['evening.intercession'] }),
         p('lords-prayer', 'Vaterunser'),
         p('collect', 'Kollekte'),
@@ -274,7 +281,7 @@ const VESPERS_FULL: Order = {
   ],
 };
 
-/** Short form: hymn – psalm – short reading – Lord's Prayer – blessing. */
+/** Short form: hymn – psalm – short reading – Lord's Prayer – blessing, on one page. */
 const VESPERS_SHORT: Order = {
   id: 'vespers',
   form: 'short',
@@ -295,8 +302,13 @@ const VESPERS_SHORT: Order = {
   ],
 };
 
-const one = (id: string, part: Part): Step => ({ id, title: part.title, minutes: 0, parts: [part] });
-
+/**
+ * The Nachtgebet on four pages, after Luther's evening blessing in the Small
+ * Catechism (sign of the cross, Creed, Lord's Prayer, evening blessing), with
+ * thanks and review, then examination, confession and absolution on one page:
+ * review before examination, never mixed (rule 3), the examination always
+ * ending in the word of forgiveness (rule 1).
+ */
 const COMPLINE_FULL: Order = {
   id: 'compline',
   form: 'full',
@@ -304,47 +316,62 @@ const COMPLINE_FULL: Order = {
   steps: [
     {
       id: 'sign',
-      title: 'Kreuzzeichen',
+      title: 'Kreuz, Glaube, Vaterunser',
       minutes: 0,
-      parts: [p('sign-of-cross', 'Kreuzzeichen'), p('armor-evening', 'Seid nüchtern und wachet')],
+      parts: [
+        p('sign-of-cross', 'Kreuzzeichen'),
+        p('armor-evening', 'Seid nüchtern und wachet'),
+        p('creed', 'Glaubensbekenntnis'),
+        p('lords-prayer', 'Vaterunser'),
+      ],
     },
-    one('creed', p('creed', 'Glaubensbekenntnis')),
-    one('lordsPrayer', p('lords-prayer', 'Vaterunser')),
-    one('thanks', p('thanks', 'Dank', { fields: ['evening.thanks.0', 'evening.thanks.1', 'evening.thanks.2'] })),
-    one('review', p('review', 'Rückschau', { fields: ['evening.marks', 'evening.carry'] })),
-    one('examination', p('examination', 'Prüfung am Dekalog in deinem Stand')),
     {
-      id: 'confession',
-      title: 'Bekenntnis und Zuspruch',
+      id: 'review',
+      title: 'Dank und Rückschau',
       minutes: 0,
-      parts: [p('confession', 'Bekenntnis'), p('absolution', 'Zuspruch')],
+      parts: [
+        p('thanks', 'Dank', { fields: ['evening.thanks.0', 'evening.thanks.1', 'evening.thanks.2'] }),
+        p('review', 'Rückschau', { fields: ['evening.marks', 'evening.carry'] }),
+      ],
     },
-    one('baptism', p('baptism', 'Taufgedächtnis')),
-    one('intercession', p('intercession', 'Fürbitte', { fields: ['evening.people', 'evening.passedOnTo'] })),
-    one('nunc', p('canticle', 'Nunc dimittis', { optional: true })),
+    {
+      id: 'examination',
+      title: 'Prüfung und Zuspruch',
+      minutes: 0,
+      parts: [p('examination', 'Prüfung am Dekalog in deinem Stand'), p('confession', 'Bekenntnis'), p('absolution', 'Zuspruch')],
+    },
     {
       id: 'blessing',
       title: 'Abendsegen',
       minutes: 0,
-      parts: [p('evening-blessing', 'Abendsegen'), p('house-blessing', 'Segen über das Haus')],
+      parts: [
+        p('baptism', 'Taufgedächtnis'),
+        p('intercession', 'Fürbitte', { fields: ['evening.people', 'evening.passedOnTo'] }),
+        p('canticle', 'Nunc dimittis', { optional: true }),
+        p('evening-blessing', 'Abendsegen'),
+        p('house-blessing', 'Segen über das Haus'),
+      ],
     },
   ],
 };
 
-/** "Kreuzzeichen – Rückschau – Vaterunser – Abendsegen. Das genügt vollkommen." */
+/** "Kreuzzeichen – Rückschau – Vaterunser – Abendsegen. Das genügt vollkommen." One page. */
 const COMPLINE_SHORT: Order = {
   id: 'compline',
   form: 'short',
   title: 'Nachtgebet – Kurzform',
   steps: [
-    one('sign', p('sign-of-cross', 'Kreuzzeichen')),
-    one('review', p('review', 'Rückschau', { fields: ['evening.marks', 'evening.carry'] })),
-    one('lordsPrayer', p('lords-prayer', 'Vaterunser')),
     {
-      id: 'blessing',
-      title: 'Abendsegen',
+      id: 'compline',
+      title: 'Nachtgebet',
       minutes: 0,
-      parts: [p('evening-blessing', 'Abendsegen'), p('house-blessing', 'Segen über das Haus')],
+      parts: [
+        p('sign-of-cross', 'Kreuzzeichen'),
+        p('review', 'Rückschau', { fields: ['evening.marks', 'evening.carry'] }),
+        p('lords-prayer', 'Vaterunser'),
+        p('evening-blessing', 'Abendsegen'),
+        p('house-blessing', 'Segen über das Haus'),
+      ],
     },
   ],
 };

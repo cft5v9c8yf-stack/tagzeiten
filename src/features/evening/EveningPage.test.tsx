@@ -64,10 +64,10 @@ describe('Nachtgebet', () => {
     const names = within(chainOf('Nachtgebet'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label'));
-    expect(names.indexOf('Rückschau')).toBeLessThan(names.indexOf('Prüfung, Bekenntnis und Zuspruch'));
-    expect(names).not.toContain('Bekenntnis und Zuspruch');
+    // Four pages after the Vesper: few marks, review before examination (rule 3).
+    expect(names).toEqual(['Vesper', 'Kreuz, Glaube, Vaterunser', 'Dank und Rückschau', 'Prüfung und Zuspruch', 'Abendsegen']);
 
-    await openPage('Nachtgebet', 'Prüfung, Bekenntnis und Zuspruch');
+    await openPage('Nachtgebet', 'Prüfung und Zuspruch');
     const page = document.querySelector('.compline .flow-step')!;
     expect(page.querySelectorAll('input, textarea, select')).toHaveLength(0);
     expect(page.textContent).toContain('Wird gebetet, nicht notiert.');
@@ -84,11 +84,12 @@ describe('Nachtgebet', () => {
     await openCompline();
     const flow = () => document.querySelector('.compline .flow-step')!;
     expect(document.querySelectorAll('.compline .flow-step')).toHaveLength(1);
-    expect(flow().querySelector('h3')!.textContent).toBe('Kreuzzeichen');
+    expect(flow().querySelector('h3')!.textContent).toBe('Kreuz, Glaube, Vaterunser');
     expect(flow().textContent).toContain('Seid nüchtern und wachet');
-    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Glaubensbekenntnis' }));
-    await waitFor(() => expect(flow().querySelector('h3')!.textContent).toBe('Glaubensbekenntnis'));
-    const current = within(chainOf('Nachtgebet')).getByRole('button', { name: 'Glaubensbekenntnis' });
+    expect(flow().textContent).toContain('Glaubensbekenntnis');
+    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Dank und Rückschau' }));
+    await waitFor(() => expect(flow().querySelector('h3')!.textContent).toBe('Dank und Rückschau'));
+    const current = within(chainOf('Nachtgebet')).getByRole('button', { name: 'Dank und Rückschau' });
     expect(current.getAttribute('aria-current')).toBe('step');
     // No times and no "gebetet" labels in the row.
     expect(chainOf('Nachtgebet').textContent).not.toMatch(/Min\.|gebetet/);
@@ -111,18 +112,18 @@ describe('Nachtgebet', () => {
 
   it('asks the station of the weekday', async () => {
     await renderEvening('2026-09-24'); // Thursday
-    await openPage('Nachtgebet', 'Prüfung, Bekenntnis und Zuspruch');
+    await openPage('Nachtgebet', 'Prüfung und Zuspruch');
     expect(screen.getByText('Als Prediger und Bruder in der Gemeinde:')).toBeTruthy();
     cleanup();
     await renderEvening('2026-09-25'); // Friday
-    await openPage('Nachtgebet', 'Prüfung, Bekenntnis und Zuspruch');
+    await openPage('Nachtgebet', 'Prüfung und Zuspruch');
     expect(screen.getByText('Gegenüber dem Nächsten:')).toBeTruthy();
     expect(screen.getByText('Wem bin ich heute die Liebe schuldig geblieben?')).toBeTruthy();
   });
 
   it('never calls a missed resolution sin in the review', async () => {
     await renderEvening('2026-09-23');
-    await openPage('Nachtgebet', 'Rückschau');
+    await openPage('Nachtgebet', 'Dank und Rückschau');
     const review = document.querySelector('.compline .flow-step .part-review')!;
     expect(review.textContent).toContain('Ein nicht erreichtes Ziel ist keine Sünde.');
     expect(review.textContent).not.toMatch(/bekenn|schuldig/i);
@@ -135,9 +136,11 @@ describe('Vesper', () => {
     await openVespers();
     const buttons = within(chainOf('Vesper')).getAllByRole('button');
     expect(buttons.at(-1)!.getAttribute('aria-label')).toBe('Nachtgebet');
-    expect(buttons.length).toBeGreaterThan(5);
+    // Three pages: praise, Word, prayer – then the Nachtgebet.
+    expect(buttons.map((b) => b.getAttribute('aria-label'))).toEqual(['Lob', 'Wort', 'Gebet', 'Nachtgebet']);
     fireEvent.click(buttons[0]!);
-    expect(document.querySelector('.flow-step h3')!.textContent).toBe('Eröffnung');
+    expect(document.querySelector('.flow-step h3')!.textContent).toBe('Lob');
+    expect(document.querySelector('.flow-step')!.textContent).toContain('Eröffnung');
     fireEvent.click(buttons.at(-2)!);
     fireEvent.click(await screen.findByRole('button', { name: 'Vesper abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
@@ -165,13 +168,13 @@ describe('Evening without the Nachtgebet', () => {
       .map((b) => b.getAttribute('aria-label') ?? b.textContent);
     expect(names.join(' | ')).not.toMatch(/Nachtgebet/);
     const review = names.findIndex((x) => /Rückschau/.test(x!));
-    const exam = names.findIndex((x) => /Prüfung, Bekenntnis und Zuspruch/.test(x!));
+    const exam = names.findIndex((x) => /Prüfung und Zuspruch/.test(x!));
     expect(review).toBeGreaterThan(0);
     expect(exam).toBe(names.length - 1);
     expect(review).toBeLessThan(exam);
 
-    fireEvent.click(within(chainOf('Vesper')).getByRole('button', { name: /Prüfung, Bekenntnis und Zuspruch/ }));
-    await screen.findByRole('heading', { name: 'Prüfung, Bekenntnis und Zuspruch', level: 3 });
+    fireEvent.click(within(chainOf('Vesper')).getByRole('button', { name: /Prüfung und Zuspruch/ }));
+    await screen.findByRole('heading', { name: 'Prüfung und Zuspruch', level: 3 });
     expect(screen.getByText('Wird gebetet, nicht notiert.')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Tag abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
@@ -181,7 +184,7 @@ describe('Evening without the Nachtgebet', () => {
   it('reads a devotion instead of the reading, with a growing field for what became important', async () => {
     localStorage.clear();
     const store = await renderEvening('2026-09-24');
-    await openPage('Vesper', /^Lesung/);
+    await openPage('Vesper', 'Wort');
     const choice = within(screen.getByRole('group', { name: 'Was du liest' }));
     fireEvent.click(choice.getByRole('button', { name: 'Andacht' }));
     fireEvent.change(screen.getByLabelText('Welche Andacht?'), { target: { value: 'Walther, Licht des Lebens' } });

@@ -2,7 +2,6 @@
  * Which icon names a step in the row of marks above an order (ui/StepFlow):
  * bed, open hands, the Bible, folded hands … – what happens in that step.
  */
-import type { PartKind } from './orders';
 import type { FlowIconName } from '../ui/FlowIcon';
 
 /** Stille Zeit (full and short form), by step id. */
@@ -23,29 +22,19 @@ export function morningIcon(stepId: string, form: 'full' | 'short'): FlowIconNam
   return MORNING_ICONS[stepId];
 }
 
-/** Nachtgebet, by step id (examination and confession share one page). */
+/** Nachtgebet, by page (step id). */
 export const COMPLINE_ICONS: Record<string, FlowIconName> = {
   sign: 'cross',
-  creed: 'scroll',
-  lordsPrayer: 'foldedHands',
-  thanks: 'heart',
   review: 'review',
   examination: 'tablets',
-  baptism: 'drop',
-  intercession: 'people',
-  nunc: 'candle',
   blessing: 'moon',
+  compline: 'moon',
 };
 
-/** Vesper, by part. */
-export const VESPERS_ICONS: Partial<Record<PartKind, FlowIconName>> = {
-  versicles: 'openHands',
-  hymn: 'song',
-  psalm: 'lyre',
-  reading: 'bible',
-  canticle: 'star',
-  intercession: 'people',
-  'lords-prayer': 'foldedHands',
-  collect: 'cross',
-  blessing: 'blessing',
+/** Vesper, by page (step id). */
+export const VESPERS_ICONS: Record<string, FlowIconName> = {
+  praise: 'lyre',
+  word: 'bible',
+  prayer: 'foldedHands',
+  vespers: 'sunset',
 };
