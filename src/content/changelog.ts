@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.32.2',
+    date: '2026-10-02',
+    title: 'Das Gebet verständlicher erklärt',
+    changes: [
+      { area: 'Andacht', text: 'Am Anfang von „Das Gebet“ heißt der Schritt jetzt „Worüber du betest“. Der Text erklärt in einfachen Sätzen, was der vierfache Kranz ist und welchen Text du dafür nimmst.' },
+    ],
+  },
+  {
     version: '0.32.1',
     date: '2026-10-01',
     title: 'Einheitliche Überschriften unter „Wort“',

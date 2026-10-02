@@ -158,7 +158,7 @@ const MORNING_FULL: Order = {
       title: 'Das Gebet',
       minutes: 12,
       parts: [
-        p('catechism', 'Katechismusstück des Tages', { optional: true }),
+        p('catechism', 'Worüber du betest', { optional: true }),
         p('wreath-instruction', 'Unterricht', { fields: ['morning.wreath.instruction'] }),
         p('wreath-thanks', 'Danksagung', { fields: ['morning.wreath.thanks'] }),
         p('confession', 'Beichte'),

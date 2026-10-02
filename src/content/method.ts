@@ -54,9 +54,10 @@ export const HARD_PASSAGES_NOTE =
   'Schwierige Stellen nicht überspringen. Von innen nach außen fragen: das Wort im Satz, der Satz im Abschnitt, der Abschnitt im Buch, das Buch im Testament, das Testament in der ganzen Heilsgeschichte. Was offen bleibt, bekommt ein Fragezeichen.';
 
 export const WREATH_INTRO =
-  'Aus dem Gehörten wird dein eigenes Gebet. Luther schrieb den vierfachen Kranz für seinen Barbier Peter Beskendorf – als Anleitung zum Beten, nicht zum Studieren.';
-export const WREATH_MATTER = 'Stoff: der Vers aus der Lesung – oder das Katechismusstück. Eines von beiden, nicht beides.';
+  'Jetzt betest du über das, was du gelesen hast. Luther nennt das einen „vierfachen Kranz“: Du nimmst ein Wort Gottes und betest es in vier Schritten durch – was es dich lehrt, wofür du dankst, was du bekennst und worum du bittest. Er schrieb diese Weise 1535 für seinen Barbier Peter Beskendorf auf, als Hilfe zum Beten, nicht zum Studieren.';
+export const WREATH_MATTER =
+  'Nimm dafür einen einzigen Text: entweder den Vers, den du aus der Lesung mitnimmst, oder das Katechismusstück von heute, das hier darunter steht.';
 export const WREATH_RULE_OF_THUMB =
-  'Hat die Lesung dich getroffen, bleib beim Vers. War sie spröde, nimm den Katechismus.';
+  'Hat dich die Lesung getroffen, bleib bei deinem Vers. Hat sie dir heute wenig gesagt, nimm das Katechismusstück.';
 export const WREATH_FREEDOM =
   'Wenn der Heilige Geist mitten hinein zu predigen anfängt, laß die Ordnung fahren und höre zu. Die Form ist Gerüst, nicht Gefängnis.';
