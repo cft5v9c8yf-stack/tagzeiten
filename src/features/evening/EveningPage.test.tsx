@@ -184,12 +184,12 @@ describe('Evening without the Nachtgebet', () => {
     await openPage('Vesper', /^Lesung/);
     const choice = within(screen.getByRole('group', { name: 'Was du liest' }));
     fireEvent.click(choice.getByRole('button', { name: 'Andacht' }));
-    fireEvent.change(screen.getByLabelText('Welche Andacht?'), { target: { value: 'Spurgeon, Kleinod' } });
+    fireEvent.change(screen.getByLabelText('Welche Andacht?'), { target: { value: 'Walther, Licht des Lebens' } });
     const notes = screen.getByLabelText('Was mir wichtig geworden ist') as HTMLTextAreaElement;
     expect(notes.rows).toBe(4);
     fireEvent.change(notes, { target: { value: 'Seine Gnade ist alle Morgen neu.' } });
     await waitFor(() => expect(store.getDay('2026-09-24').evening.devotionNotes).toBe('Seine Gnade ist alle Morgen neu.'));
-    expect(store.getDay('2026-09-24').evening.devotion).toBe('Spurgeon, Kleinod');
+    expect(store.getDay('2026-09-24').evening.devotion).toBe('Walther, Licht des Lebens');
     // The reading of Scripture stays one tap away.
     fireEvent.click(choice.getByRole('button', { name: 'Lesung' }));
     expect(screen.getByLabelText('Lesung – wenige Verse, ohne Auslegung')).toBeTruthy();

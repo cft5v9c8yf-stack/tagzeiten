@@ -41,7 +41,7 @@ export const FIELDS: Record<FieldPath, FieldMeta> = {
   'evening.intercession': { label: 'Fürbitte' },
   'evening.devotion': {
     label: 'Welche Andacht?',
-    placeholder: 'z. B. Spurgeon, Kleinod, 2. Oktober',
+    placeholder: 'z. B. Walther, Licht des Lebens, 2. Oktober',
     single: true,
   },
   'evening.devotionNotes': {
