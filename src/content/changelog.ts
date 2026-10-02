@@ -20,6 +20,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Andacht', text: 'Die Vesper hat drei Seiten nach der Ordnung der lutherischen Kirchenordnungen: Lob (Eröffnung, Psalm), Wort (Lesung oder Andacht, Hymnus, Magnificat) und Gebet (Fürbitte, Vaterunser, Kollekte, Segen). Die Kurzform steht auf einer Seite.' },
       { area: 'Andacht', text: 'Das Nachtgebet folgt Luthers Abendsegen aus dem Kleinen Katechismus und hat vier Seiten: Kreuz, Glaube, Vaterunser – Dank und Rückschau – Prüfung und Zuspruch – Abendsegen. Die Kurzform steht auf einer Seite.' },
       { area: 'Andacht', text: 'Unter den Zeichen der Leiste stehen die Namen der Seiten.' },
+      { area: 'Andacht', text: 'Nach der Rückschau führt „In der Gebetskammer weiterschreiben“ in die Arena, für alles, was ausführlicher werden will.' },
     ],
   },
   {

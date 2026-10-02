@@ -41,7 +41,8 @@ import { ARMOR_CALL, ARMOR_EVENING, ARMOR_WEEK, armorOf, refsOf } from '../../co
 import { WREATH_FREEDOM, WREATH_INTRO, WREATH_MATTER, WREATH_RULE_OF_THUMB } from '../../content/method';
 import { RUBRICS, type OrderId, type Part } from '../../content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS, PSALM_RUBRIC_ANTIPHON, PSALM_RUBRIC_MORNING } from '../../content/psalms';
-import { useDay, useProfile } from '../../data/hooks';
+import { useDay, useProfile, useStore } from '../../data/hooks';
+import { useNavigate } from 'react-router';
 import { psalmRef } from '../../domain/bibleRef';
 import { isPassiontide } from '../../domain/churchYear';
 import { WEEKDAY_LONG, weekdayOf, type DateKey } from '../../domain/dates';
@@ -142,6 +143,23 @@ function VespersReading({ part, ctx }: { part: Part; ctx: PartContext }) {
       )}
       <p className="pray-line">{AFTER_READING}</p>
     </>
+  );
+}
+
+/**
+ * After the review: the free writing of the day belongs in the Gebetskammer.
+ * A new entry there, opened at once; the evening itself stays short.
+ */
+function ToChamber() {
+  const store = useStore();
+  const navigate = useNavigate();
+  return (
+    <p className="to-chamber">
+      <button type="button" className="btn quiet" onClick={() => navigate(`/arena/${store.addArenaEntry()}`)}>
+        In der Gebetskammer weiterschreiben
+      </button>
+      <span className="small muted"> Was dich heute bewegt hat, ausführlicher.</span>
+    </p>
   );
 }
 
@@ -427,7 +445,12 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       );
 
     case 'review':
-      return <Review date={ctx.date} />;
+      return (
+        <>
+          <Review date={ctx.date} />
+          <ToChamber />
+        </>
+      );
 
     case 'examination':
       return <Examination date={ctx.date} />;

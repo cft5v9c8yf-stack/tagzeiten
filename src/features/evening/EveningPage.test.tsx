@@ -127,6 +127,8 @@ describe('Nachtgebet', () => {
     const review = document.querySelector('.compline .flow-step .part-review')!;
     expect(review.textContent).toContain('Ein nicht erreichtes Ziel ist keine Sünde.');
     expect(review.textContent).not.toMatch(/bekenn|schuldig/i);
+    // The longer writing of the day belongs in the Gebetskammer.
+    expect(screen.getByRole('button', { name: 'In der Gebetskammer weiterschreiben' })).toBeTruthy();
   });
 });
 
