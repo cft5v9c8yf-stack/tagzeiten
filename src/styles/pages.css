@@ -3094,3 +3094,6 @@ header.top .search-link:focus-visible {
 .to-chamber {
   margin: 14px 0 0;
 }
+.to-chamber p {
+  margin: 0 0 6px;
+}

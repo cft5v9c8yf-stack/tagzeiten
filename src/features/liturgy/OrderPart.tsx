@@ -154,12 +154,12 @@ function ToChamber() {
   const store = useStore();
   const navigate = useNavigate();
   return (
-    <p className="to-chamber">
+    <div className="to-chamber">
+      <p className="small muted">Was dich heute bewegt hat, ausführlicher:</p>
       <button type="button" className="btn quiet" onClick={() => navigate(`/arena/${store.addArenaEntry()}`)}>
         In der Gebetskammer weiterschreiben
       </button>
-      <span className="small muted"> Was dich heute bewegt hat, ausführlicher.</span>
-    </p>
+    </div>
   );
 }
 
