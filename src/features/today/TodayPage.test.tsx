@@ -236,17 +236,23 @@ describe('Today', () => {
   });
 
   it('lists the habits of the day to tick, above the week', async () => {
-    const store = await renderToday('2026-09-24', withHouse);
+    const store = await renderToday('2026-09-24', (s) => {
+      withHouse(s);
+      s.updateDay('2026-09-21', (d) => ({ ...d, morning: { ...d.morning, done: true } }));
+    });
     const day = within(screen.getByRole('region', { name: /^Gewohnheiten, Heute|^Gewohnheiten, Donnerstag/ }));
     const table = day.getByRole('checkbox', { name: 'Tischgebet mit der Familie' });
     expect(table.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(table);
     expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
-    // From the order (its tiles stand above): not again in the list.
-    expect(day.queryByRole('checkbox', { name: /^Stille Zeit/ })).toBeNull();
+    // From the order: listed, but ticked only by praying it.
+    const still = day.getByRole('checkbox', { name: /^Stille Zeit/ });
+    expect(still.hasAttribute('disabled')).toBe(true);
     // The strip of the week chooses another day; its habits are listed in the same place.
     fireEvent.click(screen.getByRole('button', { name: 'Montag, 21. September' }));
     const monday = within(screen.getByRole('region', { name: 'Gewohnheiten, Montag, 21. September' }));
+    // What was prayed that day shows there too.
+    expect(monday.getByRole('checkbox', { name: /^Stille Zeit/ }).getAttribute('aria-checked')).toBe('true');
     fireEvent.click(monday.getByRole('checkbox', { name: 'Tischgebet mit der Familie' }));
     expect(store.getDay('2026-09-21').habits.tablePrayer).toBe(true);
     // The grid of the week stays, folded away.

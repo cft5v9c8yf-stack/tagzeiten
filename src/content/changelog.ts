@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.34.1',
+    date: '2026-10-05',
+    title: 'Was gebetet war, auch an vergangenen Tagen',
+    changes: [
+      { area: 'Heute', text: 'Stille Zeit, Vesper und Nachtgebet stehen wieder in der Liste des Tages. Blätterst du auf einen vergangenen Tag, siehst du, was du an ihm gebetet hast. Abgehakt werden sie durch das Gebet selbst.' },
+    ],
+  },
+  {
     version: '0.34.0',
     date: '2026-10-02',
     title: 'Der Abend neu geordnet',

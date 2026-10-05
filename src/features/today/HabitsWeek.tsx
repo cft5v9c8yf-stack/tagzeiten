@@ -113,9 +113,9 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   // The day whose habits are listed: chosen in the strip of the week, at first the day shown.
   const sel = picked && week.includes(picked) ? picked : date;
   const dayTitle = sel === today ? 'Heute' : formatLong(sel);
-  // Those from the order (Stille Zeit, Vesper, Nachtgebet) stand above as its tiles; the list
-  // keeps what is ticked by hand. Weekly and monthly ones already kept move to the end.
-  const listed = rest.filter((h) => !h.auto);
+  // Those from the order (Stille Zeit, Vesper, Nachtgebet) are listed too, read-only, so a
+  // day chosen in the strip shows what was prayed. Weekly and monthly ones already kept move to the end.
+  const listed = rest;
   const keptLast = (list: Habit[]) => [
     ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
     ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
