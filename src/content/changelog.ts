@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.37.4',
+    date: '2026-10-06',
+    title: 'Kapitel am Tag ohne Wechsel',
+    changes: [
+      { area: 'Bibel', text: 'Beim Leseplan gibt es „2, 1, 1, 1 im Wechsel“ nicht mehr. Wer ihn hatte, liest im Alten Testament jetzt ein Kapitel am Tag, ab dem Kapitel, an dem er stand; das lässt sich unter „Kapitel am Tag“ ändern. Ein neuer Plan beginnt mit je einem Kapitel aus dem Alten und dem Neuen Testament.' },
+    ],
+  },
+  {
     version: '0.37.3',
     date: '2026-10-06',
     title: 'Die neue Adresse',

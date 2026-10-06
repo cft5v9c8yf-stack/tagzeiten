@@ -90,26 +90,13 @@ function TrackPosition({
   );
 }
 
-/** A select for chapters a day (and, where offered, the 2-1-1-1 base pattern). */
-function ChaptersADay<T extends number | 'base'>({
-  value,
-  onChange,
-  base,
-}: {
-  value: T;
-  onChange: (v: T) => void;
-  base?: boolean;
-}) {
+/** A select for chapters a day. */
+function ChaptersADay({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   const id = useId();
   return (
     <div className="field">
       <label htmlFor={id}>Kapitel am Tag</label>
-      <select
-        id={id}
-        value={String(value)}
-        onChange={(e) => onChange((e.target.value === 'base' ? 'base' : Number(e.target.value)) as T)}
-      >
-        {base && <option value="base">2, 1, 1, 1 im Wechsel</option>}
+      <select id={id} value={String(value)} onChange={(e) => onChange(Number(e.target.value))}>
         {CHAPTER_CHOICES.map((n) => (
           <option key={n} value={n}>
             {chapterLabel(n)}
@@ -140,7 +127,7 @@ function FixedPlan({ amounts }: { amounts: FixedAmounts }) {
           legend={`Nächste Lesung ${t.def.label}`}
         >
           {t.def.id === 'at' ? (
-            <ChaptersADay base value={amounts.at} onChange={(at) => set({ ...amounts, at })} />
+            <ChaptersADay value={amounts.at === 'base' ? 1 : amounts.at} onChange={(at) => set({ ...amounts, at })} />
           ) : (
             <ChaptersADay value={amounts.nt} onChange={(nt) => set({ ...amounts, nt })} />
           )}

@@ -117,6 +117,13 @@ export const PLANS: readonly PlanDef[] = [
 
 export const DEFAULT_PLAN_ID = 'at2-nt1';
 
+/**
+ * The plan a new profile starts with: one chapter of the Old and one of the New
+ * Testament a day. The 2-1-1-1 alternation of DEFAULT_PLAN_ID is no longer
+ * offered (0.37.4); that plan stays readable for the days read with it.
+ */
+export const START_PLAN_ID = 'atnt-1-1';
+
 /** The whole Bible in Luther's order, for a plan of one's own. */
 export const ALL_BOOKS: readonly Book[] = [...OT_BOOKS, ...NT_BOOKS];
 

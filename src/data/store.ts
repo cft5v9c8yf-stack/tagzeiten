@@ -146,6 +146,9 @@ export class Store {
       if (d) this.days.set(d.date, d);
     }
     await this.recoverJournal();
+    // Today's unread portion follows the plan, e.g. after the alternation became one chapter a day.
+    const reading = this.days.get(today)?.reading;
+    if (reading && !reading.done && reading.planId !== this.profile.plan.planId) this.followToday();
     this.emit();
   }
 

@@ -6,9 +6,16 @@ describe('profile', () => {
   it('starts with presets, plan at the beginning and system theme', () => {
     const p = defaultProfile('2026-09-25');
     expect(p.habits).toHaveLength(HABIT_PRESETS.length);
-    expect(p.plan).toEqual({ planId: 'at2-nt1', positions: { at: 0, nt: 0 } });
+    expect(p.plan).toEqual({ planId: 'atnt-1-1', positions: { at: 0, nt: 0 } });
     expect(p.theme).toBe('system');
     expect(p.schedule.stillTime).toBe('04:15');
+  });
+
+  it('turns "2, 1, 1, 1 im Wechsel" into one chapter of the Old Testament a day, from the same chapter', () => {
+    // Portion 4 of the alternation is 1. Mose 6–7; one chapter a day, that is portion 5.
+    const p = normalizeProfile({ plan: { planId: 'at2-nt1', positions: { at: 4, nt: 7 }, fixed: 'atnt-g-2' } }, '2026-10-06');
+    expect(p.plan).toEqual({ planId: 'atnt-1-1', positions: { at: 5, nt: 7 }, fixed: 'atnt-1-2' });
+    expect(normalizeProfile({ plan: { planId: 'atnt-g-3', positions: { at: 0, nt: 0 } } }, '2026-10-06').plan.planId).toBe('atnt-1-3');
   });
 
   it('repairs incomplete or broken data', () => {
@@ -23,7 +30,7 @@ describe('profile', () => {
       },
       '2026-09-25',
     );
-    expect(p.plan).toEqual({ planId: 'at2-nt1', positions: { at: 0, nt: 12 } });
+    expect(p.plan).toEqual({ planId: 'atnt-1-1', positions: { at: 0, nt: 12 } });
     expect(p.schedule.rise).toBe('05:30');
     expect(p.schedule.stillTime).toBe('04:15');
     expect(p.catechism.weekOffset).toBe(5);

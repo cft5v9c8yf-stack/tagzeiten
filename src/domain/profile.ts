@@ -1,4 +1,4 @@
-import { DEFAULT_PLAN_ID } from '../content/readingPlans';
+import { START_PLAN_ID } from '../content/readingPlans';
 import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, isTimesPerWeek, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
@@ -7,10 +7,10 @@ import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalize
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays } from './schedule';
-import { fixedAmounts, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
+import { carryPositions, fixedAmounts, fixedPlanId, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
-  const plan = getPlan(DEFAULT_PLAN_ID);
+  const plan = getPlan(START_PLAN_ID);
   return {
     plan: { planId: plan.def.id, positions: initialPositions(plan) },
     habits: habitsFromPresets(),
@@ -96,18 +96,27 @@ function cleanScheduleDays(raw: Profile['scheduleDays'], schedule: Schedule): Pi
   return { scheduleDays: { on: raw.on === true, groups } };
 }
 
+/** "2, 1, 1, 1 im Wechsel" is no longer offered (0.37.4): one chapter of the Old Testament a day instead. */
+const withoutAlternation = (planId: string): string => {
+  const a = fixedAmounts(planId);
+  return a?.at === 'base' ? fixedPlanId({ at: 1, nt: a.nt }) : planId;
+};
+
 function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined): Profile['plan'] {
   // Positions of other plans stay for a return; they are checked again when used.
-  const positions: Record<string, number> = {};
+  let positions: Record<string, number> = {};
   for (const [k, v] of Object.entries(raw?.positions ?? {})) {
     if (typeof v === 'number' && Number.isInteger(v) && v >= 0) positions[k] = v;
   }
+  // A plan with the alternation goes on from the chapter where it stood.
+  const to = withoutAlternation(planId);
+  if (to !== planId) positions = carryPositions(getPlan(planId), getPlan(to), positions);
   const out: Profile['plan'] = {
-    planId,
-    positions: { ...positions, ...normalizePositions(getPlan(planId), raw?.positions) },
+    planId: to,
+    positions: { ...positions, ...normalizePositions(getPlan(to), positions) },
   };
   if (typeof raw?.own === 'string' && isOwnPlan(raw.own)) out.own = raw.own;
-  if (typeof raw?.fixed === 'string' && fixedAmounts(raw.fixed)) out.fixed = raw.fixed;
+  if (typeof raw?.fixed === 'string' && fixedAmounts(raw.fixed)) out.fixed = withoutAlternation(raw.fixed);
   return out;
 }
 

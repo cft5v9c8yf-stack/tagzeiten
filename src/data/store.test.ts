@@ -97,7 +97,7 @@ describe('Store', () => {
     const { store } = freshStore();
     await store.load();
     store.ensureTodayReading();
-    expect(store.getDay('2026-09-25').reading).toEqual({ planId: 'at2-nt1', portions: { at: 0, nt: 0 }, done: false });
+    expect(store.getDay('2026-09-25').reading).toEqual({ planId: 'atnt-1-1', portions: { at: 0, nt: 0 }, done: false });
     store.setReadingDone('2026-09-25', true);
     expect(store.getProfile().plan.positions).toEqual({ at: 1, nt: 1 });
     store.ensureTodayReading(); // keeps today's portion
@@ -105,6 +105,21 @@ describe('Store', () => {
     store.setReadingDone('2026-09-25', false);
     expect(store.getProfile().plan.positions).toEqual({ at: 0, nt: 0 });
     await store.flush();
+  });
+
+  it('lets an unread reading of today follow the plan when "2, 1, 1, 1 im Wechsel" becomes one chapter a day', async () => {
+    const { db, store } = freshStore();
+    await store.load();
+    // As stored before 0.37.4: the alternation at 1. Mose 6–7, today's portion not yet read.
+    store.setPlan('at2-nt1');
+    store.setPlanPositions({ at: 4, nt: 7 });
+    store.ensureTodayReading();
+    await store.flush();
+    const again = new Store({ db, debounceMs: 5, now: () => new Date(2026, 8, 25, 5, 0) });
+    await again.load();
+    expect(again.getProfile().plan).toMatchObject({ planId: 'atnt-1-1', positions: { at: 5, nt: 7 } });
+    expect(again.getDay('2026-09-25').reading).toEqual({ planId: 'atnt-1-1', portions: { at: 5, nt: 7 }, done: false });
+    await again.flush();
   });
 
   it('shows past days without a reading the current position, without assigning it', async () => {
