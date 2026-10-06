@@ -26,7 +26,8 @@ export interface PrayerStep {
   pause?: string;
   /**
    * A word of forgiveness after a step of confession (rule 1). Not part of the
-   * walk as given; it is the word that follows the evening examination.
+   * walk as given; it is the word that follows the evening examination, kept
+   * there at Andreas' wish (6 October 2026).
    */
   comfort?: Text;
 }
