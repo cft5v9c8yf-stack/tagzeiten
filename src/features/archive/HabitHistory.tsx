@@ -15,14 +15,16 @@ const CHART_H = 34;
 const PAD = 3;
 
 /**
- * A daily habit: its course over the last completed weeks as a line, 7 days at
+ * A daily habit: its course over the last completed weeks as a line, all days at
  * the top, 0 at the bottom, without numbers or scale. The running week is left out, so
- * a week just begun does not look like a drop.
+ * a week just begun does not look like a drop. With Sunday rest a week has six days.
  */
 function DailyRow({ habit, today }: { habit: Habit; today: string }) {
-  const weeks = habitWeeks(habit, addDays(mondayOf(today), -1), useDayLookup());
+  const rest = useProfile().sundayRest;
+  const full = rest ? 6 : 7;
+  const weeks = habitWeeks(habit, addDays(mondayOf(today), -1), useDayLookup(), undefined, rest);
   const step = (CHART_W - 2 * PAD) / (weeks.length - 1);
-  const pts = weeks.map((w, i) => [PAD + i * step, PAD + (1 - w.done / 7) * (CHART_H - 2 * PAD)] as const);
+  const pts = weeks.map((w, i) => [PAD + i * step, PAD + (1 - w.done / full) * (CHART_H - 2 * PAD)] as const);
   const line = (list: readonly (readonly [number, number])[]) => list.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
   const [lx, ly] = pts.at(-1)!;
   return (
@@ -39,7 +41,7 @@ function DailyRow({ habit, today }: { habit: Habit; today: string }) {
       <ol className="visually-hidden" aria-label={`${habit.name}, die letzten ${HISTORY_WEEKS} Wochen`}>
         {weeks.map((w) => (
           <li key={w.monday}>
-            Woche ab {formatShort(w.monday)}: an {w.done} von 7 Tagen
+            Woche ab {formatShort(w.monday)}: an {w.done} von {full} Tagen
           </li>
         ))}
       </ol>
@@ -49,7 +51,7 @@ function DailyRow({ habit, today }: { habit: Habit; today: string }) {
 
 /** A weekly habit: one mark per week, filled when it was kept that week. */
 function WeeklyRow({ habit, today }: { habit: Habit; today: string }) {
-  const weeks = habitWeeks(habit, today, useDayLookup());
+  const weeks = habitWeeks(habit, today, useDayLookup(), undefined, useProfile().sundayRest);
   return (
     <li className="hh-row">
       <span className="hh-name">{habit.name}</span>
@@ -110,7 +112,7 @@ export function HabitHistory() {
   return (
     <Section id="review.habits" title="Gewohnheiten" level={3}>
       <p className="small muted hh-note">
-        Die letzten {HISTORY_WEEKS} Wochen, die neueste rechts. Täglich als Verlauf über die abgeschlossenen Wochen: oben alle sieben Tage, unten keiner. Festgehalten, nicht bewertet.
+        Die letzten {HISTORY_WEEKS} Wochen, die neueste rechts. Täglich als Verlauf über die abgeschlossenen Wochen: oben alle {profile.sundayRest ? 'sechs Werktage' : 'sieben Tage'}, unten keiner.{profile.sundayRest && ' Der Sonntag zählt nicht mit.'} Festgehalten, nicht bewertet.
       </p>
       {active.length === 0 ? (
         <p className="small muted">Keine Gewohnheit eingeschaltet.</p>

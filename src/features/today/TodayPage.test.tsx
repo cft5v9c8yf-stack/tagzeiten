@@ -264,4 +264,31 @@ describe('Today', () => {
     const link = screen.getByRole('link', { name: /Diese Woche/ });
     expect(link.textContent).toContain('16. Sonntag nach Trinitatis');
   });
+
+  it('with Sunday rest shows the Sunday in place of the habits on a Sunday', async () => {
+    await renderToday('2026-09-20', (s) => s.updateProfile((p) => ({ ...p, sundayRest: true })));
+    const card = within(screen.getByRole('region', { name: /Sonntag nach Trinitatis/ }));
+    expect(card.getByText('Sonntagsruhe')).toBeTruthy();
+    expect(card.getByText('Evangelium')).toBeTruthy();
+    expect(card.getByRole('link', { name: 'Den Sonntag öffnen' })).toBeTruthy();
+    expect(screen.queryByRole('region', { name: /^Gewohnheiten/ })).toBeNull();
+    expect(document.querySelector('.sunday-link')).toBeNull();
+  });
+
+  it('with Sunday rest keeps the habits on weekdays, and lists none for the Sunday of the week', async () => {
+    await renderToday('2026-09-24', (s) => s.updateProfile((p) => ({ ...p, sundayRest: true })));
+    expect(document.querySelector('.sunday-rest')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Sonntag, 27. September' }));
+    const sunday = within(screen.getByRole('region', { name: 'Gewohnheiten, Sonntag, 27. September' }));
+    expect(sunday.getByText(/Sonntagsruhe/)).toBeTruthy();
+    expect(sunday.queryAllByRole('checkbox')).toHaveLength(0);
+    // The week grid has no cells to tick on Sunday.
+    expect(screen.queryByRole('button', { name: /, So 27\.9\.$/ })).toBeNull();
+  });
+
+  it('without Sunday rest lists the habits on a Sunday as on any day', async () => {
+    await renderToday('2026-09-20');
+    expect(document.querySelector('.sunday-rest')).toBeNull();
+    expect(screen.getByRole('region', { name: /^Gewohnheiten/ })).toBeTruthy();
+  });
 });

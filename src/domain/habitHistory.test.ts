@@ -30,4 +30,12 @@ describe('habit history', () => {
       { month: '2026-09-01', done: true },
     ]);
   });
+
+  it('leaves the Sundays out with Sunday rest: a week has six days, a Sunday tick does not count', () => {
+    const lookup = lookupOf(['2026-09-21', '2026-09-23', '2026-09-27', '2026-09-20']);
+    const weeks = habitWeeks(habit('daily'), today, lookup, undefined, true);
+    expect(weeks.at(-2)).toEqual({ monday: '2026-09-21', days: 6, done: 2 });
+    // A weekly habit kept only on a Sunday is not counted for that week.
+    expect(habitWeeks(habit('weekly'), today, lookupOf(['2026-09-27']), undefined, true).at(-2)!.done).toBe(0);
+  });
 });

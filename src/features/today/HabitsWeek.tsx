@@ -53,6 +53,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const hallMode = hallModeIn(profile.winterArc, date);
   const run = activeRun(profile.winterArc);
   const active = hallMode ? [] : profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
+  // Sunday rest: no habits on Sundays; what was ticked before stays stored.
+  const resting = (k: DateKey) => profile.sundayRest && !hallMode && weekdayOf(k) === 0;
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
   const [picked, setPicked] = useState<DateKey | null>(null);
@@ -67,6 +69,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         <tr key={h.id}>
           <HabitName habit={h} note={noteOf(h, date, lookup)} />
           {week.map((k) => {
+            if (resting(k)) return <td key={k} className="rest-cell" />;
             const on = isDoneOn(h, lookup(k));
             const enabled = canToggle(h, k, today, lookup);
             return (
@@ -165,6 +168,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
       <h4 className="habits-day-title">{dayTitle}</h4>
       {hallMode ? (
         <StreithalleDay key={sel} date={sel} />
+      ) : resting(sel) ? (
+        <p className="small muted habits-rest">Sonntagsruhe. Am Sonntag stehen keine Gewohnheiten an.</p>
       ) : (
         groups
           .filter(([, list]) => list.length > 0)
@@ -190,7 +195,11 @@ export function HabitsWeek({ date }: { date: DateKey }) {
                 key={k}
                 scope="col"
                 className={
-                  [k === today ? 'is-today' : '', hallMode && run && !isInRun(run, k) ? 'is-outside' : '']
+                  [
+                    k === today ? 'is-today' : '',
+                    hallMode && run && !isInRun(run, k) ? 'is-outside' : '',
+                    resting(k) ? 'is-rest' : '',
+                  ]
                     .join(' ')
                     .trim() || undefined
                 }

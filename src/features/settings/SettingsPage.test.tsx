@@ -22,7 +22,7 @@ function openAllMore() {
 const TILE_GROUPS = [
   ['display', 'data', 'install', 'airplane', 'about'],
   ['house', 'prayerlist', 'treasury'],
-  ['display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc'],
+  ['display.theme', 'display.habitHistory', 'display.sundayRest', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc'],
   ['data.keep', 'data.export', 'data.import', 'data.delete'],
   ['about.arc', 'about.sources', 'about.privacy'],
 ].map((g) => g.map((id) => `more.${id}`));
@@ -156,6 +156,7 @@ describe('Mehr: Aufbau', () => {
     expect(inner).toEqual([
       'FarbschemaSystem',
       'Gewohnheiten im RückblickAusblenden',
+      'SonntagsruheAus',
       'Am Bett am MorgenAnzeigen',
       'Nachtgebet am BettAnzeigen',
       'Geistliche WaffenrüstungAnzeigen',
@@ -296,6 +297,16 @@ describe('Mehr: Aufbau', () => {
     fireEvent.click(within(night).getByRole('button', { name: 'Ausblenden' }));
     await waitFor(() => expect(store.getProfile().showAtBed).toBe(false));
     expect(store.getProfile().showCompline).toBe(false);
+  });
+
+  it('switches the Sunday rest on and off', async () => {
+    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.sundayRest']);
+    const rest = await screen.findByRole('group', { name: 'Sonntagsruhe' });
+    expect(within(rest).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(within(rest).getByRole('button', { name: 'Ein' }));
+    await waitFor(() => expect(store.getProfile().sundayRest).toBe(true));
+    fireEvent.click(within(rest).getByRole('button', { name: 'Aus' }));
+    await waitFor(() => expect(store.getProfile().sundayRest).toBe(false));
   });
 
   it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
@@ -854,18 +865,18 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.34(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 0\.35(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.34(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.35(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.34(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 0\.35(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('shows the Impressum with its placeholders marked and a privacy notice', async () => {

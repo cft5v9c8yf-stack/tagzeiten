@@ -705,3 +705,53 @@ a.cy-week-name {
   font-size: 1.4rem;
   color: var(--muted);
 }
+
+/* Sunday rest: the Sunday in place of the habits, at the top of "Heute". */
+.sunday-rest {
+  margin: 14px 0 18px;
+  padding: 18px 18px 20px;
+  border-radius: var(--radius-l);
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--rule));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 10%, var(--sheet)), var(--sheet));
+}
+.sunday-rest-head {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  align-items: center;
+  gap: 14px;
+}
+.sunday-rest-rose {
+  display: flex;
+}
+.sunday-rest-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sunday-rest h3 {
+  margin: 2px 0 0;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+.sunday-rest .sunday-theme {
+  margin: 0 0 12px;
+}
+.sunday-rest-go {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  text-decoration: none;
+}
+.habits td.rest-cell {
+  background: none;
+}
+.habits thead th.is-rest {
+  opacity: 0.4;
+}
+.habits-rest {
+  margin: 4px 0 2px;
+}

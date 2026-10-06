@@ -207,6 +207,30 @@ export function DisplaySettings() {
           ),
         },
         {
+          id: 'more.display.sundayRest',
+          title: 'Sonntagsruhe',
+          line: profile.sundayRest ? 'Ein' : 'Aus',
+          icon: 'cross',
+          content: (
+            <>
+              <Segmented
+                label="Sonntagsruhe"
+                value={profile.sundayRest ? 'on' : 'off'}
+                onChange={(v) => update((p) => ({ ...p, sundayRest: v === 'on' }))}
+                options={[
+                  { value: 'on', label: 'Ein' },
+                  { value: 'off', label: 'Aus' },
+                ]}
+              />
+              <p className="small muted">
+                Am Sonntag sind die Gewohnheiten ausgeblendet und zählen im Rückblick nicht mit. Unter „Heute“ steht
+                stattdessen der Sonntag mit Wochenspruch, Evangelium und Epistel. Was du an Sonntagen schon abgehakt hast,
+                bleibt gespeichert. Die Streithalle folgt ihren eigenen Tagen.
+              </p>
+            </>
+          ),
+        },
+        {
           id: 'more.display.atBed',
           title: 'Am Bett am Morgen',
           line: state(profile.showAtBed),

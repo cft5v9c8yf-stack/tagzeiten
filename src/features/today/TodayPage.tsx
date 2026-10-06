@@ -16,6 +16,8 @@ import { eveningClosed } from '../../domain/stats';
 import { churchDay } from '../../domain/churchYear';
 import { LutherRose } from '../../ui/LutherRose';
 import { activeRun, hallModeIn, runName, shortSpan } from '../../domain/winterArc';
+import { weekdayOf } from '../../domain/dates';
+import { SundayRest } from './SundayRest';
 
 function morningStatus(day: Day): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -91,11 +93,15 @@ export function TodayPage() {
   const hallMode = hallModeIn(profile.winterArc, date);
   const church = churchDay(date);
   const hallRun = hallMode ? activeRun(profile.winterArc) : undefined;
+  const sundayTo = isToday ? '/sonntag' : `/sonntag?s=${church.weekStart}`;
+  // Sunday rest: the Sunday stands at the top, and the habits are left out.
+  const resting = profile.sundayRest && !hallMode && weekdayOf(date) === 0;
 
   return (
     <>
       <h2 className="visually-hidden">{isToday ? 'Heute' : 'Tag'}</h2>
       <DayHeader date={date} />
+      {resting && <SundayRest date={date} to={sundayTo} />}
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
         <Link to={withDate('/andacht/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
@@ -117,38 +123,39 @@ export function TodayPage() {
         </Link>
       </div>
 
-      <Link
-        className="sunday-link"
-        to={isToday ? '/sonntag' : `/sonntag?s=${church.weekStart}`}
-      >
-        <span className="sunday-link-rose" aria-hidden="true">
-          <LutherRose size={30} />
-        </span>
-        <span className="sunday-link-text">
-          <span className="sunday-link-label">Diese Woche</span>
-          <span className="sunday-link-week">{church.week}</span>
-        </span>
-        <span className="sunday-link-go" aria-hidden="true">
-          ›
-        </span>
-      </Link>
+      {!resting && (
+        <Link className="sunday-link" to={sundayTo}>
+          <span className="sunday-link-rose" aria-hidden="true">
+            <LutherRose size={30} />
+          </span>
+          <span className="sunday-link-text">
+            <span className="sunday-link-label">Diese Woche</span>
+            <span className="sunday-link-week">{church.week}</span>
+          </span>
+          <span className="sunday-link-go" aria-hidden="true">
+            ›
+          </span>
+        </Link>
+      )}
 
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} date={date} isToday={isToday} />
 
-      <Section
-        id="today.habits"
-        title={hallMode ? 'Streithalle' : 'Gewohnheiten'}
-        aside={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined}
-      >
-        <HabitsWeek date={date} />
-        {hallMode && (
-          <p className="small muted habits-mode-note">
-            Während der Runde stehen hier die Gewohnheiten der Streithalle.{' '}
-            <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
-          </p>
-        )}
-      </Section>
+      {!resting && (
+        <Section
+          id="today.habits"
+          title={hallMode ? 'Streithalle' : 'Gewohnheiten'}
+          aside={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined}
+        >
+          <HabitsWeek date={date} />
+          {hallMode && (
+            <p className="small muted habits-mode-note">
+              Während der Runde stehen hier die Gewohnheiten der Streithalle.{' '}
+              <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
+            </p>
+          )}
+        </Section>
+      )}
 
       <Section id="today.lookback" title="Rückblick">
         <Lookback date={date} />

@@ -12,18 +12,27 @@ export const HISTORY_WEEKS = 8;
 export interface HabitWeek {
   /** Monday of the week. */
   monday: DateKey;
-  /** Days of the week up to today (7 for past weeks). */
+  /** Days of the week up to today (7 for past weeks, 6 with Sunday rest). */
   days: number;
   /** Habits kept day by day: days done; weekly and monthly habits: 1 if recorded in the week, else 0. */
   done: number;
 }
 
-/** The last `weeks` weeks up to the one containing `today`, oldest first. */
-export function habitWeeks(habit: Habit, today: DateKey, lookup: DayLookup, weeks = HISTORY_WEEKS): HabitWeek[] {
+/**
+ * The last `weeks` weeks up to the one containing `today`, oldest first.
+ * With `sundayRest` the Sundays are left out: a week then has six days.
+ */
+export function habitWeeks(
+  habit: Habit,
+  today: DateKey,
+  lookup: DayLookup,
+  weeks = HISTORY_WEEKS,
+  sundayRest = false,
+): HabitWeek[] {
   const current = mondayOf(today);
   return Array.from({ length: weeks }, (_, i) => {
     const monday = addDays(current, -7 * (weeks - 1 - i));
-    const dates = Array.from({ length: 7 }, (_, d) => addDays(monday, d)).filter((k) => k <= today);
+    const dates = Array.from({ length: sundayRest ? 6 : 7 }, (_, d) => addDays(monday, d)).filter((k) => k <= today);
     if (isPerDay(habit)) {
       return { monday, days: dates.length, done: dates.filter((k) => isDoneOn(habit, lookup(k))).length };
     }

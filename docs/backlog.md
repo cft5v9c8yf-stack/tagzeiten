@@ -71,7 +71,7 @@ Bestand:
 | Wochenrückblick nach den Ständen | Stände der Haustafel in der Abendprüfung (Ehemann, Vater, Mitarbeiter, Gemeinde, Nächster; einer pro Wochentag, ohne Eingabe). Wochenrückblick der Streithalle mit drei Fragen und Zuspruch (Klgl 3,22–23). | Dank je Stand, Stand „Bürger“, Auswahl der Stände |
 | Gedenktage in Mein Haus | Name und Anliegen pro Person; Reihe der Fürbitte (Mo Frau, Di–Fr Kinder, Sa Ehe, So Haus) | Daten und Vorrang vor der Reihe |
 | Fürbitte über das Haus hinaus | „Fürbitte“ im Morgen mit den Anliegen der Gebetsübersicht nach Wochentag | die sieben Themen der Wochentage |
-| Sonntagsruhe | offene Kästchen sind schon neutral | die Einstellung |
+| Sonntagsruhe | umgesetzt in 0.35.0 | – |
 
 Plan:
 
@@ -88,13 +88,15 @@ Plan:
    für das Haus: Mo Gemeinde · Di Prediger und Älteste · Mi Brüder aus der
    Arena · Do Beruf · Fr Obrigkeit (1. Timotheus 2,1–2) · Sa verfolgte
    Christen · So die ganze Kirche. Namen und Anliegen selbst gepflegt.
-4. **Sonntagsruhe** (Standard an): am Sonntag zeigen Gewohnheiten und
-   Streithalle keine leeren Ringe; Abhaken geht weiter.
+4. **Sonntagsruhe:** umgesetzt in 0.35.0, anders als zuerst geplant: eine
+   Einstellung unter „Darstellung“ (Standard aus). Eingeschaltet sind am
+   Sonntag die Gewohnheiten ausgeblendet und zählen im Rückblick nicht mit;
+   unter „Heute“ steht stattdessen der Sonntag. Die Streithalle folgt ihren
+   eigenen Tagen.
 
 Tests: jeder Punkt abschaltbar ohne Datenverlust; Gedenktag vor der Reihe; bei
-aktiver Streithalle genau ein Rückblick am Rückblickstag; Sonntag ohne offene
-Kästchen; jeder Platzhalter in `content/TEXTE-OFFEN.md`. Version 0.35.0, ein
-Commit pro Punkt.
+aktiver Streithalle genau ein Rückblick am Rückblickstag; jeder Platzhalter in `content/TEXTE-OFFEN.md`. Eine neue Version,
+ein Commit pro Punkt.
 
 Offene Fragen vor dem Beginn:
 

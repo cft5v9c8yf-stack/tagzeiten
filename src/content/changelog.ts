@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.35.0',
+    date: '2026-10-06',
+    title: 'Sonntagsruhe',
+    changes: [
+      { area: 'Heute', text: 'Neu unter „Mehr → Darstellung“: die Sonntagsruhe. Eingeschaltet stehen am Sonntag keine Gewohnheiten an. Oben unter „Heute“ steht dann der Sonntag selbst, mit Wochenspruch, Evangelium und Epistel.' },
+      { area: 'Rückblick', text: 'Mit der Sonntagsruhe zählt der Sonntag bei den Gewohnheiten im Rückblick nicht mit: eine Woche hat dort sechs Tage. Was du an Sonntagen schon abgehakt hast, bleibt gespeichert.' },
+    ],
+  },
+  {
     version: '0.34.1',
     date: '2026-10-05',
     title: 'Was gebetet war, auch an vergangenen Tagen',
