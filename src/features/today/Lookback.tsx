@@ -29,7 +29,12 @@ export function Lookback({ date }: { date: DateKey }) {
         ))}
       </ol>
       <p className="dots-legend">
-        <span className="dot both" aria-hidden="true" /> Morgen und Abend <span className="dot one" aria-hidden="true" /> eines von beiden
+        <span className="legend-item">
+          <span className="dot both" aria-hidden="true" /> Morgen und Abend
+        </span>
+        <span className="legend-item">
+          <span className="dot one" aria-hidden="true" /> eines von beiden
+        </span>
       </p>
       <dl className="stats">
         <div>
@@ -40,7 +45,7 @@ export function Lookback({ date }: { date: DateKey }) {
           <dt>Verse gesammelt</dt>
           <dd>{collectedVerses(days).length}</dd>
         </div>
-        <div>
+        <div className="stats-three">
           <dt>Drei Dinge in 30 Tagen</dt>
           <dd className="marks-dist">
             {(['plus', 'tilde', 'minus'] as const).map((m) => (

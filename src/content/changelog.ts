@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.35.1',
+    date: '2026-10-06',
+    title: 'Der Rückblick aufgeräumt',
+    changes: [
+      { area: 'Heute', text: 'Im Rückblick stehen die Stillen Zeiten und die gesammelten Verse nebeneinander, die drei Dinge in voller Breite darunter. Nichts läuft mehr über den Rand, und die Legende steht sauber neben ihren Farben.' },
+    ],
+  },
+  {
     version: '0.35.0',
     date: '2026-10-06',
     title: 'Sonntagsruhe',
