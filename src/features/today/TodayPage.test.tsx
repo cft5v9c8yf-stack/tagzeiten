@@ -270,7 +270,7 @@ describe('Today', () => {
     const card = within(screen.getByRole('region', { name: /Sonntag nach Trinitatis/ }));
     expect(card.getByText('Sonntagsruhe')).toBeTruthy();
     expect(card.getByText('Evangelium')).toBeTruthy();
-    expect(card.getByRole('link', { name: 'Den Sonntag öffnen' })).toBeTruthy();
+    expect(card.getByRole('link', { name: 'Mehr zu diesem Sonntag' })).toBeTruthy();
     expect(screen.queryByRole('region', { name: /^Gewohnheiten/ })).toBeNull();
     expect(document.querySelector('.sunday-link')).toBeNull();
   });

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.35.2',
+    date: '2026-10-06',
+    title: 'Mehr zu diesem Sonntag',
+    changes: [
+      { area: 'Heute', text: 'Der Knopf unter der Sonntagskarte heißt jetzt „Mehr zu diesem Sonntag“. Er führt zu Bedeutung, Lesungen und Kirchenjahr.' },
+    ],
+  },
+  {
     version: '0.35.1',
     date: '2026-10-06',
     title: 'Der Rückblick aufgeräumt',
