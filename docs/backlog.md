@@ -54,3 +54,56 @@ Stand:
   Einträge müssten in einen lokalen Speicher, den App und Widget teilen (App
   Group auf dem iPhone, gemeinsamer Speicher auf Android). Weiter nur auf dem
   Gerät (Regel 10).
+
+## Wochenrückblick und kleine Erweiterungen
+
+Gewünscht (06.10.2026). Kein neuer Bereich, kein neuer Tab; jeder Punkt in
+Vorhandenes eingehängt und in seinem Bereich einzeln abschaltbar, ohne dass
+Daten verloren gehen. Höchstens eine Minute mehr am Tag. Geistliche Texte
+schreibt Claude nicht selbst: fehlende Texte stehen als
+`[TEXT VON ANDREAS: …]` im Code und in `content/TEXTE-OFFEN.md`. Entwürfe als
+Screenshots in der Demo wurden gezeigt.
+
+Bestand:
+
+| Punkt | Vorhanden | Fehlt |
+|---|---|---|
+| Wochenrückblick nach den Ständen | Stände der Haustafel in der Abendprüfung (Ehemann, Vater, Mitarbeiter, Gemeinde, Nächster; einer pro Wochentag, ohne Eingabe). Wochenrückblick der Streithalle mit drei Fragen und Zuspruch (Klgl 3,22–23). | Dank je Stand, Stand „Bürger“, Auswahl der Stände |
+| Gedenktage in Mein Haus | Name und Anliegen pro Person; Reihe der Fürbitte (Mo Frau, Di–Fr Kinder, Sa Ehe, So Haus) | Daten und Vorrang vor der Reihe |
+| Fürbitte über das Haus hinaus | „Fürbitte“ im Morgen mit den Anliegen der Gebetsübersicht nach Wochentag | die sieben Themen der Wochentage |
+| Sonntagsruhe | offene Kästchen sind schon neutral | die Einstellung |
+
+Plan:
+
+1. **Wochenrückblick** am Rückblickstag (Standard Sonntag) im Nachtgebet unter
+   „Dank und Rückschau“: je Stand eine Zeile „Wofür danke ich?“, höchstens ein
+   Vorsatz insgesamt. Bei aktiver Streithalle ihre drei Fragen im selben
+   Rückblick (dieselben Daten, nie zwei Rückblicke). Am Ende der Zuspruch
+   `[TEXT VON ANDREAS]`, danach erst Prüfung und Zuspruch (Regel 3). Stände
+   aus `src/content/examen.ts` wiederverwenden, „Bürger“ (Röm 13,1) ergänzen.
+2. **Gedenktage:** pro Person Geburtstag und Tauftag, bei der Ehefrau der
+   Hochzeitstag. Ein Gedenktag geht der Reihe der Fürbitte vor. Drei Gebete
+   als Platzhalter (Geburtstag, Tauftag, Hochzeitstag).
+3. **Fürbitte über das Haus hinaus:** eine Zeile pro Morgen nach der Fürbitte
+   für das Haus: Mo Gemeinde · Di Prediger und Älteste · Mi Brüder aus der
+   Arena · Do Beruf · Fr Obrigkeit (1. Timotheus 2,1–2) · Sa verfolgte
+   Christen · So die ganze Kirche. Namen und Anliegen selbst gepflegt.
+4. **Sonntagsruhe** (Standard an): am Sonntag zeigen Gewohnheiten und
+   Streithalle keine leeren Ringe; Abhaken geht weiter.
+
+Tests: jeder Punkt abschaltbar ohne Datenverlust; Gedenktag vor der Reihe; bei
+aktiver Streithalle genau ein Rückblick am Rückblickstag; Sonntag ohne offene
+Kästchen; jeder Platzhalter in `content/TEXTE-OFFEN.md`. Version 0.35.0, ein
+Commit pro Punkt.
+
+Offene Fragen vor dem Beginn:
+
+- **Reihenfolge der Stände:** nach Regel 18 Ehemann, Vater, Gemeinde, Arbeiter,
+  Bürger (der Auftrag nannte Arbeiter vor Gemeinde).
+- **Ort des Wochenrückblicks:** im Nachtgebet (Entwurf) oder in der
+  Gebetskammer der Arena.
+- **Pflege der Fürbitte über das Haus hinaus:** in Mein Haus (Auftrag) oder als
+  Überschriften der Tage in der Gebetsübersicht (Empfehlung: vermeidet
+  Doppeltes, deren „Fürbitte“ steht direkt darunter).
+- **Hochzeitstag:** im Mittelpunkt „unsere Ehe“ oder die Ehefrau.
+- **Bürger:** ersetzt den Stand „Nächster“ oder kommt dazu.
