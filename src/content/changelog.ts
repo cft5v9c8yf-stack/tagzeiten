@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.36.1',
+    date: '2026-10-06',
+    title: 'Der Gebetsgang nach Luther 1912',
+    changes: [
+      { area: 'Sonntag', text: 'Die Bibeltexte im Gebetsgang „Mit der Schrift beten“ stehen jetzt Wort für Wort nach der Lutherbibel 1912, etwa Psalm 51,14 „und mit einem freudigen Geist rüste mich aus“ und Philipper 2,4 „sondern auch auf das, was des andern ist“.' },
+    ],
+  },
+  {
     version: '0.36.0',
     date: '2026-10-06',
     title: 'Der Sonntag im Haus',

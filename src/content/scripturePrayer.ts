@@ -3,8 +3,9 @@
  * one walk per weekday. Only Sunday is written so far; Monday to Saturday can
  * be added in the same shape under their weekday.
  *
- * Bible text as given by Andreas (6 October 2026), word for word, after the
- * Lutherbibel 1912. Built after "Praying Scripture for a Week"; the pauses
+ * Bible text after the Lutherbibel 1912, word for word (rule 12): the text
+ * given by Andreas (6 October 2026), set to the 1912 wording where it differed
+ * (Ps 62,2 keeps "ist stille"; the digital 1912 source is in doubt there). Built after "Praying Scripture for a Week"; the pauses
  * are his own words.
  *
  * Poetry: one entry per line; a leading ">" indents the line one step further
@@ -52,29 +53,29 @@ const SUNDAY: PrayerWalk = {
           kind: 'poetry',
           lines: [
             'Singet dem HERRN ein neues Lied;',
-            'singet dem HERRN, alle Welt!',
+            'singet dem HERRN alle Welt!',
             'Singet dem HERRN und lobet seinen Namen;',
-            'verkündiget von Tag zu Tag sein Heil!',
+            'verkündiget von Tag zu Tage sein Heil!',
             'Erzählet unter den Heiden seine Ehre,',
-            'unter allen Völkern seine Wunder!',
+            'unter allen Völkern seine Wunder.',
             'Denn der HERR ist groß und hoch zu loben,',
             'wunderbar über alle Götter.',
             'Denn alle Götter der Völker sind Götzen;',
             'aber der HERR hat den Himmel gemacht.',
             'Es stehet herrlich und prächtig vor ihm',
-            'und gehet gewaltiglich und löblich zu in seinem Heiligtum.',
+            'und gehet gewaltig und löblich zu in seinem Heiligtum.',
           ],
         },
         {
           ref: 'Offenbarung 15,3–4',
           kind: 'poetry',
-          intro: 'Und sie sangen das Lied Mose’s, des Knechtes Gottes, und das Lied des Lammes und sprachen:',
+          intro: 'Und sangen das Lied Mose’s, des Knechtes Gottes, und das Lied des Lammes und sprachen:',
           lines: [
             '>„Groß und wundersam sind deine Werke,',
             '>HERR, allmächtiger Gott!',
             '>Gerecht und wahrhaftig sind deine Wege,',
             '>du König der Heiden!',
-            '>Wer sollte dich nicht fürchten, HERR,',
+            '>Wer sollte dich nicht fürchten, HERR',
             '>und deinen Namen preisen?',
             '>Denn du bist allein heilig.',
             '>Denn alle Heiden werden kommen und anbeten vor dir;',
@@ -95,9 +96,9 @@ const SUNDAY: PrayerWalk = {
             'und meine Seele ist fröhlich in meinem Gott;',
             'denn er hat mich angezogen mit Kleidern des Heils',
             'und mit dem Rock der Gerechtigkeit gekleidet,',
-            'wie einen Bräutigam mit priesterlichem Schmuck geziert',
+            'wie einen Bräutigam, mit priesterlichem Schmuck geziert,',
             'und wie eine Braut, die in ihrem Geschmeide prangt.',
-            'Denn gleichwie Gewächs aus der Erde wächst',
+            'Denn gleichwie das Gewächs aus der Erde wächst',
             'und Same im Garten aufgeht,',
             'also wird Gerechtigkeit und Lob vor allen Heiden aufgehen',
             'aus dem Herrn HERRN.',
@@ -122,11 +123,11 @@ const SUNDAY: PrayerWalk = {
           ref: 'Psalm 51,3–12.14–15',
           kind: 'poetry',
           lines: [
-            'Gott, sei mir gnädig nach deiner Güte,',
+            'Gott, sei mir gnädig nach deiner Güte',
             'und tilge meine Sünden nach deiner großen Barmherzigkeit.',
-            'Wasche mich wohl von meiner Missetat,',
-            'und reinige mich von meiner Sünde;',
-            'denn ich erkenne meine Missetat,',
+            'Wasche mich wohl von meiner Missetat',
+            'und reinige mich von meiner Sünde.',
+            'Denn ich erkenne meine Missetat,',
             'und meine Sünde ist immer vor mir.',
             'An dir allein habe ich gesündigt und übel vor dir getan,',
             'auf daß du recht behaltest in deinen Worten',
@@ -139,13 +140,13 @@ const SUNDAY: PrayerWalk = {
             'wasche mich, daß ich schneeweiß werde.',
             'Laß mich hören Freude und Wonne,',
             'daß die Gebeine fröhlich werden, die du zerschlagen hast.',
-            'Verbirg dein Antlitz von meinen Sünden,',
-            'und tilge alle meine Missetat.',
-            'Schaffe in mir, Gott, ein reines Herz,',
+            'Verbirg dein Antlitz von meinen Sünden',
+            'und tilge alle meine Missetaten.',
+            'Schaffe in mir, Gott, ein reines Herz',
             'und gib mir einen neuen, gewissen Geist.',
             'Tröste mich wieder mit deiner Hilfe,',
-            'und der freudige Geist erhalte mich.',
-            'Denn ich will die Übertreter deine Wege lehren,',
+            'und mit einem freudigen Geist rüste mich aus.',
+            'Ich will die Übertreter deine Wege lehren,',
             'daß sich die Sünder zu dir bekehren.',
           ],
         },
@@ -174,7 +175,7 @@ const SUNDAY: PrayerWalk = {
         {
           ref: '2. Korinther 5,9–10',
           kind: 'prose',
-          text: 'Darum fleißigen wir uns auch, wir sind daheim oder wallen, daß wir ihm wohl gefallen. Denn wir müssen alle offenbar werden vor dem Richterstuhl Christi, auf daß ein jeglicher empfange, nach dem er gehandelt hat bei Leibesleben, es sei gut oder böse.',
+          text: 'Darum fleißigen wir uns auch, wir sind daheim oder wallen, daß wir ihm wohl gefallen. Denn wir müssen alle offenbar werden vor dem Richtstuhl Christi, auf daß ein jeglicher empfange, nach dem er gehandelt hat bei Leibesleben, es sei gut oder böse.',
         },
       ],
       pause: 'Halte inne und halte dich daran fest, dass Gott für alles sorgt, was du wirklich brauchst.',
@@ -191,7 +192,7 @@ const SUNDAY: PrayerWalk = {
             'Dein Reich komme.',
             'Dein Wille geschehe auf Erden wie im Himmel.',
             'Unser täglich Brot gib uns heute.',
-            'Und vergib uns unsere Schulden,',
+            'Und vergib uns unsere Schuld,',
             'wie wir unseren Schuldigern vergeben.',
             'Und führe uns nicht in Versuchung,',
             'sondern erlöse uns von dem Übel.',
@@ -229,13 +230,13 @@ const SUNDAY: PrayerWalk = {
         {
           ref: 'Philipper 2,3–4',
           kind: 'prose',
-          text: 'Nichts tut durch Zank oder eitle Ehre; sondern durch Demut achte euch untereinander einer den andern höher denn sich selbst; und ein jeglicher sehe nicht auf das Seine, sondern auf das, was des andern ist.',
+          text: 'Nichts tut durch Zank oder eitle Ehre; sondern durch Demut achte einer den andern höher denn sich selbst, und ein jeglicher sehe nicht auf das Seine, sondern auch auf das, was des andern ist.',
         },
         {
           ref: 'Psalm 19,15',
           kind: 'poetry',
           lines: [
-            'Laß dir wohlgefallen die Rede meines Mundes',
+            'Laß dir wohl gefallen die Rede meines Mundes',
             'und das Gespräch meines Herzens vor dir,',
             'HERR, mein Hort und mein Erlöser.',
           ],
@@ -249,7 +250,7 @@ const SUNDAY: PrayerWalk = {
         {
           ref: 'Kolosser 4,2–6',
           kind: 'prose',
-          text: 'Haltet an am Gebet und wachet in demselben mit Danksagung; und betet zugleich auch für uns, auf daß Gott uns die Tür des Wortes auftue, zu reden das Geheimnis Christi, darum ich auch gebunden bin, auf daß ich es offenbare, wie ich soll reden. Wandelt weise gegen die, die draußen sind, und kauft die Zeit aus. Eure Rede sei allezeit lieblich und mit Salz gewürzt, daß ihr wisset, wie ihr einem jeglichen antworten sollt.',
+          text: 'Haltet an am Gebet und wachet in demselben mit Danksagung; und betet zugleich auch für uns, auf daß Gott uns eine Tür des Wortes auftue, zu reden das Geheimnis Christi, darum ich auch gebunden bin, auf daß ich es offenbare, wie ich soll reden. Wandelt weise gegen die, die draußen sind, und kauft die Zeit aus. Eure Rede sei allezeit lieblich und mit Salz gewürzt, daß ihr wißt, wie ihr einem jeglichen antworten sollt.',
         },
         {
           ref: 'Epheser 6,19–20',
@@ -268,13 +269,13 @@ const SUNDAY: PrayerWalk = {
           lines: [
             'Sein Name wird ewiglich bleiben;',
             'solange die Sonne währt, wird sein Name auf die Nachkommen reichen,',
-            'und sie werden durch ihn gesegnet sein;',
+            'und sie werden durch denselben gesegnet sein;',
             'alle Heiden werden ihn preisen.',
             'Gelobet sei Gott der HERR, der Gott Israels,',
             'der allein Wunder tut;',
             'und gelobet sei sein herrlicher Name ewiglich;',
             'und alle Lande müssen seiner Ehre voll werden!',
-            'Amen, Amen.',
+            'Amen, amen.',
           ],
         },
       ],
