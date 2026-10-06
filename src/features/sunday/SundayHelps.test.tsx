@@ -62,15 +62,15 @@ describe('Sunday: guide and prayer walk', () => {
     expect(document.querySelector('.preparation-hint')).toBeNull();
     cleanup();
     await renderAt('/sonntag', new Date(2026, 8, 26, 18, 0));
-    expect(screen.getByRole('link', { name: /Bereitung am Samstagabend/ }).getAttribute('href')).toBe('/sonntag/hilfe#bereitung');
+    expect(screen.getByRole('link', { name: /Vorbereitung am Samstagabend/ }).getAttribute('href')).toBe('/sonntag/hilfe#vorbereitung');
   });
 
   it('shows the guide with its headings, the quotation, the rubrics and the sources', async () => {
-    await renderAt('/sonntag/hilfe#bereitung');
+    await renderAt('/sonntag/hilfe#vorbereitung');
     expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Der Sonntag – eine Hilfe für das Haus');
     expect(screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent)).toEqual([...SUNDAY_GUIDE.map((s) => s.title), 'Quellen']);
     expect(document.querySelector('.guide-quote blockquote')!.textContent).toMatch(/^„Der Sonntag macht die Woche“/);
-    expect(document.getElementById('bereitung')!.querySelector('.rubric-inline')!.textContent).toBe('Samstagabend: die Bereitung.');
+    expect(document.getElementById('vorbereitung')!.querySelector('.rubric-inline')!.textContent).toBe('Samstagabend: die Vorbereitung.');
     expect(document.querySelectorAll('.guide-sources li')).toHaveLength(7);
     // A page to read: nothing to tick.
     expect(screen.queryAllByRole('checkbox')).toHaveLength(0);

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.36.2',
+    date: '2026-10-06',
+    title: 'Die Vorbereitung am Samstagabend',
+    changes: [
+      { area: 'Sonntag', text: 'Am Samstagabend heißt es jetzt „Vorbereitung“ statt „Bereitung“: im Hinweis ab 18 Uhr und in der Hilfe für das Haus.' },
+    ],
+  },
+  {
     version: '0.36.1',
     date: '2026-10-06',
     title: 'Der Gebetsgang nach Luther 1912',

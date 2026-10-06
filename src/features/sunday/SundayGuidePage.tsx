@@ -27,7 +27,7 @@ function Block({ block }: { block: GuideBlock }) {
 export function SundayGuidePage() {
   const links = useSundayLinks();
   const { hash } = useLocation();
-  // A link to a section (e.g. #bereitung on Saturday evening) opens there.
+  // A link to a section (e.g. #vorbereitung on Saturday evening) opens there.
   useEffect(() => {
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView?.({ block: 'start' });
   }, [hash]);

@@ -29,7 +29,7 @@ export function SundayHelps({ page }: { page: (path: string) => string }) {
 export function PreparationHint({ page }: { page: (path: string) => string }) {
   return (
     <Link className="preparation-hint" to={`${page(GUIDE_PATH)}#${PREPARATION_ANCHOR}`}>
-      Morgen ist Sonntag. Zur Bereitung am Samstagabend <span aria-hidden="true">›</span>
+      Morgen ist Sonntag. Zur Vorbereitung am Samstagabend <span aria-hidden="true">›</span>
     </Link>
   );
 }

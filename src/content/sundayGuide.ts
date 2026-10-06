@@ -19,8 +19,8 @@ export interface GuideSection {
 
 export const SUNDAY_GUIDE_TITLE = 'Der Sonntag – eine Hilfe für das Haus';
 
-/** Anchor of "Samstagabend: die Bereitung", the target of the hint on Saturday evening. */
-export const PREPARATION_ANCHOR = 'bereitung';
+/** Anchor of "Samstagabend: die Vorbereitung", the target of the hint on Saturday evening. */
+export const PREPARATION_ANCHOR = 'vorbereitung';
 
 export const SUNDAY_GUIDE: readonly GuideSection[] = [
   {
@@ -67,7 +67,7 @@ export const SUNDAY_GUIDE: readonly GuideSection[] = [
       {
         kind: 'rubric',
         id: PREPARATION_ANCHOR,
-        lead: 'Samstagabend: die Bereitung.',
+        lead: 'Samstagabend: die Vorbereitung.',
         text: 'Lies das Evangelium des kommenden Sonntags, allein oder mit dem ganzen Haus. Was am Sonntag nur Arbeit machen würde, erledigst du heute: Kleidung, Einkauf und, so weit es geht, das Essen. Den Abschluss bildet der Abendsegen.',
       },
       {
