@@ -28,9 +28,10 @@ das der Service Worker. Eine neue Version wird in der App angekündigt und erst 
 ### GitHub Pages
 
 Die Action `.github/workflows/pages.yml` baut bei jedem Push (Arbeitszweig und `main`), führt die
-Tests aus und veröffentlicht unter `https://<name>.github.io/tagzeiten/`. Einmalig einrichten:
+Tests aus und veröffentlicht unter `https://mein.henoch.app/`. Einmalig einrichten:
 
-1. Settings → Pages → Source: **GitHub Actions**.
+1. Settings → Pages → Source: **GitHub Actions**, Custom domain: `mein.henoch.app`
+   (bei IONOS: CNAME `mein` → `cft5v9c8yf-stack.github.io`).
 2. Settings → Environments → `github-pages` → Deployment branches: den Arbeitszweig zusätzlich
    erlauben (standardmäßig darf nur `main` veröffentlichen).
 

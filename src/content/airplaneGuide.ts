@@ -59,7 +59,7 @@ export const AIRPLANE_GUIDE: readonly GuidePart[] = [
       { text: 'In „Kurzbefehle“ unten „Kurzbefehle“ wählen und oben rechts auf „+“ tippen.' },
       { text: 'Aktion „Flugmodus festlegen“ hinzufügen, auf „Ein“ lassen.' },
       {
-        text: 'Aktion „URL öffnen“ hinzufügen und die Adresse der App eintragen: https://cft5v9c8yf-stack.github.io/tagzeiten/',
+        text: 'Aktion „URL öffnen“ hinzufügen und die Adresse der App eintragen: https://mein.henoch.app/',
       },
       { text: 'Oben den Namen „Stille beginnen“ vergeben, dann über „Teilen“ → „Zum Home-Bildschirm“ ablegen.' },
       {

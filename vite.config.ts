@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 import pkg from './package.json' with { type: 'json' };
 
-// Served from a sub-path on GitHub Pages (BASE_PATH=/tagzeiten/), from the root elsewhere.
+// Served from the root (mein.henoch.app); BASE_PATH=/pfad/ builds for a sub-path.
 const base = process.env.BASE_PATH ?? '/';
 
 export default defineConfig(({ mode }) => ({

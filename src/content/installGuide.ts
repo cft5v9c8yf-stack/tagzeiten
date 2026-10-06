@@ -5,7 +5,7 @@
  */
 import type { GuidePart } from './airplaneGuide';
 
-export const APP_URL = 'https://cft5v9c8yf-stack.github.io/tagzeiten/';
+export const APP_URL = 'https://mein.henoch.app/';
 
 export const INSTALL_INTRO =
   'Henoch ist eine Web-App: Sie kommt nicht aus dem Play Store, sondern wird aus dem Browser heraus installiert. Danach liegt sie wie jede andere App auf dem Startbildschirm, öffnet sich ohne Adressleiste und läuft ohne Internet.';

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.37.3',
+    date: '2026-10-06',
+    title: 'Die neue Adresse',
+    changes: [
+      { area: 'Mehr', text: 'Henoch ist umgezogen und jetzt unter mein.henoch.app zu finden. Die Anleitungen zum Installieren und zum Flugmodus nennen die neue Adresse.' },
+    ],
+  },
+  {
     version: '0.37.2',
     date: '2026-10-06',
     title: 'Die Streithalle, neu beschrieben',

@@ -1,5 +1,5 @@
-# Builds the app and publishes it on GitHub Pages at /tagzeiten/.
-# One-time setup: Settings → Pages → Source: "GitHub Actions".
+# Builds the app and publishes it on GitHub Pages at https://mein.henoch.app/.
+# One-time setup: Settings → Pages → Source: "GitHub Actions", Custom domain: mein.henoch.app.
 name: Pages
 
 on:
@@ -41,8 +41,8 @@ jobs:
           LUT1912_DIR: ../lut1912/package/text
       - run: npm run build
         env:
-          BASE_PATH: /${{ github.event.repository.name }}/
-      # Pages has no rewrites: unknown paths (e.g. /tagzeiten/abend) get 404.html, which is the app.
+          BASE_PATH: /
+      # Pages has no rewrites: unknown paths (e.g. /abend) get 404.html, which is the app.
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
         with:

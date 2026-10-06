@@ -898,7 +898,7 @@ describe('Rückblick', () => {
     }
     const text = document.body.textContent!;
     expect(text).toContain('„App installieren“');
-    expect(text).toContain('https://cft5v9c8yf-stack.github.io/tagzeiten/');
+    expect(text).toContain('https://mein.henoch.app/');
   });
 
   it('explains, under Einstellungen, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
