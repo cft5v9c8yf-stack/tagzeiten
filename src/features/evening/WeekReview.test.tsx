@@ -101,7 +101,11 @@ describe('Wochenrückblick', () => {
     expect(page.textContent).toContain('das Gespräch beim Abendessen · Maries Lied');
     // Not the day's thanks; the review ends in the word of comfort.
     expect(screen.queryByLabelText('Ich danke dir, mein Gott, für …')).toBeNull();
-    expect(page.querySelector('.week-comfort')!.textContent).toContain('Zum Schluss der Zuspruch:');
+    // The same word of comfort as the Streithalle's weekly review.
+    const comfort = page.querySelector('.week-comfort')!.textContent;
+    expect(comfort).toContain('Zum Schluss der Zuspruch:');
+    expect(comfort).toContain('Klagelieder 3,22–23');
+    expect(comfort).not.toContain('TEXT VON ANDREAS');
     // No examination here: that is the next page (rule 3).
     expect(page.textContent).not.toContain('Wird gebetet, nicht notiert.');
 
@@ -160,6 +164,8 @@ describe('Wochenrückblick', () => {
     const store = await renderEvening(SUNDAY, (s) => s.startWinterArc('2026-09-28', 90));
     await openReview('Wochenrückblick');
     expect(screen.getByText('Aus der Streithalle')).toBeTruthy();
+    // One review, one word of comfort.
+    expect(document.querySelectorAll('.compline .flow-step .arena-comfort')).toHaveLength(1);
     fireEvent.change(screen.getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen gelesen' } });
     await store.flush();
     await waitFor(() => {

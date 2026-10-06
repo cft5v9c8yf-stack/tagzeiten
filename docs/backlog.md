@@ -74,7 +74,7 @@ Bestand:
 
 | Punkt | Vorhanden | Fehlt |
 |---|---|---|
-| Wochenrückblick nach den Ständen | umgesetzt in 0.37.0 | Zuspruch `[TEXT VON ANDREAS]` |
+| Wochenrückblick nach den Ständen | umgesetzt in 0.37.0 | – |
 | Gedenktage in Mein Haus | Name und Anliegen pro Person; Reihe der Fürbitte (Mo Frau, Di–Fr Kinder, Sa Ehe, So Haus) | Daten und Vorrang vor der Reihe |
 | Fürbitte über das Haus hinaus | „Fürbitte“ im Morgen mit den Anliegen der Gebetsübersicht nach Wochentag | die sieben Themen der Wochentage |
 | Sonntagsruhe | umgesetzt in 0.35.0 | – |
@@ -90,7 +90,8 @@ Plan:
    Unser Land (statt „Bürger“, mit 1. Timotheus 2,1–2), je mit einer
    Bibelstelle; dazu höchstens ein Vorsatz. Oben, was die Woche über abends
    beim Dank notiert wurde; bei laufender Streithalle ihre drei Fragen mit
-   denselben Daten. Am Ende der Zuspruch `[TEXT VON ANDREAS]`. Inhalte in
+   denselben Daten. Am Ende derselbe Zuspruch wie in der Streithalle
+   (Klagelieder 3,22–23, seit 0.37.1). Inhalte in
    `src/content/weekReview.ts`. Offen: ein wählbarer Rückblickstag.
 2. **Gedenktage:** pro Person Geburtstag und Tauftag, bei der Ehefrau der
    Hochzeitstag. Ein Gedenktag geht der Reihe der Fürbitte vor. Drei Gebete

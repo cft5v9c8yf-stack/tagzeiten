@@ -226,7 +226,6 @@ describe('texts Andreas writes himself (CLAUDE.md, Arbeitsweise)', () => {
     const root = fileURLToPath(new URL('..', import.meta.url));
     const list = readFileSync(fileURLToPath(new URL('../content/TEXTE-OFFEN.md', import.meta.url)), 'utf8');
     const placeholders = sourceFiles(root).flatMap((f) => readFileSync(f, 'utf8').match(/\[TEXT VON ANDREAS: [^\]]+\]/g) ?? []);
-    expect(placeholders.length).toBeGreaterThan(0);
     for (const ph of placeholders) expect(list, ph).toContain(ph);
   });
 });

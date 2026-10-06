@@ -99,7 +99,8 @@ export function WeekReview({ date }: { date: DateKey }) {
       <DayField date={date} path="evening.weekResolve" enterKeyHint="done" />
       <div className="arena-comfort week-comfort">
         <p className="rubric">{WEEK_REVIEW_COMFORT.lead}</p>
-        <p>{WEEK_REVIEW_COMFORT.text}</p>
+        <p>„{WEEK_REVIEW_COMFORT.verse.text}“</p>
+        <span className="bible-ref">{WEEK_REVIEW_COMFORT.verse.ref}</span>
       </div>
     </div>
   );

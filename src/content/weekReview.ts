@@ -10,6 +10,7 @@
  */
 import type { HouseNeed } from '../domain/house';
 import type { EveningTextField } from '../domain/model';
+import { WINTER_ARC_COMFORT } from './winterArc';
 
 export interface WeekPlace {
   field: EveningTextField;
@@ -37,8 +38,8 @@ export const WEEK_REVIEW = {
   ahead: 'Für die neue Woche',
 } as const;
 
-/** The review ends in a word of comfort. It is Andreas' to write; until then the placeholder stands. */
-export const WEEK_REVIEW_COMFORT = {
-  lead: 'Zum Schluss der Zuspruch:',
-  text: '[TEXT VON ANDREAS: Zuspruch nach dem Wochenrückblick]',
-} as const;
+/**
+ * The review ends in the word of comfort the Streithalle's weekly review ends
+ * in (Lamentations 3,22–23), so a Sunday with a round under way has only one.
+ */
+export const WEEK_REVIEW_COMFORT = WINTER_ARC_COMFORT;

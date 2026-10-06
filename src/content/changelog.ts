@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.37.1',
+    date: '2026-10-06',
+    title: 'Der Zuspruch im Wochenrückblick',
+    changes: [
+      { area: 'Andacht', text: 'Der Wochenrückblick endet mit demselben Zuspruch wie der Wochenrückblick der Streithalle: „Die Güte des HERRN ist’s, daß wir nicht gar aus sind“ (Klagelieder 3,22–23).' },
+    ],
+  },
+  {
     version: '0.37.0',
     date: '2026-10-06',
     title: 'Der Wochenrückblick',
