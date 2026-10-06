@@ -7,7 +7,13 @@ Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 Gewünscht (26.09.2026): die Bekenntnisschriften im Anhang des Katechismus, mit
 Volltextsuche, Filtern und passenden Bibelstellen.
 
-Stand:
+**Stand 06.10.2026:** Großer Katechismus, Augsburgische Konfession, Apologie,
+Schmalkaldische Artikel und Traktat sind eingebaut (0.18.0 bis 0.22.0), nach
+dem Konkordienbuch St. Louis 1881. Die Konkordienformel ist pausiert. Beim
+Traktat fehlt noch der Hinweis, dass die lateinischen Unterschriftenlisten am
+Ende weggelassen sind.
+
+Stand vom 26.09.2026, vor dem Einbau:
 
 - **Textquelle fehlt.** Nur gemeinfreie Ausgaben kommen in Frage: das
   Konkordienbuch (1580) oder eine Ausgabe des 19. Jahrhunderts, etwa

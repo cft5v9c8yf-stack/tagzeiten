@@ -38,3 +38,20 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 16. Ton: nüchtern, warm, männlich ohne Pose. Kein Motivationsvokabular („Du schaffst das!", „Level up"), keine Emojis in der Oberfläche. Luthers Sprache darf stehen bleiben („flugs und fröhlich geschlafen").
 17. Buttons sagen, was passiert („Stille Zeit abschließen", nicht „Fertig!").
 
+## Arbeitsweise in Claude-Sitzungen
+
+Am 06.10.2026 aus der ersten, langen Sitzung übernommen, damit jede neue Sitzung damit weiterarbeiten kann.
+
+- **Zweig:** Gearbeitet und gepusht wird nur auf `claude/focused-pascal-sol6ng` (PR #1 nach `main`).
+- **Nie umbenennen:** den Namen der Datenbank (`'tagzeiten'` in `src/data/db.ts`) und `BACKUP_FORMAT` (`'tagzeiten'` in `src/domain/backup.ts`). Sonst findet die App die Einträge und alte Sicherungen nicht mehr.
+- **Die App startet immer auf „Heute“**, auch am Sonntag.
+- **Vor jedem Push:** `npx vitest run`, `npm run build` (prüft auch die Typen) und `npm run build:demo`. Schlägt etwas fehl, wird nicht gepusht.
+- **Jede sichtbare Änderung bekommt eine Version:** Nummer in `package.json` und `package-lock.json` anheben, Eintrag oben in `src/content/changelog.ts`, in den Worten der App. Bei einer neuen Nebenversion (0.x.0) auch die Versionsmuster in `src/features/settings/SettingsPage.test.tsx` anpassen. Commit-Titel auf Deutsch, mit der Version in Klammern, z. B. „Sonntag: … (0.36.0)“.
+- **Demo:** Nach dem Push `npm run build:demo` und `dist-demo/tagzeiten-demo.html` unter derselben Adresse neu veröffentlichen: https://claude.ai/artifact/E78ZqtEoD8Mhv7ADGAr39F (in einer neuen Sitzung das Artefakt vorher einmal lesen).
+- **Bibeltexte** Wort für Wort gegen Luther 1912 prüfen (README, Paket `xmlbible-lut1912`; die Pipeline auf GitHub prüft mit `LUT1912_DIR`). In Psalm 62,2 ist die digitale Ausgabe fehlerhaft.
+- **Geistliche Texte** wie Gebete oder Andachten schreibt Claude nicht selbst; Bibelworte und gemeinfreie Texte nach Regel 12 sind erlaubt. Fehlt ein Text, steht ein Platzhalter `[TEXT VON ANDREAS: …]`.
+- **Vorschläge für Andachtsliteratur** nur von lutherischen Verfassern.
+- **Sprache:** gutes, natürliches Deutsch, kein übersetztes Deutsch. Lange Wörter in schmalen Spalten mit Silbentrennung.
+- **Kleine Diffs:** keine Datei als Ganzes neu formatieren.
+- **Limit sparen:** Screenshots nur, wenn eine Darstellung wirklich geprüft oder gezeigt werden muss. Keine stündlichen Erinnerungen. Für ein neues Thema eine neue Sitzung; das Wissen steht hier und in `docs/backlog.md`.
+- **Weitere Artefakte:** „Henoch am Sonntag“ (Hilfe für das Haus und Gebetsgang als eigene Seite, Quelltext nicht im Repository): https://claude.ai/artifact/UiZea7Krxu37ectiXBU9YC · Entwurf der Widgets: https://claude.ai/artifact/5NL6udynWnCejjAorL6grt · „Henoch Listenmuster“: https://claude.ai/artifact/Dmbq6dK5V7imyq9GJDKY7V
