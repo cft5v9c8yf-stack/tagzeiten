@@ -9,6 +9,8 @@ import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { SundayPage } from '../features/sunday/SundayPage';
+import { SundayGuidePage } from '../features/sunday/SundayGuidePage';
+import { ScripturePrayerPage } from '../features/sunday/ScripturePrayerPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { Layout } from './Layout';
 import { NotFound } from './NotFound';
@@ -37,6 +39,8 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'morgen', element: <DevotionRedirect part="morgen" /> },
       { path: 'abend', element: <DevotionRedirect part="abend" /> },
       { path: 'sonntag', element: <SundayPage /> },
+      { path: 'sonntag/hilfe', element: <SundayGuidePage /> },
+      { path: 'sonntag/gebet', element: <ScripturePrayerPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'katechismus/:teil', element: <CatechismPage /> },
       { path: 'arena', element: <ArenaPage /> },

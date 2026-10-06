@@ -3097,3 +3097,109 @@ header.top .search-link:focus-visible {
 .to-chamber p {
   margin: 0 0 6px;
 }
+
+/* ---------------------------------------------------------------- Sunday: guide and prayer walk */
+/* LORD as in Luther Bibles: a capital H, the rest in small capitals. */
+.lord {
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+}
+.sunday-helps {
+  margin: 14px 0;
+}
+.sunday-rest .sunday-helps {
+  margin: 14px 0 0;
+}
+.preparation-hint {
+  display: block;
+  margin: 4px 0 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-m);
+  border: 1px dashed color-mix(in srgb, var(--gold) 55%, var(--rule));
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.preparation-hint:hover,
+.preparation-hint:focus-visible {
+  color: var(--ink);
+  border-style: solid;
+}
+.sunday-guide h3,
+.scripture-walk h3 {
+  margin: 22px 0 8px;
+}
+.sunday-guide section {
+  scroll-margin-top: 70px;
+}
+.guide-entry {
+  scroll-margin-top: 70px;
+}
+.guide-quote blockquote {
+  font-size: 1.08rem;
+}
+.guide-quote-source {
+  margin-top: 6px;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 400 !important;
+}
+.guide-sources ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.guide-sources h3 {
+  font-size: 0.95rem;
+}
+.walk-count {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.walk-step .flow-title {
+  margin-top: 2px;
+}
+.walk-passage {
+  margin: 12px 0 16px;
+}
+.walk-prose {
+  margin: 0 0 8px;
+}
+.walk-poem {
+  margin: 0 0 8px;
+}
+/* One line per line of the poem; a wrapped line hangs under its first word. */
+.walk-line {
+  display: block;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+.walk-line.is-indented {
+  padding-left: 2.4em;
+}
+.walk-pause {
+  margin: 18px 0 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-m);
+  background: color-mix(in srgb, var(--gold) 9%, transparent);
+  font-style: italic;
+}
+.walk-pause-mark {
+  font-style: normal;
+  color: var(--gold);
+}
+.walk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+.walk-source {
+  margin-top: 18px;
+}

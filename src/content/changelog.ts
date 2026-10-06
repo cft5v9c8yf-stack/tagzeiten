@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.36.0',
+    date: '2026-10-06',
+    title: 'Der Sonntag im Haus',
+    changes: [
+      { area: 'Sonntag', text: 'Neu: „Der Sonntag – eine Hilfe für das Haus“, eine Seite zum Lesen über Wort und Ruhe, einen Sonntag im Haus und was frei bleibt. Ab Samstag 18 Uhr führt ein Hinweis direkt zur Bereitung am Samstagabend.' },
+      { area: 'Sonntag', text: 'Neu: „Mit der Schrift beten“, ein Gebetsgang durch die Schrift in acht Schritten, von der Anbetung bis zum Segen. Nach jedem Schritt hältst du inne und betest mit eigenen Worten weiter. Am Ende kannst du Gedanken in der Gebetskammer festhalten.' },
+      { area: 'Sonntag', text: 'Am Sonntag stehen beide oben auf der Sonntagsseite und, mit der Sonntagsruhe, auch unter „Heute“. An den anderen Tagen findest du sie am Ende der Sonntagsseite.' },
+    ],
+  },
+  {
     version: '0.35.2',
     date: '2026-10-06',
     title: 'Mehr zu diesem Sonntag',

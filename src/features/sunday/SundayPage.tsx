@@ -12,6 +12,9 @@ import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleRef } from '../../ui/BibleRef';
 import { LectionDialog } from './LectionDialog';
 import { SundayChooser } from './SundayOverview';
+import { PreparationHint, SundayHelps } from './SundayHelps';
+import { useStore } from '../../data/hooks';
+import { weekdayOf } from '../../domain/dates';
 
 const SUNDAY_PARAM = 's';
 
@@ -80,6 +83,8 @@ export function useSundayLinks() {
     current,
     shown,
     sunday: (d?: DateKey) => to('/sonntag', d),
+    /** A page within the Sunday area (the guide, the prayer walk), keeping the selected day. */
+    page: (path: string) => to(path),
   };
 }
 
@@ -123,11 +128,16 @@ export function SundayPage() {
   const group = trinityGroupOf(c.weekKey);
   const summary = READING_SUMMARIES[c.weekKey];
   const feasts = feastsInWeek(s, next);
+  // Sundays: the guide and the prayer walk stand at the top; other days at the end.
+  const sunday = weekdayOf(date) === 0;
+  const now = useStore().currentTime();
+  const saturdayEvening = isToday && weekdayOf(date) === 6 && now.getHours() >= 18;
   const toChurchYear = (circle: string) =>
     withDate('/kirchenjahr', date, isToday) + (isToday ? '?' : '&') + `kreis=${circle}&woche=${c.weekKey}`;
 
   return (
     <div className="sunday-page">
+      {saturdayEvening && <PreparationHint page={links.page} />}
       <header className="sunday-head">
         <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Letzter Sonntag: ${churchDay(prev).week}`}>
           <span className="sunday-step-circle">
@@ -171,6 +181,8 @@ export function SundayPage() {
           </span>
         </Link>
       </header>
+
+      {sunday && <SundayHelps page={links.page} />}
 
       {verse && (
         <figure className="sunday-verse">
@@ -248,6 +260,8 @@ export function SundayPage() {
         </ol>
         <p>{SEASON_INFO[c.season]}</p>
       </section>
+
+      {!sunday && <SundayHelps page={links.page} />}
     </div>
   );
 }

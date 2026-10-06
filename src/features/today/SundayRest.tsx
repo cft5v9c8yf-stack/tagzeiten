@@ -6,12 +6,14 @@ import type { DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleRef } from '../../ui/BibleRef';
 import { LutherRose } from '../../ui/LutherRose';
+import { SundayHelps } from '../sunday/SundayHelps';
 
 /**
  * Sunday rest on "Heute": in place of the habits the Sunday itself stands at
- * the top, with its verse, its theme, and Gospel and Epistle as references.
+ * the top, with its verse, its theme, and Gospel and Epistle as references,
+ * and the guide for the house and the prayer walk.
  */
-export function SundayRest({ date, to }: { date: DateKey; to: string }) {
+export function SundayRest({ date, to, page }: { date: DateKey; to: string; page: (path: string) => string }) {
   const c = churchDay(date);
   const info = SUNDAY_INFO[c.weekKey];
   const verse = WEEKLY_VERSES[c.weekKey];
@@ -53,6 +55,7 @@ export function SundayRest({ date, to }: { date: DateKey; to: string }) {
       <Link className="btn primary sunday-rest-go" to={to}>
         Mehr zu diesem Sonntag
       </Link>
+      <SundayHelps page={page} />
     </section>
   );
 }

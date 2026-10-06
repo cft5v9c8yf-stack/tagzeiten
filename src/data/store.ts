@@ -252,6 +252,11 @@ export class Store {
 
   /* ------------------------------------------------------------ reads */
 
+  /** The current moment, from the store's clock (set in tests). */
+  currentTime(): Date {
+    return this.now();
+  }
+
   today(): DateKey {
     return currentTodayKey(this.now());
   }
