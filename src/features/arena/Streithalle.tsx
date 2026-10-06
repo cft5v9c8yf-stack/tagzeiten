@@ -17,8 +17,8 @@ function HallStart() {
     <>
       <div className="panel wa-head wa-invite">
         <p>
-          In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard, nach dem Plan des
-          Winter Arc. Ihre Gewohnheiten stehen während der Runde unter „Heute“.
+          In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard. Feste Gewohnheiten, die
+          dir helfen, geistlich zu wachsen. Die Gewohnheiten stehen während des Zeitraums unter „Heute“.
         </p>
         {!starting && (
           <button type="button" className="btn primary" onClick={() => setStarting(true)}>

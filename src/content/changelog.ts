@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.37.2',
+    date: '2026-10-06',
+    title: 'Die Streithalle, neu beschrieben',
+    changes: [
+      { area: 'Arena', text: 'Die Einladung in die Streithalle nennt den Winter Arc nicht mehr: Du hältst für einen Zeitraum deiner Wahl einen festen Tagesstandard, mit festen Gewohnheiten, die dir helfen, geistlich zu wachsen.' },
+    ],
+  },
+  {
     version: '0.37.1',
     date: '2026-10-06',
     title: 'Der Zuspruch im Wochenrückblick',
