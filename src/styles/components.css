@@ -426,6 +426,18 @@ details.fold[open] > summary {
   color: var(--muted);
   margin-bottom: 4px;
 }
+/* A label with something beside it, e.g. the Bible reference in the weekly review. */
+.field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.field-head .bible-ref {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  text-align: right;
+}
 textarea,
 input[type='text'],
 input[type='time'],

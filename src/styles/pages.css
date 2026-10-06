@@ -1620,6 +1620,21 @@ body.is-sorting * {
   user-select: none;
   -webkit-touch-callout: none;
 }
+/* ---------------------------------------------------------------- weekly review */
+/* What was noted at the evening thanks during the week, as a quiet reminder. */
+.week-noted {
+  margin: 0;
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.week-comfort {
+  margin: 18px 0 0;
+}
+.week-comfort .rubric {
+  margin: 0 0 6px;
+}
+
 .arena-comfort {
   margin: 16px 0;
   padding: 12px 14px;

@@ -1,12 +1,12 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import { toMinutes } from '../../domain/dayArc';
-import type { DateKey } from '../../domain/dates';
+import { weekdayOf, type DateKey } from '../../domain/dates';
 import type { EveningEntry, OrderForm } from '../../domain/model';
 import type { FlowIconName } from '../../ui/FlowIcon';
 import { Segmented } from '../../ui/Choice';
@@ -51,6 +51,13 @@ const SHORT: Record<string, string> = {
   compline: 'Nachtgebet',
 };
 
+/** Sunday evening in the full form, unless switched off: the weekly review takes the day's thanks and review. */
+const isWeekReview = (date: DateKey, form: OrderForm, on: boolean) => on && form === 'full' && weekdayOf(date) === 0;
+
+/** The steps of the Nachtgebet, with the weekly review in place of thanks and review (still before the examination, rule 3). */
+const withWeekReview = (steps: readonly OrderStep[], weekly: boolean): readonly OrderStep[] =>
+  weekly ? steps.map((st) => (st.id === 'review' ? WEEK_REVIEW_STEP : st)) : steps;
+
 const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
   id: order === 'vespers' ? st.id : `compline-${st.id}`,
   title: st.title,
@@ -65,14 +72,16 @@ const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
  * the review before the examination, never mixed (rule 3), the examination
  * always on one page with the word of forgiveness (rule 1).
  */
-function vespersPages(form: OrderForm, withCompline: boolean): EveningPage[] {
+function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean): EveningPage[] {
   const pages = getOrder('vespers', form).steps.map((st) => pageOf(st, 'vespers'));
   if (withCompline) return pages;
   if (form === 'short') {
     const review = getOrder('compline', 'short').steps[0]!.parts.find((p) => p.kind === 'review')!;
     return [...pages, pageOf({ id: 'review', title: 'Rückschau', minutes: 0, parts: [review] }, 'compline')];
   }
-  const taken = getOrder('compline', 'full').steps.filter((st) => st.id === 'review' || st.id === 'examination');
+  const taken = withWeekReview(getOrder('compline', 'full').steps, weekly).filter(
+    (st) => st.id === 'review' || st.id === 'examination',
+  );
   return [...pages, ...taken.map((st) => pageOf(st, 'compline'))];
 }
 
@@ -92,9 +101,10 @@ function VespersView({
   onOpenCompline: () => void;
 }) {
   const day = useDay(date);
-  const withCompline = useProfile().showCompline;
+  const profile = useProfile();
+  const withCompline = profile.showCompline;
   const form = day.evening.vespersForm;
-  const pages = vespersPages(form, withCompline);
+  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview));
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;
@@ -207,8 +217,11 @@ function ComplineView({
   onOpenVespers: () => void;
 }) {
   const day = useDay(date);
+  const profile = useProfile();
   const form = day.evening.complineForm;
-  const pages = getOrder('compline', form).steps.map((st) => pageOf(st, 'compline'));
+  const pages = withWeekReview(getOrder('compline', form).steps, isWeekReview(date, form, profile.weekReview)).map((st) =>
+    pageOf(st, 'compline'),
+  );
   const setForm = useFormSetter(date, 'complineForm');
   const complete = useCompletion(date, 'complineDone', 'Tag abgeschlossen');
   const done = day.evening.complineDone;

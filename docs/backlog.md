@@ -74,19 +74,24 @@ Bestand:
 
 | Punkt | Vorhanden | Fehlt |
 |---|---|---|
-| Wochenrückblick nach den Ständen | Stände der Haustafel in der Abendprüfung (Ehemann, Vater, Mitarbeiter, Gemeinde, Nächster; einer pro Wochentag, ohne Eingabe). Wochenrückblick der Streithalle mit drei Fragen und Zuspruch (Klgl 3,22–23). | Dank je Stand, Stand „Bürger“, Auswahl der Stände |
+| Wochenrückblick nach den Ständen | umgesetzt in 0.37.0 | Zuspruch `[TEXT VON ANDREAS]` |
 | Gedenktage in Mein Haus | Name und Anliegen pro Person; Reihe der Fürbitte (Mo Frau, Di–Fr Kinder, Sa Ehe, So Haus) | Daten und Vorrang vor der Reihe |
 | Fürbitte über das Haus hinaus | „Fürbitte“ im Morgen mit den Anliegen der Gebetsübersicht nach Wochentag | die sieben Themen der Wochentage |
 | Sonntagsruhe | umgesetzt in 0.35.0 | – |
 
 Plan:
 
-1. **Wochenrückblick** am Rückblickstag (Standard Sonntag) im Nachtgebet unter
-   „Dank und Rückschau“: je Stand eine Zeile „Wofür danke ich?“, höchstens ein
-   Vorsatz insgesamt. Bei aktiver Streithalle ihre drei Fragen im selben
-   Rückblick (dieselben Daten, nie zwei Rückblicke). Am Ende der Zuspruch
-   `[TEXT VON ANDREAS]`, danach erst Prüfung und Zuspruch (Regel 3). Stände
-   aus `src/content/examen.ts` wiederverwenden, „Bürger“ (Röm 13,1) ergänzen.
+1. **Wochenrückblick:** umgesetzt in 0.37.0, nach Entwurf D
+   (https://claude.ai/artifact/MDjkWE4GLEtEHaBK2Jt4wR). Am Sonntagabend im
+   vollen Nachtgebet an Stelle von „Dank und Rückschau“, vor Prüfung und
+   Zuspruch (Regel 3); die Kurzform bleibt kurz; unter „Darstellung“
+   abschaltbar. „Wofür danke ich?“ für: Frau und Kinder (mit Namen aus Mein
+   Haus, nur wenn eingetragen), Meine Gemeinde, Meine Arbeit, Meine Nächsten,
+   Unser Land (statt „Bürger“, mit 1. Timotheus 2,1–2), je mit einer
+   Bibelstelle; dazu höchstens ein Vorsatz. Oben, was die Woche über abends
+   beim Dank notiert wurde; bei laufender Streithalle ihre drei Fragen mit
+   denselben Daten. Am Ende der Zuspruch `[TEXT VON ANDREAS]`. Inhalte in
+   `src/content/weekReview.ts`. Offen: ein wählbarer Rückblickstag.
 2. **Gedenktage:** pro Person Geburtstag und Tauftag, bei der Ehefrau der
    Hochzeitstag. Ein Gedenktag geht der Reihe der Fürbitte vor. Drei Gebete
    als Platzhalter (Geburtstag, Tauftag, Hochzeitstag).
@@ -106,12 +111,7 @@ ein Commit pro Punkt.
 
 Offene Fragen vor dem Beginn:
 
-- **Reihenfolge der Stände:** nach Regel 18 Ehemann, Vater, Gemeinde, Arbeiter,
-  Bürger (der Auftrag nannte Arbeiter vor Gemeinde).
-- **Ort des Wochenrückblicks:** im Nachtgebet (Entwurf) oder in der
-  Gebetskammer der Arena.
 - **Pflege der Fürbitte über das Haus hinaus:** in Mein Haus (Auftrag) oder als
   Überschriften der Tage in der Gebetsübersicht (Empfehlung: vermeidet
   Doppeltes, deren „Fürbitte“ steht direkt darunter).
 - **Hochzeitstag:** im Mittelpunkt „unsere Ehe“ oder die Ehefrau.
-- **Bürger:** ersetzt den Stand „Nächster“ oder kommt dazu.

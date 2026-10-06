@@ -51,6 +51,13 @@ export const EVENING_FIELD_LABEL: Record<EveningTextField, string> = {
   intercession: 'Fürbitte (Vesper)',
   people: 'Menschen des Tages',
   passedOnTo: 'Weitergegeben an',
+  weekWife: 'Wochenrückblick: Dank für meine Frau',
+  weekChildren: 'Wochenrückblick: Dank für meine Kinder',
+  weekChurch: 'Wochenrückblick: Dank für meine Gemeinde',
+  weekWork: 'Wochenrückblick: Dank für meine Arbeit',
+  weekNeighbours: 'Wochenrückblick: Dank für meine Nächsten',
+  weekCountry: 'Wochenrückblick: Dank für unser Land',
+  weekResolve: 'Wochenrückblick: Vorsatz für die neue Woche',
 };
 
 const oneLine = (s: string) => s.replace(/\s*\n\s*/g, ' / ').trim();

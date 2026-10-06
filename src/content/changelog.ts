@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.37.0',
+    date: '2026-10-06',
+    title: 'Der Wochenrückblick',
+    changes: [
+      { area: 'Andacht', text: 'Neu: Am Sonntagabend steht im Nachtgebet der Wochenrückblick, an Stelle von Dank und Rückschau des Tages. Wofür danke ich in dieser Woche? Für meine Frau und die Kinder, mit ihren Namen aus „Mein Haus“, für meine Gemeinde, meine Arbeit, meine Nächsten und unser Land, jeweils mit einer Stelle aus der Schrift. Dazu höchstens ein Vorsatz für die neue Woche. Danach folgen wie immer Prüfung und Zuspruch.' },
+      { area: 'Andacht', text: 'Oben steht, was du die Woche über abends beim Dank notiert hast. Läuft eine Runde der Streithalle, stehen ihre drei Fragen im selben Rückblick. Die Taste „Weiter“ springt zum nächsten Feld.' },
+      { area: 'Mehr', text: 'Unter „Mehr → Darstellung“ lässt sich der Wochenrückblick ausschalten. Die Kurzform des Nachtgebets bleibt kurz.' },
+    ],
+  },
+  {
     version: '0.36.2',
     date: '2026-10-06',
     title: 'Die Vorbereitung am Samstagabend',

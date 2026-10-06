@@ -259,6 +259,30 @@ export function DisplaySettings() {
           ),
         },
         {
+          id: 'more.display.weekReview',
+          title: 'Wochenrückblick',
+          line: profile.weekReview ? 'Ein' : 'Aus',
+          icon: 'review',
+          content: (
+            <>
+              <Segmented
+                label="Wochenrückblick"
+                value={profile.weekReview ? 'on' : 'off'}
+                onChange={(v) => update((p) => ({ ...p, weekReview: v === 'on' }))}
+                options={[
+                  { value: 'on', label: 'Ein' },
+                  { value: 'off', label: 'Aus' },
+                ]}
+              />
+              <p className="small muted">
+                Am Sonntagabend steht im Nachtgebet statt Dank und Rückschau des Tages der Wochenrückblick: wofür du in
+                der Woche dankst, und höchstens ein Vorsatz für die neue Woche. Die Kurzform bleibt kurz. Was du
+                eingetragen hast, bleibt gespeichert, auch wenn du ihn ausschaltest.
+              </p>
+            </>
+          ),
+        },
+        {
           id: 'more.display.armor',
           title: 'Geistliche Waffenrüstung',
           line: state(profile.armor),

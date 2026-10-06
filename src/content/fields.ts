@@ -54,6 +54,13 @@ export const FIELDS: Record<FieldPath, FieldMeta> = {
   'evening.thanks.2': { label: 'und für …', single: true },
   'evening.people': { label: 'Menschen des Tages', single: true },
   'evening.passedOnTo': { label: 'Weitergegeben an', placeholder: 'Wem habe ich das Gelesene weitergegeben?', single: true },
+  'evening.weekWife': { label: 'Meine Frau', placeholder: 'Wofür danke ich?' },
+  'evening.weekChildren': { label: 'Meine Kinder', placeholder: 'Wofür danke ich?' },
+  'evening.weekChurch': { label: 'Meine Gemeinde', placeholder: 'Wofür danke ich?' },
+  'evening.weekWork': { label: 'Meine Arbeit', placeholder: 'Wofür danke ich?' },
+  'evening.weekNeighbours': { label: 'Meine Nächsten', placeholder: 'Wofür danke ich?' },
+  'evening.weekCountry': { label: 'Unser Land', placeholder: 'z. B. Frieden, Recht und Ordnung' },
+  'evening.weekResolve': { label: 'Ein Vorsatz', placeholder: 'Höchstens einer. Es geht auch ohne.' },
 };
 
 /** Fields with their own control instead of a text input. */

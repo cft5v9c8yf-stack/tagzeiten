@@ -36,6 +36,14 @@ export function DemoSetup() {
       },
     }), { immediate: true });
     store.updateDay(addDays(today, -3), (d) => ({ ...d, morning: { ...d.morning, done: true } }), { immediate: true });
+    // A few thanks of the week's evenings: the weekly review on Sunday shows them as a reminder.
+    for (const [i, thanks] of [
+      [2, 'Maries Lied auf der Flöte'],
+      [4, 'ein ruhiger Morgen vor der Arbeit'],
+      [5, 'der Besuch bei den Eltern'],
+    ] as const) {
+      store.updateDay(addDays(today, -i), (d) => ({ ...d, evening: { ...d.evening, thanks: [thanks] } }), { immediate: true });
+    }
     // Some weeks of habits, for the overview in the Rückblick: an even, human pattern, not perfect.
     for (let i = 2; i < 56; i++) {
       const k = addDays(today, -i);

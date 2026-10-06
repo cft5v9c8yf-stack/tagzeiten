@@ -44,7 +44,8 @@ export type PartKind =
   | 'morning-blessing'
   | 'evening-blessing'
   | 'house-intercession'
-  | 'house-blessing';
+  | 'house-blessing'
+  | 'week-review';
 
 /**
  * Path of a stored value within a Day, e.g. "morning.verse",
@@ -353,6 +354,18 @@ const COMPLINE_FULL: Order = {
       ],
     },
   ],
+};
+
+/**
+ * On Sunday evening the weekly review takes the place of the day's thanks and
+ * review in the full Nachtgebet: the same page, still before the examination
+ * (rule 3). The short form stays short.
+ */
+export const WEEK_REVIEW_STEP: Step = {
+  id: 'review',
+  title: 'Wochenrückblick',
+  minutes: 0,
+  parts: [p('week-review', 'Wochenrückblick')],
 };
 
 /** "Kreuzzeichen – Rückschau – Vaterunser – Abendsegen. Das genügt vollkommen." One page. */

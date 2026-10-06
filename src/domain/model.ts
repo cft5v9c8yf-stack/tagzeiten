@@ -46,6 +46,15 @@ export const EVENING_TEXT_FIELDS = [
   'intercession', // Vesper: Fürbitte
   'people', // Nachtgebet: Menschen des Tages
   'passedOnTo', // Nachtgebet: Weitergegeben an
+  // Nachtgebet on Sunday, the weekly review: thanks for the people and tasks of the week …
+  'weekWife',
+  'weekChildren',
+  'weekChurch',
+  'weekWork',
+  'weekNeighbours',
+  'weekCountry',
+  // … and at most one resolve for the new week.
+  'weekResolve',
 ] as const;
 
 /** Number of thanksgiving lines in compline. */
@@ -235,6 +244,12 @@ export interface Profile {
    * Rückblick; "Heute" shows the Sunday instead. Ticks already made are kept.
    */
   sundayRest: boolean;
+  /**
+   * The weekly review on Sunday evening: in the full Nachtgebet it takes the
+   * place of the day's thanks and review. What was written stays when it is
+   * switched off.
+   */
+  weekReview: boolean;
   /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */
   showAtBed: boolean;
   /**

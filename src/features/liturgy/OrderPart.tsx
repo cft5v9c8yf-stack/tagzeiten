@@ -59,6 +59,7 @@ import { PartFields } from './PartFields';
 import { DayField } from '../../ui/DayField';
 import { Segmented } from '../../ui/Choice';
 import { Review } from './Review';
+import { WeekReview } from './WeekReview';
 
 export interface PartContext {
   order: OrderId;
@@ -451,6 +452,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
           <ToChamber />
         </>
       );
+
+    case 'week-review':
+      return <WeekReview date={ctx.date} />;
 
     case 'examination':
       return <Examination date={ctx.date} />;
