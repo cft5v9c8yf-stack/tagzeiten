@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
-import { useStore } from '../data/hooks';
+import { useProfile, useStore } from '../data/hooks';
 import { addDays } from '../domain/dates';
+
+/** The Sunday preview (scripts/build-demo.mjs): the clock stands on Sunday. */
+const sundayPreview = () => window.henochDemo?.sunday === true;
 
 /**
  * Demo only: a few example entries so that the evening review of yesterday
  * shows up as a suggestion this morning. Written once into an empty database.
+ * The Sunday preview also switches Sunday rest on.
  */
 export function DemoSetup() {
   const store = useStore();
@@ -49,6 +53,7 @@ export function DemoSetup() {
         ...p,
         habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
         showHabitHistory: true,
+        sundayRest: sundayPreview() || p.sundayRest,
         arena: [
           {
             id: 'demo-1',
@@ -111,10 +116,14 @@ export function DemoSetup() {
 }
 
 export function DemoBanner() {
+  const resting = useProfile().sundayRest;
   return (
     <p className="demo-banner">
-      Vorschau mit Beispieldaten. Einträge bleiben nur in diesem Browser. Export und Import sind in der Vorschau
-      gesperrt; in der installierten App funktionieren sie.
+      {sundayPreview()
+        ? `Sonntagsvorschau mit Beispieldaten: Die Uhr ist auf Sonntag gestellt${resting ? ', die Sonntagsruhe ist eingeschaltet' : ''}.`
+        : 'Vorschau mit Beispieldaten.'}{' '}
+      Einträge bleiben nur in diesem Browser. Export und Import sind in der Vorschau gesperrt; in der installierten
+      App funktionieren sie.
     </p>
   );
 }

@@ -1,7 +1,8 @@
 /**
  * Packs the demo build (vite build --mode demo) into one self-contained HTML
  * fragment: CSS and JS inline, fonts as data URIs (woff2 only).
- * Output: dist-demo/tagzeiten-demo.html
+ * Output: dist-demo/tagzeiten-demo.html, and dist-demo/tagzeiten-demo-sonntag.html
+ * with the clock on the coming Sunday.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -23,12 +24,37 @@ css = css.replace(/url\(\/?\.?\/?(?:assets\/)?([^)]+\.woff2)\)/g, (_, f) => {
 const js = readFileSync(join(dir, jsSrc), 'utf8').replace(/<\/script/gi, '<\\/script');
 const themeScript = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? '';
 
-const out = `<title>Henoch</title>
+// The Sunday preview: the same app with its clock on the coming Sunday (today, if it is
+// one) at the present time of day. The demo data switch Sunday rest on (src/demo).
+const sundayClock = `(() => {
+  const RealDate = Date;
+  const now = RealDate.now();
+  const sunday = new RealDate(now);
+  sunday.setDate(sunday.getDate() + ((7 - sunday.getDay()) % 7));
+  const offset = sunday.getTime() - now;
+  function SundayDate(...args) {
+    if (!new.target) return new RealDate(RealDate.now() + offset).toString();
+    return args.length ? new RealDate(...args) : new RealDate(RealDate.now() + offset);
+  }
+  SundayDate.prototype = RealDate.prototype;
+  SundayDate.now = () => RealDate.now() + offset;
+  SundayDate.parse = RealDate.parse;
+  SundayDate.UTC = RealDate.UTC;
+  window.Date = SundayDate;
+  window.henochDemo = { sunday: true };
+})();`;
+
+const page = (title, extra = '') => `<title>${title}</title>
 <meta name="description" content="Eine Ordnung für Morgen und Abend">
-<script>${themeScript}</script>
+<script>${themeScript}</script>${extra}
 <style>${css}</style>
 <div id="root"></div>
 <script type="module">${js}</script>
 `;
-writeFileSync(join(dir, 'tagzeiten-demo.html'), out);
-console.log(`dist-demo/tagzeiten-demo.html ${(out.length / 1024).toFixed(0)} KB`);
+for (const [file, out] of [
+  ['tagzeiten-demo.html', page('Henoch')],
+  ['tagzeiten-demo-sonntag.html', page('Henoch Sonntagsvorschau', `\n<script>${sundayClock}</script>`)],
+]) {
+  writeFileSync(join(dir, file), out);
+  console.log(`dist-demo/${file} ${(out.length / 1024).toFixed(0)} KB`);
+}
