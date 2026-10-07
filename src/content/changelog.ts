@@ -13,12 +13,20 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.38.1',
+    date: '2026-10-07',
+    title: 'Neue Namen in der Streithalle',
+    changes: [
+      { area: 'Arena', text: 'Die Anleitung der Streithalle heißt jetzt „Der 90-Tage-Standard“, die Liste daraus beim Start einer Runde „Vorlage“. Eine Runde ohne eigenen Namen heißt einfach „Runde“; den Namen wählst du frei, etwa „Fastenzeit“.' },
+    ],
+  },
+  {
     version: '0.38.0',
     date: '2026-10-07',
     title: 'Eigene Gewohnheiten in der Streithalle',
     changes: [
-      { area: 'Arena', text: 'In der Streithalle legst du die Gewohnheiten selbst fest. Unter „Meine Gewohnheiten“ fügst du eigene hinzu, änderst Wortlaut, Tage und Block (Morgen, Haus, Arbeit), sortierst sie und nimmst heraus, was nicht passt. Was der Winter Arc vorschlägt, steht darunter zum Aufnehmen bereit.' },
-      { area: 'Arena', text: 'Eine neue Runde beginnt mit den Gewohnheiten der letzten Runde, mit der Liste des Winter Arc oder leer. Jede Runde behält ihre eigene Liste; frühere Runden bleiben, wie sie waren.' },
+      { area: 'Arena', text: 'In der Streithalle legst du die Gewohnheiten selbst fest. Unter „Meine Gewohnheiten“ fügst du eigene hinzu, änderst Wortlaut, Tage und Block (Morgen, Haus, Arbeit), sortierst sie und nimmst heraus, was nicht passt. Was die Vorlage vorschlägt, steht darunter zum Aufnehmen bereit.' },
+      { area: 'Arena', text: 'Eine neue Runde beginnt mit den Gewohnheiten der letzten Runde, mit der Vorlage oder leer. Jede Runde behält ihre eigene Liste; frühere Runden bleiben, wie sie waren.' },
       { area: 'Arena', text: 'Nimmst du eine Gewohnheit heraus, die du schon abgehakt hast, bleiben ihre Haken gespeichert und stehen im Export. Die Uhrzeiten schreibst du jetzt direkt in den Wortlaut, etwa „05:00 auf, kein Handy“.' },
     ],
   },
@@ -43,7 +51,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-06',
     title: 'Die Streithalle, neu beschrieben',
     changes: [
-      { area: 'Arena', text: 'Die Einladung in die Streithalle nennt den Winter Arc nicht mehr: Du hältst für einen Zeitraum deiner Wahl einen festen Tagesstandard, mit festen Gewohnheiten, die dir helfen, geistlich zu wachsen.' },
+      { area: 'Arena', text: 'Die Einladung in die Streithalle ist neu gefasst: Du hältst für einen Zeitraum deiner Wahl einen festen Tagesstandard, mit festen Gewohnheiten, die dir helfen, geistlich zu wachsen.' },
     ],
   },
   {
@@ -218,7 +226,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: 'Die Streithalle für jeden Zeitraum',
     changes: [
-      { area: 'Einstellungen', text: 'Unter Darstellung heißt der Schalter jetzt „Streithalle“. Eine Runde bekommt einen Namen, etwa „Winter Arc“ oder „Fastenzeit“, ein Startdatum und einen letzten Tag oder eine Dauer, von einem Tag bis zu einem Jahr. Der Plan des Winter Arc bleibt die Anleitung.' },
+      { area: 'Einstellungen', text: 'Unter Darstellung heißt der Schalter jetzt „Streithalle“. Eine Runde bekommt einen Namen, etwa „Fastenzeit“, ein Startdatum und einen letzten Tag oder eine Dauer, von einem Tag bis zu einem Jahr. Der 90-Tage-Standard bleibt die Anleitung.' },
       { area: 'Arena', text: 'Der Name der Runde steht über der Streithalle, im Rückblick und im Export.' },
     ],
   },
@@ -227,7 +235,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: '„Heute“ im Modus der Streithalle',
     changes: [
-      { area: 'Heute', text: 'Solange der Winter Arc läuft, stehen unter „Heute“ die Gewohnheiten der Streithalle an Stelle der übrigen, mit einem Weg zur Streithalle. Deine übrigen Gewohnheiten bleiben gespeichert und kommen zurück, wenn die Runde endet oder du den Winter Arc ausschaltest.' },
+      { area: 'Heute', text: 'Solange eine Runde läuft, stehen unter „Heute“ die Gewohnheiten der Streithalle an Stelle der übrigen, mit einem Weg zur Streithalle. Deine übrigen Gewohnheiten bleiben gespeichert und kommen zurück, wenn die Runde endet oder du die Streithalle ausschaltest.' },
     ],
   },
   {
@@ -263,18 +271,18 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Streithalle: Abschluss, Rückblick und Gewohnheiten',
     changes: [
       { area: 'Arena', text: 'Nach dem letzten Tag einer Runde zeigt die Streithalle „Tag 90 – und danach“ mit den Wochenrückblicken der Runde. Von dort beginnst du eine neue Runde oder exportierst alles als Markdown.' },
-      { area: 'Rückblick', text: 'Unter „Streithalle“ stehen alle Runden des Winter Arc, auch beendete, zum Nachlesen.' },
-      { area: 'Heute', text: 'Solange der Winter Arc läuft, stehen seine Gewohnheiten unter „Heute“ in der Gruppe Streithalle. Ein Haken dort gilt auch in der Streithalle.' },
+      { area: 'Rückblick', text: 'Unter „Streithalle“ stehen alle Runden, auch beendete, zum Nachlesen.' },
+      { area: 'Heute', text: 'Solange eine Runde läuft, stehen ihre Gewohnheiten unter „Heute“ in der Gruppe Streithalle. Ein Haken dort gilt auch in der Streithalle.' },
       { area: 'Gewohnheiten', text: 'Gewohnheiten mit deiner Frau, deinen Kindern oder der Familie erscheinen erst, wenn sie unter „Mein Haus“ eingetragen sind.' },
-      { area: 'Arena', text: 'Die beiden Arbeitsblöcke sind aus der Liste des Winter Arc genommen.' },
+      { area: 'Arena', text: 'Die beiden Arbeitsblöcke sind aus der Liste der Streithalle genommen.' },
     ],
   },
   {
     version: '0.23.0',
     date: '2026-10-01',
-    title: 'Der Winter Arc in der Streithalle',
+    title: 'Der 90-Tage-Standard in der Streithalle',
     changes: [
-      { area: 'Einstellungen', text: 'Unter Darstellung lässt sich der Winter Arc einschalten, der 90-Tage-Standard: mit Startdatum und Dauer in Kalendertagen, eigenen Wochentagen je Punkt und deinen Zeiten. Ausgeschaltet bleibt die Runde mit allen Haken und Rückblicken erhalten.' },
+      { area: 'Einstellungen', text: 'Unter Darstellung lässt sich der 90-Tage-Standard einschalten: mit Startdatum und Dauer in Kalendertagen, eigenen Wochentagen je Punkt und deinen Zeiten. Ausgeschaltet bleibt die Runde mit allen Haken und Rückblicken erhalten.' },
       { area: 'Arena', text: 'Solange er läuft, steht neben Gebetskammer und Eisenschmiede die Streithalle: wo die Runde steht, Vers und Auftrag der Woche, die Liste für heute, die Woche als Raster zum Nachtragen, Wochenstandard und Wochenrückblick mit dem Zuspruch aus Klagelieder 3. Darunter die Anleitung.' },
     ],
   },

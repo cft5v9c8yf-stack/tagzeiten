@@ -68,7 +68,7 @@ describe('Streithalle', () => {
     await renderArena('/arena', (s) => s.startWinterArc('2026-09-14', 90));
     // The Gebetskammer stays first.
     expect(document.querySelector('.arena-place-title')!.textContent).toBe('Gebetskammer');
-    expect(screen.getByRole('link', { name: /^Streithalle/ }).textContent).toContain('Winter Arc · Tag 13 von 90');
+    expect(screen.getByRole('link', { name: /^Streithalle/ }).textContent).toContain('Runde · Tag 13 von 90');
     fireEvent.click(screen.getByRole('link', { name: /^Streithalle/ }));
     const hall = document.querySelector('.streithalle')!;
     // Word first: Psalm 144,1 above the plan.
@@ -178,8 +178,8 @@ describe('Streithalle', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
     const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
     const begins = within(dialog).getByRole('group', { name: 'Womit die Runde beginnt' });
-    // No round before: the plan of the Winter Arc, or an empty list.
-    expect(within(begins).getAllByRole('button').map((b) => b.textContent)).toEqual(['Winter Arc', 'Leer']);
+    // No round before: the template, or an empty list.
+    expect(within(begins).getAllByRole('button').map((b) => b.textContent)).toEqual(['Vorlage', 'Leer']);
     fireEvent.click(within(begins).getByRole('button', { name: 'Leer' }));
     fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
     expect(store.getProfile().winterArc.runs[0]!.points).toEqual([]);

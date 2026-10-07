@@ -5,7 +5,6 @@ import type { Profile } from '../../domain/model';
 import {
   activeRun,
   DEFAULT_DURATION,
-  DEFAULT_RUN_NAME,
   daysBetween,
   NAME_MAX,
   runName,
@@ -57,7 +56,7 @@ export function WinterArcStartPanel({
   const profile = useProfile();
   const last = lastRun(profile.winterArc);
   const [standard, setStandard] = useState<StandardStart>(last ? 'last' : 'plan');
-  const [name, setName] = useState(DEFAULT_RUN_NAME);
+  const [name, setName] = useState('');
   const [start, setStart] = useState<DateKey>(today);
   const [duration, setDuration] = useState(String(DEFAULT_DURATION));
   const days = Number(duration);
@@ -76,7 +75,7 @@ export function WinterArcStartPanel({
           type="text"
           maxLength={NAME_MAX}
           value={name}
-          placeholder={DEFAULT_RUN_NAME}
+          placeholder="z. B. Fastenzeit"
           onChange={(e) => setName(e.target.value)}
         />
       </div>
@@ -134,7 +133,7 @@ export function WinterArcStartPanel({
           onChange={setStandard}
           options={[
             ...(last ? [{ value: 'last' as const, label: 'Wie zuletzt' }] : []),
-            { value: 'plan', label: 'Winter Arc' },
+            { value: 'plan', label: 'Vorlage' },
             { value: 'empty', label: 'Leer' },
           ]}
         />
@@ -142,7 +141,7 @@ export function WinterArcStartPanel({
           {standard === 'last' && last
             ? `Die Gewohnheiten der letzten Runde („${runName(last)}“). `
             : standard === 'plan'
-              ? 'Die Liste aus dem Plan des Winter Arc. '
+              ? 'Die Liste aus dem 90-Tage-Standard der Anleitung. '
               : 'Du legst deine Gewohnheiten selbst an. '}
           Ändern kannst du sie jederzeit unter „Meine Gewohnheiten“.
         </p>
@@ -193,8 +192,8 @@ export function WinterArcSettings({ withStandard = true }: { withStandard?: bool
       />
       <p className="small muted">
         In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard. Die Gewohnheiten legst
-        du selbst fest; der Winter Arc dient als Vorlage. Die Reihenfolge ist: Gott, Familie und Haus, Gemeinde, Arbeit,
-        ich. Eingeschaltet findest du die Streithalle in der Arena und ihre Gewohnheiten unter „Heute“. Die
+        du selbst fest; der 90-Tage-Standard dient als Vorlage. Die Reihenfolge ist: Gott, Familie und Haus, Gemeinde,
+        Arbeit, ich. Eingeschaltet findest du die Streithalle in der Arena und ihre Gewohnheiten unter „Heute“. Die
         Waffenrüstung bleibt davon unberührt.
       </p>
       {run && !panel && (

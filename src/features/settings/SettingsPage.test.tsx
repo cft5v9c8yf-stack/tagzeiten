@@ -298,7 +298,7 @@ describe('Mehr: Aufbau', () => {
       s.startWinterArc('2026-09-21', 90);
     });
     expect(await screen.findByText('2 Runden der Streithalle')).toBeTruthy();
-    const old = screen.getByRole('button', { name: /^Winter Arc: Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
+    const old = screen.getByRole('button', { name: /^Runde: Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
     fireEvent.click(old);
     expect(screen.getByText('Morgens zuerst das Wort')).toBeTruthy();
     expect(screen.getByText(/alle Morgen neu/)).toBeTruthy();
@@ -308,7 +308,8 @@ describe('Mehr: Aufbau', () => {
     const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
     fireEvent.click(within(await screen.findByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
     const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
-    expect((within(dialog).getByLabelText('Name der Runde') as HTMLInputElement).value).toBe('Winter Arc');
+    // No name is given beforehand; without one a round is simply "Runde".
+    expect((within(dialog).getByLabelText('Name der Runde') as HTMLInputElement).value).toBe('');
     fireEvent.change(within(dialog).getByLabelText('Name der Runde'), { target: { value: '  Fastenzeit  2027 ' } });
     fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2027-02-17' } });
     fireEvent.change(within(dialog).getByLabelText('Letzter Tag'), { target: { value: '2027-04-03' } });
@@ -325,10 +326,10 @@ describe('Mehr: Aufbau', () => {
   it('leads from the habits in the Rückblick to the dashboard of the Streithalle', async () => {
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
       s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
-      s.startWinterArc('2026-09-21', 90, 'Winter Arc');
+      s.startWinterArc('2026-09-21', 90, 'Fastenzeit');
     }, ['review.habits']);
     await screen.findAllByText(/mit Einträgen/);
-    const link = await screen.findByRole('link', { name: /Winter Arc\s*·\s*Tag 5 von 90/ });
+    const link = await screen.findByRole('link', { name: /Fastenzeit\s*·\s*Tag 5 von 90/ });
     expect(link.getAttribute('href')).toBe('/arena?bereich=streithalle');
   });
 

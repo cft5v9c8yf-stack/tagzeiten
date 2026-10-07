@@ -1,6 +1,8 @@
 /**
- * The Winter Arc ("Der 90-Tage-Standard"), word for word after
+ * The plan of the Streithalle ("Der 90-Tage-Standard"), word for word after
  * reference/winter-arc.md. Bible verses after Luther 1912, as given there.
+ * On request the plan's own name ("Winter Arc") stands nowhere in the app
+ * (07.10.2026); code and stored data keep their names.
  */
 import type { HouseNeed } from '../domain/house';
 import type { DayBlock, WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
@@ -78,7 +80,7 @@ export const STREITHALLE_VERSE = verse(
   'Ps 144,1',
 );
 
-export const WINTER_ARC_TITLE = 'Winter Arc – Der 90-Tage-Standard';
+export const WINTER_ARC_TITLE = 'Der 90-Tage-Standard';
 
 export const WINTER_ARC_LEAD =
   'Gott zuerst, dann das Haus, dann die Arbeit: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.';
@@ -88,7 +90,7 @@ export const WINTER_ARC_ABOUT = {
   paragraphs: [
     'Dieser Plan bringt keine neuen Erkenntnisse. Er ist ein Maßstab: eine kurze Liste dessen, was du jeden Tag tust, aufgeschrieben, abends abgehakt und 90 Tage lang gehalten.',
     'Die meisten Männer scheitern nicht, weil sie es nicht besser wüssten. Sie scheitern, weil in ihrem Tag nichts feststeht. Das Handy bestimmt den Morgen, die Arbeit den Abend, und Gott und die Familie bekommen den Rest.',
-    'Der Winter Arc dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Das Haus bekommt den Rest von dir, wach und gegenwärtig. Die Arbeit bekommt ihre Stunden, aber nur diese.',
+    'Der 90-Tage-Standard dreht diese Reihenfolge um. Gott bekommt die erste Stunde. Das Haus bekommt den Rest von dir, wach und gegenwärtig. Die Arbeit bekommt ihre Stunden, aber nur diese.',
   ],
   phases: [
     { weeks: '1 bis 4', phase: 'Disziplin', question: 'Kann ich es halten?' },

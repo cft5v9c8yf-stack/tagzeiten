@@ -315,7 +315,7 @@ export function openStandard() {
 /**
  * "Meine Gewohnheiten": the standard of a round in the user's own words, by the
  * blocks of the day (Morgen, Haus, Arbeit), then week and month. Anything can
- * be added, changed, sorted and taken out; the plan of the Winter Arc offers
+ * be added, changed, sorted and taken out; the template (the plan) offers
  * what the list does not hold.
  */
 export function WinterArcStandard({ run, level = 6 }: { run: WinterArcRun; level?: 4 | 5 | 6 }) {
@@ -371,8 +371,8 @@ export function WinterArcStandard({ run, level = 6 }: { run: WinterArcRun; level
       })}
       <AddPoint run={run} H={H} />
       {fromPlan.length > 0 && (
-        <section className="wa-standard-suggest" aria-label="Aus dem Winter Arc">
-          <H>Aus dem Winter Arc</H>
+        <section className="wa-standard-suggest" aria-label="Aus der Vorlage">
+          <H>Aus der Vorlage</H>
           <div className="chips">
             {fromPlan.map((p) => (
               <button key={p.id} type="button" className="chip" onClick={() => takeUp(p)}>

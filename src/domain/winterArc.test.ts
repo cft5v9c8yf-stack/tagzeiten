@@ -18,6 +18,7 @@ import {
   totalWeeks,
   weekDates,
   weekOfDay,
+  runName,
 } from './winterArc';
 
 // A zone with summer and winter time, so the changes on 25.10.2026 and 28.03.2027 are real here.
@@ -104,6 +105,21 @@ describe('Winter Arc rounds', () => {
     const off = endRun(data, 3);
     expect(activeRun(off)).toBeUndefined();
     expect(off.days).toHaveLength(1);
+  });
+
+  it('no longer names a round "Winter Arc": the old default name reads as "Runde"', () => {
+    const data = normalizeWinterArc({
+      runs: [
+        { id: 'a', name: 'Winter Arc', startDate: '2026-09-21', durationDays: 90, status: 'active', createdAt: 1, updatedAt: 1 },
+        { id: 'b', name: 'Fastenzeit', startDate: '2026-02-18', durationDays: 40, status: 'ended', createdAt: 0, updatedAt: 0 },
+      ],
+      days: [],
+      weeks: [],
+      months: [],
+    });
+    expect(data.runs[0]!.name).toBeUndefined();
+    expect(data.runs.map(runName)).toEqual(['Runde', 'Fastenzeit']);
+    expect(runName({ name: 'Winter Arc' })).toBe('Runde');
   });
 
   it('cleans imported rounds', () => {

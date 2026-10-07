@@ -193,7 +193,7 @@ describe('Today', () => {
       'Woche und Monat',
     ]);
     // Next to the title: the name of the round and its span.
-    expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Winter Arc · 23.9.–21.12.2026');
+    expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Runde · 23.9.–21.12.2026');
     // "Heute" is in the mode of the Streithalle: the usual habits give way to it.
     expect(screen.getByRole('button', { name: /^Streithalle/ })).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Bibel lesen, Fr 25.9.' })).toBeNull();

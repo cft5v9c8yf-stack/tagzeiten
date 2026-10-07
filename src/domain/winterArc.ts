@@ -281,10 +281,14 @@ export function endRun(data: WinterArcData, now: number): WinterArcData {
 /* ------------------------------------------------------------ normalizing */
 
 export const NAME_MAX = 60;
-export const DEFAULT_RUN_NAME = 'Winter Arc';
+/** What a round without a name of its own goes by. */
+export const DEFAULT_RUN_NAME = 'Runde';
+/** The name a round got by default until 0.38.1; on request the plan's name is no longer used (07.10.2026). */
+const OLD_DEFAULT_NAME = 'Winter Arc';
 const cleanName = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX);
 /** The name a round goes by. */
-export const runName = (run: Pick<WinterArcRun, 'name'>): string => run.name || DEFAULT_RUN_NAME;
+export const runName = (run: Pick<WinterArcRun, 'name'>): string =>
+  run.name && run.name !== OLD_DEFAULT_NAME ? run.name : DEFAULT_RUN_NAME;
 
 const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object';
 const num = (x: unknown, fallback = 0) => (typeof x === 'number' && Number.isFinite(x) ? x : fallback);
@@ -344,7 +348,7 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
     const name = cleanName(str(r.name));
     runs.push({
       id: r.id,
-      ...(name ? { name } : {}),
+      ...(name && name !== OLD_DEFAULT_NAME ? { name } : {}),
       startDate: r.startDate as DateKey,
       durationDays: r.durationDays as number,
       status: r.status === 'active' ? 'active' : 'ended',
