@@ -140,9 +140,10 @@ export function removeOwn(p: Profile, id: string, now: number): Profile {
 }
 
 /**
- * Habits that can be written down in the Gebetskammer: the thanks, and the
- * journal of a round taken over from the Streithalle. Never the examination of
- * conscience: sins are prayed, not written down (rule 9).
+ * Habits that can be written down: the thanks (in the lines of the
+ * Nachtgebet's thanks, or freely in the Gebetskammer), and the journal of a
+ * round taken over from the Streithalle. Never the examination of conscience:
+ * sins are prayed, not written down (rule 9).
  */
 export const canWrite = (h: Pick<Habit, 'id'>): boolean => h.id === 'wz-dankbarkeit' || /^wz-.+-journal$/.test(h.id);
 

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.5',
+    date: '2026-10-07',
+    title: 'Der Dank in seinen Zeilen',
+    changes: [
+      { area: 'Heute', text: '„Aufschreiben“ bei der Dankbarkeit öffnet die drei Zeilen „Ich danke dir, mein Gott, für …“ des Tages. Der Dank steht dann auch im Nachtgebet und im Wochenrückblick. Beim Tagebuch einer übernommenen Runde steht davor „Der Satz, der mich trifft“. Wer lieber frei schreibt, geht von dort in die Gebetskammer.' },
+    ],
+  },
+  {
     version: '0.39.4',
     date: '2026-10-07',
     title: 'Die Gewissenserforschung auf eigener Seite',

@@ -132,24 +132,64 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(store.getDay('2026-09-25').habits['wz-freitagsfasten']).toBe(true);
   });
 
-  it('writes the thanks in the Gebetskammer: saved, ticked, and back in the list; on paper the tick alone does', async () => {
+  it('writes the thanks in the lines of the Nachtgebet: saved, ticked, and back in the list; on paper the tick alone does', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     tab('Tag');
     // Only the thanks can be written down, nothing else of the list.
     expect(screen.getAllByRole('button', { name: 'Aufschreiben' })).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
+    const page = (await screen.findByRole('heading', { level: 2, name: 'Dankbarkeit' })).closest('article') as HTMLElement;
     // The way back is named; without a word written, nothing is ticked.
-    expect(await screen.findByRole('button', { name: 'Zurück zur Liste' })).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('Was dich bewegt'), { target: { value: 'Für das Gespräch mit Anna' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    expect(within(page).getByRole('button', { name: 'Zurück zur Liste' })).toBeTruthy();
+    fireEvent.change(within(page).getByLabelText('Ich danke dir, mein Gott, für …'), { target: { value: 'das Gespräch mit Anna' } });
+    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
     expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
     expect(store.getDay('2026-09-26').habits['wz-dankbarkeit']).toBe(true);
-    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Für das Gespräch mit Anna']);
+    // The same thanks as in the Nachtgebet; no entry in the Gebetskammer.
+    expect(store.getDay('2026-09-26').evening.thanks[0]).toBe('das Gespräch mit Anna');
+    expect(store.getProfile().arena).toHaveLength(0);
     const day = within(document.querySelector('.wa-day') as HTMLElement);
     expect(day.getByRole('checkbox', { name: 'Dankbarkeit' }).getAttribute('aria-checked')).toBe('true');
     // On paper: the tick alone, as before.
     fireEvent.click(day.getByRole('checkbox', { name: 'Morgensegen' }));
     expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
+  });
+
+  it('asks the journal of a round taken over for the sentence of the day too', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      s.startDesert('2026-09-14', 40);
+      s.updateProfile(
+        (p) => ({
+          ...p,
+          habits: [
+            ...p.habits,
+            { id: 'wz-old-journal', name: 'Tagebuch und drei Dankpunkte', rhythm: 'daily', auto: null, active: false, preset: false, focus: false, desert: 'own' },
+          ],
+          winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: ['wz-old-journal'] })) },
+        }),
+        { immediate: true },
+      );
+    });
+    tab('Tag');
+    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
+    const page = (await screen.findByRole('heading', { level: 2, name: 'Tagebuch und drei Dankpunkte' })).closest('article') as HTMLElement;
+    fireEvent.change(within(page).getByLabelText('Der Satz, der mich trifft'), { target: { value: 'Seid stille und erkennet' } });
+    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ });
+    expect(store.getDay('2026-09-26').morning.verse).toBe('Seid stille und erkennet');
+    expect(store.getDay('2026-09-26').habits['wz-old-journal']).toBe(true);
+  });
+
+  it('lets the thanks be written freely in the Gebetskammer instead, ticked when saved', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    tab('Tag');
+    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Lieber frei in der Gebetskammer schreiben' }));
+    fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Für das Gespräch mit Anna' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
+    expect(store.getDay('2026-09-26').habits['wz-dankbarkeit']).toBe(true);
+    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Für das Gespräch mit Anna']);
   });
 
   it('prays the examination of conscience on a page of its own: Word first, no field, ending in the absolution', async () => {

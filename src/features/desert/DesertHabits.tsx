@@ -3,6 +3,7 @@ import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
 import { canExamine, canWrite, habitsOf, listedOn, meantFor } from '../../domain/desert';
 import { EXAMEN_SLUG } from './DesertExamen';
+import { THANKS_SLUG } from './DesertThanks';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import type { Habit } from '../../domain/model';
 import { isInRun, type WinterArcRun } from '../../domain/winterArc';
@@ -23,7 +24,7 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   const navigate = useNavigate();
   const location = useLocation();
   const today = store.today();
-  // A new entry in the Gebetskammer, or the page of the examination; done, it ticks the habit and leads back here.
+  // The page of the thanks or of the examination; done, it ticks the habit and leads back here.
   const open = (h: Habit, page: string) => {
     const query = new URLSearchParams({ gewohnheit: h.id, tag: date, zurueck: location.pathname + location.search });
     navigate(`/arena/${page}?${query}`);
@@ -46,7 +47,7 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
             {h.name}
           </Tick>
           {canWrite(h) && date <= today && (
-            <button type="button" className="wa-row-action" onClick={() => open(h, store.addArenaEntry())}>
+            <button type="button" className="wa-row-action" onClick={() => open(h, THANKS_SLUG)}>
               Aufschreiben
             </button>
           )}
