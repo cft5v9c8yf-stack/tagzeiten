@@ -13,30 +13,38 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.1',
+    date: '2026-10-07',
+    title: 'Die Wüstenwanderung',
+    changes: [
+      { area: 'Arena', text: 'Der Ort in der Arena heißt jetzt „Wüstenwanderung“. Jede einzelne Zeit darin bleibt eine Wüstenzeit, ebenso der Schalter unter Darstellung und die Gruppe unter „Heute“.' },
+    ],
+  },
+  {
     version: '0.39.0',
     date: '2026-10-07',
     title: 'Die Wüstenzeit',
     changes: [
-      { area: 'Arena', text: 'Aus der Streithalle wird die Wüstenzeit: ein fester Zeitraum von 40 oder 90 Tagen oder frei gewählt, mit Gewohnheiten aus vier Paketen (Aufbruch, Wüstenweg, Wie die Wüstenväter, Hauskirche), aus weiteren Vorschlägen oder eigenen. Ein Paket übernimmst du auf einmal, jede Gewohnheit wählst du auch einzeln.' },
+      { area: 'Arena', text: 'In der Arena steht die Wüstenwanderung. Eine Wüstenzeit ist ein fester Zeitraum von 40 oder 90 Tagen oder frei gewählt, mit Gewohnheiten aus vier Paketen (Aufbruch, Wüstenweg, Wie die Wüstenväter, Hauskirche), aus weiteren Vorschlägen oder eigenen. Ein Paket übernimmst du auf einmal, jede Gewohnheit wählst du auch einzeln.' },
       { area: 'Heute', text: 'Die Gewohnheiten der Wüstenzeit stehen unter „Heute“ als eigene Gruppe zuerst, deine übrigen darunter. Das kleine „i“ öffnet eine kurze Beschreibung. Fastentage, wöchentliche und Advent-Gewohnheiten erscheinen nur, wenn sie dran sind. Am Montag lässt sich der Sonntag noch nachtragen.' },
       { area: 'Arena', text: 'In der Arena stehen Anleitung und Überblick: Tag und Woche, was du bisher gehalten hast, und der Leitvers deines Pakets. Nach dem letzten Tag kannst du Gewohnheiten in den Alltag übernehmen. Der 90-Tage-Standard bleibt in der Anleitung.' },
-      { area: 'Arena', text: 'Eine laufende Runde der Streithalle wird zur Wüstenzeit; ihre Gewohnheiten und Haken bleiben erhalten. Frühere Runden stehen weiter im Rückblick.' },
+      { area: 'Arena', text: 'Eine laufende Runde wird zur Wüstenzeit; ihre Gewohnheiten und Haken bleiben erhalten. Frühere Runden stehen weiter im Rückblick.' },
     ],
   },
   {
     version: '0.38.1',
     date: '2026-10-07',
-    title: 'Neue Namen in der Streithalle',
+    title: 'Neue Namen in der Wüstenwanderung',
     changes: [
-      { area: 'Arena', text: 'Die Anleitung der Streithalle heißt jetzt „Der 90-Tage-Standard“, die Liste daraus beim Start einer Runde „Vorlage“. Eine Runde ohne eigenen Namen heißt einfach „Runde“; den Namen wählst du frei, etwa „Fastenzeit“.' },
+      { area: 'Arena', text: 'Die Anleitung der Wüstenwanderung heißt jetzt „Der 90-Tage-Standard“, die Liste daraus beim Start einer Runde „Vorlage“. Eine Runde ohne eigenen Namen heißt einfach „Runde“; den Namen wählst du frei, etwa „Fastenzeit“.' },
     ],
   },
   {
     version: '0.38.0',
     date: '2026-10-07',
-    title: 'Eigene Gewohnheiten in der Streithalle',
+    title: 'Eigene Gewohnheiten in der Wüstenwanderung',
     changes: [
-      { area: 'Arena', text: 'In der Streithalle legst du die Gewohnheiten selbst fest. Unter „Meine Gewohnheiten“ fügst du eigene hinzu, änderst Wortlaut, Tage und Block (Morgen, Haus, Arbeit), sortierst sie und nimmst heraus, was nicht passt. Was die Vorlage vorschlägt, steht darunter zum Aufnehmen bereit.' },
+      { area: 'Arena', text: 'In der Wüstenwanderung legst du die Gewohnheiten selbst fest. Unter „Meine Gewohnheiten“ fügst du eigene hinzu, änderst Wortlaut, Tage und Block (Morgen, Haus, Arbeit), sortierst sie und nimmst heraus, was nicht passt. Was die Vorlage vorschlägt, steht darunter zum Aufnehmen bereit.' },
       { area: 'Arena', text: 'Eine neue Runde beginnt mit den Gewohnheiten der letzten Runde, mit der Vorlage oder leer. Jede Runde behält ihre eigene Liste; frühere Runden bleiben, wie sie waren.' },
       { area: 'Arena', text: 'Nimmst du eine Gewohnheit heraus, die du schon abgehakt hast, bleiben ihre Haken gespeichert und stehen im Export. Die Uhrzeiten schreibst du jetzt direkt in den Wortlaut, etwa „05:00 auf, kein Handy“.' },
     ],
@@ -60,9 +68,9 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '0.37.2',
     date: '2026-10-06',
-    title: 'Die Streithalle, neu beschrieben',
+    title: 'Die Wüstenwanderung, neu beschrieben',
     changes: [
-      { area: 'Arena', text: 'Die Einladung in die Streithalle ist neu gefasst: Du hältst für einen Zeitraum deiner Wahl einen festen Tagesstandard, mit festen Gewohnheiten, die dir helfen, geistlich zu wachsen.' },
+      { area: 'Arena', text: 'Die Einladung in die Wüstenwanderung ist neu gefasst: Du hältst für einen Zeitraum deiner Wahl einen festen Tagesstandard, mit festen Gewohnheiten, die dir helfen, geistlich zu wachsen.' },
     ],
   },
   {
@@ -70,7 +78,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-06',
     title: 'Der Zuspruch im Wochenrückblick',
     changes: [
-      { area: 'Andacht', text: 'Der Wochenrückblick endet mit demselben Zuspruch wie der Wochenrückblick der Streithalle: „Die Güte des HERRN ist’s, daß wir nicht gar aus sind“ (Klagelieder 3,22–23).' },
+      { area: 'Andacht', text: 'Der Wochenrückblick endet mit demselben Zuspruch wie der Wochenrückblick der Wüstenwanderung: „Die Güte des HERRN ist’s, daß wir nicht gar aus sind“ (Klagelieder 3,22–23).' },
     ],
   },
   {
@@ -79,7 +87,7 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Der Wochenrückblick',
     changes: [
       { area: 'Andacht', text: 'Neu: Am Sonntagabend steht im Nachtgebet der Wochenrückblick, an Stelle von Dank und Rückschau des Tages. Wofür danke ich in dieser Woche? Für meine Frau und die Kinder, mit ihren Namen aus „Mein Haus“, für meine Gemeinde, meine Arbeit, meine Nächsten und unser Land, jeweils mit einer Stelle aus der Schrift. Dazu höchstens ein Vorsatz für die neue Woche. Danach folgen wie immer Prüfung und Zuspruch.' },
-      { area: 'Andacht', text: 'Oben steht, was du die Woche über abends beim Dank notiert hast. Läuft eine Runde der Streithalle, stehen ihre drei Fragen im selben Rückblick. Die Taste „Weiter“ springt zum nächsten Feld.' },
+      { area: 'Andacht', text: 'Oben steht, was du die Woche über abends beim Dank notiert hast. Läuft eine Wüstenzeit, stehen ihre drei Fragen im selben Rückblick. Die Taste „Weiter“ springt zum nächsten Feld.' },
       { area: 'Mehr', text: 'Unter „Mehr → Darstellung“ lässt sich der Wochenrückblick ausschalten. Die Kurzform des Nachtgebets bleibt kurz.' },
     ],
   },
@@ -185,7 +193,7 @@ export const CHANGELOG: readonly Release[] = [
       { area: 'Bedienung', text: 'Unten stehen fünf Bereiche: Wort, Andacht, Heute in der Mitte, Arena, Mehr. Die App öffnet immer bei „Heute“.' },
       { area: 'Heute', text: 'Der Sonntag der Woche ist eine Kachel unter „Heute“. In der Liste der Gewohnheiten stehen nur noch die, die du selbst abhakst; Stille Zeit, Vesper und Nachtgebet stehen oben als Kacheln. Erledigte wöchentliche und monatliche rücken ans Ende.' },
       { area: 'Wort', text: 'Bibel und Lehre stehen unter „Wort“ nebeneinander, oben umschaltbar.' },
-      { area: 'Arena', text: 'Die Einstellungen der Streithalle sind auch in der Streithalle selbst zu finden, unten zum Aufklappen.' },
+      { area: 'Arena', text: 'Die Einstellungen der Wüstenwanderung sind auch in der Wüstenwanderung selbst zu finden, unten zum Aufklappen.' },
       { area: 'Mehr', text: 'Das Impressum steht als schmale Zeile unter den Kacheln. Im Rückblick unter „Heute“ stehen die Zeichen der drei Dinge mit Worten.' },
     ],
   },
@@ -196,17 +204,17 @@ export const CHANGELOG: readonly Release[] = [
     changes: [
       { area: 'Mehr', text: 'Unter „Was sich geändert hat“ stehen die Versionen nach ihrer Nummer gruppiert: Nachbesserungen wie 0.30.1 stehen bei 0.30.' },
       { area: 'Heute', text: 'Die Gewohnheiten stehen nur noch einmal da: oben die sieben Tage der Woche zum Antippen, darunter die Liste des gewählten Tages. So trägst du auch frühere Tage nach. Die Wochenübersicht als Raster ist eingeklappt darunter.' },
-      { area: 'Arena', text: 'In der Tagesansicht der Streithalle steht unter „Heute“ das Datum.' },
+      { area: 'Arena', text: 'In der Tagesansicht der Wüstenwanderung steht unter „Heute“ das Datum.' },
     ],
   },
   {
     version: '0.30.1',
     date: '2026-10-01',
-    title: 'Feinschliff der Streithalle',
+    title: 'Feinschliff der Wüstenwanderung',
     changes: [
-      { area: 'Arena', text: 'Name und Zeitraum der Runde stehen als Unterzeile unter „Streithalle“; die Einleitung des Plans steht am Anfang der Anleitung. Der Beginn einer Runde steht ohne doppelten Rahmen.' },
-      { area: 'Arena', text: 'Ein Tipp auf „Heute“ in der Tagesansicht der Streithalle führt zur Seite „Heute“.' },
-      { area: 'Heute', text: 'Auch unter „Heute“ lässt sich beim Tagebuch der Streithalle gleich aufschreiben.' },
+      { area: 'Arena', text: 'Name und Zeitraum der Runde stehen als Unterzeile unter „Wüstenwanderung“; die Einleitung des Plans steht am Anfang der Anleitung. Der Beginn einer Runde steht ohne doppelten Rahmen.' },
+      { area: 'Arena', text: 'Ein Tipp auf „Heute“ in der Tagesansicht der Wüstenwanderung führt zur Seite „Heute“.' },
+      { area: 'Heute', text: 'Auch unter „Heute“ lässt sich beim Tagebuch der Wüstenwanderung gleich aufschreiben.' },
     ],
   },
   {
@@ -214,47 +222,47 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-01',
     title: 'Arena und Gewohnheiten neu gestaltet',
     changes: [
-      { area: 'Arena', text: 'Die Arena beginnt mit drei Kacheln: Gebetskammer, Eisenschmiede und Streithalle, jede mit dem, was dort gerade steht. Ein Tipp öffnet den Ort auf einer eigenen Seite.' },
-      { area: 'Arena', text: 'Die Streithalle steht immer in der Arena. Läuft keine Runde, beginnst du dort eine, und die Anleitung ist schon zu lesen.' },
+      { area: 'Arena', text: 'Die Arena beginnt mit drei Kacheln: Gebetskammer, Eisenschmiede und Wüstenwanderung, jede mit dem, was dort gerade steht. Ein Tipp öffnet den Ort auf einer eigenen Seite.' },
+      { area: 'Arena', text: 'Die Wüstenwanderung steht immer in der Arena. Läuft keine Runde, beginnst du dort eine, und die Anleitung ist schon zu lesen.' },
       { area: 'Heute', text: 'Die Gewohnheiten stehen oben als Liste für den Tag, abgehakt mit einem Antippen der ganzen Zeile. Darunter folgt die Woche als Übersicht zum Nachtragen.' },
     ],
   },
   {
     version: '0.29.0',
     date: '2026-10-01',
-    title: 'Haus vor Arbeit, schönere Streithalle, besseres Deutsch',
+    title: 'Haus vor Arbeit, schönere Wüstenwanderung, besseres Deutsch',
     changes: [
-      { area: 'Heute', text: 'Neben „Streithalle“ stehen der Name der Runde und ihr Zeitraum; die Gewohnheiten sind nach „Täglich“ und „Woche und Monat“ gegliedert.' },
-      { area: 'Arena', text: 'Im Plan der Streithalle steht das Haus vor der Arbeit. Die Reihenfolge gilt in der ganzen App: Gott, Familie und Haus, Gemeinde, Arbeit, ich.' },
-      { area: 'Arena', text: 'Die Tagesansicht der Streithalle ist ruhiger gestaltet: runde Knöpfe zum Blättern, „Aufschreiben“ beim Tagebuch direkt in der Zeile, das Eingabefeld in einer eigenen Fläche.' },
+      { area: 'Heute', text: 'Neben „Wüstenwanderung“ stehen der Name der Runde und ihr Zeitraum; die Gewohnheiten sind nach „Täglich“ und „Woche und Monat“ gegliedert.' },
+      { area: 'Arena', text: 'Im Plan der Wüstenwanderung steht das Haus vor der Arbeit. Die Reihenfolge gilt in der ganzen App: Gott, Familie und Haus, Gemeinde, Arbeit, ich.' },
+      { area: 'Arena', text: 'Die Tagesansicht der Wüstenwanderung ist ruhiger gestaltet: runde Knöpfe zum Blättern, „Aufschreiben“ beim Tagebuch direkt in der Zeile, das Eingabefeld in einer eigenen Fläche.' },
       { area: 'Heute', text: 'Tage vor dem Beginn einer Runde stehen in der Tabelle mit voller Breite und einem stillen Punkt statt eines grauen Streifens.' },
-      { area: 'Rückblick', text: 'Bei den Gewohnheiten führt ein Eintrag „Streithalle“ zum Dashboard der laufenden Runde.' },
+      { area: 'Rückblick', text: 'Bei den Gewohnheiten führt ein Eintrag „Wüstenwanderung“ zum Dashboard der laufenden Runde.' },
       { area: 'Sprache', text: 'Texte in Arena, Heute und unter Mehr sind sprachlich überarbeitet.' },
     ],
   },
   {
     version: '0.28.0',
     date: '2026-10-01',
-    title: 'Die Streithalle für jeden Zeitraum',
+    title: 'Die Wüstenwanderung für jeden Zeitraum',
     changes: [
-      { area: 'Einstellungen', text: 'Unter Darstellung heißt der Schalter jetzt „Streithalle“. Eine Runde bekommt einen Namen, etwa „Fastenzeit“, ein Startdatum und einen letzten Tag oder eine Dauer, von einem Tag bis zu einem Jahr. Der 90-Tage-Standard bleibt die Anleitung.' },
-      { area: 'Arena', text: 'Der Name der Runde steht über der Streithalle, im Rückblick und im Export.' },
+      { area: 'Einstellungen', text: 'Unter Darstellung heißt der Schalter jetzt „Wüstenzeit“. Eine Runde bekommt einen Namen, etwa „Fastenzeit“, ein Startdatum und einen letzten Tag oder eine Dauer, von einem Tag bis zu einem Jahr. Der 90-Tage-Standard bleibt die Anleitung.' },
+      { area: 'Arena', text: 'Der Name der Runde steht über der Wüstenwanderung, im Rückblick und im Export.' },
     ],
   },
   {
     version: '0.27.0',
     date: '2026-10-01',
-    title: '„Heute“ im Modus der Streithalle',
+    title: '„Heute“ im Modus der Wüstenwanderung',
     changes: [
-      { area: 'Heute', text: 'Solange eine Runde läuft, stehen unter „Heute“ die Gewohnheiten der Streithalle an Stelle der übrigen, mit einem Weg zur Streithalle. Deine übrigen Gewohnheiten bleiben gespeichert und kommen zurück, wenn die Runde endet oder du die Streithalle ausschaltest.' },
+      { area: 'Heute', text: 'Solange eine Runde läuft, stehen unter „Heute“ die Gewohnheiten der Wüstenwanderung an Stelle der übrigen, mit einem Weg zur Wüstenwanderung. Deine übrigen Gewohnheiten bleiben gespeichert und kommen zurück, wenn die Runde endet oder du die Wüstenwanderung ausschaltest.' },
     ],
   },
   {
     version: '0.26.0',
     date: '2026-10-01',
-    title: 'Gewohnheiten der Streithalle abschalten',
+    title: 'Gewohnheiten der Wüstenwanderung abschalten',
     changes: [
-      { area: 'Gewohnheiten', text: 'Jede Gewohnheit der Streithalle lässt sich unter Gewohnheiten einzeln aus- und wieder einschalten. Ausgeschaltet verschwindet sie aus „Heute“ und aus der Streithalle; ihre Haken bleiben.' },
+      { area: 'Gewohnheiten', text: 'Jede Gewohnheit der Wüstenwanderung lässt sich unter Gewohnheiten einzeln aus- und wieder einschalten. Ausgeschaltet verschwindet sie aus „Heute“ und aus der Wüstenwanderung; ihre Haken bleiben.' },
     ],
   },
   {
@@ -269,9 +277,9 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '0.25.0',
     date: '2026-10-01',
-    title: 'Die Streithalle neu geordnet',
+    title: 'Die Wüstenwanderung neu geordnet',
     changes: [
-      { area: 'Arena', text: 'Die Streithalle hat oben eine Karte mit Tag, Phase, Woche, Vers und Auftrag, darunter drei Reiter: Tag, Woche und Anleitung. Die Anleitung steht als Kacheln.' },
+      { area: 'Arena', text: 'Die Wüstenwanderung hat oben eine Karte mit Tag, Phase, Woche, Vers und Auftrag, darunter drei Reiter: Tag, Woche und Anleitung. Die Anleitung steht als Kacheln.' },
       { area: 'Arena', text: 'Unter „Tag“ blätterst du durch die Tage der Runde und trägst nach, was war. Abgehakt wird mit einem Antippen der ganzen Zeile.' },
       { area: 'Arena', text: 'Beim Tagebuch trägst du den Satz, der dich trifft, und drei Dankpunkte gleich dort ein, oder du schreibst in der Gebetskammer.' },
     ],
@@ -279,22 +287,22 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '0.24.0',
     date: '2026-10-01',
-    title: 'Streithalle: Abschluss, Rückblick und Gewohnheiten',
+    title: 'Wüstenwanderung: Abschluss, Rückblick und Gewohnheiten',
     changes: [
-      { area: 'Arena', text: 'Nach dem letzten Tag einer Runde zeigt die Streithalle „Tag 90 – und danach“ mit den Wochenrückblicken der Runde. Von dort beginnst du eine neue Runde oder exportierst alles als Markdown.' },
-      { area: 'Rückblick', text: 'Unter „Streithalle“ stehen alle Runden, auch beendete, zum Nachlesen.' },
-      { area: 'Heute', text: 'Solange eine Runde läuft, stehen ihre Gewohnheiten unter „Heute“ in der Gruppe Streithalle. Ein Haken dort gilt auch in der Streithalle.' },
+      { area: 'Arena', text: 'Nach dem letzten Tag einer Runde zeigt die Wüstenwanderung „Tag 90 – und danach“ mit den Wochenrückblicken der Runde. Von dort beginnst du eine neue Runde oder exportierst alles als Markdown.' },
+      { area: 'Rückblick', text: 'Unter „Wüstenwanderung“ stehen alle Runden, auch beendete, zum Nachlesen.' },
+      { area: 'Heute', text: 'Solange eine Runde läuft, stehen ihre Gewohnheiten unter „Heute“ in der Gruppe Wüstenwanderung. Ein Haken dort gilt auch in der Wüstenwanderung.' },
       { area: 'Gewohnheiten', text: 'Gewohnheiten mit deiner Frau, deinen Kindern oder der Familie erscheinen erst, wenn sie unter „Mein Haus“ eingetragen sind.' },
-      { area: 'Arena', text: 'Die beiden Arbeitsblöcke sind aus der Liste der Streithalle genommen.' },
+      { area: 'Arena', text: 'Die beiden Arbeitsblöcke sind aus der Liste der Wüstenwanderung genommen.' },
     ],
   },
   {
     version: '0.23.0',
     date: '2026-10-01',
-    title: 'Der 90-Tage-Standard in der Streithalle',
+    title: 'Der 90-Tage-Standard in der Wüstenwanderung',
     changes: [
       { area: 'Einstellungen', text: 'Unter Darstellung lässt sich der 90-Tage-Standard einschalten: mit Startdatum und Dauer in Kalendertagen, eigenen Wochentagen je Punkt und deinen Zeiten. Ausgeschaltet bleibt die Runde mit allen Haken und Rückblicken erhalten.' },
-      { area: 'Arena', text: 'Solange er läuft, steht neben Gebetskammer und Eisenschmiede die Streithalle: wo die Runde steht, Vers und Auftrag der Woche, die Liste für heute, die Woche als Raster zum Nachtragen, Wochenstandard und Wochenrückblick mit dem Zuspruch aus Klagelieder 3. Darunter die Anleitung.' },
+      { area: 'Arena', text: 'Solange er läuft, steht neben Gebetskammer und Eisenschmiede die Wüstenwanderung: wo die Runde steht, Vers und Auftrag der Woche, die Liste für heute, die Woche als Raster zum Nachtragen, Wochenstandard und Wochenrückblick mit dem Zuspruch aus Klagelieder 3. Darunter die Anleitung.' },
     ],
   },
   {

@@ -153,7 +153,8 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
       />
       <p className="small muted">
         In der Wüstenzeit hältst du für einen festen Zeitraum Gewohnheiten, die du selbst wählst: aus vier Paketen, aus
-        weiteren Vorschlägen oder eigene. Abgehakt wird unter „Heute“; in der Arena stehen Anleitung und Überblick.
+        weiteren Vorschlägen oder eigene. Abgehakt wird unter „Heute“; in der Arena unter „Wüstenwanderung“ stehen
+        Anleitung und Überblick.
       </p>
       {run && !panel && (
         <p>

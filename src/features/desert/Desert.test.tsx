@@ -59,18 +59,18 @@ const withDesert = (s: Store, start = '2026-09-14') => {
 const tab = (name: string) =>
   fireEvent.click(within(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).getByRole('button', { name }));
 
-describe('Wüstenzeit in the Arena', () => {
+describe('the Wüstenwanderung in the Arena', () => {
   it('stands in the Arena as the third place, with the guide and the way in', async () => {
     const store = await renderArena('/arena');
     expect([...document.querySelectorAll('.arena-place-title')].map((t) => t.textContent)).toEqual([
       'Gebetskammer',
       'Eisenschmiede',
-      'Wüstenzeit',
+      'Wüstenwanderung',
     ]);
-    const tile = screen.getByRole('link', { name: /^Wüstenzeit/ });
+    const tile = screen.getByRole('link', { name: /^Wüstenwanderung/ });
     expect(tile.textContent).toContain('Weniger Ablenkung. Mehr Raum für Gott.');
     fireEvent.click(tile);
-    expect(screen.getByRole('heading', { level: 2, name: 'Wüstenzeit' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Wüstenwanderung' })).toBeTruthy();
     const guide = document.querySelector('.desert-guide') as HTMLElement;
     expect(guide.textContent).toContain('In der Bibel ist die Wüste kein leerer Ort, sondern ein Ort der Begegnung.');
     expect(guide.textContent).toContain('„Ich will sie locken und will sie in die Wüste führen und freundlich mit ihr reden.“ (Hos 2,16)');
@@ -90,13 +90,16 @@ describe('Wüstenzeit in the Arena', () => {
     expect(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeTruthy();
   });
 
-  it('opens from the old address of the Streithalle', async () => {
+  it('opens from the old addresses of the Streithalle and of 0.39.0', async () => {
     await renderArena('/arena?bereich=streithalle');
-    expect(screen.getByRole('heading', { level: 2, name: 'Wüstenzeit' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: 'Wüstenwanderung' })).toBeTruthy();
+    cleanup();
+    await renderArena('/arena?bereich=wuestenzeit');
+    expect(screen.getByRole('heading', { level: 2, name: 'Wüstenwanderung' })).toBeTruthy();
   });
 
   it('shows where it stands: the verse of the package first, day and week, and a new beginning after an open day', async () => {
-    await renderArena('/arena?bereich=wuestenzeit', (s) => withDesert(s));
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     const head = document.querySelector('.wa-head') as HTMLElement;
     // Word first (rule 2): Aufbruch's verse, since most habits come from it.
     expect(head.firstElementChild!.textContent).toContain('Wer im Geringsten treu ist, der ist auch im Großen treu.');
@@ -108,7 +111,7 @@ describe('Wüstenzeit in the Arena', () => {
   });
 
   it('ticks the day like under "Heute", each habit with its "i"; Friday fasting only on Fridays', async () => {
-    const store = await renderArena('/arena?bereich=wuestenzeit', (s) => withDesert(s));
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     tab('Tag');
     const day = document.querySelector('.wa-day') as HTMLElement;
     expect(within(day).queryByRole('checkbox', { name: 'Freitagsfasten' })).toBeNull();
@@ -123,7 +126,7 @@ describe('Wüstenzeit in the Arena', () => {
   });
 
   it('shows the week as a grid of calendar weeks, what was kept so far, and the review at its end', async () => {
-    const store = await renderArena('/arena?bereich=wuestenzeit', (s) => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);
       const h = s.getProfile().habits.find((x) => x.id === 'wz-bibellese')!;
       s.toggleHabit('2026-09-15', h);
@@ -146,7 +149,7 @@ describe('Wüstenzeit in the Arena', () => {
   });
 
   it('never marks anything in red, as a streak or as a rate', async () => {
-    await renderArena('/arena?bereich=wuestenzeit', (s) => withDesert(s));
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     tab('Woche');
     const desert = document.querySelector('.desert')!;
     expect(desert.querySelector('[class*="danger"], [class*="rubric"], [class*="warn"]')).toBeNull();
@@ -157,7 +160,7 @@ describe('Wüstenzeit in the Arena', () => {
   });
 
   it('closes after the last day: the days, what was kept, taking habits into everyday life, a new Wüstenzeit', async () => {
-    const store = await renderArena('/arena?bereich=wuestenzeit', (s) => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s, '2026-08-01');
       const h = s.getProfile().habits.find((x) => x.id === 'wz-dankbarkeit')!;
       s.toggleHabit('2026-08-03', h);

@@ -447,7 +447,7 @@ function Start() {
         {starting && <DesertStartPanel onDone={() => setStarting(false)} />}
         {profile.winterArc.runs.length > 0 && (
           <p className="small">
-            <Link to="/mehr/rueckblick?ansicht=wuestenzeit">Frühere Wüstenzeiten im Rückblick</Link>
+            <Link to="/mehr/rueckblick?ansicht=wuestenwanderung">Frühere Wüstenzeiten im Rückblick</Link>
           </p>
         )}
       </div>
@@ -456,7 +456,7 @@ function Start() {
 }
 
 /**
- * The Wüstenzeit in the Arena: the guide and the way in; while it runs, the
+ * The Wüstenwanderung, the Wüstenzeit's place in the Arena: the guide and the way in; while one runs, the
  * dashboard; after its last day, the close. Everything else to set below.
  */
 export function Desert() {

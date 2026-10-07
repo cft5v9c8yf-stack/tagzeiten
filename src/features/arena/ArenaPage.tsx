@@ -18,9 +18,9 @@ type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
 const FORGE_PARAM = 'bereich';
 const FORGE_SLUG = 'eisenschmiede';
-/** The Wüstenzeit's place in the Arena; links to the Streithalle (before 0.39) lead there too. */
-const HALL_SLUG = 'wuestenzeit';
-const OLD_HALL_SLUG = 'streithalle';
+/** The Wüstenwanderung, the Arena's place of the Wüstenzeit; the addresses of 0.39.0 and of the Streithalle lead there too. */
+const HALL_SLUG = 'wuestenwanderung';
+const OLD_HALL_SLUGS = ['wuestenzeit', 'streithalle'];
 type Place = Kind | 'hall';
 
 /** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
@@ -497,7 +497,7 @@ export function ArenaPage() {
   const shownPlace: Place | undefined =
     param === FORGE_SLUG
       ? 'forge'
-      : param === HALL_SLUG || param === OLD_HALL_SLUG
+      : param === HALL_SLUG || OLD_HALL_SLUGS.includes(param ?? '')
         ? 'hall'
         : param === JOURNAL_SLUG
           ? 'journal'
@@ -507,7 +507,7 @@ export function ArenaPage() {
     const hallRun = activeRun(profile.winterArc);
     return (
       <div className="arena arena-place">
-        <PlaceHead title="Wüstenzeit" sub={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined} />
+        <PlaceHead title="Wüstenwanderung" sub={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined} />
         <Desert />
       </div>
     );
@@ -607,7 +607,7 @@ function ArenaHome() {
     },
     {
       place: 'hall',
-      title: 'Wüstenzeit',
+      title: 'Wüstenwanderung',
       icon: 'sunrise',
       line: run ? desertLine(profile, today) : 'Weniger Ablenkung. Mehr Raum für Gott.',
     },

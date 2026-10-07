@@ -16,8 +16,14 @@ import { Segmented } from '../../ui/Choice';
 import { HabitHistory } from './HabitHistory';
 
 type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'desert';
-// Links to the Streithalle (before 0.39) lead to the Wüstenzeit.
-const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered', wuestenzeit: 'desert', streithalle: 'desert' };
+// Links of 0.39.0 and of the Streithalle (before) lead to the Wüstenwanderung.
+const TAB_PARAM: Record<string, Tab> = {
+  arena: 'arena',
+  erhoerungen: 'answered',
+  wuestenwanderung: 'desert',
+  wuestenzeit: 'desert',
+  streithalle: 'desert',
+};
 const PAGE = 40;
 
 function prayed(d: Day): string {
@@ -237,7 +243,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
           { value: 'answered', label: 'Gebetserhörungen' },
-          ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenzeit' }] : []),
+          ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenwanderung' }] : []),
         ]}
       />
       <div className="field search-field">

@@ -262,14 +262,14 @@ describe('Mehr: Aufbau', () => {
     expect(screen.getByText(/alle Morgen neu/)).toBeTruthy();
   });
 
-  it('leads from the habits in the Rückblick to the Wüstenzeit in the Arena', async () => {
+  it('leads from the habits in the Rückblick to the Wüstenwanderung in the Arena', async () => {
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
       s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
       s.startDesert('2026-09-21', 40);
     }, ['review.habits']);
     await screen.findAllByText(/mit Einträgen/);
     const link = await screen.findByRole('link', { name: /Wüstenzeit\s*·\s*Tag 5 von 40/ });
-    expect(link.getAttribute('href')).toBe('/arena?bereich=wuestenzeit');
+    expect(link.getAttribute('href')).toBe('/arena?bereich=wuestenwanderung');
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {

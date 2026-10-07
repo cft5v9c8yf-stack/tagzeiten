@@ -117,7 +117,7 @@ Offene Fragen vor dem Beginn:
   Doppeltes, deren „Fürbitte“ steht direkt darunter).
 - **Hochzeitstag:** im Mittelpunkt „unsere Ehe“ oder die Ehefrau.
 
-## Wüstenzeit (früher Streithalle)
+## Wüstenwanderung und Wüstenzeit (früher Streithalle)
 
 Gewünscht (07.10.2026), **umgesetzt in 0.39.0**. Die Streithalle ist zur
 Wüstenzeit geworden: ein fester Zeitraum (40, 90 oder frei) mit Gewohnheiten aus
@@ -133,5 +133,6 @@ Abweichungen von der Vorlage nach CLAUDE.md: keine Erfüllungsquote (Regel 4),
 statt dessen „an N Tagen gehalten“; keine Emojis (Regel 16); Verse nach Luther
 1912 (1 Tim 4,7 „Gottseligkeit“, Mk 1,35, Hos 2,16 vollständiger).
 
-Offen, falls gewünscht: der Name des Ortes in der Arena („Wüstenwanderung“ wurde
-einmal genannt); ältere Einträge unter „Was ist neu“ nennen noch die Streithalle.
+Seit 0.39.1 heißt der Ort in der Arena „Wüstenwanderung“; jede einzelne Zeit darin
+bleibt eine Wüstenzeit (Schalter unter Darstellung, Gruppe unter „Heute“, Texte).
+Die älteren Einträge unter „Was ist neu“ nennen die Streithalle nicht mehr.

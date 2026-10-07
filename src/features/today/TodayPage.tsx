@@ -151,7 +151,7 @@ export function TodayPage() {
           {hallMode && (
             <p className="small muted habits-mode-note">
               Überblick und Anleitung der Wüstenzeit stehen in der Arena.{' '}
-              <Link to="/arena?bereich=wuestenzeit">Zur Wüstenzeit</Link>
+              <Link to="/arena?bereich=wuestenwanderung">Zur Wüstenwanderung</Link>
             </p>
           )}
         </Section>
