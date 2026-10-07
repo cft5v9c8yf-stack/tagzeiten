@@ -119,7 +119,7 @@ describe('Winter Arc rounds', () => {
         { runId: 'x', date: '2026-10-05', checks: { wake: true }, updatedAt: 1 },
       ],
       weeks: [],
-      months: [{ runId: 'a', month: '2026-13', served: true, updatedAt: 1 }],
+      months: [{ runId: 'a', month: '2026-13', checks: { serve: true }, updatedAt: 1 }],
     });
     expect(data.runs.map((r) => [r.id, r.status])).toEqual([
       ['a', 'ended'],

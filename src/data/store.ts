@@ -10,6 +10,7 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
+import { pointsOf } from '../domain/winterArcPoints';
 import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
@@ -17,13 +18,13 @@ import {
   endRun,
   normalizeWinterArc,
   setReview,
+  setPoints,
   startRun,
   toggleCheck,
-  toggleServed,
+  toggleMonthly,
   toggleWeekly,
-  type WinterArcItemId,
+  type WinterArcPoint,
   type WinterArcReview,
-  type WinterArcWeeklyId,
   type WinterArcData,
   type WinterArcDay,
   type WinterArcMonth,
@@ -382,12 +383,29 @@ export class Store {
 
   /* ------------------------------------------------------------ winter arc */
 
-  /** Begins a new round of the Winter Arc; a round under way is ended, nothing is deleted. */
-  startWinterArc(startDate: DateKey, durationDays: number, name = ''): void {
+  /**
+   * Begins a new round of the Winter Arc with its standard (the plan's when none
+   * is given); a round under way is ended, nothing is deleted.
+   */
+  startWinterArc(startDate: DateKey, durationDays: number, name = '', points?: readonly WinterArcPoint[]): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: startRun(p.winterArc, startDate, durationDays, t, undefined, name) }), {
-      immediate: true,
-    });
+    this.updateProfile(
+      (p) => ({ ...p, winterArc: startRun(p.winterArc, startDate, durationDays, t, undefined, name, points) }),
+      { immediate: true },
+    );
+  }
+
+  /** Changes the standard of a round: its own points, added, changed, sorted or taken out. */
+  setWinterArcPoints(runId: string, fn: (points: WinterArcPoint[]) => WinterArcPoint[]): void {
+    const t = this.now().getTime();
+    this.updateProfile(
+      (p) => {
+        const run = p.winterArc.runs.find((r) => r.id === runId);
+        if (!run) return p;
+        return { ...p, winterArc: setPoints(p.winterArc, runId, fn(pointsOf(run, p.winterArcSettings)), t) };
+      },
+      { immediate: true },
+    );
   }
 
   /** Switches the Winter Arc off: the round is marked as ended, its entries stay. */
@@ -397,20 +415,22 @@ export class Store {
   }
 
   /** Sets or takes away a tick of the daily standard; earlier days of the round may be filled in later. */
-  toggleWinterArcCheck(runId: string, date: DateKey, item: WinterArcItemId): void {
+  toggleWinterArcCheck(runId: string, date: DateKey, item: string): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: toggleCheck(p.winterArc, runId, date, item, t) }), { immediate: true });
   }
 
-  toggleWinterArcWeekly(runId: string, week: number, item: WinterArcWeeklyId): void {
+  toggleWinterArcWeekly(runId: string, week: number, item: string): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: toggleWeekly(p.winterArc, runId, week, item, t) }), { immediate: true });
   }
 
-  /** The monthly point, for the calendar month. */
-  toggleWinterArcServed(runId: string, month: string): void {
+  /** A monthly point, for the calendar month. */
+  toggleWinterArcMonthly(runId: string, month: string, item: string): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: toggleServed(p.winterArc, runId, month, t) }), { immediate: true });
+    this.updateProfile((p) => ({ ...p, winterArc: toggleMonthly(p.winterArc, runId, month, item, t) }), {
+      immediate: true,
+    });
   }
 
   /** A line of the weekly review; saved as you type. */

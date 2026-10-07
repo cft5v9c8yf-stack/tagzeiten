@@ -35,7 +35,7 @@ describe('Winter Arc in the store', () => {
         winterArc: {
           ...p.winterArc,
           days: [{ runId: first.id, date: '2026-10-05', checks: { wake: true }, updatedAt: 1 }],
-          months: [{ runId: first.id, month: '2026-10', served: true, updatedAt: 1 }],
+          months: [{ runId: first.id, month: '2026-10', checks: { serve: true }, updatedAt: 1 }],
         },
       }),
       { immediate: true },

@@ -189,13 +189,18 @@ describe('Mehr: Aufbau', () => {
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-10-05', durationDays: 90, status: 'active' });
     expect(screen.getByText(/Beginnt am Montag, 5\. Oktober 2026/)).toBeTruthy();
 
-    // Weekdays per point and "Meine Zeiten" appear while it is on.
-    const train = screen.getByRole('group', { name: 'Tage für Trainiert' });
-    fireEvent.click(within(train).getByRole('button', { name: 'Samstag' }));
-    expect(store.getProfile().winterArcSettings.weekdays.train).toEqual([1, 2, 3, 4, 5, 6]);
-    fireEvent.change(screen.getByLabelText('Aufstehen'), { target: { value: '05:00' } });
-    expect(store.getProfile().winterArcSettings.times.wake).toBe('05:00');
-    expect(screen.getByRole('group', { name: 'Tage für 05:00 auf, kein Handy' })).toBeTruthy();
+    // Begun with the plan of the Winter Arc; its habits can be changed here while it is on.
+    const train = () => store.getProfile().winterArc.runs[0]!.points!.find((p) => p.id === 'train')!;
+    expect(train()).toMatchObject({ text: 'Trainiert', block: 'morning', weekdays: [1, 2, 3, 4, 5] });
+    fireEvent.click(screen.getByRole('button', { name: 'Trainiert ändern' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'Tage für Trainiert' })).getByRole('button', { name: 'Samstag' }));
+    expect(train().weekdays).toEqual([1, 2, 3, 4, 5, 6]);
+    const wake = screen.getByRole('button', { name: '04:00 auf, kein Handy ändern' });
+    fireEvent.click(wake);
+    const wording = within(wake.closest('li')!).getByLabelText('Wortlaut');
+    fireEvent.change(wording, { target: { value: '05:00 auf, kein Handy' } });
+    fireEvent.blur(wording);
+    expect(store.getProfile().winterArc.runs[0]!.points![0]!.text).toBe('05:00 auf, kein Handy');
 
     // Off: asked first, the round stays as ended.
     fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Aus' }));
@@ -204,23 +209,40 @@ describe('Mehr: Aufbau', () => {
     await store.flush();
     expect(await db.winterArcRuns.count()).toBe(1);
 
-    // On again: a new round.
+    // On again: a new round, by default with the habits of the round before.
     fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
+    const begins = screen.getByRole('group', { name: 'Womit die Runde beginnt' });
+    expect(within(begins).getByRole('button', { name: 'Wie zuletzt' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(2));
-    expect(store.getProfile().winterArc.runs.map((r) => r.status)).toEqual(['ended', 'active']);
+    const runs = store.getProfile().winterArc.runs;
+    expect(runs.map((r) => r.status)).toEqual(['ended', 'active']);
+    expect(runs[1]!.points!.map((p) => p.text).slice(0, 4)).toEqual([
+      '05:00 auf, kein Handy',
+      'Morgenzeit im Wort und Gebet',
+      'Tagebuch und drei Dankpunkte',
+      'Trainiert',
+    ]);
+    expect(runs[1]!.points!.find((p) => p.id === 'train')!.weekdays).toEqual([1, 2, 3, 4, 5, 6]);
   });
 
   it('lists the points of the Streithalle among the habits while the Winter Arc runs', async () => {
     await renderAt('/mehr/gewohnheiten', <SettingsPage />, (s) => s.startWinterArc('2026-09-21', 90), ['more.habits.streithalle']);
     const group = (await screen.findByRole('button', { name: /^Streithalle/ })).closest('section') as HTMLElement;
     expect(group.textContent).toContain('04:00 auf, kein Handy');
-    expect(group.textContent).toContain('täglich · Streithalle');
+    expect(group.textContent).toContain('täglich · jeden Tag');
+    expect(group.textContent).toContain('täglich · Mo–Fr');
     expect(group.textContent).toContain('Gedient (einmal im Monat)');
-    expect(group.textContent).toContain('15 von 15 eingeschaltet');
+    // By the blocks of the day, then week and month.
+    expect([...group.querySelectorAll('.wa-standard-group h4')].map((h) => h.textContent)).toEqual([
+      'Morgen',
+      'Haus',
+      'Wöchentlich',
+      'Monatlich',
+    ]);
   });
 
-  it('lets each habit of the Streithalle be switched off, keeping its ticks', async () => {
+  it('lets the habits of the Streithalle be added, changed and taken out, keeping their ticks', async () => {
     const { store } = await renderAt(
       '/mehr/gewohnheiten',
       <SettingsPage />,
@@ -231,15 +253,39 @@ describe('Mehr: Aufbau', () => {
       },
       ['more.habits.streithalle'],
     );
-    const wake = await screen.findByRole('switch', { name: '04:00 auf, kein Handy' });
-    expect((wake as HTMLInputElement).checked).toBe(true);
-    fireEvent.click(wake);
-    expect(store.getProfile().winterArcSettings.off).toEqual(['wake']);
+    const points = () => store.getProfile().winterArc.runs[0]!.points!;
+    const takeOut = async (text: string) => {
+      fireEvent.click(await screen.findByRole('button', { name: `${text} ändern` }));
+      fireEvent.click(screen.getByRole('button', { name: 'Aus der Liste nehmen …' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Entfernen' }));
+    };
+
+    // Ticked: out of the list, the tick stays, and the plan offers it again.
+    await takeOut('04:00 auf, kein Handy');
+    expect(points().find((p) => p.id === 'wake')).toMatchObject({ removed: true });
     expect(store.getProfile().winterArc.days[0]!.checks).toEqual({ wake: true });
-    fireEvent.click(screen.getByRole('switch', { name: 'Gedient (einmal im Monat)' }));
-    expect(store.getProfile().winterArcSettings.off).toEqual(['wake', 'serve']);
-    fireEvent.click(screen.getByRole('switch', { name: '04:00 auf, kein Handy' }));
-    expect(store.getProfile().winterArcSettings.off).toEqual(['serve']);
+    expect(screen.queryByRole('button', { name: '04:00 auf, kein Handy ändern' })).toBeNull();
+    fireEvent.click(await screen.findByRole('button', { name: /^04:00 auf, kein Handy · Morgen/ }));
+    expect(points().find((p) => p.id === 'wake')!.removed).toBeUndefined();
+    expect(screen.getByRole('button', { name: '04:00 auf, kein Handy ändern' })).toBeTruthy();
+
+    // Never ticked: gone from the round for good.
+    await takeOut('Gedient (einmal im Monat)');
+    expect(points().some((p) => p.id === 'serve')).toBe(false);
+
+    // An own habit, in its own words, block and days.
+    const form = screen.getByRole('form', { name: 'Neue Gewohnheit' });
+    fireEvent.change(within(form).getByLabelText('Wortlaut'), { target: { value: 'Mittagsgebet' } });
+    fireEvent.change(within(form).getByLabelText('Block'), { target: { value: 'work' } });
+    fireEvent.click(within(form).getByRole('button', { name: 'Sonntag' }));
+    fireEvent.click(within(form).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
+    expect(points().at(-1)).toMatchObject({ text: 'Mittagsgebet', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5, 6] });
+    expect(screen.getByRole('heading', { name: 'Arbeit' })).toBeTruthy();
+    fireEvent.change(within(form).getByLabelText('Wortlaut'), { target: { value: 'Brief an einen Bruder' } });
+    fireEvent.change(within(form).getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
+    expect(within(form).queryByLabelText('Block')).toBeNull();
+    fireEvent.click(within(form).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
+    expect(points().at(-1)).toEqual({ id: expect.stringMatching(/^own-/), text: 'Brief an einen Bruder', rhythm: 'weekly' });
   });
 
   it('keeps every round of the Winter Arc readable in the Rückblick', async () => {
@@ -866,14 +912,14 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.37(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 0\.38(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.37(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.38(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');

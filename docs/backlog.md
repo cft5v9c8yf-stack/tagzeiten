@@ -116,3 +116,22 @@ Offene Fragen vor dem Beginn:
   Überschriften der Tage in der Gebetsübersicht (Empfehlung: vermeidet
   Doppeltes, deren „Fürbitte“ steht direkt darunter).
 - **Hochzeitstag:** im Mittelpunkt „unsere Ehe“ oder die Ehefrau.
+
+## Streithalle: eigene Gewohnheiten
+
+Gewünscht (07.10.2026): die Gewohnheiten frei wählen und selbst festlegen, das
+Konzept des Winter Arc beibehalten. **Umgesetzt in 0.38.0:** Jede Runde hat
+ihre eigene Liste (`run.points`), begonnen wie die letzte Runde, mit dem Plan
+des Winter Arc oder leer. Unter „Meine Gewohnheiten“ (Streithalle, Mehr →
+Gewohnheiten, Mehr → Darstellung) lassen sich Gewohnheiten hinzufügen, im
+Wortlaut, in den Tagen und im Block (Morgen, Haus, Arbeit; die Reihenfolge des
+Plans und nach Regel 18) ändern, sortieren und herausnehmen. Herausgenommene
+mit Haken bleiben versteckt erhalten (Export, wieder aufnehmen). Runden von vor
+0.38 lesen den Plan mit den alten Einstellungen (`pointsOf`).
+
+Offen, falls gewünscht:
+
+- Die dreizehn Wochenschwerpunkte und die drei Phasen sind noch die des Winter
+  Arc; einige Aufträge nennen seine Punkte (04:00, Fokusblöcke, Küche um 20:00).
+  Eigene Schwerpunkte wären der nächste Schritt.
+- Die übrigen Gewohnheiten (Mehr → Gewohnheiten) als Vorschläge beim Anlegen.

@@ -3105,6 +3105,75 @@ header.top .search-link:focus-visible {
   margin-bottom: 12px;
 }
 
+/* "Meine Gewohnheiten": the round's own list, by the blocks of the day as under "Heute". */
+.wa-standard-group > :is(h4, h5, h6),
+.wa-standard-suggest > :is(h4, h5, h6),
+.wa-add > :is(h4, h5, h6) {
+  margin: 16px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.wa-standard .habit-edit {
+  grid-template-columns: auto 1fr auto;
+}
+.wa-point-text {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.wa-point-edit {
+  grid-column: 1 / -1;
+  padding: 0 0 6px 34px;
+}
+.wa-point-label {
+  margin: 12px 0 4px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.wa-point-days {
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+}
+.wa-point-days legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.wa-point-remove {
+  margin-top: 6px;
+}
+.wa-point-remove p {
+  margin: 8px 0 0;
+}
+.wa-add {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10px;
+  margin-top: 6px;
+  border-top: 1px solid var(--rule);
+}
+.wa-add > :is(h4, h5, h6),
+.wa-add > .field:first-of-type,
+.wa-add > .wa-point-days,
+.wa-add > .btn {
+  grid-column: 1 / -1;
+}
+.wa-add > .btn {
+  justify-self: start;
+  margin-top: 12px;
+}
+.wa-change {
+  margin: 10px 0 0;
+}
+
 /* After the review in the evening: the way to the Gebetskammer for longer writing. */
 .to-chamber {
   margin: 14px 0 0;

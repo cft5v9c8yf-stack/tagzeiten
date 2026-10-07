@@ -3,13 +3,18 @@
  * reference/winter-arc.md. Bible verses after Luther 1912, as given there.
  */
 import type { HouseNeed } from '../domain/house';
-import type { WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
+import type { DayBlock, WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
 
-export type WinterArcGroup = 'Morgen' | 'Haus';
+/** The blocks of the day as the plan names them (its schedule): Gott zuerst, dann das Haus, dann die Arbeit. */
+export const WINTER_ARC_BLOCK_LABEL: Record<DayBlock, string> = {
+  morning: 'Morgen',
+  house: 'Haus',
+  work: 'Arbeit',
+};
 
 export interface WinterArcItem {
   id: WinterArcItemId;
-  group: WinterArcGroup;
+  block: DayBlock;
   /** The text as the tracker has it; the times come from "Meine Zeiten". */
   text: (t: WinterArcTimes) => string;
   /** What stands on days the point does not apply to ("Ruhe" for training, as in the tracker). */
@@ -22,21 +27,20 @@ export interface WinterArcItem {
  * The daily standard, in the order and groups of the tracker. The two work
  * blocks of the tracker ("Fokusblock 08–12", "Block 13–17") are left out on
  * request: the men who use it are employed, their working hours are set by others.
+ * Since 0.38 this is the template a round's own standard begins with.
  */
 export const WINTER_ARC_ITEMS: readonly WinterArcItem[] = [
-  { id: 'wake', group: 'Morgen', text: (t) => `${t.wake} auf, kein Handy`, off: '–' },
-  { id: 'word', group: 'Morgen', text: () => 'Morgenzeit im Wort und Gebet', off: '–' },
-  { id: 'journal', group: 'Morgen', text: () => 'Tagebuch und drei Dankpunkte', off: '–' },
-  { id: 'train', group: 'Morgen', text: () => 'Trainiert', off: 'Ruhe' },
-  { id: 'cook', group: 'Haus', text: () => 'Zu Hause gekocht', off: '–' },
-  { id: 'dinner', group: 'Haus', text: () => 'Abendessen ohne Handy', off: '–' },
-  { id: 'wife', group: 'Haus', text: () => 'Eine Geste für meine Frau', off: '–', needs: 'wife' },
-  { id: 'kitchen', group: 'Haus', text: (t) => `Küche um ${t.kitchen} zu`, off: '–' },
-  { id: 'phone', group: 'Haus', text: () => 'Handy außerhalb des Schlafzimmers', off: '–' },
-  { id: 'night', group: 'Haus', text: (t) => `Gebetet, ${t.night} Licht aus`, off: '–' },
+  { id: 'wake', block: 'morning', text: (t) => `${t.wake} auf, kein Handy`, off: '–' },
+  { id: 'word', block: 'morning', text: () => 'Morgenzeit im Wort und Gebet', off: '–' },
+  { id: 'journal', block: 'morning', text: () => 'Tagebuch und drei Dankpunkte', off: '–' },
+  { id: 'train', block: 'morning', text: () => 'Trainiert', off: 'Ruhe' },
+  { id: 'cook', block: 'house', text: () => 'Zu Hause gekocht', off: '–' },
+  { id: 'dinner', block: 'house', text: () => 'Abendessen ohne Handy', off: '–' },
+  { id: 'wife', block: 'house', text: () => 'Eine Geste für meine Frau', off: '–', needs: 'wife' },
+  { id: 'kitchen', block: 'house', text: (t) => `Küche um ${t.kitchen} zu`, off: '–' },
+  { id: 'phone', block: 'house', text: () => 'Handy außerhalb des Schlafzimmers', off: '–' },
+  { id: 'night', block: 'house', text: (t) => `Gebetet, ${t.night} Licht aus`, off: '–' },
 ];
-
-export const WINTER_ARC_GROUPS: readonly WinterArcGroup[] = ['Morgen', 'Haus'];
 
 /** The weekly standard, once in each week of the round. */
 export const WINTER_ARC_WEEKLY: readonly { id: WinterArcWeeklyId; text: string; needs?: HouseNeed }[] = [

@@ -4,6 +4,7 @@ import { STREITHALLE_VERSE } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
 import { activeRun, stageOf } from '../../domain/winterArc';
 import { WinterArcSettings, WinterArcStartPanel } from '../settings/WinterArcSettings';
+import { STANDARD_ID, WinterArcStandard } from '../settings/WinterArcStandard';
 import { WinterArcDashboard } from './WinterArcDashboard';
 import { WinterArcClosing } from './WinterArcRounds';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
@@ -29,8 +30,8 @@ function HallStart() {
           <WinterArcStartPanel
             today={store.today()}
             onCancel={() => setStarting(false)}
-            onStart={(s, d, n) => {
-              store.startWinterArc(s, d, n);
+            onStart={(s, d, n, pts) => {
+              store.startWinterArc(s, d, n, pts);
               setStarting(false);
             }}
           />
@@ -48,8 +49,9 @@ function HallStart() {
 }
 
 /**
- * The Streithalle: a round of a fixed daily standard, after the plan of the
- * Winter Arc. Word first (Ps 144,1), then the round.
+ * The Streithalle: a round of a fixed daily standard, in habits of the user's
+ * own choosing; the plan of the Winter Arc is the template. Word first
+ * (Ps 144,1), then the round.
  */
 export function Streithalle() {
   const store = useStore();
@@ -77,10 +79,16 @@ export function Streithalle() {
       ) : (
         <WinterArcDashboard key={run.id} run={run} />
       )}
-      {/* Everything to set for the Streithalle, in one place where it is used. */}
+      {/* The habits of the round, then everything else to set, in the place where they are used. */}
+      {stage !== 'after' && (
+        <details className="wa-settings" id={STANDARD_ID}>
+          <summary>Meine Gewohnheiten</summary>
+          <WinterArcStandard run={run} level={5} />
+        </details>
+      )}
       <details className="wa-settings">
         <summary>Einstellungen der Streithalle</summary>
-        <WinterArcSettings />
+        <WinterArcSettings withStandard={false} />
       </details>
     </div>
   );

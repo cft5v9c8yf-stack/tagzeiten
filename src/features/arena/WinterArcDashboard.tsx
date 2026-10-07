@@ -1,14 +1,11 @@
 import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
+  WINTER_ARC_BLOCK_LABEL,
   WINTER_ARC_COMFORT,
   WINTER_ARC_FOCUS,
-  WINTER_ARC_GROUPS,
-  WINTER_ARC_ITEMS,
-  WINTER_ARC_MONTHLY,
   WINTER_ARC_REVIEW,
   WINTER_ARC_TRACKER_NOTE,
-  WINTER_ARC_WEEKLY,
 } from '../../content/winterArc';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import {
@@ -20,32 +17,47 @@ import {
   WEEKDAY_SHORT,
   type DateKey,
 } from '../../domain/dates';
-import { houseHas } from '../../domain/house';
 import {
-  appliesOn,
-  isOn,
+  BLOCKS,
   dayOf,
   endDateOf,
   focusOf,
   isInRun,
   lastDayOfWeek,
+  monthlyDone,
   monthsOfWeek,
   phaseOf,
+  pointApplies,
   positionOf,
-  servedIn,
+  shownPoints,
   stageOf,
   totalWeeks,
   weekDates,
   weekOf,
+  type WinterArcPoint,
   type WinterArcRun,
 } from '../../domain/winterArc';
+import { pointsOf } from '../../domain/winterArcPoints';
 import { DayField } from '../../ui/DayField';
 import { Tick } from '../../ui/Tick';
 import { Segmented } from '../../ui/Choice';
 import { formatFullDate } from '../settings/WinterArcSettings';
+import { openStandard } from '../settings/WinterArcStandard';
 import { WaVerse, WinterArcGuide } from './WinterArcGuide';
 
 const monthName = (month: string) => MONTH_LONG[Number(month.slice(5, 7)) - 1];
+
+/** The points of the round that are shown now: its own list, without those taken out or waiting for "Mein Haus". */
+function useShownPoints(run: WinterArcRun): WinterArcPoint[] {
+  const profile = useProfile();
+  return shownPoints(pointsOf(run, profile.winterArcSettings), profile.house);
+}
+
+/** The daily points by the blocks of the day, only blocks that hold some. */
+const byBlock = (points: readonly WinterArcPoint[]) =>
+  BLOCKS.map((b) => ({ b, list: points.filter((p) => p.rhythm === 'daily' && (p.block ?? 'morning') === b) })).filter(
+    (g) => g.list.length > 0,
+  );
 const dayLabel = (d: DateKey) =>
   `${WEEKDAY_LONG[fromKey(d).getDay()]}, ${fromKey(d).getDate()}.${fromKey(d).getMonth() + 1}.`;
 
@@ -120,12 +132,13 @@ export function JournalEntry({ date }: { date: DateKey }) {
 }
 
 /**
- * One day's checklist by Morgen and Haus, with a pager through the whole round:
- * earlier days can be filled in, later ones are shown but ticked only when they come.
+ * One day's checklist by the blocks of the day, with a pager through the whole
+ * round: earlier days can be filled in, later ones are shown but ticked only when they come.
  */
 function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const store = useStore();
   const profile = useProfile();
+  const groups = byBlock(useShownPoints(run));
   const end = endDateOf(run.startDate, run.durationDays);
   const [shown, setShown] = useState<DateKey>(end < today ? end : today);
   const date = shown < run.startDate ? run.startDate : shown > end ? end : shown;
@@ -133,7 +146,6 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const day = useDay(date);
   const [writing, setWriting] = useState(false);
   const checks = dayOf(profile.winterArc, run.id, date)?.checks ?? {};
-  const settings = profile.winterArcSettings;
   return (
     <section className="panel wa-day" aria-labelledby="wa-day-title">
       <div className="wa-pager">
@@ -176,32 +188,29 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           </button>
         </p>
       )}
-      {WINTER_ARC_GROUPS.map((g) => (
-        <div key={g} className="wa-group">
-          <h5>{g}</h5>
-          {WINTER_ARC_ITEMS.filter(
-            (it) => it.group === g && houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
-          ).map((it) => {
-            const text = it.text(settings.times);
-            if (!appliesOn(settings, it.id, date)) {
+      {groups.map(({ b, list }) => (
+        <div key={b} className="wa-group">
+          <h5>{WINTER_ARC_BLOCK_LABEL[b]}</h5>
+          {list.map((p) => {
+            if (!pointApplies(p, date)) {
               return (
-                <p key={it.id} className="wa-tick is-off">
-                  <span className="wa-off-mark">{it.off}</span>
-                  <span className="wa-tick-text">{text}</span>
+                <p key={p.id} className="wa-tick is-off">
+                  <span className="wa-off-mark">{p.offMark ?? '–'}</span>
+                  <span className="wa-tick-text">{p.text}</span>
                 </p>
               );
             }
             return (
-              <div key={it.id} className="wa-row">
+              <div key={p.id} className="wa-row">
                 <div className="wa-row-line">
                   <Tick
-                    checked={!!checks[it.id]}
+                    checked={!!checks[p.id]}
                     disabled={future}
-                    onToggle={() => store.toggleWinterArcCheck(run.id, date, it.id)}
+                    onToggle={() => store.toggleWinterArcCheck(run.id, date, p.id)}
                   >
-                    {text}
+                    {p.text}
                   </Tick>
-                  {it.id === 'journal' && !future && (
+                  {p.id === 'journal' && !future && (
                     <button
                       type="button"
                       className="wa-row-action"
@@ -213,15 +222,21 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
                   )}
                 </div>
                 {/* A hint only: the tick is always set by hand. */}
-                {it.id === 'word' && day.morning.done && !checks.word && (
+                {p.id === 'word' && day.morning.done && !checks.word && (
                   <p className="wa-hint">Das Morgengebet hast du heute schon gebetet – abhaken?</p>
                 )}
-                {it.id === 'journal' && writing && !future && <JournalEntry date={date} />}
+                {p.id === 'journal' && writing && !future && <JournalEntry date={date} />}
               </div>
             );
           })}
         </div>
       ))}
+      {groups.length === 0 && <p className="small muted">In deiner Liste steht keine tägliche Gewohnheit.</p>}
+      <p className="wa-change">
+        <button type="button" className="link-btn" onClick={openStandard}>
+          Gewohnheiten ändern
+        </button>
+      </p>
     </section>
   );
 }
@@ -230,7 +245,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
 function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today: DateKey }) {
   const store = useStore();
   const profile = useProfile();
-  const settings = profile.winterArcSettings;
+  const groups = byBlock(useShownPoints(run));
   const dates = weekDates(run.startDate, week);
   return (
     <table className="wa-grid">
@@ -254,83 +269,81 @@ function WeekGrid({ run, week, today }: { run: WinterArcRun; week: number; today
           ))}
         </tr>
       </thead>
-      {WINTER_ARC_GROUPS.map((g) => (
-        <tbody key={g}>
+      {groups.map(({ b, list }) => (
+        <tbody key={b}>
           <tr className="wa-grid-group">
             <th scope="rowgroup" colSpan={8}>
-              {g}
+              {WINTER_ARC_BLOCK_LABEL[b]}
             </th>
           </tr>
-          {WINTER_ARC_ITEMS.filter(
-            (it) => it.group === g && houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
-          ).map((it) => {
-            const text = it.text(settings.times);
-            return (
-              <tr key={it.id}>
-                <th scope="row">{text}</th>
-                {dates.map((d) => {
-                  if (!isInRun(run, d))
-                    return (
-                      <td key={d} className="is-outside" aria-label="außerhalb der Runde">
-                        <span className="wa-void" aria-hidden="true" />
-                      </td>
-                    );
-                  if (!appliesOn(settings, it.id, d))
-                    return (
-                      <td key={d} className="wa-off">
-                        {it.off}
-                      </td>
-                    );
-                  const done = !!dayOf(profile.winterArc, run.id, d)?.checks[it.id];
+          {list.map((p) => (
+            <tr key={p.id}>
+              <th scope="row">{p.text}</th>
+              {dates.map((d) => {
+                if (!isInRun(run, d))
                   return (
-                    <td key={d}>
-                      <button
-                        type="button"
-                        className={done ? 'wa-dot is-done' : 'wa-dot'}
-                        aria-pressed={done}
-                        disabled={d > today}
-                        aria-label={`${text}, ${dayLabel(d)}`}
-                        onClick={() => store.toggleWinterArcCheck(run.id, d, it.id)}
-                      />
+                    <td key={d} className="is-outside" aria-label="außerhalb der Runde">
+                      <span className="wa-void" aria-hidden="true" />
                     </td>
                   );
-                })}
-              </tr>
-            );
-          })}
+                if (!pointApplies(p, d))
+                  return (
+                    <td key={d} className="wa-off">
+                      {p.offMark ?? '–'}
+                    </td>
+                  );
+                const done = !!dayOf(profile.winterArc, run.id, d)?.checks[p.id];
+                return (
+                  <td key={d}>
+                    <button
+                      type="button"
+                      className={done ? 'wa-dot is-done' : 'wa-dot'}
+                      aria-pressed={done}
+                      disabled={d > today}
+                      aria-label={`${p.text}, ${dayLabel(d)}`}
+                      onClick={() => store.toggleWinterArcCheck(run.id, d, p.id)}
+                    />
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
         </tbody>
       ))}
     </table>
   );
 }
 
-/** The weekly standard of the week shown, and the monthly point for each calendar month it touches. */
+/** The weekly standard of the week shown, and the monthly points for each calendar month it touches. */
 function WeeklyStandard({ run, week }: { run: WinterArcRun; week: number }) {
   const store = useStore();
   const profile = useProfile();
+  const points = useShownPoints(run);
+  const weekly = points.filter((p) => p.rhythm === 'weekly');
+  const monthly = points.filter((p) => p.rhythm === 'monthly');
   const checks = weekOf(profile.winterArc, run.id, week)?.weeklyChecks ?? {};
   const months = monthsOfWeek(run, week);
+  if (!weekly.length && !monthly.length) return null;
   return (
     <section className="panel wa-weekly" aria-labelledby="wa-weekly-title">
       <h5 id="wa-weekly-title">Wochenstandard</h5>
-      {WINTER_ARC_WEEKLY.filter(
-        (it) => houseHas(profile.house, it.needs) && isOn(profile.winterArcSettings, it.id),
-      ).map((it) => (
-        <Tick key={it.id} checked={!!checks[it.id]} onToggle={() => store.toggleWinterArcWeekly(run.id, week, it.id)}>
-          {it.text}
+      {weekly.map((p) => (
+        <Tick key={p.id} checked={!!checks[p.id]} onToggle={() => store.toggleWinterArcWeekly(run.id, week, p.id)}>
+          {p.text}
         </Tick>
       ))}
-      {isOn(profile.winterArcSettings, 'serve') &&
+      {monthly.flatMap((p) =>
         months.map((m) => (
           <Tick
-            key={m}
-            checked={servedIn(profile.winterArc, run.id, m)}
-            onToggle={() => store.toggleWinterArcServed(run.id, m)}
+            key={`${p.id}-${m}`}
+            checked={monthlyDone(profile.winterArc, run.id, m, p.id)}
+            onToggle={() => store.toggleWinterArcMonthly(run.id, m, p.id)}
           >
-            {WINTER_ARC_MONTHLY}
+            {p.text}
             <span className="muted"> · {monthName(m)}</span>
           </Tick>
-        ))}
+        )),
+      )}
     </section>
   );
 }

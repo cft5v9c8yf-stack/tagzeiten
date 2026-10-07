@@ -66,8 +66,8 @@ export function WinterArcClosing({ run }: { run: WinterArcRun }) {
         <WinterArcStartPanel
           today={store.today()}
           onCancel={() => setStarting(false)}
-          onStart={(s, d, n) => {
-            store.startWinterArc(s, d, n);
+          onStart={(s, d, n, pts) => {
+            store.startWinterArc(s, d, n, pts);
             setStarting(false);
           }}
         />

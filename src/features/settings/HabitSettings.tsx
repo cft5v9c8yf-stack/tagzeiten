@@ -1,9 +1,9 @@
 import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
-import { houseHas, NEED_NOTE } from '../../domain/house';
-import { WINTER_ARC_ITEMS, WINTER_ARC_MONTHLY, WINTER_ARC_WEEKLY } from '../../content/winterArc';
-import { activeRun, isOn, setPointOn, type WinterArcPointId } from '../../domain/winterArc';
+import { NEED_NOTE } from '../../domain/house';
+import { activeRun } from '../../domain/winterArc';
+import { WinterArcStandard } from './WinterArcStandard';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -281,91 +281,19 @@ export function HabitSettings() {
   );
 }
 
-/** A point of the Streithalle with its switch; switched off it leaves "Heute" and the Streithalle, its ticks stay. */
-function StreithalleRow({
-  id,
-  name,
-  kind,
-  waits,
-}: {
-  id: WinterArcPointId;
-  name: string;
-  kind: string;
-  waits?: string;
-}) {
-  const store = useStore();
-  const profile = useProfile();
-  const inputId = useId();
-  const on = isOn(profile.winterArcSettings, id);
-  return (
-    <li className="habit-edit">
-      <input
-        id={inputId}
-        type="checkbox"
-        role="switch"
-        className="switch"
-        checked={on}
-        onChange={(e) =>
-          store.updateProfile(
-            (p) => ({ ...p, winterArcSettings: setPointOn(p.winterArcSettings, id, e.target.checked) }),
-            {
-              immediate: true,
-            },
-          )
-        }
-      />
-      <div className="habit-edit-main">
-        <label htmlFor={inputId}>{name}</label>
-        <span className="habit-meta">
-          <span className="habit-kind">{kind} · Streithalle</span>
-          {on && waits && <span className="habit-kind habit-waits">{waits}</span>}
-        </span>
-      </div>
-    </li>
-  );
-}
-
-/** While the Winter Arc runs, its points stand here as habits of the Streithalle, each to switch on or off. */
+/** While a round of the Streithalle runs, its habits stand here too, to change as in the Streithalle. */
 function StreithalleGroup() {
   const profile = useProfile();
-  if (!activeRun(profile.winterArc)) return null;
-  const settings = profile.winterArcSettings;
-  const t = settings.times;
-  const count = [...WINTER_ARC_ITEMS.map((it) => it.id), ...WINTER_ARC_WEEKLY.map((it) => it.id), 'serve' as const];
+  const run = activeRun(profile.winterArc);
+  if (!run) return null;
   return (
-    <Section
-      id="more.habits.streithalle"
-      title="Streithalle"
-      level={3}
-      className="habit-card"
-      aside={`${count.filter((id) => isOn(settings, id)).length} von ${count.length} eingeschaltet`}
-    >
+    <Section id="more.habits.streithalle" title="Streithalle" level={3} className="habit-card">
       <p className="small muted">
         Solange eine Runde läuft, stehen diese Gewohnheiten unter „Heute“ statt der übrigen und zugleich in der
-        Streithalle. Ein Haken gilt an beiden Stellen. Was du ausschaltest, verschwindet aus beiden; die Haken bleiben
-        erhalten. Wochentage und Uhrzeiten stellst du unter Darstellung bei der Streithalle ein.
+        Streithalle. Ein Haken gilt an beiden Stellen. Was du aus der Liste nimmst, verschwindet aus beiden; seine Haken
+        bleiben erhalten.
       </p>
-      <ul className="habit-list">
-        {WINTER_ARC_ITEMS.map((it) => (
-          <StreithalleRow
-            key={it.id}
-            id={it.id}
-            name={it.text(t)}
-            kind="täglich"
-            waits={houseHas(profile.house, it.needs) ? undefined : NEED_NOTE[it.needs!]}
-          />
-        ))}
-        {WINTER_ARC_WEEKLY.map((it) => (
-          <StreithalleRow
-            key={it.id}
-            id={it.id}
-            name={it.text}
-            kind="wöchentlich"
-            waits={houseHas(profile.house, it.needs) ? undefined : NEED_NOTE[it.needs!]}
-          />
-        ))}
-        <StreithalleRow id="serve" name={WINTER_ARC_MONTHLY} kind="monatlich" />
-      </ul>
+      <WinterArcStandard run={run} level={4} />
     </Section>
   );
 }

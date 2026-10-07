@@ -1,17 +1,7 @@
 import { useId, useState } from 'react';
-import { WINTER_ARC_ITEMS, WINTER_ARC_TIME_LABELS } from '../../content/winterArc';
 import { useProfile, useStore } from '../../data/hooks';
-import {
-  fromKey,
-  isDateKey,
-  MONTH_LONG,
-  WEEKDAY_LONG,
-  WEEKDAY_SHORT,
-  type DateKey,
-  type Weekday,
-} from '../../domain/dates';
+import { fromKey, isDateKey, MONTH_LONG, WEEKDAY_LONG, type DateKey } from '../../domain/dates';
 import type { Profile } from '../../domain/model';
-import { WEEK } from '../../domain/schedule';
 import {
   activeRun,
   DEFAULT_DURATION,
@@ -21,15 +11,16 @@ import {
   runName,
   endDateOf,
   isValidDuration,
-  isValidTime,
   MAX_DURATION,
   MIN_DURATION,
   positionOf,
   QUICK_DURATIONS,
   stageOf,
-  type WinterArcTimes,
+  type WinterArcPoint,
 } from '../../domain/winterArc';
+import { lastRun, startPoints, type StandardStart } from '../../domain/winterArcPoints';
 import { Segmented } from '../../ui/Choice';
+import { WinterArcStandard } from './WinterArcStandard';
 
 /** "Samstag, 2. Januar 2027" */
 export function formatFullDate(k: DateKey): string {
@@ -49,8 +40,9 @@ export function winterArcLine(profile: Profile, today: DateKey): string {
 }
 
 /**
- * The start of a round in the Streithalle: a name, the start date, and the end
- * date or the duration in calendar days (each follows the other).
+ * The start of a round in the Streithalle: a name, the start date, the end date
+ * or the duration in calendar days (each follows the other), and the habits it
+ * begins with.
  */
 export function WinterArcStartPanel({
   today,
@@ -58,10 +50,13 @@ export function WinterArcStartPanel({
   onCancel,
 }: {
   today: DateKey;
-  onStart: (startDate: DateKey, durationDays: number, name: string) => void;
+  onStart: (startDate: DateKey, durationDays: number, name: string, points: WinterArcPoint[]) => void;
   onCancel: () => void;
 }) {
   const id = useId();
+  const profile = useProfile();
+  const last = lastRun(profile.winterArc);
+  const [standard, setStandard] = useState<StandardStart>(last ? 'last' : 'plan');
   const [name, setName] = useState(DEFAULT_RUN_NAME);
   const [start, setStart] = useState<DateKey>(today);
   const [duration, setDuration] = useState(String(DEFAULT_DURATION));
@@ -131,8 +126,34 @@ export function WinterArcStartPanel({
           {validStart ? `Wähle eine Dauer von ${MIN_DURATION} bis ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
+      <div className="field">
+        <p className="wa-point-label">Gewohnheiten</p>
+        <Segmented<StandardStart>
+          label="Womit die Runde beginnt"
+          value={standard}
+          onChange={setStandard}
+          options={[
+            ...(last ? [{ value: 'last' as const, label: 'Wie zuletzt' }] : []),
+            { value: 'plan', label: 'Winter Arc' },
+            { value: 'empty', label: 'Leer' },
+          ]}
+        />
+        <p className="small muted">
+          {standard === 'last' && last
+            ? `Die Gewohnheiten der letzten Runde („${runName(last)}“). `
+            : standard === 'plan'
+              ? 'Die Liste aus dem Plan des Winter Arc. '
+              : 'Du legst deine Gewohnheiten selbst an. '}
+          Ändern kannst du sie jederzeit unter „Meine Gewohnheiten“.
+        </p>
+      </div>
       <div className="button-row">
-        <button type="button" className="btn primary" disabled={!end} onClick={() => onStart(start, days, name)}>
+        <button
+          type="button"
+          className="btn primary"
+          disabled={!end}
+          onClick={() => onStart(start, days, name, startPoints(standard, profile.winterArc, profile.winterArcSettings))}
+        >
           Runde beginnen
         </button>
         <button type="button" className="btn quiet" onClick={onCancel}>
@@ -143,57 +164,18 @@ export function WinterArcStartPanel({
   );
 }
 
-/** A time of "Meine Zeiten": taken over once it is a valid time. */
-function TimeField({ k, value, onSave }: { k: keyof WinterArcTimes; value: string; onSave: (v: string) => void }) {
-  const id = useId();
-  const [draft, setDraft] = useState(value);
-  const valid = isValidTime(k, draft);
-  return (
-    <div className="field">
-      <label htmlFor={id}>{WINTER_ARC_TIME_LABELS[k]}</label>
-      <input
-        id={id}
-        type="text"
-        inputMode="numeric"
-        autoComplete="off"
-        value={draft}
-        aria-invalid={!valid}
-        placeholder="04:00"
-        onChange={(e) => {
-          setDraft(e.target.value);
-          if (isValidTime(k, e.target.value)) onSave(e.target.value);
-        }}
-        onBlur={() => !valid && setDraft(value)}
-      />
-    </div>
-  );
-}
-
 /**
  * The Winter Arc in the settings: switched on with a start date and a
  * duration, switched off after asking; nothing of a round is ever deleted.
+ * While a round runs, its habits can be changed here too, unless the page
+ * shows them on their own (the Streithalle does).
  */
-export function WinterArcSettings() {
+export function WinterArcSettings({ withStandard = true }: { withStandard?: boolean }) {
   const store = useStore();
   const profile = useProfile();
   const today = store.today();
   const run = activeRun(profile.winterArc);
   const [panel, setPanel] = useState<'start' | 'end' | null>(null);
-  const settings = profile.winterArcSettings;
-  const update = (fn: (p: Profile) => Profile) => store.updateProfile(fn, { immediate: true });
-
-  const toggleDay = (item: (typeof WINTER_ARC_ITEMS)[number]['id'], d: Weekday) =>
-    update((p) => {
-      const cur = p.winterArcSettings.weekdays[item];
-      const next = cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d];
-      return {
-        ...p,
-        winterArcSettings: {
-          ...p.winterArcSettings,
-          weekdays: { ...p.winterArcSettings.weekdays, [item]: WEEK.filter((x) => next.includes(x)) },
-        },
-      };
-    });
 
   return (
     <>
@@ -210,9 +192,10 @@ export function WinterArcSettings() {
         ]}
       />
       <p className="small muted">
-        In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard, nach dem Plan des
-        Winter Arc. Die Reihenfolge ist: Gott, Familie und Haus, Gemeinde, Arbeit, ich. Eingeschaltet findest du die
-        Streithalle in der Arena und ihre Gewohnheiten unter „Heute“. Die Waffenrüstung bleibt davon unberührt.
+        In der Streithalle hältst du für einen Zeitraum deiner Wahl einen festen Tagesstandard. Die Gewohnheiten legst
+        du selbst fest; der Winter Arc dient als Vorlage. Die Reihenfolge ist: Gott, Familie und Haus, Gemeinde, Arbeit,
+        ich. Eingeschaltet findest du die Streithalle in der Arena und ihre Gewohnheiten unter „Heute“. Die
+        Waffenrüstung bleibt davon unberührt.
       </p>
       {run && !panel && (
         <p>
@@ -224,8 +207,8 @@ export function WinterArcSettings() {
         <WinterArcStartPanel
           today={today}
           onCancel={() => setPanel(null)}
-          onStart={(s, d, n) => {
-            store.startWinterArc(s, d, n);
+          onStart={(s, d, n, pts) => {
+            store.startWinterArc(s, d, n, pts);
             setPanel(null);
           }}
         />
@@ -252,45 +235,10 @@ export function WinterArcSettings() {
           </div>
         </div>
       )}
-      {run && (
+      {run && withStandard && (
         <>
-          <h5>An welchen Tagen</h5>
-          <p className="small muted">Tippe die Tage an, an denen ein Punkt gilt. An den übrigen steht im Tracker ein Strich.</p>
-          {WINTER_ARC_ITEMS.map((item) => (
-            <fieldset key={item.id} className="schedule-group winter-arc-days">
-              <legend>{item.text(settings.times)}</legend>
-              <div className="day-chips" role="group" aria-label={`Tage für ${item.text(settings.times)}`}>
-                {WEEK.map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    aria-pressed={settings.weekdays[item.id].includes(d)}
-                    aria-label={WEEKDAY_LONG[d]}
-                    onClick={() => toggleDay(item.id, d)}
-                  >
-                    {WEEKDAY_SHORT[d]}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          ))}
-          <h5>Meine Zeiten</h5>
-          <p className="small muted">Deine Uhrzeiten für die Liste. Der Text der Anleitung bleibt dabei unverändert.</p>
-          <div className="times-grid">
-            {(Object.keys(WINTER_ARC_TIME_LABELS) as (keyof WinterArcTimes)[]).map((k) => (
-              <TimeField
-                key={k}
-                k={k}
-                value={settings.times[k]}
-                onSave={(v) =>
-                  update((p) => ({
-                    ...p,
-                    winterArcSettings: { ...p.winterArcSettings, times: { ...p.winterArcSettings.times, [k]: v } },
-                  }))
-                }
-              />
-            ))}
-          </div>
+          <h5>Meine Gewohnheiten</h5>
+          <WinterArcStandard run={run} />
         </>
       )}
     </>

@@ -210,6 +210,35 @@ describe('Today', () => {
     expect(store.getProfile().winterArc.weeks).toMatchObject([{ week: 1, weeklyChecks: { church: true } }]);
   });
 
+  it('shows the habits of a round in its own words, by the blocks of the day', async () => {
+    // 25 September 2026 is a Friday.
+    const store = await renderToday('2026-09-25', (s) =>
+      s.startWinterArc('2026-09-23', 90, 'Herbst', [
+        { id: 'own-a', text: 'Mittagsgebet', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5] },
+        { id: 'own-b', text: 'Psalm am Morgen', rhythm: 'daily', block: 'morning', weekdays: [1, 2, 3, 4, 5, 6, 0] },
+        { id: 'own-c', text: 'Brief an einen Bruder', rhythm: 'weekly' },
+        { id: 'own-d', text: 'Fastentag', rhythm: 'monthly' },
+      ]),
+    );
+    const day = within(screen.getByRole('region', { name: /^Gewohnheiten, (Heute|Freitag)/ }));
+    expect([...document.querySelectorAll('.habits-day .wa-group h5')].map((h) => h.textContent)).toEqual([
+      'Morgen',
+      'Arbeit',
+      'Woche und Monat',
+    ]);
+    fireEvent.click(day.getByRole('checkbox', { name: 'Mittagsgebet' }));
+    expect(store.getProfile().winterArc.days).toMatchObject([{ date: '2026-09-25', checks: { 'own-a': true } }]);
+    fireEvent.click(day.getByRole('checkbox', { name: /^Fastentag/ }));
+    expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', checks: { 'own-d': true } }]);
+    // Saturday: no midday prayer that day, only its mark.
+    fireEvent.click(screen.getByRole('button', { name: 'Samstag, 26. September' }));
+    const saturday = within(screen.getByRole('region', { name: /^Gewohnheiten, Samstag/ }));
+    expect(saturday.queryByRole('checkbox', { name: 'Mittagsgebet' })).toBeNull();
+    expect(saturday.getByText('Mittagsgebet').closest('.is-off')).toBeTruthy();
+    // Not the plan's points.
+    expect(document.body.textContent).not.toContain('04:00 auf, kein Handy');
+  });
+
   it('has no Streithalle among the habits while the Winter Arc is off', async () => {
     await renderToday('2026-09-25');
     expect(document.querySelector('.habit-group-streithalle')).toBeNull();

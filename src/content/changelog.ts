@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.38.0',
+    date: '2026-10-07',
+    title: 'Eigene Gewohnheiten in der Streithalle',
+    changes: [
+      { area: 'Arena', text: 'In der Streithalle legst du die Gewohnheiten selbst fest. Unter „Meine Gewohnheiten“ fügst du eigene hinzu, änderst Wortlaut, Tage und Block (Morgen, Haus, Arbeit), sortierst sie und nimmst heraus, was nicht passt. Was der Winter Arc vorschlägt, steht darunter zum Aufnehmen bereit.' },
+      { area: 'Arena', text: 'Eine neue Runde beginnt mit den Gewohnheiten der letzten Runde, mit der Liste des Winter Arc oder leer. Jede Runde behält ihre eigene Liste; frühere Runden bleiben, wie sie waren.' },
+      { area: 'Arena', text: 'Nimmst du eine Gewohnheit heraus, die du schon abgehakt hast, bleiben ihre Haken gespeichert und stehen im Export. Die Uhrzeiten schreibst du jetzt direkt in den Wortlaut, etwa „05:00 auf, kein Handy“.' },
+    ],
+  },
+  {
     version: '0.37.4',
     date: '2026-10-06',
     title: 'Kapitel am Tag ohne Wechsel',

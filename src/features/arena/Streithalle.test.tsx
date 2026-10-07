@@ -173,12 +173,42 @@ describe('Streithalle', () => {
     expect(document.querySelector('.wa-grid td.is-outside button')).toBeNull();
   });
 
+  it('begins a round with a list of its own, changed under "Meine Gewohnheiten"', async () => {
+    const store = await renderArena('/arena?bereich=streithalle');
+    fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
+    const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
+    const begins = within(dialog).getByRole('group', { name: 'Womit die Runde beginnt' });
+    // No round before: the plan of the Winter Arc, or an empty list.
+    expect(within(begins).getAllByRole('button').map((b) => b.textContent)).toEqual(['Winter Arc', 'Leer']);
+    fireEvent.click(within(begins).getByRole('button', { name: 'Leer' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
+    expect(store.getProfile().winterArc.runs[0]!.points).toEqual([]);
+    expect(screen.getByText('In deiner Liste steht keine tägliche Gewohnheit.')).toBeTruthy();
+
+    // "Gewohnheiten ändern" opens the list of the round.
+    fireEvent.click(screen.getByRole('button', { name: 'Gewohnheiten ändern' }));
+    expect((document.getElementById('wa-standard') as HTMLDetailsElement).open).toBe(true);
+    const form = screen.getByRole('form', { name: 'Neue Gewohnheit' });
+    fireEvent.change(within(form).getByLabelText('Wortlaut'), { target: { value: 'Psalm 23 beten' } });
+    fireEvent.click(within(form).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
+    // At once in the day's list, to tick.
+    const day = document.querySelector('.wa-day') as HTMLElement;
+    fireEvent.click(within(day).getByRole('checkbox', { name: 'Psalm 23 beten' }));
+    const [psalm] = store.getProfile().winterArc.runs[0]!.points!;
+    expect(store.getProfile().winterArc.days).toMatchObject([{ date: '2026-09-26', checks: { [psalm!.id]: true } }]);
+    // The plan offers its points to take up.
+    fireEvent.click(screen.getByRole('button', { name: /^Trainiert · Morgen/ }));
+    expect(store.getProfile().winterArc.runs[0]!.points!.map((p) => p.text)).toEqual(['Psalm 23 beten', 'Trainiert']);
+    // 26 September is a Saturday: rest from training, as the plan has it.
+    expect(within(day).getByText('Trainiert').closest('.is-off')!.textContent).toBe('RuheTrainiert');
+  });
+
   it('counts the monthly point for every week of the calendar month', async () => {
     const store = await renderArena('/arena?bereich=streithalle', (s) => s.startWinterArc('2026-09-14', 90));
     tab('Woche');
     const served = () => screen.getByRole('checkbox', { name: /^Gedient \(einmal im Monat\)\s*·\s*September$/ });
     fireEvent.click(served());
-    expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', served: true }]);
+    expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', checks: { serve: true } }]);
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     expect(screen.getByRole('heading', { name: /^Woche 1/ })).toBeTruthy();
     expect(served().getAttribute('aria-checked')).toBe('true');
