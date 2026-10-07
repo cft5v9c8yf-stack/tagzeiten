@@ -125,6 +125,26 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(store.getDay('2026-09-25').habits['wz-freitagsfasten']).toBe(true);
   });
 
+  it('writes the thanks in the Gebetskammer: saved, ticked, and back in the list; on paper the tick alone does', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    tab('Tag');
+    // Only the thanks can be written down, nothing else of the list.
+    expect(screen.getAllByRole('button', { name: 'Aufschreiben' })).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
+    // The way back is named; without a word written, nothing is ticked.
+    expect(await screen.findByRole('button', { name: 'Zurück zur Liste' })).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('Was dich bewegt'), { target: { value: 'Für das Gespräch mit Anna' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
+    expect(store.getDay('2026-09-26').habits['wz-dankbarkeit']).toBe(true);
+    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Für das Gespräch mit Anna']);
+    const day = within(document.querySelector('.wa-day') as HTMLElement);
+    expect(day.getByRole('checkbox', { name: 'Dankbarkeit' }).getAttribute('aria-checked')).toBe('true');
+    // On paper: the tick alone, as before.
+    fireEvent.click(day.getByRole('checkbox', { name: 'Morgensegen' }));
+    expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
+  });
+
   it('shows the week as a grid of calendar weeks, what was kept so far, and the review at its end', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);

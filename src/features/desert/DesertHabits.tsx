@@ -1,6 +1,7 @@
+import { useLocation, useNavigate } from 'react-router';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
-import { habitsOf, listedOn, meantFor } from '../../domain/desert';
+import { canWrite, habitsOf, listedOn, meantFor } from '../../domain/desert';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import type { Habit } from '../../domain/model';
 import { isInRun, type WinterArcRun } from '../../domain/winterArc';
@@ -11,13 +12,22 @@ const periodNote = (h: Habit) => (h.rhythm === 'weekly' ? 'diese Woche' : h.rhyt
 
 /**
  * The habits of the Wüstenzeit to tick on one day: daily ones on their days
- * (Advent ones in Advent), weekly ones all week until ticked. Each with the "i".
+ * (Advent ones in Advent), weekly ones all week until ticked. Each with the "i";
+ * the thanks can also be written down in the Gebetskammer, or on paper.
  */
 export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   const store = useStore();
   const profile = useProfile();
   const lookup = useDayLookup();
+  const navigate = useNavigate();
+  const location = useLocation();
   const today = store.today();
+  // A new entry in the Gebetskammer; saved, it ticks the habit and leads back to this list.
+  const write = (h: Habit) => {
+    const back = location.pathname + location.search;
+    const query = new URLSearchParams({ gewohnheit: h.id, tag: date, zurueck: back });
+    navigate(`/arena/${store.addArenaEntry()}?${query}`);
+  };
   if (!isInRun(run, date)) return <p className="small muted">An diesem Tag läuft keine Wüstenzeit.</p>;
   const habits = habitsOf(run, profile);
   const listed = habits.filter((h) => listedOn(h, date, lookup));
@@ -35,6 +45,11 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
           >
             {h.name}
           </Tick>
+          {canWrite(h) && date <= today && (
+            <button type="button" className="wa-row-action" onClick={() => write(h)}>
+              Aufschreiben
+            </button>
+          )}
         </WithInfo>
       ))}
     </>

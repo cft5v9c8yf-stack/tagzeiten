@@ -4,6 +4,7 @@ import { firstAdvent } from './churchYear';
 import {
   addOwn,
   adopt,
+  canWrite,
   choose,
   desertWeekOf,
   desertWeeks,
@@ -149,6 +150,15 @@ describe('days of the Wüstenzeit', () => {
     expect(keptLine(h('wz-psalm'), 1)).toBe('an einem Tag gehalten');
     expect(keptLine(h('wz-bibelvers'), 2)).toBe('in 2 Wochen gehalten');
     expect([keptLine(h('wz-psalm'), 0), keptLine(h('wz-bibelvers'), 3)].join()).not.toMatch(/%|von \d+|Quote|Serie/);
+  });
+});
+
+describe('writing down', () => {
+  it('lets the thanks be written in the Gebetskammer, never the examination of conscience (rule 9)', () => {
+    expect(canWrite({ id: 'wz-dankbarkeit' })).toBe(true);
+    expect(canWrite({ id: 'wz-1abc-journal' })).toBe(true);
+    expect(canWrite({ id: 'wz-gewissen' })).toBe(false);
+    expect(canWrite({ id: 'wz-psalm' })).toBe(false);
   });
 });
 

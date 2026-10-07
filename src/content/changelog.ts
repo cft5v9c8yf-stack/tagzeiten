@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.2',
+    date: '2026-10-07',
+    title: 'Den Dank aufschreiben',
+    changes: [
+      { area: 'Heute', text: 'Bei der Dankbarkeit und beim Tagebuch der Wüstenzeit steht „Aufschreiben“: Es öffnet einen neuen Eintrag in der Gebetskammer. „Sichern, abhaken und zurück“ hakt die Gewohnheit ab und führt zurück zur Liste. Wer lieber auf Papier schreibt, hakt einfach ab.' },
+    ],
+  },
+  {
     version: '0.39.1',
     date: '2026-10-07',
     title: 'Die Wüstenwanderung',

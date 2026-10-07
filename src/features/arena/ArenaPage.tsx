@@ -2,12 +2,13 @@ import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { byMeeting, entryTitle, forgeTitle, isReference } from '../../domain/arena';
+import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
-import { formatLong } from '../../domain/dates';
+import { formatLong, isDateKey } from '../../domain/dates';
+import { isDoneOn } from '../../domain/habits';
 import { desertLine } from '../desert/DesertSettings';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
@@ -341,6 +342,14 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const store = useStore();
   const profile = useProfile();
   const navigate = useNavigate();
+  // Written for a habit of the Wüstenzeit: saved, it is ticked for its day, and the way leads back to the list.
+  const [params] = useSearchParams();
+  const back = params.get('zurueck');
+  const day = params.get('tag');
+  const habit =
+    back && /^\/(?!\/)/.test(back) && day && isDateKey(day)
+      ? profile.habits.find((h) => h.id === params.get('gewohnheit'))
+      : undefined;
   const dateId = useId();
   const toast = useToast();
   const [confirm, setConfirm] = useState(false);
@@ -348,12 +357,12 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
-  const home = archived ? REVIEW_PATH : arenaPath(kind);
+  const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
 
   return (
     <article className="arena-entry">
       <p className="back-link">
-        <Link to={home}>{archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
+        <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
       </p>
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
@@ -409,8 +418,15 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       </aside>
 
       <div className="arena-actions">
-        <button type="button" className="btn primary" onClick={() => navigate(home)}>
-          Eintrag sichern und zurück
+        <button
+          type="button"
+          className="btn primary"
+          onClick={() => {
+            if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
+            navigate(home);
+          }}
+        >
+          {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
         </button>
         {archived ? (
           <button

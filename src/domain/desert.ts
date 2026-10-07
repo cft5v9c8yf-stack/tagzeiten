@@ -139,6 +139,13 @@ export function removeOwn(p: Profile, id: string, now: number): Profile {
   return { ...p, habits: p.habits.filter((h) => h.id !== id), winterArc };
 }
 
+/**
+ * Habits that can be written down in the Gebetskammer: the thanks, and the
+ * journal of a round taken over from the Streithalle. Never the examination of
+ * conscience: sins are prayed, not written down (rule 9).
+ */
+export const canWrite = (h: Pick<Habit, 'id'>): boolean => h.id === 'wz-dankbarkeit' || /^wz-.+-journal$/.test(h.id);
+
 /** Takes chosen habits into everyday life: they stay switched on after the Wüstenzeit. */
 export function adopt(p: Profile, ids: readonly string[]): Profile {
   return { ...p, habits: p.habits.map((h) => (ids.includes(h.id) ? { ...h, active: true } : h)) };
