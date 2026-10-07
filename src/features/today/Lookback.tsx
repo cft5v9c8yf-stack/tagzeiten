@@ -18,7 +18,6 @@ export function Lookback({ date }: { date: DateKey }) {
 
   return (
     <div className="panel">
-      <p className="panel-label">Die letzten vier Wochen</p>
       <ol className="dots" aria-label="Die letzten 28 Tage">
         {dots.map((d) => (
           <li key={d.date} className={`dot ${d.state}`} title={`${formatShort(d.date)}: ${STATE_LABEL[d.state]}`}>

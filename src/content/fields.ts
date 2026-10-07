@@ -30,7 +30,7 @@ export const FIELDS: Record<FieldPath, FieldMeta> = {
   'morning.application': { label: '→ Umsetzung' },
   'morning.wreath.instruction': { label: 'Unterricht – Was sagst du mir hier?', placeholder: 'Herr, du sagst mir in diesem Wort …' },
   'morning.wreath.thanks': { label: 'Danksagung – Welche Gabe steckt darin?', placeholder: 'Ich danke dir, daß …' },
-  'morning.wreath.petition': { label: 'Bitte – Was folgt daraus?', placeholder: 'Darum bitte ich dich …' },
+  'morning.wreath.petition': { label: 'Bitte – Worum bitte ich dich?', placeholder: 'Darum bitte ich dich …' },
   'morning.onMyHeart': { label: 'Was mich bewegt' },
   'morning.forMyself': { label: 'Bitte für mich' },
   'morning.peopleToday': { label: 'Menschen, denen ich heute begegne' },

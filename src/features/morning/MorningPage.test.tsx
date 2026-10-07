@@ -90,6 +90,24 @@ describe('Stille Zeit as a flow', () => {
 });
 
 describe('Stille Zeit without the bed', () => {
+  it('shows the verse and the double question in the reading, the rest folded until something is written in it', async () => {
+    await renderMorning();
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    const fold = [...document.querySelectorAll('details.fold')].find((d) => d.querySelector('summary')!.textContent === 'Mehr notieren')!;
+    expect(fold.hasAttribute('open')).toBe(false);
+    const inView = [...document.querySelectorAll('.flow-step label')].filter((l) => !fold.contains(l)).map((l) => l.textContent);
+    expect(inView).toEqual(['Stelle des Verses', 'Vers, den ich mitnehme', 'Was lerne ich über Gott?', 'Was lerne ich über den Menschen?']);
+    expect(within(fold as HTMLElement).getByLabelText('Hauptaussage')).toBeTruthy();
+    expect(within(fold as HTMLElement).getByLabelText('→ Umsetzung')).toBeTruthy();
+    cleanup();
+    await renderMorning((s) => s.updateDay(s.today(), (d) => ({ ...d, morning: { ...d.morning, unclear: 'Wer ist hier gemeint?' } })));
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    const open = [...document.querySelectorAll('details.fold')].find((d) => d.querySelector('summary')!.textContent === 'Mehr notieren')!;
+    expect(open.hasAttribute('open')).toBe(true);
+  });
+
   it('begins with the opening when Am Bett is hidden', async () => {
     await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));
     expect(title()).toBe('Eröffnung');

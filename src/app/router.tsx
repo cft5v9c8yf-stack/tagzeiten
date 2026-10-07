@@ -47,6 +47,8 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'arena/:eintrag', element: <ArenaPage /> },
       // The archive now stands under "Mehr" as "Rückblick".
       { path: 'archiv', element: <Navigate to="/mehr/rueckblick" replace /> },
+      // The reading plan is set under "Wort" (an old address led to the overview of "Mehr").
+      { path: 'mehr/leseplan', element: <Navigate to="/bibel" replace /> },
       { path: 'mehr', element: <SettingsPage /> },
       { path: 'mehr/:bereich', element: <SettingsPage /> },
       { path: 'kirchenjahr', element: <ChurchYearPage /> },

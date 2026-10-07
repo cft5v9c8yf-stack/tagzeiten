@@ -5,10 +5,20 @@
  * in the names (rule 16), the Bible verses after Luther 1912 (rule 12), and
  * the marks of the rhythm ("nur freitags") not shown. The background notes
  * ("about") come from the collection sent the same day.
+ *
+ * Since 0.40 nothing stands twice: where Henoch already has the habit (Bibel
+ * lesen, Leibliche Übung, Opfer und Gaben, Gemeinschaft mit Brüdern), the offer
+ * takes that one, as the Hauskirche always did; and what the orders already
+ * hold (the blessings, the psalm, the thanks, the examination) is ticked
+ * with them, or by hand on days without them. The 90-Tage-Standard, before a
+ * text of its own beside the guide, is a package now, the fifth: its points
+ * with their notes from the plan, its phases and weekly focuses in the week.
  */
 import type { Weekday } from '../domain/dates';
 import type { HouseNeed } from '../domain/house';
 import type { Rhythm } from '../domain/model';
+import { DEFAULT_TIMES } from '../domain/winterArc';
+import { WINTER_ARC_ABOUT, WINTER_ARC_DAY, WINTER_ARC_ITEMS, WINTER_ARC_LEAD, WINTER_ARC_TITLE, WINTER_ARC_WEEK } from './winterArc';
 
 export interface DesertVerse {
   text: string;
@@ -62,8 +72,16 @@ export const DESERT_GUIDE = {
 export const DESERT_CHOICE_LEAD =
   'Wähle ein Paket als Startpunkt oder stell dir deine eigene Wüstenzeit zusammen. Weniger ist oft mehr: Lieber drei Gewohnheiten treu halten als zehn halbherzig.';
 
+/**
+ * What in the orders already keeps a habit of the offer: "Am Bett" or the
+ * Stille Zeit (the Morgensegen), the Stille Zeit itself, a psalm prayed in the Stille Zeit or the
+ * Vesper, both blessings, the full Nachtgebet with its examination, a line of
+ * thanks written down.
+ */
+export type Follow = 'atBed' | 'stillTime' | 'psalm' | 'blessings' | 'examination' | 'thanks';
+
 export interface DesertHabit {
-  /** The id of the habit in the profile; the four of the Hauskirche that Henoch already has keep theirs. */
+  /** The id of the habit in the profile; where Henoch already has the habit, its id. */
   id: string;
   name: string;
   /** The short description. */
@@ -77,6 +95,8 @@ export interface DesertHabit {
   advent?: true;
   /** Listed once "Mein Haus" holds wife, children or both. */
   needs?: HouseNeed;
+  /** Kept with the orders as well as by hand. */
+  follows?: Follow;
 }
 
 export interface DesertPack {
@@ -103,7 +123,52 @@ const weekly = (id: string, name: string, note: string, extra: Partial<DesertHab
   ...extra,
 });
 
+const monthly = (id: string, name: string, note: string, extra: Partial<DesertHabit> = {}): DesertHabit => ({
+  id,
+  name,
+  note,
+  rhythm: 'monthly',
+  ...extra,
+});
+
 const BLESSING_ABOUT = 'Luthers Segen aus dem Kleinen Katechismus: kurz und bewährt. Du findest ihn in Henoch.';
+
+/** The notes of the plan to a point of the day, word for word (see content/winterArc.ts). */
+const dayNote = (block: number, item: number): string => WINTER_ARC_DAY.blocks[block]!.items[item]!.text;
+const weekNote = (row: number): string => WINTER_ARC_WEEK.rows[row]!.how;
+const point = (id: string) => WINTER_ARC_ITEMS.find((it) => it.id === id)!;
+const pointName = (id: string) => point(id).text(DEFAULT_TIMES);
+
+/**
+ * The 90-Tage-Standard as a package: the points of the plan, the times as the
+ * plan sets them. Where Henoch has the habit (training, the service, the
+ * Sunday, the evening with the wife), that one; the morning in the Word is
+ * kept with the Stille Zeit, the journal with a line of thanks.
+ */
+const STANDARD_PACK: DesertPack = {
+  id: 'standard',
+  name: WINTER_ARC_TITLE,
+  tagline: 'Auf 90 Tage angelegt',
+  description: WINTER_ARC_LEAD,
+  verse: verse(WINTER_ARC_ABOUT.verse.text, WINTER_ARC_ABOUT.verse.ref, WINTER_ARC_ABOUT.verse.source),
+  habits: [
+    daily('wz-std-wake', pointName('wake'), dayNote(0, 0)),
+    daily('wz-std-word', pointName('word'), dayNote(0, 1), { follows: 'stillTime' }),
+    daily('wz-std-journal', pointName('journal'), dayNote(0, 2), { follows: 'thanks' }),
+    daily('exercise', pointName('train'), dayNote(0, 3)),
+    daily('wz-std-cook', pointName('cook'), dayNote(2, 0)),
+    daily('wz-std-dinner', pointName('dinner'), dayNote(2, 1)),
+    daily('wz-std-wife', pointName('wife'), dayNote(2, 2), { needs: 'wife' }),
+    daily('wz-std-kitchen', pointName('kitchen'), dayNote(2, 3)),
+    daily('wz-std-phone', pointName('phone'), dayNote(2, 4)),
+    daily('wz-std-night', pointName('night'), dayNote(2, 5)),
+    weekly('worship', 'Gottesdienst und Sonntagsruhe', weekNote(0)),
+    weekly('wz-std-talk', 'Sonntagsgespräch mit meiner Frau', weekNote(1), { needs: 'wife' }),
+    weekly('timeWithWife', 'Abend zu zweit, von mir geplant', weekNote(2)),
+    weekly('wz-std-money', '15 Minuten Finanzen', weekNote(3)),
+    monthly('mercy', 'Einmal im Monat dienen', weekNote(4)),
+  ],
+};
 
 export const DESERT_PACKS: readonly DesertPack[] = [
   {
@@ -114,11 +179,12 @@ export const DESERT_PACKS: readonly DesertPack[] = [
       'Du willst anfangen, aber ohne dich zu überfordern? Aufbruch hilft dir, mit wenigen Gewohnheiten eine feste geistliche Routine aufzubauen. Klein anfangen und treu bleiben, darum geht es hier.',
     verse: verse('Wer im Geringsten treu ist, der ist auch im Großen treu.', 'Lk 16,10', 'Lk 16,10'),
     habits: [
-      daily('wz-morgensegen', 'Morgensegen', 'Beginne den Tag mit Luthers Morgensegen.', { about: BLESSING_ABOUT }),
-      daily('wz-bibellese', 'Bibellese', 'Lies täglich einen kurzen Abschnitt aus einem Evangelium.'),
+      daily('wz-morgensegen', 'Morgensegen', 'Beginne den Tag mit Luthers Morgensegen.', { about: BLESSING_ABOUT, follows: 'atBed' }),
+      daily('bibleReading', 'Bibellese', 'Lies täglich einen kurzen Abschnitt aus einem Evangelium.'),
       daily('wz-handy-spaeter', 'Handy später', 'Kein Handy, bevor du gebetet hast.'),
       daily('wz-dankbarkeit', 'Dankbarkeit', 'Notiere abends drei Dinge, für die du dankbar bist.', {
         about: 'Im Nachtgebet ist dafür Platz.',
+        follows: 'thanks',
       }),
     ],
   },
@@ -132,17 +198,19 @@ export const DESERT_PACKS: readonly DesertPack[] = [
     habits: [
       daily('wz-segen', 'Morgen- und Abendsegen', 'Rahme deinen Tag mit Gebet ein.', {
         about: 'Luthers Segen aus dem Kleinen Katechismus: kurz und bewährt. Du findest beide in Henoch.',
+        follows: 'blessings',
       }),
       daily('wz-psalm', 'Psalm des Tages', 'Bete täglich einen Psalm, so wie die Kirche es seit Jahrhunderten tut.', {
         about: 'Die Mönche beteten alle 150 Psalmen regelmäßig durch. Ein Psalm am Tag reicht für den Anfang.',
+        follows: 'psalm',
       }),
-      daily('wz-bibel-plan', 'Bibel nach Plan', 'Lies ein biblisches Buch während der Wüstenzeit vollständig.', {
+      daily('bibleReading', 'Bibel nach Plan', 'Lies ein biblisches Buch während der Wüstenzeit vollständig.', {
         about: 'Ein Evangelium oder ein Brief am Stück, verteilt auf die Wüstenzeit.',
       }),
       daily('wz-freitagsfasten', 'Freitagsfasten', 'Verzichte freitags auf eine Mahlzeit und nutze die Zeit zum Gebet.', {
         days: [5],
       }),
-      daily('wz-bewegung', 'Bewegung', 'Bewege dich täglich bewusst. Dein Körper ist ein Tempel des Heiligen Geistes.', {
+      daily('exercise', 'Bewegung', 'Bewege dich täglich bewusst. Dein Körper ist ein Tempel des Heiligen Geistes.', {
         about: 'Siehe 1. Korinther 6,19.',
       }),
     ],
@@ -173,6 +241,7 @@ export const DESERT_PACKS: readonly DesertPack[] = [
       daily('wz-medienfasten', 'Medienfasten', 'Kein Social Media während der Wüstenzeit.'),
       daily('wz-gewissen', 'Gewissenserforschung', 'Geh abends den Tag vor Gott durch, bekenne Schuld und empfange Vergebung.', {
         about: 'So übst du Gesetz und Evangelium täglich ein. Im Nachtgebet steht dafür „Prüfung und Zuspruch“.',
+        follows: 'examination',
       }),
       weekly('wz-bibelvers', 'Bibelvers lernen', 'Lerne jede Woche einen Vers auswendig.'),
     ],
@@ -208,6 +277,7 @@ export const DESERT_PACKS: readonly DesertPack[] = [
       }),
     ],
   },
+  STANDARD_PACK,
 ];
 
 /** Further habits from the collection, without a package. */
@@ -231,18 +301,27 @@ export const DESERT_MORE: readonly DesertHabit[] = [
   daily('wz-sabbat', 'Sabbatruhe', 'Einen Tag pro Woche bewusst ruhen und den Sonntag heiligen.', { days: [0] }),
   weekly('worship', 'Gottesdienst', 'Jeden Sonntag hingehen, ohne Ausnahme.'),
   daily('wz-gute-tat', 'Eine gute Tat am Tag', 'Jemanden ermutigen, anrufen oder ihm helfen.'),
-  weekly(
-    'wz-geben',
+  monthly(
+    'offering',
     'Geben',
     'Regelmäßig spenden, etwa das, was du durch das Fasten sparst. Fasten, Beten und Almosengeben gehören in Matthäus 6 zusammen.',
   ),
-  weekly('wz-begleiter', 'Geistlicher Begleiter', 'Dich jede Woche mit jemandem austauschen und Rechenschaft geben.'),
+  weekly('brothers', 'Geistlicher Begleiter', 'Dich jede Woche mit jemandem austauschen und Rechenschaft geben.'),
 ];
 
 export const DESERT_MORE_TITLE = 'Weitere Gewohnheiten';
 
-/** Every habit on offer, in the order of the choice. */
+/** Every habit on offer, in the order of the choice. The reading of the plan stands in two packages. */
 export const DESERT_HABITS: readonly DesertHabit[] = [...DESERT_PACKS.flatMap((p) => p.habits), ...DESERT_MORE];
+
+/** Habits of the offer before 0.40 that Henoch already had: they become the habit Henoch has. */
+export const RELINKED: Readonly<Record<string, string>> = {
+  'wz-bibellese': 'bibleReading',
+  'wz-bibel-plan': 'bibleReading',
+  'wz-bewegung': 'exercise',
+  'wz-geben': 'offering',
+  'wz-begleiter': 'brothers',
+};
 
 /** Before the examination of conscience: the Word first (rule 2). */
 export const DESERT_EXAMEN_VERSE = verse(

@@ -189,18 +189,27 @@ describe('Mehr: Aufbau', () => {
 
     // Then the choice: the four packages, the further habits, the own ones.
     const packs = [...document.querySelectorAll('.desert-pack')].map((s) => s.getAttribute('aria-label'));
-    expect(packs).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Weitere Gewohnheiten', 'Eigene Gewohnheiten']);
+    expect(packs).toEqual([
+      'Aufbruch',
+      'Wüstenweg',
+      'Wie die Wüstenväter',
+      'Hauskirche',
+      'Der 90-Tage-Standard',
+      'Weitere Gewohnheiten',
+      'Eigene Gewohnheiten',
+    ]);
     const wuestenweg = screen.getByRole('region', { name: 'Wüstenweg' });
     expect(wuestenweg.textContent).toContain('Die klassische Wüstenzeit');
     expect(wuestenweg.textContent).toContain('„Übe dich selbst aber in der Gottseligkeit.“');
     fireEvent.click(within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }));
     const run = () => store.getProfile().winterArc.runs[0]!;
-    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'wz-bibel-plan', 'wz-freitagsfasten', 'wz-bewegung']);
+    // The reading and the exercise Henoch already has: those, not a second one.
+    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'bibleReading', 'wz-freitagsfasten', 'exercise']);
     expect((within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }) as HTMLButtonElement).disabled).toBe(true);
     // Single ones off again, and across the packages.
     fireEvent.click(within(wuestenweg).getByLabelText('Bewegung'));
     fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByLabelText('Stille vor Gott'));
-    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'wz-bibel-plan', 'wz-freitagsfasten', 'wz-stille']);
+    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'bibleReading', 'wz-freitagsfasten', 'wz-stille']);
     // The "i" opens the bubble with the short description and the background.
     fireEvent.click(screen.getByRole('button', { name: 'Info zu Psalm des Tages' }));
     expect(screen.getByRole('note').textContent).toContain('Die Mönche beteten alle 150 Psalmen regelmäßig durch.');
@@ -266,8 +275,9 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
       s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
       s.startDesert('2026-09-21', 40);
-    }, ['review.habits']);
+    });
     await screen.findAllByText(/mit Einträgen/);
+    fireEvent.click(screen.getByRole('button', { name: 'Gewohnheiten' }));
     const link = await screen.findByRole('link', { name: /Wüstenzeit\s*·\s*Tag 5 von 40/ });
     expect(link.getAttribute('href')).toBe('/arena?bereich=wuestenwanderung');
   });
@@ -690,6 +700,8 @@ describe('Rückblick', () => {
     await renderAt('/mehr/rueckblick', <SettingsPage />, fill);
     const day = await screen.findByRole('button', { name: /24\. September/ });
     expect(day.getAttribute('aria-expanded')).toBe('false');
+    // One line per day: the ways into it only once it is open (0.40).
+    expect(screen.queryByRole('link', { name: 'Morgen öffnen' })).toBeNull();
     fireEvent.click(day);
     expect(day.getAttribute('aria-expanded')).toBe('true');
     const summary = document.getElementById(day.getAttribute('aria-controls')!)!;
@@ -703,6 +715,7 @@ describe('Rückblick', () => {
       'Haus: Mit Anna spazieren',
       'Dank: das Gespräch mit Paul',
     ]);
+    expect(within(summary).getByRole('link', { name: 'Morgen öffnen' }).getAttribute('href')).toBe('/andacht/morgen?d=2026-09-24');
     fireEvent.click(day);
     expect(summary.hidden).toBe(true);
   });
@@ -747,7 +760,7 @@ describe('Rückblick', () => {
       s.updateDay('2026-09-24', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } })),
     );
     await screen.findAllByText(/mit Einträgen/);
-    expect(screen.queryByRole('heading', { name: 'Gewohnheiten' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Gewohnheiten' })).toBeNull();
     cleanup();
 
     await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.habitHistory']);
@@ -763,10 +776,16 @@ describe('Rückblick', () => {
       );
       s.updateDay('2026-09-17', (d) => ({ ...d, habits: { ...d.habits, tablePrayer: true } }));
     });
+    // A view of its own, beside the days (0.40).
+    fireEvent.click(await screen.findByRole('button', { name: 'Gewohnheiten' }));
+    expect(screen.queryByLabelText('Rückblick durchsuchen')).toBeNull();
     await screen.findByRole('heading', { name: 'Gewohnheiten' });
     const row = screen.getByRole('list', { name: 'Tischgebet mit der Familie, die letzten 8 Wochen' });
     expect(within(row).getAllByRole('listitem')).toHaveLength(8);
-    expect(row.textContent).toContain('Woche ab Mo 14.9.: an 1 von 7 Tagen');
+    expect(row.textContent).toContain('Woche ab Mo 14.9.: an einem Tag');
+    expect(row.textContent).toContain('Woche ab Mo 7.9.: an keinem Tag');
+    // Kept is counted, not set against a measure (rule 4).
+    expect(row.textContent).not.toMatch(/von \d/);
     // The running week (from Monday 21) is not part of the course yet.
     expect(row.textContent).not.toContain('21.9.');
     // Documentation only: no percentages, no trend (rule 4).
@@ -852,14 +871,14 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.39(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 0\.40(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.39(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.40(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');

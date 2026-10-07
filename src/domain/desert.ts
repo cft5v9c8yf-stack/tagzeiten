@@ -6,11 +6,12 @@
  * Kept is documented, never rated (rule 4): no quota, no streak; a day left
  * open is simply open, and the next one begins anew.
  */
-import { DESERT_HABITS, DESERT_PACKS, DESERT_VERSE, type DesertHabit, type DesertVerse } from '../content/desert';
+import { DESERT_HABITS, DESERT_PACKS, DESERT_VERSE, RELINKED, type DesertHabit, type DesertVerse, type Follow } from '../content/desert';
+import { HABIT_PRESETS, READING_HABIT } from '../content/habits';
 import { firstAdvent } from './churchYear';
 import { addDays, mondayOf, weekdayOf, type DateKey } from './dates';
-import { fitsHouse, isDoneOn, isPerDay, periodDates, type DayLookup } from './habits';
-import type { Habit, Profile, Rhythm } from './model';
+import { fitsHouse, followOf, isDoneOn, isPerDay, periodDates, type DayLookup } from './habits';
+import type { Day, Habit, Profile, Rhythm } from './model';
 import { activeRun, endDateOf, isInRun, lastDayOfWeek, startRun, type WinterArcData, type WinterArcRun } from './winterArc';
 import { pointsOf } from './winterArcPoints';
 
@@ -40,9 +41,14 @@ export function startDesert(
   return { ...next, runs: next.runs.map((r) => (r === run ? { ...r, habits: [...new Set(habits)] } : r)) };
 }
 
+/** Whether a Wüstenzeit holds points of the 90-Tage-Standard: then its phases and weekly focuses go with it. */
+export const usesStandard = (run: Pick<WinterArcRun, 'habits'>): boolean => (run.habits ?? []).some((id) => id.startsWith('wz-std-'));
+
 /* ------------------------------------------------------------ the offer */
 
-const ORDER = new Map(DESERT_HABITS.map((h, i) => [h.id, i]));
+// The reading of the plan stands in two packages; it keeps the place of its first.
+const ORDER = new Map<string, number>();
+DESERT_HABITS.forEach((h, i) => ORDER.has(h.id) || ORDER.set(h.id, i));
 
 /** The offer a habit comes from, if any. */
 export const offerOf = (id: string): DesertHabit | undefined => DESERT_HABITS.find((h) => h.id === id);
@@ -67,10 +73,31 @@ export function habitFromOffer(o: DesertHabit): Habit {
   };
 }
 
-/** What the "i" tells about a habit: its short description and, if any, the background. */
-export function infoOf(h: Pick<Habit, 'id' | 'note'>): { note?: string; about?: string } {
+const FOLLOW_LINE: Record<Follow, string> = {
+  atBed: 'Abgehakt, sobald du „Am Bett“ oder die Stille Zeit abschließt.',
+  stillTime: 'Abgehakt, sobald du die Stille Zeit abschließt; die Bibellese gehört dazu.',
+  psalm: 'Abgehakt, sobald du die Stille Zeit oder die Vesper abschließt: Beide beten den Psalm des Tages.',
+  blessings: 'Abgehakt, sobald du die Stille Zeit (oder „Am Bett“) und das Nachtgebet abgeschlossen hast.',
+  examination: 'Abgehakt mit dem ganzen Nachtgebet: Dort steht „Prüfung und Zuspruch“.',
+  thanks: 'Abgehakt, sobald im Nachtgebet eine Zeile Dank steht.',
+};
+
+/**
+ * Where Henoch already holds a habit of the offer: the habit it has under
+ * another name, or the order that keeps it. Shown under the "i".
+ */
+function henochLine(id: string): string | undefined {
+  const f = followOf({ id });
+  if (f) return `${FOLLOW_LINE[f]} An anderen Tagen hakst du von Hand ab.`;
+  if (id === READING_HABIT) return 'In Henoch ist das „Bibel lesen“ nach deinem Leseplan. Den Plan stellst du unter „Wort“ ein.';
+  const preset = HABIT_PRESETS.find((p) => p.id === id);
+  return preset && preset.name !== offerOf(id)?.name ? `In Henoch heißt sie „${preset.name}“.` : undefined;
+}
+
+/** What the "i" tells about a habit: its short description, the background, and where Henoch holds it. */
+export function infoOf(h: Pick<Habit, 'id' | 'note'>): { note?: string; about?: string; henoch?: string } {
   const o = offerOf(h.id);
-  return o ? { note: o.note, about: o.about } : { note: h.note };
+  return o ? { note: o.note, about: o.about, henoch: henochLine(h.id) } : { note: h.note };
 }
 
 /** The habits of a Wüstenzeit that "Mein Haus" allows, in the order of the offer, own ones last. */
@@ -233,8 +260,35 @@ export function leadVerse(run: WinterArcRun): DesertVerse {
   const ids = run.habits ?? [];
   const counts = DESERT_PACKS.map((p) => ({ p, n: ids.filter((id) => p.habits.some((h) => h.id === id)).length }));
   const best = counts.reduce((a, b) => (b.n > a.n ? b : a), counts[0]!);
-  const others = ids.length - counts.reduce((s, c) => s + c.n, 0);
+  const others = ids.filter((id) => !packOf(id)).length;
   return best.n > 0 && best.n > others ? best.p.verse : DESERT_VERSE;
+}
+
+/* ------------------------------------------------------------ the habits Henoch already had (0.40) */
+
+/**
+ * Habits of the offer before 0.40 that Henoch already had become the habit
+ * Henoch has, in every round: their ticks are copied to it (the reading of the
+ * plan keeps its own record), and one taken into everyday life switches it on.
+ * The old ticks stay in the days, so nothing is lost from the export.
+ */
+export function relink(
+  p: Profile,
+  days: readonly Day[],
+  now: number,
+): { profile: Profile; ticks: { date: DateKey; id: string }[] } | undefined {
+  const old = p.habits.filter((h) => RELINKED[h.id] && h.desert && h.desert !== 'own');
+  if (!old.length) return undefined;
+  const to = (id: string) => RELINKED[id] ?? id;
+  const adopted = new Set(old.filter((h) => h.active).map((h) => to(h.id)));
+  const runs = p.winterArc.runs.map((r) =>
+    r.habits?.some((id) => RELINKED[id]) ? { ...r, habits: [...new Set(r.habits.map(to))], updatedAt: now } : r,
+  );
+  const ticks = days.flatMap((d) =>
+    old.filter((h) => d.habits[h.id] && to(h.id) !== READING_HABIT && !d.habits[to(h.id)]).map((h) => ({ date: d.date, id: to(h.id) })),
+  );
+  const habits = p.habits.filter((h) => !old.includes(h)).map((h) => (adopted.has(h.id) ? { ...h, active: true } : h));
+  return { profile: { ...p, habits, winterArc: { ...p.winterArc, runs } }, ticks: [...new Map(ticks.map((t) => [`${t.date}|${t.id}`, t])).values()] };
 }
 
 /* ------------------------------------------------------------ the round under way before 0.39 */

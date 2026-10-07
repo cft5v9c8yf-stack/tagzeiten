@@ -217,7 +217,7 @@ describe('Today', () => {
       'Bibelvers lernendiese Woche',
     ]);
     // The usual habits stay, below.
-    expect(within(thursday).getByRole('checkbox', { name: /^Stille Zeit/ })).toBeTruthy();
+    expect(within(thursday).getByRole('checkbox', { name: /^Bibel lesen/ })).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/Streithalle|Winter Arc|Serie|verpasst/);
   });
 
@@ -271,14 +271,14 @@ describe('Today', () => {
     expect(table.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(table);
     expect(store.getDay('2026-09-24').habits.tablePrayer).toBe(true);
-    // From the order: listed, but ticked only by praying it.
-    const still = day.getByRole('checkbox', { name: /^Stille Zeit/ });
-    expect(still.hasAttribute('disabled')).toBe(true);
+    // From the orders: a tile above, not a second time in the list (0.40).
+    expect(day.queryByRole('checkbox', { name: /^Stille Zeit/ })).toBeNull();
+    expect(day.queryByRole('checkbox', { name: /^Vesper/ })).toBeNull();
     // The strip of the week chooses another day; its habits are listed in the same place.
     fireEvent.click(screen.getByRole('button', { name: 'Montag, 21. September' }));
     const monday = within(screen.getByRole('region', { name: 'Gewohnheiten, Montag, 21. September' }));
-    // What was prayed that day shows there too.
-    expect(monday.getByRole('checkbox', { name: /^Stille Zeit/ }).getAttribute('aria-checked')).toBe('true');
+    // What was prayed that day shows in the grid of the week.
+    expect(screen.getByRole('button', { name: 'Stille Zeit, Mo 21.9.' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(monday.getByRole('checkbox', { name: 'Tischgebet mit der Familie' }));
     expect(store.getDay('2026-09-21').habits.tablePrayer).toBe(true);
     // The grid of the week stays, folded away.

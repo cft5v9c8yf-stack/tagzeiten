@@ -13,6 +13,21 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.40.0',
+    date: '2026-10-07',
+    title: 'Jedes nur einmal',
+    changes: [
+      { area: 'Heute', text: 'Stille Zeit, Vesper und Nachtgebet stehen nur noch oben als Kacheln, nicht zusätzlich in der Liste der Gewohnheiten. In der Wochenübersicht bleiben sie. Der Abschnitt unten heißt jetzt „Die letzten vier Wochen“.' },
+      { area: 'Arena', text: 'Was Henoch schon kennt, führt die Wüstenzeit nicht doppelt: Bibellese und Bibel nach Plan sind das „Bibel lesen“ nach deinem Leseplan, Bewegung die „Leibliche Übung“, Geben „Opfer und Gaben“, der Geistliche Begleiter die „Gemeinschaft mit Brüdern“. Was du davon schon gewählt hattest, ist mit seinen Häkchen übernommen.' },
+      { area: 'Arena', text: 'Morgensegen, Morgen- und Abendsegen, Psalm des Tages, Gewissenserforschung und Dankbarkeit sind abgehakt, sobald „Am Bett“, die Stille Zeit, die Vesper oder das Nachtgebet sie enthielt oder eine Zeile Dank dasteht. An anderen Tagen hakst du von Hand ab. Das „i“ sagt jeweils, wo Henoch die Gewohnheit führt.' },
+      { area: 'Arena', text: 'Der 90-Tage-Standard ist ein eigenes Paket, mit seinen Gewohnheiten und den Erklärungen aus der Vorlage. Wer ihn wählt, sieht in der Woche den Schwerpunkt mit Vers und Phase, und unter „Anleitung“ den ganzen Standard.' },
+      { area: 'Arena', text: '„Wüstenzeit beginnen“ steht oben, gleich unter dem Bibelwort. Die Anleitung folgt darunter.' },
+      { area: 'Stille Zeit', text: 'In der Lesung stehen Stelle, Vers und die Doppelfrage. Hauptaussage, Frage des Tages, Heilsgeschichte und die Randzeichen sind unter „Mehr notieren“ eingeklappt; steht dort schon etwas, ist es beim Öffnen gleich aufgeklappt. Die Bitte im vierfachen Kranz fragt jetzt „Worum bitte ich dich?“; was aus der Lesung folgt, gehört zu den drei Dingen.' },
+      { area: 'Abend', text: 'Folgt das Nachtgebet, notierst du die Namen des Tages nur dort. Die Vesper hat dann kein eigenes Feld für die Fürbitte.' },
+      { area: 'Rückblick', text: 'Die Gewohnheiten der letzten Wochen sind eine eigene Ansicht neben Tagen, Versen und Arena. Jeder Tag ist eine Zeile; „Morgen öffnen“, „Abend öffnen“ und „Tagesübersicht“ stehen im geöffneten Tag. Gezählt wird ohne Maßstab: „an 3 Tagen“ statt „an 3 von 7 Tagen“.' },
+    ],
+  },
+  {
     version: '0.39.5',
     date: '2026-10-07',
     title: 'Der Dank in seinen Zeilen',

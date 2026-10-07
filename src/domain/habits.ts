@@ -2,6 +2,7 @@
  * Habits: done for a day, a week (Mon–Sun) or a calendar month.
  * There is no streak, chain or score anywhere (rule 4).
  */
+import { DESERT_HABITS, type Follow } from '../content/desert';
 import { HABIT_NEEDS, HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS } from '../content/habits';
 import { houseHas, type House } from './house';
 import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
@@ -63,6 +64,31 @@ export function daysDoneInWeek(habit: Habit, date: DateKey, lookup: DayLookup): 
   return periodDates('weekly', date).filter((k) => isDoneOn(habit, lookup(k))).length;
 }
 
+const FOLLOWS = new Map(DESERT_HABITS.flatMap((o) => (o.follows ? [[o.id, o.follows] as const] : [])));
+
+const KEPT_BY: Record<Follow, (d: Day) => boolean> = {
+  atBed: (d) => d.morning.atBed || d.morning.done,
+  stillTime: (d) => d.morning.done,
+  psalm: (d) => d.morning.done || d.evening.vespersDone,
+  blessings: (d) => (d.morning.atBed || d.morning.done) && d.evening.complineDone,
+  // The short Nachtgebet has no examination.
+  examination: (d) => d.evening.complineDone && d.evening.complineForm === 'full',
+  thanks: (d) => d.evening.thanks.some((t) => !!t?.trim()),
+};
+
+/** What in the orders keeps a habit of the Wüstenzeit, if anything (see content/desert.ts). */
+export const followOf = (habit: Pick<Habit, 'id'>): Follow | undefined => FOLLOWS.get(habit.id);
+
+/**
+ * Whether the orders already kept the habit on this day: the Morgensegen with
+ * "Am Bett", the thanks with a line written down. Then it is ticked without a
+ * second tap; on other days it is ticked by hand.
+ */
+export function keptByOrder(habit: Pick<Habit, 'id'>, day: Day | undefined): boolean {
+  const f = FOLLOWS.get(habit.id);
+  return !!f && !!day && KEPT_BY[f](day);
+}
+
 /** Whether the habit was done on this very day. Auto habits follow the orders. */
 export function isDoneOn(habit: Habit, day: Day | undefined): boolean {
   if (!day) return false;
@@ -76,7 +102,7 @@ export function isDoneOn(habit: Habit, day: Day | undefined): boolean {
     default:
       // Reading the Bible is kept with the day's portion, so the plan can move on.
       if (habit.id === READING_HABIT) return !!day.reading?.done;
-      return !!day.habits[habit.id];
+      return !!day.habits[habit.id] || keptByOrder(habit, day);
   }
 }
 
@@ -103,12 +129,13 @@ export function isDoneInPeriod(habit: Habit, date: DateKey, lookup: DayLookup): 
 
 /**
  * Whether the user may toggle the habit for `date`. Auto habits never,
- * future days never. For weekly and monthly habits the toggle lives on the day
+ * future days never, nor a day the orders already kept it on. For weekly and monthly habits the toggle lives on the day
  * it was recorded; once done on another day of the period it is shown as done.
  */
 export function canToggle(habit: Habit, date: DateKey, today: DateKey, lookup: DayLookup): boolean {
   if (habit.auto) return false;
   if (date > today) return false;
+  if (keptByOrder(habit, lookup(date))) return false;
   // A past day can only be ticked if it had a portion; nothing is owed for the others (rule 6).
   if (habit.id === READING_HABIT) return date === today || !!lookup(date)?.reading;
   if (isPerDay(habit)) return true;

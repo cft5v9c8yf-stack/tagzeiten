@@ -4,13 +4,21 @@ import { formatShort, type DateKey } from '../../domain/dates';
 import { canExamine, canWrite, habitsOf, listedOn, meantFor } from '../../domain/desert';
 import { EXAMEN_SLUG } from './DesertExamen';
 import { THANKS_SLUG } from './DesertThanks';
-import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
+import { canToggle, followOf, isDoneInPeriod, isDoneOn, isPerDay, keptByOrder } from '../../domain/habits';
+import { READING_HABIT } from '../../content/habits';
 import type { Habit } from '../../domain/model';
 import { isInRun, type WinterArcRun } from '../../domain/winterArc';
 import { Tick } from '../../ui/Tick';
 import { WithInfo } from './DesertInfo';
 
 const periodNote = (h: Habit) => (h.rhythm === 'weekly' ? 'diese Woche' : h.rhythm === 'monthly' ? 'diesen Monat' : undefined);
+
+/** The quiet line under a habit of the day: its period, the reading plan, or that the orders kept it. */
+function noteOf(h: Habit, date: DateKey, lookup: ReturnType<typeof useDayLookup>): string | undefined {
+  if (h.id === READING_HABIT) return 'nach dem Leseplan';
+  if (keptByOrder(h, lookup(date))) return followOf(h) === 'thanks' ? 'im Nachtgebet notiert' : 'aus dem Ablauf';
+  return periodNote(h);
+}
 
 /**
  * The habits of the Wüstenzeit to tick on one day: daily ones on their days
@@ -41,7 +49,7 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
           <Tick
             checked={isPerDay(h) ? isDoneOn(h, lookup(date)) : isDoneInPeriod(h, date, lookup)}
             disabled={!canToggle(h, date, today, lookup)}
-            note={periodNote(h)}
+            note={noteOf(h, date, lookup)}
             onToggle={() => store.toggleHabit(date, h)}
           >
             {h.name}

@@ -6,7 +6,6 @@ import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
 import { habitsOfRhythm, isPerDay, RHYTHM_ORDER, fitsHouse } from '../../domain/habits';
 import type { Habit, Rhythm } from '../../domain/model';
-import { Section } from '../../ui/Section';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
@@ -41,7 +40,7 @@ function DailyRow({ habit, today }: { habit: Habit; today: string }) {
       <ol className="visually-hidden" aria-label={`${habit.name}, die letzten ${HISTORY_WEEKS} Wochen`}>
         {weeks.map((w) => (
           <li key={w.monday}>
-            Woche ab {formatShort(w.monday)}: an {w.done} von {full} Tagen
+            Woche ab {formatShort(w.monday)}: {w.done === 0 ? 'an keinem Tag' : w.done === 1 ? 'an einem Tag' : `an ${w.done} Tagen`}
           </li>
         ))}
       </ol>
@@ -100,7 +99,8 @@ const ROW: Record<Rhythm, typeof DailyRow> = { daily: DailyRow, weekly: WeeklyRo
 /**
  * How the habits were kept in the last eight weeks: counts per week, neutral
  * colours, empty weeks grey. Documented, not assessed – no percentages, no
- * trend, no streak (rules 4 and 5). Switched on under Darstellung.
+ * trend, no streak (rules 4 and 5). Switched on under Darstellung; a view of
+ * the Rückblick of its own (0.40).
  */
 export function HabitHistory() {
   const store = useStore();
@@ -110,7 +110,8 @@ export function HabitHistory() {
   // The Wüstenzeit has its own overview in the Arena, under "Wüstenwanderung"; a link leads there.
   const run = activeRun(profile.winterArc);
   return (
-    <Section id="review.habits" title="Gewohnheiten" level={3}>
+    <div className="review-habits">
+      <h3 className="visually-hidden">Gewohnheiten</h3>
       <p className="small muted hh-note">
         Die letzten {HISTORY_WEEKS} Wochen, die neueste rechts. Täglich als Verlauf über die abgeschlossenen Wochen: oben alle {profile.sundayRest ? 'sechs Werktage' : 'sieben Tage'}, unten keiner.{profile.sundayRest && ' Der Sonntag zählt nicht mit.'} Festgehalten, nicht bewertet.
       </p>
@@ -150,6 +151,6 @@ export function HabitHistory() {
           </ul>
         </div>
       )}
-    </Section>
+    </div>
   );
 }

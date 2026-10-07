@@ -166,6 +166,7 @@ function ToChamber() {
 
 function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
   const profile = useProfile();
+  const day = useDay(ctx.date);
   const wd = weekdayOf(ctx.date);
   const morning = ctx.order === 'morning' || ctx.order === 'atBed';
   // Lord's Prayer and Creed always as in Luther's catechism.
@@ -361,11 +362,17 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
         );
       }
       if (ctx.order === 'vespers') {
+        // With the Nachtgebet after it, the names are written down once, there (0.40).
+        const later = profile.showCompline && !day.evening.intercession?.trim();
         return (
           <>
             <VersicleView items={[KYRIE]} />
             <Rubric>{RUBRICS.vespersIntercession}</Rubric>
-            <PartFields part={part} date={ctx.date} />
+            {later ? (
+              <p className="small muted">Die Namen des Tages notierst du im Nachtgebet.</p>
+            ) : (
+              <PartFields part={part} date={ctx.date} />
+            )}
           </>
         );
       }

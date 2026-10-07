@@ -10,7 +10,7 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
-import { addOwn, adopt, choose, chooseOwn, fromRound, removeOwn, startDesert } from '../domain/desert';
+import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
@@ -148,12 +148,21 @@ export class Store {
     const reading = this.days.get(today)?.reading;
     if (reading && !reading.done && reading.planId !== this.profile.plan.planId) this.followToday();
     this.roundToDesert();
+    this.relinkDesert();
     this.emit();
   }
 
   /** A round of the Streithalle still under way becomes a Wüstenzeit (0.39), its ticks copied into the days. */
   private roundToDesert(): void {
-    const conv = fromRound(this.profile, this.today(), this.now().getTime());
+    this.convert(fromRound(this.profile, this.today(), this.now().getTime()));
+  }
+
+  /** Habits of the Wüstenzeit that Henoch already had become Henoch's (0.40), their ticks copied. */
+  private relinkDesert(): void {
+    this.convert(relink(this.profile, [...this.days.values()], this.now().getTime()));
+  }
+
+  private convert(conv: { profile: Profile; ticks: { date: DateKey; id: string }[] } | undefined): void {
     if (!conv) return;
     this.updateProfile(() => conv.profile, { immediate: true });
     const byDate = new Map<DateKey, string[]>();

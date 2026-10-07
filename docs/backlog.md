@@ -136,3 +136,14 @@ statt dessen „an N Tagen gehalten“; keine Emojis (Regel 16); Verse nach Luth
 Seit 0.39.1 heißt der Ort in der Arena „Wüstenwanderung“; jede einzelne Zeit darin
 bleibt eine Wüstenzeit (Schalter unter Darstellung, Gruppe unter „Heute“, Texte).
 Die älteren Einträge unter „Was ist neu“ nennen die Streithalle nicht mehr.
+
+Seit 0.40.0 (Prüfung der App auf Doppeltes, 07.10.2026): Angebote, die Henoch
+schon hat, sind die bestehende Gewohnheit (`bibleReading`, `exercise`,
+`offering`, `brothers`, `timeWithWife`, `mercy`); ältere Wahlen werden beim Laden
+umgestellt (`relink`). Was eine Gebetszeit schon enthält, folgt ihr (`follows`
+in `content/desert.ts`, `keptByOrder` in `domain/habits.ts`) und bleibt an
+anderen Tagen von Hand abhakbar. Der 90-Tage-Standard ist das fünfte Paket
+(`wz-std-*`); mit ihm zeigt die Woche Schwerpunkt, Vers und Phase. Unter „Heute“
+stehen die Gebetszeiten nur als Kacheln; im Rückblick sind die Gewohnheiten
+eine eigene Ansicht. Die Stille Zeit klappt die weiteren Felder der Lesung ein,
+die Vesper lässt die Fürbitte dem Nachtgebet.

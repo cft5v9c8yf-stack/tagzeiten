@@ -152,6 +152,18 @@ describe('Vesper', () => {
     expect(within(chainOf('Nachtgebet')).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Vesper, gebetet');
   });
 
+  it('writes the names of the day once: in the Nachtgebet, not also in the Vesper', async () => {
+    await renderEvening('2026-09-24');
+    await openPage('Vesper', 'Gebet');
+    expect(screen.queryByLabelText('Fürbitte')).toBeNull();
+    expect(document.querySelector('.flow-step')!.textContent).toContain('Die Namen des Tages notierst du im Nachtgebet.');
+    cleanup();
+    // Without the Nachtgebet, the Vesper keeps its field.
+    await renderEvening('2026-09-24', (s) => s.updateProfile((p) => ({ ...p, showCompline: false }), { immediate: true }));
+    await openPage('Vesper', 'Gebet');
+    expect(screen.getByLabelText('Fürbitte')).toBeTruthy();
+  });
+
   it('is the personal close of the day, without a family mode', async () => {
     await renderEvening('2026-09-24');
     await openVespers();

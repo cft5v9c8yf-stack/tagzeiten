@@ -31,7 +31,7 @@ export function WithInfo({ habit, children }: { habit: Pick<Habit, 'id' | 'name'
   const btn = useRef<HTMLButtonElement>(null);
   const bubble = useRef<HTMLDivElement>(null);
   const [arrowX, setArrowX] = useState(24);
-  const { note, about } = infoOf(habit);
+  const { note, about, henoch } = infoOf(habit);
 
   useEffect(() => {
     if (!open) return;
@@ -61,7 +61,7 @@ export function WithInfo({ habit, children }: { habit: Pick<Habit, 'id' | 'name'
     <div className="wa-row">
       <div className="wa-row-line desert-line" ref={line}>
         {children}
-        {(note || about) && (
+        {(note || about || henoch) && (
           <>
             <button
               type="button"
@@ -89,6 +89,7 @@ export function WithInfo({ habit, children }: { habit: Pick<Habit, 'id' | 'name'
             >
               {note && <p>{note}</p>}
               {about && <p className="info-about">{about}</p>}
+              {henoch && <p className="info-about">{henoch}</p>}
             </div>
           </>
         )}

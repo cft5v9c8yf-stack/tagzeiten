@@ -451,15 +451,6 @@ export function monthlyDone(data: WinterArcData, runId: string, month: string, i
   return data.months.some((m) => m.runId === runId && m.month === month && !!m.checks[item]);
 }
 
-/** The calendar months a week of the round touches, in order. */
-export function monthsOfWeek(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, week: number): string[] {
-  const out: string[] = [];
-  for (const d of weekDates(run.startDate, week)) {
-    if (isInRun(run, d) && !out.includes(monthOf(d))) out.push(monthOf(d));
-  }
-  return out;
-}
-
 /** The last day of a week that lies within the round (the last week may be shorter). */
 export function lastDayOfWeek(run: Pick<WinterArcRun, 'startDate' | 'durationDays'>, week: number): DateKey {
   const days = weekDates(run.startDate, week).filter((d) => isInRun(run, d));

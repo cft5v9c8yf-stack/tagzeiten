@@ -15,7 +15,7 @@ import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from '../../doma
 import { Segmented } from '../../ui/Choice';
 import { HabitHistory } from './HabitHistory';
 
-type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'desert';
+type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'desert' | 'habits';
 // Links of 0.39.0 and of the Streithalle (before) lead to the Wüstenwanderung.
 const TAB_PARAM: Record<string, Tab> = {
   arena: 'arena',
@@ -23,6 +23,7 @@ const TAB_PARAM: Record<string, Tab> = {
   wuestenwanderung: 'desert',
   wuestenzeit: 'desert',
   streithalle: 'desert',
+  gewohnheiten: 'habits',
 };
 const PAGE = 40;
 
@@ -93,13 +94,18 @@ function DayItem({ d, habits }: { d: Day; habits: readonly Habit[] }) {
         {d.morning.mainPoint && <span className="small muted archive-main">{d.morning.mainPoint}</span>}
         <span className="archive-more">{open ? 'Eingaben ausblenden' : 'Alle Eingaben anzeigen'}</span>
       </button>
+      {/* The ways into the day stand in the opened day, not under every closed one (0.40). */}
       <div id={summaryId} hidden={!open}>
-        {open && <DaySummary d={d} habits={habits} />}
-      </div>
-      <div className="archive-links">
-        <Link to={`/andacht/morgen?d=${d.date}`}>Morgen öffnen</Link>
-        <Link to={`/andacht/abend?d=${d.date}`}>Abend öffnen</Link>
-        <Link to={`/?d=${d.date}`}>Tagesübersicht</Link>
+        {open && (
+          <>
+            <DaySummary d={d} habits={habits} />
+            <div className="archive-links">
+              <Link to={`/andacht/morgen?d=${d.date}`}>Morgen öffnen</Link>
+              <Link to={`/andacht/abend?d=${d.date}`}>Abend öffnen</Link>
+              <Link to={`/?d=${d.date}`}>Tagesübersicht</Link>
+            </div>
+          </>
+        )}
       </div>
     </li>
   );
@@ -180,8 +186,9 @@ function MonthList<T>({
 export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const all = useAllDays();
   const [params] = useSearchParams();
-  const [tab, setTab] = useState<Tab>(TAB_PARAM[params.get('ansicht') ?? ''] ?? 'days');
   const profile = useProfile();
+  const asked = TAB_PARAM[params.get('ansicht') ?? ''] ?? 'days';
+  const [tab, setTab] = useState<Tab>(asked === 'habits' && !profile.showHabitHistory ? 'days' : asked);
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const searchId = useId();
@@ -225,7 +232,9 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           ? archived.length
           : tab === 'desert'
             ? rounds.length
-            : answered.length;
+            : tab === 'answered'
+              ? answered.length
+              : 0;
 
   return (
     <>
@@ -244,136 +253,138 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'arena', label: 'Arena' },
           { value: 'answered', label: 'Gebetserhörungen' },
           ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenwanderung' }] : []),
+          ...(profile.showHabitHistory ? [{ value: 'habits' as const, label: 'Gewohnheiten' }] : []),
         ]}
       />
-      <div className="field search-field">
-        <label htmlFor={searchId} className="visually-hidden">
-          Rückblick durchsuchen
-        </label>
-        <input
-          id={searchId}
-          type="search"
-          value={query}
-          placeholder="Durchsuchen: Vers, Name, Buch, Wochentag …"
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setLimit(PAGE);
-          }}
-        />
-      </div>
-      <p className="small muted" aria-live="polite">
-        {query.trim()
-          ? `${count} Treffer`
-          : tab === 'days'
-            ? `${count} ${count === 1 ? 'Tag' : 'Tage'} mit Einträgen`
-            : tab === 'verses'
-              ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
-              : tab === 'arena'
-                ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
-                : tab === 'desert'
-                  ? `${count} ${count === 1 ? 'Wüstenzeit' : 'Wüstenzeiten'}`
-                : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
-      </p>
-
-      {tab === 'days' &&
-        (found.length ? (
-          <MonthList
-            items={found.slice(0, limit)}
-            dateOf={(d) => d.date}
-            keyOf={(d) => d.date}
-            render={(d) => <DayItem d={d} habits={profile.habits} />}
-          />
-        ) : (
-          <p className="empty">
-            {query.trim() ? 'Nichts gefunden.' : 'Noch keine Einträge. Der erste entsteht mit deiner ersten Stillen Zeit.'}
-          </p>
-        ))}
-
-      {tab === 'verses' &&
-        (verses.length ? (
-          <MonthList
-            items={verses.slice(0, limit)}
-            dateOf={(v) => v.date}
-            keyOf={(v) => v.date}
-            render={(v) => (
-              <li className="archive-item">
-                <blockquote className="archive-verse">{v.verse}</blockquote>
-                <div className="archive-date">
-                  {v.ref && <>{v.ref} · </>}
-                  <Link to={`/andacht/morgen?d=${v.date}`}>{formatLong(v.date)}</Link>
-                </div>
-              </li>
-            )}
-          />
-        ) : (
-          <p className="empty">
-            {query.trim() ? 'Nichts gefunden.' : 'Noch keine Verse. Sie kommen aus dem Feld „Vers, den ich mitnehme“.'}
-          </p>
-        ))}
-
-      {tab === 'arena' &&
-        (archived.length ? (
-          <MonthList
-            items={archived.slice(0, limit)}
-            dateOf={(e) => toKey(new Date(e.createdAt))}
-            keyOf={(e) => e.id}
-            render={(e) => <ArenaItem e={e} />}
-          />
-        ) : (
-          <p className="empty">
+      {tab === 'habits' ? (
+        <HabitHistory />
+      ) : (
+        <>
+          <div className="field search-field">
+            <label htmlFor={searchId} className="visually-hidden">
+              Rückblick durchsuchen
+            </label>
+            <input
+              id={searchId}
+              type="search"
+              value={query}
+              placeholder="Durchsuchen: Vers, Name, Buch, Wochentag …"
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setLimit(PAGE);
+              }}
+            />
+          </div>
+          <p className="small muted" aria-live="polite">
             {query.trim()
-              ? 'Nichts gefunden.'
-              : 'Noch nichts archiviert. Einen Eintrag der Arena archivierst du im Eintrag selbst.'}
+              ? `${count} Treffer`
+              : tab === 'days'
+                ? `${count} ${count === 1 ? 'Tag' : 'Tage'} mit Einträgen`
+                : tab === 'verses'
+                  ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
+                  : tab === 'arena'
+                    ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
+                    : tab === 'desert'
+                      ? `${count} ${count === 1 ? 'Wüstenzeit' : 'Wüstenzeiten'}`
+                    : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
           </p>
-        ))}
 
-      {tab === 'desert' &&
-        (rounds.length ? (
-          <ul className="archive-list wa-rounds">
-            {rounds.map((r) => (
-              <li key={r.id} className="archive-item">
-                <Section
-                  id={`archive.wa.${r.id}`}
-                  title={roundTitle(r)}
-                  level={4}
-                  defaultOpen={false}
-                  className="book-card"
-                  aside={r.status === 'active' ? 'läuft' : 'beendet'}
-                >
-                  <RoundReviews run={r} />
-                </Section>
-              </li>
+          {tab === 'days' &&
+            (found.length ? (
+              <MonthList
+                items={found.slice(0, limit)}
+                dateOf={(d) => d.date}
+                keyOf={(d) => d.date}
+                render={(d) => <DayItem d={d} habits={profile.habits} />}
+              />
+            ) : (
+              <p className="empty">
+                {query.trim() ? 'Nichts gefunden.' : 'Noch keine Einträge. Der erste entsteht mit deiner ersten Stillen Zeit.'}
+              </p>
             ))}
-          </ul>
-        ) : (
-          <p className="empty">Nichts gefunden.</p>
-        ))}
 
-      {tab === 'answered' &&
-        (answered.length ? (
-          <MonthList
-            items={answered.slice(0, limit)}
-            dateOf={(a) => a.date}
-            keyOf={(a) => a.id}
-            render={(a) => <AnsweredItem a={a} />}
-          />
-        ) : (
-          <p className="empty">
-            {query.trim()
-              ? 'Nichts gefunden.'
-              : 'Noch keine. Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du dort mit „Erhört“ fest.'}
-          </p>
-        ))}
+          {tab === 'verses' &&
+            (verses.length ? (
+              <MonthList
+                items={verses.slice(0, limit)}
+                dateOf={(v) => v.date}
+                keyOf={(v) => v.date}
+                render={(v) => (
+                  <li className="archive-item">
+                    <blockquote className="archive-verse">{v.verse}</blockquote>
+                    <div className="archive-date">
+                      {v.ref && <>{v.ref} · </>}
+                      <Link to={`/andacht/morgen?d=${v.date}`}>{formatLong(v.date)}</Link>
+                    </div>
+                  </li>
+                )}
+              />
+            ) : (
+              <p className="empty">
+                {query.trim() ? 'Nichts gefunden.' : 'Noch keine Verse. Sie kommen aus dem Feld „Vers, den ich mitnehme“.'}
+              </p>
+            ))}
 
-      {count > limit && (
-        <button type="button" className="btn" onClick={() => setLimit((l) => l + PAGE)}>
-          Weitere {Math.min(PAGE, count - limit)} anzeigen
-        </button>
-      )}
-      {profile.showHabitHistory && (
-        <div className="review-habits">
-          <HabitHistory />
-        </div>
+          {tab === 'arena' &&
+            (archived.length ? (
+              <MonthList
+                items={archived.slice(0, limit)}
+                dateOf={(e) => toKey(new Date(e.createdAt))}
+                keyOf={(e) => e.id}
+                render={(e) => <ArenaItem e={e} />}
+              />
+            ) : (
+              <p className="empty">
+                {query.trim()
+                  ? 'Nichts gefunden.'
+                  : 'Noch nichts archiviert. Einen Eintrag der Arena archivierst du im Eintrag selbst.'}
+              </p>
+            ))}
+
+          {tab === 'desert' &&
+            (rounds.length ? (
+              <ul className="archive-list wa-rounds">
+                {rounds.map((r) => (
+                  <li key={r.id} className="archive-item">
+                    <Section
+                      id={`archive.wa.${r.id}`}
+                      title={roundTitle(r)}
+                      level={4}
+                      defaultOpen={false}
+                      className="book-card"
+                      aside={r.status === 'active' ? 'läuft' : 'beendet'}
+                    >
+                      <RoundReviews run={r} />
+                    </Section>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="empty">Nichts gefunden.</p>
+            ))}
+
+          {tab === 'answered' &&
+            (answered.length ? (
+              <MonthList
+                items={answered.slice(0, limit)}
+                dateOf={(a) => a.date}
+                keyOf={(a) => a.id}
+                render={(a) => <AnsweredItem a={a} />}
+              />
+            ) : (
+              <p className="empty">
+                {query.trim()
+                  ? 'Nichts gefunden.'
+                  : 'Noch keine. Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du dort mit „Erhört“ fest.'}
+              </p>
+            ))}
+
+          {count > limit && (
+            <button type="button" className="btn" onClick={() => setLimit((l) => l + PAGE)}>
+              Weitere {Math.min(PAGE, count - limit)} anzeigen
+            </button>
+          )}
+        </>
       )}
     </>
   );

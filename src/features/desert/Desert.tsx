@@ -2,7 +2,7 @@ import { useId, useState } from 'react';
 import { Link } from 'react-router';
 import { downloadText } from '../../app/files';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
-import { WINTER_ARC_COMFORT, WINTER_ARC_REVIEW } from '../../content/winterArc';
+import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatLong, fromKey, WEEKDAY_SHORT, type DateKey } from '../../domain/dates';
 import {
@@ -14,9 +14,10 @@ import {
   leadVerse,
   meantFor,
   tickedOn,
+  usesStandard,
 } from '../../domain/desert';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
-import { activeRun, endDateOf, isInRun, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
+import { activeRun, endDateOf, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
 import { Tick } from '../../ui/Tick';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
@@ -53,23 +54,55 @@ const runs = (parts: readonly Run[]) =>
     typeof p === 'string' ? p : 'em' in p ? <em key={i}>{p.em}</em> : <strong key={i}>{p.strong}</strong>,
   );
 
-/** The guide: the text of the Wüstenzeit, then the 90-Tage-Standard, folded. */
-export function DesertGuide() {
+/**
+ * The guide: the text of the Wüstenzeit (without its head where the head
+ * stands above, at the way in). The 90-Tage-Standard is a package (0.40):
+ * its guide stands with it in the choice, and here while a Wüstenzeit holds it.
+ */
+export function DesertGuide({ head = true, focus }: { head?: boolean; focus?: number }) {
   return (
     <div className="desert-guide">
+      {head && <GuideHead />}
+      {DESERT_GUIDE.paragraphs.map((p, i) => (
+        <p key={i}>{runs(p)}</p>
+      ))}
+      {head && <WaVerse verse={DESERT_GUIDE.verse} />}
+      {focus !== undefined && (
+        <details className="wa-settings desert-standard">
+          <summary>Der 90-Tage-Standard</summary>
+          <WinterArcGuide currentFocus={focus} />
+        </details>
+      )}
+    </div>
+  );
+}
+
+function GuideHead() {
+  return (
+    <>
       <h4>{DESERT_GUIDE.title}</h4>
       <p className="desert-tagline">
         <em>{DESERT_GUIDE.tagline}</em>
       </p>
-      {DESERT_GUIDE.paragraphs.map((p, i) => (
-        <p key={i}>{runs(p)}</p>
-      ))}
-      <WaVerse verse={DESERT_GUIDE.verse} />
-      <details className="wa-settings desert-standard">
-        <summary>Der 90-Tage-Standard</summary>
-        <WinterArcGuide />
-      </details>
-    </div>
+    </>
+  );
+}
+
+/** With the 90-Tage-Standard: the week's focus, its verse first (rule 2), in its phase. */
+function StandardFocus({ week, weeks }: { week: number; weeks: number }) {
+  const n = focusOf(week, weeks);
+  const f = WINTER_ARC_FOCUS[n - 1]!;
+  const phase = WINTER_ARC_PHASES.phases.find((p) => p.name === phaseOf(n))!;
+  return (
+    <section className="panel desert-focus" aria-label="Schwerpunkt der Woche">
+      <WaVerse verse={f.verse} />
+      <p className="small muted">
+        {phase.name} · {phase.question}
+      </p>
+      <p>
+        <strong>{f.focus}.</strong> {f.task}
+      </p>
+    </section>
   );
 }
 
@@ -212,6 +245,7 @@ function WeekView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const lastDay = dates.filter((d) => isInRun(run, d)).pop()!;
   return (
     <>
+      {usesStandard(run) && <StandardFocus week={week} weeks={weeks.length} />}
       <section className="panel wa-week-view" aria-labelledby="desert-week-title">
         <div className="wa-pager">
           <button type="button" className="icon-btn wa-pager-btn" aria-label="Frühere Woche" disabled={week <= 1} onClick={() => setShown(week - 1)}>
@@ -344,7 +378,11 @@ function Dashboard({ run }: { run: WinterArcRun }) {
           />
           {view === 'day' && <DayView run={run} today={today} />}
           {view === 'week' && <WeekView run={run} today={today} />}
-          {view === 'guide' && <DesertGuide />}
+          {view === 'guide' && (
+            <DesertGuide
+              focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), desertWeeks(run).length), desertWeeks(run).length) : undefined}
+            />
+          )}
           <details className="wa-settings">
             <summary>Gewohnheiten wählen</summary>
             <DesertChoice run={run} level={5} />
@@ -431,13 +469,16 @@ function Closing({ run }: { run: WinterArcRun }) {
   );
 }
 
-/** No Wüstenzeit under way: the guide, and the way in. */
+/** No Wüstenzeit under way: the Word, the way in, then the guide (0.40: the way in no longer below it). */
 function Start() {
   const profile = useProfile();
   const [starting, setStarting] = useState(false);
   return (
     <>
-      <DesertGuide />
+      <div className="desert-guide">
+        <GuideHead />
+        <WaVerse verse={DESERT_GUIDE.verse} />
+      </div>
       <div className="panel wa-head wa-invite">
         {!starting && (
           <button type="button" className="btn primary" onClick={() => setStarting(true)}>
@@ -451,6 +492,7 @@ function Start() {
           </p>
         )}
       </div>
+      <DesertGuide head={false} />
     </>
   );
 }

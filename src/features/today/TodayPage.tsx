@@ -53,7 +53,7 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
   );
 }
 
-function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: boolean }) {
+function ThreeThings({ day }: { day: Day }) {
   const any = THREE_KEYS.some((k) => day.morning.three[k]);
   return (
     <Section id="today.three" title="Die drei Dinge">
@@ -76,8 +76,7 @@ function ThreeThings({ day, date, isToday }: { day: Day; date: string; isToday: 
           })
         ) : (
           <p className="muted three-empty">
-            Sie werden in der Stillen Zeit festgelegt, nach dem Wort.{' '}
-            <Link to={withDate('/andacht/morgen', date, isToday)}>Zur Stillen Zeit</Link>
+            Sie werden in der Stillen Zeit festgelegt, nach dem Wort.
           </p>
         )}
       </div>
@@ -139,7 +138,7 @@ export function TodayPage() {
       )}
 
       <ReadingPanel date={date} isToday={isToday} />
-      <ThreeThings day={day} date={date} isToday={isToday} />
+      <ThreeThings day={day} />
 
       {!resting && (
         <Section
@@ -157,7 +156,7 @@ export function TodayPage() {
         </Section>
       )}
 
-      <Section id="today.lookback" title="Rückblick">
+      <Section id="today.lookback" title="Die letzten vier Wochen">
         <Lookback date={date} />
       </Section>
 

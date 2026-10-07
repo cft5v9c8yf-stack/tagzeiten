@@ -120,9 +120,10 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const sel = picked && (week.includes(picked) || picked === yesterday) ? picked : date;
   const lateEntry = date === today && !week.includes(yesterday) && sel !== yesterday;
   const dayTitle = sel === today ? 'Heute' : formatLong(sel);
-  // Those from the order (Stille Zeit, Vesper, Nachtgebet) are listed too, read-only, so a
-  // day chosen in the strip shows what was prayed. Weekly and monthly ones already kept move to the end.
-  const listed = rest;
+  // Those from the orders (Stille Zeit, Vesper, Nachtgebet) stand above as tiles, and in the
+  // grid of the week; here only what is ticked by hand (0.40). Weekly and monthly ones already kept move to the end.
+  const byHand = (list: Habit[]) => list.filter((h) => !h.auto);
+  const listed = byHand(rest);
   const keptLast = (list: Habit[]) => [
     ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
     ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
@@ -145,7 +146,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     );
   };
   const groups: [string, Habit[]][] = [
-    ['Im Blick', focus],
+    ['Im Blick', byHand(focus)],
     ['Täglich', perDay],
     ['Wöchentlich', weekly],
     ['Monatlich', monthly],
@@ -183,7 +184,9 @@ export function HabitsWeek({ date }: { date: DateKey }) {
           <DesertDay key={sel} run={run} date={sel} />
         </div>
       )}
-      {active.length === 0 ? null : resting(sel) ? (
+      {byHand(active).length === 0 ? (
+        !hallMode && <p className="small muted">Die Gebetszeiten stehen oben. Weitere Gewohnheiten wählst du unter „Mehr“.</p>
+      ) : resting(sel) ? (
         <p className="small muted habits-rest">
           {hallMode
             ? 'Sonntagsruhe. Die übrigen Gewohnheiten ruhen am Sonntag.'

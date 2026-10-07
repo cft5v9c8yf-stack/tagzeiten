@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DESERT_HABITS, DESERT_MORE, DESERT_PACKS, DESERT_VERSE } from '../content/desert';
+import { HABIT_PRESETS } from '../content/habits';
 import { firstAdvent } from './churchYear';
 import {
   addOwn,
@@ -18,10 +19,13 @@ import {
   leadVerse,
   listedOn,
   meantFor,
+  relink,
   removeOwn,
   startDesert,
+  usesStandard,
 } from './desert';
 import type { DateKey } from './dates';
+import { canToggle, isDoneOn, keptByOrder } from './habits';
 import { emptyDay, type Day, type Habit, type Profile } from './model';
 import { defaultProfile } from './profile';
 import { startRun, toggleCheck, toggleWeekly } from './winterArc';
@@ -53,9 +57,9 @@ function lookupOf(ticks: Record<DateKey, string[]>) {
 }
 
 describe('the offer of the Wüstenzeit', () => {
-  it('has the four packages with their habits, and the further ones from the collection', () => {
-    expect(DESERT_PACKS.map((p) => p.name)).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche']);
-    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9]);
+  it('has the four packages and the 90-Tage-Standard with their habits, and the further ones from the collection', () => {
+    expect(DESERT_PACKS.map((p) => p.name)).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Der 90-Tage-Standard']);
+    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9, 15]);
     expect(DESERT_MORE.map((h) => h.name)).toEqual([
       'Fürbittliste',
       'Katechismus',
@@ -67,14 +71,30 @@ describe('the offer of the Wüstenzeit', () => {
       'Geben',
       'Geistlicher Begleiter',
     ]);
-    // Each habit once, and the four of the Hauskirche Henoch already has under their ids.
-    expect(new Set(DESERT_HABITS.map((h) => h.id)).size).toBe(DESERT_HABITS.length);
-    expect(pack('hauskirche').habits.map((h) => h.id).filter((id) => !id.startsWith('wz-'))).toEqual([
+    // Each habit once, but for the reading of the plan in two packages;
+    // those Henoch already has under their ids, so nothing stands twice (0.40).
+    expect(DESERT_HABITS.filter((h) => h.id === 'bibleReading').map((h) => h.name)).toEqual(['Bibellese', 'Bibel nach Plan']);
+    const twice = ['bibleReading', 'exercise', 'worship'];
+    expect(new Set(DESERT_HABITS.map((h) => h.id)).size).toBe(DESERT_HABITS.length - twice.length);
+    expect(DESERT_HABITS.map((h) => h.id).filter((id) => !id.startsWith('wz-'))).toEqual([
+      'bibleReading',
+      'bibleReading',
+      'exercise',
       'tablePrayer',
       'blessChildren',
       'familyDevotion',
       'catechismChildren',
+      'exercise',
+      'worship',
+      'timeWithWife',
+      'mercy',
+      'worship',
+      'offering',
+      'brothers',
     ]);
+    for (const o of DESERT_HABITS.filter((h) => !h.id.startsWith('wz-'))) {
+      expect(HABIT_PRESETS.find((p) => p.id === o.id)?.rhythm, o.id).toBe(o.rhythm);
+    }
   });
 
   it('shows no marks of the rhythm and no emojis in the names', () => {
@@ -172,7 +192,9 @@ describe('choosing the habits', () => {
     p = choose(p, 'w', pack('aufbruch').habits, true, 2);
     p = choose(p, 'w', [offer('wz-psalm'), offer('tablePrayer')], true, 2);
     p = choose(p, 'w', [offer('wz-handy-spaeter')], false, 3);
-    expect(p.winterArc.runs[0]!.habits).toEqual(['wz-morgensegen', 'wz-bibellese', 'wz-dankbarkeit', 'wz-psalm', 'tablePrayer']);
+    expect(p.winterArc.runs[0]!.habits).toEqual(['wz-morgensegen', 'bibleReading', 'wz-dankbarkeit', 'wz-psalm', 'tablePrayer']);
+    // The reading of the plan Henoch already has: no second one.
+    expect(p.habits.filter((h) => h.id === 'bibleReading')).toHaveLength(1);
     const psalm = p.habits.find((h) => h.id === 'wz-psalm')!;
     expect(psalm).toMatchObject({ name: 'Psalm des Tages', rhythm: 'daily', active: false, desert: 'wuestenweg' });
     // The table prayer Henoch already has: no second one.
@@ -219,7 +241,8 @@ describe('choosing the habits', () => {
 
   it('sets the verse of the package most habits come from; with mostly own ones 1 Tim 4,7', () => {
     const run = (habits: string[]) => withDesert(habits).winterArc.runs[0]!;
-    expect(leadVerse(run(['wz-morgensegen', 'wz-bibellese', 'wz-psalm'])).ref).toBe('Lk 16,10');
+    expect(leadVerse(run(['wz-morgensegen', 'bibleReading', 'wz-handy-spaeter', 'wz-psalm'])).ref).toBe('Lk 16,10');
+    expect(leadVerse(run(['wz-segen', 'bibleReading', 'own-1'])).ref).toBe('1 Tim 4,7');
     expect(leadVerse(run(['tablePrayer', 'familyDevotion'])).ref).toBe('Jos 24,15');
     expect(leadVerse(run(['wz-psalm', 'own-1', 'own-2']))).toEqual(DESERT_VERSE);
     expect(leadVerse(run([]))).toEqual(DESERT_VERSE);
@@ -255,5 +278,101 @@ describe('a round of the Streithalle under way becomes a Wüstenzeit (0.39)', ()
     expect(conv.profile.winterArc.days).toHaveLength(2);
     // Once a Wüstenzeit, it is not turned again.
     expect(fromRound(conv.profile, '2026-10-05', 4)).toBeUndefined();
+  });
+});
+
+describe('what the orders already hold (0.40)', () => {
+  const day = (fn: (d: Day) => void): Day => {
+    const d = emptyDay('2026-10-07');
+    fn(d);
+    return d;
+  };
+
+  it('ticks the Morgensegen, the psalm, the blessings, the examination and the thanks with the orders', () => {
+    const bed = day((d) => (d.morning.atBed = true));
+    const vespers = day((d) => (d.evening.vespersDone = true));
+    const both = day((d) => {
+      d.morning.done = true;
+      d.evening.complineDone = true;
+    });
+    const short = day((d) => {
+      d.evening.complineDone = true;
+      d.evening.complineForm = 'short';
+    });
+    const thanks = day((d) => (d.evening.thanks = ['', 'den Regen']));
+    expect(keptByOrder({ id: 'wz-morgensegen' }, bed)).toBe(true);
+    expect(keptByOrder({ id: 'wz-psalm' }, bed)).toBe(false);
+    expect(keptByOrder({ id: 'wz-psalm' }, vespers)).toBe(true);
+    expect(keptByOrder({ id: 'wz-segen' }, bed)).toBe(false);
+    expect(keptByOrder({ id: 'wz-segen' }, both)).toBe(true);
+    expect(keptByOrder({ id: 'wz-gewissen' }, both)).toBe(true);
+    // The short Nachtgebet has no examination.
+    expect(keptByOrder({ id: 'wz-gewissen' }, short)).toBe(false);
+    expect(keptByOrder({ id: 'wz-dankbarkeit' }, thanks)).toBe(true);
+    expect(keptByOrder({ id: 'wz-dankbarkeit' }, day((d) => (d.evening.thanks = ['  '])))).toBe(false);
+    expect(keptByOrder({ id: 'wz-handy-spaeter' }, both)).toBe(false);
+  });
+
+  it('counts such a day as kept, without a second tap; other days are ticked by hand', () => {
+    const h = habit('wz-morgensegen');
+    const bed = day((d) => (d.morning.atBed = true));
+    expect(isDoneOn(h, bed)).toBe(true);
+    expect(canToggle(h, '2026-10-07', '2026-10-07', () => bed)).toBe(false);
+    const open = emptyDay('2026-10-07');
+    expect(isDoneOn(h, open)).toBe(false);
+    expect(canToggle(h, '2026-10-07', '2026-10-07', () => open)).toBe(true);
+    expect(isDoneOn(h, { ...open, habits: { 'wz-morgensegen': true } })).toBe(true);
+  });
+
+  it('says under the "i" where Henoch holds a habit', () => {
+    expect(infoOf({ id: 'wz-morgensegen' }).henoch).toMatch(/„Am Bett“ oder die Stille Zeit abschließt\. An anderen Tagen hakst du von Hand ab\./);
+    expect(infoOf({ id: 'bibleReading' }).henoch).toMatch(/Leseplan.*„Wort“/);
+    expect(infoOf({ id: 'exercise' }).henoch).toBe('In Henoch heißt sie „Leibliche Übung“.');
+    expect(infoOf({ id: 'familyDevotion' }).henoch).toBeUndefined();
+    expect(infoOf({ id: 'wz-handy-spaeter' }).henoch).toBeUndefined();
+  });
+});
+
+describe('the habits Henoch already had become its own (0.40)', () => {
+  it('takes their place in every round, copies their ticks, and switches one taken into everyday life on', () => {
+    let p = withDesert();
+    p = {
+      ...p,
+      habits: [
+        ...p.habits,
+        habit('wz-bewegung', { name: 'Bewegung', desert: 'wuestenweg', active: true }),
+        habit('wz-bibellese', { name: 'Bibellese', desert: 'aufbruch' }),
+        habit('wz-geben', { name: 'Geben', rhythm: 'weekly', desert: 'more' }),
+      ],
+      winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: ['wz-bewegung', 'wz-bibellese', 'wz-geben', 'wz-psalm'] })) },
+    };
+    const d = (date: DateKey, ids: string[]): Day => ({ ...emptyDay(date), habits: Object.fromEntries(ids.map((id) => [id, true])) });
+    const days = [d('2026-10-05', ['wz-bewegung', 'wz-bibellese']), d('2026-10-06', ['wz-geben', 'exercise', 'wz-bewegung'])];
+    const out = relink(p, days, 9)!;
+    expect(out.profile.winterArc.runs[0]!.habits).toEqual(['exercise', 'bibleReading', 'offering', 'wz-psalm']);
+    expect(out.profile.habits.some((h) => ['wz-bewegung', 'wz-bibellese', 'wz-geben'].includes(h.id))).toBe(false);
+    expect(out.profile.habits.find((h) => h.id === 'exercise')!.active).toBe(true);
+    expect(out.profile.habits.find((h) => h.id === 'offering')!.active).toBe(false);
+    // The reading keeps its own record with the plan; a tick already there is not written twice.
+    expect(out.ticks).toEqual([
+      { date: '2026-10-05', id: 'exercise' },
+      { date: '2026-10-06', id: 'offering' },
+    ]);
+    expect(relink(out.profile, days, 10)).toBeUndefined();
+  });
+});
+
+describe('the 90-Tage-Standard as a package (0.40)', () => {
+  it('has the points of the plan with their notes, the times as the plan sets them', () => {
+    const std = pack('standard');
+    expect(std.verse.ref).toBe('Matthäus 6,33');
+    expect(std.habits.slice(0, 3).map((h) => h.name)).toEqual(['04:00 auf, kein Handy', 'Morgenzeit im Wort und Gebet', 'Tagebuch und drei Dankpunkte']);
+    expect(offer('wz-std-wake').note).toBe('Der Wecker steht außer Reichweite. Das Handy hat über Nacht außerhalb des Schlafzimmers geladen.');
+    // The journal can be written down; the morning in the Word is kept with the Stille Zeit.
+    expect(canWrite({ id: 'wz-std-journal' })).toBe(true);
+    expect(keptByOrder({ id: 'wz-std-word' }, { ...emptyDay('2026-10-07'), morning: { ...emptyDay('2026-10-07').morning, done: true } })).toBe(true);
+    // Its phases and focuses go with a Wüstenzeit that holds its points.
+    expect(usesStandard({ habits: ['wz-std-wake', 'wz-psalm'] })).toBe(true);
+    expect(usesStandard({ habits: ['exercise', 'worship'] })).toBe(false);
   });
 });

@@ -6,7 +6,7 @@ import { OWN_NOTE_MAX } from '../../domain/desert';
 import { houseHas, NEED_NOTE, type HouseNeed } from '../../domain/house';
 import type { Habit, Rhythm } from '../../domain/model';
 import type { WinterArcRun } from '../../domain/winterArc';
-import { WaVerse } from '../arena/WinterArcGuide';
+import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { WithInfo } from './DesertInfo';
 
 type Heading = 'h4' | 'h5' | 'h6';
@@ -149,6 +149,12 @@ export function DesertChoice({ run, level = 6 }: { run: WinterArcRun; level?: 4 
             Paket übernehmen
           </button>
           <ul className="desert-list">{pack.habits.map(row)}</ul>
+          {pack.id === 'standard' && (
+            <details className="wa-settings desert-standard">
+              <summary>Anleitung zum 90-Tage-Standard</summary>
+              <WinterArcGuide />
+            </details>
+          )}
         </section>
       ))}
       <section className="desert-pack" aria-label={DESERT_MORE_TITLE}>

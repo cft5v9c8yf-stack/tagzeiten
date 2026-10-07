@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { FIELDS } from '../../content/fields';
 import {
   COLOR_CODE,
@@ -10,10 +10,11 @@ import {
   READING_RUBRICS,
   SALVATION_HISTORY_NOTE,
 } from '../../content/method';
-import type { Part } from '../../content/orders';
+import type { FieldPath, Part } from '../../content/orders';
 import { SEVEN_QUESTIONS } from '../../content/questions';
 import { useDay, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
+import type { Day } from '../../domain/model';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { DayField } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
@@ -124,14 +125,55 @@ export function MethodHelpBody() {
   );
 }
 
+/**
+ * In view: the verse and the double question, as in the short form. The rest
+ * of the full form (main point, question of the day, the history of salvation,
+ * the marks of the margin, already made on paper) stands folded, open as soon
+ * as something is written in it (0.40).
+ */
+const IN_VIEW: ReadonlySet<FieldPath> = new Set(['morning.verseRef', 'morning.verse', 'morning.aboutGod', 'morning.aboutMan']);
+
+/** Whether something is written in a field of the morning (the question of the day: chosen). */
+function written(day: Day, f: FieldPath): boolean {
+  if (f === 'morning.questionNo') return day.morning.questionNo !== undefined;
+  const key = f.slice('morning.'.length) as keyof Day['morning'];
+  const v = day.morning[key];
+  return typeof v === 'string' && v.trim() !== '';
+}
+
 export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) {
   const store = useStore();
+  const day = useDay(ctx.date);
   const full = ctx.form === 'full';
 
   // Today receives its portion when the reading is first shown.
   useEffect(() => {
     if (ctx.date === store.today()) store.ensureTodayReading();
   }, [store, ctx.date]);
+
+  const fields = part.fields ?? [];
+  const folded = fields.filter((f) => !IN_VIEW.has(f));
+  // Open from the start where something is written; then it is the user's to fold.
+  const [openAtStart] = useState(() => folded.some((f) => written(day, f)));
+  const field = (f: FieldPath) => {
+    if (f === 'morning.questionNo') return <QuestionSelect key={f} date={ctx.date} />;
+    const extra =
+      f === 'morning.aboutGod' ? (
+        <p key={`${f}-note`} className="small muted">
+          {DOUBLE_QUESTION_NOTE}
+        </p>
+      ) : f === 'morning.salvationHistory' ? (
+        <p key={`${f}-note`} className="small muted">
+          {SALVATION_HISTORY_NOTE}
+        </p>
+      ) : null;
+    return (
+      <div key={f}>
+        {extra}
+        <DayField date={ctx.date} path={f} />
+      </div>
+    );
+  };
 
   return (
     <>
@@ -140,25 +182,13 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
       <p className="small muted">{READING_RUBRICS.paper}</p>
       {full && <p className="small muted">{READING_RUBRICS.restart}</p>}
       {full && <MethodHelp />}
-      {(part.fields ?? []).map((f) => {
-        if (f === 'morning.questionNo') return <QuestionSelect key={f} date={ctx.date} />;
-        const extra =
-          f === 'morning.aboutGod' ? (
-            <p key={`${f}-note`} className="small muted">
-              {DOUBLE_QUESTION_NOTE}
-            </p>
-          ) : f === 'morning.salvationHistory' ? (
-            <p key={`${f}-note`} className="small muted">
-              {SALVATION_HISTORY_NOTE}
-            </p>
-          ) : null;
-        return (
-          <div key={f}>
-            {extra}
-            <DayField date={ctx.date} path={f} />
-          </div>
-        );
-      })}
+      {fields.filter((f) => IN_VIEW.has(f)).map(field)}
+      {folded.length > 0 && (
+        <details className="fold" open={openAtStart || undefined}>
+          <summary>Mehr notieren</summary>
+          {folded.map(field)}
+        </details>
+      )}
     </>
   );
 }
