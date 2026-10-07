@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.4',
+    date: '2026-10-07',
+    title: 'Die Gewissenserforschung auf eigener Seite',
+    changes: [
+      { area: 'Heute', text: 'Bei der Gewissenserforschung der Wüstenzeit steht „Beten“: Es öffnet eine eigene Seite mit Psalm 139, der Frage des Tages, dem Bekenntnis und dem Zuspruch wie im Nachtgebet. Ein Schreibfeld gibt es dort nicht; Sünde wird gebetet, nicht notiert. „Gebetet, abhaken und zurück“ hakt die Gewohnheit ab und führt zurück zur Liste.' },
+    ],
+  },
+  {
     version: '0.39.3',
     date: '2026-10-07',
     title: 'Die Erklärung am richtigen Platz',

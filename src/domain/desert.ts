@@ -146,6 +146,13 @@ export function removeOwn(p: Profile, id: string, now: number): Profile {
  */
 export const canWrite = (h: Pick<Habit, 'id'>): boolean => h.id === 'wz-dankbarkeit' || /^wz-.+-journal$/.test(h.id);
 
+/**
+ * The examination of conscience is prayed on a page of its own, without a
+ * field: the question of the day, confession and absolution as in the
+ * Nachtgebet (rules 1, 2 and 9). Only the tick is kept.
+ */
+export const canExamine = (h: Pick<Habit, 'id'>): boolean => h.id === 'wz-gewissen';
+
 /** Takes chosen habits into everyday life: they stay switched on after the Wüstenzeit. */
 export function adopt(p: Profile, ids: readonly string[]): Profile {
   return { ...p, habits: p.habits.map((h) => (ids.includes(h.id) ? { ...h, active: true } : h)) };

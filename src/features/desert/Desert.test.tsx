@@ -152,6 +152,30 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
   });
 
+  it('prays the examination of conscience on a page of its own: Word first, no field, ending in the absolution', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      const id = withDesert(s);
+      s.chooseDesert(id, [pack('wuestenvaeter').habits.find((h) => h.id === 'wz-gewissen')!], true);
+    });
+    tab('Tag');
+    const before = JSON.stringify(store.getProfile().arena);
+    fireEvent.click(screen.getByRole('button', { name: 'Beten' }));
+    const page = (await screen.findByRole('heading', { level: 2, name: 'Gewissenserforschung' })).closest('article') as HTMLElement;
+    // Word first (rule 2): Psalm 139 before the question of the day.
+    expect(page.querySelector('.wa-verse')!.textContent).toContain('Erforsche mich, Gott, und erfahre mein Herz');
+    expect(page.textContent).toContain('Wird gebetet, nicht notiert.');
+    // Nowhere to write a sin (rule 9).
+    expect(page.querySelectorAll('textarea, input[type="text"], [contenteditable]')).toHaveLength(0);
+    // The absolution comes last (rule 1).
+    const parts = [...page.querySelectorAll('.part')].map((p) => p.className);
+    expect(parts.at(-1)).toContain('part-absolution');
+    fireEvent.click(within(page).getByRole('button', { name: 'Gebetet, abhaken und zurück' }));
+    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
+    expect(store.getDay('2026-09-26').habits['wz-gewissen']).toBe(true);
+    // Only the tick: no entry in the Gebetskammer.
+    expect(JSON.stringify(store.getProfile().arena)).toBe(before);
+  });
+
   it('shows the week as a grid of calendar weeks, what was kept so far, and the review at its end', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);

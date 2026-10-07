@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
-import { canWrite, habitsOf, listedOn, meantFor } from '../../domain/desert';
+import { canExamine, canWrite, habitsOf, listedOn, meantFor } from '../../domain/desert';
+import { EXAMEN_SLUG } from './DesertExamen';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import type { Habit } from '../../domain/model';
 import { isInRun, type WinterArcRun } from '../../domain/winterArc';
@@ -22,11 +23,10 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   const navigate = useNavigate();
   const location = useLocation();
   const today = store.today();
-  // A new entry in the Gebetskammer; saved, it ticks the habit and leads back to this list.
-  const write = (h: Habit) => {
-    const back = location.pathname + location.search;
-    const query = new URLSearchParams({ gewohnheit: h.id, tag: date, zurueck: back });
-    navigate(`/arena/${store.addArenaEntry()}?${query}`);
+  // A new entry in the Gebetskammer, or the page of the examination; done, it ticks the habit and leads back here.
+  const open = (h: Habit, page: string) => {
+    const query = new URLSearchParams({ gewohnheit: h.id, tag: date, zurueck: location.pathname + location.search });
+    navigate(`/arena/${page}?${query}`);
   };
   if (!isInRun(run, date)) return <p className="small muted">An diesem Tag läuft keine Wüstenzeit.</p>;
   const habits = habitsOf(run, profile);
@@ -46,8 +46,13 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
             {h.name}
           </Tick>
           {canWrite(h) && date <= today && (
-            <button type="button" className="wa-row-action" onClick={() => write(h)}>
+            <button type="button" className="wa-row-action" onClick={() => open(h, store.addArenaEntry())}>
               Aufschreiben
+            </button>
+          )}
+          {canExamine(h) && date <= today && (
+            <button type="button" className="wa-row-action" onClick={() => open(h, EXAMEN_SLUG)}>
+              Beten
             </button>
           )}
         </WithInfo>

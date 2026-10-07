@@ -4,6 +4,7 @@ import { firstAdvent } from './churchYear';
 import {
   addOwn,
   adopt,
+  canExamine,
   canWrite,
   choose,
   desertWeekOf,
@@ -159,6 +160,9 @@ describe('writing down', () => {
     expect(canWrite({ id: 'wz-1abc-journal' })).toBe(true);
     expect(canWrite({ id: 'wz-gewissen' })).toBe(false);
     expect(canWrite({ id: 'wz-psalm' })).toBe(false);
+    // The examination is prayed on a page of its own, without a field.
+    expect(canExamine({ id: 'wz-gewissen' })).toBe(true);
+    expect(canExamine({ id: 'wz-dankbarkeit' })).toBe(false);
   });
 });
 

@@ -244,5 +244,17 @@ export const DESERT_MORE_TITLE = 'Weitere Gewohnheiten';
 /** Every habit on offer, in the order of the choice. */
 export const DESERT_HABITS: readonly DesertHabit[] = [...DESERT_PACKS.flatMap((p) => p.habits), ...DESERT_MORE];
 
+/** Before the examination of conscience: the Word first (rule 2). */
+export const DESERT_EXAMEN_VERSE = verse(
+  'Erforsche mich, Gott, und erfahre mein Herz; prüfe mich und erfahre, wie ich’s meine. Und siehe, ob ich auf bösem Wege bin, und leite mich auf ewigem Wege.',
+  'Psalm 139,23–24',
+  'Ps 139,23-24',
+);
+
 /** Every verse of the Wüstenzeit, for the check against Luther 1912. */
-export const DESERT_VERSES: readonly DesertVerse[] = [DESERT_HOSEA, DESERT_VERSE, ...DESERT_PACKS.map((p) => p.verse)];
+export const DESERT_VERSES: readonly DesertVerse[] = [
+  DESERT_HOSEA,
+  DESERT_VERSE,
+  DESERT_EXAMEN_VERSE,
+  ...DESERT_PACKS.map((p) => p.verse),
+];

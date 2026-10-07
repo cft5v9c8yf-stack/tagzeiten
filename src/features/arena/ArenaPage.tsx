@@ -14,6 +14,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
 import { Desert } from '../desert/Desert';
+import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 
 type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
@@ -496,6 +497,7 @@ export function ArenaPage() {
   const [params] = useSearchParams();
   const entries = profile.arena;
 
+  if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag) {
     const entry = entries.find((e) => e.id === eintrag);
     if (entry) return <EntryEditor entry={entry} />;
