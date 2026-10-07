@@ -15,8 +15,9 @@ import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from '../../doma
 import { Segmented } from '../../ui/Choice';
 import { HabitHistory } from './HabitHistory';
 
-type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'streithalle';
-const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered', streithalle: 'streithalle' };
+type Tab = 'days' | 'verses' | 'arena' | 'answered' | 'desert';
+// Links to the Streithalle (before 0.39) lead to the Wüstenzeit.
+const TAB_PARAM: Record<string, Tab> = { arena: 'arena', erhoerungen: 'answered', wuestenzeit: 'desert', streithalle: 'desert' };
 const PAGE = 40;
 
 function prayed(d: Day): string {
@@ -194,7 +195,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
     () => searchAnswered(answeredNewestFirst(profile.answered), query),
     [profile.answered, query],
   );
-  // Every round of the Winter Arc, newest first; searched in its weekly reviews.
+  // Every Wüstenzeit (and round of the Streithalle before it), newest first; searched in its weekly reviews.
   const rounds = useMemo(() => {
     const q = query.trim().toLowerCase();
     return [...profile.winterArc.runs]
@@ -216,7 +217,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
         ? verses.length
         : tab === 'arena'
           ? archived.length
-          : tab === 'streithalle'
+          : tab === 'desert'
             ? rounds.length
             : answered.length;
 
@@ -236,7 +237,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
           { value: 'answered', label: 'Gebetserhörungen' },
-          ...(profile.winterArc.runs.length ? [{ value: 'streithalle' as const, label: 'Streithalle' }] : []),
+          ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenzeit' }] : []),
         ]}
       />
       <div className="field search-field">
@@ -263,8 +264,8 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               ? `${count} ${count === 1 ? 'Vers' : 'Verse'}`
               : tab === 'arena'
                 ? `${count} ${count === 1 ? 'archivierter Eintrag' : 'archivierte Einträge'}`
-                : tab === 'streithalle'
-                  ? `${count} ${count === 1 ? 'Runde der Streithalle' : 'Runden der Streithalle'}`
+                : tab === 'desert'
+                  ? `${count} ${count === 1 ? 'Wüstenzeit' : 'Wüstenzeiten'}`
                 : `${count} ${count === 1 ? 'Gebetserhörung' : 'Gebetserhörungen'}`}
       </p>
 
@@ -320,7 +321,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           </p>
         ))}
 
-      {tab === 'streithalle' &&
+      {tab === 'desert' &&
         (rounds.length ? (
           <ul className="archive-list wa-rounds">
             {rounds.map((r) => (

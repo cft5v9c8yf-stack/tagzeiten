@@ -3,14 +3,14 @@
  * weekly standard, monthly point and reviews. Recorded, never counted.
  */
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_REVIEW } from '../content/winterArc';
-import { fromKey, MONTH_LONG, WEEKDAY_SHORT, type DateKey } from './dates';
+import { addDays, fromKey, MONTH_LONG, WEEKDAY_SHORT, type DateKey } from './dates';
 import {
   dayOf,
   endDateOf,
   focusOf,
   isInRun,
   monthlyDone,
-  monthsOfWeek,
+  monthOf,
   totalWeeks,
   weekDates,
   weekOf,
@@ -20,13 +20,19 @@ import {
   type WinterArcSettings,
 } from './winterArc';
 import { pointsOf } from './winterArcPoints';
+import { desertWeeks, isDesert } from './desert';
 
 const de = (k: DateKey) => fromKey(k).toLocaleDateString('de-DE');
 const short = (k: DateKey) =>
   `${WEEKDAY_SHORT[fromKey(k).getDay()]} ${fromKey(k).getDate()}.${fromKey(k).getMonth() + 1}.`;
 
 export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: WinterArcSettings): string[] {
-  const W = totalWeeks(run.durationDays);
+  // A Wüstenzeit counts calendar weeks (its ticks stand with the days); a round before it counted from its start.
+  const desert = isDesert(run);
+  const mondays = desert ? desertWeeks(run) : [];
+  const W = desert ? mondays.length : totalWeeks(run.durationDays);
+  const datesOf = (w: number) =>
+    desert ? Array.from({ length: 7 }, (_, i) => addDays(mondays[w - 1]!, i)) : weekDates(run.startDate, w);
   const out = [
     `## ${runName(run)} · ${de(run.startDate)} bis ${de(endDateOf(run.startDate, run.durationDays))} · ${run.durationDays} Tage · ${run.status === 'active' ? 'läuft' : 'beendet'}`,
     '',
@@ -42,19 +48,20 @@ export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: 
     const focus = WINTER_ARC_FOCUS[focusOf(w, W) - 1]!;
     const week = weekOf(data, run.id, w);
     const lines: string[] = [];
-    for (const d of weekDates(run.startDate, w).filter((x) => isInRun(run, x))) {
+    const dates = datesOf(w).filter((x) => isInRun(run, x));
+    for (const d of dates) {
       const checks = dayOf(data, run.id, d)?.checks ?? {};
       const done = daily.filter((p) => checks[p.id]).map((p) => p.text);
       if (done.length) lines.push(`- ${short(d)}: ${done.join(', ')}`);
     }
     const weekly = weeklyPoints.filter((p) => week?.weeklyChecks[p.id]).map((p) => p.text);
-    const monthly = monthsOfWeek(run, w)
+    const monthly = [...new Set(dates.map(monthOf))]
       .filter((m) => !told.has(m))
       .flatMap((m) => monthlyPoints.filter((p) => monthlyDone(data, run.id, m, p.id)).map((p) => ({ m, p })));
     const review = WINTER_ARC_REVIEW.filter((r) => week?.review[r.key].trim());
     if (!lines.length && !weekly.length && !monthly.length && !review.length) continue;
     monthly.forEach(({ m }) => told.add(m));
-    out.push(`### Woche ${w} · ${focus.focus}`, '');
+    out.push(desert ? `### Woche ${w}` : `### Woche ${w} · ${focus.focus}`, '');
     if (lines.length) out.push(...lines, '');
     if (weekly.length) out.push(`**Wochenstandard:** ${weekly.join(', ')}`, '');
     for (const { m, p } of monthly) out.push(`**${p.text}:** ${MONTH_LONG[Number(m.slice(5)) - 1]}`, '');
@@ -69,5 +76,5 @@ export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: 
 export function winterArcToMarkdown(data: WinterArcData, settings: WinterArcSettings): string[] {
   if (!data.runs.length) return [];
   const runs = [...data.runs].sort((a, b) => a.createdAt - b.createdAt);
-  return ['', '# Streithalle', '', ...runs.flatMap((r) => runToMarkdown(r, data, settings))];
+  return ['', '# Wüstenzeit', '', ...runs.flatMap((r) => runToMarkdown(r, data, settings))];
 }

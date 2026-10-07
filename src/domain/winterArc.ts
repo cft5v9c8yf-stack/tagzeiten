@@ -11,7 +11,7 @@
  * template; rounds from before keep the plan as it was set.
  */
 import { addDays, fromKey, isDateKey, type DateKey, type Weekday } from './dates';
-import { houseHas, type House, type HouseNeed } from './house';
+import type { HouseNeed } from './house';
 import type { Rhythm } from './model';
 
 /* ------------------------------------------------------------ types */
@@ -97,6 +97,8 @@ export interface WinterArcRun {
   updatedAt: number;
   /** The round's own standard, in its order; absent in rounds from before 0.38 (see pointsOf). */
   points?: WinterArcPoint[];
+  /** A Wüstenzeit (since 0.39): the ids of the profile's habits chosen for it, ticked like all habits. */
+  habits?: string[];
 }
 
 /** Ticks by point id. */
@@ -145,8 +147,6 @@ export type WinterArcPhase = 'Disziplin' | 'Dienst' | 'Leitung';
 
 export const MIN_DURATION = 1;
 export const MAX_DURATION = 365;
-export const DEFAULT_DURATION = 90;
-export const QUICK_DURATIONS = [40, 60, 90] as const;
 /** The plan has thirteen weekly focuses. */
 export const FOCUS_COUNT = 13;
 
@@ -282,7 +282,7 @@ export function endRun(data: WinterArcData, now: number): WinterArcData {
 
 export const NAME_MAX = 60;
 /** What a round without a name of its own goes by. */
-export const DEFAULT_RUN_NAME = 'Runde';
+export const DEFAULT_RUN_NAME = 'Wüstenzeit';
 /** The name a round got by default until 0.38.1; on request the plan's name is no longer used (07.10.2026). */
 const OLD_DEFAULT_NAME = 'Winter Arc';
 const cleanName = (s: string) => s.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX);
@@ -331,6 +331,10 @@ export function normalizePoints(raw: unknown): WinterArcPoint[] {
   return out;
 }
 
+/** The habit ids of a Wüstenzeit: strings, each once. */
+const habitIds = (raw: unknown[]): string[] =>
+  [...new Set(raw.filter((x): x is string => typeof x === 'string' && x.length > 0 && x.length <= 80))];
+
 /** The ids a round may hold ticks for, by rhythm: its own points, or the plan's. */
 function idsOf(run: WinterArcRun, rhythm: Rhythm): readonly string[] {
   if (run.points) return run.points.filter((p) => p.rhythm === rhythm).map((p) => p.id);
@@ -355,6 +359,7 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
       createdAt: num(r.createdAt),
       updatedAt: num(r.updatedAt),
       ...(Array.isArray(r.points) ? { points: normalizePoints(r.points) } : {}),
+      ...(Array.isArray(r.habits) ? { habits: habitIds(r.habits) } : {}),
     });
   }
   // At most one round is under way: the newest.
@@ -429,99 +434,6 @@ export function normalizeWinterArcSettings(raw: Partial<WinterArcSettings> | und
     base.off = POINT_IDS.filter((id) => (raw.off as unknown[]).includes(id)) as WinterArcPointId[];
   }
   return base;
-}
-
-/* ------------------------------------------------------------ the standard */
-
-/** The points shown: not taken out, and those about wife or children only once "Mein Haus" holds them. */
-export const shownPoints = (points: readonly WinterArcPoint[], house: House): WinterArcPoint[] =>
-  points.filter((p) => !p.removed && houseHas(house, p.needs));
-
-/** Whether a point applies on a date: daily ones by the weekdays chosen for them. */
-export function pointApplies(point: WinterArcPoint, date: DateKey): boolean {
-  return point.rhythm !== 'daily' || (point.weekdays ?? ALL_DAYS).includes(fromKey(date).getDay() as Weekday);
-}
-
-/** The group a point is listed and sorted in: its block of the day, or its rhythm. */
-export type PointGroup = DayBlock | 'weekly' | 'monthly';
-export const POINT_GROUPS: readonly PointGroup[] = [...BLOCKS, 'weekly', 'monthly'];
-export const groupOf = (p: WinterArcPoint): PointGroup => (p.rhythm === 'daily' ? (p.block ?? 'morning') : p.rhythm);
-
-export const newPointId = (now: number): string => `own-${now.toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
-
-export interface PointInput {
-  text: string;
-  rhythm: Rhythm;
-  block?: DayBlock;
-  weekdays?: readonly Weekday[];
-}
-
-/** Adds a point at the end of its group; without text nothing is added. */
-export function addPoint(points: readonly WinterArcPoint[], input: PointInput, id: string): WinterArcPoint[] {
-  const [point] = normalizePoints([{ ...input, id }]);
-  return point ? [...points, point] : [...points];
-}
-
-/** Changes the words, the block or the weekdays of a point; an emptied text keeps the old one. */
-export function editPoint(
-  points: readonly WinterArcPoint[],
-  id: string,
-  patch: Partial<Pick<WinterArcPoint, 'text' | 'block' | 'weekdays'>>,
-): WinterArcPoint[] {
-  return points.map((p) => {
-    if (p.id !== id) return p;
-    const text = patch.text === undefined ? p.text : cleanText(patch.text) || p.text;
-    return normalizePoints([{ ...p, ...patch, text }])[0] ?? p;
-  });
-}
-
-/**
- * Takes a point out of the standard: for good if it was never ticked, otherwise
- * out of sight, so its ticks stay in the export and it can be taken up again.
- */
-export function removePoint(points: readonly WinterArcPoint[], id: string, ticked: boolean): WinterArcPoint[] {
-  return ticked ? points.map((p) => (p.id === id ? { ...p, removed: true as const } : p)) : points.filter((p) => p.id !== id);
-}
-
-/** Takes a point (up) again: one taken out comes back with its ticks, at the end of its group. */
-export function restorePoint(points: readonly WinterArcPoint[], point: WinterArcPoint): WinterArcPoint[] {
-  const { removed: _, ...back } = points.find((p) => p.id === point.id) ?? point;
-  return [...points.filter((p) => p.id !== point.id), back];
-}
-
-/** Moves a point one place up or down among the shown points of its group. */
-export function movePoint(points: readonly WinterArcPoint[], id: string, direction: 'up' | 'down'): WinterArcPoint[] {
-  const p = points.find((x) => x.id === id);
-  if (!p) return [...points];
-  const group = points.filter((x) => !x.removed && groupOf(x) === groupOf(p));
-  const at = group.indexOf(p) + (direction === 'up' ? -1 : 1);
-  return at < 0 || at >= group.length ? [...points] : movePointTo(points, id, at);
-}
-
-/** Puts a point at a place among the shown points of its group. */
-export function movePointTo(points: readonly WinterArcPoint[], id: string, index: number): WinterArcPoint[] {
-  const p = points.find((x) => x.id === id);
-  if (!p) return [...points];
-  const inGroup = (x: WinterArcPoint) => !x.removed && groupOf(x) === groupOf(p);
-  const group = points.filter((x) => inGroup(x) && x.id !== id);
-  group.splice(Math.max(0, Math.min(index, group.length)), 0, p);
-  let next = 0;
-  return points.map((x) => (inGroup(x) ? group[next++]! : x));
-}
-
-/** Gives a round its standard. */
-export function setPoints(data: WinterArcData, runId: string, points: readonly WinterArcPoint[], now: number): WinterArcData {
-  return {
-    ...data,
-    runs: data.runs.map((r) => (r.id === runId ? { ...r, points: normalizePoints(points), updatedAt: now } : r)),
-  };
-}
-
-/** Whether a point holds a tick anywhere in its round. */
-export function isTicked(data: WinterArcData, runId: string, point: WinterArcPoint): boolean {
-  if (point.rhythm === 'daily') return data.days.some((d) => d.runId === runId && d.checks[point.id]);
-  if (point.rhythm === 'weekly') return data.weeks.some((w) => w.runId === runId && w.weeklyChecks[point.id]);
-  return data.months.some((m) => m.runId === runId && m.checks[point.id]);
 }
 
 /* ------------------------------------------------------------ ticks */
@@ -628,8 +540,8 @@ export const hasReview = (w: WinterArcWeek | undefined): boolean =>
   !!w && !!(w.review.win.trim() || w.review.slipped.trim() || w.review.lesson.trim());
 
 /**
- * "Heute" is in the mode of the Streithalle for a calendar week (Mo–So) when a
- * round under way touches it: its habits then stand in place of the usual ones.
+ * "Heute" shows the Wüstenzeit for a calendar week (Mo–So) when the one under
+ * way touches it: its habits then stand first, as a group of their own.
  */
 export function hallModeIn(data: WinterArcData, date: DateKey): boolean {
   const run = activeRun(data);

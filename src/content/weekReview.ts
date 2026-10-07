@@ -34,12 +34,12 @@ export const WEEK_REVIEW = {
     'Schau auf die Woche zurück: auf die Menschen und Aufgaben, die Gott dir anvertraut hat. Eine Zeile genügt. Was leer bleibt, darf leer bleiben.',
   noted: 'Diese Woche abends notiert',
   thanks: 'Wofür danke ich?',
-  hall: 'Aus der Streithalle',
+  hall: 'Aus der Wüstenzeit',
   ahead: 'Für die neue Woche',
 } as const;
 
 /**
- * The review ends in the word of comfort the Streithalle's weekly review ends
+ * The review ends in the word of comfort the Wüstenzeit's weekly review ends
  * in (Lamentations 3,22–23), so a Sunday with a round under way has only one.
  */
 export const WEEK_REVIEW_COMFORT = WINTER_ARC_COMFORT;

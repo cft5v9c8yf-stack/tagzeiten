@@ -144,14 +144,14 @@ export function TodayPage() {
       {!resting && (
         <Section
           id="today.habits"
-          title={hallMode ? 'Streithalle' : 'Gewohnheiten'}
+          title="Gewohnheiten"
           aside={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined}
         >
           <HabitsWeek date={date} />
           {hallMode && (
             <p className="small muted habits-mode-note">
-              Während der Runde stehen hier die Gewohnheiten der Streithalle.{' '}
-              <Link to="/arena?bereich=streithalle">Zur Streithalle</Link>
+              Überblick und Anleitung der Wüstenzeit stehen in der Arena.{' '}
+              <Link to="/arena?bereich=wuestenzeit">Zur Wüstenzeit</Link>
             </p>
           )}
         </Section>

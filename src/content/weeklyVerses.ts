@@ -32,6 +32,8 @@ export const CORRECTIONS: readonly { source: string; from: string; to: string }[
   { source: '2Mo 20,8', from: 'daß Du ihn', to: 'daß du ihn' },
   { source: '2Mo 20,9', from: 'alle dein Dinge', to: 'alle deine Dinge' },
   { source: 'Hebr 12,11', from: 'dünkt uns nicht', to: 'dünkt sie uns nicht' },
+  // The digital source writes the same word once small, once capital in this verse; the Wüstenzeit has it capital both times.
+  { source: 'Lk 16,10', from: 'im geringsten treu', to: 'im Geringsten treu' },
 ];
 
 const v = (ref: string, source: string, ...parts: string[]): WeeklyVerse => ({ ref, source, parts });

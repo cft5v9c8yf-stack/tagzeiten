@@ -10,7 +10,7 @@ import type { Day, Habit, Rhythm } from './model';
 export type DayLookup = (date: DateKey) => Day | undefined;
 
 /** Whether a habit fits the house: those about wife or children wait until they are entered. */
-export const fitsHouse = (h: Habit, house: House): boolean => houseHas(house, HABIT_NEEDS[h.id]);
+export const fitsHouse = (h: Habit, house: House): boolean => houseHas(house, h.needs ?? HABIT_NEEDS[h.id]);
 
 const fromPreset = ({ activeOnUpdate: _, ...p }: (typeof HABIT_PRESETS)[number], active: boolean): Habit => ({
   ...p,

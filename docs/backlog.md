@@ -117,21 +117,21 @@ Offene Fragen vor dem Beginn:
   Doppeltes, deren „Fürbitte“ steht direkt darunter).
 - **Hochzeitstag:** im Mittelpunkt „unsere Ehe“ oder die Ehefrau.
 
-## Streithalle: eigene Gewohnheiten
+## Wüstenzeit (früher Streithalle)
 
-Gewünscht (07.10.2026): die Gewohnheiten frei wählen und selbst festlegen, das
-Konzept des Winter Arc beibehalten. **Umgesetzt in 0.38.0:** Jede Runde hat
-ihre eigene Liste (`run.points`), begonnen wie die letzte Runde, mit dem Plan
-des Winter Arc oder leer. Unter „Meine Gewohnheiten“ (Streithalle, Mehr →
-Gewohnheiten, Mehr → Darstellung) lassen sich Gewohnheiten hinzufügen, im
-Wortlaut, in den Tagen und im Block (Morgen, Haus, Arbeit; die Reihenfolge des
-Plans und nach Regel 18) ändern, sortieren und herausnehmen. Herausgenommene
-mit Haken bleiben versteckt erhalten (Export, wieder aufnehmen). Runden von vor
-0.38 lesen den Plan mit den alten Einstellungen (`pointsOf`).
+Gewünscht (07.10.2026), **umgesetzt in 0.39.0**. Die Streithalle ist zur
+Wüstenzeit geworden: ein fester Zeitraum (40, 90 oder frei) mit Gewohnheiten aus
+vier Paketen, weiteren Vorschlägen aus der Sammlung oder eigenen
+(`src/content/desert.ts`). Die Gewohnheiten sind gewöhnliche Gewohnheiten des
+Profils (Felder `desert`, `note`, `days`, `advent`, `needs`); ihre Haken liegen
+in den Tagen. Die Runde (`winterArcRuns`, Feld `habits`) merkt sich nur Zeitraum,
+Auswahl und Wochenrückblicke. Eine laufende Runde der Streithalle wird beim Laden
+übernommen (`fromRound`). Vier Gewohnheiten der Hauskirche sind die bestehenden
+(Tischgebet, Familienandacht, Kinder segnen, Katechismus), dazu Gottesdienst.
 
-Offen, falls gewünscht:
+Abweichungen von der Vorlage nach CLAUDE.md: keine Erfüllungsquote (Regel 4),
+statt dessen „an N Tagen gehalten“; keine Emojis (Regel 16); Verse nach Luther
+1912 (1 Tim 4,7 „Gottseligkeit“, Mk 1,35, Hos 2,16 vollständiger).
 
-- Die dreizehn Wochenschwerpunkte und die drei Phasen sind noch die des Winter
-  Arc; einige Aufträge nennen seine Punkte (04:00, Fokusblöcke, Küche um 20:00).
-  Eigene Schwerpunkte wären der nächste Schritt.
-- Die übrigen Gewohnheiten (Mehr → Gewohnheiten) als Vorschläge beim Anlegen.
+Offen, falls gewünscht: der Name des Ortes in der Arena („Wüstenwanderung“ wurde
+einmal genannt); ältere Einträge unter „Was ist neu“ nennen noch die Streithalle.

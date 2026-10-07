@@ -5,7 +5,7 @@
  * TypeScript types are derived from them. This lets tests inspect the complete
  * schema at runtime (rule 9: there is no field for confessing sins, anywhere).
  */
-import type { AnsweredPrayer, House } from './house';
+import type { AnsweredPrayer, House, HouseNeed } from './house';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
 import type { WinterArcData, WinterArcSettings } from './winterArc';
@@ -152,6 +152,16 @@ export interface Habit {
    * day. Absent means once a week. A plan, not a quota: a week with fewer is not a failure (rule 3).
    */
   timesPerWeek?: number;
+  /** A short description, shown on request (the "i"): the user's own, for habits of their own. */
+  note?: string;
+  /** Daily habits only: the weekdays it is meant for ("nur freitags"); absent means every day. */
+  days?: Weekday[];
+  /** Only in Advent, from the first Sunday of Advent to 24 December. */
+  advent?: true;
+  /** About wife, children or family: listed once "Mein Haus" holds them (presets: HABIT_NEEDS). */
+  needs?: HouseNeed;
+  /** Taken in for the Wüstenzeit: a package's id, "more" for the further ones, "own" for the user's own. */
+  desert?: string;
 }
 
 export type Theme = 'system' | 'light' | 'dark';

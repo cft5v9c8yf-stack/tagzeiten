@@ -8,6 +8,7 @@ import { TagzeitenDB } from '../../data/db';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
+import { DESERT_HABITS } from '../../content/desert';
 import { TodayPage } from './TodayPage';
 
 afterEach(cleanup);
@@ -20,11 +21,11 @@ const withHouse = (s: Store) =>
     house: { wife: { name: 'Anna', concern: '' }, children: [{ ...p.house.children[0]!, name: 'Paul' }] },
   }));
 
-async function renderToday(date: string, prepare?: (s: Store) => void) {
+async function renderToday(date: string, prepare?: (s: Store) => void, now = new Date(2026, 8, 25, 9, 0)) {
   const store = new Store({
     db: new TagzeitenDB(`today-${++n}`),
     journal: memoryJournal(),
-    now: () => new Date(2026, 8, 25, 9, 0),
+    now: () => now,
   });
   await store.load();
   prepare?.(store);
@@ -184,64 +185,60 @@ describe('Today', () => {
     expect(document.body.textContent).not.toMatch(/Serie|in Folge|verpasst|versäumt|Rückstand/i);
   });
 
-  it('shows the points of the Streithalle among the habits while the Winter Arc runs, with one tick for both', async () => {
-    // 25 September 2026 is a Friday; the round began on Wednesday the 23rd.
-    const store = await renderToday('2026-09-25', (s) => s.startWinterArc('2026-09-23', 90));
-    const group = document.querySelector('.habit-groups-hall, .habits') as HTMLElement;
-    expect([...document.querySelectorAll('.habit-group-streithalle .group-row')].map((r) => r.textContent)).toEqual([
-      'Täglich',
-      'Woche und Monat',
+  it('shows the Wüstenzeit first among the habits, the usual ones below, with one tick for all', async () => {
+    // 25 September 2026 is a Friday; the Wüstenzeit began on Wednesday the 23rd.
+    const store = await renderToday('2026-09-25', (s) => {
+      s.startDesert('2026-09-23', 40);
+      const offers = ['wz-psalm', 'wz-freitagsfasten', 'wz-fasten-mi-fr', 'wz-bibelvers'].map(
+        (id) => DESERT_HABITS.find((h) => h.id === id)!,
+      );
+      s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, offers, true);
+    });
+    expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Wüstenzeit · 23.9.–1.11.2026');
+    const day = screen.getByRole('region', { name: /^Gewohnheiten, (Heute|Freitag)/ });
+    expect([...day.querySelectorAll('.wa-group h5')].map((h) => h.textContent)).toEqual(['Wüstenzeit', 'Täglich', 'Wöchentlich', 'Monatlich']);
+    const desert = within(day.querySelector('.desert-group') as HTMLElement);
+    expect(desert.getAllByRole('checkbox').map((c) => c.textContent)).toEqual([
+      'Psalm des Tages',
+      'Freitagsfasten',
+      'Fasten am Mittwoch und Freitag',
+      'Bibelvers lernendiese Woche',
     ]);
-    // Next to the title: the name of the round and its span.
-    expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Runde · 23.9.–21.12.2026');
-    // "Heute" is in the mode of the Streithalle: the usual habits give way to it.
-    expect(screen.getByRole('button', { name: /^Streithalle/ })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Bibel lesen, Fr 25.9.' })).toBeNull();
-    expect(document.querySelectorAll('.habit-group')).toHaveLength(2);
-    // Monday and Tuesday lie before the round: neutral grey, nothing to tick.
-    const wake = within(group).getByRole('row', { name: /04:00 auf, kein Handy/ });
-    expect(wake.querySelectorAll('td.wa-outside')).toHaveLength(2);
-    fireEvent.click(within(group).getByRole('button', { name: '04:00 auf, kein Handy, Fr 25.9.' }));
-    const run = store.getProfile().winterArc.runs[0]!;
-    expect(store.getProfile().winterArc.days).toMatchObject([{ runId: run.id, date: '2026-09-25', checks: { wake: true } }]);
-    // Saturday: rest from training.
-    expect(within(group).getByRole('row', { name: /Trainiert/ }).textContent).toContain('Ruhe');
-    fireEvent.click(within(group).getByRole('button', { name: 'Gottesdienst und Sonntagsruhe, Woche 1 der Runde' }));
-    expect(store.getProfile().winterArc.weeks).toMatchObject([{ week: 1, weeklyChecks: { church: true } }]);
+    fireEvent.click(desert.getByRole('checkbox', { name: 'Psalm des Tages' }));
+    expect(store.getDay('2026-09-25').habits['wz-psalm']).toBe(true);
+    // The "i" opens the short description.
+    fireEvent.click(desert.getByRole('button', { name: 'Erklärung zu Fasten am Mittwoch und Freitag' }));
+    expect(desert.getByRole('note').textContent).toContain('Halte die altkirchlichen Fastentage.');
+    // Thursday: no fasting.
+    fireEvent.click(screen.getByRole('button', { name: 'Donnerstag, 24. September' }));
+    const thursday = screen.getByRole('region', { name: 'Gewohnheiten, Donnerstag, 24. September' });
+    expect(within(thursday.querySelector('.desert-group') as HTMLElement).getAllByRole('checkbox').map((c) => c.textContent)).toEqual([
+      'Psalm des Tages',
+      'Bibelvers lernendiese Woche',
+    ]);
+    // The usual habits stay, below.
+    expect(within(thursday).getByRole('checkbox', { name: /^Stille Zeit/ })).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/Streithalle|Winter Arc|Serie|verpasst/);
   });
 
-  it('shows the habits of a round in its own words, by the blocks of the day', async () => {
-    // 25 September 2026 is a Friday.
-    const store = await renderToday('2026-09-25', (s) =>
-      s.startWinterArc('2026-09-23', 90, 'Herbst', [
-        { id: 'own-a', text: 'Mittagsgebet', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5] },
-        { id: 'own-b', text: 'Psalm am Morgen', rhythm: 'daily', block: 'morning', weekdays: [1, 2, 3, 4, 5, 6, 0] },
-        { id: 'own-c', text: 'Brief an einen Bruder', rhythm: 'weekly' },
-        { id: 'own-d', text: 'Fastentag', rhythm: 'monthly' },
-      ]),
+  it('lets the day before be filled in on a Monday, from the week before', async () => {
+    const store = await renderToday(
+      '2026-09-28',
+      (s) => {
+        s.startDesert('2026-09-21', 40);
+        s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, [DESERT_HABITS.find((h) => h.id === 'wz-psalm')!], true);
+      },
+      new Date(2026, 8, 28, 7, 0),
     );
-    const day = within(screen.getByRole('region', { name: /^Gewohnheiten, (Heute|Freitag)/ }));
-    expect([...document.querySelectorAll('.habits-day .wa-group h5')].map((h) => h.textContent)).toEqual([
-      'Morgen',
-      'Arbeit',
-      'Woche und Monat',
-    ]);
-    fireEvent.click(day.getByRole('checkbox', { name: 'Mittagsgebet' }));
-    expect(store.getProfile().winterArc.days).toMatchObject([{ date: '2026-09-25', checks: { 'own-a': true } }]);
-    fireEvent.click(day.getByRole('checkbox', { name: /^Fastentag/ }));
-    expect(store.getProfile().winterArc.months).toMatchObject([{ month: '2026-09', checks: { 'own-d': true } }]);
-    // Saturday: no midday prayer that day, only its mark.
-    fireEvent.click(screen.getByRole('button', { name: 'Samstag, 26. September' }));
-    const saturday = within(screen.getByRole('region', { name: /^Gewohnheiten, Samstag/ }));
-    expect(saturday.queryByRole('checkbox', { name: 'Mittagsgebet' })).toBeNull();
-    expect(saturday.getByText('Mittagsgebet').closest('.is-off')).toBeTruthy();
-    // Not the plan's points.
-    expect(document.body.textContent).not.toContain('04:00 auf, kein Handy');
+    fireEvent.click(screen.getByRole('button', { name: 'Gestern nachtragen' }));
+    const sunday = screen.getByRole('region', { name: 'Gewohnheiten, Sonntag, 27. September' });
+    fireEvent.click(within(sunday).getByRole('checkbox', { name: 'Psalm des Tages' }));
+    expect(store.getDay('2026-09-27').habits['wz-psalm']).toBe(true);
   });
 
-  it('has no Streithalle among the habits while the Winter Arc is off', async () => {
+  it('has no Wüstenzeit among the habits while it is off', async () => {
     await renderToday('2026-09-25');
-    expect(document.querySelector('.habit-group-streithalle')).toBeNull();
+    expect(document.querySelector('.habit-group-desert')).toBeNull();
   });
 
   it('shows habits about wife and children only once they are entered under "Mein Haus"', async () => {
@@ -259,8 +256,8 @@ describe('Today', () => {
   });
 
   it('keeps the usual habits in weeks the round does not touch', async () => {
-    await renderToday('2026-09-25', (s) => s.startWinterArc('2026-10-05', 90));
-    expect(document.querySelector('.habit-group-streithalle')).toBeNull();
+    await renderToday('2026-09-25', (s) => s.startDesert('2026-10-05', 40));
+    expect(document.querySelector('.habit-group-desert')).toBeNull();
     expect(screen.getByRole('button', { name: /^Gewohnheiten/ })).toBeTruthy();
   });
 

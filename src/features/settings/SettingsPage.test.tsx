@@ -11,18 +11,19 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { CatechismPage } from '../catechism/CatechismPage';
 import { resetOpenState, setOpen } from '../../ui/collapseState';
+import { DESERT_HABITS } from '../../content/desert';
 import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
 /** Tiles open one at a time within their group; these are the groups. */
 const TILE_GROUPS = [
   ['display', 'data', 'install', 'airplane', 'about'],
   ['house', 'prayerlist', 'treasury'],
-  ['display.theme', 'display.habitHistory', 'display.sundayRest', 'display.atBed', 'display.compline', 'display.armor', 'display.winterArc'],
+  ['display.theme', 'display.habitHistory', 'display.sundayRest', 'display.atBed', 'display.compline', 'display.armor', 'display.desert'],
   ['data.keep', 'data.export', 'data.import', 'data.delete'],
   ['about.arc', 'about.sources', 'about.privacy'],
 ].map((g) => g.map((id) => `more.${id}`));
@@ -161,176 +162,114 @@ describe('Mehr: Aufbau', () => {
       'Nachtgebet am BettAnzeigen',
       'WochenrückblickEin',
       'Geistliche WaffenrüstungAnzeigen',
-      'StreithalleAus',
+      'WüstenzeitAus',
     ]);
     view.unmount();
     render(page());
     expect((await screen.findByRole('button', { name: /^Darstellung/ })).getAttribute('aria-expanded')).toBe('true');
   });
 
-  it('switches the Winter Arc on with start and duration, and off without deleting', async () => {
-    const { store, db } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
-    const toggle = await screen.findByRole('group', { name: 'Streithalle' });
+  it('switches the Wüstenzeit on with span and start, chooses its habits, and switches it off without deleting', async () => {
+    const { store, db } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.desert']);
+    const toggle = await screen.findByRole('group', { name: 'Wüstenzeit' });
     expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
-    const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
-    expect(within(dialog).getByText('Ein Start an einem Montag passt am besten zum Wochen-Tracker.')).toBeTruthy();
+    const dialog = screen.getByRole('dialog', { name: 'Neue Wüstenzeit' });
+    // 40 days from today by default; 90 or any number of days.
     expect((within(dialog).getByLabelText('Startdatum') as HTMLInputElement).value).toBe('2026-09-25');
-    expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('90');
+    expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('40');
+    expect(within(within(dialog).getByRole('group', { name: 'Vorschläge für die Dauer' })).getAllByRole('button').map((b) => b.textContent)).toEqual(['40', '90']);
+    expect(dialog.textContent).toContain('Bis Dienstag, 3. November 2026');
+    fireEvent.click(within(dialog).getByRole('button', { name: '90' }));
     expect(dialog.textContent).toContain('Bis Mittwoch, 23. Dezember 2026');
-    fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2026-10-05' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: '40' }));
-    expect(dialog.textContent).toContain('Bis Freitag, 13. November 2026');
-    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '400' } });
-    expect((within(dialog).getByRole('button', { name: 'Runde beginnen' }) as HTMLButtonElement).disabled).toBe(true);
-    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '90' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
+    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '33' } });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Wüstenzeit beginnen' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(1));
-    expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-10-05', durationDays: 90, status: 'active' });
-    expect(screen.getByText(/Beginnt am Montag, 5\. Oktober 2026/)).toBeTruthy();
+    expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-09-25', durationDays: 33, status: 'active', habits: [] });
 
-    // Begun with the plan of the Winter Arc; its habits can be changed here while it is on.
-    const train = () => store.getProfile().winterArc.runs[0]!.points!.find((p) => p.id === 'train')!;
-    expect(train()).toMatchObject({ text: 'Trainiert', block: 'morning', weekdays: [1, 2, 3, 4, 5] });
-    fireEvent.click(screen.getByRole('button', { name: 'Trainiert ändern' }));
-    fireEvent.click(within(screen.getByRole('group', { name: 'Tage für Trainiert' })).getByRole('button', { name: 'Samstag' }));
-    expect(train().weekdays).toEqual([1, 2, 3, 4, 5, 6]);
-    const wake = screen.getByRole('button', { name: '04:00 auf, kein Handy ändern' });
-    fireEvent.click(wake);
-    const wording = within(wake.closest('li')!).getByLabelText('Wortlaut');
-    fireEvent.change(wording, { target: { value: '05:00 auf, kein Handy' } });
-    fireEvent.blur(wording);
-    expect(store.getProfile().winterArc.runs[0]!.points![0]!.text).toBe('05:00 auf, kein Handy');
+    // Then the choice: the four packages, the further habits, the own ones.
+    const packs = [...document.querySelectorAll('.desert-pack')].map((s) => s.getAttribute('aria-label'));
+    expect(packs).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Weitere Gewohnheiten', 'Eigene Gewohnheiten']);
+    const wuestenweg = screen.getByRole('region', { name: 'Wüstenweg' });
+    expect(wuestenweg.textContent).toContain('Die klassische Wüstenzeit');
+    expect(wuestenweg.textContent).toContain('„Übe dich selbst aber in der Gottseligkeit.“');
+    fireEvent.click(within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }));
+    const run = () => store.getProfile().winterArc.runs[0]!;
+    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'wz-bibel-plan', 'wz-freitagsfasten', 'wz-bewegung']);
+    expect((within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }) as HTMLButtonElement).disabled).toBe(true);
+    // Single ones off again, and across the packages.
+    fireEvent.click(within(wuestenweg).getByLabelText('Bewegung'));
+    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByLabelText('Stille vor Gott'));
+    expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'wz-bibel-plan', 'wz-freitagsfasten', 'wz-stille']);
+    // The "i" opens the bubble with the short description and the background.
+    fireEvent.click(screen.getByRole('button', { name: 'Erklärung zu Psalm des Tages' }));
+    expect(screen.getByRole('note').textContent).toContain('Die Mönche beteten alle 150 Psalmen regelmäßig durch.');
+    // An own one, with a description.
+    const own = screen.getByRole('region', { name: 'Eigene Gewohnheiten' });
+    fireEvent.change(within(own).getByLabelText('Titel'), { target: { value: 'Brief an einen Bruder' } });
+    fireEvent.change(within(own).getByLabelText('Beschreibung (wenn du willst)'), { target: { value: 'Jede Woche einen.' } });
+    fireEvent.change(within(own).getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
+    fireEvent.click(within(own).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
+    const letter = store.getProfile().habits.at(-1)!;
+    expect(letter).toMatchObject({ name: 'Brief an einen Bruder', note: 'Jede Woche einen.', rhythm: 'weekly', active: false, desert: 'own' });
+    expect(run().habits).toContain(letter.id);
 
-    // Off: asked first, the round stays as ended.
-    fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Aus' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Runde beenden' }));
-    await waitFor(() => expect(store.getProfile().winterArc.runs[0]!.status).toBe('ended'));
+    // Off: asked first, the Wüstenzeit stays as ended.
+    fireEvent.click(within(screen.getByRole('group', { name: 'Wüstenzeit' })).getByRole('button', { name: 'Aus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beenden' }));
+    await waitFor(() => expect(run().status).toBe('ended'));
     await store.flush();
     expect(await db.winterArcRuns.count()).toBe(1);
 
-    // On again: a new round, by default with the habits of the round before.
-    fireEvent.click(within(screen.getByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
-    const begins = screen.getByRole('group', { name: 'Womit die Runde beginnt' });
-    expect(within(begins).getByRole('button', { name: 'Wie zuletzt' }).getAttribute('aria-pressed')).toBe('true');
-    fireEvent.click(screen.getByRole('button', { name: 'Runde beginnen' }));
+    // On again: the habits of the last Wüstenzeit come along.
+    fireEvent.click(within(screen.getByRole('group', { name: 'Wüstenzeit' })).getByRole('button', { name: 'Ein' }));
+    expect(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }).textContent).toContain('Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt.');
+    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beginnen' }));
     await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(2));
-    const runs = store.getProfile().winterArc.runs;
-    expect(runs.map((r) => r.status)).toEqual(['ended', 'active']);
-    expect(runs[1]!.points!.map((p) => p.text).slice(0, 4)).toEqual([
-      '05:00 auf, kein Handy',
-      'Morgenzeit im Wort und Gebet',
-      'Tagebuch und drei Dankpunkte',
-      'Trainiert',
-    ]);
-    expect(runs[1]!.points!.find((p) => p.id === 'train')!.weekdays).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(store.getProfile().winterArc.runs[1]!.habits).toEqual(store.getProfile().winterArc.runs[0]!.habits);
   });
 
-  it('lists the points of the Streithalle among the habits while the Winter Arc runs', async () => {
-    await renderAt('/mehr/gewohnheiten', <SettingsPage />, (s) => s.startWinterArc('2026-09-21', 90), ['more.habits.streithalle']);
-    const group = (await screen.findByRole('button', { name: /^Streithalle/ })).closest('section') as HTMLElement;
-    expect(group.textContent).toContain('04:00 auf, kein Handy');
-    expect(group.textContent).toContain('täglich · jeden Tag');
-    expect(group.textContent).toContain('täglich · Mo–Fr');
-    expect(group.textContent).toContain('Gedient (einmal im Monat)');
-    // By the blocks of the day, then week and month.
-    expect([...group.querySelectorAll('.wa-standard-group h4')].map((h) => h.textContent)).toEqual([
-      'Morgen',
-      'Haus',
-      'Wöchentlich',
-      'Monatlich',
-    ]);
-  });
-
-  it('lets the habits of the Streithalle be added, changed and taken out, keeping their ticks', async () => {
-    const { store } = await renderAt(
+  it('chooses the habits of the Wüstenzeit under Gewohnheiten too, and keeps those only for it out of everyday life', async () => {
+    await renderAt(
       '/mehr/gewohnheiten',
       <SettingsPage />,
       (s) => {
-        s.startWinterArc('2026-09-21', 90);
-        const run = s.getProfile().winterArc.runs[0]!;
-        s.toggleWinterArcCheck(run.id, '2026-09-22', 'wake');
+        s.startDesert('2026-09-21', 40);
+        s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, [DESERT_HABITS.find((h) => h.id === 'wz-psalm')!], true);
       },
-      ['more.habits.streithalle'],
+      ['more.habits.desert', 'more.habits.daily'],
     );
-    const points = () => store.getProfile().winterArc.runs[0]!.points!;
-    const takeOut = async (text: string) => {
-      fireEvent.click(await screen.findByRole('button', { name: `${text} ändern` }));
-      fireEvent.click(screen.getByRole('button', { name: 'Aus der Liste nehmen …' }));
-      fireEvent.click(screen.getByRole('button', { name: 'Entfernen' }));
-    };
-
-    // Ticked: out of the list, the tick stays, and the plan offers it again.
-    await takeOut('04:00 auf, kein Handy');
-    expect(points().find((p) => p.id === 'wake')).toMatchObject({ removed: true });
-    expect(store.getProfile().winterArc.days[0]!.checks).toEqual({ wake: true });
-    expect(screen.queryByRole('button', { name: '04:00 auf, kein Handy ändern' })).toBeNull();
-    fireEvent.click(await screen.findByRole('button', { name: /^04:00 auf, kein Handy · Morgen/ }));
-    expect(points().find((p) => p.id === 'wake')!.removed).toBeUndefined();
-    expect(screen.getByRole('button', { name: '04:00 auf, kein Handy ändern' })).toBeTruthy();
-
-    // Never ticked: gone from the round for good.
-    await takeOut('Gedient (einmal im Monat)');
-    expect(points().some((p) => p.id === 'serve')).toBe(false);
-
-    // An own habit, in its own words, block and days.
-    const form = screen.getByRole('form', { name: 'Neue Gewohnheit' });
-    fireEvent.change(within(form).getByLabelText('Wortlaut'), { target: { value: 'Mittagsgebet' } });
-    fireEvent.change(within(form).getByLabelText('Block'), { target: { value: 'work' } });
-    fireEvent.click(within(form).getByRole('button', { name: 'Sonntag' }));
-    fireEvent.click(within(form).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
-    expect(points().at(-1)).toMatchObject({ text: 'Mittagsgebet', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5, 6] });
-    expect(screen.getByRole('heading', { name: 'Arbeit' })).toBeTruthy();
-    fireEvent.change(within(form).getByLabelText('Wortlaut'), { target: { value: 'Brief an einen Bruder' } });
-    fireEvent.change(within(form).getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
-    expect(within(form).queryByLabelText('Block')).toBeNull();
-    fireEvent.click(within(form).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
-    expect(points().at(-1)).toEqual({ id: expect.stringMatching(/^own-/), text: 'Brief an einen Bruder', rhythm: 'weekly' });
+    const group = (await screen.findByRole('button', { name: /^Wüstenzeit/ })).closest('section') as HTMLElement;
+    expect((within(group).getByLabelText('Psalm des Tages') as HTMLInputElement).checked).toBe(true);
+    // Not among the everyday habits until taken over.
+    const daily = screen.getByRole('button', { name: /^Täglich/ }).closest('section') as HTMLElement;
+    expect(daily.textContent).not.toContain('Psalm des Tages');
   });
 
-  it('keeps every round of the Winter Arc readable in the Rückblick', async () => {
+  it('keeps every Wüstenzeit and round of the Streithalle readable in the Rückblick', async () => {
     const { ArchivePage } = await import('../archive/ArchivePage');
     await renderAt('/rueckblick?ansicht=streithalle', <ArchivePage />, (s) => {
       s.startWinterArc('2026-06-01', 40);
       const first = s.getProfile().winterArc.runs[0]!;
       s.setWinterArcReview(first.id, 2, 'win', 'Morgens zuerst das Wort');
       s.endWinterArc();
-      s.startWinterArc('2026-09-21', 90);
+      s.startDesert('2026-09-21', 40);
     });
-    expect(await screen.findByText('2 Runden der Streithalle')).toBeTruthy();
-    const old = screen.getByRole('button', { name: /^Runde: Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
+    expect(await screen.findByText('2 Wüstenzeiten')).toBeTruthy();
+    const old = screen.getByRole('button', { name: /^Wüstenzeit: Montag, 1\. Juni 2026 bis Freitag, 10\. Juli 2026/ });
     fireEvent.click(old);
     expect(screen.getByText('Morgens zuerst das Wort')).toBeTruthy();
     expect(screen.getByText(/alle Morgen neu/)).toBeTruthy();
   });
 
-  it('starts a round of any name and any span, by end date or by days', async () => {
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.winterArc']);
-    fireEvent.click(within(await screen.findByRole('group', { name: 'Streithalle' })).getByRole('button', { name: 'Ein' }));
-    const dialog = screen.getByRole('dialog', { name: 'Neue Runde in der Streithalle' });
-    // No name is given beforehand; without one a round is simply "Runde".
-    expect((within(dialog).getByLabelText('Name der Runde') as HTMLInputElement).value).toBe('');
-    fireEvent.change(within(dialog).getByLabelText('Name der Runde'), { target: { value: '  Fastenzeit  2027 ' } });
-    fireEvent.change(within(dialog).getByLabelText('Startdatum'), { target: { value: '2027-02-17' } });
-    fireEvent.change(within(dialog).getByLabelText('Letzter Tag'), { target: { value: '2027-04-03' } });
-    expect((within(dialog).getByLabelText('Dauer in Kalendertagen') as HTMLInputElement).value).toBe('46');
-    // A single day is a round too.
-    fireEvent.change(within(dialog).getByLabelText('Dauer in Kalendertagen'), { target: { value: '1' } });
-    expect((within(dialog).getByLabelText('Letzter Tag') as HTMLInputElement).value).toBe('2027-02-17');
-    fireEvent.change(within(dialog).getByLabelText('Letzter Tag'), { target: { value: '2027-04-03' } });
-    fireEvent.click(within(dialog).getByRole('button', { name: 'Runde beginnen' }));
-    await waitFor(() => expect(store.getProfile().winterArc.runs).toHaveLength(1));
-    expect(store.getProfile().winterArc.runs[0]).toMatchObject({ name: 'Fastenzeit 2027', startDate: '2027-02-17', durationDays: 46 });
-  });
-
-  it('leads from the habits in the Rückblick to the dashboard of the Streithalle', async () => {
+  it('leads from the habits in the Rückblick to the Wüstenzeit in the Arena', async () => {
     await renderAt('/mehr/rueckblick', <SettingsPage />, (s) => {
       s.updateProfile((p) => ({ ...p, showHabitHistory: true }), { immediate: true });
-      s.startWinterArc('2026-09-21', 90, 'Fastenzeit');
+      s.startDesert('2026-09-21', 40);
     }, ['review.habits']);
     await screen.findAllByText(/mit Einträgen/);
-    const link = await screen.findByRole('link', { name: /Fastenzeit\s*·\s*Tag 5 von 90/ });
-    expect(link.getAttribute('href')).toBe('/arena?bereich=streithalle');
+    const link = await screen.findByRole('link', { name: /Wüstenzeit\s*·\s*Tag 5 von 40/ });
+    expect(link.getAttribute('href')).toBe('/arena?bereich=wuestenzeit');
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
@@ -913,14 +852,14 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.38(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 0\.39(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.38(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.39(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');

@@ -2484,7 +2484,7 @@ header.top .search-link:focus-visible {
   color: var(--muted);
 }
 
-/* ------------------------------------------------------------ Streithalle (Winter Arc) */
+/* ------------------------------------------------------------ Wüstenzeit (the Streithalle before 0.39) */
 /* Open things are a plain outline, never red (rules 4 and 5). */
 .wa-title {
   margin: 8px 0 4px;
@@ -3105,73 +3105,160 @@ header.top .search-link:focus-visible {
   margin-bottom: 12px;
 }
 
-/* "Meine Gewohnheiten": the round's own list, by the blocks of the day as under "Heute". */
-.wa-standard-group > :is(h4, h5, h6),
-.wa-standard-suggest > :is(h4, h5, h6),
-.wa-add > :is(h4, h5, h6) {
-  margin: 16px 0 2px;
+/* The Wüstenzeit: the choice of habits by packages, the "i" with its bubble, what was kept. */
+.desert-lead {
+  font-style: italic;
+}
+.desert-pack {
+  margin: 14px 0 0;
+  padding: 4px 16px 10px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.desert-pack > :is(h4, h5, h6) {
+  margin: 12px 0 0;
   font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 1rem;
+}
+.desert-tagline {
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
   color: var(--muted);
 }
-.wa-standard .habit-edit {
-  grid-template-columns: auto 1fr auto;
+.desert-take {
+  margin: 4px 0 6px;
 }
-.wa-point-text {
+.desert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.desert-item {
+  border-top: 1px solid var(--rule);
+}
+.desert-item .wa-row {
+  border-bottom: 0;
+}
+.desert-check {
+  display: flex;
+  flex: 1;
+  gap: 10px;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.desert-check input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--icon-gold);
+}
+.desert-check > span {
   overflow-wrap: anywhere;
   hyphens: auto;
 }
-.wa-point-edit {
-  grid-column: 1 / -1;
-  padding: 0 0 6px 34px;
-}
-.wa-point-label {
-  margin: 12px 0 4px;
+.desert-waits {
+  display: block;
   font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.75rem;
   color: var(--muted);
 }
-.wa-point-days {
-  margin: 12px 0 0;
-  padding: 0;
-  border: 0;
+.desert-remove {
+  margin: 0 0 8px 30px;
+  font-size: 0.85rem;
 }
-.wa-point-days legend {
-  padding: 0;
-  margin-bottom: 4px;
-  font-family: var(--sans);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--muted);
+.desert-item .confirm-inline {
+  margin: 0 0 8px 30px;
 }
-.wa-point-remove {
-  margin-top: 6px;
-}
-.wa-point-remove p {
-  margin: 8px 0 0;
-}
-.wa-add {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 10px;
-  margin-top: 6px;
+.desert-add {
+  margin-top: 4px;
   border-top: 1px solid var(--rule);
 }
-.wa-add > :is(h4, h5, h6),
-.wa-add > .field:first-of-type,
-.wa-add > .wa-point-days,
-.wa-add > .btn {
-  grid-column: 1 / -1;
-}
-.wa-add > .btn {
-  justify-self: start;
+.desert-add .btn {
   margin-top: 12px;
 }
-.wa-change {
-  margin: 10px 0 0;
+.info-btn {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--muted);
+  font: italic 600 0.85rem/1 var(--serif, Georgia, serif);
+  cursor: pointer;
+}
+.info-btn[aria-expanded='true'] {
+  border-color: var(--icon-gold);
+  color: var(--ink);
+}
+/* A speech bubble below the line, its point towards the "i". */
+.info-bubble {
+  position: relative;
+  margin: 2px 0 10px;
+  padding: 8px 12px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  font-size: 0.92rem;
+}
+.info-bubble::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  transform: rotate(45deg);
+}
+.info-bubble p {
+  margin: 0;
+}
+.info-bubble .info-about {
+  margin-top: 6px;
+  color: var(--muted);
+}
+.desert-kept {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.desert-kept li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--rule);
+}
+.desert-kept li:first-child {
+  border-top: 0;
+}
+.desert-kept .muted {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+.desert-guide h4 {
+  margin: 4px 0 0;
+}
+.desert-guide .desert-tagline {
+  font-size: 0.95rem;
+}
+.desert-standard {
+  margin-top: 14px;
+}
+.desert-adopt {
+  margin: 16px 0;
+}
+.habits-late {
+  margin: 0 0 6px;
 }
 
 /* After the review in the evening: the way to the Gebetskammer for longer writing. */

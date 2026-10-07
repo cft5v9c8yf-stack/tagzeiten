@@ -6,7 +6,7 @@ import { normalizeArena } from './arena';
 import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalizeWinterArcSettings } from './winterArc';
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
-import { sortDays } from './schedule';
+import { sortDays, WEEK } from './schedule';
 import { carryPositions, fixedAmounts, fixedPlanId, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
@@ -131,8 +131,15 @@ function cleanHabit(h: Habit): Habit {
     preset: h.preset === true,
     focus: h.focus === true,
     ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) ? { timesPerWeek: h.timesPerWeek } : {}),
+    ...(typeof h.note === 'string' && h.note.trim() ? { note: h.note.trim().slice(0, NOTE_MAX) } : {}),
+    ...(h.rhythm === 'daily' && Array.isArray(h.days) ? { days: WEEK.filter((d) => h.days!.includes(d)) } : {}),
+    ...(h.advent === true ? { advent: true as const } : {}),
+    ...(h.needs === 'wife' || h.needs === 'children' || h.needs === 'family' ? { needs: h.needs } : {}),
+    ...(typeof h.desert === 'string' && /^[a-z]{2,20}$/.test(h.desert) ? { desert: h.desert } : {}),
   };
 }
+
+const NOTE_MAX = 300;
 
 function isHabit(h: unknown): h is Habit {
   if (!h || typeof h !== 'object') return false;

@@ -10,19 +10,16 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
-import { pointsOf } from '../domain/winterArcPoints';
-import { isDoneOn, toggleHabit as toggleHabitOfDay } from '../domain/habits';
+import { addOwn, adopt, choose, chooseOwn, fromRound, removeOwn, startDesert } from '../domain/desert';
+import type { DesertHabit } from '../content/desert';
+import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
   endRun,
   normalizeWinterArc,
   setReview,
-  setPoints,
   startRun,
-  toggleCheck,
-  toggleMonthly,
-  toggleWeekly,
   type WinterArcPoint,
   type WinterArcReview,
   type WinterArcData,
@@ -150,7 +147,22 @@ export class Store {
     // Today's unread portion follows the plan, e.g. after the alternation became one chapter a day.
     const reading = this.days.get(today)?.reading;
     if (reading && !reading.done && reading.planId !== this.profile.plan.planId) this.followToday();
+    this.roundToDesert();
     this.emit();
+  }
+
+  /** A round of the Streithalle still under way becomes a Wüstenzeit (0.39), its ticks copied into the days. */
+  private roundToDesert(): void {
+    const conv = fromRound(this.profile, this.today(), this.now().getTime());
+    if (!conv) return;
+    this.updateProfile(() => conv.profile, { immediate: true });
+    const byDate = new Map<DateKey, string[]>();
+    for (const t of conv.ticks) byDate.set(t.date, [...(byDate.get(t.date) ?? []), t.id]);
+    for (const [date, ids] of byDate) {
+      this.updateDay(date, (d) => ({ ...d, habits: { ...d.habits, ...Object.fromEntries(ids.map((id) => [id, true])) } }), {
+        immediate: true,
+      });
+    }
   }
 
   private async loadWinterArc(): Promise<WinterArcData> {
@@ -395,42 +407,47 @@ export class Store {
     );
   }
 
-  /** Changes the standard of a round: its own points, added, changed, sorted or taken out. */
-  setWinterArcPoints(runId: string, fn: (points: WinterArcPoint[]) => WinterArcPoint[]): void {
+  /** Begins a Wüstenzeit with the habits chosen; a round under way is ended, nothing is deleted. */
+  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = []): void {
     const t = this.now().getTime();
-    this.updateProfile(
-      (p) => {
-        const run = p.winterArc.runs.find((r) => r.id === runId);
-        if (!run) return p;
-        return { ...p, winterArc: setPoints(p.winterArc, runId, fn(pointsOf(run, p.winterArcSettings)), t) };
-      },
-      { immediate: true },
-    );
+    this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits) }), {
+      immediate: true,
+    });
+  }
+
+  /** Takes habits of the offer into the Wüstenzeit, or out of it. */
+  chooseDesert(runId: string, offers: readonly DesertHabit[], on: boolean): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => choose(p, runId, offers, on, t), { immediate: true });
+  }
+
+  /** Takes one of the user's own habits into the Wüstenzeit, or out of it. */
+  chooseOwnDesert(runId: string, id: string, on: boolean): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => chooseOwn(p, runId, id, on, t), { immediate: true });
+  }
+
+  /** A habit of the user's own for the Wüstenzeit, chosen at once. */
+  addOwnDesert(runId: string, input: { name: string; note?: string; rhythm: Habit['rhythm'] }): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => addOwn(p, runId, input, newHabitId(t), t), { immediate: true });
+  }
+
+  /** Deletes one of the user's own habits of the Wüstenzeit. */
+  deleteOwnDesert(id: string): void {
+    const t = this.now().getTime();
+    this.updateProfile((p) => removeOwn(p, id, t), { immediate: true });
+  }
+
+  /** Takes habits of the Wüstenzeit into everyday life. */
+  adoptHabits(ids: readonly string[]): void {
+    this.updateProfile((p) => adopt(p, ids), { immediate: true });
   }
 
   /** Switches the Winter Arc off: the round is marked as ended, its entries stay. */
   endWinterArc(): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
-  }
-
-  /** Sets or takes away a tick of the daily standard; earlier days of the round may be filled in later. */
-  toggleWinterArcCheck(runId: string, date: DateKey, item: string): void {
-    const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: toggleCheck(p.winterArc, runId, date, item, t) }), { immediate: true });
-  }
-
-  toggleWinterArcWeekly(runId: string, week: number, item: string): void {
-    const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: toggleWeekly(p.winterArc, runId, week, item, t) }), { immediate: true });
-  }
-
-  /** A monthly point, for the calendar month. */
-  toggleWinterArcMonthly(runId: string, month: string, item: string): void {
-    const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: toggleMonthly(p.winterArc, runId, month, item, t) }), {
-      immediate: true,
-    });
   }
 
   /** A line of the weekly review; saved as you type. */

@@ -6,6 +6,7 @@ import { addDays, type DateKey } from '../../domain/dates';
 import { childrenOf, houseHas, joinNames, wifeOf, type House } from '../../domain/house';
 import type { Day } from '../../domain/model';
 import { activeRun, isInRun, positionOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
+import { desertWeekOf, isDesert } from '../../domain/desert';
 import { BibleRef } from '../../ui/BibleRef';
 import { DayField, GrowingTextarea } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
@@ -38,12 +39,13 @@ function nextOnEnter(e: KeyboardEvent<HTMLDivElement>) {
   else field.blur();
 }
 
-/** The three questions of a round of the Streithalle: the same data as on its dashboard, never a second review. */
+/** The three questions of the Wüstenzeit: the same data as in the Arena, never a second review. */
 function HallQuestions({ run, date }: { run: WinterArcRun; date: DateKey }) {
   const store = useStore();
   const profile = useProfile();
   const id = useId();
-  const { week } = positionOf(run, date);
+  // A Wüstenzeit counts calendar weeks; a round from before 0.39 counted from its start.
+  const week = isDesert(run) ? desertWeekOf(run, date) : positionOf(run, date).week;
   const review = weekOf(profile.winterArc, run.id, week)?.review;
   return (
     <>
@@ -65,7 +67,7 @@ function HallQuestions({ run, date }: { run: WinterArcRun; date: DateKey }) {
 
 /**
  * The weekly review on Sunday evening: what was noted in the week, thanks for
- * the people and tasks of the week, the Streithalle's questions while a round
+ * the people and tasks of the week, the Wüstenzeit's questions while one
  * runs, at most one resolve, and the word of comfort at the end.
  */
 export function WeekReview({ date }: { date: DateKey }) {

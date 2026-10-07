@@ -19,8 +19,8 @@ describe('Winter Arc in the Markdown export', () => {
     d = toggleMonthly(d, 'a', '2026-10', 'serve', 2);
     d = setReview(d, 'a', 1, 'win', 'Jeden Morgen\num vier auf', 2);
     const md = winterArcToMarkdown(d, defaultWinterArcSettings()).join('\n');
-    expect(md).toContain('# Streithalle');
-    expect(md).toContain('## Runde · 5.10.2026 bis 2.1.2027 · 90 Tage · läuft');
+    expect(md).toContain('# Wüstenzeit');
+    expect(md).toContain('## Wüstenzeit · 5.10.2026 bis 2.1.2027 · 90 Tage · läuft');
     expect(md).toContain('### Woche 1 · Einfach da sein');
     expect(md).toContain('- Mo 5.10.: 04:00 auf, kein Handy, Morgenzeit im Wort und Gebet');
     expect(md).toContain('**Wochenstandard:** Gottesdienst und Sonntagsruhe');

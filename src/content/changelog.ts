@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.0',
+    date: '2026-10-07',
+    title: 'Die Wüstenzeit',
+    changes: [
+      { area: 'Arena', text: 'Aus der Streithalle wird die Wüstenzeit: ein fester Zeitraum von 40 oder 90 Tagen oder frei gewählt, mit Gewohnheiten aus vier Paketen (Aufbruch, Wüstenweg, Wie die Wüstenväter, Hauskirche), aus weiteren Vorschlägen oder eigenen. Ein Paket übernimmst du auf einmal, jede Gewohnheit wählst du auch einzeln.' },
+      { area: 'Heute', text: 'Die Gewohnheiten der Wüstenzeit stehen unter „Heute“ als eigene Gruppe zuerst, deine übrigen darunter. Das kleine „i“ öffnet eine kurze Beschreibung. Fastentage, wöchentliche und Advent-Gewohnheiten erscheinen nur, wenn sie dran sind. Am Montag lässt sich der Sonntag noch nachtragen.' },
+      { area: 'Arena', text: 'In der Arena stehen Anleitung und Überblick: Tag und Woche, was du bisher gehalten hast, und der Leitvers deines Pakets. Nach dem letzten Tag kannst du Gewohnheiten in den Alltag übernehmen. Der 90-Tage-Standard bleibt in der Anleitung.' },
+      { area: 'Arena', text: 'Eine laufende Runde der Streithalle wird zur Wüstenzeit; ihre Gewohnheiten und Haken bleiben erhalten. Frühere Runden stehen weiter im Rückblick.' },
+    ],
+  },
+  {
     version: '0.38.1',
     date: '2026-10-07',
     title: 'Neue Namen in der Streithalle',

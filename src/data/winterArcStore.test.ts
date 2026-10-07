@@ -23,6 +23,37 @@ afterEach(async () => {
   for (const name of names.splice(0)) await Dexie.delete(name);
 });
 
+describe('the Wüstenzeit in the store', () => {
+  it('turns a round of the Streithalle under way into a Wüstenzeit on loading, its ticks copied into the days', async () => {
+    const name = `wa-convert-${++n}`;
+    const { store } = freshStore(name);
+    await store.load();
+    store.startWinterArc('2026-09-28', 90, 'Herbst', [
+      { id: 'pray', text: 'Psalm beten', rhythm: 'daily', block: 'morning', weekdays: [1, 2, 3, 4, 5, 6, 0] },
+    ]);
+    const old = activeRun(store.getProfile().winterArc)!;
+    store.updateProfile(
+      (p) => ({ ...p, winterArc: { ...p.winterArc, days: [{ runId: old.id, date: '2026-09-29', checks: { pray: true }, updatedAt: 1 }] } }),
+      { immediate: true },
+    );
+    await store.flush();
+    const again = new Store({ db: new TagzeitenDB(name), debounceMs: 5, now: () => new Date(2026, 9, 5, 5, 0) });
+    await again.load();
+    const run = activeRun(again.getProfile().winterArc)!;
+    const id = `wz-${old.id}-pray`;
+    expect(run.habits).toEqual([id]);
+    expect(again.getProfile().habits.find((h) => h.id === id)).toMatchObject({ name: 'Psalm beten', desert: 'own' });
+    expect(again.getDay('2026-09-29').habits[id]).toBe(true);
+    await again.flush();
+    // Stored: a third start finds the Wüstenzeit as it is, and turns nothing again.
+    const third = new Store({ db: new TagzeitenDB(name), debounceMs: 5, now: () => new Date(2026, 9, 5, 5, 0) });
+    await third.load();
+    expect(activeRun(third.getProfile().winterArc)!.habits).toEqual([id]);
+    expect(third.getProfile().habits.filter((h) => h.id === id)).toHaveLength(1);
+    expect(third.getDay('2026-09-29').habits[id]).toBe(true);
+  });
+});
+
 describe('Winter Arc in the store', () => {
   it('starts a round, ends it without deleting, and starts a new one', async () => {
     const { db, store } = freshStore();

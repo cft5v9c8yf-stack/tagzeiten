@@ -160,10 +160,11 @@ describe('Wochenrückblick', () => {
     expect(screen.queryByLabelText('Unser Land')).toBeNull();
   });
 
-  it('takes the Streithalle’s three questions into the same review, with the same data', async () => {
-    const store = await renderEvening(SUNDAY, (s) => s.startWinterArc('2026-09-28', 90));
+  it('takes the Wüstenzeit’s three questions into the same review, with the same data', async () => {
+    // A Wüstenzeit from Monday 28 September: the Sunday 4 October ends its first calendar week.
+    const store = await renderEvening(SUNDAY, (s) => s.startDesert('2026-09-28', 40));
     await openReview('Wochenrückblick');
-    expect(screen.getByText('Aus der Streithalle')).toBeTruthy();
+    expect(screen.getByText('Aus der Wüstenzeit')).toBeTruthy();
     // One review, one word of comfort.
     expect(document.querySelectorAll('.compline .flow-step .arena-comfort')).toHaveLength(1);
     fireEvent.change(screen.getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen gelesen' } });
@@ -173,4 +174,5 @@ describe('Wochenrückblick', () => {
       expect(weekOf(data, activeRun(data)!.id, 1)?.review.win).toBe('Jeden Morgen gelesen');
     });
   });
+
 });

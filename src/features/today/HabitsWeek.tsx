@@ -6,7 +6,7 @@ import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun, hallModeIn, isInRun } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
-import { StreithalleDay, StreithalleHabits } from './StreithalleHabits';
+import { DesertDay, DesertWeekRows } from '../desert/DesertHabits';
 import { Tick } from '../../ui/Tick';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
@@ -48,13 +48,14 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const lookup = useDayLookup();
   const today = store.today();
   const week = Array.from({ length: 7 }, (_, i) => addDays(mondayOf(date), i));
-  // While a round of the Winter Arc runs in this week, "Heute" is in its mode: its habits
-  // stand in place of the usual ones, which keep their ticks and come back afterwards.
+  // While a Wüstenzeit runs in this week, its habits stand first, as a group of their own;
+  // the usual ones follow (without those chosen for it, so nothing stands twice).
   const hallMode = hallModeIn(profile.winterArc, date);
   const run = activeRun(profile.winterArc);
-  const active = hallMode ? [] : profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
-  // Sunday rest: no habits on Sundays; what was ticked before stays stored.
-  const resting = (k: DateKey) => profile.sundayRest && !hallMode && weekdayOf(k) === 0;
+  const desertIds = new Set(hallMode ? (run?.habits ?? []) : []);
+  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house) && !desertIds.has(h.id));
+  // Sunday rest: no usual habits on Sundays; what was ticked before stays stored. The Wüstenzeit keeps its days.
+  const resting = (k: DateKey) => profile.sundayRest && weekdayOf(k) === 0;
 
   const toggle = (h: Habit, k: DateKey) => store.toggleHabit(k, h);
   const [picked, setPicked] = useState<DateKey | null>(null);
@@ -114,7 +115,10 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   }
 
   // The day whose habits are listed: chosen in the strip of the week, at first the day shown.
-  const sel = picked && week.includes(picked) ? picked : date;
+  // On a Monday the day before lies in the week before; it can still be filled in.
+  const yesterday = addDays(today, -1);
+  const sel = picked && (week.includes(picked) || picked === yesterday) ? picked : date;
+  const lateEntry = date === today && !week.includes(yesterday) && sel !== yesterday;
   const dayTitle = sel === today ? 'Heute' : formatLong(sel);
   // Those from the order (Stille Zeit, Vesper, Nachtgebet) are listed too, read-only, so a
   // day chosen in the strip shows what was prayed. Weekly and monthly ones already kept move to the end.
@@ -166,10 +170,25 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         ))}
       </div>
       <h4 className="habits-day-title">{dayTitle}</h4>
-      {hallMode ? (
-        <StreithalleDay key={sel} date={sel} />
-      ) : resting(sel) ? (
-        <p className="small muted habits-rest">Sonntagsruhe. Am Sonntag stehen keine Gewohnheiten an.</p>
+      {lateEntry && (
+        <p className="habits-late">
+          <button type="button" className="link-btn" onClick={() => setPicked(yesterday)}>
+            Gestern nachtragen
+          </button>
+        </p>
+      )}
+      {hallMode && run && (
+        <div className="wa-group desert-group">
+          <h5>Wüstenzeit</h5>
+          <DesertDay key={sel} run={run} date={sel} />
+        </div>
+      )}
+      {active.length === 0 ? null : resting(sel) ? (
+        <p className="small muted habits-rest">
+          {hallMode
+            ? 'Sonntagsruhe. Die übrigen Gewohnheiten ruhen am Sonntag.'
+            : 'Sonntagsruhe. Am Sonntag stehen keine Gewohnheiten an.'}
+        </p>
       ) : (
         groups
           .filter(([, list]) => list.length > 0)
@@ -197,7 +216,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
                 className={
                   [
                     k === today ? 'is-today' : '',
-                    hallMode && run && !isInRun(run, k) ? 'is-outside' : '',
+                    hallMode && run && !isInRun(run, k) && active.length === 0 ? 'is-outside' : '',
                     resting(k) ? 'is-rest' : '',
                   ]
                     .join(' ')
@@ -209,6 +228,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
             ))}
           </tr>
         </thead>
+        {hallMode && run && <DesertWeekRows run={run} week={week} date={date} />}
         {focus.length > 0 && (
           <tbody className="habit-group habit-group-focus">
             <tr className="group-row">
@@ -235,7 +255,6 @@ export function HabitsWeek({ date }: { date: DateKey }) {
             </tbody>
           );
         })}
-        <StreithalleHabits week={week} date={date} />
       </table>
     </div>
     </details>

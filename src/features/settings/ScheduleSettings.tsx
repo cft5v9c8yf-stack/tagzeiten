@@ -5,7 +5,7 @@ import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model
 import { TileGroup } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
-import { WinterArcSettings, winterArcLine } from './WinterArcSettings';
+import { DesertSettings, desertLine } from '../desert/DesertSettings';
 
 const TIMES = TIME_ORDER;
 
@@ -225,7 +225,7 @@ export function DisplaySettings() {
               <p className="small muted">
                 Am Sonntag sind die Gewohnheiten ausgeblendet und zählen im Rückblick nicht mit. Unter „Heute“ steht
                 stattdessen der Sonntag mit Wochenspruch, Evangelium und Epistel. Was du an Sonntagen schon abgehakt hast,
-                bleibt gespeichert. Die Streithalle folgt ihren eigenen Tagen.
+                bleibt gespeichert. Die Wüstenzeit folgt ihren eigenen Tagen.
               </p>
             </>
           ),
@@ -297,11 +297,11 @@ export function DisplaySettings() {
           ),
         },
         {
-          id: 'more.display.winterArc',
-          title: 'Streithalle',
-          line: winterArcLine(profile, store.today()),
+          id: 'more.display.desert',
+          title: 'Wüstenzeit',
+          line: desertLine(profile, store.today()),
           icon: 'sunrise',
-          content: <WinterArcSettings />,
+          content: <DesertSettings />,
         },
       ]}
     />

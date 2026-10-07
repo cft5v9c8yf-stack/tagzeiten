@@ -2,8 +2,9 @@ import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } f
 import { NO_SCORE_NOTE } from '../../content/about';
 import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
 import { NEED_NOTE } from '../../domain/house';
-import { activeRun } from '../../domain/winterArc';
-import { WinterArcStandard } from './WinterArcStandard';
+import { stageOf } from '../../domain/winterArc';
+import { activeDesert } from '../../domain/desert';
+import { DesertChoice } from '../desert/DesertChoice';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -105,7 +106,7 @@ function HabitRow({
           </>
         )}
         <span className="habit-meta">
-          <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : 'eigene'}</span>
+          <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : habit.desert ? 'aus der Wüstenzeit' : 'eigene'}</span>
           {habit.active && !fitsHouse(habit, profile.house) && (
             <span className="habit-kind habit-waits">{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</span>
           )}
@@ -204,6 +205,8 @@ export function HabitSettings() {
   const store = useStore();
   const toast = useToast();
   const profile = useProfile();
+  // Habits taken in only for the Wüstenzeit stand here once they are taken over into everyday life.
+  const everyday = profile.habits.filter((h) => !h.desert || h.active);
   const nameId = useId();
   const rhythmId = useId();
   const [name, setName] = useState('');
@@ -247,9 +250,9 @@ export function HabitSettings() {
         Zum Verschieben ziehen oder mit den Pfeiltasten nach oben und unten bewegen.
       </p>
       {RHYTHMS.map((r) => (
-        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(profile.habits, r)} hintId={hintId} onMoved={moved} />
+        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(everyday, r)} hintId={hintId} onMoved={moved} />
       ))}
-      <StreithalleGroup />
+      <DesertGroup />
       <Section id="more.habits.add" title="Eigene anlegen" level={3} className="habit-card">
       <form className="add-habit" onSubmit={add}>
         <div className="field">
@@ -281,19 +284,19 @@ export function HabitSettings() {
   );
 }
 
-/** While a round of the Streithalle runs, its habits stand here too, to change as in the Streithalle. */
-function StreithalleGroup() {
+/** While a Wüstenzeit runs, its habits are chosen here too, as under Darstellung and in the Arena. */
+function DesertGroup() {
   const profile = useProfile();
-  const run = activeRun(profile.winterArc);
-  if (!run) return null;
+  const store = useStore();
+  const run = activeDesert(profile.winterArc);
+  if (!run || stageOf(run, store.today()) === 'after') return null;
   return (
-    <Section id="more.habits.streithalle" title="Streithalle" level={3} className="habit-card">
+    <Section id="more.habits.desert" title="Wüstenzeit" level={3} className="habit-card">
       <p className="small muted">
-        Solange eine Runde läuft, stehen diese Gewohnheiten unter „Heute“ statt der übrigen und zugleich in der
-        Streithalle. Ein Haken gilt an beiden Stellen. Was du aus der Liste nimmst, verschwindet aus beiden; seine Haken
-        bleiben erhalten.
+        Solange die Wüstenzeit läuft, stehen ihre Gewohnheiten unter „Heute“ zuerst, als eigene Gruppe. Ein Haken gilt
+        überall. Was du abwählst, verschwindet aus der Gruppe; seine Haken bleiben erhalten.
       </p>
-      <WinterArcStandard run={run} level={4} />
+      <DesertChoice run={run} level={4} />
     </Section>
   );
 }

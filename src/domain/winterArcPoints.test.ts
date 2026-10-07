@@ -1,25 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { emptyHouse } from './house';
 import {
-  addPoint,
   defaultWinterArcSettings,
-  editPoint,
   emptyWinterArc,
-  isTicked,
-  movePoint,
-  movePointTo,
   normalizeWinterArc,
-  removePoint,
-  restorePoint,
-  setPoints,
-  shownPoints,
   startRun,
   toggleCheck,
   toggleMonthly,
   type WinterArcPoint,
 } from './winterArc';
 import { winterArcToMarkdown } from './winterArcMarkdown';
-import { planPoints, planSuggestions, pointsOf, startPoints } from './winterArcPoints';
+import { planPoints, pointsOf } from './winterArcPoints';
 
 const own = (id: string, text: string, extra: Partial<WinterArcPoint> = {}): WinterArcPoint => ({
   id,
@@ -30,7 +20,7 @@ const own = (id: string, text: string, extra: Partial<WinterArcPoint> = {}): Win
   ...extra,
 });
 
-describe('the plan as the template of a round', () => {
+describe('the points of the rounds of the Streithalle (0.38)', () => {
   it('gives the plan’s fifteen points, by blocks of the day, with their days and marks', () => {
     const plan = planPoints();
     expect(plan.map((p) => p.id)).toEqual([
@@ -70,87 +60,6 @@ describe('the plan as the template of a round', () => {
     // A round with its own points keeps them.
     const mine = startRun(emptyWinterArc(), '2026-09-21', 90, 1, 'b', '', [own('own-1', 'Psalm beten')]).runs[0]!;
     expect(pointsOf(mine, settings)).toEqual([own('own-1', 'Psalm beten')]);
-  });
-
-  it('begins a new round with the list of the round before, the plan, or nothing', () => {
-    let data = startRun(emptyWinterArc(), '2026-06-01', 40, 1, 'a', '', [
-      own('own-1', 'Psalm beten'),
-      own('own-2', 'Laufen', { removed: true }),
-    ]);
-    const settings = defaultWinterArcSettings();
-    expect(startPoints('last', data, settings)).toEqual([own('own-1', 'Psalm beten')]);
-    expect(startPoints('plan', data, settings)).toEqual(planPoints());
-    expect(startPoints('empty', data, settings)).toEqual([]);
-    data = startRun(data, '2026-09-21', 90, 2, 'b', '', startPoints('last', data, settings));
-    expect(data.runs[1]!.points).toEqual([own('own-1', 'Psalm beten')]);
-  });
-
-  it('offers the plan’s points the list does not hold, those taken out in their own words', () => {
-    const points = [own('wake', '05:30 auf, kein Handy', { removed: true }), own('word', 'Morgenzeit')];
-    const offered = planSuggestions(points);
-    expect(offered).toHaveLength(14);
-    expect(offered[0]).toMatchObject({ id: 'wake', text: '05:30 auf, kein Handy' });
-    expect(offered.some((p) => p.id === 'word')).toBe(false);
-  });
-});
-
-describe('a round’s own list', () => {
-  it('adds a point in the user’s words at the end; without words nothing', () => {
-    const points = addPoint([], { text: '  Mittagsgebet  ', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5] }, 'own-1');
-    expect(points).toEqual([{ id: 'own-1', text: 'Mittagsgebet', rhythm: 'daily', block: 'work', weekdays: [1, 2, 3, 4, 5] }]);
-    expect(addPoint(points, { text: '   ', rhythm: 'weekly' }, 'own-2')).toEqual(points);
-    // Weekly and monthly points have no block and no days.
-    expect(addPoint([], { text: 'Brief an einen Bruder', rhythm: 'weekly', block: 'work' }, 'own-3')).toEqual([
-      { id: 'own-3', text: 'Brief an einen Bruder', rhythm: 'weekly' },
-    ]);
-  });
-
-  it('changes words, block and days; an emptied text keeps the old words', () => {
-    let points = [own('a', 'Psalm beten')];
-    points = editPoint(points, 'a', { text: 'Psalm 23 beten', block: 'house', weekdays: [6, 0] });
-    expect(points[0]).toEqual(own('a', 'Psalm 23 beten', { block: 'house', weekdays: [6, 0] }));
-    expect(editPoint(points, 'a', { text: '  ' })[0]!.text).toBe('Psalm 23 beten');
-  });
-
-  it('takes a point out for good if never ticked, otherwise out of sight with its ticks', () => {
-    let data = startRun(emptyWinterArc(), '2026-09-21', 90, 1, 'r', '', [own('a', 'Psalm'), own('b', 'Laufen')]);
-    data = toggleCheck(data, 'r', '2026-09-22', 'a', 2);
-    const points = data.runs[0]!.points!;
-    const ticked = isTicked(data, 'r', points[0]!);
-    expect(ticked).toBe(true);
-    expect(isTicked(data, 'r', points[1]!)).toBe(false);
-    let next = removePoint(points, 'a', ticked);
-    next = removePoint(next, 'b', false);
-    expect(next).toEqual([own('a', 'Psalm', { removed: true })]);
-    expect(shownPoints(next, emptyHouse())).toEqual([]);
-    // Taken up again: back with its ticks, at the end of its group.
-    data = setPoints(data, 'r', [...restorePoint(next, next[0]!), own('c', 'Lesen')], 3);
-    expect(data.runs[0]!.points!.map((p) => [p.id, !!p.removed])).toEqual([
-      ['a', false],
-      ['c', false],
-    ]);
-    expect(data.days[0]!.checks).toEqual({ a: true });
-  });
-
-  it('sorts within the block or rhythm, past points taken out', () => {
-    const points = [
-      own('a', 'A'),
-      own('x', 'X', { block: 'house' }),
-      own('b', 'B', { removed: true }),
-      own('c', 'C'),
-      { id: 'w', text: 'W', rhythm: 'weekly' as const },
-    ];
-    expect(movePoint(points, 'c', 'up').map((p) => p.id)).toEqual(['c', 'x', 'b', 'a', 'w']);
-    expect(movePoint(points, 'a', 'up')).toEqual(points);
-    expect(movePointTo(points, 'a', 5).map((p) => p.id)).toEqual(['c', 'x', 'b', 'a', 'w']);
-    expect(movePoint(points, 'w', 'down')).toEqual(points);
-  });
-
-  it('shows points about wife or children only once "Mein Haus" holds them', () => {
-    const points = [own('a', 'Eine Geste für meine Frau', { needs: 'wife' }), own('b', 'Psalm')];
-    expect(shownPoints(points, emptyHouse()).map((p) => p.id)).toEqual(['b']);
-    const house = { ...emptyHouse(), wife: { ...emptyHouse().wife, name: 'Anna' } };
-    expect(shownPoints(points, house).map((p) => p.id)).toEqual(['a', 'b']);
   });
 });
 
@@ -207,12 +116,20 @@ describe('stored and imported rounds with their own lists', () => {
     data = toggleCheck(data, 'r', '2026-10-05', 'own-2', 2);
     data = toggleMonthly(data, 'r', '2026-10', 'own-3', 2);
     data = toggleMonthly(data, 'r', '2026-10', 'own-4', 2);
-    data = setPoints(data, 'r', removePoint(data.runs[0]!.points!, 'own-2', true), 3);
+    data = normalizeWinterArc({
+      ...data,
+      runs: data.runs.map((r) => ({ ...r, points: r.points!.map((p) => (p.id === 'own-2' ? { ...p, removed: true as const } : p)) })),
+    });
     const md = winterArcToMarkdown(data, defaultWinterArcSettings()).join('\n');
     expect(md).toContain('## Herbst · 5.10.2026');
     expect(md).toContain('- Mo 5.10.: Psalm beten, Laufen');
     expect(md).toContain('**Fastentag:** Oktober');
     expect(md).toContain('**Opfer:** Oktober');
     expect(md.match(/Fastentag/g)).toHaveLength(1);
+  });
+
+  it('gives a Wüstenzeit no points of its own: its habits are the profile’s', () => {
+    const run = { ...startRun(emptyWinterArc(), '2026-10-05', 40, 1, 'w').runs[0]!, habits: ['wz-psalm'] };
+    expect(pointsOf(run, defaultWinterArcSettings())).toEqual([]);
   });
 });

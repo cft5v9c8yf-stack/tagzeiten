@@ -73,13 +73,6 @@ export interface WinterArcVerse {
 
 const verse = (text: string, ref: string, source: string): WinterArcVerse => ({ text, ref, source });
 
-/** Above the Streithalle in the Arena (Luther 1912). */
-export const STREITHALLE_VERSE = verse(
-  'Gelobet sei der HERR, mein Hort, der meine Hände lehrt streiten und meine Fäuste kriegen.',
-  'Psalm 144,1',
-  'Ps 144,1',
-);
-
 export const WINTER_ARC_TITLE = 'Der 90-Tage-Standard';
 
 export const WINTER_ARC_LEAD =
@@ -457,7 +450,6 @@ export const WINTER_ARC_END = {
 
 /** Every verse of the Winter Arc, for the check against Luther 1912. */
 export const WINTER_ARC_VERSES: readonly WinterArcVerse[] = [
-  STREITHALLE_VERSE,
   WINTER_ARC_ABOUT.verse,
   WINTER_ARC_RULES.verse,
   ...WINTER_ARC_DAY.blocks.map((b) => b.verse),

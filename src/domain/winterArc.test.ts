@@ -107,7 +107,7 @@ describe('Winter Arc rounds', () => {
     expect(off.days).toHaveLength(1);
   });
 
-  it('no longer names a round "Winter Arc": the old default name reads as "Runde"', () => {
+  it('no longer names a round "Winter Arc": the old default name reads as "Wüstenzeit"', () => {
     const data = normalizeWinterArc({
       runs: [
         { id: 'a', name: 'Winter Arc', startDate: '2026-09-21', durationDays: 90, status: 'active', createdAt: 1, updatedAt: 1 },
@@ -118,8 +118,8 @@ describe('Winter Arc rounds', () => {
       months: [],
     });
     expect(data.runs[0]!.name).toBeUndefined();
-    expect(data.runs.map(runName)).toEqual(['Runde', 'Fastenzeit']);
-    expect(runName({ name: 'Winter Arc' })).toBe('Runde');
+    expect(data.runs.map(runName)).toEqual(['Wüstenzeit', 'Fastenzeit']);
+    expect(runName({ name: 'Winter Arc' })).toBe('Wüstenzeit');
   });
 
   it('cleans imported rounds', () => {
