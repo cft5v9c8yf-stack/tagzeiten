@@ -202,7 +202,7 @@ describe('Mehr: Aufbau', () => {
     fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByLabelText('Stille vor Gott'));
     expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'wz-bibel-plan', 'wz-freitagsfasten', 'wz-stille']);
     // The "i" opens the bubble with the short description and the background.
-    fireEvent.click(screen.getByRole('button', { name: 'Erklärung zu Psalm des Tages' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Info zu Psalm des Tages' }));
     expect(screen.getByRole('note').textContent).toContain('Die Mönche beteten alle 150 Psalmen regelmäßig durch.');
     // An own one, with a description.
     const own = screen.getByRole('region', { name: 'Eigene Gewohnheiten' });

@@ -207,7 +207,7 @@ describe('Today', () => {
     fireEvent.click(desert.getByRole('checkbox', { name: 'Psalm des Tages' }));
     expect(store.getDay('2026-09-25').habits['wz-psalm']).toBe(true);
     // The "i" opens the short description.
-    fireEvent.click(desert.getByRole('button', { name: 'Erklärung zu Fasten am Mittwoch und Freitag' }));
+    fireEvent.click(desert.getByRole('button', { name: 'Info zu Fasten am Mittwoch und Freitag' }));
     expect(desert.getByRole('note').textContent).toContain('Halte die altkirchlichen Fastentage.');
     // Thursday: no fasting.
     fireEvent.click(screen.getByRole('button', { name: 'Donnerstag, 24. September' }));

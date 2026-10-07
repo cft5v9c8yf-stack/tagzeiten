@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.39.3',
+    date: '2026-10-07',
+    title: 'Die Erklärung am richtigen Platz',
+    changes: [
+      { area: 'Arena', text: 'Die Erklärung hinter dem „i“ einer Gewohnheit steht jetzt direkt unter ihrer Zeile und schiebt die übrigen nach unten. Es ist immer nur eine offen: Ein Tipp auf ein anderes „i“ wechselt zu dessen Erklärung, ein Tipp anderswo schließt sie.' },
+    ],
+  },
+  {
     version: '0.39.2',
     date: '2026-10-07',
     title: 'Den Dank aufschreiben',

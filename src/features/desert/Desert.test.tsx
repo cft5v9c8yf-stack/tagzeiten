@@ -117,8 +117,15 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(within(day).queryByRole('checkbox', { name: 'Freitagsfasten' })).toBeNull();
     fireEvent.click(within(day).getByRole('checkbox', { name: 'Morgensegen' }));
     expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
-    fireEvent.click(within(day).getByRole('button', { name: 'Erklärung zu Morgensegen' }));
+    fireEvent.click(within(day).getByRole('button', { name: 'Info zu Morgensegen' }));
     expect(within(day).getByRole('note').textContent).toContain('Beginne den Tag mit Luthers Morgensegen.');
+    // The bubble hangs below its own line; another "i" closes it, so only one stands open.
+    expect(within(day).getByRole('note').closest('.desert-line')!.textContent).toContain('Morgensegen');
+    const next = within(day).getByRole('button', { name: 'Info zu Bibellese' });
+    fireEvent.pointerDown(next);
+    fireEvent.click(next);
+    expect(within(day).getAllByRole('note')).toHaveLength(1);
+    expect(within(day).getByRole('note').textContent).toContain('Lies täglich einen kurzen Abschnitt aus einem Evangelium.');
     // Yesterday, a Friday, can still be filled in.
     fireEvent.click(within(day).getByRole('button', { name: 'Vortag' }));
     fireEvent.click(within(day).getByRole('checkbox', { name: 'Freitagsfasten' }));
