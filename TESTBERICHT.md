@@ -4,7 +4,7 @@ Stand: 8. Oktober 2026 · geprüft: Version 0.40.0 · Korrekturen aus Phase 2 in
 
 ## Kurzfassung
 
-Henoch ist reif für 1.0, sobald deine Anschrift im Impressum steht.
+Henoch ist reif für 1.0. Seit 0.41.1 ist auch das Impressum vollständig.
 
 **Phase 1** fand zwei kritische Punkte: das Impressum mit Platzhaltern und „Heute“, das nach
 Mitternacht auf dem Vortag stehen blieb. Alles andere lief:
@@ -18,8 +18,8 @@ Mitternacht auf dem Vortag stehen blieb. Alles andere lief:
 **Phase 2** (Version 0.41.0) hat den Tageswechsel, die E-Mail, den Datenschutz, die Reihenfolge
 nach Regel 18 und die Textfehler behoben.
 
-**Offen sind drei Dinge, die nur du entscheiden kannst:** die Anschrift, das rechtliche
-Gegenlesen des Datenschutzes und zwei Sätze im 90-Tage-Standard (W7). Phase 3 ist vorbereitet,
+**Offen sind zwei Dinge, die nur du entscheiden kannst:** das rechtliche Gegenlesen des
+Datenschutzes und zwei Sätze im 90-Tage-Standard (W7). Phase 3 ist vorbereitet,
 aber noch nicht live.
 
 ## 1. Projektzustand
@@ -127,7 +127,7 @@ aber noch nicht live.
 
 | Nr. | Problem | Status |
 |---|---|---|
-| K1 | Impressum zeigt Platzhalter: Straße, PLZ/Ort und E-Mail (auch im Datenschutz). § 5 DDG verlangt eine ladungsfähige Anschrift. | **teilweise:** E-Mail kontakt@henoch.app eingetragen (0.41.0). **Die Anschrift fehlt noch, sie kann nur von dir kommen.** |
+| K1 | Impressum zeigt Platzhalter: Straße, PLZ/Ort und E-Mail (auch im Datenschutz). § 5 DDG verlangt eine ladungsfähige Anschrift. | **behoben:** E-Mail kontakt@henoch.app (0.41.0), Anschrift Bükers Wiesen 16, 33106 Paderborn (0.41.1). Kein Platzhalter mehr. |
 | K2 | Bleibt die App über Mitternacht offen oder wird morgens aus dem Hintergrund geholt, zeigt „Heute“ weiter den Vortag. Häkchen landen dann beim Vortag. | **behoben** (0.41.0): Heute, Stille Zeit und Wüstenzeit folgen dem neuen Tag. Das Nachtgebet bleibt beim begonnenen Abend, bis du es verlässt. Neuer Test, im Browser nachgeprüft. |
 
 ### Wichtig (sollte vor 1.0 behoben werden)
@@ -204,9 +204,7 @@ Korrekturen:
 
 **Bleibt bei dir:**
 
-1. **K1 Anschrift im Impressum.** Straße, Hausnummer, PLZ und Ort in `src/content/impressum.ts`.
-   Wenn du deine Privatanschrift nicht zeigen willst: ein Impressum-Service mit ladungsfähiger
-   Anschrift.
+1. ~~**K1 Anschrift im Impressum.**~~ Erledigt in 0.41.1.
 2. **W1 Datenschutz** einmal rechtlich gegenlesen lassen.
 3. **W7 90-Tage-Standard:** Sollen „Zwei hintereinander vermeiden“ und die Hinweise auf den
    „Tracker“ bleiben?
@@ -222,7 +220,7 @@ mein.henoch.app. Vorbereitet sind:
 
 **Nach deiner Freigabe (etwa 10 Minuten):**
 
-1. Anschrift eintragen
+1. ~~Anschrift eintragen~~ (erledigt in 0.41.1)
 2. Version 1.0.0 in `package.json`, `package-lock.json` und in den Versionen der App; die
    Versionsmuster im Test anpassen
 3. „in Vorbereitung“ aus `CHANGELOG.md` streichen

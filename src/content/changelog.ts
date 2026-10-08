@@ -13,6 +13,12 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.41.1',
+    date: '2026-10-08',
+    title: 'Das Impressum vollständig',
+    changes: [{ area: 'Mehr', text: 'Das Impressum nennt jetzt Anschrift und Kontaktadresse; kein Platzhalter steht mehr darin.' }],
+  },
+  {
     version: '0.41.0',
     date: '2026-10-08',
     title: 'Vor 1.0 durchgesehen',

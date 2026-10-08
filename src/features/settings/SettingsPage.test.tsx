@@ -892,8 +892,10 @@ describe('Rückblick', () => {
     await screen.findByRole('heading', { level: 2, name: /Impressum/ });
     expect(screen.getByRole('heading', { level: 3, name: 'Angaben gemäß § 5 DDG' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Datenschutz' })).toBeTruthy();
-    // Only the postal address is still to be filled in; the contact is kontakt@henoch.app.
-    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toEqual(['[Straße und Hausnummer]', '[Postleitzahl und Ort]']);
+    // Complete: no placeholder left, with address and contact.
+    expect(document.querySelectorAll('mark.placeholder')).toHaveLength(0);
+    expect(document.body.textContent).toContain('Bükers Wiesen 16');
+    expect(document.body.textContent).toContain('33106 Paderborn');
     expect(document.body.textContent).toContain('E-Mail: kontakt@henoch.app');
     expect(document.body.textContent).toContain('Art. 6 Abs. 1 lit. f DSGVO');
     expect(document.body.textContent).toContain('Andreas Dykau');

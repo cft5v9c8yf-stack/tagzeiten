@@ -11,7 +11,7 @@ export interface ImprintSection {
 export const IMPRINT: readonly ImprintSection[] = [
   {
     title: 'Angaben gemäß § 5 DDG',
-    lines: ['Andreas Dykau', '[Straße und Hausnummer]', '[Postleitzahl und Ort]', 'Deutschland'],
+    lines: ['Andreas Dykau', 'Bükers Wiesen 16', '33106 Paderborn', 'Deutschland'],
   },
   {
     title: 'Kontakt',
