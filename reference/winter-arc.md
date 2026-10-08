@@ -7,7 +7,10 @@
      Changed on request: Phil 2,4 reads „sondern auch auf das“ as in Luther 1912;
      the house stands before the work (CLAUDE.md, rule 18) in the opening line and in „Worum es geht“.
      Changed after rule 18 (08.10.2026): weeks 6 and 7 swapped (the church before the work),
-     weeks 9 and 10 swapped (the house before the self), each with its task and verse. -->
+     weeks 9 and 10 swapped (the house before the self), each with its task and verse.
+     Changed on request (08.10.2026): rule 3 without „Zwei hintereinander vermeiden“ and its
+     sentence (CLAUDE.md, rule 4); „Tracker“ in the rules, the weekly standard and day 90
+     replaced by the list, the week view of the Wüstenzeit and the 90 days. -->
 
 Gott zuerst, dann das Haus, dann die Arbeit: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.
 
@@ -31,9 +34,9 @@ Der 90-Tage-Standard dreht diese Reihenfolge um. Gott bekommt die erste Stunde. 
 
 Alles andere hängt an diesen vier Regeln. Hältst du sie, tragen die 90 Tage.
 
-1. **Eine Stelle, kein Feed.** Hake in Henoch ab, nicht in einer App, die dich mit einem Wisch woandershin zieht. Wer lieber Papier nimmt, druckt den Tracker aus und legt ihn neben das Bett.
+1. **Eine Stelle, kein Feed.** Hake in Henoch ab, nicht in einer App, die dich mit einem Wisch woandershin zieht. Wer lieber Papier nimmt, schreibt sich die Liste ab und legt sie neben das Bett.
 2. **Abends abhaken, vor dem Schlafen.** Jeden Abend, nicht am Wochenende. Nur ehrliche Haken: Ein Haken, den du dir nicht verdient hast, lehrt dich, dich selbst zu belügen.
-3. **Einen Tag verpasst, kein Problem. Zwei hintereinander vermeiden.** Ein verpasster Tag ist Leben. Zwei hintereinander sind der Anfang einer neuen Gewohnheit. Am nächsten Morgen weitermachen, ohne Neustart und ohne Schuldspirale. Die Barmherzigkeit Gottes ist alle Morgen neu.
+3. **Einen Tag verpasst, kein Problem.** Ein verpasster Tag ist Leben. Am nächsten Morgen weitermachen, ohne Neustart und ohne Schuldspirale. Die Barmherzigkeit Gottes ist alle Morgen neu.
 4. **Tiefer, nicht anders.** Die Gewohnheiten bleiben 90 Tage gleich. Wenn es langweilig wird, kommt nichts Neues dazu. Du gehst tiefer in das, was da ist. Dafür gibt es die drei Phasen.
 
 Ziel: fünf gute Tage pro Woche. Fünf starke Tage über dreizehn Wochen verändern mehr als drei perfekte Wochen und dann Abbruch.
@@ -105,7 +108,7 @@ Der Morgen wird am Abend gewonnen. Wer um 23 Uhr noch scrollt, steht um 04:00 ni
 
 ## Der Wochenstandard
 
-Der Tagesstandard hält dich stabil, der Wochenstandard hält die Richtung. Du hakst ihn unten auf jedem Wochen-Tracker ab.
+Der Tagesstandard hält dich stabil, der Wochenstandard hält die Richtung. Du hakst ihn in der Wochenansicht der Wüstenzeit ab.
 
 | Wann | Was | Wie |
 | --- | --- | --- |
@@ -187,7 +190,7 @@ Zum Schluss der Zuspruch: „Die Güte des HERRN ist’s, daß wir nicht gar aus
 
 ## Tag 90 – und danach
 
-Vor 90 Tagen war das eine Liste. Jetzt ist es, wie du lebst. Hör nicht auf, nur weil der Tracker zu Ende ist: Starte eine neue Runde mit denselben Gewohnheiten und mehr Tiefe.
+Vor 90 Tagen war das eine Liste. Jetzt ist es, wie du lebst. Hör nicht auf, nur weil die 90 Tage um sind: Starte eine neue Runde mit denselben Gewohnheiten und mehr Tiefe.
 
 Geh den nächsten Durchgang nicht allein. Nimm einen oder zwei Brüder aus der Arena mit und haltet euch gegenseitig ehrlich.
 

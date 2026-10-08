@@ -3,7 +3,7 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
-## 1.0.0 – in Vorbereitung, noch nicht veröffentlicht
+## 1.0.0 – 8. Oktober 2026
 
 Die erste feste Version. Henoch ist eine Ordnung für Morgen und Abend: Gebet und Bibellese für
 lutherische Männer, mit allem, was dazu in den letzten Wochen gewachsen ist.
@@ -31,6 +31,11 @@ lutherische Männer, mit allem, was dazu in den letzten Wochen gewachsen ist.
   - Alles bleibt auf deinem Gerät, ohne Konto und ohne Tracker
   - Export als JSON und Markdown, vollständiges Löschen
   - Die App läuft offline und kündigt neue Versionen an
+- **Vor 1.0 durchgesehen** (siehe `TESTBERICHT.md`):
+  - Tageswechsel über Nacht
+  - Impressum und Datenschutz vollständig
+  - Reihenfolge Haus, Gemeinde, Arbeit überall
+  - im 90-Tage-Standard keine Kette mehr („Zwei hintereinander vermeiden“)
 
 ## 0.1 bis 0.41 – September und Oktober 2026
 

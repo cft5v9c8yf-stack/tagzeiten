@@ -8,6 +8,10 @@
  * self last: weeks 6 and 7 swapped („In der Gemeinde dienen“ before „Bei der
  * Arbeit dienen“), and weeks 9 and 10 („Zu Hause führen“ before „Dich selbst
  * führen“). Their tasks and verses went with them.
+ *
+ * Changed on request (08.10.2026): the third rule no longer asks to avoid two
+ * days in a row (rule 4, no chains), and the printed tracker of the source
+ * plan is Henoch's list, the week view of the Wüstenzeit, or the 90 days.
  */
 import type { HouseNeed } from '../domain/house';
 import type { DayBlock, WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
@@ -108,15 +112,15 @@ export const WINTER_ARC_RULES = {
   rules: [
     {
       title: 'Eine Stelle, kein Feed.',
-      text: 'Hake in Henoch ab, nicht in einer App, die dich mit einem Wisch woandershin zieht. Wer lieber Papier nimmt, druckt den Tracker aus und legt ihn neben das Bett.',
+      text: 'Hake in Henoch ab, nicht in einer App, die dich mit einem Wisch woandershin zieht. Wer lieber Papier nimmt, schreibt sich die Liste ab und legt sie neben das Bett.',
     },
     {
       title: 'Abends abhaken, vor dem Schlafen.',
       text: 'Jeden Abend, nicht am Wochenende. Nur ehrliche Haken: Ein Haken, den du dir nicht verdient hast, lehrt dich, dich selbst zu belügen.',
     },
     {
-      title: 'Einen Tag verpasst, kein Problem. Zwei hintereinander vermeiden.',
-      text: 'Ein verpasster Tag ist Leben. Zwei hintereinander sind der Anfang einer neuen Gewohnheit. Am nächsten Morgen weitermachen, ohne Neustart und ohne Schuldspirale. Die Barmherzigkeit Gottes ist alle Morgen neu.',
+      title: 'Einen Tag verpasst, kein Problem.',
+      text: 'Ein verpasster Tag ist Leben. Am nächsten Morgen weitermachen, ohne Neustart und ohne Schuldspirale. Die Barmherzigkeit Gottes ist alle Morgen neu.',
     },
     {
       title: 'Tiefer, nicht anders.',
@@ -257,7 +261,7 @@ export const WINTER_ARC_DAY = {
 
 export const WINTER_ARC_WEEK = {
   title: 'Der Wochenstandard',
-  lead: 'Der Tagesstandard hält dich stabil, der Wochenstandard hält die Richtung. Du hakst ihn unten auf jedem Wochen-Tracker ab.',
+  lead: 'Der Tagesstandard hält dich stabil, der Wochenstandard hält die Richtung. Du hakst ihn in der Wochenansicht der Wüstenzeit ab.',
   rows: [
     {
       when: 'Sonntag',
@@ -443,7 +447,7 @@ export const WINTER_ARC_COMFORT = {
 export const WINTER_ARC_END = {
   title: 'Tag 90 – und danach',
   paragraphs: [
-    'Vor 90 Tagen war das eine Liste. Jetzt ist es, wie du lebst. Hör nicht auf, nur weil der Tracker zu Ende ist: Starte eine neue Runde mit denselben Gewohnheiten und mehr Tiefe.',
+    'Vor 90 Tagen war das eine Liste. Jetzt ist es, wie du lebst. Hör nicht auf, nur weil die 90 Tage um sind: Starte eine neue Runde mit denselben Gewohnheiten und mehr Tiefe.',
     'Geh den nächsten Durchgang nicht allein. Nimm einen oder zwei Brüder aus der Arena mit und haltet euch gegenseitig ehrlich.',
   ],
   verse: verse(

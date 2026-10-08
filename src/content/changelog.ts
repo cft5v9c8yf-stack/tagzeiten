@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.0.0',
+    date: '2026-10-08',
+    title: 'Henoch 1.0',
+    changes: [
+      { area: 'Henoch', text: 'Die erste feste Version: Stille Zeit, Vesper und Nachtgebet, Gewohnheiten, Gebetskammer und Eisenschmiede, die geistliche Waffenrüstung, die Wüstenzeit, Wort und Lehre. Alles, was du einträgst, bleibt auf deinem Gerät.' },
+      { area: 'Arena', text: 'Im 90-Tage-Standard steht die dritte Regel ohne „Zwei hintereinander vermeiden“. Statt vom Tracker ist von der Liste, der Wochenansicht der Wüstenzeit und den 90 Tagen die Rede.' },
+    ],
+  },
+  {
     version: '0.41.1',
     date: '2026-10-08',
     title: 'Das Impressum vollständig',

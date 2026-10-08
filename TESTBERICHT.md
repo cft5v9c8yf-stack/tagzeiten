@@ -18,9 +18,9 @@ Mitternacht auf dem Vortag stehen blieb. Alles andere lief:
 **Phase 2** (Version 0.41.0) hat den Tageswechsel, die E-Mail, den Datenschutz, die Reihenfolge
 nach Regel 18 und die Textfehler behoben.
 
-**Offen sind zwei Dinge, die nur du entscheiden kannst:** das rechtliche Gegenlesen des
-Datenschutzes und zwei Sätze im 90-Tage-Standard (W7). Phase 3 ist vorbereitet,
-aber noch nicht live.
+**Phase 3:** am 8. Oktober als Version 1.0.0 veröffentlicht.
+
+**Offen bei dir:** das rechtliche Gegenlesen des Datenschutzes und das GitHub Release.
 
 ## 1. Projektzustand
 
@@ -140,7 +140,7 @@ aber noch nicht live.
 | W4 | Vesper-Kurzform: Rubrik „Die Kinder sprechen die Antiphon.“ passt nicht zur persönlichen Vesper und erscheint auch ohne Kinder. | **behoben** (0.41.0): Rubrik entfernt |
 | W5 | „Tagebuch“ statt „Gebetskammer“ beim Schriftgebet („Gedanken ins Tagebuch“) und in der Suche („Arena · Tagebuch“). | **behoben** (0.41.0) |
 | W6 | Versionsnummer nur unter „Über Henoch“ und „Versionen“, nicht unten unter Mehr („Henoch 1.0.0“). | **behoben** (0.41.0): „Henoch 0.41.0“ ganz unten unter Mehr |
-| W7 | **Deine Entscheidung:** Der 90-Tage-Standard (dein Text, wortgetreu) enthält „Einen Tag verpasst, kein Problem. Zwei hintereinander vermeiden.“, das reibt sich mit Regel 4 (keine Ketten). Außerdem „druckt den Tracker aus“, „Wochen-Tracker“ und „weil der Tracker zu Ende ist“, obwohl Henoch keinen Tracker zum Ausdrucken hat. Nicht geändert. | Entscheidung |
+| W7 | **Deine Entscheidung:** Der 90-Tage-Standard (dein Text, wortgetreu) enthält „Einen Tag verpasst, kein Problem. Zwei hintereinander vermeiden.“, das reibt sich mit Regel 4 (keine Ketten). Außerdem „druckt den Tracker aus“, „Wochen-Tracker“ und „weil der Tracker zu Ende ist“, obwohl Henoch keinen Tracker zum Ausdrucken hat. | **angepasst** (1.0.0) auf deinen Wunsch: Regel ohne „Zwei hintereinander vermeiden“, „Tracker“ ersetzt, im Kopf der Quelle vermerkt |
 
 ### Später (kann in 1.1)
 
@@ -206,10 +206,13 @@ Korrekturen:
 
 1. ~~**K1 Anschrift im Impressum.**~~ Erledigt in 0.41.1.
 2. **W1 Datenschutz** einmal rechtlich gegenlesen lassen.
-3. **W7 90-Tage-Standard:** Sollen „Zwei hintereinander vermeiden“ und die Hinweise auf den
-   „Tracker“ bleiben?
+3. ~~**W7 90-Tage-Standard**~~ Erledigt in 1.0.0: auf deinen Wunsch angepasst.
 
-## Phase 3: vorbereitet, noch nicht live
+## Phase 3: veröffentlicht als 1.0.0 (8. Oktober 2026)
+
+Freigegeben am Morgen des 8. Oktober. Was dabei geschah, steht unten unter „Live-Gang“.
+
+### Vorbereitung (Stand vor der Freigabe)
 
 Mit 1.0.0 live gehen habe ich bewusst nicht. Jeder Push auf den Arbeitszweig geht automatisch auf
 mein.henoch.app. Vorbereitet sind:
