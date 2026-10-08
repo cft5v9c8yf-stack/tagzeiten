@@ -20,7 +20,8 @@ nach Regel 18 und die Textfehler behoben.
 
 **Phase 3:** am 8. Oktober als Version 1.0.0 veröffentlicht.
 
-**Offen bei dir:** das rechtliche Gegenlesen des Datenschutzes und das GitHub Release.
+**Offen bei dir:** das rechtliche Gegenlesen des Datenschutzes. Tag und Release „Henoch 1.0“
+stehen auf GitHub.
 
 ## 1. Projektzustand
 
@@ -262,11 +263,12 @@ nicht; `main` enthält noch die zwei hochgeladenen Dateien zum 90-Tage-Standard.
   - Das Manifest kennt kein Versionsfeld.
   - Den Service-Worker-Cache muss niemand hochzählen: Jede Datei trägt ihren
     Inhalts-Fingerabdruck, alte Caches werden aufgeräumt.
-- **Tag `v1.0.0`:** lokal gesetzt. Der Git-Zugang dieser Arbeitsumgebung nimmt aber nur Pushes
-  auf den Arbeitszweig an. Der Tag entsteht deshalb mit dem GitHub Release:
-  1. GitHub → Releases → „Draft a new release“
-  2. Tag `v1.0.0` neu anlegen, Ziel: Zweig `claude/focused-pascal-sol6ng`, Commit „Release 1.0.0“
-  3. Titel „Henoch 1.0“, Text aus `docs/release-notes-1.0.0.md`
+- **Tag `v1.0.0` und GitHub Release „Henoch 1.0“:**
+  - auf GitHub angelegt, mit dem Text aus `docs/release-notes-1.0.0.md`
+  - der Tag zeigt auf `e0ed57a`, den Commit direkt nach „Release 1.0.0“ (nur der Testbericht kam
+    dazu, die App ist dieselbe)
+  - der erste Anlauf zeigte auf den alten Upload-Stand von `main` und wurde neu angelegt
+  - Pushes von Tags lässt die Arbeitsumgebung nicht zu, darum lief das über GitHub selbst
 - **Live prüfen:** mein.henoch.app ist aus der Arbeitsumgebung gesperrt. Bitte auf dem Handy
   die Punkte 1, 4 und 19 der Checkliste prüfen (Versionsnummer, Start, Update-Hinweis).
 
