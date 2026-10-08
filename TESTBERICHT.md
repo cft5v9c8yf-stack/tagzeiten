@@ -244,3 +244,44 @@ mein.henoch.app. Vorbereitet sind:
 
 Ob PR #1 nach `main` zusammengeführt werden soll, entscheidest du. Die Auslieferung braucht es
 nicht; `main` enthält noch die zwei hochgeladenen Dateien zum 90-Tage-Standard.
+
+## Live-Gang 1.0.0 (8. Oktober 2026)
+
+- **Commit:** „Release 1.0.0“ auf dem Arbeitszweig.
+  - 650 Tests grün, lokal und auf GitHub (dort mit der Prüfung gegen Luther 1912)
+  - Build und Demo fehlerfrei
+- **Probe im Browser** gegen den 1.0.0-Build:
+  - unten unter Mehr steht „Henoch 1.0.0“
+  - unter Versionen „Du nutzt Version 1.0.0.“
+  - Impressum ohne Platzhalter
+  - Service Worker aktiv, keine Konsolenfehler
+- **Auslieferung:** GitHub Pages über den Lauf „Release 1.0.0“ nach mein.henoch.app. Wer die App
+  offen hat, bekommt den Hinweis „Eine neue Version der App ist bereit“.
+- **Versionsnummer** steht in `package.json`, `package-lock.json`, in der App und in
+  `CHANGELOG.md`.
+  - Das Manifest kennt kein Versionsfeld.
+  - Den Service-Worker-Cache muss niemand hochzählen: Jede Datei trägt ihren
+    Inhalts-Fingerabdruck, alte Caches werden aufgeräumt.
+- **Tag `v1.0.0`:** lokal gesetzt. Der Git-Zugang dieser Arbeitsumgebung nimmt aber nur Pushes
+  auf den Arbeitszweig an. Der Tag entsteht deshalb mit dem GitHub Release:
+  1. GitHub → Releases → „Draft a new release“
+  2. Tag `v1.0.0` neu anlegen, Ziel: Zweig `claude/focused-pascal-sol6ng`, Commit „Release 1.0.0“
+  3. Titel „Henoch 1.0“, Text aus `docs/release-notes-1.0.0.md`
+- **Live prüfen:** mein.henoch.app ist aus der Arbeitsumgebung gesperrt. Bitte auf dem Handy
+  die Punkte 1, 4 und 19 der Checkliste prüfen (Versionsnummer, Start, Update-Hinweis).
+
+### Offen für Version 1.1
+
+- **Datenschutz:** von jemandem mit Rechtskenntnis gegenlesen lassen (W1)
+- **Leistung:** großes Paket aufteilen, Handy-Leistung 77
+- **Linter:** ESLint einrichten
+- **Zweige:** erledigte Zweige löschen, PR #1 und die zwei Upload-Dateien auf `main`
+  zusammenführen
+- **Bibelstellen:** einheitlich zitieren
+- **Alte Schreibung im Gebetsheft:** „daß“, „mußt“, „Schlußgebet“. Ist das bewusst?
+- **Kleine Formulierungen und Anglizismen:** „Gym“, „Calls“, „Social Media“; „Runde“ im
+  90-Tage-Standard
+- **Barrierefreiheit:** Tagesleiste und Linktext „Mehr“
+- **Wüstenzeit:** Eine Wüstenzeit ganz in der Vergangenheit sollte der Start-Dialog verhindern
+- **Querformat:** auf kleinen Handys eng
+- **Flugmodus-Anleitung:** auf aktuelle Systemversionen bringen
