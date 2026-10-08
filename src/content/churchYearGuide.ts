@@ -10,7 +10,7 @@
 import type { Circle, Season } from '../domain/churchYear';
 
 export const LECTIONARY_NOTE =
-  'Evangelium und Epistel nach der altkirchlichen Leseordnung, wie sie in der lutherischen Kirche seit der Reformation gilt und auch Dieffenbachs Haus-Agende folgt.';
+  'Evangelium und Epistel nach der altkirchlichen Leseordnung, wie sie in der lutherischen Kirche seit der Reformation gilt; ihr folgt auch Dieffenbachs Haus-Agende.';
 
 /**
  * The festal circles after Georg Christian Dieffenbach, Evangelische Haus-Agende

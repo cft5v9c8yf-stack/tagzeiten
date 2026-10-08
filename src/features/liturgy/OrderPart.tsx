@@ -221,9 +221,6 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
             <span className="rubric-inline">Antiphon:</span> {ps.antiphon}
           </p>
           {morning && ctx.form === 'full' && <Rubric>{PSALM_RUBRIC_MORNING}</Rubric>}
-          {ctx.order === 'vespers' && ctx.form === 'short' && (
-            <Rubric>Im Wechsel, Vers um Vers. Die Kinder sprechen die Antiphon.</Rubric>
-          )}
           <Collapsible title="Gloria Patri">
             <PrayerText text={GLORIA} />
           </Collapsible>

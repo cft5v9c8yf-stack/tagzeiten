@@ -3,7 +3,7 @@ import { morningIcon } from '../../content/flowIcons';
 import { getOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
-import { useDay, useProfile, useStore } from '../../data/hooks';
+import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
 import type { MorningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
@@ -18,6 +18,8 @@ const FORMS: { value: OrderForm; label: string }[] = [
 ];
 
 export function MorningPage() {
+  // Left open overnight, the Stille Zeit moves on to the new day (the evening keeps its own until left).
+  useToday();
   const { date, isToday } = useSelectedDate();
   // A new day starts at its own first open step.
   return <MorningOrder key={date} date={date} isToday={isToday} />;

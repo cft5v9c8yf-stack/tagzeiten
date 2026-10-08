@@ -1,12 +1,42 @@
-# Tagzeiten
+# Henoch
 
-Gebetsordnung für Morgen und Abend – App für lutherische Männer.
+Eine Ordnung für Morgen und Abend: Gebet und Bibellese für lutherische Männer, mit Gewohnheiten,
+Gebetskammer und Wüstenzeit. Die App läuft im Browser und lässt sich auf dem Handy installieren.
 
-Progressive Web App (React 18, TypeScript, Vite, Dexie). Alle Einträge bleiben auf dem Gerät.
-Verbindliche Regeln für Inhalt und Code: [`CLAUDE.md`](CLAUDE.md).
-Referenzmaterial (Prototyp, Gebetsheft): [`reference/`](reference/).
+**Zur App:** <https://mein.henoch.app/> · **Kontakt:** kontakt@henoch.app
+
+## Funktionen
+
+- **Tagzeiten:**
+  - Stille Zeit am Morgen (mit „Am Bett“), Vesper und Nachtgebet am Abend
+  - Schritt für Schritt geführt, jede Ordnung auch als vollwertige Kurzform
+  - Die Bibel wird auf Papier gelesen; die App nennt die Stellen nach dem Leseplan
+- **Gewohnheiten:**
+  - Vorlagen und eigene Gewohnheiten, täglich, wöchentlich oder monatlich
+  - Abgehakt wird unter „Heute“
+  - Festgehalten wird, was war; ohne Serien, Punkte oder Rückstand
+- **Gebetskammer:** Einträge für das, was dich bewegt; dazu die Eisenschmiede für das Treffen mit Brüdern
+- **Waffenrüstung:**
+  - Jeden Tag ein Stück der geistlichen Waffenrüstung (Epheser 6) in der Stillen Zeit
+  - Die Frage dazu in der Prüfung des Nachtgebets
+- **Wüstenzeit:**
+  - Ein fester Zeitraum (40 Tage, 90 Tage oder frei) mit Gewohnheiten aus fünf Paketen oder eigenen
+  - Tagesliste, Wochenansicht, Wochenrückblick und Abschluss
+- **Wort und Lehre:** Leseplan, Luthers Kleiner Katechismus, Bekenntnisschriften, Kirchenjahr und Sonntag
+- **Rückblick und Export:** alle Tage, Versesammlung und Gebetserhörungen; Export als JSON und Markdown, vollständiges Löschen
+
+## Datenschutz
+
+Alle Einträge bleiben auf dem Gerät (IndexedDB). Es gibt keine Konten, keine Analytik, keine
+Tracker und keine Aufrufe fremder Dienste; die Schriften sind in der App enthalten. Ausgeliefert
+wird über GitHub Pages. Einzelheiten stehen in der App unter Mehr → Impressum.
 
 ## Entwicklung
+
+Progressive Web App (React 18, TypeScript, Vite, Dexie). Verbindliche Regeln für Inhalt und Code:
+[`CLAUDE.md`](CLAUDE.md). Referenzmaterial (Prototyp, Gebetsheft): [`reference/`](reference/).
+Was sich von Version zu Version geändert hat: [`CHANGELOG.md`](CHANGELOG.md) und in der App unter
+Mehr → Versionen.
 
 ```sh
 npm install
@@ -46,22 +76,25 @@ src/
   content/   gemeinfreie Texte und Abläufe als Daten (Liturgie, Katechismus, Psalmen, Leseplan, Ordnungen)
   domain/    reine Logik ohne UI und Datenbank (Leseplan, Katechismus-Tag, Gewohnheiten, Rückschau, Export)
   data/      Dexie-Schema, Speicher mit Schreibwarteschlange, Journal, React-Hooks
-  features/  Heute, Morgen, Abend, Katechismus, Archiv, Mehr
+  features/  Heute, Andacht, Wort, Arena, Wüstenzeit, Rückblick, Mehr
   ui/        Grundbausteine (Gebetstext, Feld, Schritt, Timer)
   styles/    Design-Tokens und Styles
 ```
 
-## Wochensprüche prüfen
+Die Datenbank heißt aus Gründen der Kompatibilität weiterhin `tagzeiten`, ebenso das Format der
+Sicherungsdateien; so findet die App alle älteren Einträge und Sicherungen.
 
-Die Wochensprüche (`src/content/weeklyVerses.ts`) sind wörtliche Ausschnitte der Lutherbibel 1912.
-Gegen die gemeinfreie Textausgabe (CC0) prüfen:
+## Bibeltexte prüfen
+
+Alle Bibelworte in der App sind wörtliche Ausschnitte der Lutherbibel 1912. Gegen die gemeinfreie
+Textausgabe (CC0) prüfen:
 
 ```sh
 npm pack xmlbible-lut1912 && tar xzf xmlbible-lut1912-*.tgz
-LUT1912_DIR=package/text npx vitest run src/content/weeklyVerses.source.test.ts
+LUT1912_DIR=package/text npx vitest run
 ```
 
-Die Dauerhaften Regeln aus `CLAUDE.md` sind, wo möglich, als Tests abgesichert
+Die dauerhaften Regeln aus `CLAUDE.md` sind, wo möglich, als Tests abgesichert
 (`src/domain/rules.test.ts` und die Seitentests): kein Feld für Sündenbekenntnis, jede Prüfung
 endet im Zuspruch, Rückschau vor Prüfung, Kurzformen vollwertig, keine Streaks, kein Rot für
 Versäumtes, keine Emojis.

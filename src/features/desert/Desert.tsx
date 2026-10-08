@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { downloadText } from '../../app/files';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
-import { useDayLookup, useProfile, useStore } from '../../data/hooks';
+import { useDayLookup, useProfile, useStore, useToday } from '../../data/hooks';
 import { addDays, formatLong, fromKey, WEEKDAY_SHORT, type DateKey } from '../../domain/dates';
 import {
   desertWeekOf,
@@ -502,6 +502,7 @@ function Start() {
  * dashboard; after its last day, the close. Everything else to set below.
  */
 export function Desert() {
+  useToday();
   const store = useStore();
   const profile = useProfile();
   const run = activeRun(profile.winterArc);

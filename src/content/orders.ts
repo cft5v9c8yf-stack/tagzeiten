@@ -443,14 +443,15 @@ export const RUBRICS = {
   vespersShortClosing: 'Hymnus – Psalm – kurze Lesung – Vaterunser – Segen, dann die Rückschau auf den Tag.',
   vespersReading: 'Ein kurzer Abschnitt, ohne Auslegung. Nicht die Bibellese vom Morgen – hier genügen wenige Verse.',
   vespersDevotion: 'Eine Andacht aus einem Buch, das du zur Hand hast. Lies sie langsam und halte fest, was dir wichtig geworden ist.',
-  vespersIntercession: 'Für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde, für das eigene Haus.',
+  // The house first, then the church (rule 18; until 0.41 the house stood last).
+  vespersIntercession: 'Für das eigene Haus, für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde.',
   magnificat: 'Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn von deinem her prüfst.',
   complineShort: 'Kurzform an müden Tagen: Kreuzzeichen, Rückschau, Vaterunser, Abendsegen. Das genügt vollkommen.',
   complineCreed: 'Der Tag wird nicht an deinem Gewissen gemessen, sondern an dem, was bekannt und gebetet wird.',
   thanks: 'Zwei oder drei Dinge dieses Tages. Konkret, nicht pauschal. Auch das Kleine, gerade das Kleine.',
   review: 'Rechenschaft, nicht Beichte. Ein Zeichen, kein Kommentar.',
   reviewMarks: '+ geschehen · ~ angefangen · – nicht geschehen',
-  reviewCarry: '„Morgen wieder“ erscheint morgen früh als Vorschlag. „Fallenlassen“: es war heute morgen wichtig und ist es nicht mehr.',
+  reviewCarry: '„Morgen wieder“ erscheint morgen früh als Vorschlag. „Fallenlassen“: Es war heute Morgen wichtig und ist es nicht mehr.',
   reviewNotSin:
     'Ein nicht erreichtes Ziel ist keine Sünde. Nur wenn wirklich ein Gebot dahintersteht, gehört es in die Prüfung.',
   absolutionAloud: 'Dann sprich dir laut zu – laut, nicht gedacht:',

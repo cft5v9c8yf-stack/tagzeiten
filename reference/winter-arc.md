@@ -5,7 +5,9 @@
      Left out on request: the sentence on the source plan and the author's day,
      the document header (date, author) and the page numbers.
      Changed on request: Phil 2,4 reads „sondern auch auf das“ as in Luther 1912;
-     the house stands before the work (CLAUDE.md, rule 18) in the opening line and in „Worum es geht“. -->
+     the house stands before the work (CLAUDE.md, rule 18) in the opening line and in „Worum es geht“.
+     Changed after rule 18 (08.10.2026): weeks 6 and 7 swapped (the church before the work),
+     weeks 9 and 10 swapped (the house before the self), each with its task and verse. -->
 
 Gott zuerst, dann das Haus, dann die Arbeit: dieselben Gewohnheiten jeden Tag, 90 Tage lang. Nur die Tiefe wächst. Bibelverse nach Luther 1912.
 
@@ -132,11 +134,11 @@ Die Gewohnheiten bleiben gleich, nur die Tiefe wächst. Jede Phase stellt dersel
 | 3 | Die Arbeit schützen | Beide Fokusblöcke wie Termine halten. „Nicht stören“ an, schwerste Aufgabe zuerst. | „Die Anschläge eines Emsigen bringen Überfluß.“ (Spr 21,5) |
 | 4 | Den Tag schließen | Küche um 20:00 zu, um 21:00 Licht aus. Rückblick: Welches Kästchen blieb am häufigsten leer? | „Ich liege und schlafe ganz mit Frieden.“ (Ps 4,9) |
 | 5 | Zu Hause dienen | Die Geste für deine Frau wird etwas, worum sie nie bitten würde. | „Durch die Liebe diene einer dem andern.“ (Gal 5,13) |
-| 6 | Bei der Arbeit dienen | Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen. | „Ein jeglicher sehe nicht auf das Seine, sondern auch auf das, was des andern ist.“ (Phil 2,4) |
-| 7 | In der Gemeinde dienen | Fragen, wo Hilfe fehlt, und zu einer Sache Ja sagen, die nicht schon deine Aufgabe ist. | „Dienet einander, ein jeglicher mit der Gabe, die er empfangen hat.“ (1 Petr 4,10) |
+| 6 | In der Gemeinde dienen | Fragen, wo Hilfe fehlt, und zu einer Sache Ja sagen, die nicht schon deine Aufgabe ist. | „Dienet einander, ein jeglicher mit der Gabe, die er empfangen hat.“ (1 Petr 4,10) |
+| 7 | Bei der Arbeit dienen | Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen. | „Ein jeglicher sehe nicht auf das Seine, sondern auch auf das, was des andern ist.“ (Phil 2,4) |
 | 8 | Einem Fremden dienen | Etwas für jemanden tun, der es dir nie zurückgeben kann. Niemandem davon erzählen. | „So laß deine linke Hand nicht wissen, was die rechte tut.“ (Mt 6,3) |
-| 9 | Dich selbst führen | Niemand prüft deine Haken außer dir. Das eine Kästchen festziehen, das du noch schleifen lässt. | „Ein Geduldiger ist besser denn ein Starker, und der seines Mutes Herr ist, denn der Städte gewinnt.“ (Spr 16,32) |
-| 10 | Zu Hause führen | Am Sonntag die ganze Woche mit deiner Frau planen. Mit ihr beten, wenn sie möchte. | „Ich aber und mein Haus wollen dem HERRN dienen.“ (Jos 24,15) |
+| 9 | Zu Hause führen | Am Sonntag die ganze Woche mit deiner Frau planen. Mit ihr beten, wenn sie möchte. | „Ich aber und mein Haus wollen dem HERRN dienen.“ (Jos 24,15) |
+| 10 | Dich selbst führen | Niemand prüft deine Haken außer dir. Das eine Kästchen festziehen, das du noch schleifen lässt. | „Ein Geduldiger ist besser denn ein Starker, und der seines Mutes Herr ist, denn der Städte gewinnt.“ (Spr 16,32) |
 | 11 | Einen Bruder mitnehmen | Einen Mann einladen, den Standard mitzugehen, etwa aus der Arena. Ihm jeden Abend kurz deinen Stand schicken. | „Ein Messer wetzt das andere und ein Mann den andern.“ (Spr 27,17) |
 | 12 | Führen, wenn es schwer ist | Etwas wird dich diese Woche prüfen. Den Standard trotzdem halten. | „Wachet, stehet im Glauben, seid männlich und seid stark!“ (1 Kor 16,13) |
 | 13 | Den nächsten Standard setzen | Stark beenden. Dann aufschreiben, wie die nächsten 90 Tage aussehen. | „Ich habe einen guten Kampf gekämpft.“ (2 Tim 4,7) |

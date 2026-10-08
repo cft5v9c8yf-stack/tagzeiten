@@ -21,7 +21,7 @@ export function Review({ date }: { date: DateKey }) {
   return (
     <>
       <Rubric>{RUBRICS.review}</Rubric>
-      {!any && <p className="muted">Heute morgen wurden keine drei Dinge festgelegt. Dann gibt es hier nichts abzulegen.</p>}
+      {!any && <p className="muted">Heute Morgen wurden keine drei Dinge festgelegt. Dann gibt es hier nichts abzulegen.</p>}
       {any && (
         <>
           <p className="small muted">{RUBRICS.reviewMarks}</p>
@@ -32,7 +32,7 @@ export function Review({ date }: { date: DateKey }) {
               return (
                 <div key={k} className="review-item">
                   <div className="review-key">{THREE_LABEL[k]}</div>
-                  <div className="review-text">{text || <span className="muted">heute morgen nicht festgelegt</span>}</div>
+                  <div className="review-text">{text || <span className="muted">heute Morgen nicht festgelegt</span>}</div>
                   {text && (
                     <Choice
                       label={`Rückschau ${THREE_LABEL[k]}`}

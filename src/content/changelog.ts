@@ -13,13 +13,25 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '0.41.0',
+    date: '2026-10-08',
+    title: 'Vor 1.0 durchgesehen',
+    changes: [
+      { area: 'Heute', text: 'Bleibt die App über Nacht offen oder holst du sie morgens aus dem Hintergrund, zeigt „Heute“ den neuen Tag. Vorher stand dort bis zum Neuladen der Vortag, und ein Haken landete dort.' },
+      { area: 'Mehr', text: 'Ganz unten unter „Mehr“ steht die Versionsnummer. Das Impressum nennt die Kontaktadresse kontakt@henoch.app; der Datenschutz nennt jetzt auch die Rechtsgrundlage, die Übermittlung in die USA durch GitHub, den Speicher auf deinem Gerät und alle deine Rechte.' },
+      { area: 'Ordnung', text: 'Das Haus steht vor der Gemeinde und die Gemeinde vor der Arbeit, jetzt auch in der Fürbitte der Vesper, unter „Über Henoch“, beim Stück der Waffenrüstung am Mittwoch und in den Wochen des 90-Tage-Standards (Woche 6 und 7, 9 und 10 getauscht).' },
+      { area: 'Abend', text: 'Die Kurzform der Vesper spricht nicht mehr von Kindern; die Vesper betest du für dich.' },
+      { area: 'Texte', text: 'Kleine Korrekturen: „heute Morgen“, der Weg zum Katechismus („Wort“ › „Lehre“), fünf Pakete der Wüstenzeit, „Gebetskammer“ statt „Tagebuch“ beim Schriftgebet und in der Suche.' },
+    ],
+  },
+  {
     version: '0.40.0',
     date: '2026-10-07',
     title: 'Jedes nur einmal',
     changes: [
       { area: 'Heute', text: 'Stille Zeit, Vesper und Nachtgebet stehen nur noch oben als Kacheln, nicht zusätzlich in der Liste der Gewohnheiten. In der Wochenübersicht bleiben sie. Der Abschnitt unten heißt jetzt „Die letzten vier Wochen“.' },
       { area: 'Arena', text: 'Was Henoch schon kennt, führt die Wüstenzeit nicht doppelt: Bibellese und Bibel nach Plan sind das „Bibel lesen“ nach deinem Leseplan, Bewegung die „Leibliche Übung“, Geben „Opfer und Gaben“, der Geistliche Begleiter die „Gemeinschaft mit Brüdern“. Was du davon schon gewählt hattest, ist mit seinen Häkchen übernommen.' },
-      { area: 'Arena', text: 'Morgensegen, Morgen- und Abendsegen, Psalm des Tages, Gewissenserforschung und Dankbarkeit sind abgehakt, sobald „Am Bett“, die Stille Zeit, die Vesper oder das Nachtgebet sie enthielt oder eine Zeile Dank dasteht. An anderen Tagen hakst du von Hand ab. Das „i“ sagt jeweils, wo Henoch die Gewohnheit führt.' },
+      { area: 'Arena', text: 'Morgensegen, Morgen- und Abendsegen, Psalm des Tages, Gewissenserforschung und Dankbarkeit sind abgehakt, sobald „Am Bett“, die Stille Zeit, die Vesper oder das Nachtgebet sie enthält oder eine Zeile Dank dasteht. An anderen Tagen hakst du von Hand ab. Das „i“ sagt jeweils, wo Henoch die Gewohnheit führt.' },
       { area: 'Arena', text: 'Der 90-Tage-Standard ist ein eigenes Paket, mit seinen Gewohnheiten und den Erklärungen aus der Vorlage. Wer ihn wählt, sieht in der Woche den Schwerpunkt mit Vers und Phase, und unter „Anleitung“ den ganzen Standard.' },
       { area: 'Arena', text: '„Wüstenzeit beginnen“ steht oben, gleich unter dem Bibelwort. Die Anleitung folgt darunter.' },
       { area: 'Stille Zeit', text: 'In der Lesung stehen Stelle, Vers und die Doppelfrage. Hauptaussage, Frage des Tages, Heilsgeschichte und die Randzeichen sind unter „Mehr notieren“ eingeklappt; steht dort schon etwas, ist es beim Öffnen gleich aufgeklappt. Die Bitte im vierfachen Kranz fragt jetzt „Worum bitte ich dich?“; was aus der Lesung folgt, gehört zu den drei Dingen.' },

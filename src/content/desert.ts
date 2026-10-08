@@ -261,7 +261,7 @@ export const DESERT_PACKS: readonly DesertPack[] = [
       daily('blessChildren', 'Kinder segnen', 'Legt euren Kindern vor dem Schlafen die Hand auf und sprecht ihnen den Segen zu.'),
       daily('familyDevotion', 'Familienandacht', 'Lest einmal am Tag eine Geschichte aus der (Kinder-)Bibel und redet darüber.'),
       weekly('catechismChildren', 'Katechismus gemeinsam', 'Lernt jede Woche ein Stück aus dem Kleinen Katechismus.', {
-        about: 'Er steht in Henoch unter „Katechismus“.',
+        about: 'Er steht in Henoch unter „Wort“ › „Lehre“.',
       }),
       weekly('wz-singen', 'Gemeinsam singen', 'Singt ein Lied pro Woche, das ihr als Familie lernt.', { needs: 'family' }),
       weekly('wz-familienabend', 'Bildschirmfreier Familienabend', 'Haltet einmal pro Woche einen Abend ohne Bildschirme frei.', {
@@ -290,7 +290,7 @@ export const DESERT_MORE: readonly DesertHabit[] = [
   daily(
     'wz-katechismus',
     'Katechismus',
-    'Jeden Tag ein Stück aus Luthers Kleinem Katechismus lesen oder lernen. Er steht in Henoch unter „Katechismus“.',
+    'Jeden Tag ein Stück aus Luthers Kleinem Katechismus lesen oder lernen. Er steht in Henoch unter „Wort“ › „Lehre“.',
   ),
   daily('wz-losung', 'Losung lesen', 'Einfach und alltagstauglich.'),
   daily(

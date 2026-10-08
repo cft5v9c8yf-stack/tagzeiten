@@ -286,6 +286,9 @@ export class Store {
     return currentTodayKey(this.now());
   }
 
+  /** The day the views are drawn for; it changes with checkDayChange, so views can follow it. */
+  getShownDay = (): DateKey => this.shownDay;
+
   /**
    * Redraws the views when a new day has begun while the app stayed open (e.g.
    * left open in the evening, brought back in the morning). Otherwise "Heute"

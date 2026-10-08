@@ -3075,6 +3075,11 @@ header.top .search-link:focus-visible {
 .more-imprint a {
   color: var(--muted);
 }
+.more-version {
+  margin: 4px 0 0;
+  text-align: center;
+  font-family: var(--sans);
+}
 
 .marks-word {
   font-family: var(--sans);

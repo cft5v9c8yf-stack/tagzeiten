@@ -42,6 +42,31 @@ async function renderToday(date: string, prepare?: (s: Store) => void, now = new
 }
 
 describe('Today', () => {
+  it('moves on to the new day when the app stayed open over midnight, so nothing is ticked for yesterday', async () => {
+    const clock = { now: new Date(2026, 8, 24, 23, 58) };
+    const store = new Store({ db: new TagzeitenDB(`today-${++n}`), journal: memoryJournal(), now: () => clock.now });
+    await store.load();
+    store.updateProfile((p) => ({ ...p, house: { ...p.house, wife: { name: 'Anna', concern: '' } } }));
+    const router = createMemoryRouter([{ path: '/', element: <TodayPage /> }], { initialEntries: ['/'] });
+    render(
+      <ToastProvider>
+        <StoreProvider store={store}>
+          <RouterProvider router={router} />
+        </StoreProvider>
+      </ToastProvider>,
+    );
+    await screen.findByText('Die drei Dinge');
+    expect(document.querySelector('.church-year')!.textContent).toBe('Donnerstag, 24. September 2026');
+    clock.now = new Date(2026, 8, 25, 6, 30);
+    act(() => void store.checkDayChange());
+    expect(document.querySelector('.church-year')!.textContent).toBe('Freitag, 25. September 2026');
+    // The new day receives its portion of the reading plan, as on opening the app.
+    await waitFor(() => expect(store.getDay('2026-09-25').reading).toBeDefined());
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Tischgebet mit der Familie' }));
+    expect(store.getDay('2026-09-25').habits.tablePrayer).toBe(true);
+    expect(store.getDay('2026-09-24').habits.tablePrayer).toBeUndefined();
+  });
+
   it('heads the page with the date only; the week lives on "Sonntag"', async () => {
     await renderToday('2026-09-24');
     expect(document.querySelector('.church-year')!.textContent).toBe('Donnerstag, 24. September 2026');

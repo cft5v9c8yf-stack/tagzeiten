@@ -74,6 +74,6 @@ export function About() {
 export const ABOUT_INFO = (
   <p>
     Eine Ordnung für Morgen und Abend. Sie ist kein weiterer Lebensbereich, der bedient werden will, sondern ordnet die,
-    die schon da sind: Haus, Beruf, Gemeinde und den Nächsten.
+    die schon da sind: Haus, Gemeinde, Beruf und den Nächsten.
   </p>
 );

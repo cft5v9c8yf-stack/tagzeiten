@@ -108,7 +108,7 @@ export function ScripturePrayerPage() {
             </button>
           ) : (
             <button type="button" className="btn primary" onClick={toJournal}>
-              Gedanken ins Tagebuch
+              Gedanken in der Gebetskammer aufschreiben
             </button>
           )}
         </div>

@@ -15,6 +15,15 @@ export function useDay(date: DateKey): Day {
   return useSyncExternalStore(store.subscribe, () => store.getDay(date));
 }
 
+/**
+ * Today as the views show it: it moves on when a new day has begun while the
+ * app stayed open, or was brought back in the morning (see Store.checkDayChange).
+ */
+export function useToday(): DateKey {
+  const store = useStore();
+  return useSyncExternalStore(store.subscribe, store.getShownDay);
+}
+
 /** Re-renders on every store change; use for views that read many days. */
 export function useStoreVersion(): number {
   const store = useStore();

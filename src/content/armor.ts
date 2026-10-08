@@ -3,7 +3,9 @@
  * blessing, Monday to Saturday; on Sunday the prayer that goes with it (V. 18).
  * In the night prayer, 1. Petrus 5,8-9 opens, and the question of the day
  * stands in the examination, before confession and absolution (rules 1–3).
- * The texts live in data/waffenruestung.json.
+ * The texts live in data/waffenruestung.json. Adjusted after rule 18
+ * (08.10.2026): on Wednesday „Familie, Gemeinde und Beruf“ (was „Familie,
+ * Beruf und Gemeinde“).
  */
 import data from '../../data/waffenruestung.json';
 import type { Weekday } from '../domain/dates';

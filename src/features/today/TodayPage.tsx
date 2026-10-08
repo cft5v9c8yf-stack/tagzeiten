@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router';
 import { getOrder } from '../../content/orders';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
+import { useDay, useProfile, useStore, useStoreVersion, useToday } from '../../data/hooks';
 import { THREE_KEYS, type Day } from '../../domain/model';
 import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
 import { Section } from '../../ui/Section';
@@ -37,9 +37,10 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
   useStoreVersion();
   const { reading } = store.readingFor(date);
 
+  // Also on a new day while the app stayed open.
   useEffect(() => {
     if (isToday) store.ensureTodayReading();
-  }, [store, isToday]);
+  }, [store, isToday, date]);
 
   return (
     <Section id="today.reading" title={
@@ -85,6 +86,8 @@ function ThreeThings({ day }: { day: Day }) {
 }
 
 export function TodayPage() {
+  // A new day while the app stayed open: "Heute" follows it, so nothing is ticked for yesterday.
+  const today = useToday();
   const { date, isToday } = useSelectedDate();
   const day = useDay(date);
   const profile = useProfile();
@@ -146,7 +149,7 @@ export function TodayPage() {
           title="Gewohnheiten"
           aside={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined}
         >
-          <HabitsWeek date={date} />
+          <HabitsWeek key={today} date={date} />
           {hallMode && (
             <p className="small muted habits-mode-note">
               Überblick und Anleitung der Wüstenzeit stehen in der Arena.{' '}

@@ -3,6 +3,11 @@
  * reference/winter-arc.md. Bible verses after Luther 1912, as given there.
  * On request the plan's own name ("Winter Arc") stands nowhere in the app
  * (07.10.2026); code and stored data keep their names.
+ *
+ * Adjusted after rule 18 (08.10.2026), house before church before work, the
+ * self last: weeks 6 and 7 swapped („In der Gemeinde dienen“ before „Bei der
+ * Arbeit dienen“), and weeks 9 and 10 („Zu Hause führen“ before „Dich selbst
+ * führen“). Their tasks and verses went with them.
  */
 import type { HouseNeed } from '../domain/house';
 import type { DayBlock, WinterArcItemId, WinterArcTimes, WinterArcWeeklyId } from '../domain/winterArc';
@@ -358,6 +363,12 @@ export const WINTER_ARC_FOCUS: readonly WinterArcFocus[] = [
   },
   {
     week: 6,
+    focus: 'In der Gemeinde dienen',
+    task: 'Fragen, wo Hilfe fehlt, und zu einer Sache Ja sagen, die nicht schon deine Aufgabe ist.',
+    verse: verse('Dienet einander, ein jeglicher mit der Gabe, die er empfangen hat.', '1 Petr 4,10', '1Petr 4,10'),
+  },
+  {
+    week: 7,
     focus: 'Bei der Arbeit dienen',
     task: 'Arbeiten wie für Gott, nicht für das Gehalt. Einem Kollegen oder Kunden ungefragt helfen.',
     verse: verse(
@@ -367,12 +378,6 @@ export const WINTER_ARC_FOCUS: readonly WinterArcFocus[] = [
     ),
   },
   {
-    week: 7,
-    focus: 'In der Gemeinde dienen',
-    task: 'Fragen, wo Hilfe fehlt, und zu einer Sache Ja sagen, die nicht schon deine Aufgabe ist.',
-    verse: verse('Dienet einander, ein jeglicher mit der Gabe, die er empfangen hat.', '1 Petr 4,10', '1Petr 4,10'),
-  },
-  {
     week: 8,
     focus: 'Einem Fremden dienen',
     task: 'Etwas für jemanden tun, der es dir nie zurückgeben kann. Niemandem davon erzählen.',
@@ -380,6 +385,12 @@ export const WINTER_ARC_FOCUS: readonly WinterArcFocus[] = [
   },
   {
     week: 9,
+    focus: 'Zu Hause führen',
+    task: 'Am Sonntag die ganze Woche mit deiner Frau planen. Mit ihr beten, wenn sie möchte.',
+    verse: verse('Ich aber und mein Haus wollen dem HERRN dienen.', 'Jos 24,15', 'Jos 24,15'),
+  },
+  {
+    week: 10,
     focus: 'Dich selbst führen',
     task: 'Niemand prüft deine Haken außer dir. Das eine Kästchen festziehen, das du noch schleifen lässt.',
     verse: verse(
@@ -387,12 +398,6 @@ export const WINTER_ARC_FOCUS: readonly WinterArcFocus[] = [
       'Spr 16,32',
       'Spr 16,32',
     ),
-  },
-  {
-    week: 10,
-    focus: 'Zu Hause führen',
-    task: 'Am Sonntag die ganze Woche mit deiner Frau planen. Mit ihr beten, wenn sie möchte.',
-    verse: verse('Ich aber und mein Haus wollen dem HERRN dienen.', 'Jos 24,15', 'Jos 24,15'),
   },
   {
     week: 11,

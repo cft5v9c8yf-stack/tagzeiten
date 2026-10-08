@@ -240,6 +240,7 @@ export function SettingsPage() {
         <p className="more-imprint">
           <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>
         </p>
+        <p className="more-version small muted">Henoch {__APP_VERSION__}</p>
       </div>
     );
   }

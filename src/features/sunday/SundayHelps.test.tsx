@@ -99,7 +99,7 @@ describe('Sunday: guide and prayer walk', () => {
     }
     expect(document.querySelector('.walk-count')!.textContent).toBe('8 / 8');
     expect(document.querySelector('.walk-pause')).toBeNull();
-    fireEvent.click(screen.getByRole('button', { name: 'Gedanken ins Tagebuch' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Gedanken in der Gebetskammer aufschreiben' }));
     await waitFor(() => expect(router.state.location.pathname).toMatch(/^\/arena\//));
     expect(store.getProfile().arena[0]!.text).toBe('Sonntagsgebet, Freitag, 25. September 2026\n\n');
   });

@@ -93,6 +93,8 @@ describe('Mehr: Aufbau', () => {
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
     expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen']);
+    // The version stands at the bottom of "Mehr".
+    expect(document.querySelector('.more-version')!.textContent).toBe(`Henoch ${__APP_VERSION__}`);
     expect(screen.getByRole('link', { name: 'Impressum · Anbieter und Datenschutz' })).toBeTruthy();
     expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
 
@@ -871,14 +873,14 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 0\.40(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 0\.41(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 0\.40(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 0\.41(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
@@ -890,7 +892,10 @@ describe('Rückblick', () => {
     await screen.findByRole('heading', { level: 2, name: /Impressum/ });
     expect(screen.getByRole('heading', { level: 3, name: 'Angaben gemäß § 5 DDG' })).toBeTruthy();
     expect(screen.getByRole('heading', { level: 3, name: 'Datenschutz' })).toBeTruthy();
-    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toEqual(expect.arrayContaining(['[Straße und Hausnummer]', '[E-Mail-Adresse]']));
+    // Only the postal address is still to be filled in; the contact is kontakt@henoch.app.
+    expect([...document.querySelectorAll('mark.placeholder')].map((m) => m.textContent)).toEqual(['[Straße und Hausnummer]', '[Postleitzahl und Ort]']);
+    expect(document.body.textContent).toContain('E-Mail: kontakt@henoch.app');
+    expect(document.body.textContent).toContain('Art. 6 Abs. 1 lit. f DSGVO');
     expect(document.body.textContent).toContain('Andreas Dykau');
     expect(document.body.textContent).toContain('bleibt auf deinem Gerät');
   });
