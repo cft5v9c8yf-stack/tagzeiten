@@ -378,6 +378,18 @@ body.no-scroll {
 .more-tile .flow-icon {
   color: var(--icon-gold);
 }
+/* The news on the homepage: across both columns, the arrow says it leaves the app. */
+.more-tile-wide {
+  grid-column: 1 / -1;
+}
+.more-tile-wide .more-tile {
+  min-height: 0;
+}
+.more-tile .out-arrow {
+  margin-left: 6px;
+  vertical-align: -1px;
+  color: var(--link);
+}
 .more-tile-title {
   font-family: var(--serif);
   -webkit-hyphens: auto;
@@ -1837,8 +1849,13 @@ mark.placeholder {
   padding-top: 6px;
   margin-top: 6px;
 }
-.changelog-release h3 {
+.changelog-release h3,
+.changelog-release h4 {
   margin: 0;
+}
+/* The versions of an earlier number, folded together; their entries inside. */
+.changelog-major > .fold-body {
+  padding-left: 12px;
 }
 /* Version and date, the title beneath: seen also when folded. */
 .changelog-head {

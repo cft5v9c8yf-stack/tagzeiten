@@ -92,7 +92,11 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Neuigkeiten']);
+    // The news open on the homepage, in the browser.
+    const news = screen.getByRole('link', { name: /Neuigkeiten/ });
+    expect(news.getAttribute('href')).toBe('https://henoch.app/neuigkeiten/');
+    expect(news.getAttribute('target')).toBe('_blank');
     // The version stands at the bottom of "Mehr".
     expect(document.querySelector('.more-version')!.textContent).toBe(`Henoch ${__APP_VERSION__}`);
     expect(screen.getByRole('link', { name: 'Impressum · Anbieter und Datenschutz' })).toBeTruthy();
@@ -873,15 +877,24 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.1(?![\d.])/);
-    expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
-    // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
-    expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
+    expect(versions[0]).toMatch(/^Version 1\.2(?![\d.])/);
+    expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
+    // The versions before 1.0 fold together, last.
+    expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
+    expect(screen.queryAllByRole('heading', { level: 4 }).filter((h) => /^Version 0\./.test(h.textContent ?? ''))).toHaveLength(0);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.2(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(toggle(/^Versionen 0\.1 bis/));
+    expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.2(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
+    const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
+    expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);
+    expect(earlier.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
+    expect(earlier.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.36(?![\d.])/).getAttribute('aria-expanded')).toBe('false');

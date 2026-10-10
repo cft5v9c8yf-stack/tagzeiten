@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.2.0',
+    date: '2026-10-10',
+    title: 'Neuigkeiten und Versionen',
+    changes: [
+      { area: 'Mehr', text: 'Die Kachel „Neuigkeiten“ öffnet die Artikel auf henoch.app im Browser. Henoch gibt dabei nichts mit.' },
+      { area: 'Mehr', text: 'Unter „Versionen“ stehen die Versionen von Henoch 1 obenauf. Die Versionen 0.1 bis 0.41 aus der Zeit des Aufbaus sind darunter zusammen zugeklappt.' },
+    ],
+  },
+  {
     version: '1.1.0',
     date: '2026-10-10',
     title: 'Eine Wüstenzeit im Advent',

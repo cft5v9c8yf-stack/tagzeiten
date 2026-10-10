@@ -3,6 +3,11 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.2.0 – 10. Oktober 2026
+
+- **Neuigkeiten:** Eine Kachel unter „Mehr“ öffnet https://henoch.app/neuigkeiten/ im Browser.
+- **Versionen:** Die Versionen 0.1 bis 0.41 stehen zusammen zugeklappt unter denen von Henoch 1.
+
 ## 1.1.0 – 10. Oktober 2026
 
 - **Eine Wüstenzeit im Advent:** Ab dem dritten Sonntag vor dem Advent lädt eine Karte unter

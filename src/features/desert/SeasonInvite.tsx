@@ -4,6 +4,7 @@ import { useStore } from '../../data/hooks';
 import { formatLong, fromKey, MONTH_LONG } from '../../domain/dates';
 import type { SeasonOffer } from '../../domain/seasons';
 import { FlowIcon } from '../../ui/FlowIcon';
+import { OutArrow } from '../../ui/OutArrow';
 import { WaVerse } from '../arena/WinterArcGuide';
 
 /** Where "Wüstenzeit vorbereiten" on "Heute" leads: the Wüstenwanderung, the start already filled in. */
@@ -30,9 +31,7 @@ export function SeasonLink({ href }: { href: string }) {
   return (
     <a className="season-link" href={href} target="_blank" rel="noopener noreferrer">
       Mehr dazu auf henoch.app
-      <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M5 11L11 5M6 5h5v5" />
-      </svg>
+      <OutArrow />
     </a>
   );
 }

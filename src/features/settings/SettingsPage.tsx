@@ -4,6 +4,7 @@ import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
+import { OutArrow } from '../../ui/OutArrow';
 import { setOpen } from '../../ui/collapseState';
 import { InfoToggle } from '../../ui/Section';
 import { TileGroup } from '../../ui/TileGroup';
@@ -211,6 +212,9 @@ const AREAS: readonly Area[] = [
   },
 ];
 
+/** The news on the homepage; the only tile that leaves the app. */
+const NEWS_URL = 'https://henoch.app/neuigkeiten/';
+
 /** "Mehr": the areas as tiles, two side by side; a tile opens what can be set there. */
 export function SettingsPage() {
   const { bereich } = useParams();
@@ -236,6 +240,16 @@ export function SettingsPage() {
               </Link>
             </li>
           ))}
+          <li className="more-tile-wide">
+            <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer">
+              <FlowIcon name="scroll" size={22} />
+              <span className="more-tile-title">
+                Neuigkeiten
+                <OutArrow />
+              </span>
+              <span className="more-tile-line">Artikel auf henoch.app, im Browser</span>
+            </a>
+          </li>
         </ul>
         <p className="more-imprint">
           <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>
