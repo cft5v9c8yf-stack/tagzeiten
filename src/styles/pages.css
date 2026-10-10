@@ -3460,3 +3460,29 @@ header.top .search-link:focus-visible {
   font-size: 0.85rem;
   color: var(--muted);
 }
+
+/* The examination of conscience (1.4): six questions to pray, the sending at the end. */
+.examen-questions {
+  margin: 0;
+  padding-left: 1.1em;
+  font-family: var(--serif);
+  line-height: 1.5;
+}
+.examen-questions li {
+  margin: 0 0 8px;
+}
+.examen-sending {
+  margin: 14px 0 0;
+  font-family: var(--serif);
+  font-weight: 600;
+}
+.arena-examen-link {
+  margin: 10px 0 0;
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.arena-examen-link a {
+  color: var(--link);
+  text-decoration: none;
+}
+

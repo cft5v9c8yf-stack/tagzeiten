@@ -3,6 +3,11 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.4.0 – 10. Oktober 2026
+
+- **Gewissenserforschung mit sechs Fragen:** Taufe und Psalm 139 zuerst, sechs Fragen zum Beten
+  (ohne Feld), Bekenntnis, jeden Tag ein Wort der Vergebung. Auch aus der Gebetskammer erreichbar.
+
 ## 1.3.0 – 10. Oktober 2026
 
 - **Paket „Erbe“** in der Wüstenzeit, für Väter. Pakete lassen sich kombinieren; was in zweien steht,

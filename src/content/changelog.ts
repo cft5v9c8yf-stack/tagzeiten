@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.4.0',
+    date: '2026-10-10',
+    title: 'Die Gewissenserforschung mit sechs Fragen',
+    changes: [
+      { area: 'Arena', text: 'Die Gewissenserforschung beginnt mit der Taufe aus dem Kleinen Katechismus („daß der alte Adam in uns durch tägliche Reue und Buße soll ersäuft werden …“) und Psalm 139,23 als Gebet. Danach stehen sechs Fragen zum Beten, ohne Feld: Wird gebetet, nicht notiert.' },
+      { area: 'Arena', text: 'Nach dem Bekenntnis aus dem Nachtgebet steht jeden Tag zuerst ein Wort der Vergebung, am Montag, Mittwoch, Freitag und Sonntag 1. Johannes 1,9 mit Römer 8,14, an den anderen Tagen Römer 8,1 mit Galater 5,24. Zum Schluss: „Du bist getauft. Gehe hin in Frieden.“' },
+      { area: 'Arena', text: 'In der Gebetskammer führt ein Link unter „Neuen Eintrag schreiben“ zur Gewissenserforschung, auch ohne Wüstenzeit. Läuft eine mit dieser Gewohnheit, hakt „Gebetet, abhaken und zurück“ sie ab.' },
+    ],
+  },
+  {
     version: '1.3.0',
     date: '2026-10-10',
     title: 'Das Paket „Erbe“',

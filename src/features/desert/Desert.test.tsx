@@ -214,14 +214,23 @@ describe('the Wüstenwanderung in the Arena', () => {
     const before = JSON.stringify(store.getProfile().arena);
     fireEvent.click(screen.getByRole('button', { name: 'Beten' }));
     const page = (await screen.findByRole('heading', { level: 2, name: 'Gewissenserforschung' })).closest('article') as HTMLElement;
-    // Word first (rule 2): Psalm 139 before the question of the day.
-    expect(page.querySelector('.wa-verse')!.textContent).toContain('Erforsche mich, Gott, und erfahre mein Herz');
+    // Word first (rule 2): Baptism and Psalm 139 before the six questions.
+    expect(page.querySelector('.wa-verse')!.textContent).toContain('daß der alte Adam in uns durch tägliche Reue und Buße');
+    expect(page.querySelector('.pray')!.textContent).toContain('Erforsche mich, Gott, und erfahre mein Herz');
+    const questions = [...page.querySelectorAll('.examen-questions li')].map((li) => li.textContent);
+    expect(questions).toHaveLength(6);
+    expect(questions[0]).toBe('Wo war ich heute ungeduldig oder zornig?');
     expect(page.textContent).toContain('Wird gebetet, nicht notiert.');
+    expect(page.querySelector('.part-confession')!.textContent).toContain('Ich armer, elender Sünder');
     // Nowhere to write a sin (rule 9).
     expect(page.querySelectorAll('textarea, input[type="text"], [contenteditable]')).toHaveLength(0);
     // The absolution comes last (rule 1).
     const parts = [...page.querySelectorAll('.part')].map((p) => p.className);
     expect(parts.at(-1)).toContain('part-absolution');
+    // Saturday: Römer 8,1 as the word of forgiveness, then Galater 5,24, then the sending.
+    const absolution = page.querySelector('.part-absolution')!;
+    expect([...absolution.querySelectorAll('.bible-ref')].map((r) => r.textContent)).toEqual(['Römer 8,1', 'Galater 5,24']);
+    expect(absolution.lastElementChild!.textContent).toBe('Du bist getauft. Gehe hin in Frieden.');
     fireEvent.click(within(page).getByRole('button', { name: 'Gebetet, abhaken und zurück' }));
     expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
     expect(store.getDay('2026-09-26').habits['wz-gewissen']).toBe(true);
@@ -359,6 +368,31 @@ describe('the package "Erbe" (1.3)', () => {
     for (const id of ['wz-stille', 'wz-gewissen', 'wz-familienzeit', 'wz-kindzeit', 'brothers']) expect(ids, id).toContain(id);
     expect(ids.filter((id) => id === 'wz-gewissen')).toHaveLength(1);
     expect(within(erbe).getByRole('button', { name: 'Paket übernehmen' })).toHaveProperty('disabled', true);
+  });
+});
+
+describe('the examination of conscience from the Gebetskammer (1.4)', () => {
+  it('is reached by a link, and ticks the habit of the Wüstenzeit under way', async () => {
+    const store = await renderArena('/arena?bereich=gebetskammer', (s) => {
+      const id = withDesert(s);
+      s.chooseDesert(id, [pack('erbe').habits.find((h) => h.id === 'wz-gewissen')!], true);
+    });
+    fireEvent.click(screen.getByRole('link', { name: 'Gewissenserforschung' }));
+    const page = (await screen.findByRole('heading', { level: 2, name: 'Gewissenserforschung' })).closest('article') as HTMLElement;
+    expect(within(page).getByRole('link', { name: '‹ Gebetskammer' })).toBeTruthy();
+    fireEvent.click(within(page).getByRole('button', { name: 'Gebetet, abhaken und zurück' }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' })).toBeTruthy();
+    expect(store.getDay('2026-09-26').habits['wz-gewissen']).toBe(true);
+  });
+
+  it('only says "Zurück" without a Wüstenzeit, and keeps nothing', async () => {
+    const store = await renderArena(`/arena/pruefung?zurueck=${encodeURIComponent('/arena?bereich=gebetskammer')}`);
+    const before = JSON.stringify(store.getProfile());
+    // A Saturday: Römer 8,1 is the word of forgiveness.
+    expect(document.querySelector('.part-absolution .bible-ref')!.textContent).toBe('Römer 8,1');
+    fireEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' })).toBeTruthy();
+    expect(JSON.stringify(store.getProfile())).toBe(before);
   });
 });
 

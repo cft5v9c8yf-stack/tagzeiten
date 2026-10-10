@@ -18,6 +18,7 @@ import type { Weekday } from '../domain/dates';
 import type { HouseNeed } from '../domain/house';
 import type { Rhythm } from '../domain/model';
 import { DEFAULT_TIMES } from '../domain/winterArc';
+import { CATECHISM } from './catechism';
 import { WINTER_ARC_ABOUT, WINTER_ARC_DAY, WINTER_ARC_ITEMS, WINTER_ARC_LEAD, WINTER_ARC_TITLE, WINTER_ARC_WEEK } from './winterArc';
 
 export interface DesertVerse {
@@ -341,12 +342,41 @@ export const RELINKED: Readonly<Record<string, string>> = {
   'wz-begleiter': 'brothers',
 };
 
-/** Before the examination of conscience: the Word first (rule 2). */
-export const DESERT_EXAMEN_VERSE = verse(
-  'Erforsche mich, Gott, und erfahre mein Herz; prüfe mich und erfahre, wie ich’s meine. Und siehe, ob ich auf bösem Wege bin, und leite mich auf ewigem Wege.',
-  'Psalm 139,23–24',
-  'Ps 139,23-24',
-);
+/**
+ * The examination of conscience (1.4): Baptism and Psalm 139 first (rule 2), then
+ * six questions to pray, not to write down (rule 9), the confession of the
+ * Nachtgebet, and every day a word of forgiveness first (rule 1).
+ */
+export const DESERT_CONSCIENCE = {
+  lead: {
+    text: CATECHISM.find((p) => p.id === 'baptism')!.pieces.find((p) => p.title === 'Zum vierten')!.qa[0]![1],
+    ref: 'Kleiner Katechismus, Die Taufe, viertens',
+  },
+  prayer: verse('Erforsche mich, Gott, und erfahre mein Herz; prüfe mich und erfahre, wie ich’s meine.', 'Psalm 139,23', 'Ps 139,23'),
+  questions: [
+    'Wo war ich heute ungeduldig oder zornig?',
+    'Wo war ich körperlich da, aber innerlich abwesend?',
+    'Wo bin ich passiv geblieben, wo ich hätte handeln sollen?',
+    'Wo hat mich Stolz gehindert, einen Fehler zuzugeben?',
+    'Wem schulde ich noch ein Wort der Vergebung?',
+    'Was will Gott heute in mir sterben lassen, damit der neue Mensch hervorkommt?',
+  ],
+  /** Monday, Wednesday, Friday and Sunday the first pair, the other days the second. */
+  words: [
+    [
+      verse('So wir aber unsre Sünden bekennen, so ist er treu und gerecht, daß er uns die Sünden vergibt und reinigt uns von aller Untugend.', '1. Johannes 1,9', '1Jo 1,9'),
+      verse('Welche der Geist Gottes treibt, die sind Gottes Kinder.', 'Römer 8,14', 'Röm 8,14'),
+    ],
+    [
+      verse('So ist nun nichts Verdammliches an denen, die in Christo Jesu sind.', 'Römer 8,1', 'Röm 8,1'),
+      verse('Welche aber Christo angehören, die kreuzigen ihr Fleisch samt den Lüsten und Begierden.', 'Galater 5,24', 'Gal 5,24'),
+    ],
+  ] as const,
+  sending: 'Du bist getauft. Gehe hin in Frieden.',
+};
+
+/** The two words of the absolution for a weekday (0 = Sunday). */
+export const conscienceWords = (weekday: number) => DESERT_CONSCIENCE.words[weekday === 0 || weekday % 2 === 1 ? 0 : 1];
 
 /* ------------------------------------------------------------ in the church year (1.1) */
 
@@ -366,6 +396,7 @@ export const DESERT_VERSES: readonly DesertVerse[] = [
   DESERT_HOSEA,
   ADVENT_INVITE.verse,
   DESERT_VERSE,
-  DESERT_EXAMEN_VERSE,
+  DESERT_CONSCIENCE.prayer,
+  ...DESERT_CONSCIENCE.words.flat(),
   ...DESERT_PACKS.map((p) => p.verse),
 ];
