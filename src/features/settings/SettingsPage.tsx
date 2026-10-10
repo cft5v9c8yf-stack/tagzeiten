@@ -4,7 +4,6 @@ import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
-import { OutArrow } from '../../ui/OutArrow';
 import { setOpen } from '../../ui/collapseState';
 import { InfoToggle } from '../../ui/Section';
 import { TileGroup } from '../../ui/TileGroup';
@@ -243,11 +242,8 @@ export function SettingsPage() {
           <li className="more-tile-wide">
             <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer">
               <FlowIcon name="scroll" size={22} />
-              <span className="more-tile-title">
-                Neuigkeiten
-                <OutArrow />
-              </span>
-              <span className="more-tile-line">Artikel auf henoch.app, im Browser</span>
+              <span className="more-tile-title">Neuigkeiten</span>
+              <span className="more-tile-line">Neues auf henoch.app</span>
             </a>
           </li>
         </ul>

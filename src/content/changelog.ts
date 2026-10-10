@@ -13,6 +13,12 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.2.1',
+    date: '2026-10-10',
+    title: 'Die Kachel „Neuigkeiten“ schlichter',
+    changes: [{ area: 'Mehr', text: 'Die Kachel „Neuigkeiten“ steht ohne Pfeil, darunter „Neues auf henoch.app“.' }],
+  },
+  {
     version: '1.2.0',
     date: '2026-10-10',
     title: 'Neuigkeiten und Versionen',

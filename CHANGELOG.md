@@ -5,7 +5,8 @@ Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritt
 
 ## 1.2.0 – 10. Oktober 2026
 
-- **Neuigkeiten:** Eine Kachel unter „Mehr“ öffnet https://henoch.app/neuigkeiten/ im Browser.
+- **Neuigkeiten:** Eine Kachel unter „Mehr“ öffnet https://henoch.app/neuigkeiten/ im Browser
+  (1.2.1: ohne Pfeil, „Neues auf henoch.app“).
 - **Versionen:** Die Versionen 0.1 bis 0.41 stehen zusammen zugeklappt unter denen von Henoch 1.
 
 ## 1.1.0 – 10. Oktober 2026

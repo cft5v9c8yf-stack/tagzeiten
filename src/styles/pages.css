@@ -378,17 +378,12 @@ body.no-scroll {
 .more-tile .flow-icon {
   color: var(--icon-gold);
 }
-/* The news on the homepage: across both columns, the arrow says it leaves the app. */
+/* The news on the homepage: across both columns. */
 .more-tile-wide {
   grid-column: 1 / -1;
 }
 .more-tile-wide .more-tile {
   min-height: 0;
-}
-.more-tile .out-arrow {
-  margin-left: 6px;
-  vertical-align: -1px;
-  color: var(--link);
 }
 .more-tile-title {
   font-family: var(--serif);
