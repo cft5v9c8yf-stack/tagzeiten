@@ -3,6 +3,11 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.4.1 – 10. Oktober 2026
+
+- Die Gewissenserforschung wieder wie vor 1.4.0; die sechs Fragen und der Link in der Gebetskammer
+  sind herausgenommen.
+
 ## 1.4.0 – 10. Oktober 2026
 
 - **Gewissenserforschung mit sechs Fragen:** Taufe und Psalm 139 zuerst, sechs Fragen zum Beten

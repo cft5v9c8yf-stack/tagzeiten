@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.4.1',
+    date: '2026-10-10',
+    title: 'Die Gewissenserforschung wie zuvor',
+    changes: [
+      { area: 'Arena', text: 'Die Gewissenserforschung ist wieder wie vor 1.4.0: Psalm 139, die Prüfung am Dekalog aus dem Nachtgebet, Bekenntnis und Zuspruch. Die sechs Fragen und der Link in der Gebetskammer sind wieder herausgenommen.' },
+    ],
+  },
+  {
     version: '1.4.0',
     date: '2026-10-10',
     title: 'Die Gewissenserforschung mit sechs Fragen',

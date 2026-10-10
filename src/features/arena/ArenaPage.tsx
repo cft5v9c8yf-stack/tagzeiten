@@ -16,7 +16,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
 import { Desert } from '../desert/Desert';
-import { DesertExamen, EXAMEN_SLUG, GEBETSKAMMER } from '../desert/DesertExamen';
+import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
 
 type Kind = 'journal' | 'forge';
@@ -550,11 +550,6 @@ export function ArenaPage() {
       >
         {place.add}
       </button>
-      {kind === 'journal' && (
-        <p className="arena-examen-link">
-          <Link to={`/arena/${EXAMEN_SLUG}?zurueck=${encodeURIComponent(GEBETSKAMMER)}`}>Gewissenserforschung</Link>
-        </p>
-      )}
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {shown.map((e) => (
