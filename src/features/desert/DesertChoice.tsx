@@ -108,9 +108,10 @@ function AddOwn({ run, H }: { run: WinterArcRun; H: Heading }) {
 }
 
 /**
- * The choice of habits for a Wüstenzeit: the four packages with their
- * description and verse, each with "Paket übernehmen"; the further habits; and
- * the user's own. Every habit can be chosen on its own, across the packages.
+ * The choice of habits for a Wüstenzeit: the packages with their description
+ * and verse, each with "Paket übernehmen", which adds to what is chosen, so
+ * packages combine; the further habits; and the user's own. Every habit can be
+ * chosen on its own, across the packages.
  */
 export function DesertChoice({ run, level = 6 }: { run: WinterArcRun; level?: 4 | 5 | 6 }) {
   const store = useStore();

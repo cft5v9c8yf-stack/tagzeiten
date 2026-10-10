@@ -347,3 +347,18 @@ describe('a Wüstenzeit in Advent', () => {
   });
 });
 
+describe('the package "Erbe" (1.3)', () => {
+  it('combines with another package; a habit in both counts once', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => s.startDesert('2026-09-14', 40));
+    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByRole('button', { name: 'Paket übernehmen' }));
+    fireEvent.click(screen.getByText('Gewohnheiten wählen', { selector: 'summary' }));
+    const erbe = screen.getByRole('region', { name: 'Erbe' });
+    expect(erbe.textContent).toContain('Was du nicht angehst, erben deine Kinder.');
+    fireEvent.click(within(erbe).getByRole('button', { name: 'Paket übernehmen' }));
+    const ids = store.getProfile().winterArc.runs[0]!.habits!;
+    for (const id of ['wz-stille', 'wz-gewissen', 'wz-familienzeit', 'wz-kindzeit', 'brothers']) expect(ids, id).toContain(id);
+    expect(ids.filter((id) => id === 'wz-gewissen')).toHaveLength(1);
+    expect(within(erbe).getByRole('button', { name: 'Paket übernehmen' })).toHaveProperty('disabled', true);
+  });
+});
+

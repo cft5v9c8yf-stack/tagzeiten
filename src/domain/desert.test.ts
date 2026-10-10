@@ -57,9 +57,9 @@ function lookupOf(ticks: Record<DateKey, string[]>) {
 }
 
 describe('the offer of the Wüstenzeit', () => {
-  it('has the four packages and the 90-Tage-Standard with their habits, and the further ones from the collection', () => {
-    expect(DESERT_PACKS.map((p) => p.name)).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Der 90-Tage-Standard']);
-    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9, 15]);
+  it('has the five packages and the 90-Tage-Standard with their habits, and the further ones from the collection', () => {
+    expect(DESERT_PACKS.map((p) => p.name)).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Erbe', 'Der 90-Tage-Standard']);
+    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9, 4, 15]);
     expect(DESERT_MORE.map((h) => h.name)).toEqual([
       'Fürbittliste',
       'Katechismus',
@@ -74,7 +74,8 @@ describe('the offer of the Wüstenzeit', () => {
     // Each habit once, but for the reading of the plan in two packages;
     // those Henoch already has under their ids, so nothing stands twice (0.40).
     expect(DESERT_HABITS.filter((h) => h.id === 'bibleReading').map((h) => h.name)).toEqual(['Bibellese', 'Bibel nach Plan']);
-    const twice = ['bibleReading', 'exercise', 'worship'];
+    // "Erbe" (1.3) shares the examination with the Wüstenväter and the brothers with the further habits.
+    const twice = ['bibleReading', 'exercise', 'worship', 'wz-gewissen', 'brothers'];
     expect(new Set(DESERT_HABITS.map((h) => h.id)).size).toBe(DESERT_HABITS.length - twice.length);
     expect(DESERT_HABITS.map((h) => h.id).filter((id) => !id.startsWith('wz-'))).toEqual([
       'bibleReading',
@@ -84,6 +85,7 @@ describe('the offer of the Wüstenzeit', () => {
       'blessChildren',
       'familyDevotion',
       'catechismChildren',
+      'brothers',
       'exercise',
       'worship',
       'timeWithWife',

@@ -20,7 +20,7 @@ Gebetskammer und Wüstenzeit. Die App läuft im Browser und lässt sich auf dem 
   - Jeden Tag ein Stück der geistlichen Waffenrüstung (Epheser 6) in der Stillen Zeit
   - Die Frage dazu in der Prüfung des Nachtgebets
 - **Wüstenzeit:**
-  - Ein fester Zeitraum (40 Tage, 90 Tage oder frei) mit Gewohnheiten aus fünf Paketen oder eigenen
+  - Ein fester Zeitraum (40 Tage, 90 Tage oder frei) mit Gewohnheiten aus sechs Paketen (auch kombiniert) oder eigenen
   - Tagesliste, Wochenansicht, Wochenrückblick und Abschluss
 - **Wort und Lehre:** Leseplan, Luthers Kleiner Katechismus, Bekenntnisschriften, Kirchenjahr und Sonntag
 - **Rückblick und Export:** alle Tage, Versesammlung und Gebetserhörungen; Export als JSON und Markdown, vollständiges Löschen

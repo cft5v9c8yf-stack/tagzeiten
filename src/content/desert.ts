@@ -70,7 +70,7 @@ export const DESERT_GUIDE = {
 
 /** Above the choice of habits. */
 export const DESERT_CHOICE_LEAD =
-  'Wähle ein Paket als Startpunkt oder stell dir deine eigene Wüstenzeit zusammen. Weniger ist oft mehr: Lieber drei Gewohnheiten treu halten als zehn halbherzig.';
+  'Wähle ein Paket als Startpunkt oder stell dir deine eigene Wüstenzeit zusammen. Pakete lassen sich kombinieren: Was in zweien steht, zählt einmal. Weniger ist oft mehr: Lieber drei Gewohnheiten treu halten als zehn halbherzig.';
 
 /**
  * What in the orders already keeps a habit of the offer: "Am Bett" or the
@@ -129,6 +129,12 @@ const monthly = (id: string, name: string, note: string, extra: Partial<DesertHa
   note,
   rhythm: 'monthly',
   ...extra,
+});
+
+/** In "Wie die Wüstenväter" and in "Erbe": one habit, kept by the examination of the full Nachtgebet. */
+const EXAMEN_HABIT = daily('wz-gewissen', 'Gewissenserforschung', 'Geh abends den Tag vor Gott durch, bekenne Schuld und empfange Vergebung.', {
+  about: 'So übst du Gesetz und Evangelium täglich ein. Im Nachtgebet steht dafür „Prüfung und Zuspruch“.',
+  follows: 'examination',
 });
 
 const BLESSING_ABOUT = 'Luthers Segen aus dem Kleinen Katechismus: kurz und bewährt. Du findest ihn in Henoch.';
@@ -239,10 +245,7 @@ export const DESERT_PACKS: readonly DesertPack[] = [
         about: 'Die altkirchliche Praxis aus der Didache: eine Mahlzeit oder ein ganzer Tag.',
       }),
       daily('wz-medienfasten', 'Medienfasten', 'Kein Social Media während der Wüstenzeit.'),
-      daily('wz-gewissen', 'Gewissenserforschung', 'Geh abends den Tag vor Gott durch, bekenne Schuld und empfange Vergebung.', {
-        about: 'So übst du Gesetz und Evangelium täglich ein. Im Nachtgebet steht dafür „Prüfung und Zuspruch“.',
-        follows: 'examination',
-      }),
+      EXAMEN_HABIT,
       weekly('wz-bibelvers', 'Bibelvers lernen', 'Lerne jede Woche einen Vers auswendig.'),
     ],
   },
@@ -275,6 +278,21 @@ export const DESERT_PACKS: readonly DesertPack[] = [
         advent: true,
         needs: 'family',
       }),
+    ],
+  },
+  {
+    // 1.3: what a father hands on. In the order of rule 18: God, the house, the brothers.
+    id: 'erbe',
+    name: 'Erbe',
+    tagline: 'Für Väter',
+    description:
+      'Was du nicht angehst, erben deine Kinder. Der alte Adam soll täglich sterben, nicht durch eigene Kraft, sondern durch den Geist (Römer 8,13).',
+    verse: verse('wo ihr aber durch den Geist des Fleisches Geschäfte tötet, so werdet ihr leben.', 'Röm 8,13', 'Röm 8,13'),
+    habits: [
+      EXAMEN_HABIT,
+      daily('wz-familienzeit', 'Familienzeit ohne Handy', 'Zeit mit deiner Familie, das Handy bleibt weggelegt.', { needs: 'family' }),
+      weekly('wz-kindzeit', 'Zeit allein mit einem Kind', 'Jede Woche Zeit mit einem deiner Kinder allein, reihum.', { needs: 'children' }),
+      weekly('brothers', 'Austausch mit einem Bruder (Rechenschaft)', 'Dich jede Woche mit einem Bruder austauschen und Rechenschaft geben.'),
     ],
   },
   STANDARD_PACK,

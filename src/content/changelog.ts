@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.3.0',
+    date: '2026-10-10',
+    title: 'Das Paket „Erbe“',
+    changes: [
+      { area: 'Arena', text: 'In der Wüstenzeit gibt es das Paket „Erbe“ für Väter: Gewissenserforschung, Familienzeit ohne Handy, jede Woche Zeit allein mit einem Kind und der Austausch mit einem Bruder.' },
+      { area: 'Arena', text: 'Pakete lassen sich kombinieren: „Paket übernehmen“ fügt zu dem hinzu, was schon gewählt ist. Was in zwei Paketen steht, zählt einmal. Das steht jetzt auch in der Auswahl.' },
+    ],
+  },
+  {
     version: '1.2.1',
     date: '2026-10-10',
     title: 'Die Kachel „Neuigkeiten“ schlichter',

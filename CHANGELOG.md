@@ -3,6 +3,11 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.3.0 – 10. Oktober 2026
+
+- **Paket „Erbe“** in der Wüstenzeit, für Väter. Pakete lassen sich kombinieren; was in zweien steht,
+  zählt einmal.
+
 ## 1.2.0 – 10. Oktober 2026
 
 - **Neuigkeiten:** Eine Kachel unter „Mehr“ öffnet https://henoch.app/neuigkeiten/ im Browser
