@@ -1,0 +1,3462 @@
+/* ---------------------------------------------------------------- shared */
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+/* Destructive, but not red: red belongs to the rubrics (rule 5). */
+.btn.danger {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.confirm-panel {
+  display: grid;
+  gap: 10px;
+}
+.confirm-panel p {
+  margin: 0;
+}
+.danger-panel {
+  border-color: var(--ink);
+}
+.form-error {
+  font-family: var(--sans);
+  font-weight: 600;
+  margin: 8px 0;
+}
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+.file-btn:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------- catechism */
+/* This week's chief part, in gold like the reading of the day */
+.cat-week {
+  margin: 14px 0;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+}
+.cat-week-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.cat-week-title {
+  margin: 2px 0 4px;
+  font-size: 1.3rem;
+}
+.cat-week-title .no {
+  color: var(--rubric);
+  margin-right: 4px;
+}
+.cat-today {
+  margin: 0 0 12px;
+}
+.cat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.cat-actions .btn.primary {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 12px;
+}
+.cat-choose {
+  margin-top: 14px;
+}
+.cat-choose label {
+  font-size: 0.8rem;
+}
+/* Chief parts and appendices: one card each */
+.chief {
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.chief > .fold-head {
+  padding: 14px 0 12px;
+}
+.chief > .fold-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.chief .no {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--rubric);
+  vertical-align: middle;
+}
+.chief.is-open > .fold-head .no {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.chief .title {
+  font-weight: 600;
+  vertical-align: middle;
+}
+.chief-body {
+  padding: 0 0 14px;
+}
+.kpiece {
+  padding: 10px 0 14px;
+  border-top: 1px solid var(--rule);
+}
+/* Today's piece: in gold */
+.kpiece.today {
+  margin: 4px -10px;
+  padding: 10px 10px 14px;
+  border-top: 0;
+  border-radius: 12px;
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.kpiece.today + .kpiece {
+  border-top: 0;
+}
+.kpiece-title {
+  font-size: 1rem;
+  margin: 4px 0 6px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.ktag {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 0 7px;
+}
+.kpiece-title .fold-text {
+  display: inline-flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.cat-sub {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 14px 0 4px;
+}
+.duties {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.duties li {
+  display: grid;
+  gap: 2px;
+  border-top: 1px solid var(--rule);
+  padding: 10px 0;
+}
+
+/* House father mode: one piece, large, answer on tap. */
+.housefather {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--paper);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: calc(var(--safe-top) + 12px) calc(var(--gutter) + var(--safe-right)) calc(var(--safe-bottom) + 12px)
+    calc(var(--gutter) + var(--safe-left));
+}
+.hf-top,
+.hf-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: var(--content-width);
+  width: 100%;
+  margin: 0 auto;
+}
+.hf-chief {
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--muted);
+}
+.hf-pos {
+  font-family: var(--sans);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.hf-body {
+  overflow-y: auto;
+  max-width: var(--content-width);
+  width: 100%;
+  margin: 0 auto;
+  padding: 12px 0;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+.hf-body h2 {
+  font-size: 1.8rem;
+  margin: 8px 0 12px;
+  text-wrap: balance;
+}
+.hf-words {
+  font-weight: 600;
+  font-style: italic;
+}
+.hf-question {
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--rubric);
+  margin-top: 18px;
+}
+.hf-answer {
+  font-size: 1.35rem;
+}
+.hf-reveal {
+  appearance: none;
+  width: 100%;
+  min-height: 120px;
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-l);
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 8px 0 14px;
+}
+
+/* ---------------------------------------------------------------- archive */
+.search-field {
+  margin: 0 0 6px;
+}
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+.archive-item {
+  border-top: 1px solid var(--rule);
+  padding: 12px 0;
+  display: grid;
+  gap: 4px;
+}
+.archive-date {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.archive-status {
+  color: var(--done);
+}
+.archive-reading {
+  font-weight: 600;
+}
+.archive-verse {
+  margin: 0;
+  font-style: italic;
+}
+.archive-verse .muted {
+  font-style: normal;
+}
+/* The whole entry opens the list of its inputs. */
+.archive-toggle {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.archive-more {
+  font: 600 0.85rem var(--sans);
+  color: var(--link);
+}
+.archive-summary {
+  margin: 6px 0 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+}
+.archive-summary > p {
+  margin: 0 0 8px;
+}
+.archive-summary h5 {
+  margin: 12px 0 6px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.archive-summary section:first-of-type h5 {
+  margin-top: 0;
+}
+.archive-summary dl {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.archive-summary dt {
+  font: 600 0.85rem var(--sans);
+}
+.archive-summary dd {
+  margin: 2px 0 0;
+  white-space: pre-line;
+}
+.archive-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------- settings */
+/* "Mehr": the areas as tiles, two side by side */
+.more-tiles {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  gap: 12px;
+}
+.more-tile {
+  /* Icon and title side by side, the line beneath across the tile. */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  height: 100%;
+  min-height: 104px;
+  padding: 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.more-tile .flow-icon {
+  color: var(--icon-gold);
+}
+/* The news on the homepage: across both columns. */
+.more-tile-wide {
+  grid-column: 1 / -1;
+}
+.more-tile-wide .more-tile {
+  min-height: 0;
+}
+.more-tile-title {
+  font-family: var(--serif);
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.more-tile-line {
+  grid-column: 1 / -1;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--muted);
+}
+/* An area opened from a tile */
+.more-area-head {
+  margin: 10px 0 8px;
+}
+.more-area-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.more-area-head .flow-icon {
+  color: var(--icon-gold);
+}
+/* The parts of "Einstellungen" as cards */
+.settings .more-section {
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.settings .more-section > .fold-head h3 {
+  margin: 14px 0 12px;
+}
+.settings .more-section > .fold-body {
+  padding-bottom: 14px;
+}
+.habit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.habit-edit {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border-top: 1px solid var(--rule);
+  padding: 10px 0;
+}
+.habit-edit-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.habit-edit-main input[type='text'] {
+  padding: 5px 8px;
+}
+.habit-meta {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.confirm-inline {
+  display: flex;
+  gap: 4px;
+}
+.switch {
+  appearance: none;
+  width: 44px;
+  height: 26px;
+  border-radius: 13px;
+  background: var(--rule);
+  position: relative;
+  cursor: pointer;
+  margin: 0;
+  flex: none;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sheet);
+  transition: left 0.15s;
+}
+.switch:checked {
+  background: var(--done);
+}
+.switch:checked::after {
+  left: 21px;
+}
+.add-habit {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 10px;
+  align-items: end;
+}
+.add-habit .field:first-child {
+  grid-column: 1 / -1;
+}
+.add-habit .btn {
+  margin-top: 12px;
+}
+.weekly-grid,
+.times-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0 12px;
+}
+.times-grid > .field {
+  min-width: 0;
+}
+/* A time is five characters: a compact field, not a full-width box. Safari on
+   the iPhone gives time fields their own minimum width and height; reset them. */
+.times-grid input[type='time'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 8.5rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
+  text-align: left;
+}
+.times-grid input[type='time']::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.45em;
+}
+.plan-track {
+  border: 0;
+  padding: 0;
+  margin: 14px 0 0;
+}
+.plan-track .seg,
+.plan-add,
+.plan-remove {
+  margin-bottom: 4px;
+}
+.plan-track legend {
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+.motto {
+  margin: 10px 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+  font-style: italic;
+}
+.arc-lines span {
+  display: block;
+}
+
+/* Habit settings: star and ordering */
+.habit-edit {
+  grid-template-columns: auto auto 1fr auto;
+  gap: 8px;
+  position: relative;
+  background: var(--paper);
+}
+.icon-btn {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0;
+}
+.icon-btn:hover:not(:disabled) {
+  border-color: var(--rule);
+}
+.icon-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.star-btn[aria-pressed='true'] {
+  color: var(--accent);
+}
+.drag-handle {
+  width: 32px;
+  margin-left: -6px;
+  cursor: grab;
+  /* The handle takes the gesture; the rest of the row scrolls the page. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.habit-list.sorting .habit-edit {
+  transition: transform 0.15s ease;
+}
+.habit-list.sorting .habit-edit.is-dragging {
+  transition: none;
+  z-index: 3;
+  background: var(--sheet);
+  border-radius: var(--radius-s);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.habit-edit.is-dragging + .habit-edit {
+  border-top-color: transparent;
+}
+body.is-sorting,
+body.is-sorting * {
+  cursor: grabbing !important;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.habit-edit.is-focus .habit-edit-main > label,
+.habit-edit.is-focus .habit-edit-main > input {
+  font-weight: 600;
+}
+.habit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.link-btn {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--link);
+  font-weight: 600;
+  cursor: pointer;
+}
+.small-btn {
+  min-height: 30px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+}
+
+/* Catechism overview: orientation, not a tracker */
+.cat-overview {
+  margin: 8px 0 18px;
+}
+/* The chief parts as tiles, two side by side (like "Mehr") */
+.cat-overview {
+  margin: 20px 0 0;
+}
+.cat-overview-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+.cat-overview-head h3 {
+  margin: 0;
+}
+.overview-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.overview-row {
+  display: flex;
+}
+.overview-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.overview-row.current .overview-link {
+  border: 2px solid var(--gold);
+  background: var(--gold-soft);
+}
+.overview-no {
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--rubric);
+}
+.overview-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.overview-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: auto;
+}
+.piece-mark {
+  appearance: none;
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1.5px solid var(--rule);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.piece-mark.known {
+  background: var(--done);
+  border-color: var(--done);
+}
+.overview-count {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.kpiece:focus {
+  outline: none;
+}
+.kpiece:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+.cat-overview > .fold-head h3 {
+  margin: 6px 0;
+}
+.overview-total {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- church year page */
+.back-link {
+  margin: 12px 0 0;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.back-link a {
+  text-decoration: none;
+}
+.cy-intro {
+  font-size: 1.05rem;
+}
+.cy-phase {
+  border-top: 1px solid var(--rule);
+  margin-top: 22px;
+  padding-top: 4px;
+}
+.cy-phase h3 {
+  margin-bottom: 0;
+}
+.cy-phase-dates {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.cy-entries {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 4px;
+}
+.cy-entry {
+  padding: 10px 0 10px 12px;
+  border-left: 2px solid var(--rule);
+  scroll-margin-top: calc(var(--safe-top) + 12px);
+}
+.cy-entry:focus {
+  outline: none;
+}
+.cy-entry:focus-visible {
+  outline: 2px solid var(--accent);
+}
+.cy-entry.current {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: 0 var(--radius-s) var(--radius-s) 0;
+  padding-right: 10px;
+}
+.cy-entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+}
+.cy-entry-head h4 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+.cy-entry.feast .cy-entry-head h4 {
+  font-style: italic;
+}
+.cy-entry-date {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 4.6em;
+}
+.cy-meaning {
+  margin: 2px 0 0;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.cy-theme {
+  margin: 2px 0 4px;
+}
+.cy-readings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 18px;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.cy-readings div {
+  display: flex;
+  gap: 6px;
+}
+.cy-readings dt {
+  color: var(--muted);
+}
+.cy-readings dd {
+  margin: 0;
+}
+.cy-group {
+  margin-top: 16px;
+}
+.cy-group-title {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin: 0 0 2px;
+}
+.cy-group-range {
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+  margin-left: 6px;
+}
+.cy-entry-head h5 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+/* Enough contrast on the highlighted background of the current week. */
+.cy-entry.current .cy-entry-date,
+.cy-entry.current .cy-meaning,
+.cy-entry.current .cy-readings dt {
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- Andacht */
+/* Morning / evening: one capsule across the page */
+.devotion-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin: 16px 0 4px;
+  padding: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+}
+.devotion-switch a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.devotion-switch a[aria-current='page'] {
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+/* Head of an order: title, rubric, options in one row */
+.order-head {
+  margin: 20px 0 2px;
+}
+.order-head h2 {
+  margin: 0 0 2px;
+}
+.order-head .rubric {
+  margin: 0 0 6px;
+}
+.order-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin: 10px 0 2px;
+}
+.order-options .seg {
+  margin: 0;
+}
+.done-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------------------------------------------------------------- Sunday */
+/* Head: the Sunday in the middle, the Sundays before and after on either side */
+.sunday-head {
+  display: grid;
+  grid-template-columns: 58px 1fr 58px;
+  align-items: center;
+  gap: 6px;
+  margin: 18px 0 6px;
+}
+.sunday-center {
+  text-align: center;
+  min-width: 0;
+}
+.sunday-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.sunday-step-circle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: var(--sheet);
+  color: var(--gold);
+}
+.sunday-step-label {
+  max-width: 52px;
+  font-family: var(--sans);
+  font-size: 0.66rem;
+  line-height: 1.2;
+  text-align: center;
+}
+.sunday-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sunday-group {
+  margin: 2px 0 0;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.sunday-summary {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.sunday-name {
+  margin: 4px 0 2px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.sunday-name button {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.sunday-week {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 2px 8px;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.sunday-back {
+  font-size: 0.8rem;
+}
+
+/* All Sundays: a card that rises over the Sunday page */
+.chooser-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: color-mix(in srgb, #000 40%, transparent);
+  animation: chooser-fade 0.2s ease;
+}
+.chooser {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--content-width);
+  max-height: calc(100% - var(--safe-top) - 24px);
+  background: var(--paper);
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -8px 30px color-mix(in srgb, #000 20%, transparent);
+  padding-bottom: var(--safe-bottom);
+  animation: chooser-rise 0.25s ease;
+}
+@keyframes chooser-rise {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+}
+@keyframes chooser-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .chooser,
+  .chooser-backdrop {
+    animation: none;
+  }
+}
+.chooser-head {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid var(--rule);
+}
+.chooser-title {
+  text-align: center;
+}
+.chooser-title h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.chooser-title p {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.chooser-year {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: var(--sheet);
+  color: var(--gold);
+  cursor: pointer;
+}
+.chooser-list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 16px 8px;
+}
+.chooser-list h3 {
+  margin: 18px 0 4px;
+  font-size: 1.02rem;
+}
+.chooser-foot {
+  padding: 8px 16px 12px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.week-group-title {
+  margin: 10px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.week-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+}
+.week-link {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 2px 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+}
+.week-link[aria-current='true'] {
+  background: var(--gold-soft);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.week-date {
+  flex: none;
+  min-width: 4.6em;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.week-name {
+  flex: 1;
+}
+.sunday-verse {
+  margin: 16px 0;
+  padding: 4px 0 4px 16px;
+  border-left: 3px solid var(--gold);
+}
+.sunday-verse figcaption {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sunday-verse blockquote {
+  margin: 4px 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+.sunday-page .block {
+  margin: 14px 0;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+}
+.sunday-page .block h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+.sunday-page .block > p:last-child {
+  margin-bottom: 0;
+}
+.sunday-theme {
+  font-size: 1.1rem;
+}
+.sunday-readings {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.sunday-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
+}
+.sunday-reading .track {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.sunday-reading .bible-ref {
+  font-size: 1.05rem;
+}
+/* The Gospel opens the lesson from the Haus-Agende. */
+.sunday-reading-open {
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.sunday-reading-open .sunday-summary {
+  display: block;
+}
+.sunday-lection-hint {
+  margin-top: 6px;
+  font: 600 0.85rem var(--sans);
+  color: var(--link);
+}
+.sunday-lection-hint::after {
+  content: ' ›';
+}
+.sunday-reading-open:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+/* The lesson: a title, then numbered paragraphs to read straight through. */
+.lection-head {
+  grid-template-columns: 1fr;
+}
+.lection-body {
+  overflow-y: auto;
+  padding: 12px 20px 8px;
+}
+.lection-paragraphs {
+  line-height: 1.6;
+}
+.lection-paragraphs p {
+  margin: 0 0 12px;
+}
+.lection-source {
+  margin: 4px 0 8px;
+}
+.sunday-page .cy-circles {
+  margin-top: 4px;
+}
+.overview-row.current .piece-mark:not(.known) {
+  border-color: color-mix(in srgb, var(--gold) 45%, transparent);
+}
+.sunday-page .top-motto {
+  margin: 12px 0 0;
+  text-align: center;
+}
+
+/* A chief part (or appendix) on its own page */
+.cat-part-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 8px 0 10px;
+}
+.cat-part-title .no {
+  color: var(--rubric);
+}
+.cat-part {
+  padding: 4px 16px 12px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.cat-part > .kpiece:first-child {
+  border-top: 0;
+}
+.cat-week-title a {
+  color: inherit;
+}
+.plan-add {
+  margin-top: 14px;
+}
+.plan-remove {
+  margin-top: 8px;
+}
+/* Times per weekday: each group a card with its days as round chips. */
+.schedule-group {
+  margin: 14px 0 0;
+  padding: 12px 14px 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+}
+.schedule-group legend {
+  padding: 0 4px;
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.day-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+.day-chips button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  font: 600 0.85rem var(--sans);
+  cursor: pointer;
+}
+.day-chips button[aria-pressed='true'] {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.schedule-add {
+  margin-top: 6px;
+}
+.schedule-group > .btn {
+  margin-top: 10px;
+}
+/* Prayer list: concerns as tags, set on days. */
+.concerns,
+.prayer-days {
+  margin-top: 18px;
+}
+.concern-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.concern-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px 4px 12px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
+  font: 500 0.9rem var(--sans);
+}
+.concern-chip button,
+.concern-add {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: 600 1.1rem var(--sans);
+  cursor: pointer;
+}
+.concern-add {
+  border: 1px dashed var(--rule);
+  color: var(--gold);
+}
+.concern-input {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 10px;
+}
+.concern-input input {
+  flex: 1;
+  min-width: 0;
+}
+/* The days as tiles, two side by side like "Mehr"; "Täglich" across the width. */
+.prayer-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 12px;
+  margin-top: 10px;
+}
+.prayer-day {
+  min-width: 0;
+  padding: 12px 12px 10px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.prayer-day-daily {
+  grid-column: 1 / -1;
+  background: var(--gold-soft);
+  border-color: color-mix(in srgb, var(--gold) 35%, transparent);
+}
+.prayer-day .concern-input {
+  flex-wrap: wrap;
+}
+.prayer-day .concern-input .btn {
+  flex: 1 0 100%;
+}
+.prayer-day .concern-chip {
+  max-width: 100%;
+}
+.prayer-day .concern-chip span {
+  overflow-wrap: anywhere;
+}
+.prayer-day-name {
+  margin: 0 0 4px;
+  font: 600 0.9rem var(--sans);
+}
+.prayer-day .concern-chips {
+  margin-bottom: 0;
+}
+/* A time out of the order of the day: a plain note, not a red mark. */
+.time-order {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 var(--radius-m, 8px) var(--radius-m, 8px) 0;
+  font: 0.9rem var(--sans);
+}
+.times-grid input[aria-invalid='true'] {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+/* The spiritual armour: the call of Eph 6,10-11, then the piece of the day. */
+.armor-call {
+  margin: 0 0 10px;
+  padding-left: 12px;
+  border-left: 2px solid var(--gold);
+  font-style: italic;
+}
+.armor-call .refs,
+.armor-word .refs {
+  font-style: normal;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.armor-piece {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-l);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.armor-title {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.armor-word {
+  font-style: italic;
+}
+.armor-week {
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+.armor-week li {
+  padding: 4px 0;
+}
+.armor-week li[aria-current='true'] {
+  font-weight: 600;
+}
+.armor-day {
+  display: inline-block;
+  min-width: 6.5em;
+  color: var(--muted);
+  font: 0.85rem var(--sans);
+}
+.armor-question {
+  margin: 0 0 12px;
+}
+/* Arena: the journal of the fight of faith. */
+.arena-note {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 12px 12px 0;
+  font: 0.92rem var(--sans);
+}
+.arena-new {
+  margin: 4px 0 16px;
+}
+.arena-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.arena-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.arena-card-date {
+  font: 0.8rem var(--sans);
+  color: var(--muted);
+}
+.arena-card-title {
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+.arena-card-verses {
+  font: 0.85rem var(--sans);
+  color: var(--link);
+}
+.arena-entry-date {
+  font-size: 1.3rem;
+}
+.arena-lines {
+  border: 0;
+  margin: 14px 0 0;
+  padding: 0;
+}
+.arena-lines legend {
+  padding: 0;
+  font: 600 0.9rem var(--sans);
+  margin-bottom: 6px;
+}
+.arena-line {
+  margin-bottom: 8px;
+}
+.arena-line-input {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.arena-line-input input {
+  flex: 1;
+  min-width: 0;
+}
+.arena-remove {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: 600 1.1rem var(--sans);
+  cursor: pointer;
+}
+.arena-line-view {
+  margin: 4px 0 0 4px;
+  font-size: 0.9rem;
+}
+.arena-text {
+  margin-top: 16px;
+}
+.arena-text textarea {
+  min-height: 16rem;
+  line-height: 1.5;
+}
+.arena-text .field {
+  margin-top: 10px;
+}
+
+/* Handwriting: a page like paper, the tools above it. */
+.ink {
+  margin-top: 10px;
+}
+.ink-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+.ink-colors {
+  display: flex;
+  gap: 6px;
+}
+.ink-color {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--rule);
+  background: var(--sheet);
+  cursor: pointer;
+  position: relative;
+}
+.ink-color::after {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background: var(--swatch);
+}
+.ink-ink {
+  --swatch: var(--ink);
+}
+.ink-gold {
+  --swatch: var(--rose-gold);
+}
+.ink-sky {
+  --swatch: var(--sky);
+}
+.ink-color[aria-pressed='true'] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.ink-color:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.ink-undo {
+  margin-left: auto;
+}
+.ink-hint {
+  margin: 8px 0;
+}
+.ink-page {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-l);
+  background: var(--sheet);
+  overflow: hidden;
+}
+.ink-page canvas {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+/* ---------------------------------------------------------------- weekly review */
+/* What was noted at the evening thanks during the week, as a quiet reminder. */
+.week-noted {
+  margin: 0;
+  font-size: 0.92rem;
+  font-style: italic;
+  color: var(--muted);
+}
+.week-comfort {
+  margin: 18px 0 0;
+}
+.week-comfort .rubric {
+  margin: 0 0 6px;
+}
+
+.arena-comfort {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--warm-soft);
+  font-style: italic;
+}
+.arena-comfort p {
+  margin: 0 0 6px;
+}
+.arena-comfort .bible-ref {
+  font-style: normal;
+  font-size: 0.85rem;
+}
+.arena-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.arena-comfort .bible-ref {
+  white-space: nowrap;
+}
+.arena-archived { margin-top: 14px; }
+/* Impressum */
+.imprint-section h3,
+.imprint-section h4 {
+  margin: 18px 0 4px;
+  font: 600 0.95rem var(--sans);
+}
+.imprint-section p {
+  margin: 0 0 6px;
+}
+.imprint > h3 {
+  margin-top: 28px;
+}
+mark.placeholder {
+  background: var(--gold-soft);
+  color: var(--gold);
+  border: 1px dashed var(--gold);
+  border-radius: 4px;
+  padding: 0 3px;
+}
+/* Guides under "Mehr" */
+.guide-part h3 {
+  margin: 22px 0 6px;
+  font-size: 1.05rem;
+}
+.guide-steps {
+  margin: 6px 0;
+  padding-left: 1.4em;
+}
+.guide-steps li {
+  margin-bottom: 8px;
+  line-height: 1.45;
+}
+.guide-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font: 0.85rem var(--sans);
+}
+.guide-notes {
+  list-style: none;
+  padding-left: 0;
+}
+.guide-notes li {
+  margin-bottom: 10px;
+}
+.arena-entry-kind {
+  margin: 8px 0 -4px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  color: var(--gold);
+}
+.arena-card-date .ktag {
+  margin-left: 8px;
+}
+.arena .seg {
+  margin-bottom: 10px;
+}
+.arena-meeting {
+  margin-top: 12px;
+}
+.arena-meeting input {
+  max-width: 14rem;
+}
+/* Kirchenjahr: Dieffenbach's introduction and the themes of circles and seasons */
+.cy-dieffenbach {
+  margin-bottom: 14px;
+}
+.cy-intro-title {
+  font-style: italic;
+  margin-top: 0;
+}
+.cy-intro-part h4 {
+  margin: 18px 0 6px;
+  font: 600 0.95rem var(--sans);
+}
+.cy-intro-part p {
+  line-height: 1.55;
+}
+.cy-intro-gloria {
+  margin-top: 18px;
+  font-style: italic;
+}
+.cy-circle-of {
+  margin: 12px 0 0;
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.cy-circle-of .muted {
+  font-weight: 400;
+}
+.cy-season-theme {
+  margin: 2px 0 6px;
+  font-style: italic;
+}
+/* Kirchenjahr: Dieffenbach's explanation of each circle and the meaning of each day */
+.cy-dieffenbach p {
+  line-height: 1.55;
+}
+.cy-motto {
+  margin: 4px 0 14px;
+  padding-left: 12px;
+  border-left: 2px solid var(--rule);
+  font-style: italic;
+}
+.cy-motto p {
+  margin: 0 0 4px;
+}
+.cy-motto footer {
+  font: 0.85rem var(--sans);
+  font-style: normal;
+}
+.cy-hausagende {
+  margin: 4px 0 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.cy-group-refs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin: 0 0 6px;
+  font: 0.85rem var(--sans);
+}
+.cy-more-days {
+  margin: 12px 0 4px;
+}
+.cy-more-title {
+  margin: 0 0 4px;
+  font: 600 0.85rem var(--sans);
+  color: var(--muted);
+}
+.cy-more-days dl {
+  margin: 0;
+}
+.cy-more-days dt {
+  margin-top: 8px;
+  font: 600 0.9rem var(--sans);
+}
+.cy-more-days dd {
+  margin: 2px 0 0;
+}
+.cy-note {
+  margin: 14px 0 4px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.cy-note-label {
+  font-style: italic;
+}
+.cy-closing {
+  margin: 22px 0 14px;
+}
+.cy-closing p {
+  line-height: 1.55;
+}
+/* Rückblick: one list under headings for year and month */
+.archive-year > h3 {
+  margin: 18px 0 2px;
+}
+.archive-month {
+  margin: 12px 0 4px;
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.archive-title {
+  font-weight: 600;
+}
+/* Mehr: Versionen */
+.changelog-current {
+  font: 600 0.9rem var(--sans);
+  color: var(--gold);
+}
+.changelog-release {
+  border-top: 1px solid var(--rule);
+  padding-top: 6px;
+  margin-top: 6px;
+}
+.changelog-release h3,
+.changelog-release h4 {
+  margin: 0;
+}
+/* The versions of an earlier number, folded together; their entries inside. */
+.changelog-major > .fold-body {
+  padding-left: 12px;
+}
+/* Version and date, the title beneath: seen also when folded. */
+.changelog-head {
+  display: grid;
+  gap: 2px;
+}
+.changelog-release > .fold-head .fold-title,
+.changelog-release > .fold-head .fold-title .fold-text {
+  width: 100%;
+}
+.changelog-release > .fold-head .fold-title button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 0;
+  text-align: left;
+}
+/* The same chevron as the cards of the church year. */
+.changelog-release > .fold-head .fold-title button::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 auto;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.15s ease;
+}
+.changelog-release.is-open > .fold-head .fold-title button::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.changelog-date {
+  font: 400 0.85rem var(--sans);
+  color: var(--muted);
+  margin-left: 6px;
+}
+.changelog-title {
+  font: italic 400 0.95rem var(--serif);
+  color: var(--muted);
+}
+.changelog-changes {
+  padding-bottom: 8px;
+}
+.changelog-changes {
+  margin: 0;
+}
+.changelog-changes dt {
+  margin-top: 10px;
+  font: 600 0.9rem var(--sans);
+}
+.changelog-changes dd {
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
+/* Eisenschmiede: the list of points to bring to the meeting */
+.arena-points ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.arena-point {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.arena-point input[type='checkbox'] {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  accent-color: var(--gold);
+}
+.arena-point input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
+.arena-point.done input[type='text'] {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+/* Lehre / Anhang: the church year after Dieffenbach, to be read straight through */
+.dieffenbach-book .book-circle {
+  margin-top: 10px;
+}
+.dieffenbach-book p {
+  line-height: 1.55;
+}
+.book-lead {
+  margin-top: 18px;
+  font-style: italic;
+}
+.book-season h4 {
+  margin: 22px 0 2px;
+}
+.book-group h5 {
+  margin: 16px 0 2px;
+  font: 600 0.95rem var(--sans);
+}
+.book-days {
+  margin: 8px 0 0;
+}
+.book-days dt {
+  margin-top: 12px;
+  font: 600 0.92rem var(--sans);
+}
+.book-days dd {
+  margin: 3px 0 0;
+  line-height: 1.55;
+}
+
+/* ---------------------------------------------------------------- Mein Haus */
+/* Morning: who stands in the centre today, then the prayers. */
+.house-focus {
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-l);
+  background: var(--gold-soft);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.house-focus p {
+  margin: 0;
+}
+.house-focus p + p {
+  margin-top: 4px;
+}
+.house-focus-title {
+  margin: 16px 0 6px;
+  font-size: 1.05rem;
+}
+/* Bible references under a prayer, like the attribution inside a prayed text. */
+.house-refs {
+  margin: -4px 0 10px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.house-hint {
+  margin: 8px 0;
+}
+
+/* Settings: wife and children. */
+.house-children {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.house-child {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: start;
+  border-top: 1px solid var(--rule);
+  padding: 12px 0;
+  position: relative;
+  background: var(--paper);
+}
+.house-child-main {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.house-child-main .field {
+  margin: 0;
+}
+.house-children.sorting .house-child {
+  transition: transform 0.15s ease;
+}
+.house-children.sorting .house-child.is-dragging {
+  transition: none;
+  z-index: 3;
+  background: var(--sheet);
+  border-radius: var(--radius-s);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.house-required {
+  margin: 0;
+}
+.house-concern textarea {
+  resize: none;
+  overflow: hidden;
+}
+.house-concern-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.archive-answered {
+  margin: 0;
+}
+.treasury-author {
+  margin: 0 0 6px;
+}
+
+/* ---------------------------------------------------------------- Rückblick: habits */
+/* Neutral throughout: kept weeks in quiet ink, empty ones in the grey of the rule (rules 4 and 5). */
+.hh-note {
+  margin: 0 0 8px;
+}
+.hh-group-title {
+  margin: 12px 0 4px;
+  font: 600 0.8rem var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hh-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.hh-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  padding: 6px 0;
+  border-top: 1px solid var(--rule);
+}
+.hh-name {
+  font-size: 0.95rem;
+  align-self: center;
+  min-width: 0;
+}
+.hh-cells {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+.hh-cell {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 18px;
+}
+.hh-months .hh-cell {
+  width: 30px;
+}
+.hh-bar {
+  display: flex;
+  align-items: flex-end;
+  width: 12px;
+  height: 28px;
+  border-radius: 3px;
+  background: var(--rule);
+  overflow: hidden;
+}
+.hh-fill {
+  display: block;
+  width: 100%;
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+.hh-count {
+  font: 0.68rem var(--sans);
+  color: var(--muted);
+  line-height: 1;
+}
+.hh-mark {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+}
+.hh-mark.is-done {
+  background: color-mix(in srgb, var(--ink) 70%, transparent);
+  border-color: transparent;
+}
+/* Daily habits: the course of the weeks as a quiet line between 0 and 7 days. */
+.hh-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+}
+.hh-chart svg {
+  display: block;
+  overflow: visible;
+}
+.hh-guide {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+.hh-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 75%, transparent);
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.hh-dot {
+  fill: color-mix(in srgb, var(--ink) 75%, transparent);
+}
+/* The habits stand apart, below the entries: a clear rule and room above. */
+.review-habits {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid var(--rule);
+}
+
+/* Lehre / Anhang, "Das Kirchenjahr": the introduction and the three circles as cards,
+   like the parts of "Einstellungen"; a gold numeral, the title, a quiet line under it. */
+.book-source {
+  margin: -4px 0 14px;
+  font: 0.82rem var(--sans);
+  color: var(--muted);
+  line-height: 1.45;
+}
+.dieffenbach-book .book-card {
+  margin: 10px 0;
+  padding: 0 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.book-card > .fold-head .fold-title {
+  flex: 1 1 auto;
+  margin: 0;
+}
+.book-card > .fold-head .fold-title button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+}
+/* A chevron at the right that turns when the card opens. */
+.book-card > .fold-head .fold-title button::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 auto;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.15s ease;
+}
+.book-card.is-open > .fold-head .fold-title button::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.book-card-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold-soft);
+  color: var(--gold);
+  font: 600 0.95rem var(--serif);
+}
+.book-card-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.book-card-title {
+  font-size: 1.12rem;
+}
+.book-card-sub {
+  font: 400 0.8rem var(--sans);
+  color: var(--muted);
+  line-height: 1.35;
+}
+.book-card > .fold-body {
+  padding: 2px 0 16px;
+  border-top: 1px solid var(--rule);
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-card > .fold-head .fold-title button::after {
+    transition: none;
+  }
+}
+.book-card > .fold-head .fold-text {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ---------------------------------------------------------------- tile groups */
+/* Settings and parts as tiles, two side by side, like the tiles of "Mehr";
+   a chosen tile opens its content beneath its row, across the full width. */
+.tile-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 12px;
+}
+.tile-card {
+  appearance: none;
+  /* Icon and title side by side, the line beneath across the tile. */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  align-items: center;
+  column-gap: 10px;
+  row-gap: 6px;
+  min-height: 104px;
+  padding: 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tile-card .flow-icon {
+  color: var(--icon-gold);
+  flex: none;
+}
+.tile-card-title {
+  font-family: var(--serif);
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.tile-card-line {
+  grid-column: 1 / -1;
+  font: 0.82rem/1.35 var(--sans);
+  color: var(--muted);
+}
+.tile-card.is-open {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+.tile-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.tile-panel {
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding: 12px 16px 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.tile-panel-head {
+  /* The info bubble hangs from this row. */
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.tile-panel-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+/* A group inside a panel sits on the page colour, so its tiles and panels stand out. */
+.tile-panel .tile-card,
+.tile-panel .tile-panel {
+  background: var(--paper);
+}
+
+/* ---------------------------------------------------------------- Gewohnheiten as cards */
+/* Each rhythm a card like the tiles; switches in the gold of the rose, the kind as a small label. */
+.habit-card {
+  margin: 12px 0;
+  padding: 0 16px 6px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.habit-card > .fold-head {
+  justify-content: space-between;
+  align-items: center;
+}
+.habit-card > .fold-head h3 {
+  margin: 14px 0 10px;
+}
+.habit-card .fold-aside {
+  font-size: 0.78rem;
+}
+.habit-card .habit-edit {
+  background: var(--sheet);
+  padding: 12px 0;
+}
+.habit-card .habit-list .habit-edit:first-child {
+  border-top: 0;
+}
+.habit-card .add-habit {
+  padding-bottom: 12px;
+}
+/* How often a weekly habit is meant: a small select beside the kind label. */
+.habit-meta select.habit-times {
+  width: auto;
+  min-height: 0;
+  padding: 1px 22px 1px 8px;
+  border-radius: 999px;
+  font: 0.72rem/1.5 var(--sans);
+  background-position: right 6px center;
+  background-size: 10px;
+}
+.habit-kind {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.switch:checked {
+  background: var(--icon-gold);
+}
+.star-btn[aria-pressed='true'] {
+  color: var(--icon-gold);
+}
+
+/* Narrow phones: the tile names a little smaller, so they stay on one line beside the icon. */
+@media (max-width: 400px) {
+  .more-tile,
+  .tile-card {
+    padding: 12px;
+    column-gap: 8px;
+  }
+  .more-tile-title,
+  .tile-card-title {
+    font-size: 0.9rem;
+  }
+}
+
+/* ---------------------------------------------------------------- search */
+header.top .search-link {
+  margin-left: auto;
+  align-self: center;
+  display: inline-flex;
+  padding: 6px;
+  margin-right: -6px;
+  color: var(--muted);
+  border-radius: 999px;
+}
+header.top .search-link:hover,
+header.top .search-link:focus-visible {
+  color: var(--accent);
+}
+.search-hits {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 14px;
+}
+.search-hits li {
+  border-top: 1px solid var(--rule);
+}
+.search-hit {
+  display: grid;
+  gap: 3px;
+  padding: 12px 0;
+  color: inherit;
+  text-decoration: none;
+}
+.search-area {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.search-title {
+  font-weight: 600;
+}
+.search-snippet {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.search-hit mark {
+  background: color-mix(in srgb, var(--icon-gold, #c9a227) 35%, transparent);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* Arena: one-line fields that wrap and grow with their text */
+.grow-field {
+  resize: none;
+  overflow: hidden;
+  min-height: 0;
+  line-height: 1.4;
+}
+.arena-line-input .grow-field,
+.arena-point .grow-field {
+  flex: 1;
+  min-width: 0;
+}
+.arena-line-input,
+.arena-point {
+  align-items: flex-start;
+}
+.arena-line-input .arena-remove,
+.arena-point .arena-remove {
+  margin-top: 6px;
+}
+.arena-point input[type='checkbox'] {
+  margin-top: 12px;
+}
+.arena-point.done .grow-field {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.arena-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 0;
+}
+
+/* Lehre: two areas, Lernen and Lesen */
+.cat-area {
+  margin: 18px 0 28px;
+}
+.cat-area-head h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.cat-area-line {
+  margin: 2px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.cat-area .cat-week {
+  margin-top: 12px;
+}
+.cat-area .cat-overview-head h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.overview-row.wide {
+  grid-column: 1 / -1;
+}
+.cat-part-choose {
+  margin: 0 0 12px;
+}
+.overview-row.pending .overview-link {
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------ Wüstenzeit (the Streithalle before 0.39) */
+/* Open things are a plain outline, never red (rules 4 and 5). */
+.wa-title {
+  margin: 8px 0 4px;
+}
+.wa-heading {
+  margin: 20px 0 8px;
+}
+.wa-verse blockquote {
+  font-style: italic;
+}
+.wa-guide-part p,
+.wa-guide-part li {
+  line-height: 1.5;
+}
+.wa-list {
+  padding-left: 1.2em;
+}
+.wa-list li {
+  margin: 6px 0;
+}
+.wa-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 12px;
+  font-size: 0.92rem;
+}
+.wa-table th,
+.wa-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 6px 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.wa-table th {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wa-nowrap {
+  white-space: nowrap;
+}
+.wa-block h5 {
+  margin: 16px 0 4px;
+}
+.wa-rows {
+  margin: 8px 0;
+}
+.wa-rows > div {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.wa-rows dt {
+  font-weight: 600;
+}
+.wa-rows dd {
+  margin: 2px 0 0;
+}
+.wa-when {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.wa-weeks {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+}
+.wa-week {
+  padding: 8px 10px;
+  margin: 6px 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-m);
+}
+.wa-week p {
+  margin: 2px 0;
+}
+.wa-week.is-current {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.wa-week-no,
+.wa-week-now {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.wa-week-verse {
+  font-style: italic;
+}
+.wa-dashboard .seg {
+  margin: 4px 0 8px;
+}
+/* The head: where the round stands. */
+.wa-head {
+  border-color: var(--gold);
+}
+.wa-head p {
+  margin: 4px 0;
+}
+.wa-head-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  font-size: 1.15rem;
+}
+.wa-head-week {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.wa-chip {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold-soft);
+  color: var(--ink);
+}
+.wa-head-focus strong {
+  font-size: 1.1rem;
+}
+.wa-head .wa-verse {
+  margin: 8px 0;
+}
+.wa-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+/* A pager: ‹ title › with round buttons. */
+.wa-pager {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.wa-pager h4 {
+  margin: 0;
+  text-align: center;
+}
+.wa-pager-sub {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.wa-pager-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+.wa-pager-btn:disabled {
+  opacity: 0.3;
+}
+.wa-back {
+  text-align: center;
+  margin: 2px 0 0;
+}
+.wa-group h5,
+.wa-weekly h5,
+.wa-review h5 {
+  margin: 14px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* A point to tick: the whole row, with a ring; done is a filled ring with a check. */
+.wa-tick {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.wa-row {
+  border-bottom: 1px solid var(--rule);
+}
+.wa-row .wa-tick {
+  border-bottom: 0;
+}
+.wa-group .wa-row:last-child,
+.wa-weekly .wa-tick:last-child {
+  border-bottom: 0;
+}
+.wa-row-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wa-row-line .wa-tick {
+  flex: 1;
+  min-width: 0;
+}
+/* "Aufschreiben": a quiet pill at the end of the journal row. */
+.wa-row-action {
+  flex: none;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.wa-row-action[aria-expanded='true'] {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+}
+.wa-ring {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  display: grid;
+  place-items: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.wa-tick[aria-checked='true'] .wa-ring {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.wa-tick[aria-checked='true'] .wa-ring::after {
+  content: '';
+  width: 6px;
+  height: 11px;
+  margin-top: -2px;
+  border: solid var(--on-accent);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.wa-tick:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.wa-tick-note {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.wa-tick.is-off {
+  cursor: default;
+  color: var(--muted);
+}
+.wa-off-mark {
+  flex: none;
+  width: 26px;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+}
+.wa-hint {
+  margin: -6px 0 10px 38px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.wa-dashboard > .seg {
+  display: flex;
+  width: 100%;
+}
+.wa-dashboard > .seg button {
+  flex: 1;
+}
+.wa-journal {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-m);
+  background: var(--warm-soft);
+}
+.wa-journal .field:last-of-type {
+  margin-bottom: 4px;
+}
+.wa-off {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+}
+.wa-grid-wrap {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+.wa-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.wa-grid th,
+.wa-grid td {
+  padding: 4px 2px;
+  border-bottom: 1px solid var(--rule);
+  text-align: center;
+}
+.wa-grid tbody th[scope='row'] {
+  text-align: left;
+  font-weight: 400;
+  padding-right: 6px;
+}
+.wa-grid thead th {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.wa-grid thead th.is-today {
+  color: var(--ink);
+}
+.wa-grid-date {
+  display: block;
+  font-weight: 400;
+}
+.wa-grid-group th {
+  text-align: left;
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 10px;
+}
+/* Days outside the round: the width of a day, a quiet dot, nothing to tick. */
+.wa-grid thead th.is-outside {
+  opacity: 0.45;
+}
+.wa-void {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+}
+.wa-void::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.wa-dot {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+.wa-dot.is-done {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.wa-dot:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.wa-review textarea {
+  width: 100%;
+}
+.wa-review-line p {
+  margin: 2px 0 8px;
+}
+
+/* The Streithalle in the Rückblick of the habits: one row that opens its dashboard. */
+.hh-hall-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------ Arena: the entrance */
+.arena-places {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+  display: grid;
+  gap: 12px;
+}
+.arena-place-tile {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border-radius: var(--radius-l);
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.arena-place-tile:hover,
+.arena-place-tile:focus-visible {
+  border-color: var(--gold);
+}
+.arena-place-tile:active {
+  transform: scale(0.99);
+}
+.arena-place-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--gold-soft);
+  color: var(--icon-gold);
+}
+.arena-place-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.arena-place-title {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.15rem;
+}
+.arena-place-line {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.arena-place-go {
+  font-size: 1.4rem;
+  color: var(--muted);
+}
+.wa-invite .btn {
+  margin-top: 4px;
+}
+
+/* A place's name with a quiet second line (the round of the Streithalle). */
+.place-title .place-sub {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 2px;
+}
+/* The start of a round inside the invitation: no box in a box. */
+.wa-invite .winter-arc-start {
+  border: 0;
+  padding: 0;
+  margin: 12px 0 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* "Heute" in the day of the Streithalle leads to the page of the day. */
+.wa-today-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* The week as a strip of seven days; a tap chooses the day whose habits are listed. */
+.day-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin: 0 0 12px;
+}
+.day-strip-day {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  border-radius: var(--radius-m);
+  border: 1px solid transparent;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  cursor: pointer;
+}
+.day-strip-wd {
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+}
+.day-strip-d {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.day-strip-day.is-today .day-strip-d {
+  color: var(--icon-gold);
+}
+.day-strip-day[aria-pressed='true'] {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+}
+.habits-week > summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--ink);
+}
+.habits-week > summary::-webkit-details-marker {
+  display: none;
+}
+.habits-week > summary::after {
+  content: ' ›';
+}
+.habits-week[open] > summary::after {
+  content: ' ‹';
+}
+
+/* Under one number, each release of it with its own small head. */
+.changelog-patch + .changelog-patch {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+}
+.changelog-patch-head {
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Under "Wort": Bibel and Lehre as two halves, links styled like the segmented choice. */
+.word-switch {
+  display: flex;
+  width: 100%;
+  margin: 4px 0 12px;
+}
+.word-switch a {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.86rem;
+  text-decoration: none;
+  color: var(--muted);
+}
+.word-switch a[aria-current='page'] {
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+/* The Impressum under the tiles of "Mehr": a quiet line, not a tile of its own. */
+.more-imprint {
+  margin: 16px 0 0;
+  text-align: center;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.more-imprint a {
+  color: var(--muted);
+}
+.more-version {
+  margin: 4px 0 0;
+  text-align: center;
+  font-family: var(--sans);
+}
+
+.marks-word {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* The settings of the Streithalle, at its end: folded, opened by a quiet button. */
+.wa-settings {
+  margin: 20px 0 0;
+}
+.wa-settings > summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.wa-settings > summary::-webkit-details-marker {
+  display: none;
+}
+.wa-settings[open] > summary {
+  margin-bottom: 12px;
+}
+
+/* The Wüstenzeit: the choice of habits by packages, the "i" with its bubble, what was kept. */
+.desert-lead {
+  font-style: italic;
+}
+.desert-pack {
+  margin: 14px 0 0;
+  padding: 4px 16px 10px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.desert-pack > :is(h4, h5, h6) {
+  margin: 12px 0 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+.desert-tagline {
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.desert-take {
+  margin: 4px 0 6px;
+}
+.desert-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.desert-item {
+  border-top: 1px solid var(--rule);
+}
+.desert-item .wa-row {
+  border-bottom: 0;
+}
+.desert-check {
+  display: flex;
+  flex: 1;
+  gap: 10px;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.desert-check input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--icon-gold);
+}
+.desert-check > span {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.desert-waits {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.desert-remove {
+  margin: 0 0 8px 30px;
+  font-size: 0.85rem;
+}
+.desert-item .confirm-inline {
+  margin: 0 0 8px 30px;
+}
+.desert-add {
+  margin-top: 4px;
+  border-top: 1px solid var(--rule);
+}
+.desert-add .btn {
+  margin-top: 12px;
+}
+/*
+ * The "i" looks as everywhere (fold.css). In a list its bubble stands below the
+ * habit's own line and moves the next lines down, so it never covers their "i".
+ */
+.desert-line {
+  position: relative;
+  flex-wrap: wrap;
+}
+.desert-line .info-bubble {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  flex: 1 0 100%;
+  max-width: none;
+  margin: 10px 0 6px;
+  box-shadow: none;
+}
+.desert-line .info-about {
+  color: var(--muted);
+}
+.desert-kept {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.desert-kept li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  padding: 6px 0;
+  border-top: 1px solid var(--rule);
+}
+.desert-kept li:first-child {
+  border-top: 0;
+}
+.desert-kept .muted {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+}
+.desert-guide h4 {
+  margin: 4px 0 0;
+}
+.desert-guide .desert-tagline {
+  font-size: 0.95rem;
+}
+.desert-standard {
+  margin-top: 14px;
+}
+.desert-adopt {
+  margin: 16px 0;
+}
+.habits-late {
+  margin: 0 0 6px;
+}
+
+/* After the review in the evening: the way to the Gebetskammer for longer writing. */
+.to-chamber {
+  margin: 14px 0 0;
+}
+.to-chamber p {
+  margin: 0 0 6px;
+}
+
+/* ---------------------------------------------------------------- Sunday: guide and prayer walk */
+/* LORD as in Luther Bibles: a capital H, the rest in small capitals. */
+.lord {
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+}
+.sunday-helps {
+  margin: 14px 0;
+}
+.sunday-rest .sunday-helps {
+  margin: 14px 0 0;
+}
+.preparation-hint {
+  display: block;
+  margin: 4px 0 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-m);
+  border: 1px dashed color-mix(in srgb, var(--gold) 55%, var(--rule));
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.preparation-hint:hover,
+.preparation-hint:focus-visible {
+  color: var(--ink);
+  border-style: solid;
+}
+.sunday-guide h3,
+.scripture-walk h3 {
+  margin: 22px 0 8px;
+}
+.sunday-guide section {
+  scroll-margin-top: 70px;
+}
+.guide-entry {
+  scroll-margin-top: 70px;
+}
+.guide-quote blockquote {
+  font-size: 1.08rem;
+}
+.guide-quote-source {
+  margin-top: 6px;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 400 !important;
+}
+.guide-sources ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.guide-sources h3 {
+  font-size: 0.95rem;
+}
+.walk-count {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.walk-step .flow-title {
+  margin-top: 2px;
+}
+.walk-passage {
+  margin: 12px 0 16px;
+}
+.walk-prose {
+  margin: 0 0 8px;
+}
+.walk-poem {
+  margin: 0 0 8px;
+}
+/* One line per line of the poem; a wrapped line hangs under its first word. */
+.walk-line {
+  display: block;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+.walk-line.is-indented {
+  padding-left: 2.4em;
+}
+.walk-pause {
+  margin: 18px 0 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-m);
+  background: color-mix(in srgb, var(--gold) 9%, transparent);
+  font-style: italic;
+}
+.walk-pause-mark {
+  font-style: normal;
+  color: var(--gold);
+}
+.walk-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+}
+.walk-source {
+  margin-top: 18px;
+}
+
+/* A Wüstenzeit in Advent (1.1): the invitation on "Heute" and in the Wüstenwanderung. */
+.season-invite {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-l);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--rule));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, var(--sheet)), var(--sheet));
+}
+.season-head {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.season-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--gold-soft);
+  color: var(--icon-gold);
+}
+.season-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.season-invite h3 {
+  margin: 1px 0 0;
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+.season-span {
+  margin: 10px 0 12px;
+}
+.season-dates {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+}
+.season-arena .wa-verse {
+  margin: 14px 0 10px;
+}
+.season-arena .season-span {
+  margin-top: 4px;
+}
+.season-decide {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.season-decide .btn,
+.season-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+}
+.season-actions {
+  display: grid;
+  gap: 8px;
+}
+.season-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: none;
+}
+.season-link:hover,
+.season-link:focus-visible {
+  text-decoration: underline;
+}
+.desert-guide .season-link {
+  margin-top: 0;
+}
+.season-note {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}

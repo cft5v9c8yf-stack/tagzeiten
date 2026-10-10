@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Anleitung zu Henoch, der Ordnung für Morgen und Abend: installieren, einrichten und mit der App durch den Tag gehen.">
+<title>Henoch Schritt für Schritt</title>
+<link rel="icon" href="img/favicon-64.png" type="image/png" sizes="64x64">
+<style>
+/* One reading column; each section pairs text with a phone screenshot beside it (wide) or below it (narrow). Colours and faces are Henoch's own. */
+@font-face { font-family: 'Literata'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/literata-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Literata'; font-style: italic; font-weight: 400; font-display: swap; src: url('fonts/literata-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Literata'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/literata-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/source-sans-3-latin-600-normal.woff2') format('woff2'); }
+
+:root {
+  --paper: #f6f4ef;
+  --sheet: #ffffff;
+  --ink: #1d2330;
+  --muted: #5e6571;
+  --rule: #ddd8ce;
+  --rubric: #8c2f2f;
+  --gold: #7f6200;
+  --gold-soft: #f7efd6;
+  --accent: #2e4057;
+  --warm-soft: #efede8;
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Source Sans 3', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --text: 40rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #131a26; --sheet: #1b2432; --ink: #e8e3d8; --muted: #9aa2af; --rule: #2c3748;
+    --rubric: #e07a6e; --gold: #e0b93a; --gold-soft: #2e2a1c; --accent: #d8d0c0; --warm-soft: #242832;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #131a26; --sheet: #1b2432; --ink: #e8e3d8; --muted: #9aa2af; --rule: #2c3748;
+  --rubric: #e07a6e; --gold: #e0b93a; --gold-soft: #2e2a1c; --accent: #d8d0c0; --warm-soft: #242832;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--sans);
+  -webkit-text-size-adjust: 100%;
+}
+.page { max-width: 64rem; margin: 0 auto; padding-inline: 20px; padding-block: 40px 72px; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.1rem, 6vw, 3.1rem); letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.55rem, 4vw, 2rem); }
+h3 { font-size: 1.2rem; }
+p, li, dd { max-width: var(--text); }
+p { margin: 0; }
+a { color: var(--gold); text-underline-offset: 3px; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+strong { font-weight: 600; }
+.path { font-family: var(--sans); font-weight: 600; }
+.ui { font-weight: 600; }
+.rubric { color: var(--rubric); font-family: var(--serif); font-style: italic; }
+
+/* Head */
+.head { display: grid; gap: 18px; padding-bottom: 36px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+.lead { font-family: var(--serif); font-size: 1.2rem; line-height: 1.55; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 4px 0 0; list-style: none; }
+.facts li { background: var(--gold-soft); color: var(--ink); border-radius: 999px; padding: 4px 12px; font-size: 0.92rem; }
+
+/* Contents */
+.toc { padding-block: 28px; border-bottom: 1px solid var(--rule); }
+.toc h2 { font-size: 1.1rem; font-family: var(--sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.toc ol { margin: 0; padding: 0; list-style: none; columns: 2 15rem; column-gap: 32px; }
+.toc li { break-inside: avoid; padding: 3px 0; }
+.toc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.toc a:hover { color: var(--gold); border-color: var(--gold); }
+
+/* Sections */
+section.part { padding-block: 48px; border-bottom: 1px solid var(--rule); display: grid; gap: 22px; }
+section.part > header { display: grid; gap: 8px; }
+.time { font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.row { display: grid; gap: 22px; align-items: start; }
+.row + .row { margin-top: 10px; }
+.text { display: grid; gap: 14px; min-width: 0; }
+@media (min-width: 860px) {
+  .row { grid-template-columns: minmax(0, 1fr) 270px; gap: 40px; }
+  .row.flip { grid-template-columns: 270px minmax(0, 1fr); }
+  .row.flip .shot { order: -1; }
+}
+
+/* Screenshots in a quiet phone frame */
+.shot { margin: 0; display: grid; gap: 8px; justify-items: center; }
+.shot img {
+  display: block; width: 100%; max-width: 270px; height: auto; aspect-ratio: 780 / 1688;
+  border-radius: 26px; border: 1px solid var(--rule); background: var(--sheet);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 12px 28px -18px rgb(29 35 48 / 0.35);
+}
+.shot figcaption { font-size: 0.88rem; color: var(--muted); text-align: center; max-width: 270px; }
+.shots2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; justify-items: center; }
+
+/* Lists */
+ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+ol.steps > li { counter-increment: s; position: relative; padding-left: 40px; }
+ol.steps > li::before {
+  content: counter(s); position: absolute; left: 0; top: 0.05em; width: 27px; height: 27px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--gold-soft); color: var(--gold); font-weight: 600; font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+}
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+dl.flow { margin: 0; display: grid; gap: 12px; }
+dl.flow dt { font-family: var(--serif); font-weight: 600; }
+dl.flow dd { margin: 2px 0 0; }
+
+/* Notes */
+.note { background: var(--sheet); border: 1px solid var(--rule); border-left: 3px solid var(--gold); border-radius: 10px; padding: 14px 16px; max-width: calc(var(--text) + 34px); }
+.note strong:first-child { display: block; margin-bottom: 2px; }
+
+.tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 12px; padding: 0; margin: 0; list-style: none; }
+.tabs li { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; max-width: none; }
+.tabs b { font-family: var(--serif); font-size: 1.08rem; }
+.tabs span { color: var(--muted); font-size: 0.95rem; }
+
+details.faq { border-bottom: 1px solid var(--rule); padding-block: 12px; max-width: calc(var(--text) + 2rem); }
+details.faq summary { cursor: pointer; font-family: var(--serif); font-weight: 600; font-size: 1.05rem; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+details.faq summary::-webkit-details-marker { display: none; }
+details.faq summary::before { content: '+'; color: var(--gold); font-family: var(--sans); font-weight: 600; width: 1ch; flex: none; }
+details.faq[open] summary::before { content: '–'; }
+details.faq p { margin-top: 8px; padding-left: calc(1ch + 10px); }
+
+.foot { padding-top: 32px; color: var(--muted); font-size: 0.92rem; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+</head>
+<body>
+
+<main class="page">
+  <header class="head">
+    <p class="eyebrow">Anleitung · Henoch 1.0</p>
+    <h1>Henoch Schritt für Schritt</h1>
+    <p class="lead">Henoch ist eine Ordnung für Morgen und Abend. Die App führt dich durch Gebet und Bibellese, hält die Gewohnheiten fest, die dir wichtig sind, und gibt dir einen Ort für das, was dich bewegt. Diese Anleitung geht mit dir durch einen Tag: vom Einrichten über die Stille Zeit am Morgen bis zum Nachtgebet.</p>
+    <ul class="facts" aria-label="Das Wichtigste vorab">
+      <li>kostenlos, ohne Werbung</li>
+      <li>ohne Konto: alles bleibt auf deinem Handy</li>
+      <li>läuft auch ohne Internet</li>
+      <li>die Bibel liest du auf Papier</li>
+    </ul>
+  </header>
+
+  <nav class="toc" aria-label="Inhalt">
+    <h2>Inhalt</h2>
+    <ol>
+      <li><a href="#installieren">Henoch auf dein Handy holen</a></li>
+      <li><a href="#einrichten">Am ersten Tag einrichten</a></li>
+      <li><a href="#bereiche">Die fünf Bereiche</a></li>
+      <li><a href="#morgen">Am Morgen</a></li>
+      <li><a href="#tag">Über den Tag</a></li>
+      <li><a href="#abend">Am Abend</a></li>
+      <li><a href="#sonntag">Am Sonntag</a></li>
+      <li><a href="#arena">Die Arena</a></li>
+      <li><a href="#wuestenzeit">Eine Wüstenzeit</a></li>
+      <li><a href="#wort">Wort und Lehre</a></li>
+      <li><a href="#rueckblick">Zurückschauen</a></li>
+      <li><a href="#daten">Deine Daten</a></li>
+      <li><a href="#fragen">Häufige Fragen</a></li>
+    </ol>
+  </nav>
+
+  <section class="part" id="installieren" aria-labelledby="h-installieren">
+    <header><p class="time">Einmal, etwa zwei Minuten</p><h2 id="h-installieren">Henoch auf dein Handy holen</h2></header>
+    <div class="text">
+      <p>Henoch kommt nicht aus dem App Store oder dem Play Store. Du öffnest die Adresse <strong>mein.henoch.app</strong> im Browser und legst die App auf deinen Startbildschirm. Danach öffnet sie sich wie jede andere App, ohne Adressleiste, und läuft auch ohne Internet.</p>
+      <div class="row">
+        <div class="text">
+          <h3>iPhone</h3>
+          <ol class="steps">
+            <li>Öffne <strong>Safari</strong> (nicht Chrome) und rufe <strong>mein.henoch.app</strong> auf.</li>
+            <li>Tippe unten auf <span class="ui">Teilen</span>, das Quadrat mit dem Pfeil nach oben.</li>
+            <li>Wähle <span class="ui">Zum Home-Bildschirm</span> und tippe oben rechts auf <span class="ui">Hinzufügen</span>.</li>
+          </ol>
+        </div>
+        <div class="text">
+          <h3>Android</h3>
+          <ol class="steps">
+            <li>Öffne <strong>Chrome</strong> und rufe <strong>mein.henoch.app</strong> auf.</li>
+            <li>Erscheint unten <span class="ui">Henoch installieren</span>, tippe darauf. Sonst oben rechts das Menü (⋮) → <span class="ui">App installieren</span> oder <span class="ui">Zum Startbildschirm hinzufügen</span>.</li>
+            <li>Bestätige mit <span class="ui">Installieren</span>. Henoch liegt jetzt mit der Lutherrose auf deinem Startbildschirm.</li>
+          </ol>
+        </div>
+      </div>
+      <p class="note"><strong>Öffne Henoch ab jetzt über das Symbol.</strong> Auf dem iPhone haben Safari und die installierte App getrennte Speicher: Was du im Browser einträgst, siehst du in der App nicht. Die ausführliche Anleitung, auch für Samsung Internet, steht in der App unter <span class="path">Mehr → Einstellungen → App installieren</span>.</p>
+    </div>
+  </section>
+
+  <section class="part" id="einrichten" aria-labelledby="h-einrichten">
+    <header><p class="time">Einmal, etwa zehn Minuten</p><h2 id="h-einrichten">Am ersten Tag einrichten</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Henoch funktioniert sofort. Diese sechs Schritte machen die App zu deiner.</p>
+        <ol class="steps">
+          <li><strong>Dein Haus eintragen.</strong> Unter <span class="path">Mehr → Gebet → Mein Haus</span> trägst du deine Frau und deine Kinder mit Namen ein, die Kinder als Sohn oder Tochter, und für jeden ein Anliegen. Erst dann erscheinen die Gewohnheiten für die Familie, etwa Tischgebet und Kindersegen, und die Fürbitte am Morgen nennt sie mit Namen. Jeden Tag steht einer im Mittelpunkt: montags deine Frau, dienstags bis freitags je ein Kind, samstags eure Ehe, sonntags das ganze Haus.</li>
+          <li><strong>Deine Zeiten festlegen.</strong> Unter <span class="path">Mehr → Zeiten</span> stehen Aufstehen, Stille Zeit, Vesper, Nachtgebet und Licht aus. Mit <span class="ui">Tage unterschiedlich</span> gibst du etwa dem Wochenende eigene Zeiten. Henoch schickt keine Erinnerungen; die Zeiten ordnen den Tag unter „Heute“.</li>
+          <li><strong>Den Leseplan wählen.</strong> Unter <span class="path">Wort → Leseplan einstellen</span>: <span class="ui">AT und NT</span> liest jeden Tag einen Abschnitt aus beiden Testamenten, mit <span class="ui">Eigener Plan</span> bestimmst du Buch, Kapitel und Kapitel am Tag selbst.</li>
+          <li><strong>Deine Gewohnheiten auswählen.</strong> Unter <span class="path">Mehr → Gewohnheiten</span> schaltest du Vorlagen ein oder aus. Mit dem Stern hältst du eine Gewohnheit „Im Blick“. Unter <span class="ui">Eigene anlegen</span> kommen eigene dazu: täglich, wöchentlich (auch mehrmals in der Woche) oder monatlich.</li>
+          <li><strong>Die Darstellung anpassen.</strong> Unter <span class="path">Mehr → Einstellungen → Darstellung</span>: das Farbschema (System, Hell, Dunkel) und welche Teile du nutzt, also „Am Bett“, Nachtgebet, Wochenrückblick, geistliche Waffenrüstung, Sonntagsruhe und Wüstenzeit.</li>
+          <li><strong>Die Speicherung zusagen lassen.</strong> Unter <span class="path">Mehr → Einstellungen → Deine Daten</span> tippst du auf <span class="ui">Speicherung</span>. Dann verspricht der Browser, deine Einträge nicht von selbst zu löschen.</li>
+        </ol>
+      </div>
+      <figure class="shot">
+        <img src="img/20-gebet.jpg" width="780" height="1688" loading="lazy" alt="Mehr, Gebet: die Kacheln Mein Haus mit Anna, Paul und Marie, Gebetsübersicht und Gebetsschatz.">
+        <figcaption>Mehr → Gebet: Mein Haus, Gebetsübersicht, Gebetsschatz</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="bereiche" aria-labelledby="h-bereiche">
+    <header><h2 id="h-bereiche">Die fünf Bereiche</h2></header>
+    <div class="text">
+      <p>Unten auf jedem Bildschirm liegt die Leiste mit fünf Bereichen. Henoch startet immer auf <strong>Heute</strong>.</p>
+      <ul class="tabs">
+        <li><b>Wort</b><span>Leseplan, Bibel und Lehre: Katechismus und Bekenntnisse</span></li>
+        <li><b>Andacht</b><span>Morgen mit „Am Bett“ und Stiller Zeit, Abend mit Vesper und Nachtgebet</span></li>
+        <li><b>Heute</b><span>dein Tag auf einer Seite</span></li>
+        <li><b>Arena</b><span>Gebetskammer, Eisenschmiede, Wüstenwanderung</span></li>
+        <li><b>Mehr</b><span>Gewohnheiten, Gebet, Zeiten, Rückblick, Einstellungen</span></li>
+      </ul>
+      <p>Oben rechts sucht die <strong>Lupe</strong> in den Texten der App und in deinen Einträgen.</p>
+    </div>
+  </section>
+
+  <section class="part" id="morgen" aria-labelledby="h-morgen">
+    <header><p class="time">Gleich nach dem Aufstehen</p><h2 id="h-morgen">Am Morgen</h2></header>
+    <div class="row">
+      <div class="text">
+        <h3>Heute: dein Tag auf einen Blick</h3>
+        <p>Oben stehen das Datum und der Tagesbogen mit deinen Zeiten; der Punkt zeigt, wo du im Tag gerade stehst. Darunter zwei Kacheln, <strong>Stille Zeit</strong> und <strong>Vesper und Nachtgebet</strong>, jeweils mit ihrem Stand: offen, wie viele Schritte, abgeschlossen. Ein Tipp darauf öffnet die Ordnung.</p>
+        <p><span class="ui">Diese Woche</span> führt zum Sonntag. <span class="ui">Heute lesen</span> zeigt die beiden Abschnitte des Leseplans. <span class="ui">Die drei Dinge</span> füllst du in der Stillen Zeit, nach dem Wort.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/01-heute.jpg" width="780" height="1688" loading="lazy" alt="Heute: Datum, Tagesbogen, die Kacheln Stille Zeit und Vesper und Nachtgebet, der Sonntag der Woche, die Lesung des Tages.">
+        <figcaption>Heute</figcaption>
+      </figure>
+    </div>
+    <div class="row flip">
+      <div class="text">
+        <h3>Am Bett</h3>
+        <p>Noch bevor der Tag anfängt: Kreuzzeichen, Vaterunser, Taufgedächtnis und Luthers Morgensegen. Die Stille Zeit beginnt danach, am Tisch. Wenn nicht mehr geht, genügen Vaterunser und Morgensegen am Bett.</p>
+        <h3>Die Stille Zeit</h3>
+        <p>Tippe auf die Kachel oder auf <span class="path">Andacht → Morgen</span>. Wähle <span class="ui">Ganze Ordnung</span> (45 Minuten) oder <span class="ui">Kurzform</span> (20 Minuten). Die Kurzform zählt ganz.</p>
+        <p>Die Leiste mit den Zeichen zeigt die Schritte; jeden kannst du direkt antippen. <span class="ui">Weiter zu: …</span> führt zum nächsten. Mit <span class="ui">Zeit starten</span> läuft oben eine Uhr mit und zeigt, welcher Schritt gerade dran ist.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/03-am-bett.jpg" width="780" height="1688" loading="lazy" alt="Andacht, Morgen: die Stille Zeit mit Ganze Ordnung und Kurzform, die Leiste der Schritte und der erste Schritt Am Bett.">
+        <figcaption>Andacht → Morgen, erster Schritt</figcaption>
+      </figure>
+    </div>
+    <div class="row">
+      <div class="text">
+        <dl class="flow">
+          <dt>Eröffnung</dt>
+          <dd>Versikel und Gloria, wenn du willst ein Hymnus, dann der Psalm des Wochentages.</dd>
+          <dt>Das Wort</dt>
+          <dd>Die App zeigt die Stellen; gelesen wird in deiner gedruckten Bibel, mit Farbstiften. Dreimal: ohne Stift, mit Stift nach Farbcode, dann zusammenfassen. Trag den Vers ein, den du mitnimmst, und beantworte die Doppelfrage: Was lerne ich über Gott, was über den Menschen? Unter <span class="ui">Mehr notieren</span> ist Platz für Hauptaussage, Frage des Tages, Heilsgeschichte und die Randzeichen. Die Lesemethode stammt von Hanniel Strebel („Überblick: Hanniel zum Lesen der Bibel“, hanniel.ch).</dd>
+          <dt>Das Gebet</dt>
+          <dd>Über deinen Vers oder das Katechismusstück des Tages betest du den vierfachen Kranz nach Luther: Unterricht, Danksagung, Beichte, Bitte. Die Beichte hat kein Eingabefeld, <span class="rubric">sie wird gebetet, nicht notiert</span>; auf sie folgt der Zuspruch. Dann freies Gebet und eine Minute Stille.</dd>
+        </dl>
+      </div>
+      <div class="shots2">
+        <figure class="shot">
+          <img src="img/04-das-wort.jpg" width="780" height="1688" loading="lazy" alt="Schritt Das Wort: die Stellen des Tages, der Hinweis zum dreimaligen Lesen, Felder für Stelle und Vers und die Doppelfrage.">
+          <figcaption>Das Wort</figcaption>
+        </figure>
+      </div>
+    </div>
+    <div class="row flip">
+      <div class="text">
+        <dl class="flow">
+          <dt>Die Antwort</dt>
+          <dd>Das Benedictus, die Fürbitte für dein Haus mit dem, der heute im Mittelpunkt steht, die Anliegen des Wochentages und das Vaterunser.</dd>
+          <dt>Die Ausrichtung</dt>
+          <dd>Erst jetzt wird der Tag angesehen. Zuerst das Stück der geistlichen Waffenrüstung für heute, dann die drei Dinge: eines aus dem Wort, eines für dein Haus, eines für die Arbeit. Was du gestern Abend auf „Morgen wieder“ gesetzt hast, steht als Vorschlag da; ein Tipp übernimmt es.</dd>
+          <dt>Der Segen</dt>
+          <dd>Kollekte und Segen. Mit <span class="ui">Stille Zeit abschließen</span> steht sie unter Heute als abgeschlossen.</dd>
+        </dl>
+        <p class="note"><strong>Still beim Beten.</strong> Unter <span class="path">Mehr → Einstellungen → Flugmodus beim Beten</span> steht, wie dein Handy von selbst still wird, sobald du Henoch öffnest.</p>
+      </div>
+      <div class="shots2">
+        <figure class="shot">
+          <img src="img/05-das-gebet.jpg" width="780" height="1688" loading="lazy" alt="Schritt Das Gebet: Felder für Unterricht und Danksagung, die Beichte ohne Feld mit dem Hinweis Wird gebetet, nicht notiert, danach der Zuspruch aus Psalm 103.">
+          <figcaption>Das Gebet: die Beichte ohne Feld</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/06-ausrichtung.jpg" width="780" height="1688" loading="lazy" alt="Die drei Dinge: ein Vorschlag von gestern, Felder für Wort, Haus und Werk.">
+          <figcaption>Die drei Dinge</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="tag" aria-labelledby="h-tag">
+    <header><p class="time">Zwischendurch</p><h2 id="h-tag">Über den Tag</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Unter <span class="path">Heute → Gewohnheiten</span> hakst du ab, was du heute gehalten hast: tägliche, wöchentliche und monatliche Gewohnheiten. Was du mit dem Stern versehen hast, steht oben unter <span class="ui">Im Blick</span>.</p>
+        <p>Mit der Leiste der Wochentage wählst du einen anderen Tag, etwa um etwas nachzutragen. Montags steht dort <span class="ui">Gestern nachtragen</span> für den Sonntag. Darunter klappst du die <span class="ui">Wochenübersicht</span> auf.</p>
+        <ul class="plain">
+          <li>Stille Zeit, Vesper und Nachtgebet hakst du nicht von Hand ab: Sie gelten, sobald du sie abschließt.</li>
+          <li><span class="ui">Bibel lesen</span> abhaken rückt den Leseplan weiter.</li>
+          <li>Ein Abschnitt aus dem Katechismus mit den Kindern: unter <span class="path">Wort → Lehre</span> steht das Hauptstück der Woche. <span class="ui">Am Tisch abfragen</span> zeigt es in Frage und Antwort, <span class="ui">Mit den Kindern gelernt</span> hakt die Gewohnheit ab.</li>
+        </ul>
+        <p>Henoch zählt keine Serien und kennt keinen Rückstand. Ein leeres Kästchen ist kein Urteil, nur eine ehrliche Auskunft.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/02-gewohnheiten.jpg" width="780" height="1688" loading="lazy" alt="Die Gewohnheiten unter Heute: Leiste der Wochentage, Im Blick, Täglich, Wöchentlich und Monatlich mit Kreisen zum Abhaken.">
+        <figcaption>Heute → Gewohnheiten</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="abend" aria-labelledby="h-abend">
+    <header><p class="time">Am Abend und vor dem Schlafen</p><h2 id="h-abend">Am Abend</h2></header>
+    <div class="row">
+      <div class="text">
+        <h3>Die Vesper</h3>
+        <p>Unter <span class="path">Andacht → Abend</span> oder über die Kachel unter Heute. Die Vesper ist der persönliche Abschluss des Tages, für dich allein (10 Minuten, Kurzform 5): Lob mit dem Psalm, dann das Wort, eine kurze Lesung oder eine Andacht aus einem Buch, das du zur Hand hast, dann Fürbitte, Vaterunser und Kollekte. <span class="ui">Vesper abschließen</span> führt zum Nachtgebet.</p>
+        <h3>Das Nachtgebet</h3>
+        <p>Am Bett, 10 Minuten oder die <span class="ui">Kurzform für müde Tage</span>:</p>
+        <dl class="flow">
+          <dt>Kreuz, Glaube, Vaterunser</dt>
+          <dd>Das Kreuzzeichen, das Glaubensbekenntnis, das Vaterunser.</dd>
+          <dt>Dank und Rückschau</dt>
+          <dd>Zwei oder drei Dinge, für die du dankst. Dann die drei Dinge vom Morgen: geschehen, angefangen oder nicht geschehen, und ob sie morgen wieder dran sind oder fallen gelassen werden. Ein nicht erreichtes Ziel ist keine Sünde.</dd>
+          <dt>Prüfung und Zuspruch</dt>
+          <dd>Die Prüfung an den Zehn Geboten in deinem Stand, als Ehemann, Vater und Kollege, mit der Frage zur Waffenrüstung des Tages. Dann das Bekenntnis und der Zuspruch der Vergebung. Auch hier gibt es kein Feld.</dd>
+          <dt>Abendsegen</dt>
+          <dd>Das Taufgedächtnis, die Fürbitte für die Menschen des Tages, Luthers Abendsegen und der Segen über dein Haus. <span class="ui">Tag abschließen</span>, und der Abend steht unter Heute als abgeschlossen.</dd>
+        </dl>
+        <p>Was dich heute bewegt hat, schreibst du mit <span class="ui">In der Gebetskammer weiterschreiben</span> ausführlicher auf. Wer kein Nachtgebet am Bett möchte, blendet es unter Darstellung aus; dann schließt die Vesper den Tag mit Rückschau, Prüfung und Zuspruch.</p>
+      </div>
+      <div class="shots2">
+        <figure class="shot">
+          <img src="img/07-vesper.jpg" width="780" height="1688" loading="lazy" alt="Andacht, Abend: die Vesper mit den Schritten Lob, Wort, Gebet und Nacht.">
+          <figcaption>Die Vesper</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/08b-zuspruch.jpg" width="780" height="1688" loading="lazy" alt="Nachtgebet, Prüfung und Zuspruch: der Zuspruch aus dem ersten Johannesbrief.">
+          <figcaption>Nachtgebet: der Zuspruch zuletzt</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="sonntag" aria-labelledby="h-sonntag">
+    <header><p class="time">Einmal in der Woche</p><h2 id="h-sonntag">Am Sonntag</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Unter Heute führt <span class="ui">Diese Woche</span> zum Sonntag: sein Name im Kirchenjahr, der Wochenspruch, seine Bedeutung, Evangelium und Epistel mit kurzer Inhaltsangabe und sein Platz im Kirchenjahr. Mit den Pfeilen blätterst du zum vorigen und nächsten Sonntag.</p>
+        <p>Dazu zwei Hilfen: <span class="ui">Der Sonntag – eine Hilfe für das Haus</span> zum Lesen und <span class="ui">Mit der Schrift beten</span>, ein Gebetsgang zum Sonntag.</p>
+        <ul class="plain">
+          <li>Mit der <strong>Sonntagsruhe</strong> (unter Darstellung) ruhen am Sonntag die Gewohnheiten, und oben unter Heute steht der Sonntag.</li>
+          <li>Am Sonntagabend tritt im Nachtgebet der <strong>Wochenrückblick</strong> an die Stelle von Dank und Rückschau: Dank für deine Frau, deine Kinder, die Gemeinde, die Arbeit, die Nächsten und unser Land, und höchstens ein Vorsatz.</li>
+        </ul>
+      </div>
+      <figure class="shot">
+        <img src="img/11-sonntag.jpg" width="780" height="1688" loading="lazy" alt="Die Seite des Sonntags: 19. Sonntag nach Trinitatis mit Wochenspruch und Bedeutung.">
+        <figcaption>Der Sonntag der Woche</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="arena" aria-labelledby="h-arena">
+    <header><h2 id="h-arena">Die Arena</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Die Arena hat drei Orte.</p>
+        <h3>Gebetskammer</h3>
+        <p>Dein Ort für das, was dich bewegt. <span class="ui">Neuen Eintrag schreiben</span>: Bibelstellen, Gebetsanliegen und ein freier Text, getippt oder mit dem Finger geschrieben (<span class="ui">Handschrift</span>). Unter jedem Eintrag steht ein Zuspruch. Ist eine Sache durch, archivierst du den Eintrag; er steht dann im Rückblick.</p>
+        <h3>Eisenschmiede</h3>
+        <p>Für das Treffen mit deinen Brüdern: <span class="ui">Anliegen fürs Treffen aufschreiben</span> mit Datum, Bibelstellen, Gebetsanliegen und den Punkten, über die ihr reden wollt. Besprochenes hakst du ab, <span class="ui">Besprochen – archivieren</span> legt das Treffen in den Rückblick.</p>
+        <h3>Wüstenwanderung</h3>
+        <p>Der Ort für eine Wüstenzeit, siehe nächster Abschnitt.</p>
+      </div>
+      <div class="shots2">
+        <figure class="shot">
+          <img src="img/12-arena.jpg" width="780" height="1688" loading="lazy" alt="Die Arena mit Gebetskammer, Eisenschmiede und Wüstenwanderung.">
+          <figcaption>Arena</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/13-gebetskammer.jpg" width="780" height="1688" loading="lazy" alt="Ein Eintrag der Gebetskammer mit Bibelstellen, Gebetsanliegen und freiem Text.">
+          <figcaption>Ein Eintrag der Gebetskammer</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="wuestenzeit" aria-labelledby="h-wuestenzeit">
+    <header><p class="time">40 Tage, 90 Tage oder so lange du willst</p><h2 id="h-wuestenzeit">Eine Wüstenzeit</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Eine Wüstenzeit ist ein fester Zeitraum mit wenigen festen Gewohnheiten: weniger Ablenkung, mehr Raum für Gott. Sie ist kein Leistungsprogramm.</p>
+        <ol class="steps">
+          <li><span class="path">Arena → Wüstenwanderung → Wüstenzeit beginnen</span>. Wähle die Dauer (40, 90 oder frei) und das Startdatum.</li>
+          <li>Wähle die Gewohnheiten, ein ganzes Paket mit <span class="ui">Paket übernehmen</span> oder einzeln:
+            <ul class="plain">
+              <li><strong>Aufbruch</strong>, für den Einstieg</li>
+              <li><strong>Wüstenweg</strong>, die klassische Wüstenzeit</li>
+              <li><strong>Wie die Wüstenväter</strong>, für alle, die tiefer gehen wollen</li>
+              <li><strong>Hauskirche</strong>, für die ganze Familie</li>
+              <li><strong>Der 90-Tage-Standard</strong>, mit Wochenschwerpunkten</li>
+            </ul>
+            Dazu weitere Gewohnheiten und eigene. Das <span class="ui">i</span> erklärt jede.</li>
+          <li>Jeden Tag hakst du ab, unter Heute in der Gruppe Wüstenzeit oder in der Arena unter <span class="ui">Tag</span>. Was eine Gebetszeit schon enthält, etwa den Morgensegen in der Stillen Zeit oder den Dank im Nachtgebet, hakt Henoch selbst ab.</li>
+          <li>Unter <span class="ui">Woche</span> siehst du die Woche im Überblick und am Ende jeder Woche drei Fragen für den Rückblick. Hast du einen Tag ausgelassen, steht oben einfach: <em>Heute neu anfangen.</em></li>
+          <li>Nach dem letzten Tag zeigt Henoch, was du gehalten hast. Was bleiben soll, übernimmst du mit einem Tipp in den Alltag.</li>
+        </ol>
+      </div>
+      <div class="shots2">
+        <figure class="shot">
+          <img src="img/16-wueste-pakete.jpg" width="780" height="1688" loading="lazy" alt="Die Wahl der Gewohnheiten: das Paket Aufbruch mit Beschreibung, Vers und Paket übernehmen.">
+          <figcaption>Ein Paket wählen</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="img/17-wueste-tag.jpg" width="780" height="1688" loading="lazy" alt="Die laufende Wüstenzeit: Vers, Tag 1 von 40, die Gewohnheiten des Tages mit dem i daneben.">
+          <figcaption>Tag 1 von 40</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="wort" aria-labelledby="h-wort">
+    <header><h2 id="h-wort">Wort und Lehre</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Unter <strong>Wort</strong> stehen oben die Abschnitte des Tages, darunter die nächsten. <span class="ui">So wird gelesen</span> erklärt die Lesemethode mit Farbcode und Randzeichen. Hast du ausgesetzt, machst du einfach beim nächsten Abschnitt weiter: Der Plan läuft nach Fortschritt, nicht nach Datum.</p>
+        <p>Unter <strong>Lehre</strong> lernst du jede Woche ein Hauptstück aus Luthers Kleinem Katechismus. Unter <span class="ui">Lesen</span> stehen der Große Katechismus und die Bekenntnisschriften des Konkordienbuchs. Vom Sonntag aus kommst du ins Kirchenjahr.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/09-wort.jpg" width="780" height="1688" loading="lazy" alt="Wort: Heute lesen und Danach mit den nächsten Abschnitten aus Altem und Neuem Testament.">
+        <figcaption>Wort</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="rueckblick" aria-labelledby="h-rueckblick">
+    <header><h2 id="h-rueckblick">Zurückschauen</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Unter <span class="path">Mehr → Rückblick</span> steht, was du festgehalten hast:</p>
+        <ul class="plain">
+          <li><strong>Tage</strong>: ein Tipp öffnet alle Eingaben eines Tages, von dort auch seine Stille Zeit und seinen Abend</li>
+          <li><strong>Versesammlung</strong>: jeder Vers, den du mitgenommen hast</li>
+          <li><strong>Arena</strong>: archivierte Einträge</li>
+          <li><strong>Gebetserhörungen</strong>: was du unter Mein Haus mit <span class="ui">Erhört</span> festgehalten hast</li>
+          <li><strong>Wüstenwanderung</strong>: frühere Wüstenzeiten mit ihren Wochenrückblicken</li>
+          <li><strong>Gewohnheiten</strong>: die letzten acht Wochen, wenn unter Darstellung eingeschaltet</li>
+        </ul>
+        <p>Das Suchfeld findet Verse, Namen und Bücher. Unter Heute zeigt <span class="ui">Die letzten vier Wochen</span> eine stille Punktreihe: Morgen und Abend gebetet, eines von beiden oder offen.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/21-rueckblick.jpg" width="780" height="1688" loading="lazy" alt="Der Rückblick mit den Ansichten Tage, Versesammlung, Arena, Gebetserhörungen und Gewohnheiten und einer Liste der Tage.">
+        <figcaption>Mehr → Rückblick</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="daten" aria-labelledby="h-daten">
+    <header><h2 id="h-daten">Deine Daten</h2></header>
+    <div class="row">
+      <div class="text">
+        <p>Alles, was du einträgst, bleibt auf deinem Handy. Es gibt kein Konto, keine Übertragung und keine Tracker. Darum sorgst du selbst für eine Sicherung:</p>
+        <ul class="plain">
+          <li><span class="path">Mehr → Einstellungen → Deine Daten → Exportieren</span>: als Text zum Lesen oder als Sicherung, eine Datei zum Einspielen.</li>
+          <li><strong>Neues Handy:</strong> dort Henoch installieren und <span class="ui">Sicherung einspielen</span>.</li>
+          <li><span class="ui">Alles löschen</span> entfernt alle Einträge vom Gerät. Wer die App deinstalliert oder die Websitedaten löscht, löscht sie auch.</li>
+        </ul>
+        <p><strong>Neue Versionen</strong> kommen von selbst. Erscheint <em>Eine neue Version der App ist bereit</em>, lädt <span class="ui">Jetzt aktualisieren</span> sie, <span class="ui">Später</span> wartet. Deine Einträge bleiben dabei erhalten. Welche Version du nutzt, steht ganz unten unter Mehr.</p>
+      </div>
+      <figure class="shot">
+        <img src="img/22-daten.jpg" width="780" height="1688" loading="lazy" alt="Einstellungen, Deine Daten: Speicherung, Exportieren, Sicherung einspielen und Alles löschen.">
+        <figcaption>Mehr → Einstellungen → Deine Daten</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="part" id="fragen" aria-labelledby="h-fragen">
+    <header><h2 id="h-fragen">Häufige Fragen</h2></header>
+    <div>
+      <details class="faq"><summary>Ich habe ein paar Tage nicht gebetet. Muss ich etwas nachholen?</summary><p>Nein. Der Leseplan macht beim nächsten Abschnitt weiter, und es gibt keine Serien und keinen Rückstand. Fang heute wieder an.</p></details>
+      <details class="faq"><summary>Wo schreibe ich auf, was ich bekenne?</summary><p>Nirgends. Beichte und Prüfung werden gebetet, nicht notiert. Henoch speichert keine Sünden.</p></details>
+      <details class="faq"><summary>Zählt die Kurzform?</summary><p>Ja, ganz. Jede Ordnung hat eine Kurzform; wer sie betet, hat die Ordnung gebetet.</p></details>
+      <details class="faq"><summary>Ich bin nicht verheiratet oder habe keine Kinder.</summary><p>Dann trägst du unter Mein Haus nur ein, was zu dir passt. Gewohnheiten und Fürbitten für Frau oder Kinder erscheinen erst, wenn sie eingetragen sind.</p></details>
+      <details class="faq"><summary>Brauche ich Internet?</summary><p>Nur zum Installieren und für neue Versionen. Beten, Lesen und Eintragen gehen auch im Flugmodus.</p></details>
+      <details class="faq"><summary>Kann ich Henoch auf mehreren Geräten nutzen?</summary><p>Einen Abgleich zwischen Geräten gibt es nicht. Mit Exportieren und Sicherung einspielen nimmst du deine Einträge auf ein anderes Gerät mit.</p></details>
+      <details class="faq"><summary>Was kostet Henoch?</summary><p>Nichts. Henoch ist ein privates Angebot, ohne Werbung und ohne Konto.</p></details>
+      <details class="faq"><summary>An wen wende ich mich mit Fragen?</summary><p>Schreib an <strong>kontakt@henoch.app</strong>.</p></details>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Henoch 1.0 · mein.henoch.app · Impressum und Datenschutz stehen in der App unter Mehr.</p>
+    <p>Die Bilder zeigen Beispieldaten; die Namen darin sind erfunden.</p>
+  </footer>
+</main>
+</body>
+</html>
