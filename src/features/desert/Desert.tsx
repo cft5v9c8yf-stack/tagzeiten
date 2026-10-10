@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { downloadText } from '../../app/files';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
@@ -16,6 +16,7 @@ import {
   tickedOn,
   usesStandard,
 } from '../../domain/desert';
+import { arenaOffer, seasonLinkOf } from '../../domain/seasons';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import { activeRun, endDateOf, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
@@ -26,6 +27,7 @@ import { DesertChoice } from './DesertChoice';
 import { DesertDay } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { WithInfo } from './DesertInfo';
+import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 
 const dayLabel = (d: DateKey) => `${WEEKDAY_SHORT[fromKey(d).getDay()]} ${fromKey(d).getDate()}.${fromKey(d).getMonth() + 1}.`;
 
@@ -59,7 +61,7 @@ const runs = (parts: readonly Run[]) =>
  * stands above, at the way in). The 90-Tage-Standard is a package (0.40):
  * its guide stands with it in the choice, and here while a Wüstenzeit holds it.
  */
-export function DesertGuide({ head = true, focus }: { head?: boolean; focus?: number }) {
+export function DesertGuide({ head = true, focus, link }: { head?: boolean; focus?: number; link?: string }) {
   return (
     <div className="desert-guide">
       {head && <GuideHead />}
@@ -67,6 +69,11 @@ export function DesertGuide({ head = true, focus }: { head?: boolean; focus?: nu
         <p key={i}>{runs(p)}</p>
       ))}
       {head && <WaVerse verse={DESERT_GUIDE.verse} />}
+      {link && (
+        <p>
+          <SeasonLink href={link} />
+        </p>
+      )}
       {focus !== undefined && (
         <details className="wa-settings desert-standard">
           <summary>Der 90-Tage-Standard</summary>
@@ -381,6 +388,7 @@ function Dashboard({ run }: { run: WinterArcRun }) {
           {view === 'guide' && (
             <DesertGuide
               focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), desertWeeks(run).length), desertWeeks(run).length) : undefined}
+              link={seasonLinkOf(run)}
             />
           )}
           <details className="wa-settings">
@@ -471,27 +479,41 @@ function Closing({ run }: { run: WinterArcRun }) {
 
 /** No Wüstenzeit under way: the Word, the way in, then the guide (0.40: the way in no longer below it). */
 function Start() {
+  const store = useStore();
   const profile = useProfile();
-  const [starting, setStarting] = useState(false);
+  // In Advent the invitation stands above; "Wüstenzeit vorbereiten" on "Heute" opens its start at once.
+  const offer = arenaOffer(profile, store.today());
+  const [params] = useSearchParams();
+  const [starting, setStarting] = useState<'season' | 'free' | false>(offer && params.get('vorbereiten') ? 'season' : false);
+  const earlier = profile.winterArc.runs.length > 0;
   return (
     <>
       <div className="desert-guide">
         <GuideHead />
         <WaVerse verse={DESERT_GUIDE.verse} />
       </div>
-      <div className="panel wa-head wa-invite">
-        {!starting && (
-          <button type="button" className="btn primary" onClick={() => setStarting(true)}>
-            Wüstenzeit beginnen
-          </button>
-        )}
-        {starting && <DesertStartPanel onDone={() => setStarting(false)} />}
-        {profile.winterArc.runs.length > 0 && (
-          <p className="small">
-            <Link to="/mehr/rueckblick?ansicht=wuestenwanderung">Frühere Wüstenzeiten im Rückblick</Link>
-          </p>
-        )}
-      </div>
+      {offer && !starting && <ArenaSeason offer={offer} onPrepare={() => setStarting('season')} onOther={() => setStarting('free')} />}
+      {(!offer || starting || earlier) && (
+        <div className="panel wa-head wa-invite">
+          {!starting && !offer && (
+            <button type="button" className="btn primary" onClick={() => setStarting('free')}>
+              Wüstenzeit beginnen
+            </button>
+          )}
+          {starting && (
+            <DesertStartPanel
+              key={starting}
+              preset={starting === 'season' && offer ? seasonPreset(offer) : undefined}
+              onDone={() => setStarting(false)}
+            />
+          )}
+          {earlier && (
+            <p className="small">
+              <Link to="/mehr/rueckblick?ansicht=wuestenwanderung">Frühere Wüstenzeiten im Rückblick</Link>
+            </p>
+          )}
+        </div>
+      )}
       <DesertGuide head={false} />
     </>
   );

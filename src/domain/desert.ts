@@ -35,8 +35,9 @@ export function startDesert(
   now: number,
   habits: readonly string[],
   id?: string,
+  name = '',
 ): WinterArcData {
-  const next = startRun(data, startDate, durationDays, now, id);
+  const next = startRun(data, startDate, durationDays, now, id, name);
   const run = next.runs[next.runs.length - 1]!;
   return { ...next, runs: next.runs.map((r) => (r === run ? { ...r, habits: [...new Set(habits)] } : r)) };
 }

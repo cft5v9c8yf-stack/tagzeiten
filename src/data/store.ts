@@ -420,11 +420,16 @@ export class Store {
   }
 
   /** Begins a Wüstenzeit with the habits chosen; a round under way is ended, nothing is deleted. */
-  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = []): void {
+  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = ''): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits) }), {
+    this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) }), {
       immediate: true,
     });
+  }
+
+  /** "Diesmal nicht": the invitation leaves "Heute" and stays in the Arena. */
+  declineSeason(key: string): void {
+    this.updateProfile((p) => ({ ...p, seasonsDeclined: [...new Set([...(p.seasonsDeclined ?? []), key])] }), { immediate: true });
   }
 
   /** Takes habits of the offer into the Wüstenzeit, or out of it. */

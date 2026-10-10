@@ -274,6 +274,8 @@ export interface Profile {
   winterArc: WinterArcData;
   /** Weekdays per point of the Winter Arc and "Meine Zeiten"; kept with the profile. */
   winterArcSettings: WinterArcSettings;
+  /** The invitations in the church year answered with "Diesmal nicht", e.g. "advent-2026" (1.1). */
+  seasonsDeclined?: string[];
   theme: Theme;
   createdAt: DateKey;
   updatedAt: number;

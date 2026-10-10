@@ -330,9 +330,23 @@ export const DESERT_EXAMEN_VERSE = verse(
   'Ps 139,23-24',
 );
 
+/* ------------------------------------------------------------ in the church year (1.1) */
+
+/**
+ * The invitation to a Wüstenzeit in Advent: on "Heute" until the brother decides, in the
+ * Arena all the while. The articles on the homepage are named per year; a year without one
+ * shows no link.
+ */
+export const ADVENT_INVITE = {
+  title: 'Eine Wüstenzeit im Advent',
+  verse: verse('Bereitet dem HERRN den Weg, macht auf dem Gefilde eine ebene Bahn unserm Gott!', 'Jesaja 40,3', 'Jes 40,3'),
+  links: { 2026: 'https://henoch.app/neuigkeiten/advent-2026/' } as Readonly<Partial<Record<number, string>>>,
+};
+
 /** Every verse of the Wüstenzeit, for the check against Luther 1912. */
 export const DESERT_VERSES: readonly DesertVerse[] = [
   DESERT_HOSEA,
+  ADVENT_INVITE.verse,
   DESERT_VERSE,
   DESERT_EXAMEN_VERSE,
   ...DESERT_PACKS.map((p) => p.verse),

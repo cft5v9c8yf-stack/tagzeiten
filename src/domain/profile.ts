@@ -7,6 +7,7 @@ import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalize
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays, WEEK } from './schedule';
+import { normalizeDeclined } from './seasons';
 import { carryPositions, fixedAmounts, fixedPlanId, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
@@ -32,6 +33,11 @@ export function defaultProfile(today: DateKey): Profile {
     createdAt: today,
     updatedAt: 0,
   };
+}
+
+function declined(raw: unknown): Pick<Profile, 'seasonsDeclined'> {
+  const keys = normalizeDeclined(raw);
+  return keys.length ? { seasonsDeclined: keys } : {};
 }
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -66,6 +72,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     arena: normalizeArena(raw.arena),
     winterArc: normalizeWinterArc(raw.winterArc),
     winterArcSettings: normalizeWinterArcSettings(raw.winterArcSettings),
+    ...declined(raw.seasonsDeclined),
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'system',
     createdAt: raw.createdAt ?? today,
     updatedAt: raw.updatedAt ?? 0,

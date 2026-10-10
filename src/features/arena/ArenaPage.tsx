@@ -10,6 +10,8 @@ import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { formatLong, isDateKey } from '../../domain/dates';
 import { isDoneOn } from '../../domain/habits';
 import { desertLine } from '../desert/DesertSettings';
+import { arenaOffer } from '../../domain/seasons';
+import { seasonTileLine } from '../desert/SeasonInvite';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
@@ -608,6 +610,7 @@ function ArenaHome() {
   const forge = live.filter((e) => kindOf(e) === 'forge');
   const meeting = byMeeting(forge).find((g) => g.date && g.date >= today)?.date;
   const run = activeRun(profile.winterArc);
+  const offer = arenaOffer(profile, today);
   const places: { place: Place; title: string; icon: FlowIconName; line: string }[] = [
     {
       place: 'journal',
@@ -629,7 +632,7 @@ function ArenaHome() {
       place: 'hall',
       title: 'Wüstenwanderung',
       icon: 'sunrise',
-      line: run ? desertLine(profile, today) : 'Weniger Ablenkung. Mehr Raum für Gott.',
+      line: offer ? seasonTileLine(offer) : run ? desertLine(profile, today) : 'Weniger Ablenkung. Mehr Raum für Gott.',
     },
   ];
   return (

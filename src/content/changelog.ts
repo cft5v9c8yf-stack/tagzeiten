@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.1.0',
+    date: '2026-10-10',
+    title: 'Eine Wüstenzeit im Advent',
+    changes: [
+      { area: 'Heute', text: 'Vom dritten Sonntag vor dem Advent bis zum Ende der ersten Adventswoche lädt eine Karte unter „Diese Woche“ zu einer Wüstenzeit bis Heiligabend ein. „Wüstenzeit vorbereiten“ öffnet den Beginn mit den Daten schon eingetragen. Nach „Diesmal nicht“ steht die Karte nicht mehr unter „Heute“, nur noch in der Arena.' },
+      { area: 'Arena', text: 'In der Wüstenwanderung steht im Advent die Einladung mit Jesaja 40,3, den Daten und dem Weg hinein; „Anderen Zeitraum wählen“ beginnt eine Wüstenzeit wie bisher. Die Kachel nennt den Advent.' },
+      { area: 'Arena', text: '„Mehr dazu auf henoch.app“ öffnet den Artikel zum Advent im Browser, auch unter „Anleitung“ einer Wüstenzeit im Advent. Henoch gibt dabei nichts mit.' },
+    ],
+  },
+  {
     version: '1.0.0',
     date: '2026-10-08',
     title: 'Henoch 1.0',

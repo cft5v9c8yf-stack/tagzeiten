@@ -22,11 +22,11 @@ afterEach(cleanup);
 
 let n = 0;
 // 26 September 2026 is a Saturday.
-async function renderArena(path: string, prepare?: (s: Store) => void) {
+async function renderArena(path: string, prepare?: (s: Store) => void, now = new Date(2026, 8, 26, 7)) {
   const store = new Store({
     db: new TagzeitenDB(`desert-${++n}`),
     journal: memoryJournal(),
-    now: () => new Date(2026, 8, 26, 7),
+    now: () => now,
   });
   await store.load();
   prepare?.(store);
@@ -306,3 +306,44 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }).textContent).toContain('Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt.');
   });
 });
+
+describe('a Wüstenzeit in Advent', () => {
+  // Monday, 16 November 2026: thirteen days before the first Sunday in Advent.
+  const nov16 = new Date(2026, 10, 16, 7);
+
+  it('stands in the Wüstenwanderung with the verse, the dates and the article', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', undefined, nov16);
+    const card = screen.getByRole('region', { name: 'Eine Wüstenzeit im Advent' });
+    expect(card.textContent).toContain('Bereitet dem HERRN den Weg');
+    expect(card.textContent).toContain('Sonntag, 29. November bis Donnerstag, 24. Dezember');
+    expect(within(card).getByRole('link', { name: /Mehr dazu auf henoch\.app/ }).getAttribute('href')).toBe(
+      'https://henoch.app/neuigkeiten/advent-2026/',
+    );
+    expect(screen.queryByRole('button', { name: 'Wüstenzeit beginnen' })).toBeNull();
+  });
+
+  it('opens the start filled in from "Heute" and begins on the first Sunday in Advent, named for it', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung&vorbereiten=1', undefined, nov16);
+    const dialog = screen.getByRole('dialog', { name: 'Wüstenzeit im Advent' });
+    expect((within(dialog).getByLabelText('Startdatum') as HTMLInputElement).value).toBe('2026-11-29');
+    expect((within(dialog).getByLabelText('Letzter Tag') as HTMLInputElement).value).toBe('2026-12-24');
+    expect(dialog.textContent).toContain('26 Tage: vom 1. Advent bis Heiligabend');
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Wüstenzeit beginnen' }));
+    const run = store.getProfile().winterArc.runs[0]!;
+    expect(run).toMatchObject({ name: 'Advent 2026', startDate: '2026-11-29', durationDays: 26 });
+    expect(screen.queryByRole('region', { name: 'Eine Wüstenzeit im Advent' })).toBeNull();
+  });
+
+  it('opens an empty start for another span', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', undefined, nov16);
+    fireEvent.click(screen.getByRole('button', { name: 'Anderen Zeitraum wählen' }));
+    const dialog = screen.getByRole('dialog', { name: 'Neue Wüstenzeit' });
+    expect((within(dialog).getByLabelText('Startdatum') as HTMLInputElement).value).toBe('2026-11-16');
+  });
+
+  it('names the Advent on the Arena tile', async () => {
+    await renderArena('/arena', undefined, nov16);
+    expect(screen.getByText('Im Advent, ab 29. November')).toBeTruthy();
+  });
+});
+

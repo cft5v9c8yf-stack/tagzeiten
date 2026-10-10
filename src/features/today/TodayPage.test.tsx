@@ -343,3 +343,37 @@ describe('Today', () => {
     expect(screen.getByRole('region', { name: /^Gewohnheiten/ })).toBeTruthy();
   });
 });
+
+describe('a Wüstenzeit in Advent on "Heute"', () => {
+  const nov16 = new Date(2026, 10, 16, 7);
+
+  it('invites with the dates, the way in and the article', async () => {
+    await renderToday('2026-11-16', undefined, nov16);
+    const card = screen.getByRole('region', { name: 'Eine Wüstenzeit im Advent' });
+    expect(card.textContent).toContain('Ab 29. November');
+    expect(card.textContent).toContain('Vom 1. Advent bis Heiligabend, 26 Tage');
+    expect(within(card).getByRole('link', { name: 'Wüstenzeit vorbereiten' }).getAttribute('href')).toBe(
+      '/arena?bereich=wuestenwanderung&vorbereiten=1',
+    );
+    expect(within(card).getByRole('link', { name: /Mehr dazu auf henoch\.app/ }).getAttribute('target')).toBe('_blank');
+  });
+
+  it('leaves "Heute" after "Diesmal nicht", also on the days after', async () => {
+    const store = await renderToday('2026-11-16', undefined, nov16);
+    fireEvent.click(screen.getByRole('button', { name: 'Diesmal nicht' }));
+    await waitFor(() => expect(screen.queryByRole('region', { name: 'Eine Wüstenzeit im Advent' })).toBeNull());
+    expect(store.getProfile().seasonsDeclined).toEqual(['advent-2026']);
+    cleanup();
+    await renderToday('2026-11-17', (s) => s.declineSeason('advent-2026'), new Date(2026, 10, 17, 7));
+    expect(screen.queryByRole('region', { name: 'Eine Wüstenzeit im Advent' })).toBeNull();
+  });
+
+  it('is not there outside Advent or on an earlier day', async () => {
+    await renderToday('2026-09-25');
+    expect(screen.queryByRole('region', { name: 'Eine Wüstenzeit im Advent' })).toBeNull();
+    cleanup();
+    await renderToday('2026-11-15', undefined, nov16);
+    expect(screen.queryByRole('region', { name: 'Eine Wüstenzeit im Advent' })).toBeNull();
+  });
+});
+

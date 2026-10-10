@@ -3356,3 +3356,95 @@ header.top .search-link:focus-visible {
 .walk-source {
   margin-top: 18px;
 }
+
+/* A Wüstenzeit in Advent (1.1): the invitation on "Heute" and in the Wüstenwanderung. */
+.season-invite {
+  margin: 12px 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-l);
+  border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--rule));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, var(--sheet)), var(--sheet));
+}
+.season-head {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.season-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--gold-soft);
+  color: var(--icon-gold);
+}
+.season-kicker {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.season-invite h3 {
+  margin: 1px 0 0;
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+.season-span {
+  margin: 10px 0 12px;
+}
+.season-dates {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+}
+.season-arena .wa-verse {
+  margin: 14px 0 10px;
+}
+.season-arena .season-span {
+  margin-top: 4px;
+}
+.season-decide {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.season-decide .btn,
+.season-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+}
+.season-actions {
+  display: grid;
+  gap: 8px;
+}
+.season-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--link);
+  text-decoration: none;
+}
+.season-link:hover,
+.season-link:focus-visible {
+  text-decoration: underline;
+}
+.desert-guide .season-link {
+  margin-top: 0;
+}
+.season-note {
+  margin: 8px 0 0;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+}

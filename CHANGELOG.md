@@ -3,6 +3,12 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.1.0 – 10. Oktober 2026
+
+- **Eine Wüstenzeit im Advent:** Ab dem dritten Sonntag vor dem Advent lädt eine Karte unter
+  „Heute“ zu einer Wüstenzeit bis Heiligabend ein, mit dem Beginn schon ausgefüllt. Nach
+  „Diesmal nicht“ steht sie nur noch in der Arena. Ein Link führt zum Artikel auf henoch.app.
+
 ## 1.0.0 – 8. Oktober 2026
 
 Die erste feste Version. Henoch ist eine Ordnung für Morgen und Abend: Gebet und Bibellese für

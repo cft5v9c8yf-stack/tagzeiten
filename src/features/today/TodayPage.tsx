@@ -18,6 +18,8 @@ import { LutherRose } from '../../ui/LutherRose';
 import { activeRun, hallModeIn, runName, shortSpan } from '../../domain/winterArc';
 import { weekdayOf } from '../../domain/dates';
 import { SundayRest } from './SundayRest';
+import { todayOffer } from '../../domain/seasons';
+import { TodaySeason } from '../desert/SeasonInvite';
 
 function morningStatus(day: Day): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -98,6 +100,8 @@ export function TodayPage() {
   const sundayTo = isToday ? '/sonntag' : `/sonntag?s=${church.weekStart}`;
   // Sunday rest: the Sunday stands at the top, and the habits are left out.
   const resting = profile.sundayRest && !hallMode && weekdayOf(date) === 0;
+  // A Wüstenzeit in Advent: on today's page, until the brother decides.
+  const season = isToday && !resting ? todayOffer(profile, today) : undefined;
 
   return (
     <>
@@ -139,6 +143,7 @@ export function TodayPage() {
           </span>
         </Link>
       )}
+      {season && <TodaySeason offer={season} />}
 
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} />

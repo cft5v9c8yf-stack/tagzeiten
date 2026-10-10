@@ -873,14 +873,14 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.0(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.1(?![\d.])/);
     expect(versions.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     // Patches stand under their number: 0.30.0 and 0.30.1 share one entry.
     expect(versions.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.0(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Version 0\.1(?![\d.])/));
     expect(toggle(/^Version 0\.1(?![\d.])/).getAttribute('aria-expanded')).toBe('true');

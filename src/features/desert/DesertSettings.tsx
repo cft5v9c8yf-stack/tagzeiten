@@ -33,17 +33,28 @@ export function desertLine(profile: Profile, today: DateKey): string {
   return `Tag ${day} von ${days}`;
 }
 
+/** A start filled in beforehand, as by the invitation in Advent. */
+export interface StartPreset {
+  start: DateKey;
+  days: number;
+  name: string;
+  title: string;
+  /** Beside the length while it is the one proposed. */
+  note: string;
+}
+
 /**
  * The start of a Wüstenzeit: the span in calendar days (40, 90 or any) and the
  * first day (today unless chosen). The habits of the last Wüstenzeit come along.
  */
-export function DesertStartPanel({ onDone }: { onDone: () => void }) {
+export function DesertStartPanel({ onDone, preset }: { onDone: () => void; preset?: StartPreset }) {
   const store = useStore();
   const profile = useProfile();
   const id = useId();
   const today = store.today();
-  const [start, setStart] = useState<DateKey>(today);
-  const [duration, setDuration] = useState(String(DEFAULT_DESERT_DAYS));
+  const [start, setStart] = useState<DateKey>(preset?.start ?? today);
+  const [duration, setDuration] = useState(String(preset?.days ?? DEFAULT_DESERT_DAYS));
+  const quick = preset && !(QUICK_DESERT_DAYS as readonly number[]).includes(preset.days) ? [preset.days, ...QUICK_DESERT_DAYS] : QUICK_DESERT_DAYS;
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
   const validStart = isDateKey(start);
@@ -52,17 +63,18 @@ export function DesertStartPanel({ onDone }: { onDone: () => void }) {
   return (
     <div className="panel confirm-panel winter-arc-start" role="dialog" aria-labelledby={`${id}-title`}>
       <p id={`${id}-title`}>
-        <strong>Neue Wüstenzeit</strong>
+        <strong>{preset?.title ?? 'Neue Wüstenzeit'}</strong>
       </p>
       <div className="field">
         <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
         <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
-          {QUICK_DESERT_DAYS.map((n) => (
+          {quick.map((n) => (
             <button key={n} type="button" aria-pressed={days === n} onClick={() => setDuration(String(n))}>
               {n}
             </button>
           ))}
         </div>
+        {preset && days === preset.days && start === preset.start && <p className="small muted">{preset.note}</p>}
         <input
           id={`${id}-days`}
           type="number"
@@ -110,7 +122,7 @@ export function DesertStartPanel({ onDone }: { onDone: () => void }) {
           className="btn primary"
           disabled={!end}
           onClick={() => {
-            store.startDesert(start, days, last?.habits ?? []);
+            store.startDesert(start, days, last?.habits ?? [], preset?.name);
             onDone();
           }}
         >
