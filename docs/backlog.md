@@ -147,3 +147,35 @@ anderen Tagen von Hand abhakbar. Der 90-Tage-Standard ist das fünfte Paket
 stehen die Gebetszeiten nur als Kacheln; im Rückblick sind die Gewohnheiten
 eine eigene Ansicht. Die Stille Zeit klappt die weiteren Felder der Lesung ein,
 die Vesper lässt die Fürbitte dem Nachtgebet.
+
+## Schrift der App
+
+Besprochen am 11.10.2026. **Entscheidung: vorerst bleibt alles, wie es ist.** Vor dem Druck der
+Visitenkarten noch einmal darüber sprechen, damit Karte und App dieselben Schriften tragen.
+
+- **Heute:** Literata für Texte, Source Sans 3 für Beschriftungen und Bibelstellen. Beide frei
+  (OFL), selbst ausgeliefert über `@fontsource` (geladen in `src/main.tsx`, festgelegt als
+  `--serif` und `--sans` in `src/styles/tokens.css`).
+- **Gewünscht und verglichen:**
+  - Die Schrift der King James Bibel: 1611 eine gebrochene Schrift. Als Leseschrift ungeeignet,
+    höchstens als Zierde (Name, Anfangsbuchstabe). Heutige KJV-Ausgaben nutzen Buchschriften in
+    Garamond-Art, oft lizenzpflichtig. Freie Verwandte: EB Garamond, IM Fell.
+  - Merriweather für Texte: für den Bildschirm gebaut, gut lesbar, kräftiger und breiter als
+    Literata.
+  - Montserrat nur für die Bibelstellen: verworfen, weil dann zwei serifenlose Schriften
+    nebeneinander stünden. Wenn Montserrat, dann statt Source Sans überall.
+  - Vergleich in der Demo (links heute, Mitte Merriweather + Montserrat, rechts Literata +
+    Montserrat) ergab: Montserrat läuft breit, lange Stellen wie „1. Thessalonicher 5,1-11“
+    brechen eher um; „1. Mose 1“ wirkt wie ein Schild statt wie aus einem Buch.
+- **Empfehlung:** bei Literata und Source Sans bleiben. Sonst als Paar Merriweather und
+  Montserrat, für die ganze App.
+- **Aufwand einer Umstellung:**
+  - Klein: zwei Pakete tauschen, fünf Importe in `src/main.tsx`, zwei Zeilen in `tokens.css`.
+    Gebraucht werden 400, 400 kursiv und 600. Keine Daten betroffen.
+  - Mittel: alle Ansichten in Handybreite (etwa 25, hell und dunkel) durchgehen und Größen und
+    Abstände nachjustieren, weil beide neuen Schriften breiter laufen (Kacheln, Knöpfe,
+    Wochentage, untere Leiste).
+  - Danach: Bildschirmfotos der Anleitung neu (`docs/anleitung/`, Skript vorhanden) und die
+    Artefakte („Henoch am Sonntag“ u. a.) angleichen.
+- **Vorgehen, wenn es so weit ist:** zuerst eine Schriftprobe als eigene Demo, die Andreas ein
+  paar Tage auf dem Handy liest, vor allem morgens. Erst danach die App umstellen.

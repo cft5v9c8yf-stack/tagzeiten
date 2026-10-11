@@ -59,7 +59,8 @@ describe('Today', () => {
     expect(document.querySelector('.church-year')!.textContent).toBe('Donnerstag, 24. September 2026');
     clock.now = new Date(2026, 8, 25, 6, 30);
     act(() => void store.checkDayChange());
-    expect(document.querySelector('.church-year')!.textContent).toBe('Freitag, 25. September 2026');
+    // Under load React may draw the new day a moment later; wait for it rather than check at once.
+    await waitFor(() => expect(document.querySelector('.church-year')!.textContent).toBe('Freitag, 25. September 2026'));
     // The new day receives its portion of the reading plan, as on opening the app.
     await waitFor(() => expect(store.getDay('2026-09-25').reading).toBeDefined());
     fireEvent.click(screen.getByRole('checkbox', { name: 'Tischgebet mit der Familie' }));
