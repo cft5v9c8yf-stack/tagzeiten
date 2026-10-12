@@ -65,20 +65,10 @@ export function LectionDialog({ lection, onClose }: { lection: Lection; onClose:
             </figure>
           ))}
           {lection.sections ? (
-            <ol className="lesson-paragraphs">
-              {lection.sections.map((s) => (
-                <li key={s.nr} value={s.nr}>
-                  <span className="lesson-nr" aria-hidden="true">
-                    {s.nr}
-                  </span>
-                  <div className="lesson-body">
-                    {s.parts.map((p, i) => (
-                      <Part key={i} part={p} />
-                    ))}
-                  </div>
-                </li>
-              ))}
-            </ol>
+            // Like the other readings, without the numbers of the paragraphs; hymn verses set off.
+            <div className="lection-paragraphs">
+              {lection.sections.flatMap((s) => s.parts.map((p, i) => <Part key={`${s.nr}-${i}`} part={p} />))}
+            </div>
           ) : (
             <div className="lection-paragraphs">
               {lection.paragraphs.map((p, i) => (

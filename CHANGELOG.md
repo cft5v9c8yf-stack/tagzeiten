@@ -3,6 +3,10 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.5.2 – 12. Oktober 2026
+
+- Die Absätze der Bibellektion ohne Nummern, wie bei Löhe.
+
 ## 1.5.1 – 12. Oktober 2026
 
 - Die Bibellektion öffnet sich über die Kachel „Evangelium“, wie Löhes Betrachtung bei der Epistel;

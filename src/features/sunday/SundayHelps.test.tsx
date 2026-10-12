@@ -127,7 +127,11 @@ describe('Sunday: the Bible lessons of Advent after Dieffenbach (1.5)', () => {
     expect(dialog.textContent).toContain('Matth. 21, 1–9');
     expect(dialog.querySelector('.lesson-addition')!.textContent).toBe('(Vom ersten Advent bis zum Christsonnabend – die Vorbereitung auf Christi Ankunft.)');
     expect([...dialog.querySelectorAll('.lesson-motto .bible-ref')].map((r) => r.textContent)).toEqual(['Psalm 24, 9–10', 'Sacharja 9, 9']);
-    expect([...dialog.querySelectorAll('.lesson-paragraphs > li')].map((li) => li.getAttribute('value'))).toEqual(['1', '2', '3', '4', '5', '6', '7']);
+    // The paragraphs in order, without their numbers, as Löhe's readings.
+    const paragraphs = [...dialog.querySelectorAll('.lection-paragraphs > p')].map((p) => p.textContent);
+    expect(paragraphs[0]).toMatch(/^Der Herr zieht ein in Jerusalem/);
+    expect(paragraphs.at(-1)).toMatch(/^– In Jerusalem war viel Volks/);
+    expect(paragraphs.some((p) => /^\d+\. /.test(p ?? ''))).toBe(false);
     expect(dialog.querySelectorAll('.lesson-hymn')).toHaveLength(3);
     fireEvent.click(screen.getByRole('button', { name: 'Andacht schließen' }));
     expect(screen.queryByRole('dialog')).toBeNull();

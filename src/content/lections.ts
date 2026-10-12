@@ -21,7 +21,7 @@ export interface Lection {
   paragraphs: readonly string[];
   /** Author, book and page. */
   source: string;
-  /** Lessons kept as data (1.5): an addition to the title, the guiding words, and the paragraphs with their numbers, hymn verses set off. */
+  /** Lessons kept as data (1.5): an addition to the title, the guiding words, and the paragraphs (shown without their numbers), hymn verses set off. */
   addition?: string;
   motto?: readonly { ref: string; text: string }[];
   sections?: readonly { nr: number; parts: readonly LessonPart[] }[];

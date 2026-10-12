@@ -13,6 +13,12 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.5.2',
+    date: '2026-10-12',
+    title: 'Die Bibellektion ohne Nummern',
+    changes: [{ area: 'Sonntag', text: 'Die Absätze der Bibellektion nach Dieffenbach stehen ohne Nummern, wie bei Löhes Betrachtung. Die Liedverse bleiben abgesetzt.' }],
+  },
+  {
     version: '1.5.1',
     date: '2026-10-12',
     title: 'Die Bibellektion am Evangelium',

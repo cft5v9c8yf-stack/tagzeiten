@@ -3461,7 +3461,7 @@ header.top .search-link:focus-visible {
   color: var(--muted);
 }
 
-/* Dieffenbach's lessons in the reading window (1.5): guiding words, numbered paragraphs, hymn verses set off. */
+/* Dieffenbach's lessons in the reading window (1.5): guiding words, paragraphs, hymn verses set off. */
 .sunday-lessons-link {
   margin: 10px 0 0;
   font-family: var(--sans);
@@ -3479,31 +3479,6 @@ header.top .search-link:focus-visible {
 }
 .lesson-motto {
   margin: 0 0 14px;
-}
-.lesson-paragraphs {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.lesson-paragraphs > li {
-  display: grid;
-  grid-template-columns: 1.9rem minmax(0, 1fr);
-  padding: 14px 0 4px;
-  border-top: 1px solid var(--rule);
-}
-.lesson-nr {
-  font-family: var(--sans);
-  font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--gold);
-}
-.lesson-body p {
-  margin: 0 0 10px;
-  line-height: 1.65;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  overflow-wrap: break-word;
 }
 .lesson-hymn {
   margin: 4px 0 12px;
