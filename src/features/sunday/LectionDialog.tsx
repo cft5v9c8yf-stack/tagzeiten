@@ -1,5 +1,21 @@
 import { useEffect, useRef } from 'react';
+import type { LessonPart } from '../../content/adventLessons';
 import type { Lection } from '../../content/lections';
+
+/** A hymn verse set off, its lines as printed (" / "). */
+function Hymn({ text }: { text: string }) {
+  return (
+    <blockquote className="lesson-hymn">
+      {text.split(' / ').map((l, i) => (
+        <span key={i} className="line">
+          {l}
+        </span>
+      ))}
+    </blockquote>
+  );
+}
+
+const Part = ({ part }: { part: LessonPart }) => ('zitat' in part ? <Hymn text={part.zitat} /> : <p>{part.text}</p>);
 
 /** A reading on the Sunday's Gospel or Epistle, over the page, to be read through. */
 export function LectionDialog({ lection, onClose }: { lection: Lection; onClose: () => void }) {
@@ -39,11 +55,37 @@ export function LectionDialog({ lection, onClose }: { lection: Lection; onClose:
           </div>
         </div>
         <div className="chooser-list lection-body">
-          <div className="lection-paragraphs">
-            {lection.paragraphs.map((p, i) => (
-              <p key={i}>{p}</p>
-            ))}
-          </div>
+          {lection.addition && <p className="lesson-addition">{lection.addition}</p>}
+          {lection.motto?.map((m) => (
+            <figure key={m.ref} className="sunday-verse lesson-motto">
+              <blockquote>{m.text}</blockquote>
+              <p className="cy-verse-ref">
+                <span className="bible-ref">{m.ref}</span>
+              </p>
+            </figure>
+          ))}
+          {lection.sections ? (
+            <ol className="lesson-paragraphs">
+              {lection.sections.map((s) => (
+                <li key={s.nr} value={s.nr}>
+                  <span className="lesson-nr" aria-hidden="true">
+                    {s.nr}
+                  </span>
+                  <div className="lesson-body">
+                    {s.parts.map((p, i) => (
+                      <Part key={i} part={p} />
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="lection-paragraphs">
+              {lection.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
+            </div>
+          )}
           <p className="small muted lection-source">
             {lection.source} In der Rechtschreibung des Originals.
           </p>

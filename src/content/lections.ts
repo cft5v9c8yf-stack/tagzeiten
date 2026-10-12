@@ -6,6 +6,7 @@
  * Sunday without an entry shows none.
  */
 import { DIEFFENBACH_SOURCE } from './dieffenbach';
+import { SUNDAY_LESSONS, type LessonPart } from './adventLessons';
 
 export interface Lection {
   /** What it is, for the tile and the button: "Andacht", "Betrachtung". */
@@ -20,6 +21,10 @@ export interface Lection {
   paragraphs: readonly string[];
   /** Author, book and page. */
   source: string;
+  /** Lessons kept as data (1.5): an addition to the title, the guiding words, and the paragraphs with their numbers, hymn verses set off. */
+  addition?: string;
+  motto?: readonly { ref: string; text: string }[];
+  sections?: readonly { nr: number; parts: readonly LessonPart[] }[];
 }
 
 /**
@@ -27,6 +32,7 @@ export interface Lection {
  * Dieffenbach's Evangelische Haus-Agende (Mainz 1853).
  */
 export const LECTIONS: Record<string, Lection> = {
+  ...hausAgendeData(),
   trinity18: {
     kind: 'Andacht',
     hint: 'Andacht aus der Haus-Agende lesen',
@@ -44,6 +50,29 @@ export const LECTIONS: Record<string, Lection> = {
     ],
   },
 };
+
+/**
+ * Dieffenbach's lessons kept as data (data/advent-lektionen.json, see content/adventLessons.ts):
+ * the four Sundays in Advent (1.5), under the week's key ("advent-1" → "advent1").
+ */
+function hausAgendeData(): Record<string, Lection> {
+  return Object.fromEntries(
+    SUNDAY_LESSONS.map((l) => [
+      l.sonntag.replace('-', ''),
+      {
+        kind: 'Andacht',
+        hint: 'Andacht aus der Haus-Agende lesen',
+        ref: l.bibelstelle,
+        title: l.titel,
+        source: DIEFFENBACH_SOURCE,
+        paragraphs: l.absaetze.map((a) => a.teile.map((t) => ('zitat' in t ? t.zitat : t.text)).join(' ')),
+        ...(l.zusatz ? { addition: l.zusatz } : {}),
+        motto: l.leitworte.map((m) => ({ ref: m.bibelstelle, text: m.text })),
+        sections: l.absaetze.map((a) => ({ nr: a.nr, parts: a.teile })),
+      },
+    ]),
+  );
+}
 
 const LOEHE =
   'Wilhelm Löhe, lutherischer Pfarrer: Kurze Lectionen zu den sonn- und festtäglichen Episteln des Kirchenjahres. Neben der Evangelienpostille zu lesen. Stuttgart, Samuel Gottlieb Liesching';

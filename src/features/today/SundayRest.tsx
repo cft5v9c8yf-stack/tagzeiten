@@ -55,7 +55,7 @@ export function SundayRest({ date, to, page }: { date: DateKey; to: string; page
       <Link className="btn primary sunday-rest-go" to={to}>
         Mehr zu diesem Sonntag
       </Link>
-      <SundayHelps page={page} weekKey={c.weekKey} />
+      <SundayHelps page={page} />
     </section>
   );
 }

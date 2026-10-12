@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.5.1',
+    date: '2026-10-12',
+    title: 'Die Bibellektion am Evangelium',
+    changes: [
+      { area: 'Sonntag', text: 'Die Bibellektion nach Dieffenbach öffnet sich jetzt im Advent über die Kachel „Evangelium“, so wie Löhes Betrachtung über die Kachel „Epistel“: „Andacht aus der Haus-Agende lesen“. Die eigene Kachel und die eigene Seite sind dafür weggefallen.' },
+      { area: 'Sonntag', text: 'Außerhalb des Advents führt unter „Im Kirchenjahr“ ein Link zum ersten Advent; von dort geht es mit den Pfeilen von Sonntag zu Sonntag.' },
+    ],
+  },
+  {
     version: '1.5.0',
     date: '2026-10-12',
     title: 'Die Bibellektionen der Adventssonntage',

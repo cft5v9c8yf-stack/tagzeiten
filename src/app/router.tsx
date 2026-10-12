@@ -11,7 +11,6 @@ import { SettingsPage } from '../features/settings/SettingsPage';
 import { SundayPage } from '../features/sunday/SundayPage';
 import { SundayGuidePage } from '../features/sunday/SundayGuidePage';
 import { ScripturePrayerPage } from '../features/sunday/ScripturePrayerPage';
-import { SundayLessonPage } from '../features/sunday/SundayLessonPage';
 import { TodayPage } from '../features/today/TodayPage';
 import { Layout } from './Layout';
 import { NotFound } from './NotFound';
@@ -42,7 +41,6 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'sonntag', element: <SundayPage /> },
       { path: 'sonntag/hilfe', element: <SundayGuidePage /> },
       { path: 'sonntag/gebet', element: <ScripturePrayerPage /> },
-      { path: 'sonntag/lektion/:sonntag', element: <SundayLessonPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'katechismus/:teil', element: <CatechismPage /> },
       { path: 'arena', element: <ArenaPage /> },

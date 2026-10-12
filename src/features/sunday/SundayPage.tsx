@@ -6,7 +6,7 @@ import { EPISTLE_LECTIONS, FEAST_EPISTLE_LECTIONS, LECTIONS, type Lection } from
 import { READING_SUMMARIES } from '../../content/readingSummaries';
 import { WEEKLY_VERSES } from '../../content/weeklyVerses';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { churchDay, CIRCLE_LABEL, CIRCLES, nextWeekStart, previousWeekStart, SEASON_LABEL } from '../../domain/churchYear';
+import { churchDay, CIRCLE_LABEL, CIRCLES, firstAdvent, nextWeekStart, previousWeekStart, SEASON_LABEL } from '../../domain/churchYear';
 import { addDays, formatLong, formatShort, type DateKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
 import { BibleRef } from '../../ui/BibleRef';
@@ -17,6 +17,13 @@ import { useStore } from '../../data/hooks';
 import { weekdayOf } from '../../domain/dates';
 
 const SUNDAY_PARAM = 's';
+
+/** The first Sunday in Advent of this year, or of the next once Advent is over: its Gospel opens Dieffenbach's lesson. */
+function adventAhead(day: DateKey): DateKey {
+  const year = Number(day.slice(0, 4));
+  const first = firstAdvent(year);
+  return day <= addDays(first, 27) ? first : firstAdvent(year + 1);
+}
 
 /** The fixed feasts with their own Epistle lesson that fall between `from` and the day before `until`. */
 function feastsInWeek(from: DateKey, until: DateKey) {
@@ -182,7 +189,7 @@ export function SundayPage() {
         </Link>
       </header>
 
-      {sunday && <SundayHelps page={links.page} weekKey={c.weekKey} withLessons />}
+      {sunday && <SundayHelps page={links.page} />}
 
       {verse && (
         <figure className="sunday-verse">
@@ -259,9 +266,16 @@ export function SundayPage() {
           ))}
         </ol>
         <p>{SEASON_INFO[c.season]}</p>
+        {!/^advent[1-4]$/.test(c.weekKey) && (
+          <p className="sunday-lessons-link">
+            <Link to={links.sunday(adventAhead(links.current))}>
+              Die Bibellektionen der Adventssonntage <span aria-hidden="true">›</span>
+            </Link>
+          </p>
+        )}
       </section>
 
-      {!sunday && <SundayHelps page={links.page} weekKey={c.weekKey} withLessons />}
+      {!sunday && <SundayHelps page={links.page} />}
     </div>
   );
 }
