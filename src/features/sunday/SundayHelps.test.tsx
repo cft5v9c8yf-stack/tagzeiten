@@ -12,6 +12,7 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { ScripturePrayerPage } from './ScripturePrayerPage';
 import { SundayGuidePage } from './SundayGuidePage';
+import { SundayLessonPage } from './SundayLessonPage';
 import { SundayPage } from './SundayPage';
 
 afterEach(cleanup);
@@ -25,6 +26,7 @@ async function renderAt(path: string, now = new Date(2026, 8, 25, 9)) {
       { path: '/sonntag', element: <SundayPage /> },
       { path: '/sonntag/hilfe', element: <SundayGuidePage /> },
       { path: '/sonntag/gebet', element: <ScripturePrayerPage /> },
+      { path: '/sonntag/lektion/:sonntag', element: <SundayLessonPage /> },
       { path: '/arena/:eintrag', element: <p>Gebetskammer</p> },
     ],
     { initialEntries: [path] },
@@ -115,3 +117,47 @@ describe('Sunday: guide and prayer walk', () => {
     for (const s of walk.steps) if (/bekenne/i.test(s.pause ?? '')) expect(s.comfort).toBeDefined();
   });
 });
+
+describe('Sunday: the Bible lessons of Advent after Dieffenbach (1.5)', () => {
+  it('stand as a tile in each week of Advent, the right one by the date', async () => {
+    await renderAt('/sonntag', new Date(2026, 10, 29, 9));
+    const tile = screen.getByRole('link', { name: /Bibellektion · Matth\. 21, 1–9/ });
+    expect(tile.textContent).toContain('Der Herr kommt zur Erlösung.');
+    expect(tile.getAttribute('href')).toBe('/sonntag/lektion/advent-1');
+    cleanup();
+    await renderAt('/sonntag', new Date(2026, 11, 16, 9));
+    expect(screen.getByRole('link', { name: /Bibellektion · Matth\. 11, 2–10/ }).getAttribute('href')).toBe('/sonntag/lektion/advent-3');
+    expect(screen.queryByRole('link', { name: /Die Bibellektionen der Adventssonntage/ })).toBeNull();
+  });
+
+  it('are reached outside Advent by a link in the Sunday area', async () => {
+    const { router } = await renderAt('/sonntag');
+    expect(screen.queryByRole('link', { name: /^Bibellektion ·/ })).toBeNull();
+    fireEvent.click(screen.getByRole('link', { name: /Die Bibellektionen der Adventssonntage/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Der Herr kommt zur Erlösung.' })).toBeTruthy();
+    expect(router.state.location.pathname).toBe('/sonntag/lektion/advent-1');
+  });
+
+  it('show title, guiding words, the reference and the numbered paragraphs, hymn verses set off', async () => {
+    await renderAt('/sonntag/lektion/advent-3');
+    const page = document.querySelector('.sunday-lesson')!;
+    expect(page.querySelector('.sunday-kicker')!.textContent).toBe('Dritter Advent – Sonntag');
+    expect(page.querySelector('.lesson-motto')!.textContent).toContain('Alle Gottes-Verheißungen sind Ja in Ihm');
+    expect(page.querySelector('.lesson-ref')!.textContent).toBe('Bibellektion Matth. 11, 2–10 (V. 6)');
+    // The Bible text itself is not given, only its reference (rule 13).
+    expect(page.textContent).not.toContain('Gehet hin und saget Johannes wieder');
+    expect([...page.querySelectorAll('.lesson-paragraphs > li')].map((li) => li.getAttribute('value'))).toEqual(['1', '2', '3', '4']);
+    const hymns = [...page.querySelectorAll('.lesson-hymn')];
+    expect(hymns).toHaveLength(2);
+    expect([...hymns[0]!.querySelectorAll('.line')].map((l) => l.textContent)).toEqual([
+      '„Was der alten Väter Chor',
+      'Höchster Wunsch und Sehnen war,',
+      'Und was sie geprophezeit,',
+      'Ist erfüllt nach Herrlichkeit!“',
+    ]);
+    // On to the other Sundays of Advent.
+    fireEvent.click(screen.getByRole('link', { name: '4. Advent' }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Der Herr kommt! – Richtet den Weg des Herrn!' })).toBeTruthy();
+  });
+});
+

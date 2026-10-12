@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.5.0',
+    date: '2026-10-12',
+    title: 'Die Bibellektionen der Adventssonntage',
+    changes: [
+      { area: 'Sonntag', text: 'In jeder Adventswoche steht über den Kacheln „Der Sonntag“ und „Mit der Schrift beten“ die Bibellektion des Sonntags nach Dieffenbachs Evangelischer Haus-Agende (1853): Überschrift, Leitwort, die Stelle zum Lesen in der Bibel und die Auslegung in nummerierten Absätzen, Liedverse abgesetzt. Der vierte Advent ist der letzte Sonntag vor dem Christfest.' },
+      { area: 'Sonntag', text: 'Außerhalb des Advents führt im Sonntagsbereich ein Link zu den vier Bibellektionen; unten auf der Seite geht es von Sonntag zu Sonntag.' },
+    ],
+  },
+  {
     version: '1.4.1',
     date: '2026-10-10',
     title: 'Die Gewissenserforschung wie zuvor',

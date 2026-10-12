@@ -182,7 +182,7 @@ export function SundayPage() {
         </Link>
       </header>
 
-      {sunday && <SundayHelps page={links.page} />}
+      {sunday && <SundayHelps page={links.page} weekKey={c.weekKey} withLessons />}
 
       {verse && (
         <figure className="sunday-verse">
@@ -261,7 +261,7 @@ export function SundayPage() {
         <p>{SEASON_INFO[c.season]}</p>
       </section>
 
-      {!sunday && <SundayHelps page={links.page} />}
+      {!sunday && <SundayHelps page={links.page} weekKey={c.weekKey} withLessons />}
     </div>
   );
 }

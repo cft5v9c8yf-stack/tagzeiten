@@ -3460,3 +3460,100 @@ header.top .search-link:focus-visible {
   font-size: 0.85rem;
   color: var(--muted);
 }
+
+/* Sunday lessons after Dieffenbach (1.5): the tile in Advent, the link outside it, the page to read. */
+.tiles .tile-wide {
+  grid-column: 1 / -1;
+}
+.sunday-lessons-link {
+  margin: 4px 0 14px;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.sunday-lessons-link a {
+  color: var(--link);
+  text-decoration: none;
+}
+.sunday-lesson h2 {
+  margin: 2px 0 8px;
+}
+.lesson-addition {
+  margin: 0 0 14px;
+  font-style: italic;
+  color: var(--muted);
+}
+.lesson-motto {
+  margin: 14px 0;
+}
+.lesson-ref {
+  margin: 22px 0 6px;
+  font-family: var(--sans);
+}
+.lesson-ref-label {
+  margin-right: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lesson-paragraphs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lesson-paragraphs > li {
+  display: grid;
+  grid-template-columns: 1.9rem minmax(0, 1fr);
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--rule);
+}
+.lesson-nr {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--gold);
+}
+.lesson-body p {
+  margin: 0 0 10px;
+  line-height: 1.65;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+.lesson-hymn {
+  margin: 4px 0 12px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid color-mix(in srgb, var(--gold) 45%, var(--rule));
+  font-style: italic;
+  line-height: 1.6;
+}
+.lesson-hymn .line {
+  display: block;
+}
+.lesson-source {
+  margin: 18px 0 0;
+}
+.lesson-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0 8px;
+}
+.lesson-nav a {
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.lesson-nav a[aria-current='page'] {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}

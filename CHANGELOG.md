@@ -3,6 +3,12 @@
 Was jede Version gebracht hat, ausführlich und in den Worten der App: in Henoch unter
 Mehr → Versionen (`src/content/changelog.ts`). Hier stehen die großen Schritte.
 
+## 1.5.0 – 12. Oktober 2026
+
+- **Die Bibellektionen der Adventssonntage** nach Dieffenbachs Evangelischer Haus-Agende (1853) im
+  Sonntagsbereich: in jeder Adventswoche als Kachel, sonst über einen Link. Texte in
+  `data/advent-lektionen.json`, Wortlaut geprüft gegen `reference/dieffenbach-advent.txt`.
+
 ## 1.4.1 – 10. Oktober 2026
 
 - Die Gewissenserforschung wieder wie vor 1.4.0; die sechs Fragen und der Link in der Gebetskammer
