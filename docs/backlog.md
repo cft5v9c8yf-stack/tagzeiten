@@ -179,3 +179,25 @@ Visitenkarten noch einmal darüber sprechen, damit Karte und App dieselben Schri
     Artefakte („Henoch am Sonntag“ u. a.) angleichen.
 - **Vorgehen, wenn es so weit ist:** zuerst eine Schriftprobe als eigene Demo, die Andreas ein
   paar Tage auf dem Handy liest, vor allem morgens. Erst danach die App umstellen.
+
+## Schwerpunkt Lehre
+
+Beschlossen am 14.10.2026. **Die Funktionen von Henoch sind für Andreas vorerst vollständig; es kommen
+keine neuen Funktionen mehr dazu.** Der Schwerpunkt liegt jetzt auf dem Inhalt der Lehre. Erwartet werden
+zwei Texte, die Andreas als bereinigten Export liefert (Wortlaut verbindlich, Prüfung Wort für Wort
+gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`):
+
+- **Dieffenbach, Evangelische Haus-Agende (1853): die tägliche Lesung.** Konzept (Bilder vom 13.10.2026):
+  in der Vesper unter „Wort“ als dritte Wahl neben „Lesung“ und „Andacht“; bei der Gewohnheit
+  „Familienandacht“ unter „Heute“ ein Knopf „Lesen“; dasselbe Fenster wie bei Löhe; unter „Darstellung“
+  ein Schalter „Haus-Agende am Abend“. Kein Rückstand, kein Nachholen (Regel 6). Offen: Wie ist die
+  Tageslesung aufgebaut (Bibellektion mit Auslegung für jeden Tag, oder nur eine Tafel mit Stellen)?
+  Zuerst ein Festkreis (Advent bis Epiphanias), das ganze Jahr danach.
+- **Löhe, Haus-, Schul- und Kirchenbuch (Erster Theil, 4. Aufl.): die Erklärung zum Katechismus.**
+  Entschieden: nur unter Wort › Lehre, nicht in der Stillen Zeit. Auf der Seite jedes Hauptstücks ein
+  eingeklapptes Feld „Erklärung von Wilhelm Löhe“ mit Fragen und Antworten; Fragen zum ganzen Katechismus
+  auf der Übersichtsseite der Lehre. Beginn mit „Einleitende Fragen zum ersten Hauptstück“ (Foto S. 31,
+  Nr. 17 ff.). Der Text kommt als bereinigter Export, nicht aus der Fraktur abgelesen.
+- **„Lehre und Wehre“:** Vorschlag B (Überschrift über den lutherischen Bekenntnissen im Konkordienbuch,
+  mit einem Satz zu Walthers Zeitschrift); der Bereich selbst heißt weiter „Lehre“. Noch nicht entschieden.
+- Zur Schrift der App siehe oben: erst vor dem Druck der Visitenkarten.
