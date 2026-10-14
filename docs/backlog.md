@@ -182,8 +182,9 @@ Visitenkarten noch einmal darüber sprechen, damit Karte und App dieselben Schri
 
 ## Schwerpunkt Lehre
 
-Beschlossen am 14.10.2026. **Die Funktionen von Henoch sind für Andreas vorerst vollständig; es kommen
-keine neuen Funktionen mehr dazu.** Der Schwerpunkt liegt jetzt auf dem Inhalt der Lehre. Erwartet werden
+Beschlossen am 14.10.2026. Der Schwerpunkt liegt jetzt auf dem Inhalt der Lehre. **Berichtigung vom
+15.10.2026:** Es gilt kein Stopp für neue Funktionen. Andreas meinte nur „erstmal keine“: Eine App lebt von
+guten Neuerungen, die jederzeit willkommen sind. Erwartet werden
 zwei Texte, die Andreas als bereinigten Export liefert (Wortlaut verbindlich, Prüfung Wort für Wort
 gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`):
 
@@ -201,3 +202,10 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
 - **„Lehre und Wehre“:** Vorschlag B (Überschrift über den lutherischen Bekenntnissen im Konkordienbuch,
   mit einem Satz zu Walthers Zeitschrift); der Bereich selbst heißt weiter „Lehre“. Noch nicht entschieden.
 - Zur Schrift der App siehe oben: erst vor dem Druck der Visitenkarten.
+
+## Mögliche Neuerungen (Ideen, nicht beschlossen)
+
+- **Gerätewechsel iPhone/iPad:** Heute hat jedes Gerät seinen eigenen Bestand (Regel 10); Sichern und
+  Einspielen unter Deine Daten ersetzt den Bestand. Denkbar: freiwilliger, Ende-zu-Ende verschlüsselter
+  Abgleich (CLAUDE.md sieht ihn vor), oder ein Einspielen, das zusammenführt, statt zu ersetzen.
+- **Passionszeit** als zweite Gelegenheit für die Wüstenzeit (Aschermittwoch bis Karsamstag, Matthäus 4,1).
