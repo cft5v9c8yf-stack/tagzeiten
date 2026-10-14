@@ -1,0 +1,173 @@
+import { scheduleFor } from '../../domain/schedule';
+import { useEffect } from 'react';
+import { Link } from 'react-router';
+import { getOrder } from '../../content/orders';
+import { useSelectedDate, withDate } from '../../app/useSelectedDate';
+import { useDay, useProfile, useStore, useStoreVersion, useToday } from '../../data/hooks';
+import { THREE_KEYS, type Day } from '../../domain/model';
+import { MARK_LABEL, MARK_SYMBOL, THREE_LABEL } from '../../domain/review';
+import { Section } from '../../ui/Section';
+import { ReadingRefs } from '../liturgy/MorningReading';
+import { DayHeader } from './DayHeader';
+import { DayArc } from './DayArc';
+import { HabitsWeek } from './HabitsWeek';
+import { Lookback } from './Lookback';
+import { eveningClosed } from '../../domain/stats';
+import { churchDay } from '../../domain/churchYear';
+import { LutherRose } from '../../ui/LutherRose';
+import { activeRun, hallModeIn, runName, shortSpan } from '../../domain/winterArc';
+import { weekdayOf } from '../../domain/dates';
+import { SundayRest } from './SundayRest';
+import { todayOffer } from '../../domain/seasons';
+import { TodaySeason } from '../desert/SeasonInvite';
+
+function morningStatus(day: Day): string {
+  if (day.morning.done) return 'abgeschlossen';
+  const order = getOrder('morning', day.morning.form);
+  const n = order.steps.filter((s) => day.morning.steps[s.id]).length;
+  return n === 0 ? 'offen' : `${n} von ${order.steps.length} Schritten`;
+}
+
+function eveningStatus(day: Day, withCompline: boolean): string {
+  if (!withCompline) return day.evening.vespersDone ? 'abgeschlossen' : 'offen';
+  if (day.evening.complineDone) return day.evening.vespersDone ? 'abgeschlossen' : 'Nachtgebet gebetet';
+  return day.evening.vespersDone ? 'Vesper gebetet' : 'offen';
+}
+
+function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
+  const store = useStore();
+  useStoreVersion();
+  const { reading } = store.readingFor(date);
+
+  // Also on a new day while the app stayed open.
+  useEffect(() => {
+    if (isToday) store.ensureTodayReading();
+  }, [store, isToday, date]);
+
+  return (
+    <Section id="today.reading" title={
+      <>
+        {isToday ? 'Heute lesen' : 'Lesung'}
+        {reading.done && <span className="title-state"> · gelesen</span>}
+      </>
+    }>
+      <ReadingRefs date={date} />
+    </Section>
+  );
+}
+
+function ThreeThings({ day }: { day: Day }) {
+  const any = THREE_KEYS.some((k) => day.morning.three[k]);
+  return (
+    <Section id="today.three" title="Die drei Dinge">
+      <div className="panel three">
+        {any ? (
+          THREE_KEYS.map((k) => {
+            const mark = day.evening.marks[k];
+            return (
+              <div key={k} className="three-row">
+                <span className="three-key">{THREE_LABEL[k]}</span>
+                <span>{day.morning.three[k] || <span className="muted">—</span>}</span>
+                {mark && (
+                  <span className={`mark ${mark}`} title={MARK_LABEL[mark]}>
+                    {MARK_SYMBOL[mark]}
+                    <span className="visually-hidden"> {MARK_LABEL[mark]}</span>
+                  </span>
+                )}
+              </div>
+            );
+          })
+        ) : (
+          <p className="muted three-empty">
+            Sie werden in der Stillen Zeit festgelegt, nach dem Wort.
+          </p>
+        )}
+      </div>
+    </Section>
+  );
+}
+
+export function TodayPage() {
+  // A new day while the app stayed open: "Heute" follows it, so nothing is ticked for yesterday.
+  const today = useToday();
+  const { date, isToday } = useSelectedDate();
+  const day = useDay(date);
+  const profile = useProfile();
+  const s = scheduleFor(profile, date);
+  const hallMode = hallModeIn(profile.winterArc, date);
+  const church = churchDay(date);
+  const hallRun = hallMode ? activeRun(profile.winterArc) : undefined;
+  const sundayTo = isToday ? '/sonntag' : `/sonntag?s=${church.weekStart}`;
+  // Sunday rest: the Sunday stands at the top, and the habits are left out.
+  const resting = profile.sundayRest && !hallMode && weekdayOf(date) === 0;
+  // A Wüstenzeit in Advent: on today's page, until the brother decides.
+  const season = isToday && !resting ? todayOffer(profile, today) : undefined;
+
+  return (
+    <>
+      <h2 className="visually-hidden">{isToday ? 'Heute' : 'Tag'}</h2>
+      <DayHeader date={date} />
+      {resting && <SundayRest date={date} to={sundayTo} page={(p) => withDate(p, date, isToday)} />}
+      <DayArc schedule={s} day={day} isToday={isToday} />
+      <div className="tiles">
+        <Link to={withDate('/andacht/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
+          <span className="tile-time">
+            {s.stillTime} · {day.morning.form === 'short' ? '20' : '45'} Min.
+          </span>
+          <span className="tile-name">Stille Zeit</span>
+          <span className="tile-state">{morningStatus(day)}</span>
+        </Link>
+        <Link
+          to={withDate('/andacht/abend', date, isToday)}
+          className={`tile${day.evening.vespersDone && eveningClosed(day, profile.showCompline) ? ' is-done' : ''}`}
+        >
+          <span className="tile-time">
+            {profile.showCompline ? `${s.vespers} · ${s.compline}` : s.vespers}
+          </span>
+          <span className="tile-name">{profile.showCompline ? 'Vesper und Nachtgebet' : 'Vesper'}</span>
+          <span className="tile-state">{eveningStatus(day, profile.showCompline)}</span>
+        </Link>
+      </div>
+
+      {!resting && (
+        <Link className="sunday-link" to={sundayTo}>
+          <span className="sunday-link-rose" aria-hidden="true">
+            <LutherRose size={30} />
+          </span>
+          <span className="sunday-link-text">
+            <span className="sunday-link-label">Diese Woche</span>
+            <span className="sunday-link-week">{church.week}</span>
+          </span>
+          <span className="sunday-link-go" aria-hidden="true">
+            ›
+          </span>
+        </Link>
+      )}
+      {season && <TodaySeason offer={season} />}
+
+      <ReadingPanel date={date} isToday={isToday} />
+      <ThreeThings day={day} />
+
+      {!resting && (
+        <Section
+          id="today.habits"
+          title="Gewohnheiten"
+          aside={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined}
+        >
+          <HabitsWeek key={today} date={date} />
+          {hallMode && (
+            <p className="small muted habits-mode-note">
+              Überblick und Anleitung der Wüstenzeit stehen in der Arena.{' '}
+              <Link to="/arena?bereich=wuestenwanderung">Zur Wüstenwanderung</Link>
+            </p>
+          )}
+        </Section>
+      )}
+
+      <Section id="today.lookback" title="Die letzten vier Wochen">
+        <Lookback date={date} />
+      </Section>
+
+    </>
+  );
+}
