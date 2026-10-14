@@ -6,7 +6,7 @@
  * the spelling of the edition; the long s is set as s, "ꝛc." as "etc.".
  * Löhe's own misprints stay (e.g. question 122, "des siebenten Gebotes").
  */
-import type { ChiefPartId } from './catechism';
+import { WEEKDAY_PIECES, type ChiefPartId } from './catechism';
 import { LOEHE_BAPTISM } from './loehe/baptism';
 import { LOEHE_COMMANDMENTS } from './loehe/commandments';
 import { LOEHE_CONFESSION } from './loehe/confession';
@@ -115,13 +115,31 @@ export function loeheForChiefPart(chief: ChiefPartId): LoeheQuestion[] {
 export const LOEHE_DAYS = 7;
 
 /**
- * The questions for one learning day (0 = Monday): the questions of the chief
- * part shared out evenly over the week, in the order of the book. Nothing
- * lapses: what is not asked today simply stays in the book.
+ * Löhe's questions on one piece for one learning day (0 = Monday), so that
+ * they always explain the piece learned that day. A piece learned on several
+ * days has its questions shared out evenly over them. The introductory
+ * questions go with the first piece on its first day, the transition with
+ * the last piece on its last day. Nothing lapses: what is not asked simply
+ * stays in the book.
  */
+export function loeheForPieceOnDay(chief: ChiefPartId, pieceIndex: number, dayIndex: number): LoeheQuestion[] {
+  const p = LOEHE_PLACES[chief];
+  const range = p.pieces[pieceIndex];
+  const days = WEEKDAY_PIECES[chief].flatMap((d, i) => (d.includes(pieceIndex) ? [i] : []));
+  const share = days.indexOf(dayIndex);
+  if (!range || share < 0) return [];
+  const qs = (r: Range) => loeheBetween(r).flatMap((l) => l.items.filter(isQuestion));
+  const own = qs(range);
+  const start = Math.round((own.length * share) / days.length);
+  const end = Math.round((own.length * (share + 1)) / days.length);
+  return [
+    ...(p.intro && pieceIndex === 0 && share === 0 ? qs(p.intro) : []),
+    ...own.slice(start, end),
+    ...(p.outro && pieceIndex === p.pieces.length - 1 && share === days.length - 1 ? qs(p.outro) : []),
+  ];
+}
+
+/** All of Löhe's questions for one learning day: those on the pieces learned that day. */
 export function loeheForDay(chief: ChiefPartId, dayIndex: number): LoeheQuestion[] {
-  const all = loeheForChiefPart(chief);
-  const start = Math.round((all.length * dayIndex) / LOEHE_DAYS);
-  const end = Math.round((all.length * (dayIndex + 1)) / LOEHE_DAYS);
-  return all.slice(start, end);
+  return (WEEKDAY_PIECES[chief][dayIndex] ?? []).flatMap((pi) => loeheForPieceOnDay(chief, pi, dayIndex));
 }

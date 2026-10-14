@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type TouchEvent } from 'react';
 import { WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
-import { loeheForDay } from '../../content/loeheCatechism';
+import { loeheForPieceOnDay } from '../../content/loeheCatechism';
 
 const DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
 
@@ -27,7 +27,7 @@ function Lines({ text }: { text: string }) {
 /**
  * At the table with the children. The piece stays on the left (on a phone:
  * above), to be said and learned; Luther's answer only after a tap. On the
- * right, all of the day's questions of Wilhelm Löhe at once, with their
+ * right, all of Wilhelm Löhe's questions on the piece for the day at once, with their
  * answers in view for the one who asks: read on by scrolling, nothing to
  * tap. A sideways swipe turns to the next or previous piece.
  */
@@ -54,7 +54,7 @@ export function HouseFatherMode({
   onCloseRef.current = onClose;
   const piece = chief.pieces[pieceIndex]!;
   const day = dayOfPiece(chief, pieceIndex, dayIndex);
-  const loehe = loeheForDay(chief.id, day);
+  const loehe = loeheForPieceOnDay(chief.id, pieceIndex, day);
 
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;

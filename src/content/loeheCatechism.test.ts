@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATECHISM } from './catechism';
+import { CATECHISM, WEEKDAY_PIECES } from './catechism';
 import {
   LOEHE_BY_CHIEF_PART,
   LOEHE_IN_ORDER,
@@ -12,6 +12,7 @@ import {
   loeheBetween,
   loeheForChiefPart,
   loeheForDay,
+  loeheForPieceOnDay,
   loeheForPiece,
 } from './loeheCatechism';
 
@@ -80,16 +81,25 @@ describe("Löhe's questions on the chief parts", () => {
     expect(second.items[0]).toEqual({ mark: '2.' });
   });
 
-  it('share the questions of each chief part out evenly over its seven learning days', () => {
+  it('go with the pieces learned each day, all of them over the week, in the order of the book', () => {
     const totals: Record<string, number> = {};
     for (const part of CATECHISM) {
       const all = loeheForChiefPart(part.id).map((q) => q.no);
       totals[part.id] = all.length;
       const days = Array.from({ length: LOEHE_DAYS }, (_, d) => loeheForDay(part.id, d).map((q) => q.no));
       expect(days.flat(), part.id).toEqual(all);
-      const sizes = days.map((d) => d.length);
-      expect(Math.max(...sizes) - Math.min(...sizes), part.id).toBeLessThanOrEqual(1);
+      // Each question on a piece only on a day that piece is learned.
+      for (let d = 0; d < LOEHE_DAYS; d++)
+        for (const pi of WEEKDAY_PIECES[part.id][d]!) {
+          const [from, to] = LOEHE_PLACES[part.id].pieces[pi]!;
+          const own = loeheForPieceOnDay(part.id, pi, d).filter((q) => q.no >= from && q.no <= to);
+          expect(own.length, `${part.id} ${pi} ${d}`).toBeGreaterThan(0);
+        }
     }
     expect(totals).toEqual({ commandments: 156, creed: 192, lordsPrayer: 141, baptism: 95, confession: 73, lordsSupper: 96 });
+    // Wednesday, the third commandment: only Löhe's questions on it.
+    expect(loeheForDay('commandments', 2).map((q) => q.no)).toEqual(Array.from({ length: 14 }, (_, i) => 64 + i));
+    // Monday, the first commandment, after the introduction.
+    expect(loeheForDay('commandments', 0).map((q) => q.no)).toEqual(Array.from({ length: 30 }, (_, i) => 17 + i));
   });
 });

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.8.1',
+    date: '2026-10-14',
+    title: 'Löhes Fragen passend zum Stück',
+    changes: [
+      { area: 'Lehre', text: 'Am Tisch stehen rechts jetzt genau Löhes Fragen zu dem Stück, das links steht, etwa beim dritten Gebot die Fragen 64–77. Bisher waren seine Fragen nach der Zahl auf die Woche verteilt und reichten so in das Gebot davor und danach. Wird ein Stück an zwei Tagen gelernt, teilen sich die beiden Tage seine Fragen. Die einleitenden Fragen kommen mit dem ersten Stück, die Übergangsfragen mit dem letzten.' },
+    ],
+  },
+  {
     version: '1.8.0',
     date: '2026-10-14',
     title: 'Löhes Fragen im Anhang',
