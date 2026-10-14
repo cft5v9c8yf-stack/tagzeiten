@@ -6,6 +6,7 @@
 <title>Henoch Visitenkarte</title>
 <style>
 /* Square business card for Vistaprint: 65 × 65 mm trim with 1.5 mm bleed on every side. Page 1 is the front, page 2 the back. */
+@font-face { font-family: 'Literata'; font-style: italic; font-weight: 400; src: url('../anleitung/fonts/literata-latin-400-italic.woff2') format('woff2'); }
 @font-face { font-family: 'Literata'; font-style: normal; font-weight: 400; src: url('../anleitung/fonts/literata-latin-400-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Literata'; font-style: normal; font-weight: 600; src: url('../anleitung/fonts/literata-latin-600-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 400; src: url('../anleitung/fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
@@ -41,9 +42,15 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
 .title { position: absolute; top: calc(var(--bleed) + 7mm); left: 0; right: 0; text-align: center; }
 .name { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 22.5pt; letter-spacing: 0.02em; line-height: 1; }
 .motto { font-family: 'Literata', Georgia, serif; font-size: 11pt; color: var(--ink); margin-top: 2.4mm; line-height: 1; }
-/* Alternative back: a short description of Henoch, the address beneath it. */
-.about { width: calc(var(--trim) - 12mm); font-family: 'Literata', Georgia, serif; font-size: 7.6pt; line-height: 1.42; text-align: left; hyphens: auto; -webkit-hyphens: auto; margin: 0; }
-.about-url { width: calc(var(--trim) - 12mm); border-top: 0.2mm solid var(--rule); padding-top: 2.6mm; margin-top: 3.2mm; text-align: left; font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; font-size: 9pt; letter-spacing: 0.06em; line-height: 1; }
+/* Alternative back: headline, two short paragraphs, then the address under the icon's horizon and sun. */
+.back-text { justify-content: flex-start; align-items: stretch; padding: calc(var(--bleed) + 5.5mm) calc(var(--bleed) + 5.5mm) calc(var(--bleed) + 5mm); }
+.pitch { margin-bottom: 2.2mm; font-family: 'Literata', Georgia, serif; hyphens: auto; -webkit-hyphens: auto; }
+.pitch h2 { font-weight: 600; font-size: 12pt; line-height: 1.15; margin: 0 0 2.4mm; }
+.pitch p { font-size: 7.6pt; line-height: 1.4; margin: 0 0 1.6mm; }
+.pitch .source { font-style: italic; color: var(--muted); font-size: 7pt; margin: 0; }
+.horizon { margin-top: auto; flex: none; position: relative; height: 3.2mm; border-bottom: 0.35mm solid var(--ink); }
+.horizon::after { content: ''; position: absolute; left: 50%; bottom: 0; width: 6.4mm; height: 3.2mm; margin-left: -3.2mm; border-radius: 3.2mm 3.2mm 0 0; background: var(--gold); }
+.site { text-align: center; font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 12pt; letter-spacing: 0.03em; line-height: 1; margin-top: 2.6mm; }
 /* Back: QR code to the website, the address beneath it. */
 .qr { width: 30mm; height: 30mm; display: block; }
 .url { font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; font-size: 11pt; letter-spacing: 0.06em; color: var(--ink); margin-top: 5.3mm; line-height: 1; }
@@ -97,9 +104,15 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
   <div class="url">henoch.app</div>
 </section>
 
-<section class="card" aria-label="Rückseite mit Text">
-  <p class="about">Henoch ist ein Begleiter für Männer, die ihren Tag mit Gott beginnen und beschließen wollen: mit Gebet am Morgen und am Abend, mit Gottes Wort und mit dem Katechismus. Die App will kein weiteres Projekt neben Familie, Gemeinde und Arbeit sein, sondern das ordnen, was schon da ist, dort, wo Gott dich hingestellt hat. Der App-Name Henoch geht zurück auf Henoch, der „ein göttliches Leben führte“ (1.&nbsp;Mose&nbsp;5,24), Tag für Tag mit Gott.</p>
-  <div class="about-url">henoch.app</div>
+<section class="card back-text" aria-label="Rückseite mit Text">
+  <div class="pitch">
+    <h2>Morgens und abends mit&nbsp;Gott.</h2>
+    <p>Gebet, Gottes Wort und Katechismus: Henoch begleitet Männer durch den Tag.</p>
+    <p>Kein weiteres Projekt neben Familie, Gemeinde und Arbeit, sondern Ordnung für das, was schon da ist. Dort, wo Gott dich hingestellt hat.</p>
+    <p class="source">Benannt nach Henoch, der „ein göttliches Leben führte“ (1.&nbsp;Mose&nbsp;5,24).</p>
+  </div>
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="site">henoch.app</div>
 </section>
 
 </body>

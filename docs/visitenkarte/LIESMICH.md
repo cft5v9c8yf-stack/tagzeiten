@@ -4,7 +4,7 @@ Quadratische Visitenkarte für Vistaprint, 65 × 65 mm, mit 1,5 mm Anschnitt an 
 
 - **Vorderseite:** das Bild des App-Symbols randlos über die ganze Fläche in den Farben des Symbols wie auf der Homepage, darin „Henoch“ und „Mit Gott durch den Tag.“; die Farben stehen oben in `.front`
 - **Rückseite:** QR-Code zu https://henoch.app/ und darunter die Adresse
-- **Rückseite mit Text (Alternative):** ein kurzer Text über Henoch und darunter die Adresse
+- **Rückseite mit Text (Alternative):** Überschrift, kurzer Text über Henoch, darunter Horizont und Sonne aus dem Symbol und die Adresse
 
 Dateien:
 
