@@ -21,18 +21,18 @@ CSS = r"""
   --paper:#FBFAF6; --endpaper:#E9E3D7; --ink:#1D2330; --ink-2:#565D6B; --ink-3:#8E8A82; --line:#D5D0C6; --dot:#C3BDB1;
   --rubric:#8C2F2F; --hand:#243B6B; --silent:#F1EEE7; --shade:rgba(29,35,48,.18);
   --cloth:#1F2B3A; --cloth-2:#162030; --gilt:#C9B27D; --band:#0E141D; --ribbon-1:#8C2F2F; --ribbon-2:#3E6B4E;
-  --seg1:#8C2F2F; --seg2:#3A4A63; --seg3:#3E6B4E; --seg4:#9A7B2F;
+  --seg1:#8C2F2F; --seg2:#3A4A63; --seg3:#3E6B4E; --seg4:#9A7B2F; --seg5:#A8875A; --seg6:#5B6676;
   --serif:"Literata",Georgia,"Times New Roman",serif;
   --sans:"Source Sans 3",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
   --script:"Caveat","Segoe Print","Bradley Hand",cursive;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
-  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F;
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F; --seg5:#C2A57A; --seg6:#8C97A8;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
-  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F;
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F; --seg5:#C2A57A; --seg6:#8C97A8;
   color-scheme:dark}
 
 body{background:var(--desk);color:var(--desk-ink);font-family:var(--sans);font-size:16px;line-height:1.5}
@@ -168,6 +168,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .tbl .ps{font:400 calc(2.6 * var(--mm)) var(--serif);font-variant-numeric:tabular-nums}
 .tbl .st{font:400 calc(2.45 * var(--mm)) var(--serif);color:var(--ink-2)}
 .tbl .hw{padding-bottom:0}
+.tbl span.hw,.ln .hw,.hb span.hw{overflow:visible;padding-right:calc(.8 * var(--mm))}
 .wk > div{grid-template-columns:calc(8 * var(--mm)) calc(18 * var(--mm)) calc(31 * var(--mm)) calc(28 * var(--mm)) minmax(0,1fr)}
 .mo > div{grid-template-columns:calc(22 * var(--mm)) minmax(0,1fr) calc(22 * var(--mm)) calc(17 * var(--mm)) calc(19 * var(--mm));min-height:calc(9.5 * var(--mm))}
 .mo .ck{text-align:center}
@@ -246,12 +247,12 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .plan{max-width:900px;margin:0 auto}
 .bar{display:flex;height:34px;border-radius:4px;overflow:hidden;box-shadow:0 1px 0 var(--desk-rule)}
 .bar span{display:flex;align-items:center;justify-content:center;color:var(--paper);font:600 .8rem var(--sans);min-width:0;overflow:hidden;white-space:nowrap}
-.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:18px}
+.parts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-top:18px}
 .parts h3{margin:0 0 6px;font:600 .78rem var(--sans);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
 .parts h3 i{width:10px;height:10px;border-radius:2px;flex:none}
 .parts h3 b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--desk-muted)}
 .parts ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-family:var(--serif);font-size:.9rem;line-height:1.35}
-.parts li{display:grid;grid-template-columns:4.8em minmax(0,1fr);gap:4px}
+.parts li{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
 .parts li span:first-child{font:600 .8rem var(--sans);color:var(--desk-muted);font-variant-numeric:tabular-nums;padding-top:2px}
 .plan .sum{margin:18px 0 0;font-family:var(--serif);color:var(--desk-muted);text-align:center}
 
@@ -393,7 +394,7 @@ def p_aufbau():
         ("8", "Die Ordnung am Morgen, mit allen Gebetstexten"),
         ("12", "Die Ordnung am Abend: Vesper und Nachtgebet"),
         ("16", "Die Tage – dreizehn Wochen zu je sechzehn Seiten: <em>eine Doppelseite für die Woche, dann jeder Tag auf einer Doppelseite, links der Morgen, rechts der Abend</em>"),
-        ("224", "Arena: Brüder, Winter Arc, Treffen"),
+        ("224", "Wüstenzeit: der Winter Arc, dreizehn Wochen"), ("260", "Arena: Brüder und Treffen"),
         ("275", "Notizen"), ("283", "Verse, die ich mitnehme"), ("288", "Monatlich: Privatbeichte, Abendmahl"),
     ]
     toc_html = "".join(f"<b>{n}</b><span>{t}</span>" for n, t in toc)
@@ -455,19 +456,21 @@ NT_BOOKS = [("Matthäus", 28), ("Markus", 16), ("Lukas", 24), ("Johannes", 21), 
 assert sum(n for _, n in NT_BOOKS) == 260
 
 
-def p_nt():
+def p_nt(folio="6", side="l", note="Altes Testament auf S. 4–5: 929 Kapitel im Muster 2-1-1-1, keine Portion über eine Buchgrenze.",
+         read=(("Matthäus", 4),)):
+    done = dict(read)
     rows = ""
     for name, n in NT_BOOKS:
-        bx = "".join(f'<span class="nb{" on" if (name == "Matthäus" and i <= 4) else ""}">{i}</span>' for i in range(1, n + 1))
+        bx = "".join(f'<span class="nb{" on" if i <= done.get(name, 0) else ""}">{i}</span>' for i in range(1, n + 1))
         rows += f'<span class="bk">{name}</span><span class="bx">{bx}</span>'
     inner = f"""
 <header class="ph"><h2 class="pt"><small>Leseplan</small>Neues Testament</h2>
 <div class="pm"><div class="dline"><span class="pl">begonnen am</span>{hw("5. 10. 2026")}</div></div></header>
 <p class="pr">260 Kapitel, eines je Lesung, in Luthers Reihenfolge. Abhaken, was gelesen ist. Der Plan läuft nach Fortschritt, nicht nach Datum: Wer aussetzt, liest beim nächsten freien Kästchen weiter.</p>
 <div class="nt">{rows}</div>
-<p class="pr" style="margin-top:auto">Altes Testament auf S. 4–5: 929 Kapitel im Muster 2-1-1-1, keine Portion über eine Buchgrenze.</p>
+<p class="pr" style="margin-top:auto">{note}</p>
 """
-    return page("l", "6", "Seite 6: Leseplan Neues Testament", inner)
+    return page(side, folio, f"Seite {folio}: Leseplan Neues Testament", inner)
 
 
 KATECHISMUS = [
@@ -485,7 +488,7 @@ KATECHISMUS = [
 assert sum(len(p) for _, _, p in KATECHISMUS) == 35
 
 
-def p_katechismus():
+def p_katechismus(folio="7", side="r", sub="Sechs Wochen, sechs Hauptstücke, dann von vorn. Pro Tag ein Stück, nach der Wochenseite."):
     body = '<span class="th" style="justify-content:flex-start">Stück</span><span class="th">aus&shy;wendig</span><span class="th">mit den Kindern</span>'
     for wk, hs, pieces in KATECHISMUS:
         body += f'<span class="hs">{hs}</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">{wk}</span>'
@@ -495,10 +498,10 @@ def p_katechismus():
             body += f'<span>{p}</span><span class="cc">{b(me)}</span><span class="cc">{b(kids)}</span>'
     inner = f"""
 <header class="ph"><h2 class="pt"><small>Luther, 1529</small>Der Kleine Katechismus</h2></header>
-<p class="pr">Sechs Wochen, sechs Hauptstücke, dann von vorn. Pro Tag ein Stück, nach der Wochenseite.</p>
+<p class="pr">{sub}</p>
 <div class="kt">{body}</div>
 """
-    return page("r", "7", "Seite 7: Katechismus", inner)
+    return page(side, folio, f"Seite {folio}: Katechismus", inner)
 
 
 WEEK = [("Mo", "63 · 141", "Ehemann", "1. Gebot", "verfolgte Kirche"),
@@ -718,49 +721,52 @@ def p_endpaper_back():
     return page("r ep", "", "Hinterer Innendeckel: Der Bogen", inner)
 
 
-def p_wa_l():
-    D = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-    groups = [("Morgen", [("04:00 auf, kein Handy", "all", [1, 1, 1, 1]),
-                          ("Morgenzeit im Wort und Gebet", "all", [1, 1, 0, 1]),
-                          ("Tagebuch und drei Dankpunkte", "all", [1, 1, 0, 1]),
-                          ("Trainiert", "rest", [1, 1, 1, 0])]),
-              ("Arbeit", [("Fokusblock 08–12", "dash", [1, 0, 1, 1]),
-                          ("Block 13–17", "dash", [1, 1, 1, 1])]),
-              ("Haus", [("Zu Hause gekocht", "all", [1, 1, 0, 1]),
-                        ("Abendessen ohne Handy", "all", [1, 0, 1, 1]),
-                        ("Eine Geste für meine Frau", "all", [1, 1, 0, 1]),
-                        ("Küche um 20:00 zu", "all", [0, 1, 1, 1]),
-                        ("Handy außerhalb des Schlafzimmers", "all", [1, 1, 1, 1]),
-                        ("Gebetet, 21:00 Licht aus", "all", [1, 1, 1, 0])])]
+WA_MARKS = {"04:00 auf, kein Handy": [1, 1, 1, 1], "Morgenzeit im Wort und Gebet": [1, 1, 0, 1],
+            "Tagebuch und drei Dankpunkte": [1, 1, 0, 1], "Trainiert": [1, 1, 1, 0], "Fokusblock 08–12": [1, 0, 1, 1],
+            "Block 13–17": [1, 1, 1, 1], "Zu Hause gekocht": [1, 1, 0, 1], "Abendessen ohne Handy": [1, 0, 1, 1],
+            "Eine Geste für meine Frau": [1, 1, 0, 1], "Küche um 20:00 zu": [0, 1, 1, 1],
+            "Handy außerhalb des Schlafzimmers": [1, 1, 1, 1], "Gebetet, 21:00 Licht aus": [1, 1, 1, 0]}
+
+
+def p_wa_l(folio="232", runner="Wüstenzeit · Winter Arc", D=("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"),
+           phase="Phase Disziplin · Kann ich es halten?", title="Woche 1 · Einfach da sein", vom="5. 10.", marks=None):
+    """Winter Arc week tracker; texts verbatim from the plan. Ruhe/– fall on Saturday and Sunday wherever they sit."""
+    marks = WA_MARKS if marks is None else marks
+    groups = [("Morgen", [("04:00 auf, kein Handy", "all"), ("Morgenzeit im Wort und Gebet", "all"),
+                          ("Tagebuch und drei Dankpunkte", "all"), ("Trainiert", "rest")]),
+              ("Arbeit", [("Fokusblock 08–12", "dash"), ("Block 13–17", "dash")]),
+              ("Haus", [("Zu Hause gekocht", "all"), ("Abendessen ohne Handy", "all"), ("Eine Geste für meine Frau", "all"),
+                        ("Küche um 20:00 zu", "all"), ("Handy außerhalb des Schlafzimmers", "all"), ("Gebetet, 21:00 Licht aus", "all")])]
     g = '<span class="h lft">Tagesstandard</span>' + "".join(f'<span class="h">{d}</span>' for d in D)
     for gname, items in groups:
         g += f'<span class="grp">{gname}</span>'
-        for name, kind, marks in items:
+        for name, kind in items:
             g += f'<span class="n">{name}</span>'
-            for i in range(7):
-                if i >= 5 and kind == "rest":
+            mk = marks.get(name, [])
+            for i, d in enumerate(D):
+                if d in ("Sa", "So") and kind == "rest":
                     g += '<span class="cc"><span class="rest">Ruhe</span></span>'
-                elif i >= 5 and kind == "dash":
+                elif d in ("Sa", "So") and kind == "dash":
                     g += '<span class="cc"><span class="dash">–</span></span>'
                 else:
-                    g += f'<span class="cc">{b(i < len(marks) and marks[i] == 1)}</span>'
+                    g += f'<span class="cc">{b(i < len(mk) and mk[i] == 1)}</span>'
     inner = f"""
-<header class="ph"><h2 class="pt"><small>Phase Disziplin · Kann ich es halten?</small>Woche 1 · Einfach da sein</h2>
-<div class="pm"><div class="dline" style="width:calc(34 * var(--mm))"><span class="pl">Woche vom</span>{hw("5. 10.")}</div></div></header>
+<header class="ph"><h2 class="pt"><small>{phase}</small>{title}</h2>
+<div class="pm"><div class="dline" style="width:calc(34 * var(--mm))"><span class="pl">Woche vom</span>{hw(vom)}</div></div></header>
 {row("Auftrag der Woche", '<div class="lines"><p class="txt" style="margin:calc(1 * var(--mm)) 0">Die Woche nicht bewerten. Abhaken, was war, leer lassen, was nicht war. Ziel: sieben Abende ehrlich abgehakt.</p></div>')}
 <p class="rb" style="margin-left:calc(22 * var(--mm))">„Alles, was ihr tut, das tut von Herzen als dem HERRN.“<cite>Kol 3,23</cite></p>
 <div class="hb wa">{g}</div>
 <p class="pr" style="margin-top:auto">Ein leeres Kästchen ist kein Urteil, nur eine ehrliche Auskunft.</p>
 """
-    return page("l", "234", "Seite 234: Winter Arc, Wochen-Tracker", inner, runner="Arena · Winter Arc")
+    return page("l", folio, f"Seite {folio}: Winter Arc, Wochen-Tracker", inner, runner=runner)
 
 
-def p_wa_r():
+def p_wa_r(folio="233", runner="Wüstenzeit · Winter Arc", small="Woche 1", finance=True):
     ws = [("Gottesdienst und Sonntagsruhe", False), ("Sonntagsgespräch mit meiner Frau", False),
-          ("Abend zu zweit, von mir geplant", False), ("15 Minuten Finanzen", True), ("Gedient (einmal im Monat)", False)]
+          ("Abend zu zweit, von mir geplant", False), ("15 Minuten Finanzen", finance), ("Gedient (einmal im Monat)", False)]
     w = "".join(f'<div class="it">{b(on)}<span>{n}</span></div>' for n, on in ws)
     inner = f"""
-<header class="ph"><h2 class="pt"><small>Woche 1</small>Wochenstandard</h2></header>
+<header class="ph"><h2 class="pt"><small>{small}</small>Wochenstandard</h2></header>
 <div class="wl" style="margin-top:calc(3 * var(--mm))">{w}</div>
 {sec("", "Sonntagabend")}
 {row("Ein Sieg dieser Woche", lines(3))}
@@ -769,7 +775,7 @@ def p_wa_r():
 <p class="pr" style="margin-top:calc(4 * var(--mm))">Zum Schluss der Zuspruch:</p>
 <div class="vs">„Die Güte des HERRN ist’s, daß wir nicht gar aus sind; seine Barmherzigkeit hat noch kein Ende, sondern sie ist alle Morgen neu, und deine Treue ist groß.“<cite>Klagelieder 3,22–23</cite></div>
 """
-    return page("r", "235", "Seite 235: Winter Arc, Wochenstandard und Sonntagabend", inner, runner="Arena · Winter Arc")
+    return page("r", folio, f"Seite {folio}: Winter Arc, Wochenstandard und Sonntagabend", inner, runner=runner)
 
 
 def p_ord(n, fn, side, label, runner):
@@ -777,23 +783,20 @@ def p_ord(n, fn, side, label, runner):
 
 
 def p_arena():
-    toc = [("225", "Meine Brüder"), ("226", "Winter Arc: Anleitung, wortgetreu nach dem Plan"),
-           ("234", "Winter Arc: dreizehn Wochen, je eine Doppelseite"), ("260", "Tag 90 – und danach"),
-           ("262", "Treffen der Brüder, eine Seite je Treffen")]
+    toc = [("261", "Meine Brüder"), ("262", "Treffen der Brüder, eine Seite je Treffen")]
     toc_html = "".join(f"<b>{n}</b><span>{t}</span>" for n, t in toc)
     inner = f"""
-<header class="ph"><h2 class="pt"><small>Dritter Teil</small>Arena</h2></header>
+<header class="ph"><h2 class="pt"><small>Vierter Teil</small>Arena</h2></header>
 <div class="vs" style="margin-top:calc(3 * var(--mm))">„Ein Messer wetzt das andere und ein Mann den andern.“<cite>Sprüche 27,17</cite></div>
 <p class="txt">Hier gehst du nicht allein. Zwei oder drei Brüder halten sich gegenseitig ehrlich, mit dem, was jeder teilen will.</p>
 {sec("", "In der Arena")}
 <div class="toc">{toc_html}</div>
 {sec("", "Was geteilt wird")}
-<p class="txt">Die drei Dinge, einzelne Gewohnheiten, der Stand im Winter Arc.</p>
+<p class="txt">Die drei Dinge und einzelne Gewohnheiten, so viel jeder teilen will.</p>
 {sec("", "Was nicht geteilt wird")}
 <p class="txt">Gebet, Prüfung und die Tagesseiten. Was einer dem andern bekennt, wird nicht notiert.</p>
-<p class="rb" style="margin-top:auto">Geh den nächsten Durchgang nicht allein. Nimm einen oder zwei Brüder aus der Arena mit und haltet euch gegenseitig ehrlich.</p>
 """
-    return page("l", "224", "Seite 224: Arena", inner, runner="Arena")
+    return page("l", "260", "Seite 260: Arena", inner, runner="Arena")
 
 
 def p_brueder():
@@ -811,11 +814,8 @@ def p_brueder():
 {sec("", "Wir treffen uns")}
 {row("Wann", lines(1, ["samstags, 7 Uhr, jede Woche"]))}
 {row("Wo", lines(1, ["Bäckerei am Markt"]))}
-{sec("", "Abends den Stand schicken an")}
-{row("Bruder", lines(1, ["Matthias, ab Woche 11"]))}
-<p class="pr">Winter Arc, Woche 11: Einen Mann einladen, den Standard mitzugehen, etwa aus der Arena. Ihm jeden Abend kurz deinen Stand schicken.</p>
 """
-    return page("r", "225", "Seite 225: Meine Brüder", inner, runner="Arena")
+    return page("r", "261", "Seite 261: Meine Brüder", inner, runner="Arena")
 
 
 def p_treffen(n, side, ex):
@@ -831,7 +831,7 @@ def p_treffen(n, side, ex):
                 + ln('<span class="pl">Name</span>' + hw(names[i]))
                 + ln('<span class="pl">trägt</span>' + hw(tr[i]))
                 + ln('<span class="pl">braucht</span>' + hw(br_[i]))
-                + ln('<span class="pl">Winter Arc</span>' + hw(e.get("wa", ["", "", ""])[i])) + ln("") + "</div>")
+                + ln("") + "</div>")
     inner = f"""
 <header class="ph"><h2 class="pt">Treffen</h2>
 <div class="pm"><div class="dline"><span class="pl">Datum</span>{hw(e.get("date", ""))}</div></div></header>
@@ -839,7 +839,7 @@ def p_treffen(n, side, ex):
 {sec("1", "Das Wort", "einer bringt es mit")}
 {row("Stelle", lines(1, g("ref")))}
 {row("Was wir mitnehmen", lines(3, g("take")))}
-{sec("2", "Der Stand", "jeder, so viel er teilen will")}
+{sec("2", "Aus der Woche", "jeder, so viel er teilen will")}
 <div class="tri">{stand(0)}{stand(1)}{stand(2)}</div>
 <p class="pr">Was einer dem andern bekennt, wird nicht notiert.</p>
 {sec("3", "Füreinander beten")}
@@ -857,27 +857,27 @@ def p_treffen(n, side, ex):
 TREFFEN_EX = {"date": "Samstag, 10. Oktober", "who": "Andreas, Matthias, Daniel", "ref": "Sprüche 27,17",
               "take": ["Keiner hält den Standard allein."],
               "names": ["Andreas", "Matthias", "Daniel"],
-              "traegt": ["04:00 hält", "Fokusblöcke", "startet Montag"],
+              "traegt": ["Morgen um 4 hält", "die Fokusblöcke", "der Hauskreis"],
               "braucht": ["Küche um 20:00", "Schlaf", "Nachfragen"],
-              "wa": ["Woche 1", "Woche 1", "ab Montag"],
               "pray": ["M.: Schlaf und Geduld · D.: Bewerbung", "A.: Predigt am Sonntag"],
               "ask": ["Matthias fragt Andreas Mittwoch nach der Küche."],
               "next": ["Samstag, 17. 10., 7 Uhr, Bäckerei"]}
 
 PARTS = [("Vorn", 15, "--seg1", [("1–3", "Titel, Aufbau, Gebetsübersicht"), ("4–6", "Leseplan AT und NT"), ("7", "Katechismus"), ("8–15", "Die Ordnung, Morgen und Abend")]),
          ("Die Tage", 208, "--seg2", [("16–223", "13 Wochen × 16 Seiten"), ("", "je Woche: 2 Seiten Woche, 7 Tage × 2 Seiten")]),
-         ("Arena", 51, "--seg3", [("224–225", "Arena, Meine Brüder"), ("226–233", "Winter Arc: Anleitung"), ("234–259", "13 Wochen-Tracker"), ("260–261", "Tag 90 – und danach"), ("262–274", "13 Treffen")]),
+         ("Wüstenzeit", 36, "--seg5", [("224–231", "Winter Arc: Anleitung"), ("232–257", "13 Wochen-Tracker"), ("258–259", "Tag 90 – und danach")]),
+         ("Arena", 15, "--seg3", [("260–261", "Arena, Meine Brüder"), ("262–274", "13 Treffen")]),
          ("Hinten", 14, "--seg4", [("275–282", "Notizen"), ("283–287", "Verse, die ich mitnehme"), ("288", "Monatlich")])]
 assert sum(p[1] for p in PARTS) == 288
 PLAN = ('<section class="block" id="seiten"><div class="cap"><span class="pg">Umfang</span><h2>288 Seiten in 18 Lagen</h2>'
         '<p>Ein Band trägt dreizehn Wochen, also genau eine Runde Winter Arc. 288 Seiten sind 18 Lagen zu je 16 Seiten, so lässt sich das Buch fadenheften.</p></div>'
-        '<div class="plan"><div class="bar" role="img" aria-label="Vorn 15, Die Tage 208, Arena 51, Hinten 14 Seiten">'
-        + "".join(f'<span style="flex:{n};background:var({c})">{n if n > 20 else ""}</span>' for _, n, c, _ in PARTS)
+        '<div class="plan"><div class="bar" role="img" aria-label="Vorn 15, Die Tage 208, Wüstenzeit 36, Arena 15, Hinten 14 Seiten">'
+        + "".join(f'<span style="flex:{n};background:var({c})">{n if n > 30 else ""}</span>' for _, n, c, _ in PARTS)
         + '</div><div class="parts">'
         + "".join(f'<div><h3><i style="background:var({c})"></i>{t}<b>{n} S.</b></h3><ul>'
                   + "".join(f"<li><span>{a}</span><span>{b}</span></li>" for a, b in items) + "</ul></div>"
                   for t, n, c, items in PARTS)
-        + '</div><p class="sum">Dazu Vorsatz und Nachsatz im Deckel. Wer keinen Winter Arc läuft, nutzt die Tracker-Seiten für Notizen der Brüder.</p></div></section>')
+        + '</div><p class="sum">Dazu Vorsatz und Nachsatz im Deckel. Wer keine Wüstenzeit hält, nutzt ihre Seiten für Notizen.</p></div></section>')
 
 
 def build():
@@ -896,7 +896,7 @@ def build():
         <dt>Umfang</dt><dd>288 nummerierte Seiten in 18 Lagen, ein Band für dreizehn Wochen; etwa 2 cm stark</dd>
         <dt>Bindung</dt><dd>Fadenheftung, liegt offen flach; Leineneinband</dd>
         <dt>Papier</dt><dd>90 g, füllhaltertauglich; Linien im Abstand von 5,5 mm, hinten Punktraster</dd>
-        <dt>Bändchen</dt><dd>Drei: rot für den Tag, grün für die Ordnung, schwarz für die Arena</dd>
+        <dt>Bändchen</dt><dd>Drei: rot für den Tag, grün für die Ordnung, schwarz für die Wüstenzeit</dd>
         <dt>Dazu</dt><dd>Gummiband, Einstecktasche hinten für Gottesdienstblatt und Zettel</dd>
       </dl>
     </div>
@@ -939,14 +939,16 @@ def build():
         block("monatlich", "S. 288 · Innendeckel", "Monatlich und der Bogen",
               "Privatbeichte und Abendmahl haben ihren eigenen Termin. Notiert wird das Datum, nie der Inhalt. Der hintere Deckel trägt den Bogen aus dem Gebetsheft.",
               spread(p_monatlich(), p_endpaper_back())),
-        block("arena", "S. 224–274", "Arena",
-              "Der dritte Teil gehört den Brüdern und dem Winter Arc. Vorn stehen die Brüder, dann die Anleitung des Winter Arc wortgetreu, dreizehn Wochen-Tracker, Tag 90 und je eine Seite für jedes Treffen.",
+        block("wueste", "S. 224–259", "Wüstenzeit",
+              "Der Winter Arc ist eine Wüstenzeit: dreizehn Wochen, in denen dieselbe kurze Liste gehalten wird. Er steht deshalb als eigener Teil im Buch und nicht in der Arena. Anleitung und Tracker sind wortgetreu wie im Plan.",
+              spread(p_wa_l(), p_wa_r())),
+        block("arena", "S. 260–274", "Arena",
+              "Die Arena gehört den Brüdern: wer sie sind, wann man sich trifft, und je eine Seite für jedes Treffen. Geteilt wird, was jeder teilen will. Der Winter Arc wird hier nicht abgefragt.",
               spread(p_arena(), p_brueder())
-              + '<div class="gap"></div>' + spread(p_wa_l(), p_wa_r())
               + '<div class="gap"></div>' + spread(p_treffen(262, "l", TREFFEN_EX), p_treffen(263, "r", None))),
     ]
     nav = [("umschlag", "Umschlag"), ("seiten", "288 Seiten"), ("titel", "Titel"), ("aufbau", "Aufbau"), ("leseplan", "Leseplan"),
-           ("ordnung", "Die Ordnung"), ("woche", "Woche"), ("tag", "Tag"), ("arena", "Arena"),
+           ("ordnung", "Die Ordnung"), ("woche", "Woche"), ("tag", "Tag"), ("wueste", "Wüstenzeit"), ("arena", "Arena"),
            ("hinten", "Notizen und Verse"), ("monatlich", "Monatlich")]
     nav_html = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in nav)
     body = f"""
