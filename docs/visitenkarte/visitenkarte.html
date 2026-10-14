@@ -6,6 +6,7 @@
 <title>Henoch Visitenkarte</title>
 <style>
 /* Square business card, 55 × 55 mm trim with 2 mm bleed on every side. Page 1 is the front, page 2 the back. */
+@font-face { font-family: 'Literata'; font-style: italic; font-weight: 400; src: url('../anleitung/fonts/literata-latin-400-italic.woff2') format('woff2'); }
 @font-face { font-family: 'Literata'; font-style: normal; font-weight: 600; src: url('../anleitung/fonts/literata-latin-600-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 400; src: url('../anleitung/fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
 
@@ -30,10 +31,11 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
   position: relative; overflow: hidden;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
-/* Front: the app icon, the name beneath it. */
-.icon { width: 25mm; height: 25mm; border-radius: 5.5mm; box-shadow: 0 0 0 0.2mm var(--rule); overflow: hidden; }
-.icon svg { display: block; width: 100%; height: 100%; }
-.name { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 17pt; letter-spacing: 0.02em; margin-top: 4.5mm; line-height: 1; }
+/* Front: the icon's landscape runs to the edges, widened upward so the name and motto sit in the open sky. */
+.art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.title { position: absolute; top: calc(var(--bleed) + 6mm); left: 0; right: 0; text-align: center; }
+.name { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 19pt; letter-spacing: 0.02em; line-height: 1; }
+.motto { font-family: 'Literata', Georgia, serif; font-style: italic; font-size: 9pt; color: var(--muted); margin-top: 2mm; line-height: 1; }
 /* Back: QR code to the website, the address beneath it. */
 .qr { width: 25mm; height: 25mm; display: block; }
 .url { font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; font-size: 9.5pt; letter-spacing: 0.06em; color: var(--ink); margin-top: 4.5mm; line-height: 1; }
@@ -48,8 +50,7 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
 <body>
 
 <section class="card" aria-label="Vorderseite">
-  <div class="icon">
-    <svg viewBox="0 0 512 512" aria-hidden="true">
+  <svg class="art" viewBox="-60 -120 632 632" aria-hidden="true">
       <defs>
         <linearGradient id="valley" x1="0" y1="266" x2="0" y2="512" gradientUnits="userSpaceOnUse">
           <stop offset="0" stop-color="#e7e3d9"/><stop offset="1" stop-color="#f6f4ef"/>
@@ -58,16 +59,16 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
           <stop offset="0" stop-color="#1d2330"/><stop offset="0.55" stop-color="#1d2330"/><stop offset="1" stop-color="#1d2330" stop-opacity="0.25"/>
         </linearGradient>
       </defs>
-      <rect width="512" height="512" fill="#f6f4ef"/>
+      <rect x="-60" y="-120" width="632" height="632" fill="#f6f4ef"/>
       <g fill="none" stroke="#d6d0c4" stroke-width="3">
         <path d="M107,265 A149,149 0 0 1 405,265"/>
         <path d="M138.5,265 A117.5,117.5 0 0 1 373.5,265"/>
         <path d="M170,265 A86,86 0 0 1 342,265"/>
-        <path d="M0,278.5H512" stroke-width="2"/>
-        <path d="M0,297.5H512"/>
-        <path d="M0,329.5H512"/>
-        <path d="M0,378.5H512"/>
-        <path d="M0,450.5H512" stroke="#e9e5dd"/>
+        <path d="M-60,278.5H572" stroke-width="2"/>
+        <path d="M-60,297.5H572"/>
+        <path d="M-60,329.5H572"/>
+        <path d="M-60,378.5H572"/>
+        <path d="M-60,450.5H572" stroke="#e9e5dd"/>
       </g>
       <path d="M204,265.5 A52,52 0 0 1 308,265.5Z" fill="#c49c00"/>
       <path d="M256,266 C255.4,266.7 253.6,266.8 252.5,270 C251.4,273.2 250.5,280 249.5,285 C248.5,290 247.7,295 246.5,300 C245.3,305 243.8,310 242.5,315 C241.2,320 240,325 238.5,330 C237,335 235.3,340 233.5,345 C231.7,350 229.7,355 227.5,360 C225.3,365 223.2,370 220.5,375 C217.8,380 214.7,385 211.5,390 C208.3,395 205.2,400 201.5,405 C197.8,410 193.7,415 189.5,420 C185.3,425 181.3,430 176.5,435 C171.7,440 166,445 160.5,450 C155,455 149.3,460 143.5,465 C137.7,470 131.8,475 125.5,480 C119.2,485 113.2,489.7 106,495 C98.8,500.3 86,509.2 82,512 L391.5,512 C390.9,509.2 389.2,500.3 388,495 C386.8,489.7 385.5,485 384,480 C382.5,475 380.8,470 379,465 C377.2,460 375.2,455 373,450 C370.8,445 368.5,440 366,435 C363.5,430 360.8,425 358,420 C355.2,415 352.2,410 349,405 C345.8,400 342.5,395 339,390 C335.5,385 331.8,380 328,375 C324.2,370 320,365 316,360 C312,355 307.8,350 304,345 C300.2,340 296.7,335 293,330 C289.3,325 285.5,320 282,315 C278.5,310 275.1,305 272,300 C268.9,295 265.8,290 263.5,285 C261.2,280 259.8,273.2 258.5,270 C257.2,266.8 256.4,266.7 256,266Z" fill="url(#valley)"/>
@@ -75,10 +76,12 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
         <path d="M256,266 C255.4,266.7 253.6,266.8 252.5,270 C251.4,273.2 250.5,280 249.5,285 C248.5,290 247.7,295 246.5,300 C245.3,305 243.8,310 242.5,315 C241.2,320 240,325 238.5,330 C237,335 235.3,340 233.5,345 C231.7,350 229.7,355 227.5,360 C225.3,365 223.2,370 220.5,375 C217.8,380 214.7,385 211.5,390 C208.3,395 205.2,400 201.5,405 C197.8,410 193.7,415 189.5,420 C185.3,425 181.3,430 176.5,435 C171.7,440 166,445 160.5,450 C155,455 149.3,460 143.5,465 C137.7,470 131.8,475 125.5,480 C119.2,485 113.2,489.7 106,495 C98.8,500.3 86,509.2 82,512"/>
         <path d="M256,266 C256.4,266.7 257.2,266.8 258.5,270 C259.8,273.2 261.2,280 263.5,285 C265.8,290 268.9,295 272,300 C275.1,305 278.5,310 282,315 C285.5,320 289.3,325 293,330 C296.7,335 300.2,340 304,345 C307.8,350 312,355 316,360 C320,365 324.2,370 328,375 C331.8,380 335.5,385 339,390 C342.5,395 345.8,400 349,405 C352.2,410 355.2,415 358,420 C360.8,425 363.5,430 366,435 C368.5,440 370.8,445 373,450 C375.2,455 377.2,460 379,465 C380.8,470 382.5,475 384,480 C385.5,485 386.8,489.7 388,495 C389.2,500.3 390.9,509.2 391.5,512"/>
       </g>
-      <path d="M0,265.5H512" stroke="#1d2330" stroke-width="4"/>
-    </svg>
+      <path d="M-60,265.5H572" stroke="#1d2330" stroke-width="4"/>
+  </svg>
+  <div class="title">
+    <div class="name">Henoch</div>
+    <div class="motto">mit Gott unterwegs</div>
   </div>
-  <div class="name">Henoch</div>
 </section>
 
 <section class="card" aria-label="Rückseite">

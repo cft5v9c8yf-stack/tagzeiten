@@ -2,7 +2,7 @@
 
 Quadratische Visitenkarte, 55 × 55 mm, mit 2 mm Anschnitt an jeder Seite (Seitengröße 59 × 59 mm).
 
-- **Vorderseite:** das App-Symbol und der Name „Henoch“
+- **Vorderseite:** das Bild des App-Symbols randlos über die ganze Fläche, darin „Henoch“ und „mit Gott unterwegs“
 - **Rückseite:** QR-Code zu https://henoch.app/ und darunter die Adresse
 
 Dateien:
