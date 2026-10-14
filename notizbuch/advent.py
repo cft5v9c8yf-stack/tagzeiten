@@ -552,33 +552,27 @@ def p_prayerlist():
 # ------------------------------------------------------------------ Heute
 
 PRESETS = A["habits"]["presets"]
-DAILY = [h for h in PRESETS if h["rhythm"] == "daily" and h["active"] and not h["auto"]]
-WEEKLY = [h for h in PRESETS if h["rhythm"] == "weekly" and h["active"]]
+RHYTHM = A["habits"]["rhythm"]
+# Your own habits, as you set them up in the app: written once on p. 15, ticked by their number every day.
+HABIT_SLOTS = 8
+# The example in blue: the habits the app starts with that are ticked by hand (the prayer times stand on the line).
+HABIT_EX = [h for h in PRESETS if h["active"] and not h["auto"]][:HABIT_SLOTS]
 ARC_TIMES = ["Stille Zeit", "Vesper", "Nachtgebet"]
 
 
-def ring(on=False):
-    """A tick as in the app: an open ring, done a filled one with a check."""
-    return f'<span class="rg{" on" if on else ""}"></span>'
+def ring(on=False, label=""):
+    """A tick as in the app: an open ring, done a filled one (with a check, or with its number)."""
+    return f'<span class="rg{" on" if on else ""}{" num" if label else ""}">{esc(label)}</span>'
 
 
 def today_band(e, end=False):
-    """Like "Heute" in the app: the prayer times as rings on the line of the day, below them the habits
-    ticked by hand, in the same three columns."""
+    """Like "Heute" in the app: the prayer times as rings on the line of the day, below them your habits by their number."""
     done, ticked = e.get("arc", ()), e.get("habits", ())
     times = "".join(f'<span class="hc">{ring(n in done)}<span class="hl">{esc(n)}</span></span>' for n in ARC_TIMES)
-    names = [h["name"] for h in DAILY]
-    names += [""] * ((-len(names) % 3) or 3)
-    habits = "".join(f'<span class="hc">{ring(bool(n) and n in ticked)}<span>{esc(n)}</span></span>' for n in names)
-    body = f'<div class="hg arcrow">{times}</div><div class="hg">{habits}</div>'
+    nums = "".join(ring(i in ticked, str(i)) for i in range(1, HABIT_SLOTS + 1))
+    body = (f'<div class="hg arcrow">{times}</div>'
+            f'<div class="hnums"><span class="hl">Gewohnheiten <span class="hp">S. {P_HABITS}</span></span><span class="rgs">{nums}</span></div>')
     return step("", "check", "Heute", body, end=end)
-
-
-def week_habits(done=()):
-    """The weekly habits, once a week on the first page of the Sunday."""
-    wk = "".join(f'<span class="hc">{ring(h["name"] in done)}<span>{esc(h["name"])}</span></span>' for h in WEEKLY)
-    return f'<div class="sub">Gewohnheiten · diese Woche</div><div class="hwk">{wk}<span class="hc">{ring()}<span class="tkb"></span></span></div>'
-
 
 
 def p_today():
@@ -594,7 +588,7 @@ def p_today():
 <div class="sub">Gebetszeiten</div>
 <p class="small">Stille Zeit, Vesper und Nachtgebet stehen auf der Linie des Tages. Ist eine gebetet, füllst du ihren Ring aus. Was offen bleibt, bleibt ein leerer Ring, nie rot.</p>
 <div class="sub">Gewohnheiten</div>
-<p class="small">Darunter, in denselben Spalten, was du von Hand abhakst, für diesen einen Tag. Welche es sind, wählst du auf S. {P_HABITS}; die leeren Ringe sind für eigene. Die wöchentlichen stehen einmal auf der ersten Seite jedes Sonntags.</p>
+<p class="small">Deine Gewohnheiten trägst du einmal auf S. {P_HABITS} ein, jede mit einer Nummer. Auf der Tagesseite hakst du sie mit dieser Nummer ab, an dem Tag, an dem sie geschehen ist: die täglichen jeden Tag, die wöchentlichen und monatlichen, wenn sie dran sind.</p>
 <div class="sub">Heute lesen und die drei Dinge</div>
 <p class="small">Die Lesung steht links unter dem Wort. {esc(A["method"]["rubrics"]["restart"])} Die drei Dinge stehen rechts unter der Ausrichtung. Sie werden in der Stillen Zeit festgelegt, nach dem Wort, und abends mit einem Zeichen versehen.</p>
 <div class="sub">Zeiten</div>
@@ -607,22 +601,22 @@ def p_today():
 
 def p_habits():
     v = A["sectionVerses"]["habits"]
-    groups = ""
-    for rhythm, title, where in [("daily", "Täglich", "oben auf jeder Tagesseite"), ("weekly", "Wöchentlich", "auf der ersten Seite jedes Sonntags"),
-                                 ("monthly", "Monatlich", "hier")]:
-        rows = ""
-        for h in [x for x in PRESETS if x["rhythm"] == rhythm]:
-            n = "aus dem Ablauf · auf dem Bogen" if h["auto"] else "nach dem Leseplan" if h["id"] == "bibleReading" else ""
-            months = (f'<span class="mo">{ring()}November</span><span class="mo">{ring()}Dezember</span>' if rhythm == "monthly" else "")
-            rows += (f'<div class="hb2">{ring(h["active"])}<span class="hn">{esc(h["name"])}</span>'
-                     f'<span class="hnote">{n}</span>{months}</div>')
-        rows += f'<div class="hb2">{ring()}<span class="hn own"></span><span class="hnote">eigene</span></div>'
-        groups += f'<div class="sub">{title} <span class="where">· {where}</span></div>{rows}'
+    rows = ""
+    for i in range(HABIT_SLOTS):
+        h = HABIT_EX[i] if i < len(HABIT_EX) else None
+        opts = ""
+        for r in ["daily", "weekly", "monthly"]:
+            on = bool(h) and h["rhythm"] == r
+            extra = f', <span class="hx">{hw("1") if on and r == "weekly" else ""}</span>-mal in der Woche' if r == "weekly" else ""
+            opts += f'<span class="opt2">{ring(on)}{esc(RHYTHM[r])}{extra}</span>'
+        rows += (f'<div class="hab"><span class="habn">{i + 1}</span><div class="habb">'
+                 f'{ln(hw(h["name"]) if h else "")}<div class="rhy">{opts}</div></div></div>')
     inner = f"""
 {header("Wie unter „Mehr“ in der App", "Gewohnheiten")}
 <p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
-<p class="small">Kreuze an, welche Gewohnheiten du im Advent hältst. Eine Gewohnheit gilt immer nur für ihren Tag, ihre Woche oder ihren Monat.</p>
-{groups}
+<p class="small">Trage deine Gewohnheiten selbst ein und wähle für jede ihren Rhythmus: täglich, wöchentlich oder monatlich. Unter „Heute“ auf jeder Tagesseite hakst du sie mit ihrer Nummer ab. Eine Gewohnheit gilt immer nur für ihren Tag, ihre Woche oder ihren Monat.</p>
+<p class="small muted">Stille Zeit, Vesper und Nachtgebet brauchst du hier nicht: Sie stehen als Gebetszeiten auf jeder Tagesseite. Zum Beispiel: Psalm mit den Kindern.</p>
+<div class="habs">{rows}</div>
 """
     return page("r", P_HABITS, f"Seite {P_HABITS}: Gewohnheiten", inner)
 
@@ -802,7 +796,6 @@ def sunday_pages(i, ex=None):
 {guide_block("Samstagabend: die Vorbereitung.")}
 {guide_block("Sonntagmorgen.")}
 {four}
-{week_habits(e.get("week", ()))}
 <div class="fill"></div>
 {field("evening.devotionNotes", 6, e.get("notes", ()))}
 <p class="next">{esc(g["hint"].replace(" lesen", ""))}, S. {f0 + 1} · {esc(ep["hint"].replace(" lesen", ""))}, S. {f0 + 3} · Stille Zeit, S. {f0 + 4}</p>
@@ -1002,8 +995,7 @@ def p_sources():
 EX_WEEK1 = {
     0: {
         "date": "28. 11.", "notes": ["Er kommt sanftmütig – und zu mir."],
-        "week": ["Gottesdienst – den Feiertag heiligen"],
-        "day": {"date": "29. 11.", "reading": "Römer 13", "arc": ["Stille Zeit"], "habits": ["Bibel lesen", "Tischgebet mit der Familie"],
+        "day": {"date": "29. 11.", "reading": "Römer 13", "arc": ["Stille Zeit"], "habits": [1, 2, 5],
                 "three": [("Sacharja 9,9 auswendig", None), ("die erste Kerze mit allen", None), ("Sonntagsruhe", None)]},
         "service": {"text": "Matthäus 21,1–9", "stuck": ["Er kommt sanftmütig, auf einem Esel."],
                     "comfort": ["Er kommt zu mir, nicht ich zu ihm."], "kids": ["J.: Warum ein Esel?"],
@@ -1012,7 +1004,7 @@ EX_WEEK1 = {
                    "resolve": ["Abends die Kinder segnen"]},
     },
     1: {"date": "30. 11.", "reading": "Jesaja 40", "arc": ["Stille Zeit", "Vesper", "Nachtgebet"],
-        "habits": ["Bibel lesen", "Tischgebet mit der Familie", "Die Kinder segnen"], "main": ["Gott tröstet sein Volk und kommt selbst."],
+        "habits": [1, 2, 4], "main": ["Gott tröstet sein Volk und kommt selbst."],
         "ref": "Jesaja 40,3", "verse": ["„Bereitet dem HERRN den Weg“"],
         "god": ["Er kommt gewaltig und weidet seine Herde", "wie ein Hirte (V. 10–11)."],
         "man": ["Alles Fleisch vergeht wie Heu;", "Gottes Wort bleibt (V. 6–8)."],
@@ -1299,26 +1291,28 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .arcrow .hc{height:auto;flex-direction:column;align-items:flex-start;gap:calc(.9 * var(--mm));padding:0;border:0;overflow:visible}
 .arcrow .rg{z-index:1}
 .hl{font:600 calc(2 * var(--mm))/1 var(--sans);color:var(--muted);letter-spacing:.01em}
-.hcap{font:600 calc(2 * var(--mm)) var(--sans);color:var(--muted);margin-top:calc(1.6 * var(--mm)) !important}
-.hwk{display:flex;flex-wrap:wrap;column-gap:calc(5 * var(--mm))}
-.hwk .hc{flex:none}
-.tkb{display:inline-block;width:calc(12 * var(--mm))}
+.rg.num{display:grid;place-items:center;width:calc(4.4 * var(--mm));height:calc(4.4 * var(--mm));font:600 calc(2.1 * var(--mm))/1 var(--sans);color:var(--muted)}
+.show .rg.num.on{color:#fff}
+.show .rg.num.on::after{display:none}
+.hnums{display:flex;align-items:center;gap:calc(3 * var(--mm));height:calc(7.4 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule)}
+.hnums .hl{flex:none}
+.hp{font-weight:400}
+.rgs{flex:1 1 auto;display:flex;justify-content:space-between}
+.habs{margin-top:calc(1 * var(--mm))}
+.hab{display:grid;grid-template-columns:calc(6 * var(--mm)) minmax(0,1fr);align-items:start;margin-top:calc(1.2 * var(--mm))}
+.habn{font:600 calc(3.6 * var(--mm))/1 var(--serif);color:var(--muted);padding-top:calc(2.4 * var(--mm))}
+.rhy{display:flex;flex-wrap:wrap;gap:calc(1 * var(--mm)) calc(5 * var(--mm));padding:calc(1.2 * var(--mm)) 0 calc(.6 * var(--mm))}
+.opt2{display:inline-flex;align-items:center;gap:calc(1.2 * var(--mm));font:400 calc(2.2 * var(--mm)) var(--sans);color:var(--muted)}
+.opt2 .rg{width:calc(3 * var(--mm));height:calc(3 * var(--mm))}
+.hx{display:inline-block;min-width:calc(6 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);text-align:center;margin-left:calc(.6 * var(--mm))}
+.hx .hw{font-size:calc(3.4 * var(--mm));padding:0}
 .sample{margin:calc(1 * var(--mm)) 0 calc(1 * var(--mm))}
-.hb2 .rg{margin:0}
-.mo .rg{width:calc(3 * var(--mm));height:calc(3 * var(--mm))}
 .verse-s{font-style:italic;font-size:calc(2.6 * var(--mm));margin:0 0 calc(1.2 * var(--mm)) !important}
 .times{display:grid;gap:calc(1.2 * var(--mm)) calc(2 * var(--mm));align-items:end;margin-top:calc(.8 * var(--mm))}
 .times b{font:600 calc(2 * var(--mm)) var(--sans);color:var(--muted)}
 .tr2{font:600 calc(2.1 * var(--mm)) var(--sans)}
 .tm{height:calc(6 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule)}
 .tm::after{content:":";display:block;text-align:center;color:var(--rule);font:600 calc(3 * var(--mm))/calc(6 * var(--mm)) var(--sans)}
-.where{font-weight:400;letter-spacing:0;text-transform:none}
-.hb2{display:flex;align-items:center;gap:calc(1.6 * var(--mm));min-height:calc(5.6 * var(--mm));border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--rule)}
-.hb2 .bx{margin:0}
-.hn{font-size:calc(2.6 * var(--mm))}
-.hn.own{flex:0 0 calc(50 * var(--mm))}
-.hnote{font:400 calc(2 * var(--mm)) var(--sans);color:var(--muted);margin-left:auto}
-.mo{display:inline-flex;align-items:center;gap:calc(1 * var(--mm));font:400 calc(2 * var(--mm)) var(--sans);color:var(--muted);margin-left:calc(2.4 * var(--mm))}
 .mo .bx{margin:0}
 
 /* Arena */
