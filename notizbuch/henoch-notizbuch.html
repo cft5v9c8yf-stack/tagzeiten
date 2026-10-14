@@ -1,0 +1,750 @@
+<title>Henoch Notizbuch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: a desk with A5 notebook spreads (148 x 210 mm), every page measured in real millimetres via container units */
+:root{
+  --desk:#E2E0DA; --desk-2:#D6D3CB; --desk-ink:#1D2330; --desk-muted:#5A606C; --desk-rule:#C4C0B6; --chip:#F2F0EB;
+  --paper:#FBFAF6; --endpaper:#E9E3D7; --ink:#1D2330; --ink-2:#565D6B; --ink-3:#8E8A82; --line:#D5D0C6; --dot:#C3BDB1;
+  --rubric:#8C2F2F; --hand:#243B6B; --silent:#F1EEE7; --shade:rgba(29,35,48,.18);
+  --cloth:#1F2B3A; --cloth-2:#162030; --gilt:#C9B27D; --band:#0E141D; --ribbon-1:#8C2F2F; --ribbon-2:#3E6B4E;
+  --seg1:#8C2F2F; --seg2:#3A4A63; --seg3:#3E6B4E; --seg4:#9A7B2F;
+  --serif:"Literata",Georgia,"Times New Roman",serif;
+  --sans:"Source Sans 3",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --script:"Caveat","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F;
+  color-scheme:dark}
+
+body{background:var(--desk);color:var(--desk-ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:40px 72px}
+
+/* ---------- chrome ---------- */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;border-bottom:1px solid var(--desk-rule);padding-bottom:22px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--desk-muted);font-weight:600;margin:0 0 6px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lede{font-family:var(--serif);font-size:1.05rem;max-width:62ch;margin:12px 0 0;color:var(--desk-ink)}
+.toggle{justify-self:end;display:flex;align-items:center;gap:10px;background:var(--chip);border:1px solid var(--desk-rule);border-radius:999px;padding:7px 14px 7px 8px;font:600 .9rem var(--sans);color:var(--desk-ink);cursor:pointer}
+.toggle .sw{width:34px;height:20px;border-radius:999px;background:var(--desk-rule);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--paper);transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--hand)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(14px)}
+.toggle:focus-visible,.nav a:focus-visible{outline:2px solid var(--hand);outline-offset:3px}
+.hint{font-size:.85rem;color:var(--desk-muted);margin:8px 0 0;text-align:right;max-width:30ch;justify-self:end}
+.nav{display:flex;flex-wrap:wrap;gap:6px 8px;margin:22px 0 0;padding:0;list-style:none}
+.nav a{display:inline-block;font-size:.86rem;color:var(--desk-ink);text-decoration:none;border:1px solid var(--desk-rule);border-radius:999px;padding:3px 12px;background:var(--chip)}
+.nav a:hover{border-color:var(--desk-muted)}
+
+.block{margin-top:56px;scroll-margin-top:16px}
+.gap{height:36px}
+.cap{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;max-width:70ch;margin:0 auto 18px;text-align:center}
+.cap h2{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0;text-wrap:balance}
+.cap .pg{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--desk-muted);font-weight:600}
+.cap p{margin:0;color:var(--desk-muted);font-size:.95rem}
+
+/* ---------- cover + spec ---------- */
+.cover-row{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:48px;align-items:center;justify-content:center}
+.book{position:relative;aspect-ratio:148/210;max-width:100%;container-type:inline-size;margin-bottom:28px}
+.book .cl{position:absolute;inset:0;border-radius:2px 7px 7px 2px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, var(--cloth-2) 0, var(--cloth) 5%, var(--cloth) 100%);
+  box-shadow:0 18px 40px var(--shade), inset -2px 0 0 rgba(255,255,255,.05);}
+.book .spine{position:absolute;left:4.2%;top:0;bottom:0;width:1px;background:rgba(0,0,0,.35);box-shadow:1px 0 0 rgba(255,255,255,.05)}
+.book .band{position:absolute;right:9%;top:-1px;bottom:-1px;width:3.2%;background:var(--band);box-shadow:0 0 0 1px rgba(255,255,255,.03), 2px 0 4px rgba(0,0,0,.3)}
+.book .rib{position:absolute;bottom:-26px;width:3.4%;height:40px;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+.book .rib.a{left:44%;background:var(--ribbon-1)}
+.book .rib.b{left:49%;background:var(--ribbon-2);height:34px;bottom:-20px}
+.book .rib.c{left:54%;background:var(--band);height:30px;bottom:-16px}
+.book .ttl{position:absolute;left:0;right:0;top:30%;text-align:center;color:var(--gilt)}
+.book .ttl b{display:block;font-family:var(--serif);font-weight:600;font-size:11.5cqw;letter-spacing:.32em;padding-left:.32em;text-shadow:0 1px 0 rgba(0,0,0,.45)}
+.book .ttl i{display:block;width:16cqw;height:1px;background:var(--gilt);opacity:.7;margin:5cqw auto}
+.book .ttl span{display:block;font-family:var(--sans);font-weight:600;font-size:3.4cqw;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;opacity:.85}
+.spec h2{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0 0 10px}
+.spec dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;margin:0}
+.spec dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--desk-muted);font-weight:600;padding-top:3px}
+.spec dd{margin:0;font-family:var(--serif)}
+
+/* ---------- spreads ---------- */
+.spread{display:grid;grid-template-columns:repeat(2,minmax(0,560px));justify-content:center;filter:drop-shadow(0 14px 22px var(--shade))}
+.spread.solo{grid-template-columns:minmax(0,560px)}
+.page{container-type:inline-size;aspect-ratio:148/210;background:var(--paper);position:relative;color:var(--ink);overflow:hidden}
+.page.l{border-radius:3px 0 0 3px;background-image:linear-gradient(to left, rgba(29,35,48,.10), rgba(29,35,48,0) 7%)}
+.page.r{border-radius:0 3px 3px 0;background-image:linear-gradient(to right, rgba(29,35,48,.10), rgba(29,35,48,0) 7%)}
+.page.ep{background-color:var(--endpaper)}
+.in{--mm:calc(100cqw / 148);--lh:calc(5.5 * var(--mm));position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:calc(12 * var(--mm)) calc(14 * var(--mm)) calc(15 * var(--mm)) calc(11 * var(--mm));
+  font-family:var(--serif);font-size:calc(2.75 * var(--mm));line-height:1.38}
+.r .in{padding-left:calc(14 * var(--mm));padding-right:calc(11 * var(--mm))}
+.folio{position:absolute;bottom:calc(7 * var(--mm));font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.l .folio{left:calc(11 * var(--mm))}
+.r .folio{right:calc(11 * var(--mm))}
+.runner{position:absolute;top:calc(6.2 * var(--mm));font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.l .runner{left:calc(11 * var(--mm))}
+.r .runner{right:calc(11 * var(--mm))}
+
+/* page header */
+.ph{display:flex;justify-content:space-between;align-items:flex-end;gap:calc(4 * var(--mm));border-bottom:calc(.35 * var(--mm)) solid var(--rubric);padding-bottom:calc(1.4 * var(--mm));margin-bottom:calc(1 * var(--mm))}
+.pt{font-family:var(--serif);font-weight:600;font-size:calc(6 * var(--mm));line-height:1;color:var(--rubric);margin:0;letter-spacing:-.005em}
+.pt small{display:block;font:600 calc(2.1 * var(--mm)) var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:calc(1.2 * var(--mm))}
+.pm{display:flex;flex-direction:column;align-items:flex-end;gap:calc(1.2 * var(--mm))}
+.dline{display:flex;align-items:flex-end;gap:calc(1.5 * var(--mm));width:calc(52 * var(--mm));border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(5 * var(--mm))}
+
+/* sections + rows */
+.sec{display:flex;align-items:baseline;gap:calc(1.6 * var(--mm));margin-top:calc(2.6 * var(--mm));font:700 calc(2.25 * var(--mm)) var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--rubric)}
+.sec .no{font-variant-numeric:tabular-nums}
+.sec .m{margin-left:auto;font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--ink-3)}
+.sub{margin-top:calc(2 * var(--mm));font:700 calc(2.15 * var(--mm)) var(--sans);letter-spacing:.06em;color:var(--ink)}
+.sub em{font:italic 400 calc(2.4 * var(--mm)) var(--serif);letter-spacing:0;color:var(--ink-2);margin-left:calc(1.2 * var(--mm))}
+.row{display:grid;grid-template-columns:calc(22 * var(--mm)) minmax(0,1fr);align-items:start;position:relative}
+.row.kf::before{content:"";position:absolute;left:calc(-3.4 * var(--mm));top:calc(1 * var(--mm));bottom:calc(.8 * var(--mm));width:calc(.7 * var(--mm));background:var(--rubric)}
+.lab{font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-2);line-height:1.12;padding-top:calc(var(--lh) - 3.4 * var(--mm));padding-right:calc(1.5 * var(--mm))}
+.lab .g{display:inline-block;font:600 calc(3.6 * var(--mm)) var(--serif);color:var(--rubric);width:calc(4.2 * var(--mm));line-height:1;vertical-align:-.1em}
+.lines{display:flex;flex-direction:column;min-width:0}
+.ln{height:var(--lh);border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);display:flex;align-items:flex-end;gap:calc(1.6 * var(--mm));min-width:0;white-space:nowrap;overflow:hidden}
+.row.tall{--lh:calc(6.4 * var(--mm))}
+.page.dense .in{--lh:calc(5.15 * var(--mm))}
+.ln .half{flex:1 1 0;display:flex;align-items:flex-end;gap:calc(1.4 * var(--mm));min-width:0}
+.pl{font:600 calc(2.1 * var(--mm)) var(--sans);color:var(--ink-3);letter-spacing:.04em;padding-bottom:calc(.9 * var(--mm));flex:none}
+.pi{font:italic 400 calc(2.45 * var(--mm)) var(--serif);color:var(--ink-2);padding-bottom:calc(.8 * var(--mm));flex:none}
+.pr{margin:calc(1.2 * var(--mm)) 0 0;font:italic 400 calc(2.4 * var(--mm)) var(--serif);color:var(--ink-2);line-height:1.4}
+.rb{margin:calc(1 * var(--mm)) 0 calc(.6 * var(--mm));font:italic 400 calc(2.5 * var(--mm)) var(--serif);color:var(--rubric);line-height:1.4}
+.rb cite{font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.06em;font-style:normal;margin-left:calc(1 * var(--mm))}
+.txt{margin:calc(1.2 * var(--mm)) 0 0;font-size:calc(2.7 * var(--mm));line-height:1.45}
+.vs{margin:calc(1.2 * var(--mm)) 0 0 calc(3 * var(--mm));font-size:calc(2.75 * var(--mm));line-height:1.42}
+.vs cite{display:block;font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-top:calc(.6 * var(--mm))}
+.end{margin-top:auto;padding-top:calc(2 * var(--mm));font:italic 400 calc(2.5 * var(--mm)) var(--serif);color:var(--ink-2);text-align:center}
+.grow{flex:1 1 auto}
+
+/* marks, chips, circles, boxes */
+.chips{display:flex;flex-wrap:nowrap;gap:calc(1.6 * var(--mm));align-items:flex-end;padding-bottom:calc(.8 * var(--mm))}
+.chip{position:relative;font:600 calc(2.25 * var(--mm)) var(--sans);color:var(--ink-2);padding:0 calc(.5 * var(--mm));letter-spacing:.02em}
+.days .chip{width:calc(4.6 * var(--mm));text-align:center;padding:0}
+.mk{position:relative;font:700 calc(3.1 * var(--mm)) var(--sans);color:var(--ink-2);width:calc(4.2 * var(--mm));text-align:center;line-height:1}
+.c{display:inline-block;width:calc(3.1 * var(--mm));height:calc(3.1 * var(--mm));border-radius:50%;border:max(1px,calc(.24 * var(--mm))) solid var(--ink-3);box-sizing:border-box;vertical-align:middle}
+.b{position:relative;display:inline-block;width:calc(3 * var(--mm));height:calc(3 * var(--mm));border:max(1px,calc(.24 * var(--mm))) solid var(--ink-3);box-sizing:border-box;vertical-align:middle;flex:none}
+.dash{font:600 calc(2.4 * var(--mm)) var(--sans);color:var(--ink-3)}
+.rest{font:italic 400 calc(2.2 * var(--mm)) var(--serif);color:var(--ink-3)}
+
+/* handwriting (example entries) */
+.hw{display:none;font-family:var(--script);font-weight:500;font-size:calc(4.05 * var(--mm));line-height:1;color:var(--hand);padding:0 0 calc(.45 * var(--mm)) calc(.6 * var(--mm));white-space:nowrap}
+.show .hw{display:inline-block}
+.show .hc::after{content:"";position:absolute;inset:calc(-.9 * var(--mm)) calc(-1.1 * var(--mm));border:calc(.28 * var(--mm)) solid var(--hand);border-radius:50%;transform:rotate(-6deg);opacity:.9;pointer-events:none}
+.show .c.on{background:radial-gradient(circle at 46% 54%, var(--hand) 0 52%, transparent 58%)}
+.show .b.on::after{content:"";position:absolute;left:calc(.75 * var(--mm));top:calc(-1 * var(--mm));width:calc(1.1 * var(--mm));height:calc(2.8 * var(--mm));border:solid var(--hand);border-width:0 calc(.5 * var(--mm)) calc(.5 * var(--mm)) 0;transform:rotate(38deg)}
+.show .nb.on::after{content:"";position:absolute;left:8%;right:8%;top:50%;height:calc(.45 * var(--mm));background:var(--hand);transform:rotate(-52deg);border-radius:2px}
+
+/* silent panel: prayed, not written */
+.silent{margin-top:calc(1.4 * var(--mm));height:calc(13 * var(--mm));background:var(--silent);border-radius:calc(1 * var(--mm));display:grid;place-items:center;font:italic 400 calc(2.6 * var(--mm)) var(--serif);color:var(--ink-2)}
+.silent.sm{height:auto;padding:calc(1.6 * var(--mm)) calc(3 * var(--mm));place-items:start;justify-items:start}
+
+/* tables */
+.tbl{display:grid;margin-top:calc(1.4 * var(--mm))}
+.tbl > div{display:grid;align-items:end;border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);min-height:calc(7.6 * var(--mm))}
+.tbl .th{font:700 calc(1.95 * var(--mm)) var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);min-height:0;padding-bottom:calc(1 * var(--mm));border-bottom-color:var(--ink-3);line-height:1.15}
+.tbl span{min-width:0;overflow:hidden;white-space:nowrap;padding-bottom:calc(1 * var(--mm))}
+.tbl .th span{white-space:normal}
+.tbl .d{font:700 calc(2.4 * var(--mm)) var(--sans);color:var(--rubric)}
+.tbl .ps{font:400 calc(2.6 * var(--mm)) var(--serif);font-variant-numeric:tabular-nums}
+.tbl .st{font:400 calc(2.45 * var(--mm)) var(--serif);color:var(--ink-2)}
+.tbl .hw{padding-bottom:0}
+.wk > div{grid-template-columns:calc(8 * var(--mm)) calc(18 * var(--mm)) calc(31 * var(--mm)) calc(28 * var(--mm)) minmax(0,1fr)}
+.mo > div{grid-template-columns:calc(22 * var(--mm)) minmax(0,1fr) calc(22 * var(--mm)) calc(17 * var(--mm)) calc(19 * var(--mm));min-height:calc(9.5 * var(--mm))}
+.mo .ck{text-align:center}
+.vz > div{grid-template-columns:calc(27 * var(--mm)) minmax(0,1fr) calc(15 * var(--mm)) calc(10 * var(--mm));min-height:calc(5.6 * var(--mm))}
+.vz .r2{text-align:right;padding-right:calc(.6 * var(--mm))}
+
+.hb{display:grid;grid-template-columns:minmax(0,1fr) repeat(7, calc(8.4 * var(--mm)));align-items:end;margin-top:calc(1.2 * var(--mm))}
+.hb > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(6 * var(--mm));display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap}
+.hb > span.cc{justify-content:center}
+.hb > span.h{font:700 calc(2.1 * var(--mm)) var(--sans);letter-spacing:.06em;color:var(--ink-3);justify-content:center;height:calc(4.6 * var(--mm));border-bottom-color:var(--ink-3)}
+.hb > span.h.lft{justify-content:flex-start;text-transform:uppercase;letter-spacing:.1em}
+.hb > span.n{font-size:calc(2.65 * var(--mm))}
+.hb > span.grp{grid-column:1 / -1;font:700 calc(2.05 * var(--mm)) var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--rubric);height:calc(5.4 * var(--mm));align-items:flex-end;padding-bottom:calc(.8 * var(--mm));border-bottom:none}
+.hb .hw{padding-bottom:0}
+.hb.wa > span{height:calc(6.9 * var(--mm))}
+.hb.wa > span.h{height:calc(4.6 * var(--mm))}
+.hb.wa > span.grp{height:calc(6 * var(--mm))}
+.tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(3 * var(--mm));margin-top:calc(.4 * var(--mm))}
+.tri .ln{--lh:calc(5.6 * var(--mm))}
+.wl{display:grid;gap:calc(1.6 * var(--mm));margin-top:calc(1.4 * var(--mm))}
+.wl label,.wl .it{display:flex;align-items:center;gap:calc(2.2 * var(--mm));font-size:calc(2.75 * var(--mm))}
+
+/* NT grid */
+.nt{display:grid;grid-template-columns:calc(23 * var(--mm)) minmax(0,1fr);row-gap:calc(1.75 * var(--mm));margin-top:calc(2.6 * var(--mm));align-items:center}
+.nt .bk{font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--ink-2);white-space:nowrap}
+.nt .bx{display:flex;flex-wrap:wrap;gap:calc(.35 * var(--mm))}
+.nb{position:relative;width:calc(3.15 * var(--mm));height:calc(3.15 * var(--mm));border:max(1px,calc(.2 * var(--mm))) solid var(--line);box-sizing:border-box;font:600 calc(1.55 * var(--mm)) var(--sans);color:var(--ink-3);display:grid;place-items:center;font-variant-numeric:tabular-nums;line-height:1}
+
+/* catechism list */
+.kt{display:grid;grid-template-columns:minmax(0,1fr) calc(15 * var(--mm)) calc(15 * var(--mm));margin-top:calc(1.6 * var(--mm));align-items:end}
+.kt > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(3.1 * var(--mm));display:flex;align-items:flex-end;padding-bottom:calc(.25 * var(--mm));font-size:calc(2.3 * var(--mm));min-width:0;white-space:nowrap;overflow:hidden}
+.kt > span.cc{justify-content:center;align-items:center;padding:0}
+.kt > span.hs{font:700 calc(2.05 * var(--mm)) var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--rubric);height:calc(4.2 * var(--mm));border-bottom-color:transparent}
+.kt > span.hs.w{font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--ink-3)}
+.kt > span.th{font:700 calc(1.85 * var(--mm)) var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);justify-content:center;text-align:center;line-height:1.1;border-bottom-color:var(--ink-3);height:calc(5 * var(--mm))}
+.kt .b{width:calc(2.5 * var(--mm));height:calc(2.5 * var(--mm))}
+
+/* dot grid */
+.dots{flex:1 1 auto;margin-top:calc(2 * var(--mm));position:relative;
+  background-image:radial-gradient(circle, var(--dot) 0 calc(.26 * var(--mm)), transparent calc(.32 * var(--mm)));
+  background-size:calc(5 * var(--mm)) calc(5 * var(--mm));background-position:calc(-2.5 * var(--mm)) calc(-2.5 * var(--mm))}
+.dots .note{position:absolute;left:calc(5 * var(--mm));right:calc(3 * var(--mm));display:flex;flex-direction:column}
+.dots .note .hw{line-height:calc(5 * var(--mm));height:calc(5 * var(--mm));padding:0;white-space:nowrap}
+
+/* timeline */
+.tl{margin-top:calc(2.2 * var(--mm));width:100%;height:auto;display:block}
+.tl text{font-family:var(--sans)}
+.times{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(2.4 * var(--mm));margin-top:calc(2.4 * var(--mm))}
+.times .ln{justify-content:center}
+.times .pl{display:block;text-align:center;padding:0 0 calc(.6 * var(--mm))}
+
+/* toc */
+.toc{display:grid;grid-template-columns:calc(9 * var(--mm)) minmax(0,1fr);row-gap:calc(1.25 * var(--mm));margin-top:calc(2.2 * var(--mm));font-size:calc(2.7 * var(--mm))}
+.toc b{font:600 calc(2.4 * var(--mm)) var(--sans);color:var(--rubric);font-variant-numeric:tabular-nums;padding-top:calc(.25 * var(--mm))}
+.toc span em{color:var(--ink-2)}
+
+/* endpapers + title */
+.legend{display:grid;grid-template-columns:calc(13 * var(--mm)) minmax(0,1fr);row-gap:calc(1.9 * var(--mm));column-gap:calc(2 * var(--mm));margin-top:calc(1.6 * var(--mm));font-size:calc(2.65 * var(--mm));align-items:baseline}
+.legend .k{font:700 calc(3.2 * var(--mm)) var(--sans);color:var(--ink);text-align:center;line-height:1}
+.legend .k.serif{font-family:var(--serif);color:var(--rubric)}
+.legend .bar{display:block;margin:0 auto;width:calc(.7 * var(--mm));height:calc(4 * var(--mm));background:var(--rubric)}
+.sw6{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(1.3 * var(--mm)) calc(3 * var(--mm));margin-top:calc(1.6 * var(--mm));font-size:calc(2.5 * var(--mm))}
+.sw6 span{display:flex;gap:calc(1.8 * var(--mm));align-items:center;line-height:1.2}
+.sw6 i{flex:none;width:calc(6 * var(--mm));height:calc(2.2 * var(--mm));border-radius:calc(1.1 * var(--mm))}
+.title-pg{align-items:center;text-align:center}
+.title-pg .big{font:600 calc(12 * var(--mm)) var(--serif);letter-spacing:.22em;padding-left:.22em;color:var(--rubric);margin:calc(30 * var(--mm)) 0 0;line-height:1}
+.title-pg .rule{width:calc(22 * var(--mm));height:calc(.35 * var(--mm));background:var(--rubric);margin:calc(4 * var(--mm)) auto}
+.title-pg .subt{font-size:calc(3.4 * var(--mm));margin:0}
+.title-pg .vs{margin:calc(12 * var(--mm)) auto 0;font-style:italic;max-width:calc(92 * var(--mm))}
+.own{margin-top:auto;width:100%;text-align:left;display:grid;gap:calc(1 * var(--mm))}
+.bogen p{margin:calc(1 * var(--mm)) 0 0;font-size:calc(2.75 * var(--mm));line-height:1.48}
+.bogen h3{margin:calc(4 * var(--mm)) 0 0;font:700 calc(2.25 * var(--mm)) var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--rubric)}
+.src{margin-top:auto;font:italic 400 calc(2.25 * var(--mm)) var(--serif);color:var(--ink-2);text-align:center;line-height:1.45}
+
+/* page plan */
+.plan{max-width:900px;margin:0 auto}
+.bar{display:flex;height:34px;border-radius:4px;overflow:hidden;box-shadow:0 1px 0 var(--desk-rule)}
+.bar span{display:flex;align-items:center;justify-content:center;color:var(--paper);font:600 .8rem var(--sans);min-width:0;overflow:hidden;white-space:nowrap}
+.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:18px}
+.parts h3{margin:0 0 6px;font:600 .78rem var(--sans);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.parts h3 i{width:10px;height:10px;border-radius:2px;flex:none}
+.parts h3 b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--desk-muted)}
+.parts ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-family:var(--serif);font-size:.9rem;line-height:1.35}
+.parts li{display:grid;grid-template-columns:4.8em minmax(0,1fr);gap:4px}
+.parts li span:first-child{font:600 .8rem var(--sans);color:var(--desk-muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.plan .sum{margin:18px 0 0;font-family:var(--serif);color:var(--desk-muted);text-align:center}
+
+/* phones: one page per row */
+@media (max-width: 760px){
+  .top{grid-template-columns:minmax(0,1fr)}
+  .hint{text-align:left;justify-self:start}
+  .toggle{justify-self:start}
+  .cover-row{grid-template-columns:minmax(0,1fr);gap:40px}
+  .book{width:min(320px,100%);margin:0 auto 28px}
+  .spread{grid-template-columns:minmax(0,1fr);row-gap:14px}
+  .parts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .page.l,.page.r{border-radius:3px}
+}
+@media (prefers-reduced-motion: reduce){.toggle .sw,.toggle .sw::after{transition:none}}
+
+/* print: A5 pages only, no desk */
+@page{size:148mm 210mm;margin:0}
+@media print{
+  html,body{background:#fff}
+  :root{padding:0}
+  .wrap{max-width:none;padding:0}
+  .top,.cap,.cover-block,.nav,#seiten,.gap{display:none}
+  .block{margin:0}
+  .spread{display:block;filter:none}
+  .page{width:148mm;height:210mm;aspect-ratio:auto;break-after:page;border-radius:0;background-image:none}
+}
+
+/* Die Ordnung: liturgical typesetting */
+.ord .in{font-size:calc(2.55 * var(--mm));line-height:1.36}
+.ord .sec{margin-top:calc(2.8 * var(--mm))}
+.ord .sub{margin-top:calc(2.1 * var(--mm))}
+.ord .rb{margin:calc(.6 * var(--mm)) 0 0}
+.ord .pr{margin-top:calc(.6 * var(--mm))}
+.lit{margin:calc(.7 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.36}
+.lit.run{text-indent:calc(-2 * var(--mm));padding-left:calc(2 * var(--mm));margin-top:calc(.45 * var(--mm))}
+.lit.ref{color:var(--ink-2);font-style:italic}
+.lit cite{display:block;font:600 calc(1.95 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-top:calc(.4 * var(--mm))}
+.va{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr);margin-top:calc(.35 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.36}
+.va b{font:700 calc(2.25 * var(--mm)) var(--sans);color:var(--rubric);padding-top:calc(.2 * var(--mm))}
+.txt.o{margin-top:calc(.6 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.4}
+.txt.st{margin-top:calc(.35 * var(--mm))}
+.txt b{font-weight:600}
+.pst{display:grid;grid-template-columns:calc(17 * var(--mm)) calc(7 * var(--mm)) minmax(0,1fr);margin:calc(1 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.45 * var(--mm));line-height:1.3}
+.pst > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);padding:calc(.55 * var(--mm)) 0}
+.pst .th{font:700 calc(1.9 * var(--mm)) var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);border-bottom-color:var(--ink-3)}
+.pst .d{font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--ink-2)}
+.pst .p{font-variant-numeric:tabular-nums}
+.q7{margin:calc(.6 * var(--mm)) 0 0 calc(3.5 * var(--mm));padding-left:calc(3.5 * var(--mm));columns:2;column-gap:calc(5 * var(--mm));font-size:calc(2.45 * var(--mm));line-height:1.36}
+.q7 li{break-inside:avoid}
+.q7 li::marker{font:600 calc(2.1 * var(--mm)) var(--sans);color:var(--rubric)}
+.kz{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr);row-gap:calc(.9 * var(--mm));margin-top:calc(.8 * var(--mm))}
+.kz .kn{font:700 calc(2.25 * var(--mm)) var(--sans);color:var(--rubric);padding-top:calc(.2 * var(--mm))}
+.kz b{font-weight:600}
+.kz i{display:block;color:var(--ink-2)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.kft{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr) calc(10 * var(--mm));margin:calc(.8 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.45 * var(--mm))}
+.kft > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);padding:calc(.4 * var(--mm)) 0}
+.kft .d{font:700 calc(2.1 * var(--mm)) var(--sans);color:var(--rubric)}
+.kft .m{text-align:right;color:var(--ink-3);font:600 calc(2.1 * var(--mm)) var(--sans)}
+.kft .m::after{content:" Min."}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Henoch · Musterseiten</p>
+      <h1>Henoch als Notizbuch</h1>
+      <p class="lede">Ein Band in A5 für dreizehn Wochen. Er folgt derselben Ordnung wie die App: erst das Wort, dann der Vorsatz. Es gibt keine Serien, und für Sünden gibt es keine Zeile.</p>
+    </div>
+    <div style="display:grid">
+      <button class="toggle" id="ex-toggle" type="button" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Beispieleinträge</button>
+      <p class="hint">Blaue Handschrift ist ein Beispiel. Ausgeschaltet zeigen die Seiten, wie sie gedruckt würden.</p>
+    </div>
+  </header>
+  <nav aria-label="Seiten"><ul class="nav"><li><a href="#umschlag">Umschlag</a></li><li><a href="#seiten">288 Seiten</a></li><li><a href="#titel">Titel</a></li><li><a href="#aufbau">Aufbau</a></li><li><a href="#leseplan">Leseplan</a></li><li><a href="#ordnung">Die Ordnung</a></li><li><a href="#woche">Woche</a></li><li><a href="#tag">Tag</a></li><li><a href="#arena">Arena</a></li><li><a href="#hinten">Notizen und Verse</a></li><li><a href="#monatlich">Monatlich</a></li></ul></nav>
+  <main id="book" class="show">
+    
+<section class="block cover-block" id="umschlag">
+  <div class="cover-row">
+    <div class="book" role="img" aria-label="Umschlag: dunkelblaues Leinen, Titel Henoch in Gold, Gummiband, zwei Lesebändchen">
+      <div class="cl"></div><div class="spine"></div><div class="band"></div>
+      <div class="rib a"></div><div class="rib b"></div><div class="rib c"></div>
+      <div class="ttl"><b>HENOCH</b><i></i><span>Morgen · Abend</span></div>
+    </div>
+    <div class="spec">
+      <h2>Ausstattung</h2>
+      <dl>
+        <dt>Format</dt><dd>A5, 148 × 210 mm, so groß wie das Gebetsheft</dd>
+        <dt>Umfang</dt><dd>288 nummerierte Seiten in 18 Lagen, ein Band für dreizehn Wochen; etwa 2 cm stark</dd>
+        <dt>Bindung</dt><dd>Fadenheftung, liegt offen flach; Leineneinband</dd>
+        <dt>Papier</dt><dd>90 g, füllhaltertauglich; Linien im Abstand von 5,5 mm, hinten Punktraster</dd>
+        <dt>Bändchen</dt><dd>Drei: rot für den Tag, grün für die Ordnung, schwarz für die Arena</dd>
+        <dt>Dazu</dt><dd>Gummiband, Einstecktasche hinten für Gottesdienstblatt und Zettel</dd>
+      </dl>
+    </div>
+  </div>
+</section><section class="block" id="seiten"><div class="cap"><span class="pg">Umfang</span><h2>288 Seiten in 18 Lagen</h2><p>Ein Band trägt dreizehn Wochen, also genau eine Runde Winter Arc. 288 Seiten sind 18 Lagen zu je 16 Seiten, so lässt sich das Buch fadenheften.</p></div><div class="plan"><div class="bar" role="img" aria-label="Vorn 15, Die Tage 208, Arena 51, Hinten 14 Seiten"><span style="flex:15;background:var(--seg1)"></span><span style="flex:208;background:var(--seg2)">208</span><span style="flex:51;background:var(--seg3)">51</span><span style="flex:14;background:var(--seg4)"></span></div><div class="parts"><div><h3><i style="background:var(--seg1)"></i>Vorn<b>15 S.</b></h3><ul><li><span>1–3</span><span>Titel, Aufbau, Gebetsübersicht</span></li><li><span>4–6</span><span>Leseplan AT und NT</span></li><li><span>7</span><span>Katechismus</span></li><li><span>8–15</span><span>Die Ordnung, Morgen und Abend</span></li></ul></div><div><h3><i style="background:var(--seg2)"></i>Die Tage<b>208 S.</b></h3><ul><li><span>16–223</span><span>13 Wochen × 16 Seiten</span></li><li><span></span><span>je Woche: 2 Seiten Woche, 7 Tage × 2 Seiten</span></li></ul></div><div><h3><i style="background:var(--seg3)"></i>Arena<b>51 S.</b></h3><ul><li><span>224–225</span><span>Arena, Meine Brüder</span></li><li><span>226–233</span><span>Winter Arc: Anleitung</span></li><li><span>234–259</span><span>13 Wochen-Tracker</span></li><li><span>260–261</span><span>Tag 90 – und danach</span></li><li><span>262–274</span><span>13 Treffen</span></li></ul></div><div><h3><i style="background:var(--seg4)"></i>Hinten<b>14 S.</b></h3><ul><li><span>275–282</span><span>Notizen</span></li><li><span>283–287</span><span>Verse, die ich mitnehme</span></li><li><span>288</span><span>Monatlich</span></li></ul></div></div><p class="sum">Dazu Vorsatz und Nachsatz im Deckel. Wer keinen Winter Arc läuft, nutzt die Tracker-Seiten für Notizen der Brüder.</p></div></section><section class="block" id="titel"><div class="cap"><span class="pg">Innendeckel · S. 1</span><h2>Zeichen und Titel</h2><p>Vorn im Deckel stehen alle Zeichen, die im Buch vorkommen. Die Titelseite nennt den Band, kein Jahr: Ein Band reicht für dreizehn Wochen.</p></div><div class="spread"><section class="page l ep " aria-label="Vorderer Innendeckel: Zeichen"><div class="in">
+<header class="ph"><h2 class="pt">Zeichen in diesem Buch</h2></header>
+<div class="sec"><span class="t">Beim Lesen, am Rand der Bibel</span></div>
+<div class="legend">
+  <span class="k serif">?</span><span>Unklar – hier nachfassen.</span>
+  <span class="k serif">!</span><span>Fordert mich heraus.</span>
+  <span class="k serif">→</span><span>Umsetzungsidee. Dieses Zeichen liefert das erste der drei Dinge.</span>
+</div>
+<div class="sec"><span class="t">Farbcode für die Stifte</span></div>
+<div class="sw6">
+  <span><i style="background:#2F5DA8"></i>Blau · Gottes Wesen und Handeln</span>
+  <span><i style="background:#B23A3A"></i>Rot · Gottes Aufforderungen und Gebote</span>
+  <span><i style="background:#6E4A9E"></i>Violett · Gottesfürchtige Reaktionen</span>
+  <span><i style="background:#7A5230"></i>Braun · Sündige, gottlose Handlungen</span>
+  <span><i style="background:#D9822B"></i>Orange · Wichtige Begriffe</span>
+  <span><i style="background:#3F7F4F"></i>Grün · Innerbiblische Zitate</span>
+</div>
+<div class="sec"><span class="t">Abends, bei den drei Dingen</span></div>
+<div class="legend">
+  <span class="k">+</span><span>geschehen</span>
+  <span class="k">~</span><span>angefangen</span>
+  <span class="k">–</span><span>nicht geschehen. Ein Zeichen, kein Kommentar.</span>
+</div>
+<div class="sec"><span class="t">Gewohnheiten</span></div>
+<div class="legend">
+  <span class="k"><span class="c"></span></span><span>offen</span>
+  <span class="k"><span class="c" style="background:var(--ink)"></span></span><span>gehalten. Gezählt wird nichts.</span>
+</div>
+<div class="sec"><span class="t">Im ganzen Buch</span></div>
+<div class="legend">
+  <span class="k"><span class="bar"></span></span><span>Roter Randstrich: die Kurzform. Wer nur diese Felder füllt, hat die Ordnung gehalten.</span>
+  <span class="k"><span style="display:block;margin:0 auto;width:calc(9 * var(--mm));height:calc(4 * var(--mm));background:var(--paper);border-radius:calc(.8 * var(--mm))"></span></span><span>Bei Beichte und Prüfung hat dieses Buch keine Zeilen. Was dort geschieht, wird gebetet, nicht notiert.</span>
+</div>
+</div></section><section class="page r title-pg " aria-label="Seite 1: Titel"><div class="in">
+<p class="big">HENOCH</p>
+<div class="rule"></div>
+<p class="subt">Ein Notizbuch für Morgen und Abend</p>
+<div class="vs">„Und dieweil er ein göttliches Leben führte, nahm ihn Gott hinweg, und er ward nicht mehr gesehen.“<cite>1. Mose 5,24</cite></div>
+<div class="own">
+  <div class="row"><div class="lab">Dieses Buch gehört</div><div class="lines"><div class="ln "><span class="hw">Andreas</span></div></div></div>
+  <div class="row"><div class="lab">Band</div><div class="lines"><div class="ln"><span class="half"><span class="hw">1</span></span><span class="half"><span class="pl">begonnen am</span><span class="hw">5. 10. 2026</span></span><span class="half"><span class="pl">beendet am</span></span></div></div></div>
+  <div class="row"><div class="lab">Falls gefunden, bitte zurück an</div><div class="lines"><div class="ln "></div><div class="ln "></div></div></div>
+</div>
+<span class="folio">1</span></div></section></div></section><section class="block" id="aufbau"><div class="cap"><span class="pg">S. 2–3</span><h2>Aufbau und Gebetsübersicht</h2><p>Die Seiten sind nicht datiert, deshalb gibt es keinen Rückstand. Wer aussetzt, macht auf der nächsten freien Seite weiter.</p></div><div class="spread"><section class="page l " aria-label="Seite 2: Aufbau und Zeiten"><div class="in">
+<header class="ph"><h2 class="pt">So ist dieses Buch gebaut</h2></header>
+<div class="toc"><b>1</b><span>Titel · 2 Aufbau · 3 Gebetsübersicht</span><b>4</b><span>Leseplan: Altes Testament (S. 4–5), Neues Testament (S. 6)</span><b>7</b><span>Der Kleine Katechismus</span><b>8</b><span>Die Ordnung am Morgen, mit allen Gebetstexten</span><b>12</b><span>Die Ordnung am Abend: Vesper und Nachtgebet</span><b>16</b><span>Die Tage – dreizehn Wochen zu je sechzehn Seiten: <em>eine Doppelseite für die Woche, dann jeder Tag auf einer Doppelseite, links der Morgen, rechts der Abend</em></span><b>224</b><span>Arena: Brüder, Winter Arc, Treffen</span><b>275</b><span>Notizen</span><b>283</b><span>Verse, die ich mitnehme</span><b>288</b><span>Monatlich: Privatbeichte, Abendmahl</span></div>
+<p class="txt">Die Seiten sind nicht datiert. Wer drei Tage aussetzt, schlägt die nächste freie Seite auf. Nicht nachholen, nicht rechnen – wieder anfangen.</p>
+<p class="txt">Alle Felder sind freiwillig. Der rote Randstrich zeigt die Kurzform. Ein Band reicht für dreizehn Wochen.</p>
+<div class="sec"><span class="t">Meine Zeiten</span></div>
+<svg class="tl" viewBox="0 0 123 21" role="img" aria-label="Tagesbogen von 4 bis 21 Uhr: Stille Zeit am Morgen, Vesper und Nachtgebet am Abend"><line x1="3.0" y1="13" x2="120.0" y2="13" stroke="#565D6B" stroke-width=".3"/><line x1="3.00" y1="13" x2="3.00" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="3.00" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">04</text><line x1="9.88" y1="13" x2="9.88" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="16.76" y1="13" x2="16.76" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="16.76" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">06</text><line x1="23.65" y1="13" x2="23.65" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="30.53" y1="13" x2="30.53" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="30.53" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">08</text><line x1="37.41" y1="13" x2="37.41" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="44.29" y1="13" x2="44.29" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="44.29" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">10</text><line x1="51.18" y1="13" x2="51.18" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="58.06" y1="13" x2="58.06" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="58.06" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">12</text><line x1="64.94" y1="13" x2="64.94" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="71.82" y1="13" x2="71.82" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="71.82" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">14</text><line x1="78.71" y1="13" x2="78.71" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="85.59" y1="13" x2="85.59" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="85.59" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">16</text><line x1="92.47" y1="13" x2="92.47" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="99.35" y1="13" x2="99.35" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="99.35" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">18</text><line x1="106.24" y1="13" x2="106.24" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><line x1="113.12" y1="13" x2="113.12" y2="15.6" stroke="#8E8A82" stroke-width=".2"/><text x="113.12" y="19" font-size="2.1" text-anchor="middle" fill="#8E8A82">20</text><line x1="120.00" y1="13" x2="120.00" y2="14.6" stroke="#8E8A82" stroke-width=".2"/><rect x="4.72" y="9.6" width="5.16" height="3.4" fill="#8C2F2F" fill-opacity=".14" stroke="#8C2F2F" stroke-width=".25"/><text x="7.30" y="7.6" font-size="2.05" text-anchor="middle" fill="#8C2F2F" font-weight="600">Stille Zeit</text><rect x="102.79" y="9.6" width="1.17" height="3.4" fill="#8C2F2F" fill-opacity=".14" stroke="#8C2F2F" stroke-width=".25"/><text x="103.38" y="7.6" font-size="2.05" text-anchor="middle" fill="#8C2F2F" font-weight="600">Vesper</text><rect x="118.28" y="9.6" width="1.17" height="3.4" fill="#8C2F2F" fill-opacity=".14" stroke="#8C2F2F" stroke-width=".25"/><text x="118.86" y="7.6" font-size="2.05" text-anchor="middle" fill="#8C2F2F" font-weight="600">Nachtgebet</text><line x1="120.00" y1="8.6" x2="120.00" y2="13" stroke="#1D2330" stroke-width=".35"/></svg>
+<div class="times"><div><span class="pl">Am Bett</span><div class="ln"><span class="hw">04:00</span></div></div><div><span class="pl">Stille Zeit</span><div class="ln"><span class="hw">04:15</span></div></div><div><span class="pl">Vesper</span><div class="ln"><span class="hw">18:30</span></div></div><div><span class="pl">Nachtgebet</span><div class="ln"><span class="hw">20:45</span></div></div><div><span class="pl">Licht aus</span><div class="ln"><span class="hw">21:00</span></div></div></div>
+<p class="rb">Wer um 04:00 aufsteht, muß für sieben Stunden Schlaf um 21:00 liegen. Der Abend ist Teil der Morgenordnung.</p>
+<span class="folio">2</span></div></section><section class="page r " aria-label="Seite 3: Gebetsübersicht"><div class="in">
+<header class="ph"><h2 class="pt">Gebetsübersicht</h2></header>
+<p class="pr">Hanniel führt für das tägliche Gebet eine solche Übersicht und sieht von Zeit zu Zeit hinein, um nicht zu vergessen, was ihm sonst entgleitet.</p>
+<div class="sec"><span class="t">Täglich</span></div>
+<div class="row"><div class="lab">Haus · Frau, Kinder</div><div class="lines"><div class="ln "><span class="hw">meine Frau – Kraft für die neue Stelle</span></div><div class="ln "><span class="hw">J. – Schule, Freunde · M. – Schlaf</span></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Gemeinde</div><div class="lines"><div class="ln "><span class="hw">Älteste, Jugendleiter, die Predigt am Sonntag</span></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Arbeit · Kollegen</div><div class="lines"><div class="ln "><span class="hw">Team im Umbruch – Ruhe und Klarheit</span></div><div class="ln "></div></div></div>
+<div class="sec"><span class="t">Wöchentlich</span></div>
+<p class="pr">Ein Anliegen je Wochentag, damit nichts liegenbleibt.</p>
+<div class="row"><div class="lab">Montag</div><div class="lines"><div class="ln "><span class="hw">verfolgte Kirche</span></div></div></div><div class="row"><div class="lab">Dienstag</div><div class="lines"><div class="ln "><span class="hw">Missionare</span></div></div></div><div class="row"><div class="lab">Mittwoch</div><div class="lines"><div class="ln "><span class="hw">Obrigkeit und Frieden</span></div></div></div><div class="row"><div class="lab">Donnerstag</div><div class="lines"><div class="ln "><span class="hw">Nachbarn</span></div></div></div><div class="row"><div class="lab">Freitag</div><div class="lines"><div class="ln "><span class="hw">Kranke</span></div></div></div><div class="row"><div class="lab">Samstag</div><div class="lines"><div class="ln "><span class="hw">Patenkinder</span></div></div></div><div class="row"><div class="lab">Sonntag</div><div class="lines"><div class="ln "><span class="hw">Bekannte ohne Glauben</span></div></div></div>
+<p class="pr">Zum Beispiel: verfolgte Kirche, Missionare, Obrigkeit, Nachbarn, Ungläubige im Bekanntenkreis, Kranke, Patenkinder.</p>
+<span class="folio">3</span></div></section></div></section><section class="block" id="leseplan"><div class="cap"><span class="pg">S. 6–7</span><h2>Leseplan und Katechismus</h2><p>Der Leseplan ist eine Liste zum Abhaken, kein Kalender. Beim Katechismus gibt es eine zweite Spalte für das Lernen mit den Kindern.</p></div><div class="spread"><section class="page l " aria-label="Seite 6: Leseplan Neues Testament"><div class="in">
+<header class="ph"><h2 class="pt"><small>Leseplan</small>Neues Testament</h2>
+<div class="pm"><div class="dline"><span class="pl">begonnen am</span><span class="hw">5. 10. 2026</span></div></div></header>
+<p class="pr">260 Kapitel, eines je Lesung, in Luthers Reihenfolge. Abhaken, was gelesen ist. Der Plan läuft nach Fortschritt, nicht nach Datum: Wer aussetzt, liest beim nächsten freien Kästchen weiter.</p>
+<div class="nt"><span class="bk">Matthäus</span><span class="bx"><span class="nb on">1</span><span class="nb on">2</span><span class="nb on">3</span><span class="nb on">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span><span class="nb">17</span><span class="nb">18</span><span class="nb">19</span><span class="nb">20</span><span class="nb">21</span><span class="nb">22</span><span class="nb">23</span><span class="nb">24</span><span class="nb">25</span><span class="nb">26</span><span class="nb">27</span><span class="nb">28</span></span><span class="bk">Markus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span></span><span class="bk">Lukas</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span><span class="nb">17</span><span class="nb">18</span><span class="nb">19</span><span class="nb">20</span><span class="nb">21</span><span class="nb">22</span><span class="nb">23</span><span class="nb">24</span></span><span class="bk">Johannes</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span><span class="nb">17</span><span class="nb">18</span><span class="nb">19</span><span class="nb">20</span><span class="nb">21</span></span><span class="bk">Apostelgeschichte</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span><span class="nb">17</span><span class="nb">18</span><span class="nb">19</span><span class="nb">20</span><span class="nb">21</span><span class="nb">22</span><span class="nb">23</span><span class="nb">24</span><span class="nb">25</span><span class="nb">26</span><span class="nb">27</span><span class="nb">28</span></span><span class="bk">Römer</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span></span><span class="bk">1. Korinther</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span></span><span class="bk">2. Korinther</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span></span><span class="bk">Galater</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span></span><span class="bk">Epheser</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span></span><span class="bk">Philipper</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span></span><span class="bk">Kolosser</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span></span><span class="bk">1. Thessalonicher</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span></span><span class="bk">2. Thessalonicher</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span></span><span class="bk">1. Timotheus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span></span><span class="bk">2. Timotheus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span></span><span class="bk">Titus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span></span><span class="bk">Philemon</span><span class="bx"><span class="nb">1</span></span><span class="bk">1. Petrus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span></span><span class="bk">2. Petrus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span></span><span class="bk">1. Johannes</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span></span><span class="bk">2. Johannes</span><span class="bx"><span class="nb">1</span></span><span class="bk">3. Johannes</span><span class="bx"><span class="nb">1</span></span><span class="bk">Hebräer</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span></span><span class="bk">Jakobus</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span></span><span class="bk">Judas</span><span class="bx"><span class="nb">1</span></span><span class="bk">Offenbarung</span><span class="bx"><span class="nb">1</span><span class="nb">2</span><span class="nb">3</span><span class="nb">4</span><span class="nb">5</span><span class="nb">6</span><span class="nb">7</span><span class="nb">8</span><span class="nb">9</span><span class="nb">10</span><span class="nb">11</span><span class="nb">12</span><span class="nb">13</span><span class="nb">14</span><span class="nb">15</span><span class="nb">16</span><span class="nb">17</span><span class="nb">18</span><span class="nb">19</span><span class="nb">20</span><span class="nb">21</span><span class="nb">22</span></span></div>
+<p class="pr" style="margin-top:auto">Altes Testament auf S. 4–5: 929 Kapitel im Muster 2-1-1-1, keine Portion über eine Buchgrenze.</p>
+<span class="folio">6</span></div></section><section class="page r " aria-label="Seite 7: Katechismus"><div class="in">
+<header class="ph"><h2 class="pt"><small>Luther, 1529</small>Der Kleine Katechismus</h2></header>
+<p class="pr">Sechs Wochen, sechs Hauptstücke, dann von vorn. Pro Tag ein Stück, nach der Wochenseite.</p>
+<div class="kt"><span class="th" style="justify-content:flex-start">Stück</span><span class="th">aus&shy;wendig</span><span class="th">mit den Kindern</span><span class="hs">Die Zehn Gebote</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 1</span><span>Das erste Gebot</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span>Das zweite Gebot</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span>Das dritte Gebot</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span>Das vierte Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das fünfte Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das sechste Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das siebente Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das achte Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das neunte Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Das zehnte Gebot</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Der Beschluß der Gebote</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="hs">Der Glaube</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 2</span><span>Der erste Artikel: Von der Schöpfung</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Der zweite Artikel: Von der Erlösung</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Der dritte Artikel: Von der Heiligung</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="hs">Das Vaterunser</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 3</span><span>Die Anrede</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die erste Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die zweite Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die dritte Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die vierte Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die fünfte Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die sechste Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die siebente Bitte</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Der Beschluß</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="hs">Die heilige Taufe</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 4</span><span>Zum Ersten</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Zum Andern</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Zum Dritten</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Zum Vierten</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="hs">Die Beichte</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 5</span><span>Was ist die Beichte?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Welche Sünden soll man beichten?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Welche sind die?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Die Absolution</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="hs">Das Sakrament des Altars</span><span class="hs w" style="grid-column:span 2;justify-content:flex-end">Woche 6</span><span>Was ist das Sakrament des Altars?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Was nützt solch Essen und Trinken?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Wie kann leiblich Essen solch große Dinge tun?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span>Wer empfängt es würdig?</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span></div>
+<span class="folio">7</span></div></section></div></section><section class="block" id="ordnung"><div class="cap"><span class="pg">S. 8–15</span><h2>Die Ordnung</h2><p>Die Gebetsanleitung steht vorn im Buch, mit allen Texten aus dem Gebetsheft: vier Seiten für den Morgen, vier für den Abend. Das grüne Bändchen bleibt hier liegen, das rote im Tag. Jede Tagesseite nennt bei jedem Schritt die Seite der Ordnung.</p></div><div class="spread"><section class="page l ord " aria-label="Seite 8: Ordnung am Morgen, Am Bett und Eröffnung"><div class="in">
+<header class="ph"><h2 class="pt"><small>Die Ordnung</small>Am Morgen</h2><div class="pm"><span class="pl" style="padding:0">fünfundvierzig Minuten</span></div></header>
+<div class="sec"><span class="t">Vor der Stille Zeit</span><span class="m">3 Min. · am Bett</span></div>
+<p class="rb">Gleich nach dem Aufstehen, noch bevor der Tag anfängt. Die Stille Zeit beginnt danach, am Tisch.</p>
+<div class="sub">Kreuzzeichen<em>Bekreuzige dich und sprich:</em></div>
+<div class="lit ">Das walte Gott Vater, Sohn und Heiliger Geist. Amen.</div>
+<div class="sub">Vaterunser<em>S. 11</em></div>
+<div class="sub">Taufgedächtnis<em>Bekreuzige dich noch einmal:</em></div>
+<div class="lit ">Ich bin getauft auf den Namen des Vaters und des Sohnes<br>und des Heiligen Geistes.</div><div class="lit ">Der alte Adam in mir soll durch tägliche Reue und Buße ersäuft werden<br>und sterben mit allen Sünden und bösen Lüsten,<br>und täglich soll wieder herauskommen und auferstehen der neue Mensch,<br>der in Gerechtigkeit und Reinheit vor Gott ewiglich lebe. Amen.</div>
+<div class="sub">Morgensegen<em>Luther, Kleiner Katechismus</em></div>
+<div class="lit ">Ich danke dir, mein himmlischer Vater,<br>durch Jesus Christus, deinen lieben Sohn,<br>daß du mich diese Nacht vor allem Schaden und Gefahr behütet hast,<br>und bitte dich, du wollest mich diesen Tag auch behüten<br>vor Sünden und allem Übel,<br>daß dir all mein Tun und Leben gefalle.<br>Denn ich befehle mich, meinen Leib und Seele und alles in deine Hände.<br>Dein heiliger Engel sei mit mir,<br>daß der böse Feind keine Macht an mir finde. Amen.</div>
+<div class="sec"><span class="no">1</span><span class="t">Eröffnung</span><span class="m">3 Min.</span></div>
+<div class="va"><b>V</b><span>Herr, tue meine Lippen auf,</span></div><div class="va"><b>A</b><span>daß mein Mund deinen Ruhm verkündige.</span></div>
+<div class="va"><b>V</b><span>O Gott, komm mir zu Hilfe.</span></div><div class="va"><b>A</b><span>Herr, eile, mir zu helfen.</span></div>
+<div class="lit ">Ehre sei dem Vater und dem Sohn und dem Heiligen Geist,<br>wie im Anfang, so auch jetzt und alle Zeit<br>und in Ewigkeit. Amen.<br>Halleluja.</div>
+<p class="rb">In der Passionszeit entfällt das Halleluja.</p>
+<div class="sub">Hymnus<em>wahlweise, eine Strophe</em></div>
+<div class="lit ">Die helle Sonn leucht jetzt herfür,<br>fröhlich vom Schlaf aufstehen wir;<br>Gott Lob, der uns in dieser Nacht<br>behüt hat vor des Teufels Macht.</div>
+<p class="pr">Nikolaus Herman, 1560. Oder Aus meines Herzens Grunde (Georg Niege, 1592), oder Wach auf, mein Herz, und singe (Paul Gerhardt, 1647).</p>
+<span class="runner">Die Ordnung · Morgen</span><span class="folio">8</span></div></section><section class="page r ord " aria-label="Seite 9: Ordnung am Morgen, Psalm und Das Wort"><div class="in">
+<div class="sub">Psalm<em>des Wochentages, mit seiner Antiphon</em></div>
+<p class="rb">Er gehört nicht zur Bibellese und wird nicht ausgelegt – er wird gebetet.</p>
+<div class="pst"><span class="th">Tag</span><span class="th">Ps.</span><span class="th">Antiphon</span><span class="d">Montag</span><span class="p">63</span><span>Gott, du bist mein Gott; frühe suche ich dich.</span><span class="d">Dienstag</span><span class="p">5</span><span>HERR, frühe wollest du meine Stimme hören.</span><span class="d">Mittwoch</span><span class="p">36</span><span>Bei dir ist die Quelle des Lebens, und in deinem Licht sehen wir das Licht.</span><span class="d">Donnerstag</span><span class="p">57</span><span>Wache auf, meine Ehre, wache auf, Psalter und Harfe!</span><span class="d">Freitag</span><span class="p">51</span><span>Schaffe in mir, Gott, ein reines Herz.</span><span class="d">Samstag</span><span class="p">92</span><span>Des Morgens deine Gnade und des Nachts deine Wahrheit verkündigen.</span><span class="d">Sonntag</span><span class="p">118</span><span>Dies ist der Tag, den der HERR macht; laßt uns freuen und fröhlich darin sein.</span></div>
+<div class="lit ref">Ehre sei dem Vater …</div>
+<p class="rb">Die Antiphon wird wiederholt.</p>
+<div class="sec"><span class="no">2</span><span class="t">Das Wort</span><span class="m">20 Min. · nach Hanniel Strebel</span></div>
+<div class="sub">Eingangsgebet<em>Die Lesung beginnt und endet im Gebet.</em></div>
+<div class="lit ">Öffne mir die Augen,<br>daß ich sehe die Wunder an deinem Gesetz.<cite>Psalm 119,18</cite></div>
+<div class="sub">Die Portion</div>
+<p class="txt o">Dem Leseplan folgen, nicht der Stimmung. Ein bis zwei Kapitel aus dem Alten Testament und eines aus dem Neuen. Lieber weniger und dreimal gelesen als mehr und einmal.</p>
+<div class="sub">Dreimal lesen</div>
+<p class="txt o"><b>Erster Gang:</b> durchlesen, ohne Stift. Was steht da?<br><b>Zweiter Gang:</b> mit Stift. Markieren nach dem Farbcode, Randzeichen setzen.<br><b>Dritter Gang:</b> die Hauptaussage innerlich zusammenfassen. Pro Kapitel einen Vers auswählen und sich einprägen.</p>
+<div class="sub">Die Doppelfrage<em>nach jedem Text, ohne Ausnahme</em></div>
+<div class="lit ">Was lerne ich hier über Gott?<br>Was lerne ich hier über den Menschen?</div>
+<div class="sub">Die heilsgeschichtliche Brille</div>
+<p class="txt o">Wo steht der Text im Panorama von Schöpfung, Fall, Erlösung und Vollendung? Worauf weist er hin, wenn er auf Christus weist?</p>
+<div class="sub">Die sieben Fragen<em>eine, abhängig vom Text</em></div>
+<ol class="q7"><li>Was sagt der Text?</li><li>Was bedeutete er für die ersten Leser?</li><li>Was lehrt er über Gott?</li><li>Was über den Menschen?</li><li>Was erwartet er von mir?</li><li>Wie verändert das meinen Umgang mit anderen?</li><li>Wozu treibt er mich im Gebet?</li></ol>
+<p class="rb">Was heute offenbleibt, bleibt offen. Fragezeichen an den Rand, weiterlesen.</p>
+<div class="sub">Schlußgebet</div>
+<div class="lit ">Herr, du hast geredet.<br>Laß dein Wort nicht leer zurückkommen,<br>sondern tun, wozu du es gesandt hast. Amen.<cite>nach Jesaja 55,11</cite></div>
+<span class="runner">Die Ordnung · Morgen</span><span class="folio">9</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l ord " aria-label="Seite 10: Ordnung am Morgen, Das Gebet und Benedictus"><div class="in">
+<div class="sec"><span class="no">3</span><span class="t">Das Gebet</span><span class="m">12 Min. · in eigenen Worten</span></div>
+<div class="sub">Der Stoff<em>eines von beiden, nicht beides</em></div>
+<p class="txt o">Der Vers aus der Lesung – der, den du dir eben eingeprägt hast. Oder das Katechismusstück nach dem Wochenplan – ein Gebot, ein Artikel, eine Bitte.</p>
+<p class="rb">Hat die Lesung dich getroffen, bleib beim Vers. War sie spröde, nimm den Katechismus.</p>
+<div class="sub">Der vierfache Kranz<em>etwa sechs Minuten, halblaut, nicht nur gedacht</em></div>
+<div class="kz"><span class="kn">1</span><span><b>Unterricht</b> – Was sagst du mir hier?<i>Herr, du sagst mir in diesem Wort …</i></span><span class="kn">2</span><span><b>Danksagung</b> – Welche Gabe steckt darin?<i>Ich danke dir, daß …</i></span><span class="kn">3</span><span><b>Beichte</b> – Wo stehe ich dagegen?<i>Ich bekenne dir, daß ich …</i></span><span class="kn">4</span><span><b>Bitte</b> – Was folgt daraus?<i>Darum bitte ich dich …</i></span></div>
+<p class="rb">Luther: Wenn der Heilige Geist mitten hinein zu predigen anfängt und Gedanken schenkt, die reicher sind als die Ordnung, dann laß die Ordnung fahren und höre zu.</p>
+<div class="sub">Freies Gebet<em>etwa fünf Minuten</em></div>
+<p class="txt o">Jetzt, was dich selbst bewegt – ohne Vorlage. Sorge und Freude, eine Entscheidung, die ansteht, eine Last, die du trägst, Bitte für dich selbst. Auch Klage: die Psalmen geben dir die Erlaubnis dazu.</p>
+<div class="sub">Stille<em>eine Minute</em></div>
+<div class="lit ">Sei stille dem HERRN und warte auf ihn.<cite>Psalm 37,7</cite></div>
+<div class="sec"><span class="no">4</span><span class="t">Die Antwort</span><span class="m">5 Min.</span></div>
+<div class="sub">Benedictus<em>Antiphon: Gelobt sei der Herr, der Gott Israels.</em></div>
+<div class="lit run">Gelobt sei der Herr, der Gott Israels, denn er hat besucht und erlöst sein Volk</div><div class="lit run">und hat uns aufgerichtet ein Horn des Heils in dem Hause seines Dieners David,</div><div class="lit run">wie er vorzeiten geredet hat durch den Mund seiner heiligen Propheten:</div><div class="lit run">daß er uns errettete von unsern Feinden und von der Hand aller, die uns hassen,</div><div class="lit run">und Barmherzigkeit erzeigte unsern Vätern und gedächte an seinen heiligen Bund,</div><div class="lit run">daß wir, erlöst aus der Hand unserer Feinde, ihm dienten ohne Furcht unser Leben lang in Heiligkeit und Gerechtigkeit, die ihm gefällig ist.</div><div class="lit run">Und du, Kindlein, wirst ein Prophet des Höchsten heißen; du wirst vor dem Herrn hergehen, daß du seinen Weg bereitest</div><div class="lit run">und Erkenntnis des Heils gebest seinem Volk, die da ist in Vergebung ihrer Sünden,</div><div class="lit run">durch die herzliche Barmherzigkeit unseres Gottes, durch welche uns besucht hat der Aufgang aus der Höhe,</div><div class="lit run">auf daß er erscheine denen, die da sitzen in Finsternis und Schatten des Todes, und richte unsere Füße auf den Weg des Friedens.</div>
+<div class="lit ref">Ehre sei dem Vater …</div>
+<span class="runner">Die Ordnung · Morgen</span><span class="folio">10</span></div></section><section class="page r ord " aria-label="Seite 11: Ordnung am Morgen, Vaterunser, Ausrichtung, Segen"><div class="in">
+<div class="sub">Fürbitte</div>
+<div class="va"><b>V</b><span>Kyrie eleison.</span></div><div class="va"><b>A</b><span>Christe eleison. Kyrie eleison.</span></div>
+<p class="txt o">Nach der Gebetsübersicht (S. 3): das Anliegen des Wochentages und die Menschen, denen du heute begegnen wirst – namentlich, kurz.</p>
+<div class="sub">Vaterunser</div>
+<div class="lit ">Vater unser im Himmel.<br>Geheiligt werde dein Name.<br>Dein Reich komme.<br>Dein Wille geschehe, wie im Himmel, so auf Erden.<br>Unser tägliches Brot gib uns heute.<br>Und vergib uns unsere Schuld,<br>wie auch wir vergeben unsern Schuldigern.<br>Und führe uns nicht in Versuchung,<br>sondern erlöse uns von dem Bösen.<br>Denn dein ist das Reich und die Kraft<br>und die Herrlichkeit in Ewigkeit. Amen.</div>
+<div class="sec"><span class="no">5</span><span class="t">Die Ausrichtung</span><span class="m">3 Min. · die drei Dinge</span></div>
+<p class="txt o">Jetzt, und erst jetzt, wird der Tag angesehen. Drei Dinge, nicht mehr – eines aus jedem Bereich: das Wort, das Haus, das Werk. Beobachtbar, nicht gesinnungsmäßig: etwas, das man abends mit Ja oder Nein beantworten kann.</p>
+<div class="sec"><span class="no">6</span><span class="t">Der Segen</span><span class="m">2 Min.</span></div>
+<div class="sub">Kollekte</div>
+<div class="lit ">Herr Gott, himmlischer Vater,<br>der du uns diesen Tag geschenkt hast:<br>Wir bitten dich, regiere uns durch deinen Heiligen Geist,<br>daß wir in unserem Beruf treu seien,<br>unserm Nächsten dienen<br>und nichts tun, was dir mißfällt,<br>durch Jesus Christus, deinen Sohn, unsern Herrn. Amen.</div>
+<div class="sub">Beschluß</div>
+<div class="va"><b>V</b><span>Lasset uns preisen den Herrn.</span></div><div class="va"><b>A</b><span>Gott sei ewiglich Dank.</span></div><div class="va"><b>V</b><span>Es segne und behüte uns der allmächtige und barmherzige Gott, Vater, Sohn und Heiliger Geist.</span></div><div class="va"><b>A</b><span>Amen.</span></div>
+<p class="rb">Und dann, wie Luther schreibt: mit Freuden an dein Werk gegangen.</p>
+<div class="sub">Kurzform am Morgen<em>zwanzig Minuten</em></div>
+<div class="kft"><span class="d">1</span><span>Versikel, Gloria, Psalm des Tages</span><span class="m">3</span><span class="d">2</span><span>Lesung – einmal durch, ein Vers, Doppelfrage</span><span class="m">10</span><span class="d">3</span><span>Freies Gebet über den Vers</span><span class="m">3</span><span class="d">4</span><span>Vaterunser</span><span class="m">1</span><span class="d">5</span><span>Die drei Dinge</span><span class="m">2</span><span class="d">6</span><span>Segen</span><span class="m">1</span></div>
+<p class="rb">Und wenn auch zwanzig nicht gehen: Vaterunser und Morgensegen am Bett. Dann ist es genug.</p>
+<span class="runner">Die Ordnung · Morgen</span><span class="folio">11</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l ord " aria-label="Seite 12: Ordnung am Abend, Vesper"><div class="in">
+<header class="ph"><h2 class="pt"><small>Die Ordnung</small>Am Abend</h2><div class="pm"><span class="pl" style="padding:0">zwanzig Minuten</span></div></header>
+<div class="sec"><span class="no">1</span><span class="t">Vesper</span><span class="m">10 Min. · beim Abendessen, mit der Familie</span></div>
+<p class="rb">Gebet der Kirche, nicht Selbstprüfung. Kurzform für die Familie: Lied – Psalm im Wechsel – kurze Lesung – Vaterunser – Segen. Fünf Minuten. Die Kinder können die Antiphon sprechen.</p>
+<div class="sub">Eröffnung</div>
+<div class="va"><b>V</b><span>O Gott, komm mir zu Hilfe.</span></div><div class="va"><b>A</b><span>Herr, eile, mir zu helfen.</span></div>
+<div class="lit ref">Ehre sei dem Vater … Halleluja.</div>
+<div class="sub">Hymnus<em>Christe, du bist der helle Tag – Erasmus Alber, 1556</em></div>
+<div class="two"><div class="lit ">Christe, du bist der helle Tag,<br>vor dir die Nacht nicht bleiben mag;<br>du leuchtest uns vom Vater her<br>und bist des Lichtes Prediger.</div><div class="lit ">Ach lieber Herr, behüte uns<br>in dieser Nacht vor allem Bös,<br>laß uns in dir ruhen fein<br>und vor dem Feind behütet sein.</div></div>
+<p class="pr">Oder: Nun ruhen alle Wälder (Paul Gerhardt, 1647), Str. 1, 8 und 9.</p>
+<div class="sub">Psalm<em>Antiphon: Mein Gebet steige vor dir auf wie ein Räuchopfer, und meiner Hände Aufheben wie ein Abendopfer.</em></div>
+<div class="lit ">HERR, ich rufe zu dir, eile zu mir;<br>vernimm meine Stimme, wenn ich dich anrufe.</div>
+<div class="lit ">Mein Gebet müsse vor dir gelten wie ein Räuchopfer,<br>mein Händeaufheben wie ein Abendopfer.</div>
+<div class="lit ">HERR, behüte meinen Mund<br>und bewahre die Tür meiner Lippen.</div>
+<div class="lit ">Neige mein Herz nicht auf etwas Böses,<br>ein gottloses Wesen zu führen mit den Übeltätern.</div>
+<div class="lit ">Denn auf dich, HERR Herr, sehen meine Augen;<br>ich traue auf dich, verstoße meine Seele nicht.<cite>Psalm 141</cite></div>
+<div class="lit ref">Ehre sei dem Vater …</div>
+<div class="sub">Psalmenreihe für die Woche</div>
+<div class="pst"><span class="th">Tag</span><span class="th">Ps.</span><span class="th">Antiphon</span><span class="d">Montag</span><span class="p">141</span><span>Mein Gebet steige vor dir auf wie ein Räuchopfer.</span><span class="d">Dienstag</span><span class="p">121</span><span>Meine Hilfe kommt vom HERRN, der Himmel und Erde gemacht hat.</span><span class="d">Mittwoch</span><span class="p">130</span><span>Bei dem HERRN ist die Gnade und viel Erlösung bei ihm.</span><span class="d">Donnerstag</span><span class="p">23</span><span>Der HERR ist mein Hirte, mir wird nichts mangeln.</span><span class="d">Freitag</span><span class="p">51</span><span>Schaffe in mir, Gott, ein reines Herz.</span><span class="d">Samstag</span><span class="p">84</span><span>Wie lieblich sind deine Wohnungen, HERR Zebaoth.</span><span class="d">Sonntag</span><span class="p">103</span><span>Lobe den HERRN, meine Seele, und vergiß nicht, was er dir Gutes getan hat.</span></div>
+<span class="runner">Die Ordnung · Abend</span><span class="folio">12</span></div></section><section class="page r ord " aria-label="Seite 13: Ordnung am Abend, Magnificat und Segen"><div class="in">
+<div class="sub">Lesung<em>ein kurzer Abschnitt, ohne Auslegung</em></div>
+<p class="txt o">Nicht die Bibellese vom Morgen – die ist erledigt. Hier genügen wenige Verse, gern das Evangelium des Sonntags.</p>
+<div class="va"><b>V</b><span>Gott sei ewiglich Dank.</span></div>
+<div class="sub">Magnificat<em>Antiphon: Meine Seele erhebt den Herrn.</em></div>
+<div class="lit run">Meine Seele erhebt den Herrn, und mein Geist freuet sich Gottes, meines Heilandes;</div><div class="lit run">denn er hat die Niedrigkeit seiner Magd angesehen. Siehe, von nun an werden mich selig preisen alle Kindeskinder.</div><div class="lit run">Denn er hat große Dinge an mir getan, der da mächtig ist und dessen Name heilig ist.</div><div class="lit run">Und seine Barmherzigkeit währet immer für und für bei denen, die ihn fürchten.</div><div class="lit run">Er übet Gewalt mit seinem Arm und zerstreut, die hoffärtig sind in ihres Herzens Sinn.</div><div class="lit run">Er stößt die Gewaltigen vom Stuhl und erhebt die Niedrigen.</div><div class="lit run">Die Hungrigen füllt er mit Gütern und läßt die Reichen leer.</div><div class="lit run">Er denkt der Barmherzigkeit und hilft seinem Diener Israel auf, wie er geredet hat unsern Vätern, Abraham und seinem Samen ewiglich.</div>
+<div class="lit ref">Ehre sei dem Vater …</div>
+<p class="rb">Das Magnificat deutet den Tag von Gottes Handeln her, bevor du ihn im Nachtgebet von deinem her prüfst.</p>
+<div class="sub">Fürbitten und Vaterunser</div>
+<div class="va"><b>V</b><span>Kyrie eleison.</span></div><div class="va"><b>A</b><span>Christe eleison. Kyrie eleison.</span></div>
+<p class="txt o">Freie Fürbitte: für die Gemeinde, für Obrigkeit und Frieden, für Kranke und Trauernde, für das eigene Haus. Dann das Vaterunser (S. 11).</p>
+<div class="sub">Kollekte und Segen</div>
+<div class="lit ">Herr Gott, himmlischer Vater,<br>der du die Nacht gemacht hast, daß der Mensch ruhe:<br>Wir bitten dich, vergib uns, was wir heute gefehlt haben,<br>behüte uns diese Nacht<br>und laß uns morgen fröhlich aufstehen zu deinem Dienst,<br>durch Jesus Christus, deinen Sohn, unsern Herrn. Amen.</div>
+<div class="va"><b>V</b><span>Lasset uns preisen den Herrn.</span></div><div class="va"><b>A</b><span>Gott sei ewiglich Dank.</span></div><div class="va"><b>V</b><span>Es segne und behüte uns der allmächtige und barmherzige Gott, Vater, Sohn und Heiliger Geist.</span></div><div class="va"><b>A</b><span>Amen.</span></div>
+<span class="runner">Die Ordnung · Abend</span><span class="folio">13</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l ord " aria-label="Seite 14: Ordnung am Abend, Nachtgebet bis zur Rückschau"><div class="in">
+<div class="sec"><span class="no">2</span><span class="t">Nachtgebet</span><span class="m">10 Min. · gegen 20:45, am Bett</span></div>
+<p class="rb">Kurzform an müden Tagen: Kreuzzeichen – Rückschau (drei Zeichen) – Vaterunser – Abendsegen. Das genügt vollkommen.</p>
+<div class="sub">1 · Kreuzzeichen</div>
+<div class="lit ">Das walte Gott Vater, Sohn und Heiliger Geist. Amen.</div>
+<div class="sub">2 · Glaubensbekenntnis</div>
+<div class="lit ">Ich glaube an Gott, den Vater, den Allmächtigen,<br>Schöpfer des Himmels und der Erde.</div>
+<div class="lit ">Und an Jesus Christus,<br>seinen eingeborenen Sohn, unsern Herrn,<br>empfangen durch den Heiligen Geist,<br>geboren von der Jungfrau Maria,<br>gelitten unter Pontius Pilatus,<br>gekreuzigt, gestorben und begraben,<br>hinabgestiegen in das Reich des Todes,<br>am dritten Tage auferstanden von den Toten,<br>aufgefahren in den Himmel;<br>er sitzt zur Rechten Gottes, des allmächtigen Vaters;<br>von dort wird er kommen, zu richten die Lebenden und die Toten.</div>
+<div class="lit ">Ich glaube an den Heiligen Geist,<br>die heilige christliche Kirche,<br>Gemeinschaft der Heiligen,<br>Vergebung der Sünden,<br>Auferstehung der Toten<br>und das ewige Leben. Amen.</div>
+<div class="sub">3 · Vaterunser<em>S. 11</em></div>
+<p class="rb">Luther stellt Glaube und Vaterunser voran. Der Tag wird nicht an deinem Gewissen gemessen, sondern an dem, was bekannt und gebetet wird.</p>
+<div class="sub">4 · Dank<em>zwei oder drei Dinge dieses Tages</em></div>
+<div class="lit ">Ich danke dir, mein Gott, für …</div>
+<div class="sub">5 · Rückschau<em>Rechenschaft, nicht Beichte</em></div>
+<p class="txt o">Die drei Dinge vom Morgen vorlesen. Zu jedem ein Zeichen setzen, ohne Kommentar: <b>+</b> geschehen · <b>~</b> angefangen · <b>–</b> nicht geschehen. Kein Nachtreten, keine Erklärung. Das Zeichen steht, und damit ist der Punkt erledigt.</p>
+<p class="txt o">Was mit einem Minus geschieht – du entscheidest sofort: <b>Morgen wieder.</b> Es war richtig, es kam nur nicht dazu. <b>Fallenlassen.</b> Es war heute morgen wichtig und ist es nicht mehr. <b>In die Beichte.</b> Nur wenn wirklich ein Gebot dahintersteht – wenn du jemanden im Stich gelassen hast, nicht wenn du eine Aufgabe nicht geschafft hast.</p>
+<span class="runner">Die Ordnung · Abend</span><span class="folio">14</span></div></section><section class="page r ord " aria-label="Seite 15: Ordnung am Abend, Prüfung, Zuspruch, Abendsegen"><div class="in">
+<div class="sub">6 · Prüfung am Dekalog in deinem Stand<em>wo bin ich schuldig geblieben?</em></div>
+<p class="txt o">Nicht Stimmungen abklopfen, sondern das Amt befragen, das dir gegeben ist. Eine Frage genügt; der Stand des Wochentages steht auf der Wochenseite.</p>
+<p class="txt o st"><b>Als Ehemann:</b> Habe ich meine Frau heute geehrt, oder nur verwaltet?</p><p class="txt o st"><b>Als Vater:</b> Habe ich meine Kinder heute gesehen, oder nur beaufsichtigt?</p><p class="txt o st"><b>Als Mitarbeiter und Kollege:</b> War ich treu in dem, was mir anvertraut ist? Habe ich über andere geredet, wie ich möchte, daß über mich geredet wird?</p><p class="txt o st"><b>Als Prediger und Bruder in der Gemeinde:</b> Habe ich Gottes Wort heute geachtet und gern gehört? Habe ich gedient oder mich dargestellt?</p><p class="txt o st"><b>Als Nächster:</b> Wem bin ich heute begegnet, dem ich schuldig geblieben bin?</p>
+<p class="pr">Haustafel: Ehemann 1. Petr 3,7; Kol 3,19 · Vater Eph 6,4; Kol 3,21 · Mitarbeiter Eph 6,5–9 · Prediger 1. Tim 3,2–6; Tit 1,9 · Nächster Röm 13,9</p>
+<div class="sub">7 · Bekenntnis und Zuspruch</div>
+<div class="lit ">Ich armer, elender Sünder bekenne dir alle meine Sünde und Missetat,<br>die ich begangen habe mit Gedanken, Worten und Werken,<br>womit ich dich erzürnt und deine Strafe verdient habe.<br>Sie sind mir leid, und ich bitte um Gnade.<br>Und was ich nicht erkenne, das erkennst du:<br>vergib mir auch das, um deines Sohnes Jesu Christi willen.</div>
+<p class="rb">Dann sprich dir laut zu – laut, nicht gedacht:</p>
+<div class="lit ">So wir aber unsere Sünde bekennen, so ist er treu und gerecht,<br>daß er uns die Sünde vergibt und reinigt uns von aller Untugend.<cite>1. Johannes 1,9</cite></div>
+<p class="rb">Dieser Schritt ist der entscheidende. Ohne ihn wird die ganze Ordnung Gesetz.</p>
+<div class="sub">8 · Taufgedächtnis<em>wie am Morgen, S. 8</em></div>
+<div class="sub">9 · Fürbitte</div>
+<p class="txt o">Die Menschen, die dir heute begegnet sind. Namentlich, nicht als Gruppe. Dann Frau, Kinder, Gemeinde.</p>
+<div class="sub">10 · Nunc dimittis<em>wahlweise</em></div>
+<div class="lit run">Herr, nun lässest du deinen Diener in Frieden fahren, wie du gesagt hast; denn meine Augen haben deinen Heiland gesehen, welchen du bereitet hast vor allen Völkern, ein Licht, zu erleuchten die Heiden, und zum Preis deines Volkes Israel.</div>
+<div class="sub">11 · Abendsegen<em>Luther, Kleiner Katechismus</em></div>
+<div class="lit ">Ich danke dir, mein himmlischer Vater,<br>durch Jesus Christus, deinen lieben Sohn,<br>daß du mich diesen Tag gnädiglich behütet hast,<br>und bitte dich, du wollest mir vergeben alle meine Sünde,<br>wo ich Unrecht getan habe,<br>und mich diese Nacht auch gnädiglich behüten.<br>Denn ich befehle mich, meinen Leib und Seele und alles in deine Hände.<br>Dein heiliger Engel sei mit mir,<br>daß der böse Feind keine Macht an mir finde. Amen.</div>
+<p class="rb">Und dann, wie Luther schreibt: flugs und fröhlich geschlafen.</p>
+<span class="runner">Die Ordnung · Abend</span><span class="folio">15</span></div></section></div></section><section class="block" id="woche"><div class="cap"><span class="pg">S. 16–17</span><h2>Die Woche</h2><p>Links stehen Psalmen und Stand für jeden Wochentag, rechts die Gewohnheiten. Ein leerer Kreis bleibt leer, zusammengezählt wird nichts.</p></div><div class="spread"><section class="page l " aria-label="Seite 16: Woche, Übersicht"><div class="in">
+<header class="ph"><h2 class="pt">Woche</h2>
+<div class="pm"><div class="dline"><span class="pl">vom</span><span class="hw">5. 10.</span><span class="pl" style="margin-left:auto">bis</span><span class="hw">11. 10.</span></div></div></header>
+<div class="row"><div class="lab">Hauptstück</div><div class="lines"><div class="ln"><span class="chips"><span class="chip hc">Gebote</span><span class="chip">Glaube</span><span class="chip">Vaterunser</span><span class="chip">Taufe</span><span class="chip">Beichte</span><span class="chip">Abendmahl</span></span></div></div></div>
+<div class="tbl wk"><div class="th"><span>Tag</span><span>Psalm<br>früh · abends</span><span>Prüfung im Stand</span><span>Katechismus</span><span>Anliegen</span></div><div><span class="d">Mo</span><span class="ps">63 · 141</span><span class="st">Ehemann</span><span><span class="hw">1. Gebot</span></span><span><span class="hw">verfolgte Kirche</span></span></div><div><span class="d">Di</span><span class="ps">5 · 121</span><span class="st">Vater</span><span><span class="hw">2. Gebot</span></span><span><span class="hw">Missionare</span></span></div><div><span class="d">Mi</span><span class="ps">36 · 130</span><span class="st">Mitarbeiter und Kollege</span><span><span class="hw">3. Gebot</span></span><span><span class="hw">Obrigkeit</span></span></div><div><span class="d">Do</span><span class="ps">57 · 23</span><span class="st">Prediger und Bruder</span><span><span class="hw">4. Gebot</span></span><span><span class="hw">Nachbarn</span></span></div><div><span class="d">Fr</span><span class="ps">51 · 51</span><span class="st">Nächster</span><span><span class="hw">5. und 6. Gebot</span></span><span><span class="hw">Kranke</span></span></div><div><span class="d">Sa</span><span class="ps">92 · 84</span><span class="st">Vater</span><span><span class="hw">7. und 8. Gebot</span></span><span><span class="hw">Patenkinder</span></span></div><div><span class="d">So</span><span class="ps">118 · 103</span><span class="st">Ehemann</span><span><span class="hw">9., 10., Beschluß</span></span><span><span class="hw">Bekannte ohne Glauben</span></span></div></div>
+<div class="sec"><span class="t">Vers zum Auswendiglernen</span></div>
+<div class="row"><div class="lab">Stelle</div><div class="lines"><div class="ln "><span class="hw">Kolosser 3,23</span></div></div></div>
+<div class="row"><div class="lab">Wo ich stehe</div><div class="lines"><div class="ln "><span class="hw">sitzt bis „von Herzen“</span></div></div></div>
+<div class="sec"><span class="t">Notizen zur Woche</span></div>
+<div class="lines"><div class="ln "><span class="hw">Sonntag Jugendgottesdienst – ich predige</span></div><div class="ln "><span class="hw">Mi abends Ältestenkreis</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<span class="runner">Woche 1</span><span class="folio">16</span></div></section><section class="page r " aria-label="Seite 17: Woche, Gewohnheiten"><div class="in">
+<header class="ph"><h2 class="pt">Gewohnheiten</h2>
+<div class="pm"><span class="pl" style="padding:0">○ offen · ● gehalten</span></div></header>
+<div class="hb"><span class="h lft">Täglich</span><span class="h">Mo</span><span class="h">Di</span><span class="h">Mi</span><span class="h">Do</span><span class="h">Fr</span><span class="h">Sa</span><span class="h">So</span><span class="n">Stille Zeit</span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n">Vesper mit der Familie</span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n">Nachtgebet</span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n">Tischgebet mit der Familie</span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n">Die Kinder segnen</span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n">Mit meiner Frau beten</span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n"><span class="hw">Vers wiederholen</span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c on"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="n"></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span><span class="cc"><span class="c"></span></span></div>
+<div class="sec"><span class="t">Diese Woche</span></div>
+<div class="wl"><div class="it"><span class="b"></span><span>Gottesdienst – den Feiertag heiligen</span></div><div class="it"><span class="b on"></span><span>Katechismus mit den Kindern</span></div><div class="it"><span class="b"></span><span>Gemeinschaft mit Brüdern</span></div><div class="it"><span class="b"></span><span>Zeit allein mit meiner Frau</span></div><div class="it"><span class="b"></span><span class="grow" style="border-bottom:1px solid var(--line);height:calc(4 * var(--mm))"></span></div></div>
+<p class="pr">Stille Zeit, Vesper und Nachtgebet ergeben sich aus den Tagesseiten. Gezählt wird nichts; ein offener Kreis bleibt einfach offen.</p>
+<div class="sec"><span class="t">Für die kommende Woche</span></div>
+<div class="lines"><div class="ln "><span class="hw">Samstag: Abend mit meiner Frau planen</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<span class="runner">Woche 1</span><span class="folio">17</span></div></section></div></section><section class="block" id="tag"><div class="cap"><span class="pg">S. 24–25</span><h2>Ein Tag: Morgen und Abend</h2><p>Die Doppelseite folgt der Ordnung: Wort, Gebet, Ausrichtung am Morgen; Rückschau, Prüfung, Zuspruch am Abend. Für Beichte und Prüfung gibt es keine Zeile. Der rote Randstrich markiert die Kurzform, die Seitenzahl im Kopf jedes Schritts führt zur Ordnung.</p></div><div class="spread"><section class="page l dense " aria-label="Seite 24: Morgen"><div class="in">
+<header class="ph"><h2 class="pt">Morgen</h2>
+<div class="pm"><div class="dline"><span class="pl">Datum</span><span class="hw">Donnerstag, 8. Oktober</span></div><span class="chips days"><span class="chip">Mo</span><span class="chip">Di</span><span class="chip">Mi</span><span class="chip hc">Do</span><span class="chip">Fr</span><span class="chip">Sa</span><span class="chip">So</span></span></div></header>
+<div class="row"><div class="lab">Am Bett</div><div class="lines"><div class="ln"><span class="b on"></span><span class="pi">Kreuzzeichen · Vaterunser · Taufgedächtnis · Morgensegen</span></div></div></div>
+<div class="sec"><span class="no">1</span><span class="t">Eröffnung</span><span class="m">3 Min. · S. 8</span></div>
+<div class="row kf"><div class="lab">Psalm</div><div class="lines"><div class="ln "><span class="hw">57 – „Wache auf, meine Ehre“</span></div></div></div>
+<div class="sec"><span class="no">2</span><span class="t">Das Wort</span><span class="m">20 Min. · S. 9</span></div>
+<p class="rb">Öffne mir die Augen, daß ich sehe die Wunder an deinem Gesetz.<cite>Ps 119,18</cite></p>
+<div class="row kf"><div class="lab">Lesung</div><div class="lines"><div class="ln"><span class="half"><span class="pl">AT</span><span class="hw">1. Mose 5</span></span><span class="half"><span class="pl">NT</span><span class="hw">Matthäus 4</span></span></div></div></div>
+<div class="row"><div class="lab">Hauptaussage</div><div class="lines"><div class="ln "><span class="hw">Achtmal „und starb“ – bei Henoch steht etwas anderes.</span></div></div></div>
+<div class="row kf"><div class="lab">Vers, den ich mitnehme</div><div class="lines"><div class="ln"><span class="pl">Stelle</span><span class="hw">1. Mose 5,24</span></div><div class="ln "><span class="hw">„Und dieweil er ein göttliches Leben führte,</span></div><div class="ln "><span class="hw">nahm ihn Gott hinweg …“</span></div></div></div>
+<div class="row kf"><div class="lab">Über Gott</div><div class="lines"><div class="ln "><span class="hw">Er kennt jeden Namen in der langen Reihe.</span></div></div></div>
+<div class="row kf"><div class="lab">Über den Menschen</div><div class="lines"><div class="ln "><span class="hw">Wir sterben alle. Es zählt, mit wem wir gehen.</span></div></div></div>
+<div class="row"><div class="lab">Frage</div><div class="lines"><div class="ln"><span class="chips"><span class="chip">1</span><span class="chip">2</span><span class="chip">3</span><span class="chip">4</span><span class="chip">5</span><span class="chip">6</span><span class="chip hc">7</span></span><span class="hw">Um ein Leben mit Gott, mitten im Alltag.</span></div></div></div>
+<div class="row"><div class="lab">Heilsgeschichte</div><div class="lines"><div class="ln"><span class="chips"><span class="chip">Schöpfung</span><span class="chip">Fall</span><span class="chip">Erlösung</span><span class="chip hc">Vollendung</span></span><span class="hw">Der Tod hat nicht das letzte Wort.</span></div></div></div>
+<div class="row"><div class="lab"><span class="g">?</span>Unklar</div><div class="lines"><div class="ln "><span class="hw">Was hieß „göttliches Leben“ bei ihm konkret?</span></div></div></div>
+<div class="row"><div class="lab"><span class="g">!</span>Fordert</div><div class="lines"><div class="ln "><span class="hw">V. 22: mit Söhnen und Töchtern, also im Alltag.</span></div></div></div>
+<div class="row"><div class="lab"><span class="g">→</span>Umsetzen</div><div class="lines"><div class="ln "><span class="hw">Mittags gehen und beten, ohne Handy.</span></div></div></div>
+<div class="sec"><span class="no">3</span><span class="t">Das Gebet</span><span class="m">12 Min. · S. 10</span></div>
+<div class="row"><div class="lab">Stoff</div><div class="lines"><div class="ln"><span class="chips"><span class="chip hc">Vers aus der Lesung</span><span class="chip">Katechismusstück</span></span></div></div></div>
+<div class="row"><div class="lab">Unterricht</div><div class="lines"><div class="ln "><span class="hw">Du sagst mir: Mit dir gehen geht auch heute.</span></div></div></div>
+<div class="row"><div class="lab">Dank</div><div class="lines"><div class="ln "><span class="hw">daß du im Alltag mitgehst, nicht erst am Sonntag.</span></div></div></div>
+<div class="row"><div class="lab">Beichte</div><div class="lines"><div class="ln" style="border-bottom-color:transparent"><span class="pi">Wird gebetet, nicht notiert.</span></div></div></div>
+<div class="row"><div class="lab">Bitte</div><div class="lines"><div class="ln "><span class="hw">Laß mich heute bei dir bleiben, auch im Büro.</span></div></div></div>
+<p class="rb">Freies Gebet. Eine Minute Stille: Sei stille dem HERRN und warte auf ihn.<cite>Ps 37,7</cite></p>
+<div class="sec"><span class="no">4</span><span class="t">Die Antwort</span><span class="m">5 Min. · S. 10</span></div>
+<div class="row"><div class="lab">Menschen heute</div><div class="lines"><div class="ln "><span class="hw">T. (Kollege), Familie K. von nebenan, die Jugendleiter</span></div></div></div>
+<div class="sec"><span class="no">5</span><span class="t">Die drei Dinge</span><span class="m">3 Min. · S. 11</span></div>
+<div class="row kf"><div class="lab">Wort</div><div class="lines"><div class="ln "><span class="hw">Mittagspause: gehen und beten, ohne Handy</span></div></div></div>
+<div class="row kf"><div class="lab">Haus</div><div class="lines"><div class="ln "><span class="hw">Beim Abendessen den Kindern von Henoch erzählen</span></div></div></div>
+<div class="row kf"><div class="lab">Werk</div><div class="lines"><div class="ln "><span class="hw">Angebot für Kunde M. bis 12 Uhr fertig</span></div></div></div>
+<p class="end">6 · Der Segen. Und dann mit Freuden an dein Werk gegangen.</p>
+<span class="runner">Woche 1 · Tag 4</span><span class="folio">24</span></div></section><section class="page r " aria-label="Seite 25: Abend"><div class="in">
+<header class="ph"><h2 class="pt">Abend</h2>
+<div class="pm"><div class="dline"><span class="pl">Datum</span><span class="hw">Donnerstag, 8. Oktober</span></div></div></header>
+<div class="sec"><span class="no">1</span><span class="t">Vesper</span><span class="m">10 Min. · S. 12</span></div>
+<div class="row"><div class="lab">Psalm</div><div class="lines"><div class="ln "><span class="hw">23</span></div></div></div>
+<div class="row"><div class="lab">Lesung</div><div class="lines"><div class="ln "><span class="hw">Lukas 10,38–42</span></div></div></div>
+<div class="row"><div class="lab">Fürbitte</div><div class="lines"><div class="ln "><span class="hw">Oma im Krankenhaus, Familie K.</span></div></div></div>
+<p class="pr">Versikel · Hymnus · Psalm · Lesung · Magnificat · Fürbitte · Vaterunser · Kollekte · Segen</p>
+<div class="sec"><span class="no">2</span><span class="t">Nachtgebet</span><span class="m">10 Min. · S. 14</span></div>
+<p class="pr">Kreuzzeichen · Glaubensbekenntnis · Vaterunser</p>
+<div class="row"><div class="lab">Dank<br><span style='font-weight:400;font-style:italic;font-family:var(--serif)'>für …</span></div><div class="lines"><div class="ln "><span class="pl">1</span><span class="hw">die halbe Stunde im Wald, mittags</span></div><div class="ln "><span class="pl">2</span><span class="hw">J. hat beim Essen nachgefragt</span></div><div class="ln "><span class="pl">3</span><span class="hw">einen ruhigen Abend</span></div></div></div>
+<div class="sub">Rückschau<em>Rechenschaft, nicht Beichte.</em></div>
+<div class="row kf tall"><div class="lab">Wort</div><div class="lines"><div class="ln"><span class="mk hc">+</span><span class="mk">~</span><span class="mk">–</span><span class="grow"></span><span class="chips"><span class="chip">Morgen wieder</span><span class="chip">Fallenlassen</span></span></div></div></div>
+<div class="row kf tall"><div class="lab">Haus</div><div class="lines"><div class="ln"><span class="mk hc">+</span><span class="mk">~</span><span class="mk">–</span><span class="grow"></span><span class="chips"><span class="chip">Morgen wieder</span><span class="chip">Fallenlassen</span></span></div></div></div>
+<div class="row kf tall"><div class="lab">Werk</div><div class="lines"><div class="ln"><span class="mk">+</span><span class="mk hc">~</span><span class="mk">–</span><span class="grow"></span><span class="chips"><span class="chip hc">Morgen wieder</span><span class="chip">Fallenlassen</span></span></div></div></div>
+<p class="pr">+ geschehen · ~ angefangen · – nicht geschehen. Ein Zeichen, kein Kommentar.</p>
+<div class="sub">Prüfung im Stand<em>Wo bin ich schuldig geblieben?</em></div>
+<div class="row"><div class="lab">Stand heute</div><div class="lines"><div class="ln"><span class="chips"><span class="chip">Ehemann</span><span class="chip">Vater</span><span class="chip">Mitarbeiter</span><span class="chip hc">Prediger und Bruder</span><span class="chip">Nächster</span></span></div></div></div>
+<div class="silent">Wird gebetet, nicht notiert.</div>
+<div class="sub">Bekenntnis und Zuspruch<em>laut, nicht gedacht</em></div>
+<div class="vs">So wir aber unsere Sünde bekennen, so ist er treu und gerecht, daß er uns die Sünde vergibt und reinigt uns von aller Untugend.<cite>1. Johannes 1,9</cite></div>
+<div class="sub">Taufgedächtnis</div>
+<div class="vs" style="margin-top:calc(.6 * var(--mm))">Ich bin getauft auf den Namen des Vaters und des Sohnes und des Heiligen Geistes.</div>
+<div class="row"><div class="lab">Fürbitte</div><div class="lines"><div class="ln "><span class="hw">T., Familie K., die Jugendleiter</span></div></div></div>
+<div class="row"><div class="lab">Weitergegeben an</div><div class="lines"><div class="ln "><span class="hw">den Kindern beim Abendessen: Henoch</span></div></div></div>
+<p class="end">Nunc dimittis · Abendsegen. Und dann, wie Luther schreibt: flugs und fröhlich geschlafen.</p>
+<span class="runner">Woche 1 · Tag 4</span><span class="folio">25</span></div></section></div></section><section class="block" id="hinten"><div class="cap"><span class="pg">S. 276 · 283</span><h2>Notizen und Verse</h2><p>Hinten sammelt sich, was über die Wochen aufgeht. Die Versliste führt mit der Seitenzahl zurück zum Tag.</p></div><div class="spread"><section class="page l " aria-label="Seite 276: Notizen"><div class="in">
+<header class="ph"><h2 class="pt">Notizen</h2></header>
+<p class="pr">Was im Katechismus oder in der Lesung aufgeht – ein Satz, nicht ein Aufsatz. Über Monate wird daraus das Material, aus dem Predigt und Beichte leben.</p>
+<div class="dots"><div class="note" style="top:calc(2.3 * var(--mm))"><span class="hw">8. 10. · 1. Mose 5 – achtmal „und starb“. Dann Henoch.</span><span class="hw">Für die Jugend am Sonntag: Wer mit Gott geht, kommt an.</span><span class="hw">&nbsp;</span><span class="hw">4. Gebot: „in Ehren halten, ihnen dienen, gehorchen,</span><span class="hw">sie lieb und wert haben.“ Als Vater: mich ehrbar machen.</span><span class="hw">&nbsp;</span><span class="hw">Hebräer 11,5 nachlesen – Henoch im Glauben.</span></div></div>
+<span class="folio">276</span></div></section><section class="page r " aria-label="Seite 283: Verse, die ich mitnehme"><div class="in">
+<header class="ph"><h2 class="pt">Verse, die ich mitnehme</h2></header>
+<p class="pr">Aus dem Morgen übertragen. Die Seitenzahl führt zurück zum Tag.</p>
+<div class="tbl vz"><div class="th"><span>Stelle</span><span>Stichwort</span><span>Datum</span><span class="r2">S.</span></div><div><span><span class="hw">1. Mose 1,31</span></span><span><span class="hw">alles sehr gut</span></span><span><span class="hw">5. 10.</span></span><span class="r2"><span class="hw">18</span></span></div><div><span><span class="hw">1. Mose 3,9</span></span><span><span class="hw">„Wo bist du?“</span></span><span><span class="hw">6. 10.</span></span><span class="r2"><span class="hw">20</span></span></div><div><span><span class="hw">Matthäus 3,17</span></span><span><span class="hw">der liebe Sohn</span></span><span><span class="hw">7. 10.</span></span><span class="r2"><span class="hw">22</span></span></div><div><span><span class="hw">1. Mose 5,24</span></span><span><span class="hw">ein göttliches Leben</span></span><span><span class="hw">8. 10.</span></span><span class="r2"><span class="hw">24</span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span></div></div>
+<span class="folio">283</span></div></section></div></section><section class="block" id="monatlich"><div class="cap"><span class="pg">S. 288 · Innendeckel</span><h2>Monatlich und der Bogen</h2><p>Privatbeichte und Abendmahl haben ihren eigenen Termin. Notiert wird das Datum, nie der Inhalt. Der hintere Deckel trägt den Bogen aus dem Gebetsheft.</p></div><div class="spread"><section class="page l " aria-label="Seite 288: Monatlich"><div class="in">
+<header class="ph"><h2 class="pt">Monatlich</h2></header>
+<p class="pr">Was seinen eigenen Termin hat. Ein Band umfasst drei bis vier Monate.</p>
+<div class="tbl mo"><div class="th"><span>Monat</span><span>Privatbeichte · am, bei</span><span>Abendmahl</span><span class="ck">Opfer und Gaben</span><span class="ck">Barm&shy;herzig&shy;keit</span></div><div><span><span class="hw">Oktober</span></span><span><span class="hw">24. 10. · Bruder H.</span></span><span><span class="hw">18. 10.</span></span><span class="ck"><span class="b on"></span></span><span class="ck"><span class="b"></span></span></div><div><span><span class="hw">November</span></span><span></span><span></span><span class="ck"><span class="b"></span></span><span class="ck"><span class="b"></span></span></div><div><span><span class="hw">Dezember</span></span><span></span><span></span><span class="ck"><span class="b"></span></span><span class="ck"><span class="b"></span></span></div><div><span><span class="hw">Januar</span></span><span></span><span></span><span class="ck"><span class="b"></span></span><span class="ck"><span class="b"></span></span></div></div>
+<div class="sec"><span class="t">Privatbeichte</span></div>
+<p class="txt">Monatlich, terminiert. Nicht nach Bedarfslage des Gewissens, sonst kommt sie nie. Zusätzlich, wenn eine bestimmte Sache dich drückt.</p>
+<p class="txt"><b>Beichtvater:</b> Ein Ältester deines Vertrauens, ein befreundeter Prediger, oder ein lutherischer Pfarrer vor Ort, der Beichte hält.</p>
+<p class="txt"><b>Vorbereitung:</b> Nicht alles aufzählen; Luther sagt ausdrücklich, das könne niemand. Nur, was dich wirklich drückt.</p>
+<div class="silent sm">Hier steht der Termin. Was gebeichtet wird, steht nirgends.</div>
+<div class="sec"><span class="t">Zuspruch</span></div>
+<div class="vs">Wie du glaubst, so geschehe dir. Und auf Befehl unseres Herrn Jesu Christi vergebe ich dir deine Sünden im Namen des Vaters und des Sohnes und des Heiligen Geistes. Amen. Gehe hin in Frieden.</div>
+<div class="sec"><span class="t">Danach</span></div>
+<p class="txt">Nicht nachprüfen, ob es gewirkt hat. Das Wort steht, unabhängig von deinem Gefühl. Wenn Zweifel kommen, ist die Antwort nicht neue Prüfung, sondern das Taufgedächtnis.</p>
+<span class="folio">288</span></div></section><section class="page r ep " aria-label="Hinterer Innendeckel: Der Bogen"><div class="in">
+<header class="ph"><h2 class="pt">Der Bogen</h2></header>
+<div class="bogen">
+<h3>Am Morgen</h3>
+<p>Die Eröffnung stellt dich in das Lob der Kirche.<br>Das Wort redet, bevor du redest.<br>Das Gebet macht aus dem Gehörten dein eigenes Wort.<br>Die Antwort trägt es in das Gebet der Kirche.<br>Die Ausrichtung bringt es an den Tag.<br>Der Segen entläßt dich.</p>
+<h3>Am Abend</h3>
+<p>Die Vesper stellt dich wieder in das Lob.<br>Die Rückschau legt den Vorsatz ab.<br>Die Prüfung legt die Schuld ab.<br>Der Zuspruch hebt sie auf.<br>Das Taufgedächtnis sagt, worauf du morgen wieder aufstehst.</p>
+<h3>Und einmal im Monat</h3>
+<p>holt die Beichte dich aus dem Kreis heraus, in dem du sonst mit dir selbst verhandelst.</p>
+</div>
+<p class="src">Bibeltexte nach Luther 1912. Gebetstexte aus dem Kleinen Katechismus und der Deutschen Messe. Leseteil nach Hanniel Strebel, „Überblick: Hanniel zum Lesen der Bibel“, hanniel.ch, 31. August 2026.</p>
+</div></section></div></section><section class="block" id="arena"><div class="cap"><span class="pg">S. 224–274</span><h2>Arena</h2><p>Der dritte Teil gehört den Brüdern und dem Winter Arc. Vorn stehen die Brüder, dann die Anleitung des Winter Arc wortgetreu, dreizehn Wochen-Tracker, Tag 90 und je eine Seite für jedes Treffen.</p></div><div class="spread"><section class="page l " aria-label="Seite 224: Arena"><div class="in">
+<header class="ph"><h2 class="pt"><small>Dritter Teil</small>Arena</h2></header>
+<div class="vs" style="margin-top:calc(3 * var(--mm))">„Ein Messer wetzt das andere und ein Mann den andern.“<cite>Sprüche 27,17</cite></div>
+<p class="txt">Hier gehst du nicht allein. Zwei oder drei Brüder halten sich gegenseitig ehrlich, mit dem, was jeder teilen will.</p>
+<div class="sec"><span class="t">In der Arena</span></div>
+<div class="toc"><b>225</b><span>Meine Brüder</span><b>226</b><span>Winter Arc: Anleitung, wortgetreu nach dem Plan</span><b>234</b><span>Winter Arc: dreizehn Wochen, je eine Doppelseite</span><b>260</b><span>Tag 90 – und danach</span><b>262</b><span>Treffen der Brüder, eine Seite je Treffen</span></div>
+<div class="sec"><span class="t">Was geteilt wird</span></div>
+<p class="txt">Die drei Dinge, einzelne Gewohnheiten, der Stand im Winter Arc.</p>
+<div class="sec"><span class="t">Was nicht geteilt wird</span></div>
+<p class="txt">Gebet, Prüfung und die Tagesseiten. Was einer dem andern bekennt, wird nicht notiert.</p>
+<p class="rb" style="margin-top:auto">Geh den nächsten Durchgang nicht allein. Nimm einen oder zwei Brüder aus der Arena mit und haltet euch gegenseitig ehrlich.</p>
+<span class="runner">Arena</span><span class="folio">224</span></div></section><section class="page r " aria-label="Seite 225: Meine Brüder"><div class="in">
+<header class="ph"><h2 class="pt">Meine Brüder</h2></header>
+<div class="sec"><span class="t">Erster Bruder</span></div>
+<div class="row"><div class="lab">Name</div><div class="lines"><div class="ln "><span class="hw">Matthias</span></div></div></div><div class="row"><div class="lab">erreichbar</div><div class="lines"><div class="ln "><span class="hw">Signal · wohnt zwei Straßen weiter</span></div></div></div><div class="row"><div class="lab">Für ihn beten</div><div class="lines"><div class="ln "><span class="hw">Schlaf, das Kleinkind zahnt</span></div><div class="ln "><span class="hw">Geduld mit dem Chef</span></div></div></div>
+<div class="sec"><span class="t">Zweiter Bruder</span></div>
+<div class="row"><div class="lab">Name</div><div class="lines"><div class="ln "><span class="hw">Daniel</span></div></div></div><div class="row"><div class="lab">erreichbar</div><div class="lines"><div class="ln "><span class="hw">Signal · Jugendkreis dienstags</span></div></div></div><div class="row"><div class="lab">Für ihn beten</div><div class="lines"><div class="ln "><span class="hw">Bewerbung bis Ende Oktober</span></div><div class="ln "></div></div></div>
+<div class="sec"><span class="t">Dritter Bruder</span></div>
+<div class="row"><div class="lab">Name</div><div class="lines"><div class="ln "></div></div></div><div class="row"><div class="lab">erreichbar</div><div class="lines"><div class="ln "></div></div></div><div class="row"><div class="lab">Für ihn beten</div><div class="lines"><div class="ln "></div><div class="ln "></div></div></div>
+<div class="sec"><span class="t">Wir treffen uns</span></div>
+<div class="row"><div class="lab">Wann</div><div class="lines"><div class="ln "><span class="hw">samstags, 7 Uhr, jede Woche</span></div></div></div>
+<div class="row"><div class="lab">Wo</div><div class="lines"><div class="ln "><span class="hw">Bäckerei am Markt</span></div></div></div>
+<div class="sec"><span class="t">Abends den Stand schicken an</span></div>
+<div class="row"><div class="lab">Bruder</div><div class="lines"><div class="ln "><span class="hw">Matthias, ab Woche 11</span></div></div></div>
+<p class="pr">Winter Arc, Woche 11: Einen Mann einladen, den Standard mitzugehen, etwa aus der Arena. Ihm jeden Abend kurz deinen Stand schicken.</p>
+<span class="runner">Arena</span><span class="folio">225</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l " aria-label="Seite 234: Winter Arc, Wochen-Tracker"><div class="in">
+<header class="ph"><h2 class="pt"><small>Phase Disziplin · Kann ich es halten?</small>Woche 1 · Einfach da sein</h2>
+<div class="pm"><div class="dline" style="width:calc(34 * var(--mm))"><span class="pl">Woche vom</span><span class="hw">5. 10.</span></div></div></header>
+<div class="row"><div class="lab">Auftrag der Woche</div><div class="lines"><p class="txt" style="margin:calc(1 * var(--mm)) 0">Die Woche nicht bewerten. Abhaken, was war, leer lassen, was nicht war. Ziel: sieben Abende ehrlich abgehakt.</p></div></div>
+<p class="rb" style="margin-left:calc(22 * var(--mm))">„Alles, was ihr tut, das tut von Herzen als dem HERRN.“<cite>Kol 3,23</cite></p>
+<div class="hb wa"><span class="h lft">Tagesstandard</span><span class="h">Mo</span><span class="h">Di</span><span class="h">Mi</span><span class="h">Do</span><span class="h">Fr</span><span class="h">Sa</span><span class="h">So</span><span class="grp">Morgen</span><span class="n">04:00 auf, kein Handy</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Morgenzeit im Wort und Gebet</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Tagebuch und drei Dankpunkte</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Trainiert</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="rest">Ruhe</span></span><span class="cc"><span class="rest">Ruhe</span></span><span class="grp">Arbeit</span><span class="n">Fokusblock 08–12</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="dash">–</span></span><span class="cc"><span class="dash">–</span></span><span class="n">Block 13–17</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="dash">–</span></span><span class="cc"><span class="dash">–</span></span><span class="grp">Haus</span><span class="n">Zu Hause gekocht</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Abendessen ohne Handy</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Eine Geste für meine Frau</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Küche um 20:00 zu</span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Handy außerhalb des Schlafzimmers</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="n">Gebetet, 21:00 Licht aus</span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b on"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span><span class="cc"><span class="b"></span></span></div>
+<p class="pr" style="margin-top:auto">Ein leeres Kästchen ist kein Urteil, nur eine ehrliche Auskunft.</p>
+<span class="runner">Arena · Winter Arc</span><span class="folio">234</span></div></section><section class="page r " aria-label="Seite 235: Winter Arc, Wochenstandard und Sonntagabend"><div class="in">
+<header class="ph"><h2 class="pt"><small>Woche 1</small>Wochenstandard</h2></header>
+<div class="wl" style="margin-top:calc(3 * var(--mm))"><div class="it"><span class="b"></span><span>Gottesdienst und Sonntagsruhe</span></div><div class="it"><span class="b"></span><span>Sonntagsgespräch mit meiner Frau</span></div><div class="it"><span class="b"></span><span>Abend zu zweit, von mir geplant</span></div><div class="it"><span class="b on"></span><span>15 Minuten Finanzen</span></div><div class="it"><span class="b"></span><span>Gedient (einmal im Monat)</span></div></div>
+<div class="sec"><span class="t">Sonntagabend</span></div>
+<div class="row"><div class="lab">Ein Sieg dieser Woche</div><div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Das Kästchen, das ich schleifen ließ</div><div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Was Gott mich lehrt</div><div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div></div></div>
+<p class="pr" style="margin-top:calc(4 * var(--mm))">Zum Schluss der Zuspruch:</p>
+<div class="vs">„Die Güte des HERRN ist’s, daß wir nicht gar aus sind; seine Barmherzigkeit hat noch kein Ende, sondern sie ist alle Morgen neu, und deine Treue ist groß.“<cite>Klagelieder 3,22–23</cite></div>
+<span class="runner">Arena · Winter Arc</span><span class="folio">235</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l " aria-label="Seite 262: Treffen"><div class="in">
+<header class="ph"><h2 class="pt">Treffen</h2>
+<div class="pm"><div class="dline"><span class="pl">Datum</span><span class="hw">Samstag, 10. Oktober</span></div></div></header>
+<div class="row"><div class="lab">Dabei</div><div class="lines"><div class="ln "><span class="hw">Andreas, Matthias, Daniel</span></div></div></div>
+<div class="sec"><span class="no">1</span><span class="t">Das Wort</span><span class="m">einer bringt es mit</span></div>
+<div class="row"><div class="lab">Stelle</div><div class="lines"><div class="ln "><span class="hw">Sprüche 27,17</span></div></div></div>
+<div class="row"><div class="lab">Was wir mitnehmen</div><div class="lines"><div class="ln "><span class="hw">Keiner hält den Standard allein.</span></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="sec"><span class="no">2</span><span class="t">Der Stand</span><span class="m">jeder, so viel er teilen will</span></div>
+<div class="tri"><div class="lines"><div class="ln "><span class="pl">Name</span><span class="hw">Andreas</span></div><div class="ln "><span class="pl">trägt</span><span class="hw">04:00 hält</span></div><div class="ln "><span class="pl">braucht</span><span class="hw">Küche um 20:00</span></div><div class="ln "><span class="pl">Winter Arc</span><span class="hw">Woche 1</span></div><div class="ln "></div></div><div class="lines"><div class="ln "><span class="pl">Name</span><span class="hw">Matthias</span></div><div class="ln "><span class="pl">trägt</span><span class="hw">Fokusblöcke</span></div><div class="ln "><span class="pl">braucht</span><span class="hw">Schlaf</span></div><div class="ln "><span class="pl">Winter Arc</span><span class="hw">Woche 1</span></div><div class="ln "></div></div><div class="lines"><div class="ln "><span class="pl">Name</span><span class="hw">Daniel</span></div><div class="ln "><span class="pl">trägt</span><span class="hw">startet Montag</span></div><div class="ln "><span class="pl">braucht</span><span class="hw">Nachfragen</span></div><div class="ln "><span class="pl">Winter Arc</span><span class="hw">ab Montag</span></div><div class="ln "></div></div></div>
+<p class="pr">Was einer dem andern bekennt, wird nicht notiert.</p>
+<div class="sec"><span class="no">3</span><span class="t">Füreinander beten</span></div>
+<div class="lines"><div class="ln "><span class="hw">M.: Schlaf und Geduld · D.: Bewerbung</span></div><div class="ln "><span class="hw">A.: Predigt am Sonntag</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="no">4</span><span class="t">Bis zum nächsten Mal</span></div>
+<div class="row"><div class="lab">Wer fragt was nach</div><div class="lines"><div class="ln "><span class="hw">Matthias fragt Andreas Mittwoch nach der Küche.</span></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Nächstes Treffen</div><div class="lines"><div class="ln "><span class="hw">Samstag, 17. 10., 7 Uhr, Bäckerei</span></div></div></div>
+<p class="end">Vaterunser gemeinsam. Segen.</p>
+<span class="runner">Arena</span><span class="folio">262</span></div></section><section class="page r " aria-label="Seite 263: Treffen"><div class="in">
+<header class="ph"><h2 class="pt">Treffen</h2>
+<div class="pm"><div class="dline"><span class="pl">Datum</span></div></div></header>
+<div class="row"><div class="lab">Dabei</div><div class="lines"><div class="ln "></div></div></div>
+<div class="sec"><span class="no">1</span><span class="t">Das Wort</span><span class="m">einer bringt es mit</span></div>
+<div class="row"><div class="lab">Stelle</div><div class="lines"><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Was wir mitnehmen</div><div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="sec"><span class="no">2</span><span class="t">Der Stand</span><span class="m">jeder, so viel er teilen will</span></div>
+<div class="tri"><div class="lines"><div class="ln "><span class="pl">Name</span></div><div class="ln "><span class="pl">trägt</span></div><div class="ln "><span class="pl">braucht</span></div><div class="ln "><span class="pl">Winter Arc</span></div><div class="ln "></div></div><div class="lines"><div class="ln "><span class="pl">Name</span></div><div class="ln "><span class="pl">trägt</span></div><div class="ln "><span class="pl">braucht</span></div><div class="ln "><span class="pl">Winter Arc</span></div><div class="ln "></div></div><div class="lines"><div class="ln "><span class="pl">Name</span></div><div class="ln "><span class="pl">trägt</span></div><div class="ln "><span class="pl">braucht</span></div><div class="ln "><span class="pl">Winter Arc</span></div><div class="ln "></div></div></div>
+<p class="pr">Was einer dem andern bekennt, wird nicht notiert.</p>
+<div class="sec"><span class="no">3</span><span class="t">Füreinander beten</span></div>
+<div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="no">4</span><span class="t">Bis zum nächsten Mal</span></div>
+<div class="row"><div class="lab">Wer fragt was nach</div><div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div></div></div>
+<div class="row"><div class="lab">Nächstes Treffen</div><div class="lines"><div class="ln "></div></div></div>
+<p class="end">Vaterunser gemeinsam. Segen.</p>
+<span class="runner">Arena</span><span class="folio">263</span></div></section></div></section>
+  </main>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('ex-toggle'), book=document.getElementById('book'), KEY='henoch-nb-examples';
+  function set(on){ book.classList.toggle('show',on); btn.setAttribute('aria-pressed', on?'true':'false'); }
+  try{ var v=localStorage.getItem(KEY); if(v==='0') set(false); }catch(e){}
+  btn.addEventListener('click',function(){
+    var on=!book.classList.contains('show'); set(on);
+    try{ localStorage.setItem(KEY,on?'1':'0'); }catch(e){}
+  });
+})();
+</script>
