@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Henoch Visitenkarte</title>
 <style>
-/* Square business card, 55 × 55 mm trim with 2 mm bleed on every side. Page 1 is the front, page 2 the back. */
+/* Square business card for Vistaprint: 65 × 65 mm trim with 1.5 mm bleed on every side. Page 1 is the front, page 2 the back. */
 @font-face { font-family: 'Literata'; font-style: normal; font-weight: 400; src: url('../anleitung/fonts/literata-latin-400-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Literata'; font-style: normal; font-weight: 600; src: url('../anleitung/fonts/literata-latin-600-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 400; src: url('../anleitung/fonts/source-sans-3-latin-400-normal.woff2') format('woff2'); }
 
 :root {
-  --trim: 55mm;
-  --bleed: 2mm;
+  --trim: 65mm;
+  --bleed: 1.5mm;
   --page: calc(var(--trim) + 2 * var(--bleed));
   --paper: #f6f4ef;
   --ink: #1d2330;
@@ -20,7 +20,7 @@
   --rule: #d6d0c4;
   --gold: #c49c00;
 }
-@page { size: 59mm 59mm; margin: 0; }
+@page { size: 68mm 68mm; margin: 0; }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: #8a8f98; }
 body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content: center; }
@@ -38,12 +38,12 @@ body { display: flex; flex-wrap: wrap; gap: 10mm; padding: 10mm; justify-content
 }
 /* Front: the icon's landscape runs to the edges, widened upward so the name and motto sit in the open sky. */
 .art { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.title { position: absolute; top: calc(var(--bleed) + 6mm); left: 0; right: 0; text-align: center; }
-.name { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 19pt; letter-spacing: 0.02em; line-height: 1; }
-.motto { font-family: 'Literata', Georgia, serif; font-size: 9.5pt; color: var(--ink); margin-top: 2mm; line-height: 1; }
+.title { position: absolute; top: calc(var(--bleed) + 7mm); left: 0; right: 0; text-align: center; }
+.name { font-family: 'Literata', Georgia, serif; font-weight: 600; font-size: 22.5pt; letter-spacing: 0.02em; line-height: 1; }
+.motto { font-family: 'Literata', Georgia, serif; font-size: 11pt; color: var(--ink); margin-top: 2.4mm; line-height: 1; }
 /* Back: QR code to the website, the address beneath it. */
-.qr { width: 25mm; height: 25mm; display: block; }
-.url { font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; font-size: 9.5pt; letter-spacing: 0.06em; color: var(--ink); margin-top: 4.5mm; line-height: 1; }
+.qr { width: 30mm; height: 30mm; display: block; }
+.url { font-family: 'Source Sans 3', Helvetica, Arial, sans-serif; font-size: 11pt; letter-spacing: 0.06em; color: var(--ink); margin-top: 5.3mm; line-height: 1; }
 
 @media print {
   html, body { background: none; }
