@@ -574,16 +574,14 @@ def tb(t=""):
 
 
 def today_top(e):
-    """The top of "Heute" in the app: the arc of the day with its three prayer times, below it the two tiles.
-    The times are written in the tiles, and there the prayer is ticked."""
+    """The two tiles at the top of "Heute" in the app: the time to write in, the prayer to tick."""
     t = e.get("tiles", {})
-    arc = '<div class="arc2"><i></i>' + "".join(f'<span class="ad" style="left:{x}%"></span>' for x in (2, 74, 98)) + "</div>"
     ev = t.get("ev", ("", ""))
     tiles = (f'<div class="tile2"><span class="tt2">{tb(t.get("st", ""))} · 45 Min.</span><b>Stille Zeit</b>'
-             f'<span class="ts2">{ring(t.get("morning"))}abgeschlossen</span></div>'
+             f'<span class="ts2">{ring(t.get("morning"))}gebetet</span></div>'
              f'<div class="tile2"><span class="tt2">{tb(ev[0])} · {tb(ev[1])}</span><b>Vesper und Nachtgebet</b>'
              f'<span class="ts2">{ring(t.get("vespers"))}Vesper<span class="gap"></span>{ring(t.get("compline"))}Nachtgebet</span></div>')
-    return f'<div class="today2">{arc}<div class="tiles2">{tiles}</div></div>'
+    return f'<div class="today2"><div class="tiles2">{tiles}</div></div>'
 
 
 def p_today():
@@ -593,15 +591,15 @@ def p_today():
     rows = "".join(f'<span class="tr2">{d}</span>' + "".join('<span class="tm"></span>' for _ in t)
                    for d in ["Montag bis Samstag", "Sonntag"])
     inner = f"""
-{header("Wie in der App", "Heute")}
-<p class="lead">Jede Tagesseite beginnt wie „Heute“ in der App: mit dem Bogen des Tages und den beiden Kacheln. Darunter folgt die Stille Zeit.</p>
+{header("So beginnt ein Tag", "Heute")}
+<p class="lead">Jede Tagesseite beginnt mit zwei Kacheln: der Stillen Zeit am Morgen, Vesper und Nachtgebet am Abend. Darunter folgt die Stille Zeit.</p>
 {today_top(EX_WEEK1[1])}
-<div class="sub">Der Bogen und die Kacheln</div>
-<p class="small">Der Bogen zeigt den Tag mit Stiller Zeit, Vesper und Nachtgebet. In die Kacheln schreibst du die Zeiten; ist eine gebetet, füllst du ihren Ring aus. Was offen bleibt, bleibt ein leerer Ring, nie rot.</p>
+<div class="sub">Die Kacheln</div>
+<p class="small">Oben links die Uhrzeit, wenn du sie festhalten willst. Ist ein Gebet gebetet, füllst du seinen Ring aus. Was offen bleibt, bleibt ein leerer Ring, nie rot.</p>
 <div class="sub">Heute lesen und die drei Dinge</div>
 <p class="small">Die Lesung steht links unter dem Wort, mit Altem und Neuem Testament. {esc(A["method"]["rubrics"]["restart"])} Die drei Dinge stehen rechts unter der Ausrichtung. Sie werden in der Stillen Zeit festgelegt, nach dem Wort.</p>
 <div class="sub">Gewohnheiten</div>
-<p class="small">Nach jedem Sonntag kommt die Wochenübersicht: Dort trägst du deine Gewohnheiten für die Woche ein und hakst sie ab. Daneben steht „Diese Woche“ für den Blick zurück.</p>
+<p class="small">Nach jedem Sonntag kommt eine Doppelseite für die Woche: links trägst du deine Gewohnheiten ein und hakst sie ab, rechts schaust du am Ende der Woche zurück.</p>
 <div class="sub">Zeiten</div>
 <p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
 <div class="times" style="grid-template-columns:calc(27 * var(--mm)) repeat({len(t)},minmax(0,1fr))"><span></span>{head}{rows}</div>
@@ -624,9 +622,9 @@ def p_habits():
         opts += f'<span class="opt2 fo">{ring(focus)}{icon("star", "ic st")}im Blick</span>'
         rows += f'<div class="hab">{ln(hw(h["name"]) if h else "")}<div class="rhy">{opts}</div></div>'
     inner = f"""
-{header("Wie unter „Mehr“ in der App", "Gewohnheiten")}
+{header("Für den Advent", "Gewohnheiten")}
 <p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
-<p class="small">Lege deine Gewohnheiten an, jede mit ihrem Rhythmus: täglich, wöchentlich oder monatlich. Was dir gerade besonders wichtig ist, steht „im Blick“. In der Wochenübersicht nach jedem Sonntag trägst du sie ein und hakst sie ab. Eine Gewohnheit gilt immer nur für ihren Tag, ihre Woche oder ihren Monat.</p>
+<p class="small">Lege deine Gewohnheiten an, jede mit ihrem Rhythmus: täglich, wöchentlich oder monatlich. Was dir gerade besonders wichtig ist, steht „im Blick“. Auf der Seite „Gewohnheiten“ nach jedem Sonntag trägst du sie ein und hakst sie ab. Eine Gewohnheit gilt immer nur für ihren Tag, ihre Woche oder ihren Monat.</p>
 <p class="small muted">Stille Zeit, Vesper und Nachtgebet brauchst du hier nicht: Sie stehen in den Kacheln jeder Tagesseite. Zum Beispiel: Psalm mit den Kindern.</p>
 <div class="habs">{rows}</div>
 """
@@ -648,10 +646,9 @@ def p_week_habits(i, folio, e=None):
                 body += "".join(f'<span class="tc">{ring(d in ticks.get((g, r), ()))}</span>' for d in range(7))
             else:
                 label = "diese Woche" if g == "weekly" else "diesen Monat"
-                body += f'<span class="tpl"><span class="pill{" on" if (g, r) in ticks else ""}">{label}</span></span>'
+                body += f'<span class="tpl">{ring((g, r) in ticks)}<span class="tpw">{label}</span></span>'
     inner = f"""
 {header(f"Woche des {i + 1}. Advent", "Gewohnheiten", e.get("date", ""))}
-<p class="pillhead"><span>Wochenübersicht</span></p>
 <p class="small">Trage deine Gewohnheiten für diese Woche ein, wie du sie auf S. {P_HABITS} angelegt hast, und hake sie ab: die täglichen Tag für Tag, die wöchentlichen und monatlichen einmal.</p>
 <div class="htab">{body}</div>
 <p class="small muted">Stille Zeit, Vesper und Nachtgebet hakst du in den Kacheln der Tagesseiten ab.</p>
@@ -670,18 +667,17 @@ def p_week_look(i, folio, e=None):
                     f'<span class="vl">{hw(verses[d][1]) if d < len(verses) else ""}</span>' for d in range(7))
     inner = f"""
 {header(f"Woche des {i + 1}. Advent", "Diese Woche")}
-<p class="small muted">Wie „Die letzten vier Wochen“ in der App, für diese eine Woche. Ein Feld für jeden Tag: ganz ausgefüllt für Morgen und Abend, halb für eines von beiden. Leer bleibt leer.</p>
+<p class="small muted">Für das Ende der Woche. Ein Feld für jeden Tag: ganz ausgefüllt, wenn du morgens und abends gebetet hast, halb für eines von beiden. Leer bleibt leer.</p>
 <div class="look">
   <div class="sqs">{sq}</div>
   <p class="lgd"><span class="lg"><span class="sq both"></span>Morgen und Abend</span><span class="lg"><span class="sq one"></span>eines von beiden</span></p>
   <div class="stats2">
     <div><span class="sn2">{tb(stats.get("still", ""))}</span><span>Stille Zeiten in dieser Woche</span></div>
-    <div><span class="sn2">{tb(stats.get("verses", ""))}</span><span>Verse gesammelt</span></div>
   </div>
   <div class="marks3">{marks3}</div>
   <p class="m3l">Drei Dinge in dieser Woche</p>
 </div>
-<div class="sub">Verse gesammelt</div>
+<div class="sub">Verse der Woche</div>
 <div class="vtab"><b></b><b>Stelle</b><b>Vers, den ich mitnehme</b>{vrows}</div>
 <p class="note">{esc(A["noScore"])}</p>
 """
@@ -712,7 +708,7 @@ def day_left(wd, kicker, folio, title=None, e=None):
                 + field("morning.verse", 2, e.get("verse", ()), aside=stelle)
                 + field("morning.aboutGod", 3, e.get("god", ()))
                 + field("morning.aboutMan", 3, e.get("man", ()))
-                + '<p class="more">Mehr notieren</p>'
+                + '<p class="more">Zeichen am Rand</p>'
                 + more
                 + pray(LIT["afterReading"], run=True), end=True)
     inner = header(kicker, title or WD[wd], e.get("date", "")) + today_top(e) + f'<div class="steps">{opening}{word}</div>'
@@ -739,15 +735,15 @@ def day_right(wd, folio, sunday=False, review_folio=None, e=None):
                  + field("Freies Gebet · " + F["morning.onMyHeart"]["label"], 2, e.get("heart", ()))
                  + pray(LIT["silence"], run=True))
     antwort = step(4, "candle", "Die Antwort",
-                   f'<p class="seq">Benedictus · Fürbitte für das Haus, heute <b>{focus_of(wd)}</b> · '
-                   f'Anliegen S. {P_PRAYERLIST} · Vaterunser</p>'
+                   f'<p class="seq">Benedictus · Fürbitte für das Haus ({focus_of(wd)}) · '
+                   f'Anliegen, S. {P_PRAYERLIST} · Vaterunser</p>'
                    + field("morning.peopleToday", 1, e.get("people", ())))
     three = ""
     for (key, path), (val, mk) in zip([("word", "morning.three.word"), ("house", "morning.three.house"), ("work", "morning.three.work")],
                                       e.get("three", [("", None)] * 3)):
         three += ln(il(F[path]["label"]) + hw(val) + '<span class="grow"></span>' + marks(mk))
     ausr = step(5, "compass", "Die Ausrichtung",
-                f'<p class="arm"><b>{esc(piece["title"])}</b> <span class="att">{esc(piece["ref"])} · Gebet S. {P_ARMOR}</span></p>'
+                f'<p class="arm"><b>{esc(piece["title"])}</b> <span class="att">{esc(piece["ref"])} · S. {P_ARMOR}</span></p>'
                 + three)
     segen = step(6, "blessing", "Der Segen",
                  f'<p class="seq">Kollekte · Beschluß und Segen. <b>{esc(R["sendOff"])}</b></p>', end=True)
@@ -757,8 +753,8 @@ def day_right(wd, folio, sunday=False, review_folio=None, e=None):
     else:
         th = e.get("thanks", ())
         eve = ("".join(ln(pi(F[f"evening.thanks.{i}"]["label"]) + hw(th[i] if i < len(th) else "")) for i in range(3))
-               + f'<p class="seq"><b>Rückschau:</b> ein Zeichen bei den drei Dingen. Dann die Prüfung {esc(st_label)}, '
-               f'Bekenntnis und Zuspruch. Nachtgebet, S. {P_NIGHT}–{P_NIGHT + 1}.</p>')
+               + f'<p class="seq"><b>Rückschau:</b> ein Zeichen bei den drei Dingen. '
+               f'Prüfung {esc(st_label)}, Bekenntnis und Zuspruch: S. {P_NIGHT + 1}.</p>')
     evening = f'<div class="fill"></div><div class="eve">{step("", "moon", "Am Abend", eve, end=True)}</div>'
     inner = f'<div class="steps">{gebet}{antwort}{ausr}{segen}</div>{evening}'
     return page(side(folio), folio, f"Seite {folio}: {WD[wd]}, Gebet und Ausrichtung", inner, "day")
@@ -968,7 +964,6 @@ def p_arena():
 {header("Henoch", "Arena")}
 <figure class="wsp"><blockquote>{esc(v["text"])}</blockquote><figcaption>{esc(v["ref"])}</figcaption></figure>
 <div class="ptiles">{tiles}</div>
-<p class="small muted">Was du hier schreibst, bleibt im Heft. Es gibt nichts zu archivieren.</p>
 """
     return page("r", P_ARENA, f"Seite {P_ARENA}: Arena", inner, runner="Arena")
 
@@ -1053,7 +1048,7 @@ def p_sources():
     inner = f"""
 {header("Henoch", "Texte und Quellen", small=True)}
 <ul class="srcs">{items}</ul>
-<p class="small muted">Alle Texte, Felder und Hinweise stammen aus der App Henoch. Was dort nur auf dem Bildschirm Sinn hat, fehlt hier.</p>
+<p class="small muted">Texte, Ordnung und Felder folgen der App Henoch.</p>
 <div class="fill"></div>
 <p class="solas" lang="la"><span>Sola scriptura</span> · <span>Sola gratia</span> · <span>Sola fide</span> · <span>Solus Christus</span></p>
 """
@@ -1401,9 +1396,11 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .tn,.tc,.tpl{height:calc(7.4 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap}
 .tc{justify-content:center}
 .tc .rg{width:calc(4.6 * var(--mm));height:calc(4.6 * var(--mm));border-color:color-mix(in srgb,var(--muted) 70%,var(--rule))}
-.show .tc .rg.on{background:var(--done);border-color:var(--done)}
-.show .tc .rg.on::after{left:50%;top:50%;width:calc(1.4 * var(--mm));height:calc(1.4 * var(--mm));border:0;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
-.tpl{grid-column:span 7;justify-content:flex-end}
+.show .tc .rg.on,.show .tpl .rg.on{background:var(--done);border-color:var(--done)}
+.show .tc .rg.on::after,.show .tpl .rg.on::after{left:50%;top:50%;width:calc(1.4 * var(--mm));height:calc(1.4 * var(--mm));border:0;border-radius:50%;background:#fff;transform:translate(-50%,-50%)}
+.tpl{grid-column:span 7;justify-content:flex-end;gap:calc(1.4 * var(--mm))}
+.tpl .rg{width:calc(4.6 * var(--mm));height:calc(4.6 * var(--mm))}
+.tpw{font:400 calc(2.2 * var(--mm)) var(--sans);color:var(--muted);width:calc(16 * var(--mm))}
 .pill{display:inline-block;font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--ink);padding:calc(.9 * var(--mm)) calc(3 * var(--mm));border:max(1px,calc(.3 * var(--mm))) solid var(--rule);border-radius:999px}
 .show .pill.on{background:var(--done);border-color:var(--done);color:#fff}
 .show .pill.on::before{content:"✓ "}
