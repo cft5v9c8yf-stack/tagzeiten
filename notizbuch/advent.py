@@ -1177,9 +1177,6 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .board::after{content:"";position:absolute;inset:3.2cqw;border:1px solid rgba(201,160,67,.0)}
 .spine{box-shadow:inset 6px 0 10px rgba(0,0,0,.35),inset -6px 0 10px rgba(0,0,0,.35);display:grid;place-items:center}
 .spine span{writing-mode:vertical-rl;font:italic 400 1.9cqw/1 var(--serif);letter-spacing:.06em}
-/* a cross blind-embossed into the leather, from edge to edge, as on Protestant hymnals and Bibles */
-.xc{position:absolute;inset:0;background:rgba(0,0,0,.1);
-  clip-path:polygon(46.75% 0,53.25% 0,53.25% 30%,100% 30%,100% 34.6%,53.25% 34.6%,53.25% 100%,46.75% 100%,46.75% 34.6%,0 34.6%,0 30%,46.75% 30%)}
 .ft{position:absolute;left:0;right:0;top:42%;display:flex;flex-direction:column;align-items:center;gap:1.6cqw}
 .ft h2,.ft p,.spine span,.bv p,.bv span{background:linear-gradient(175deg,var(--gold1),var(--gold2) 45%,var(--gold3) 80%,var(--gold2));
   -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25)}
@@ -1520,7 +1517,7 @@ def cover():
 <div class="case">
   <div class="board back"><div class="bv"><p>{esc(HENOCH_VERSE[0])}</p><span>{esc(HENOCH_VERSE[1])}</span></div></div>
   <div class="spine"><span>Mit Gott durch den Tag</span></div>
-  <div class="board front"><i class="xc"></i><div class="ft"><h2>Henoch</h2></div></div>
+  <div class="board front"><div class="ft"><h2>Henoch</h2></div></div>
   <div class="ribs">{rib}</div>
 </div>"""
 
