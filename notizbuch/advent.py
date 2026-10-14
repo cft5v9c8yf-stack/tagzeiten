@@ -1176,8 +1176,8 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .board.front{border-radius:0 6px 6px 0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset -8px 0 18px rgba(0,0,0,.25)}
 .board::after{content:"";position:absolute;inset:3.2cqw;border:1px solid rgba(201,160,67,.0)}
 .spine{box-shadow:inset 6px 0 10px rgba(0,0,0,.35),inset -6px 0 10px rgba(0,0,0,.35);display:grid;place-items:center}
-.spine span{writing-mode:vertical-rl;font:600 2.3cqw/1 var(--serif);letter-spacing:.18em}
-.ft{position:absolute;left:0;right:0;top:36%;display:flex;flex-direction:column;align-items:center;gap:1.6cqw}
+.spine span{writing-mode:vertical-rl;font:italic 400 1.9cqw/1 var(--serif);letter-spacing:.06em}
+.ft{position:absolute;left:0;right:0;top:42%;display:flex;flex-direction:column;align-items:center;gap:1.6cqw}
 .ft h2,.ft p,.spine span,.bv p,.bv span{background:linear-gradient(175deg,var(--gold1),var(--gold2) 45%,var(--gold3) 80%,var(--gold2));
   -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25)}
 .ft h2{margin:0;font:600 7.4cqw/1 var(--serif);letter-spacing:.06em}
@@ -1516,8 +1516,8 @@ def cover():
     return f"""
 <div class="case">
   <div class="board back"><div class="bv"><p>{esc(HENOCH_VERSE[0])}</p><span>{esc(HENOCH_VERSE[1])}</span></div></div>
-  <div class="spine"><span>Henoch</span></div>
-  <div class="board front"><div class="ft"><h2>Henoch</h2><i class="rule"></i><p>Mit Gott durch den Tag</p></div></div>
+  <div class="spine"><span>Mit Gott durch den Tag</span></div>
+  <div class="board front"><div class="ft"><h2>Henoch</h2></div></div>
   <div class="ribs">{rib}</div>
 </div>"""
 
@@ -1526,7 +1526,7 @@ def build():
     front, weeks, end = all_pages()
     ribbons = ", ".join(n for _, n in RIBBONS[:-1]) + " und " + RIBBONS[-1][1]
     blocks = [block("einband", "Einband", "Leder in Weinrot, Prägung in Gold",
-                    f"Vorn groß „Henoch“, darunter „Mit Gott durch den Tag“. Hinten unten der Vers zu Henoch. "
+                    f"Vorn groß „Henoch“, auf dem Rücken „Mit Gott durch den Tag“. Hinten unten der Vers zu Henoch. "
                     f"Drei Seitenbänder in Gold, Grün und Blau, zum Beispiel für {ribbons}.", cover()),block("vorn", f"S. 1–{FRONT}", "Vorn im Heft",
                     "Titel, die Adventszeit, der Weg durch die Stille Zeit, Lesen und Beten, die Ordnung mit allen Texten, das Nachtgebet, "
                     "Mein Haus, die Gebetsübersicht, Heute und die Gewohnheiten.",
