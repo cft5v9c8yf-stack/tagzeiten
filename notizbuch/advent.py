@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """Henoch im Advent: a notebook from the first Sunday in Advent to Christmas Eve.
 
-Every day has one spread and follows the Stille Zeit of the app step by step:
+Every day has one spread. It opens like "Heute" in the app, with the prayer
+times of the day and the habits, and then follows the Stille Zeit step by step:
 Eröffnung, Das Wort, Das Gebet, Die Antwort, Die Ausrichtung, Der Segen, and at
 the foot of the right page the evening. Every Sunday adds the week's verse, the
-lessons of Dieffenbach and Löhe, the service and the weekly review.
+lessons of Dieffenbach and Löhe, the service and the weekly review. At the back
+stand the two places of the Arena, Gebetskammer and Eisenschmiede.
 
 All words come from the app: notizbuch/app_texte.ts prints them as JSON (run
 with tsx, set TSX to the command if npx is not wanted), the step icons are read
-from src/ui/FlowIcon.tsx and the colours from src/styles/tokens.css. What only
+from src/ui/FlowIcon.tsx, the colours from src/styles/tokens.css, the texts of
+the Arena from src/features/arena/ArenaPage.tsx. What only
 makes sense on a screen (archiving, suggestions, buttons) is left out; where an
 app text points to the screen, the change is noted next to it.
 
@@ -46,7 +49,37 @@ def tokens():
     return dict(re.findall(r"(--[\w-]+):\s*([^;]+);", root))
 
 
+def arena_texts():
+    """The texts of the Arena's two places, read from the page of the app (it cannot be imported without React)."""
+    src = (REPO / "src" / "features" / "arena" / "ArenaPage.tsx").read_text(encoding="utf-8")
+    places = src.split("const PLACES = {", 1)[1].split("} as const;", 1)[0]
+    journal, forge = places.split("\n  forge: {", 1)
+
+    def get(part, key):
+        m = re.search(key + r": '([^']*)'", part)
+        assert m, key
+        return m.group(1)
+
+    def comfort(part):
+        return [{"text": t, "ref": r} for t, r in re.findall(r"text: '([^']*)',\s*ref: '([^']*)'", part)]
+
+    def lit(t):
+        assert t in src, t
+        return t
+
+    out = {k: {key: get(part, key) for key in ["title", "note", "concernHint"]} for k, part in [("journal", journal), ("forge", forge)]}
+    out["journal"].update(textLabel=get(journal, "textLabel"), textHint=get(journal, "textHint"), comfort=comfort(journal),
+                          tile=lit("Was dich belastet und womit du ringst"))
+    out["forge"].update(comfort=comfort(forge), tile=lit("Für das Treffen mit deinen Brüdern"),
+                        kind=lit("Eisenschmiede · fürs Treffen mit den Brüdern"), meeting=lit("Für das Treffen am"),
+                        points=lit("Was du mit den Brüdern besprechen willst"), pointHint=lit("Was dich umtreibt, wo du Rat brauchst …"))
+    out["verses"], out["concerns"], out["verseHint"] = lit("Bibelstelle"), lit("Gebetsanliegen"), lit("z. B. Römer 8,37")
+    assert len(out["journal"]["comfort"]) == 2 and len(out["forge"]["comfort"]) == 2
+    return out
+
+
 A = app_texts()
+AR = arena_texts()
 ICONS = flow_icons()
 TOK = tokens()
 F = A["fields"]
@@ -58,14 +91,23 @@ WD = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Sam
 ARMOR = {p["weekday"]: p for p in A["armor"]["week"]}
 STATIONS = A["examen"]["stations"]
 
-# Folios: thirteen pages in front, then four weeks of twenty pages, then three at the end (96 = six quires of 16).
-FRONT = 13
+# Folios: fifteen pages in front, four weeks of twenty pages, the Christfest, the Arena (16 pages) and the
+# sources: 112 pages, seven quires of 16.
+FRONT = 15
 WEEK = 20
 P_NIGHT = 10        # Nachtgebet, two pages
 P_ARMOR = 8         # Die geistliche Waffenrüstung
 P_ORDER_RESPONSE = 7
 P_PRAYERLIST = 13   # Gebetsübersicht
-P_END = FRONT + 4 * WEEK + 1
+P_TODAY = 14         # Heute
+P_HABITS = 15        # Gewohnheiten
+P_END = FRONT + 4 * WEEK + 1    # Das Christfest
+P_ARENA = P_END + 1
+P_CHAMBER = P_ARENA + 1         # Gebetskammer, then its entries
+CHAMBER_PAGES = 7
+P_FORGE = P_CHAMBER + 1 + CHAMBER_PAGES  # Eisenschmiede, then its meetings
+FORGE_PAGES = 5
+P_SOURCES = P_FORGE + 1 + FORGE_PAGES
 
 
 def week_start(i):
@@ -108,12 +150,16 @@ def lab(text, aside=""):
     return f'<div class="lab"><span>{esc(text)}</span>{aside}</div>'
 
 
-def field(path_or_label, n, hws=(), prompt=None, aside=""):
+def field(path_or_label, n, hws=(), prompt=None, aside="", hint=False):
+    """A label and lines. The prompt starts the first line; a hint (an app placeholder) gives way to the examples."""
     meta = F.get(path_or_label)
     label = meta["label"] if meta else path_or_label
     if prompt is None and meta:
         prompt = meta.get("placeholder", "")
-    return lab(label, aside) + lines(n, hws, pi(prompt) if prompt else "")
+    first = ""
+    if prompt:
+        first = f'<span class="pi{" ph" if hint and hws else ""}">{esc(prompt)}</span>'
+    return lab(label, aside) + lines(n, hws, first)
 
 
 def rub(t, cls=""):
@@ -242,7 +288,7 @@ def p_way():
 {rub(R["morningShort"])}
 <p class="small muted">{esc(R["morningShortDrops"])} {esc(R["morningMinimal"])}</p>
 <div class="sub">Im Heft</div>
-<p class="small">Jeder Tag hat eine Doppelseite. Links stehen Eröffnung und Wort, rechts Gebet, Antwort, Ausrichtung und Segen. Unten rechts ist Platz für den Abend. Was auf den Tagesseiten nur genannt wird, steht vorn in der Ordnung, S. 6–11.</p>
+<p class="small">Jeder Tag hat eine Doppelseite. Oben links steht „Heute“ mit Gebetszeiten und Gewohnheiten, darunter Eröffnung und Wort; rechts Gebet, Antwort, Ausrichtung und Segen, unten der Abend. Was auf den Tagesseiten nur genannt wird, steht vorn in der Ordnung, S. 6–11. Hinten liegt die Arena, S. {P_ARENA}.</p>
 """
     return page("r", 3, "Seite 3: Der Weg durch die Stille Zeit", inner)
 
@@ -422,7 +468,7 @@ def p_night_1():
 <div class="pt">Rückschau</div>
 {rub(R["review"])}
 <p class="small"><b>{esc(R["reviewMarks"])}</b></p>
-<p class="tiny muted">{esc(R["reviewNotSin"])} Beides schreibst du unten auf der Tagesseite, am Sonntag tritt der Wochenrückblick an diese Stelle.</p>
+<p class="tiny muted">{esc(R["reviewNotSin"])} Beides schreibst du unten auf der Tagesseite, am Sonntag tritt der Wochenrückblick an diese Stelle. Was dich heute bewegt hat, ausführlicher: in der Gebetskammer, S. {P_CHAMBER}.</p>
 """
     return page("l", P_NIGHT, "Seite 10: Das Nachtgebet", inner, "ord")
 
@@ -503,13 +549,83 @@ def p_prayerlist():
     return page("r", P_PRAYERLIST, "Seite 13: Gebetsübersicht", inner)
 
 
+# ------------------------------------------------------------------ Heute
+
+PRESETS = A["habits"]["presets"]
+DAILY = [h for h in PRESETS if h["rhythm"] == "daily" and h["active"] and not h["auto"]]
+WEEKLY = [h for h in PRESETS if h["rhythm"] == "weekly" and h["active"]]
+# The prayer times on the arc of the day, placed roughly where the app's default times put them.
+ARC_STOPS = [("Stille Zeit", 9), ("Vesper", 66), ("Nachtgebet", 89)]
+
+
+def ticks(habits, done=(), blank=True):
+    out = "".join(f'<span class="tk">{box(h["name"] in done)}<span>{esc(h["name"])}</span></span>' for h in habits)
+    return out + (f'<span class="tk">{box()}<span class="tkb"></span></span>' if blank else "")
+
+
+def today_band(e, sunday=False):
+    """Like the top of "Heute": the arc of the day with its prayer times, then the habits ticked by hand."""
+    done = e.get("arc", ())
+    stops = "".join(f'<span class="stop" style="left:{x}%"><span class="dot{" on" if n in done else ""}"></span>'
+                    f'<span class="sl2">{esc(n)}</span></span>' for n, x in ARC_STOPS)
+    week = f'<div class="hrow">{il("Diese Woche")}<div class="tks">{ticks(WEEKLY, e.get("week", ()))}</div></div>' if sunday else ""
+    return (f'<div class="today"><div class="hrow">{il("Gebetszeiten")}<div class="arcb"><i class="track"></i>{stops}</div></div>'
+            f'<div class="hrow">{il("Gewohnheiten")}<div class="tks">{ticks(DAILY, e.get("habits", ()))}</div></div>{week}</div>')
+
+
+def p_today():
+    t = A["times"]
+    v = A["sectionVerses"]["times"]
+    head = "".join(f"<b>{esc(x['label'])}</b>" for x in t)
+    rows = "".join(f'<span class="tr2">{d}</span>' + "".join('<span class="tm"></span>' for _ in t)
+                   for d in ["Montag bis Samstag", "Sonntag"])
+    inner = f"""
+{header("Wie in der App", "Heute")}
+<p class="lead">Jede Tagesseite beginnt wie „Heute“ in der App: oben der Tag mit seinen Gebetszeiten und Gewohnheiten, darunter die Stille Zeit.</p>
+{today_band(EX_WEEK1[1])}
+<div class="sub">Gebetszeiten</div>
+<p class="small">Stille Zeit, Vesper und Nachtgebet liegen auf dem Bogen des Tages. Ist eine gebetet, füllst du ihren Kreis aus. Was offen bleibt, bleibt offen und grau.</p>
+<div class="sub">Gewohnheiten</div>
+<p class="small">Was du von Hand abhakst, für diesen einen Tag. Welche es sind, wählst du auf S. {P_HABITS}. Am Sonntag kommen die wöchentlichen dazu.</p>
+<div class="sub">Heute lesen und die drei Dinge</div>
+<p class="small">Die Lesung steht links unter dem Wort. {esc(A["method"]["rubrics"]["restart"])} Die drei Dinge stehen rechts unter der Ausrichtung. Sie werden in der Stillen Zeit festgelegt, nach dem Wort, und abends mit einem Zeichen versehen.</p>
+<div class="sub">Zeiten</div>
+<p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
+<div class="times" style="grid-template-columns:calc(27 * var(--mm)) repeat({len(t)},minmax(0,1fr))"><span></span>{head}{rows}</div>
+<p class="note">{esc(A["noScore"])}</p>
+"""
+    return page("l", P_TODAY, f"Seite {P_TODAY}: Heute", inner)
+
+
+def p_habits():
+    v = A["sectionVerses"]["habits"]
+    groups = ""
+    for rhythm, title, where in [("daily", "Täglich", "oben auf jeder Tagesseite"), ("weekly", "Wöchentlich", "am Sonntag"),
+                                 ("monthly", "Monatlich", "hier")]:
+        rows = ""
+        for h in [x for x in PRESETS if x["rhythm"] == rhythm]:
+            n = "aus dem Ablauf · auf dem Bogen" if h["auto"] else "nach dem Leseplan" if h["id"] == "bibleReading" else ""
+            months = (f'<span class="mo">{box()}November</span><span class="mo">{box()}Dezember</span>' if rhythm == "monthly" else "")
+            rows += (f'<div class="hb2">{box(h["active"])}<span class="hn">{esc(h["name"])}</span>'
+                     f'<span class="hnote">{n}</span>{months}</div>')
+        rows += f'<div class="hb2">{box()}<span class="hn own"></span><span class="hnote">eigene</span></div>'
+        groups += f'<div class="sub">{title} <span class="where">· {where}</span></div>{rows}'
+    inner = f"""
+{header("Wie unter „Mehr“ in der App", "Gewohnheiten")}
+<p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
+<p class="small">Kreuze an, welche Gewohnheiten du im Advent hältst. Eine Gewohnheit gilt immer nur für ihren Tag, ihre Woche oder ihren Monat.</p>
+{groups}
+"""
+    return page("r", P_HABITS, f"Seite {P_HABITS}: Gewohnheiten", inner)
+
+
 # ------------------------------------------------------------------ the day
 
 def focus_of(wd):
     return {0: "das ganze Haus", 1: "meine Frau", 6: "unsere Ehe"}.get(wd, "ein Kind")
 
 
-def day_left(wd, kicker, folio, title=None, e=None):
+def day_left(wd, kicker, folio, title=None, e=None, sunday=False):
     e = e or {}
     ps = A["psalms"]["morning"][str(wd)]
     stelle = f'<span class="aside">{il("Stelle")}<span class="sl">{hw(e.get("ref", ""))}</span></span>'
@@ -527,12 +643,9 @@ def day_left(wd, kicker, folio, title=None, e=None):
                 + field("morning.aboutGod", 3, e.get("god", ()))
                 + field("morning.aboutMan", 3, e.get("man", ()))
                 + '<p class="more">Mehr notieren</p>'
-                + lab(F["morning.questionNo"]["label"], '<span class="aside">' + "".join(
-                    f'<span class="qn{" on" if e.get("qno") == n else ""}">{n}</span>' for n in range(1, 8)) + il("S. 4") + "</span>")
-                + lines(2, e.get("qa", ()), il(F["morning.questionAnswer"]["label"]))
                 + more
                 + pray(LIT["afterReading"], run=True), end=True)
-    inner = header(kicker, title or WD[wd], e.get("date", "")) + f'<div class="steps">{opening}{word}</div>'
+    inner = header(kicker, title or WD[wd], e.get("date", "")) + today_band(e, sunday) + f'<div class="steps">{opening}{word}</div>'
     return page(side(folio), folio, f"Seite {folio}: {title or WD[wd]}, Wort", inner, "day")
 
 
@@ -722,7 +835,7 @@ def sunday_pages(i, ex=None):
         page("r", f0 + 1, f"Seite {f0 + 1}: {name}, Andacht", les1, "lesson"),
         page("l", f0 + 2, f"Seite {f0 + 2}: {name}, Andacht", les2, "lesson"),
         page("r", f0 + 3, f"Seite {f0 + 3}: {name}, Betrachtung", loehe, "lesson"),
-        day_left(0, name, f0 + 4, "Sonntag", e.get("day")),
+        day_left(0, name, f0 + 4, "Sonntag", e.get("day"), sunday=True),
         day_right(0, f0 + 5, sunday=True, review_folio=f0 + 7, e=e.get("day")),
         page("l", f0 + 6, f"Seite {f0 + 6}: {name}, Gottesdienst", service),
         page("r", f0 + 7, f"Seite {f0 + 7}: {name}, Wochenrückblick", review),
@@ -760,9 +873,106 @@ def p_christmas():
     return page("l", P_END, f"Seite {P_END}: Das Christfest", inner, "xmas")
 
 
-def p_notes():
-    inner = header("Adventszeit", "Notizen", small=True) + lines(25)
-    return page("r", P_END + 1, f"Seite {P_END + 1}: Notizen", inner)
+# ------------------------------------------------------------------ Arena (no archive: the book keeps everything)
+
+def comfort(items):
+    """The words of comfort at the foot of an entry, as in the app."""
+    return '<div class="pray abs run">' + "".join(f'<p>{esc(c["text"])} <span class="att">{esc(c["ref"])}</span></p>' for c in items) + "</div>"
+
+
+def index(head, folios, ex=()):
+    rows = "".join(f'<span class="ix">{hw(ex[i][0]) if i < len(ex) else ""}</span><span class="ix">{hw(ex[i][1]) if i < len(ex) else ""}</span>'
+                   f'<span class="ixp">S. {f}</span>' for i, f in enumerate(folios))
+    return f'<div class="index"><b>{esc(head[0])}</b><b>{esc(head[1])}</b><b></b>{rows}</div>'
+
+
+def p_arena():
+    v = A["sectionVerses"]["arena"]
+    j, f = AR["journal"], AR["forge"]
+    tiles = "".join(f'<div class="ptile"><span class="ring">{icon(ic)}</span><span class="pt2"><b>{esc(t)}</b><span>{esc(line)}</span></span>'
+                    f'<span class="pg2">S. {pg}</span></div>'
+                    for ic, t, line, pg in [("candle", j["title"], j["tile"], P_CHAMBER), ("people", f["title"], f["tile"], P_FORGE)])
+    inner = f"""
+{header("Henoch", "Arena")}
+<figure class="wsp"><blockquote>{esc(v["text"])}</blockquote><figcaption>{esc(v["ref"])}</figcaption></figure>
+<div class="ptiles">{tiles}</div>
+<p class="small muted">Was du hier schreibst, bleibt im Heft. Es gibt nichts zu archivieren.</p>
+"""
+    return page("r", P_ARENA, f"Seite {P_ARENA}: Arena", inner, runner="Arena")
+
+
+CHAMBER_EX = [{"date": "Mittwoch, 2. 12.", "verses": ["Römer 8,37"],
+               "concerns": ["Das Gespräch mit T. am Freitag", "Ruhe vor dem Schlafengehen"],
+               "text": ["Am Freitag das Gespräch mit T. Ich merke, wie ich innerlich schon", "meine Sätze vorbereite. Ich will zuhören, bevor ich antworte.",
+                        "Heute Morgen gebetet und ruhiger geworden."]}]
+FORGE_EX = [{"date": "Samstag, 5. 12.", "verses": ["Galater 6,2"], "concerns": ["M.: Schlaf, das Kleinkind zahnt", "D.: die Bewerbung"],
+             "points": [("Abendgebet mit den Kindern: wie anfangen?", True), ("Wie lade ich einen Bruder ein?", False),
+                        ("Rat für das Gespräch mit T.", False)]}]
+
+
+def p_chamber():
+    j = AR["journal"]
+    folios = list(range(P_CHAMBER + 1, P_CHAMBER + 1 + CHAMBER_PAGES))
+    inner = f"""
+{header(j["tile"], j["title"])}
+<p class="lead">{esc(j["note"])}</p>
+<p class="small muted">Was dich am Abend bewegt hat, schreibst du hier ausführlicher weiter.</p>
+<div class="sub">Einträge</div>
+{index(("Datum", "Erste Zeile"), folios, [("2. 12.", "Das Gespräch mit T.")])}
+"""
+    return page("l", P_CHAMBER, f"Seite {P_CHAMBER}: Gebetskammer", inner, runner="Arena")
+
+
+def date_head(kicker, label, date):
+    return (f'<header class="hd"><div class="dh"><p class="k">{esc(kicker)}</p>'
+            f'<div class="tl">{il(label)}{hw(date)}</div></div></header>')
+
+
+def p_chamber_entry(folio, e=None):
+    e = e or {}
+    j = AR["journal"]
+    inner = f"""
+{date_head(j["title"], "Datum", e.get("date", ""))}
+{field(AR["verses"], 2, e.get("verses", ()), prompt=AR["verseHint"], hint=True)}
+{field(AR["concerns"], 3, e.get("concerns", ()), prompt=j["concernHint"], hint=True)}
+{field(j["textLabel"], 19, e.get("text", ()), prompt=j["textHint"], hint=True)}
+<div class="fill"></div>
+{comfort(j["comfort"])}
+"""
+    return page(side(folio), folio, f"Seite {folio}: Gebetskammer, Eintrag", inner, runner="Arena")
+
+
+def p_forge():
+    f = AR["forge"]
+    v = A["sectionVerses"]["forge"]
+    folios = list(range(P_FORGE + 1, P_FORGE + 1 + FORGE_PAGES))
+    inner = f"""
+{header(f["tile"], f["title"])}
+<p class="verse-s">{esc(v["text"])} <span class="att">{esc(v["ref"])}</span></p>
+<p class="lead">{esc(f["note"])}</p>
+<div class="sub">Treffen</div>
+{index((f["meeting"], "Erster Punkt"), folios, [("5. 12.", "Abendgebet mit den Kindern")])}
+"""
+    return page("l", P_FORGE, f"Seite {P_FORGE}: Eisenschmiede", inner, runner="Arena")
+
+
+def p_forge_entry(folio, e=None):
+    e = e or {}
+    f = AR["forge"]
+    pts = e.get("points", [])
+    points = "".join(ln(box(pts[i][1] if i < len(pts) else False)
+                        + (pi(f["pointHint"]) if i == 0 and not pts else "") + hw(pts[i][0] if i < len(pts) else ""))
+                     for i in range(17))
+    inner = f"""
+{date_head(f["kind"], f["meeting"], e.get("date", ""))}
+{field(AR["verses"], 2, e.get("verses", ()), prompt=AR["verseHint"], hint=True)}
+{field(AR["concerns"], 3, e.get("concerns", ()), prompt=f["concernHint"], hint=True)}
+{lab(f["points"], '<span class="silent">abgehakt: besprochen</span>')}
+<div class="points">{points}</div>
+<div class="fill"></div>
+{comfort(f["comfort"])}
+"""
+    return page(side(folio), folio, f"Seite {folio}: Eisenschmiede, Treffen", inner, runner="Arena")
 
 
 def p_sources():
@@ -775,7 +985,7 @@ def p_sources():
 <div class="fill"></div>
 <p class="solas" lang="la"><span>Sola scriptura</span> · <span>Sola gratia</span> · <span>Sola fide</span> · <span>Solus Christus</span></p>
 """
-    return page("l", P_END + 2, f"Seite {P_END + 2}: Texte und Quellen", inner)
+    return page(side(P_SOURCES), P_SOURCES, f"Seite {P_SOURCES}: Texte und Quellen", inner)
 
 
 # ------------------------------------------------------------------ examples (blue handwriting, switchable)
@@ -783,19 +993,20 @@ def p_sources():
 EX_WEEK1 = {
     0: {
         "date": "28. 11.", "notes": ["Er kommt sanftmütig – und zu mir."],
-        "day": {"date": "29. 11.", "reading": "Römer 13",
-                "three": [("Sacharja 9,9 auswendig", "+"), ("die erste Kerze mit allen", "+"), ("Sonntagsruhe", "+")]},
+        "day": {"date": "29. 11.", "reading": "Römer 13", "arc": ["Stille Zeit"], "habits": ["Bibel lesen", "Tischgebet mit der Familie"],
+                "week": ["Gottesdienst – den Feiertag heiligen"],
+                "three": [("Sacharja 9,9 auswendig", None), ("die erste Kerze mit allen", None), ("Sonntagsruhe", None)]},
         "service": {"text": "Matthäus 21,1–9", "stuck": ["Er kommt sanftmütig, auf einem Esel."],
                     "comfort": ["Er kommt zu mir, nicht ich zu ihm."], "kids": ["J.: Warum ein Esel?"],
                     "cat": "Der zweite Artikel", "word": ["Sacharja 9,9"]},
         "review": {"weekWife": ["für ihre Geduld in dieser Woche"], "weekChildren": ["J. und M. beim Kranzbinden"],
                    "resolve": ["Abends die Kinder segnen"]},
     },
-    1: {"date": "30. 11.", "reading": "Jesaja 40", "main": ["Gott tröstet sein Volk und kommt selbst."],
+    1: {"date": "30. 11.", "reading": "Jesaja 40", "arc": ["Stille Zeit", "Vesper", "Nachtgebet"],
+        "habits": ["Bibel lesen", "Tischgebet mit der Familie", "Die Kinder segnen"], "main": ["Gott tröstet sein Volk und kommt selbst."],
         "ref": "Jesaja 40,3", "verse": ["„Bereitet dem HERRN den Weg“"],
         "god": ["Er kommt gewaltig und weidet seine Herde", "wie ein Hirte (V. 10–11)."],
         "man": ["Alles Fleisch vergeht wie Heu;", "Gottes Wort bleibt (V. 6–8)."],
-        "qno": 7, "qa": ["um Geduld mit M. und um ein offenes Ohr"],
         "q": "Wer ist die Stimme in V. 3? → Matthäus 3,3", "x": "V. 8: Das Wort bleibt.", "to": "Abends Jesaja 40,1–11 vorlesen",
         "which": "vers", "wreath": {"i": ["dass du selbst kommst (V. 10)"], "t": ["für dein Wort, das bleibt"], "p": ["Weg frei machen: Gespräch mit T."]},
         "heart": ["Termin am Freitag · Sorge um M."], "people": ["T., das Team, Nachbar K."],
@@ -808,9 +1019,13 @@ EX_WEEK1 = {
 
 def all_pages():
     front = [p_title(), p_season(), p_way(), p_method(), p_wreath(), p_order_word(), p_order_response(),
-             p_order_armor(), p_order_blessing(), p_night_1(), p_night_2(), p_house(), p_prayerlist()]
+             p_order_armor(), p_order_blessing(), p_night_1(), p_night_2(), p_house(), p_prayerlist(), p_today(), p_habits()]
     weeks = [week_pages(i, EX_WEEK1 if i == 0 else None) for i in range(4)]
-    end = [p_christmas(), p_notes(), p_sources()]
+    end = ([p_christmas(), p_arena(), p_chamber()]
+           + [p_chamber_entry(P_CHAMBER + 1 + i, CHAMBER_EX[i] if i < len(CHAMBER_EX) else None) for i in range(CHAMBER_PAGES)]
+           + [p_forge()]
+           + [p_forge_entry(P_FORGE + 1 + i, FORGE_EX[i] if i < len(FORGE_EX) else None) for i in range(FORGE_PAGES)]
+           + [p_sources()])
     return front, weeks, end
 
 
@@ -910,8 +1125,6 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .lab{display:flex;align-items:baseline;justify-content:space-between;gap:calc(3 * var(--mm));margin-top:calc(1.5 * var(--mm));font:600 calc(2.2 * var(--mm))/1.2 var(--sans);color:var(--muted)}
 .lab .aside{display:flex;align-items:flex-end;gap:calc(1.2 * var(--mm));font-weight:400}
 .lab .sl{display:inline-block;width:calc(28 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);min-height:calc(4 * var(--mm))}
-.qn{display:grid;place-items:center;width:calc(3.9 * var(--mm));height:calc(3.9 * var(--mm));border:max(1px,calc(.25 * var(--mm))) solid var(--rule);border-radius:50%;font:600 calc(2 * var(--mm))/1 var(--sans);color:var(--muted)}
-.show .qn.on{border-color:var(--hand);color:var(--hand);box-shadow:inset 0 0 0 calc(.25 * var(--mm)) var(--hand)}
 .ln{height:var(--lh);border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);display:flex;align-items:flex-end;gap:calc(1.4 * var(--mm));white-space:nowrap;overflow:hidden;min-width:0}
 .ln .grow,.owner .grow{flex:1 1 auto}
 .pi{font:italic 400 calc(2.6 * var(--mm)) var(--serif);color:color-mix(in srgb,var(--muted) 80%,var(--paper));padding-bottom:calc(.9 * var(--mm));flex:none}
@@ -925,6 +1138,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .show .bx.on::after{content:"";position:absolute;inset:-25%;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 13l5 5L20 5' fill='none' stroke='%232C4A86' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")}
 .hw{display:none;font-family:var(--script);font-weight:500;font-size:calc(4.1 * var(--mm));line-height:1;color:var(--hand);padding:0 calc(.8 * var(--mm)) calc(.5 * var(--mm)) calc(.6 * var(--mm));white-space:nowrap}
 .show .hw{display:inline-block}
+.show .pi.ph{display:none}
 .blank{display:inline-block;width:calc(16 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--muted);vertical-align:baseline}
 
 /* text as in the app: prayers with a rule on the left, the absolution in green, rubrics in red */
@@ -1063,6 +1277,54 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .srcs{margin:0 0 calc(2 * var(--mm));padding-left:calc(4 * var(--mm));font-size:calc(2.5 * var(--mm));line-height:1.4}
 .srcs li + li{margin-top:calc(1 * var(--mm))}
 
+/* Heute: the arc of the day and the habits, on a card like the tiles of the app */
+.today{background:var(--sheet);border:max(1px,calc(.25 * var(--mm))) solid var(--rule);border-radius:calc(2.2 * var(--mm));padding:calc(1 * var(--mm)) calc(2.6 * var(--mm));margin:0 0 calc(2 * var(--mm))}
+.hrow{display:flex;align-items:center;gap:calc(1.6 * var(--mm));min-height:calc(5.6 * var(--mm))}
+.hrow + .hrow{border-top:max(1px,calc(.2 * var(--mm))) solid var(--rule)}
+.hrow > .il{width:calc(16.5 * var(--mm));padding:0}
+.arcb{position:relative;flex:1 1 auto;height:calc(8.2 * var(--mm))}
+.arcb .track{position:absolute;left:0;right:0;top:calc(2.5 * var(--mm));height:max(1px,calc(.35 * var(--mm)));background:var(--rule);border-radius:9px}
+.stop{position:absolute;top:calc(.8 * var(--mm));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.dot{width:calc(3.6 * var(--mm));height:calc(3.6 * var(--mm));border-radius:50%;border:max(1px,calc(.3 * var(--mm))) solid var(--muted);background:var(--sheet)}
+.show .dot.on{background:var(--hand);border-color:var(--hand)}
+.sl2{font:600 calc(1.95 * var(--mm))/1 var(--sans);color:var(--muted);margin-top:calc(.8 * var(--mm));white-space:nowrap}
+.tks{display:flex;flex-wrap:wrap;gap:calc(.6 * var(--mm)) calc(1.5 * var(--mm));padding:calc(.8 * var(--mm)) 0}
+.tk{display:inline-flex;align-items:center;gap:calc(1 * var(--mm));font:400 calc(2 * var(--mm)) var(--sans);color:var(--ink);white-space:nowrap}
+.tk .bx{margin:0}
+.tkb{display:inline-block;width:calc(9 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);height:calc(3 * var(--mm))}
+.verse-s{font-style:italic;font-size:calc(2.6 * var(--mm));margin:0 0 calc(1.2 * var(--mm)) !important}
+.times{display:grid;gap:calc(1.2 * var(--mm)) calc(2 * var(--mm));align-items:end;margin-top:calc(.8 * var(--mm))}
+.times b{font:600 calc(2 * var(--mm)) var(--sans);color:var(--muted)}
+.tr2{font:600 calc(2.1 * var(--mm)) var(--sans)}
+.tm{height:calc(6 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule)}
+.tm::after{content:":";display:block;text-align:center;color:var(--rule);font:600 calc(3 * var(--mm))/calc(6 * var(--mm)) var(--sans)}
+.where{font-weight:400;letter-spacing:0;text-transform:none}
+.hb2{display:flex;align-items:center;gap:calc(1.6 * var(--mm));min-height:calc(5.6 * var(--mm));border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--rule)}
+.hb2 .bx{margin:0}
+.hn{font-size:calc(2.6 * var(--mm))}
+.hn.own{flex:0 0 calc(50 * var(--mm))}
+.hnote{font:400 calc(2 * var(--mm)) var(--sans);color:var(--muted);margin-left:auto}
+.mo{display:inline-flex;align-items:center;gap:calc(1 * var(--mm));font:400 calc(2 * var(--mm)) var(--sans);color:var(--muted);margin-left:calc(2.4 * var(--mm))}
+.mo .bx{margin:0}
+
+/* Arena */
+.ptiles{display:grid;gap:calc(2.6 * var(--mm));margin:calc(2 * var(--mm)) 0 calc(4 * var(--mm))}
+.ptile{display:flex;align-items:center;gap:calc(3 * var(--mm));padding:calc(3 * var(--mm)) calc(3.4 * var(--mm));background:var(--sheet);border:max(1px,calc(.25 * var(--mm))) solid var(--rule);border-radius:calc(2.4 * var(--mm))}
+.ptile .ring{width:calc(10 * var(--mm));height:calc(10 * var(--mm))}
+.ptile .ring .ic{width:calc(6 * var(--mm));height:calc(6 * var(--mm))}
+.pt2{display:flex;flex-direction:column;flex:1 1 auto}
+.pt2 b{font:600 calc(4 * var(--mm)) var(--serif)}
+.pt2 span{font-size:calc(2.6 * var(--mm));color:var(--muted)}
+.pg2{font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--muted)}
+.index{display:grid;grid-template-columns:calc(28 * var(--mm)) minmax(0,1fr) auto;column-gap:calc(3 * var(--mm))}
+.index b{font:600 calc(2 * var(--mm)) var(--sans);color:var(--muted);padding-bottom:calc(1 * var(--mm))}
+.ix,.ixp{height:calc(7 * var(--mm));border-bottom:max(1px,calc(.25 * var(--mm))) solid var(--rule);display:flex;align-items:flex-end;overflow:hidden;white-space:nowrap}
+.ixp{font:400 calc(2.1 * var(--mm)) var(--sans);color:var(--muted);padding-bottom:calc(1 * var(--mm))}
+.dh{flex:1 1 auto}
+.tl{display:flex;align-items:flex-end;gap:calc(2 * var(--mm));height:calc(8 * var(--mm));width:calc(80 * var(--mm))}
+.tl .hw{font-size:calc(5 * var(--mm))}
+.points .bx{margin-bottom:calc(1 * var(--mm))}
+
 /* print: A5 pages only */
 @page{size:148mm 210mm;margin:0}
 @media print{
@@ -1083,22 +1345,25 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Caveat:wght@500"
 
 def build():
     front, weeks, end = all_pages()
-    blocks = [block("vorn", "S. 1–13", "Vorn im Heft",
-                    "Titel, die Adventszeit, der Weg durch die Stille Zeit, Lesen und Beten, die Ordnung mit allen Texten, das Nachtgebet, Mein Haus und die Gebetsübersicht.",
+    blocks = [block("vorn", f"S. 1–{FRONT}", "Vorn im Heft",
+                    "Titel, die Adventszeit, der Weg durch die Stille Zeit, Lesen und Beten, die Ordnung mit allen Texten, das Nachtgebet, "
+                    "Mein Haus, die Gebetsübersicht, Heute und die Gewohnheiten.",
                     spreads(front, 1))]
     for i, w in enumerate(weeks):
         f0 = week_start(i)
         text = (f"Acht Seiten zum Sonntag: Wochenspruch, Andacht von Dieffenbach, Betrachtung von Löhe, die Stille Zeit, "
-                f"der Gottesdienst und der Wochenrückblick. Dann Montag bis Samstag, je eine Doppelseite.")
+                f"der Gottesdienst und der Wochenrückblick. Dann Montag bis Samstag, je eine Doppelseite, oben mit „Heute“.")
         if i == 0:
             text += " Sonntag und Montag tragen Beispieleinträge."
         blocks.append(block(f"advent{i + 1}", f"S. {f0}–{f0 + WEEK - 1}", f"{i + 1}. Sonntag im Advent", text, spreads(w, f0)))
-    blocks.append(block("christfest", f"S. {P_END}–{P_END + 2}", "Zum Christfest",
-                        "Das Christfest als Ausblick, eine Seite für Notizen und die Quellen.", spreads(end, P_END)))
+    blocks.append(block("arena", f"S. {P_END}–{P_SOURCES}", "Christfest und Arena",
+                        f"Das Christfest als Ausblick. Dann die Arena: der Eingang, die Gebetskammer mit {CHAMBER_PAGES} Einträgen "
+                        f"und die Eisenschmiede mit {FORGE_PAGES} Treffen, je eine Seite, ohne Archiv. Am Ende die Quellen.",
+                        spreads(end, P_END)))
     nav = [("vorn", "Vorn"), ("advent1", "1. Advent"), ("advent2", "2. Advent"), ("advent3", "3. Advent"),
-           ("advent4", "4. Advent"), ("christfest", "Christfest")]
+           ("advent4", "4. Advent"), ("arena", "Christfest und Arena")]
     nav_html = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in nav)
-    total = FRONT + 4 * WEEK + 3
+    total = P_SOURCES
     body = f"""
 <div class="wrap">
   <header class="top">

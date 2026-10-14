@@ -3,11 +3,12 @@
  * notizbuch/advent.py takes every word from the app itself and keeps no copy.
  * Run: npx tsx notizbuch/app_texte.ts
  */
-import { MOTTO, SOURCES, THE_ARC } from '../src/content/about';
+import { MOTTO, NO_SCORE_NOTE, SOURCES, THE_ARC } from '../src/content/about';
 import { ARMOR_CALL, ARMOR_EVENING, ARMOR_TITLE, ARMOR_WEEK } from '../src/content/armor';
 import { CIRCLE_INFO, SEASON_INFO, SEASON_THEME, SUNDAY_INFO } from '../src/content/churchYearGuide';
 import { EXAMEN_INTRO, EXAMEN_NOTE, STATIONS, STATION_BY_WEEKDAY } from '../src/content/examen';
 import { FIELDS } from '../src/content/fields';
+import { HABIT_PRESETS, RHYTHM_LABEL } from '../src/content/habits';
 import { HOUSE_BLESSING_RUBRIC, HOUSE_RUBRIC, houseBlessing, houseForAll } from '../src/content/house';
 import { EPISTLE_LECTIONS, LECTIONS } from '../src/content/lections';
 import * as L from '../src/content/liturgy';
@@ -16,10 +17,12 @@ import { ORDER_MINUTES, RUBRICS, getOrder } from '../src/content/orders';
 import { EVENING_PSALMS, MORNING_PSALMS, PSALM_RUBRIC_ANTIPHON, PSALM_RUBRIC_MORNING } from '../src/content/psalms';
 import { SEVEN_QUESTIONS } from '../src/content/questions';
 import { READING_SUMMARIES } from '../src/content/readingSummaries';
+import { SETTINGS_VERSES } from '../src/content/settingsVerses';
 import { SUNDAY_GUIDE } from '../src/content/sundayGuide';
 import { WEEK_PLACES, WEEK_REVIEW, WEEK_REVIEW_COMFORT } from '../src/content/weekReview';
 import { WEEKLY_VERSES } from '../src/content/weeklyVerses';
 import { emptyChild, emptyHouse } from '../src/domain/house';
+import { TIME_ORDER } from '../src/domain/schedule';
 import { composeVerse } from '../src/domain/weeklyVerse';
 
 const verse = (v: (typeof WEEKLY_VERSES)[string]) => ({ ref: v.ref, text: composeVerse(v) });
@@ -35,6 +38,10 @@ const out = {
   arc: THE_ARC,
   motto: MOTTO,
   sources: SOURCES,
+  noScore: NO_SCORE_NOTE,
+  habits: { presets: HABIT_PRESETS, rhythm: RHYTHM_LABEL },
+  times: TIME_ORDER,
+  sectionVerses: Object.fromEntries(Object.entries(SETTINGS_VERSES).map(([k, v]) => [k, verse(v)])),
   orders: {
     morning: order('morning', 'full'),
     morningShort: order('morning', 'short'),
