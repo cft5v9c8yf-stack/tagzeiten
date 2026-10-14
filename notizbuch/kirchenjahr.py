@@ -9,6 +9,8 @@ book continues at Advent.
 Run: python3 kirchenjahr.py (writes henoch-kirchenjahr.html and henoch-kirchenjahr-druck.html next to this file).
 """
 import datetime as dt
+import html
+import json
 import math
 import pathlib
 import sys
@@ -18,6 +20,18 @@ sys.path.insert(0, str(HERE))
 import build as B  # noqa: E402
 import ordnung as O  # noqa: E402
 from build import hw, ln, lines, row, sec, c, b, page, spread, block  # noqa: E402
+
+QUELLEN = HERE / "quellen"
+_adv = json.loads((QUELLEN / "advent-lektionen.json").read_text(encoding="utf-8"))
+ADV = {x["sonntag"]: x for x in _adv["sonntage"]}
+ADV_QUELLE = _adv["quelle"]
+LOEHE = json.loads((QUELLEN / "loehe-epistel.json").read_text(encoding="utf-8"))
+WS = json.loads((QUELLEN / "wochensprueche.json").read_text(encoding="utf-8"))
+
+
+def esc(t):
+    return html.escape(t, quote=False)
+
 
 D = dt.timedelta
 V, W, G, R, S = "violett", "weiß", "grün", "rot", "schwarz"
@@ -39,6 +53,7 @@ NAMES = [n for n, _ in SUNDAYS]
 FEASTS_AFTER = {"4. Advent": "Christfest", "2. So. n. d. Christfest": "Epiphanias", "Palmarum": "Gründonnerstag und Karfreitag",
                 "Rogate": "Himmelfahrt", "27. So. n. Trinitatis": "Michaelis, Erntedank, Reformationstag, Buß- und Bettag"}
 FIRST = 20
+WEEK_PAGES = 10  # Sunday 4 pages (Wort, Dieffenbach, Löhe, Der Sonntag), Monday to Saturday one page each
 
 
 def folio_of(name):
@@ -46,14 +61,14 @@ def folio_of(name):
     for n in NAMES:
         if n == name:
             return p
-        p += 8
+        p += WEEK_PAGES
         if n in FEASTS_AFTER:
             p += 4 if n == "27. So. n. Trinitatis" else 2
     raise KeyError(name)
 
 
-YEAR_END = folio_of("27. So. n. Trinitatis") + 8 + 4 - 1
-assert YEAR_END == 487, YEAR_END
+YEAR_END = folio_of("27. So. n. Trinitatis") + WEEK_PAGES + 4 - 1
+assert YEAR_END == 601, YEAR_END
 
 # ------------------------------------------------------------------ Easter table
 
@@ -130,7 +145,7 @@ def p_kreis():
 <header class="ph"><h2 class="pt">Das Kirchenjahr</h2></header>
 {svg}
 <div class="lg">{legend}</div>
-<p class="txt">Das Buch hat keine Daten. Es enthält jeden Sonntag, den ein Kirchenjahr haben kann. Jeder Sonntag öffnet eine Woche: seine Doppelseite mit Impulsen zu Evangelium und Epistel, dann Montag bis Samstag.</p>
+<p class="txt">Das Buch hat keine Daten. Es enthält jeden Sonntag, den ein Kirchenjahr haben kann. Jeder Sonntag öffnet eine Woche: vier Seiten für den Sonntag mit Dieffenbach und Löhe, dann Montag bis Samstag.</p>
 <p class="txt">Beginnen kannst du an jedem Sonntag. Nach dem 27. Sonntag nach Trinitatis geht es vorn beim 1. Advent weiter.</p>
 """
     return page("l", "18", "Seite 18: Das Kirchenjahr", inner, runner="Das Kirchenjahr")
@@ -155,30 +170,66 @@ def p_ostertafel():
     return page("r", "19", "Seite 19: Ostertafel", inner, runner="Das Kirchenjahr")
 
 
-def p_sonntag_l():
-    proper = [("Wochenpsalm", "Psalm 24"), ("Wochenlied", "Nun komm, der Heiden Heiland<br><em>Martin Luther, 1524</em>"),
-              ("Evangelium", "Matthäus 21,1–9"), ("Epistel", "Römer 13,11–14")]
-    pg = "".join(f'<div><span class="pl">{a}</span><span class="pv">{t}</span></div>' for a, t in proper)
+def lektion_html(abs_):
+    """Dieffenbach's paragraphs as the app shows them: without numbers, hymn verses set off."""
+    out = ""
+    for a in abs_:
+        after_hymn = False
+        for t in a["teile"]:
+            if "zitat" in t:
+                out += f'<p class="hym">{esc(t["zitat"])}</p>'
+                after_hymn = True
+            else:
+                out += f'<p class="imp{" cont" if after_hymn else ""}">{esc(t["text"])}</p>'
+                after_hymn = False
+    return out
+
+
+def p_so1():
+    s = ADV["advent-1"]
+    ws = WS["advent1"]
+    lw = "".join(f'<div class="lw"><cite>{esc(x["bibelstelle"])}</cite>{esc(x["text"])}</div>' for x in s["leitworte"])
     inner = f"""
 <header class="ph"><h2 class="pt"><small>Advent</small>1. Sonntag im Advent</h2>
 <div class="pm"><div class="dline" style="width:calc(34 * var(--mm))"><span class="pl">Datum</span>{hw("29. 11. 2026")}</div><span class="lc">{dot(V)}violett</span></div></header>
-<p class="latin">Ad te levavi · Nach dir, HERR, verlanget mich</p>
-<div class="vs ws">„Siehe, dein König kommt zu dir, ein Gerechter und ein Helfer.“<cite>Wochenspruch · Sacharja 9,9</cite></div>
-<div class="prop">{pg}</div>
-{sec("", "Zum Evangelium", "Matthäus 21,1–9")}
-<h3 class="it">Der König kommt</h3>
-<p class="imp">Der Advent beginnt nicht mit deinem Vorsatz, sondern mit einem, der kommt. Jesus reitet auf einem geliehenen Esel in Jerusalem ein. Die Menge ruft Hosianna, und wenige Tage später ruft sie etwas anderes. Er weiß das und reitet trotzdem hinein, in die Stadt, in der er sterben wird. Du mußt dich nicht erst würdig machen, damit er kommen darf. Er kommt dir entgegen, im Wort und im Abendmahl, sanftmütig und als Helfer.</p>
-{sec("", "Zur Epistel", "Römer 13,11–14")}
-<h3 class="it">Zeit aufzustehen</h3>
-<p class="imp">Paulus schreibt an Leute, die wissen, wie spät es ist: Die Nacht ist weit vorbei, der Tag steht vor der Tür. Was zur Nacht gehört, zählt er auf: Gelage, Unzucht, Streit und Neid. Es ist auch das, was einen frommen Mann um elf Uhr abends noch wach hält. Paulus sagt aber nicht zuerst: Streng dich an. Er sagt: Zieht den Herrn Jesus Christus an. Das Licht ist ein Kleid, das dir gegeben wird. Am Morgen trittst du in ein Licht, das schon da ist.</p>
-{sec("", "Am Tisch", "Sonntagabend, Vesper")}
-<p class="txt">Zündet die erste Kerze an und lest Matthäus 21,1–9. Fragt die Kinder: Warum kommt der König auf einem Esel und nicht auf einem Pferd?</p>
-{sec("", "Für die Woche")}
-<p class="rb">Wo meinst du, erst bereit sein zu müssen, bevor er zu dir kommen darf?</p>
-{lines(1, ["Bei der Arbeit: erst alles im Griff haben, dann beten."])}
+<div class="vs ws">„{esc(ws["text"])}“<cite>Wochenspruch · {esc(ws["ref"])}</cite></div>
+{sec("", "Bibellektion zum Evangelium", esc(s["bibelstelle"]))}
+<h3 class="it">{esc(s["titel"])}</h3>
+<p class="zus">{esc(s["zusatz"])}</p>
+<div class="lws">{lw}</div>
+{lektion_html(s["absaetze"][:3])}
 """
     f = folio_of("1. Advent")
-    return page("l", str(f), f"Seite {f}: 1. Advent, Impulse", inner, runner="Advent")
+    return page("l", str(f), f"Seite {f}: 1. Advent, Dieffenbach", inner, runner="Advent")
+
+
+def p_so2():
+    s = ADV["advent-1"]
+    inner = f"""
+{lektion_html(s["absaetze"][3:])}
+<p class="quelle">{esc(ADV_QUELLE)}</p>
+"""
+    f = folio_of("1. Advent") + 1
+    return page("r", str(f), f"Seite {f}: 1. Advent, Dieffenbach", inner, runner="Advent")
+
+
+def p_so3():
+    e = LOEHE["advent1"]
+    paras = "".join(f'<p class="imp">{esc(x)}</p>' for x in e["absaetze"])
+    inner = f"""
+<header class="ph"><h2 class="pt"><small>Advent</small>Zur Epistel</h2><div class="pm"><span class="pl" style="padding:0">{esc(e["ref"])}</span></div></header>
+{sec("", "Betrachtung von Wilhelm Löhe")}
+<h3 class="it">{esc(e["titel"])}</h3>
+{paras}
+<p class="quelle">{esc(e["quelle"])}</p>
+{sec("", "Am Tisch", "Sonntagabend, Vesper")}
+<p class="ptext">[TEXT VON ANDREAS: Gedanke für den Tisch am Sonntagabend]</p>
+{sec("", "Für die Woche")}
+<p class="ptext">[TEXT VON ANDREAS: Frage für die Woche]</p>
+{lines(2)}
+"""
+    f = folio_of("1. Advent") + 2
+    return page("l", str(f), f"Seite {f}: 1. Advent, Löhe", inner, runner="Advent")
 
 
 def marks(sel=None):
@@ -215,7 +266,7 @@ def p_sonntag_r():
 <div class="hb">{g}</div>
 <div class="wl two">{w}</div>
 """
-    f = folio_of("1. Advent") + 1
+    f = folio_of("1. Advent") + 3
     return page("r", str(f), f"Seite {f}: 1. Advent, Der Sonntag", inner, runner="Advent")
 
 
@@ -468,7 +519,14 @@ CSS_KJ = r"""
 .prop .pv{font-size:calc(2.7 * var(--mm));line-height:1.3}
 .prop .pv em{font-size:calc(2.3 * var(--mm));color:var(--ink-2)}
 .it{margin:calc(1 * var(--mm)) 0 0;font:600 calc(3.3 * var(--mm)) var(--serif);color:var(--ink)}
-.imp{margin:calc(.8 * var(--mm)) 0 0;font-size:calc(2.65 * var(--mm));line-height:1.45;hyphens:auto}
+.imp{margin:calc(1 * var(--mm)) 0 0;font-size:calc(2.5 * var(--mm));line-height:1.42;hyphens:auto}
+.imp.cont{margin-top:calc(.6 * var(--mm))}
+.hym{margin:calc(.8 * var(--mm)) 0 0 calc(5 * var(--mm));font:italic 400 calc(2.4 * var(--mm)) var(--serif);line-height:1.4;color:var(--ink-2)}
+.zus{margin:calc(.4 * var(--mm)) 0 0;font:italic 400 calc(2.35 * var(--mm)) var(--serif);color:var(--ink-2)}
+.lws{display:grid;gap:calc(1.1 * var(--mm));margin:calc(1.6 * var(--mm)) 0 calc(.6 * var(--mm));padding:calc(1.4 * var(--mm)) 0;border-top:max(1px,calc(.2 * var(--mm))) solid var(--line);border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);font-size:calc(2.45 * var(--mm));line-height:1.38}
+.lw cite{display:block;font:600 calc(1.95 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-bottom:calc(.2 * var(--mm))}
+.quelle{margin:calc(2 * var(--mm)) 0 0;font:italic 400 calc(2.2 * var(--mm)) var(--serif);color:var(--ink-3);line-height:1.4}
+.ptext{margin:calc(1 * var(--mm)) 0 0;padding:calc(1.4 * var(--mm)) calc(2 * var(--mm));border:max(1px,calc(.25 * var(--mm))) dashed var(--dot);border-radius:calc(.8 * var(--mm));font:italic 400 calc(2.4 * var(--mm)) var(--serif);color:var(--ink-3)}
 .wl.two{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:calc(3 * var(--mm))}
 """
 
@@ -488,11 +546,11 @@ def build():
       <dl>
         <dt>Inhalt</dt><dd>Alle 57 Sonntage, die ein Kirchenjahr haben kann, vom 1. Advent bis zum 27. Sonntag nach Trinitatis</dd>
         <dt>Datum</dt><dd>Keins. Beginnen kannst du an jedem Sonntag; nach dem letzten geht es vorn beim Advent weiter</dd>
-        <dt>Sonntag</dt><dd>Eine Doppelseite: Wochenspruch, Psalm, Lied, Evangelium und Epistel, je ein Impuls zu Evangelium und Epistel</dd>
+        <dt>Sonntag</dt><dd>Vier Seiten: Wochenspruch, Dieffenbachs Bibellektion zum Evangelium, Löhes Betrachtung zur Epistel, dann Gottesdienst und die Gewohnheiten der Woche</dd>
         <dt>Woche</dt><dd>Montag bis Samstag je eine Tagesseite für Morgen und Abend</dd>
         <dt>Vorn</dt><dd>Jahresplan Bibellese mit allen Kapiteln zum Abhaken, Katechismus lernen, die Ordnung, Kirchenjahr und Ostertafel</dd>
         <dt>Hinten</dt><dd>Notizseiten für die Gebetskammer und die Eisenschmiede, je 16 Seiten</dd>
-        <dt>Umfang</dt><dd>576 nummerierte Seiten in 36 Lagen; Dünndruck, 52 g, füllhaltertauglich, gut 2 cm stark</dd>
+        <dt>Umfang</dt><dd>704 nummerierte Seiten in 44 Lagen; Dünndruck, 52 g, füllhaltertauglich, etwa 2,5 cm stark</dd>
         <dt>Bändchen</dt><dd>Drei: rot für den Tag, grün für die Ordnung, schwarz für den Sonntag</dd>
       </dl>
     </div>
@@ -501,21 +559,21 @@ def build():
     year_pages = YEAR_END - FIRST + 1
     Y = YEAR_END
     parts = [("Vorn", 19, "--seg1", [("1–3", "Titel, Aufbau, Gebetsübersicht"), ("4–7", "Jahresplan Bibellese, NT und AT zum Abhaken"), ("8–9", "Katechismus lernen"), ("10–17", "Die Ordnung"), ("18–19", "Kirchenjahr, Ostertafel")]),
-             ("Das Kirchenjahr", year_pages, "--seg2", [(f"{FIRST}–{Y}", "57 Sonntage × 8 Seiten"), ("", "Sonntag als Doppelseite, Montag bis Samstag je eine Seite"), ("", "6 Doppelseiten für Feste")]),
+             ("Das Kirchenjahr", year_pages, "--seg2", [(f"{FIRST}–{Y}", "57 Wochen × 10 Seiten"), ("", "Sonntag 4 Seiten, Montag bis Samstag je 1 Seite"), ("", "6 Doppelseiten für Feste")]),
              ("Arena", 28, "--seg3", [(f"{Y + 1}–{Y + 2}", "Arena, Meine Brüder"), (f"{Y + 3}–{Y + 28}", "26 Treffen")]),
              ("Gebetskammer", 16, "--seg5", [(f"{Y + 29}–{Y + 44}", "Anliegen und Antworten, Notizen aus der Stille")]),
              ("Eisenschmiede", 16, "--seg6", [(f"{Y + 45}–{Y + 60}", "Notizen aus dem Gespräch unter Brüdern")]),
-             ("Hinten", 29, "--seg4", [(f"{Y + 61}–{Y + 80}", "Notizen"), (f"{Y + 81}–{Y + 88}", "Verse, die ich mitnehme"), (f"{Y + 89}", "Monatlich")])]
-    assert sum(p[1] for p in parts) == 576 == Y + 89
-    plan = ('<section class="block" id="seiten"><div class="cap"><span class="pg">Umfang</span><h2>576 Seiten für ein Kirchenjahr</h2>'
-            '<p>Mit der Doppelseite pro Tag aus dem Band für dreizehn Wochen wären es über tausend Seiten. Deshalb bekommt hier nur der Sonntag eine Doppelseite, die Wochentage je eine Seite.</p></div>'
-            '<div class="plan"><div class="bar" role="img" aria-label="Vorn 19, Das Kirchenjahr 468, Arena 28, Gebetskammer 16, Eisenschmiede 16, Hinten 29 Seiten">'
+             ("Hinten", 43, "--seg4", [(f"{Y + 61}–{Y + 94}", "Notizen"), (f"{Y + 95}–{Y + 102}", "Verse, die ich mitnehme"), (f"{Y + 103}", "Monatlich")])]
+    assert sum(p[1] for p in parts) == 704 == Y + 103 and 704 % 16 == 0
+    plan = ('<section class="block" id="seiten"><div class="cap"><span class="pg">Umfang</span><h2>704 Seiten für ein Kirchenjahr</h2>'
+            '<p>Mit der Doppelseite pro Tag aus dem Band für dreizehn Wochen wären es weit über tausend Seiten. Deshalb bekommt hier nur der Sonntag vier Seiten, die Wochentage je eine.</p></div>'
+            f'<div class="plan"><div class="bar" role="img" aria-label="Vorn 19, Das Kirchenjahr {year_pages}, Arena 28, Gebetskammer 16, Eisenschmiede 16, Hinten 43 Seiten">'
             + "".join(f'<span style="flex:{n};background:var({c_})">{n if n > 60 else ""}</span>' for _, n, c_, _ in parts)
             + '</div><div class="parts kj">'
             + "".join(f'<div><h3><i style="background:var({c_})"></i>{t}<b>{n} S.</b></h3><ul>'
                       + "".join(f"<li><span>{a}</span><span>{bb}</span></li>" for a, bb in items) + "</ul></div>"
                       for t, n, c_, items in parts)
-            + '</div><p class="sum">Sonntage, die in einem Jahr ausfallen, lassen acht Seiten frei. Dafür passt das Buch in jedes Jahr.</p></div></section>')
+            + '</div><p class="sum">Sonntage, die in einem Jahr ausfallen, lassen zehn Seiten frei. Gedruckt sind die Texte, die Henoch geprüft hat: die Wochensprüche aller Sonntage, Dieffenbach für die vier Adventssonntage, Löhe für neun Sonn- und Festtage. Wo ein Text noch fehlt, steht ein Platzhalter.</p></div></section>')
     adv = folio_of("1. Advent")
     blocks = [
         cover, plan,
@@ -531,12 +589,12 @@ def build():
         block("kirchenjahr", "S. 18–19", "Das Kirchenjahr",
               "Vorn steht der Jahreskreis mit allen 57 Sonntagen, daneben die Ostertafel. Aus ihr liest man ab, wann ein Kirchenjahr beginnt und welche Sonntage es hat.",
               spread(p_kreis(), p_ostertafel())),
-        block("sonntag", f"S. {adv}–{adv + 1}", "Der Sonntag",
-              "Links steht das Wort des Sonntags: Wochenspruch, Psalm, Lied, Evangelium und Epistel, je ein Impuls zum Evangelium und zur Epistel, ein Gedanke für den Tisch und eine Frage für die Woche. Rechts kommen Gottesdienst, die Stille Zeit am Sonntag und die Gewohnheiten der Woche hin.",
-              spread(p_sonntag_l(), p_sonntag_r())),
-        block("tage", f"S. {adv + 2}–{adv + 3}", "Die Wochentage",
+        block("sonntag", f"S. {adv}–{adv + 3}", "Der Sonntag mit Dieffenbach und Löhe",
+              "Der Sonntag hat vier Seiten. Vorn stehen der Wochenspruch und Dieffenbachs Bibellektion zum Evangelium aus der Evangelischen Haus-Agende. Dann folgt Löhes Betrachtung zur Epistel, darunter Platz für den Gedanken am Tisch und die Frage für die Woche. Die vierte Seite trägt Gottesdienst, Stille Zeit am Sonntag und die Gewohnheiten der Woche. Die Texte sind die der App, wortgetreu.",
+              spread(p_so1(), p_so2()) + '<div class="gap"></div>' + spread(p_so3(), p_sonntag_r())),
+        block("tage", f"S. {adv + 4}–{adv + 5}", "Die Wochentage",
               "Ein Tag hat eine Seite, Morgen oben, Abend unten. Psalm und Stand für die Prüfung hängen am Wochentag und sind vorgedruckt, die Vesper liest das Evangelium des Sonntags. Datum, Lesung und Katechismusstück trägt man ein.",
-              spread(p_tag(0, "l", adv + 2, MO_EX), p_tag(1, "r", adv + 3))),
+              spread(p_tag(0, "l", adv + 4, MO_EX), p_tag(1, "r", adv + 5))),
         block("gebetskammer", f"S. {YEAR_END + 29}–{YEAR_END + 44}", "Gebetskammer",
               "Hinten im Buch hat die Gebetskammer sechzehn Seiten: links die Anliegen mit der Antwort, wenn sie kommt, rechts Platz für das, was in der Stille aufgeht. Was bekannt wird, steht auch hier nicht.",
               spread(p_gebetskammer(), p_notes(YEAR_END + 30, "r", "Gebetskammer", "Aus der Stille", "Ein Satz genügt.",
@@ -545,7 +603,7 @@ def build():
               "Dann die Eisenschmiede: Notizen aus dem Gespräch unter Brüdern, je Treffen ein Block mit Datum und wer dabei war. Was einer dem andern bekennt, bleibt im Gespräch.",
               spread(p_eisenschmiede(), p_notes(YEAR_END + 46, "r", "Eisenschmiede", "Eisenschmiede", "Weitere Notizen."))),
     ]
-    nav = [("umschlag", "Der Band"), ("seiten", "576 Seiten"), ("bibellese", "Bibellese"), ("katechismus", "Katechismus"),
+    nav = [("umschlag", "Der Band"), ("seiten", "704 Seiten"), ("bibellese", "Bibellese"), ("katechismus", "Katechismus"),
            ("kirchenjahr", "Kirchenjahr"), ("sonntag", "Sonntag"), ("tage", "Wochentage"), ("gebetskammer", "Gebetskammer"), ("eisenschmiede", "Eisenschmiede")]
     nav_html = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in nav)
     body = f"""
@@ -554,7 +612,7 @@ def build():
     <div>
       <p class="eyebrow">Henoch · Musterseiten</p>
       <h1>Henoch im Kirchenjahr</h1>
-      <p class="lede">Ein undatierter Band mit allen Sonntagen vom 1. Advent bis zum 27. Sonntag nach Trinitatis. Jeder Sonntag bringt einen Impuls zum Evangelium und einen zur Epistel. Beginnen kannst du an jedem Sonntag.</p>
+      <p class="lede">Ein undatierter Band mit allen Sonntagen vom 1. Advent bis zum 27. Sonntag nach Trinitatis. Jeder Sonntag bringt Dieffenbachs Bibellektion zum Evangelium und Löhes Betrachtung zur Epistel. Beginnen kannst du an jedem Sonntag.</p>
     </div>
     <div style="display:grid">
       <button class="toggle" id="ex-toggle" type="button" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Beispieleinträge</button>
