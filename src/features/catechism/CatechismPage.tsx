@@ -24,7 +24,7 @@ import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
-import { LoeheExplanation } from './LoeheExplanation';
+import { LoeheExplanation, LoehePiece } from './LoeheExplanation';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -116,12 +116,12 @@ function ChiefPart({ ci }: { ci: number }) {
                 <button type="button" className="pill" aria-pressed={!!memorized[id]} onClick={() => toggleMemorized(id)}>
                   {memorized[id] ? '✓ auswendig' : 'auswendig gelernt'}
                 </button>
+                <LoehePiece chief={chief.id} pieceIndex={pi} />
               </Section>
             </article>
           );
         })}
       </div>
-      <LoeheExplanation chief={chief.id} />
     </>
   );
 }

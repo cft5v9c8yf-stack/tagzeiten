@@ -612,19 +612,32 @@ describe('Katechismus', () => {
     expect(screen.getAllByRole('button', { name: /Bitte\./ })).toHaveLength(7);
   });
 
-  it("folds Löhe's questions under a chief part, lesson by lesson", async () => {
+  it("folds Löhe's questions under each piece", async () => {
     await renderAt('/katechismus/commandments', <CatechismPage />);
-    const head = await screen.findByRole('button', { name: 'Erklärung von Wilhelm Löhe' });
-    const first = () => screen.getByText(/Wovon handelt das erste Hauptstück\?/).closest('[hidden]');
-    expect(first()).not.toBeNull();
-    fireEvent.click(head);
-    fireEvent.click(screen.getByRole('button', { name: 'II. Einleitende Fragen zum ersten Hauptstück' }));
-    expect(first()).toBeNull();
-    expect(document.body.textContent).toContain('17. Wovon handelt das erste Hauptstück?');
-    expect(document.body.textContent).toContain('Von den heiligen zehen Geboten.');
-    // The Law ends in the Gospel (rule 1): the last lesson leads to Christ.
-    fireEvent.click(screen.getByRole('button', { name: 'Uebergangsfragen zum zweiten Hauptstück' }));
+    await screen.findByRole('heading', { level: 2, name: /Die Zehn Gebote/ });
+    const heads = screen.getAllByRole('button', { name: /^Fragen von Wilhelm Löhe/ });
+    expect(heads).toHaveLength(11);
+    const q40 = () => screen.getByText(/Was sollst du nach dem ersten Gebote nicht\?/).closest('[hidden]');
+    expect(q40()).not.toBeNull();
+    expect(heads[0]!.closest('.fold-head')!.textContent).toContain('Fragen 17–46');
+    fireEvent.click(heads[0]!);
+    expect(q40()).toBeNull();
+    expect(document.body.textContent).toContain('40. Was sollst du nach dem ersten Gebote nicht?');
+    // The Law ends in the Gospel (rule 1): the last piece leads to Christ.
+    fireEvent.click(heads[10]!);
     expect(document.body.textContent).toContain('„Christus hat uns erlöset vom Fluch des Gesetzes, da Er ward ein Fluch für uns.“');
+  });
+
+  it("asks Löhe's questions in the house father mode after Luther's", async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    fireEvent.click(await screen.findByText('Am Tisch abfragen'));
+    const dialog = screen.getByRole('dialog');
+    fireEvent.click(screen.getByText('Antwort zeigen'));
+    fireEvent.click(screen.getByText('Nächste Frage'));
+    expect(dialog.querySelector('.hf-source')!.textContent).toMatch(/^Wilhelm Löhe, Frage \d+$/);
+    expect(dialog.querySelector('.hf-answer')).toBeNull();
+    fireEvent.click(screen.getByText('Antwort zeigen'));
+    expect(dialog.querySelector('.hf-answer')!.textContent!.length).toBeGreaterThan(1);
   });
 
   it("keeps Löhe's questions on the whole catechism on the overview", async () => {

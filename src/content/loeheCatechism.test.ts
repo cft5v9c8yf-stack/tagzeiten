@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { CATECHISM } from './catechism';
-import { LOEHE_BY_CHIEF_PART, LOEHE_IN_ORDER, LOEHE_OVERVIEW, isQuestion, lessonTitle } from './loeheCatechism';
+import {
+  LOEHE_BY_CHIEF_PART,
+  LOEHE_IN_ORDER,
+  LOEHE_OVERVIEW,
+  LOEHE_PIECE_RANGES,
+  isQuestion,
+  lessonTitle,
+  loeheForPiece,
+} from './loeheCatechism';
 
 const numbers = (chapters: typeof LOEHE_IN_ORDER) =>
   chapters.flatMap((c) => c.lessons.flatMap((l) => l.items.filter(isQuestion).map((q) => q.no)));
@@ -41,5 +49,28 @@ describe("Löhe's questions on the chief parts", () => {
     expect(lessonTitle(ii!)).toBe('II. Einleitende Fragen zum ersten Hauptstück');
     expect(lessonTitle(iii!)).toBe('III. Fragen über den Wortverstand des ersten Hauptstücks');
     expect(lessonTitle(iv!)).toBe('IV. Fragen 64–77');
+  });
+
+  it('give every piece its questions, each question to exactly one piece', () => {
+    const onPieces: number[] = [];
+    for (const part of CATECHISM) {
+      expect(LOEHE_PIECE_RANGES[part.id], part.id).toHaveLength(part.pieces.length);
+      part.pieces.forEach((_, pi) => {
+        const qs = loeheForPiece(part.id, pi).flatMap((l) => l.items.filter(isQuestion).map((q) => q.no));
+        expect(qs.length, `${part.id} ${pi}`).toBeGreaterThan(0);
+        onPieces.push(...qs);
+      });
+    }
+    const overview = numbers(LOEHE_OVERVIEW);
+    expect([...onPieces, ...overview].sort((a, b) => a - b)).toEqual(numbers(LOEHE_IN_ORDER));
+  });
+
+  it('keep a commandment\'s number over its questions', () => {
+    const first = loeheForPiece('commandments', 0);
+    expect(first.map(lessonTitle)).toEqual(['II. Einleitende Fragen zum ersten Hauptstück', 'III. Fragen über den Wortverstand des ersten Hauptstücks']);
+    expect(first[1]!.items[0]).toEqual({ mark: '1.' });
+    const second = loeheForPiece('commandments', 1)[0]!;
+    expect(second.items[0]).toEqual({ mark: '2.' });
+    expect(second.items.some((i) => 'mark' in i && i.mark === '1.')).toBe(false);
   });
 });

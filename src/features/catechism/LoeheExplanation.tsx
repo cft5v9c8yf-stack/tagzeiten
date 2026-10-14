@@ -1,10 +1,11 @@
 import type { ChiefPartId } from '../../content/catechism';
 import {
-  LOEHE_BY_CHIEF_PART,
   LOEHE_OVERVIEW,
   LOEHE_SOURCE,
   isQuestion,
   lessonTitle,
+  loeheForPiece,
+  pieceRangeLabel,
   type LoeheChapter,
   type LoeheQuestion,
 } from '../../content/loeheCatechism';
@@ -24,7 +25,7 @@ function Lines({ text }: { text: string }) {
   );
 }
 
-function Question({ q }: { q: LoeheQuestion }) {
+export function Question({ q }: { q: LoeheQuestion }) {
   return (
     <div className="loehe-qa">
       <p className="cat-q">
@@ -59,26 +60,53 @@ function Chapter({ chapter, prefix }: { chapter: LoeheChapter; prefix: string })
 }
 
 /**
- * Löhe's questions and answers on one chief part, folded under the pieces
- * (on the overview: those on the catechism as a whole). Folded by default:
- * an explanation for the teacher, not a step in learning by heart.
+ * Löhe's questions on one piece, folded under it: his lessons as small
+ * headings, the questions in his numbering.
  */
-export function LoeheExplanation({ chief }: { chief?: ChiefPartId }) {
-  const chapters = chief ? [LOEHE_BY_CHIEF_PART[chief]] : LOEHE_OVERVIEW;
-  const id = `cat.loehe.${chief ?? 'overview'}`;
+export function LoehePiece({ chief, pieceIndex }: { chief: ChiefPartId; pieceIndex: number }) {
+  const lessons = loeheForPiece(chief, pieceIndex);
+  if (!lessons.length) return null;
+  return (
+    <Section
+      id={`cat.loehe.${chief}.${pieceIndex}`}
+      title="Fragen von Wilhelm Löhe"
+      aside={pieceRangeLabel(chief, pieceIndex)}
+      level={4}
+      defaultOpen={false}
+      className="loehe loehe-piece"
+      titleClassName="cat-sub"
+    >
+      {lessons.map((lesson, li) => (
+        <div key={li}>
+          <h5 className="loehe-lesson">{lessonTitle(lesson)}</h5>
+          {lesson.items.map((item, i) =>
+            isQuestion(item) ? <Question key={item.no} q={item} /> : <p key={`m${i}`} className="loehe-mark">{item.mark}</p>,
+          )}
+        </div>
+      ))}
+      <p className="small muted">{LOEHE_SOURCE}.</p>
+    </Section>
+  );
+}
+
+/**
+ * Löhe's questions on the catechism as a whole and on the means of grace, on
+ * the overview. Folded by default: an explanation for the teacher, not a
+ * step in learning by heart.
+ */
+export function LoeheExplanation() {
+  const id = 'cat.loehe.overview';
   return (
     <Section id={id} title="Erklärung von Wilhelm Löhe" level={3} defaultOpen={false} className="loehe" titleClassName="cat-sub">
       <p className="book-source">
-        {chief
-          ? 'Fragen und Antworten zum Verständnis, in Lektionen eingeteilt, wie Löhe sie für Haus, Schule und Kirche geschrieben hat.'
-          : 'Fragen zum ganzen Katechismus und zu den Gnadenmitteln. Die Fragen zu den einzelnen Hauptstücken stehen auf deren Seiten.'}{' '}
-        Wortgetreu in der Rechtschreibung der Ausgabe.
+        Fragen zum ganzen Katechismus und zu den Gnadenmitteln. Die Fragen zu den einzelnen Stücken stehen unter jedem Stück
+        und im Hausvater-Modus. Wortgetreu in der Rechtschreibung der Ausgabe.
       </p>
-      {chapters.map((c, i) => (
+      {LOEHE_OVERVIEW.map((c, i) => (
         <Chapter key={i} chapter={c} prefix={`${id}.${i}`} />
       ))}
       <p className="small muted">
-        {LOEHE_SOURCE}, {chapters.map((c) => c.pages).join(' und ')}.
+        {LOEHE_SOURCE}, {LOEHE_OVERVIEW.map((c) => c.pages).join(' und ')}.
       </p>
     </Section>
   );

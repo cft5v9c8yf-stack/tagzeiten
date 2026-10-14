@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.6.1',
+    date: '2026-10-14',
+    title: 'Löhes Fragen bei jedem Stück',
+    changes: [
+      { area: 'Lehre', text: 'Löhes Fragen stehen jetzt unter dem Stück, zu dem sie gehören: eingeklappt als „Fragen von Wilhelm Löhe“, daneben ihre Nummern. Die einleitenden Fragen eines Hauptstücks stehen beim ersten Stück, die Übergangsfragen beim letzten.' },
+      { area: 'Lehre', text: 'Im Hausvater-Modus folgen nach Luthers Fragen zu einem Stück Löhes Fragen, jede mit „Antwort zeigen“. Mit „Nächstes Stück“ geht es ohne sie weiter.' },
+    ],
+  },
+  {
     version: '1.6.0',
     date: '2026-10-14',
     title: 'Löhes Fragen zum Katechismus',
