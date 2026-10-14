@@ -10,7 +10,6 @@ Run: python3 kirchenjahr.py (writes henoch-kirchenjahr.html and henoch-kirchenja
 """
 import datetime as dt
 import html
-import json
 import math
 import pathlib
 import sys
@@ -21,12 +20,11 @@ import build as B  # noqa: E402
 import ordnung as O  # noqa: E402
 from build import hw, ln, lines, row, sec, c, b, page, spread, block  # noqa: E402
 
-QUELLEN = HERE / "quellen"
-_adv = json.loads((QUELLEN / "advent-lektionen.json").read_text(encoding="utf-8"))
+import texte  # noqa: E402
+
+_adv, LOEHE, WS = texte.load()
 ADV = {x["sonntag"]: x for x in _adv["sonntage"]}
 ADV_QUELLE = _adv["quelle"]
-LOEHE = json.loads((QUELLEN / "loehe-epistel.json").read_text(encoding="utf-8"))
-WS = json.loads((QUELLEN / "wochensprueche.json").read_text(encoding="utf-8"))
 
 
 def esc(t):

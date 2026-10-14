@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-"""Reads the verified Sunday texts out of the app repo (branch claude/focused-pascal-sol6ng) into JSON.
+"""Reads the verified Sunday texts straight from the app files in this repo.
 
-Nothing is retyped: the texts stay exactly as the app has them (public domain, rule 12).
+Nothing is retyped or copied: the texts stay exactly as the app has them (public domain, rule 12).
 
-Usage:
-    git show origin/claude/focused-pascal-sol6ng:src/content/lections.ts > /tmp/lections.ts
-    git show origin/claude/focused-pascal-sol6ng:src/content/weeklyVerses.ts > /tmp/weeklyVerses.ts
-    git show origin/claude/focused-pascal-sol6ng:data/advent-lektionen.json > advent-lektionen.json
-    python3 extract_texte.py /tmp/lections.ts /tmp/weeklyVerses.ts
-
-Writes loehe-epistel.json and wochensprueche.json next to this file.
+    data/advent-lektionen.json      Dieffenbach, Bibellektionen der Adventssonntage (Gospel)
+    src/content/lections.ts         Löhe, Betrachtungen zur Epistel (EPISTLE_LECTIONS)
+    src/content/weeklyVerses.ts     Wochensprüche (Luther 1912)
 
 Note: verses with several excerpts (e.g. advent3, advent4, misericordias) are joined with a plain space here.
 The app composes them itself; use the app's logic before printing those.
+
+Run `python3 texte.py` to see what was found.
 """
 import json
 import pathlib
@@ -88,8 +86,16 @@ def verses(path):
     return out
 
 
+REPO = HERE.parent
+
+
+def load():
+    """Return (dieffenbach, loehe, wochensprueche) read from the app files."""
+    adv = json.loads((REPO / "data" / "advent-lektionen.json").read_text(encoding="utf-8"))
+    content = REPO / "src" / "content"
+    return adv, loehe(content / "lections.ts"), verses(content / "weeklyVerses.ts")
+
+
 if __name__ == "__main__":
-    l, w = loehe(sys.argv[1]), verses(sys.argv[2])
-    (HERE / "loehe-epistel.json").write_text(json.dumps(l, ensure_ascii=False, indent=2), encoding="utf-8")
-    (HERE / "wochensprueche.json").write_text(json.dumps(w, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(len(l), "Löhe-Betrachtungen,", len(w), "Wochensprüche")
+    adv, l, w = load()
+    print(len(adv["sonntage"]), "Adventslektionen,", len(l), "Löhe-Betrachtungen,", len(w), "Wochensprüche")
