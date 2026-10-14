@@ -1,0 +1,108 @@
+/*
+ * Design tokens, taken from the prototype.
+ * Colour rule (CLAUDE.md, rule 5): --rubric is reserved for liturgical rubrics,
+ * versicle markers and step numbers. Everything interactive uses --accent.
+ * Missed days are never red: they use --rule (neutral grey).
+ */
+:root {
+  --paper: #f6f4ef;
+  --sheet: #ffffff;
+  --ink: #1d2330;
+  --muted: #636a76;
+  --rule: #ddd8ce;
+  --rubric: #8c2f2f;
+  --rubric-soft: #f1e3e1;
+  --accent: #2e4057;
+  --accent-soft: #e2f3fa;
+  --on-accent: #ffffff;
+  --done: #4f7a17;
+  --done-soft: #e8f2d9;
+  --half: #9a7b2f;
+  --half-soft: #f3ecd9;
+  /* From Luther's rose: gold for links and the Today tab, sky for "now" and the
+     current, green for done. Red stays with the rubrics (rule 5); in the rose it
+     is the heart. */
+  --gold: #7f6200;
+  --gold-soft: #f7efd6;
+  --link: #7a5d00;
+  --sky: #0a7fae;
+  --rose-gold: #d9ae00;
+  /* The rose's gold, a shade deeper on light paper so thin lines stay visible. */
+  --icon-gold: #c49c00;
+  --rose-sky: #0bc8ff;
+  --rose-green: #9acd32;
+  --rose-red: #e31e24;
+  --rose-white: #ffffff;
+  --rose-grey: #cfcfcf;
+  --rose-line: #141414;
+  /* Quiet block tints (Bible page). */
+  --warm-soft: #efede8;
+
+  --serif: 'Literata', Georgia, 'Times New Roman', serif;
+  --sans: 'Source Sans 3', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --radius-s: 8px;
+  --radius-m: 10px;
+  --radius-l: 12px;
+  --content-width: 640px;
+  --gutter: 18px;
+  --tabbar-height: 70px;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  color-scheme: light;
+}
+
+/* Dark scheme: designed for 04:00 – low glare, warm ink, no pure white. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #131a26;
+    --sheet: #1b2432;
+    --ink: #e8e3d8;
+    --muted: #9aa2af;
+    --rule: #2c3748;
+    --rubric: #e07a6e;
+    --rubric-soft: #3a2327;
+    --accent: #d8d0c0;
+    --accent-soft: #16303d;
+    --on-accent: #131a26;
+    --done: #9acd32;
+    --done-soft: #26331a;
+    --half: #d2b26a;
+    --half-soft: #33301f;
+    --gold: #e0b93a;
+    --link: #e0b93a;
+    --sky: #5fd6ff;
+    --icon-gold: #d9ae00;
+    --gold-soft: #2e2a1c;
+    --warm-soft: #242832;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --paper: #131a26;
+  --sheet: #1b2432;
+  --ink: #e8e3d8;
+  --muted: #9aa2af;
+  --rule: #2c3748;
+  --rubric: #e07a6e;
+  --rubric-soft: #3a2327;
+  --accent: #d8d0c0;
+  --accent-soft: #16303d;
+  --on-accent: #131a26;
+  --done: #9acd32;
+  --done-soft: #26331a;
+  --half: #d2b26a;
+  --half-soft: #33301f;
+  --gold: #e0b93a;
+  --link: #e0b93a;
+  --sky: #5fd6ff;
+  --icon-gold: #d9ae00;
+  --gold-soft: #2e2a1c;
+  --warm-soft: #242832;
+  color-scheme: dark;
+}
