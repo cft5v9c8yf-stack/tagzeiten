@@ -1,0 +1,434 @@
+<title>Henoch Arena</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: a desk with A5 notebook spreads (148 x 210 mm), every page measured in real millimetres via container units */
+:root{
+  --desk:#E2E0DA; --desk-2:#D6D3CB; --desk-ink:#1D2330; --desk-muted:#5A606C; --desk-rule:#C4C0B6; --chip:#F2F0EB;
+  --paper:#FBFAF6; --endpaper:#E9E3D7; --ink:#1D2330; --ink-2:#565D6B; --ink-3:#8E8A82; --line:#D5D0C6; --dot:#C3BDB1;
+  --rubric:#8C2F2F; --hand:#243B6B; --silent:#F1EEE7; --shade:rgba(29,35,48,.18);
+  --cloth:#1F2B3A; --cloth-2:#162030; --gilt:#C9B27D; --band:#0E141D; --ribbon-1:#8C2F2F; --ribbon-2:#3E6B4E;
+  --seg1:#8C2F2F; --seg2:#3A4A63; --seg3:#3E6B4E; --seg4:#9A7B2F; --seg5:#A8875A; --seg6:#5B6676;
+  --serif:"Literata",Georgia,"Times New Roman",serif;
+  --sans:"Source Sans 3",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --script:"Caveat","Segoe Print","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F; --seg5:#C2A57A; --seg6:#8C97A8;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#121821; --desk-2:#0D121A; --desk-ink:#E6E1D6; --desk-muted:#9AA2AF; --desk-rule:#2A3443; --chip:#1B2432; --shade:rgba(0,0,0,.55);
+  --seg1:#B5554B; --seg2:#5C7098; --seg3:#5E9472; --seg4:#B8994F; --seg5:#C2A57A; --seg6:#8C97A8;
+  color-scheme:dark}
+
+body{background:var(--desk);color:var(--desk-ink);font-family:var(--sans);font-size:16px;line-height:1.5}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:40px 72px}
+
+/* ---------- chrome ---------- */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;border-bottom:1px solid var(--desk-rule);padding-bottom:22px}
+.eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--desk-muted);font-weight:600;margin:0 0 6px}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.lede{font-family:var(--serif);font-size:1.05rem;max-width:62ch;margin:12px 0 0;color:var(--desk-ink)}
+.toggle{justify-self:end;display:flex;align-items:center;gap:10px;background:var(--chip);border:1px solid var(--desk-rule);border-radius:999px;padding:7px 14px 7px 8px;font:600 .9rem var(--sans);color:var(--desk-ink);cursor:pointer}
+.toggle .sw{width:34px;height:20px;border-radius:999px;background:var(--desk-rule);position:relative;transition:background .2s}
+.toggle .sw::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--paper);transition:transform .2s}
+.toggle[aria-pressed="true"] .sw{background:var(--hand)}
+.toggle[aria-pressed="true"] .sw::after{transform:translateX(14px)}
+.toggle:focus-visible,.nav a:focus-visible{outline:2px solid var(--hand);outline-offset:3px}
+.hint{font-size:.85rem;color:var(--desk-muted);margin:8px 0 0;text-align:right;max-width:30ch;justify-self:end}
+.nav{display:flex;flex-wrap:wrap;gap:6px 8px;margin:22px 0 0;padding:0;list-style:none}
+.nav a{display:inline-block;font-size:.86rem;color:var(--desk-ink);text-decoration:none;border:1px solid var(--desk-rule);border-radius:999px;padding:3px 12px;background:var(--chip)}
+.nav a:hover{border-color:var(--desk-muted)}
+
+.block{margin-top:56px;scroll-margin-top:16px}
+.gap{height:36px}
+.cap{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;max-width:70ch;margin:0 auto 18px;text-align:center}
+.cap h2{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0;text-wrap:balance}
+.cap .pg{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--desk-muted);font-weight:600}
+.cap p{margin:0;color:var(--desk-muted);font-size:.95rem}
+
+/* ---------- cover + spec ---------- */
+.cover-row{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:48px;align-items:center;justify-content:center}
+.book{position:relative;aspect-ratio:148/210;max-width:100%;container-type:inline-size;margin-bottom:28px}
+.book .cl{position:absolute;inset:0;border-radius:2px 7px 7px 2px;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px),
+    linear-gradient(90deg, var(--cloth-2) 0, var(--cloth) 5%, var(--cloth) 100%);
+  box-shadow:0 18px 40px var(--shade), inset -2px 0 0 rgba(255,255,255,.05);}
+.book .spine{position:absolute;left:4.2%;top:0;bottom:0;width:1px;background:rgba(0,0,0,.35);box-shadow:1px 0 0 rgba(255,255,255,.05)}
+.book .band{position:absolute;right:9%;top:-1px;bottom:-1px;width:3.2%;background:var(--band);box-shadow:0 0 0 1px rgba(255,255,255,.03), 2px 0 4px rgba(0,0,0,.3)}
+.book .rib{position:absolute;bottom:-26px;width:3.4%;height:40px;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
+.book .rib.a{left:44%;background:var(--ribbon-1)}
+.book .rib.b{left:49%;background:var(--ribbon-2);height:34px;bottom:-20px}
+.book .rib.c{left:54%;background:var(--band);height:30px;bottom:-16px}
+.book .ttl{position:absolute;left:0;right:0;top:30%;text-align:center;color:var(--gilt)}
+.book .ttl b{display:block;font-family:var(--serif);font-weight:600;font-size:11.5cqw;letter-spacing:.32em;padding-left:.32em;text-shadow:0 1px 0 rgba(0,0,0,.45)}
+.book .ttl i{display:block;width:16cqw;height:1px;background:var(--gilt);opacity:.7;margin:5cqw auto}
+.book .ttl span{display:block;font-family:var(--sans);font-weight:600;font-size:3.4cqw;letter-spacing:.42em;padding-left:.42em;text-transform:uppercase;opacity:.85}
+.spec h2{font-family:var(--serif);font-weight:600;font-size:1.35rem;margin:0 0 10px}
+.spec dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;margin:0}
+.spec dt{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--desk-muted);font-weight:600;padding-top:3px}
+.spec dd{margin:0;font-family:var(--serif)}
+
+/* ---------- spreads ---------- */
+.spread{display:grid;grid-template-columns:repeat(2,minmax(0,560px));justify-content:center;filter:drop-shadow(0 14px 22px var(--shade))}
+.spread.solo{grid-template-columns:minmax(0,560px)}
+.page{container-type:inline-size;aspect-ratio:148/210;background:var(--paper);position:relative;color:var(--ink);overflow:hidden}
+.page.l{border-radius:3px 0 0 3px;background-image:linear-gradient(to left, rgba(29,35,48,.10), rgba(29,35,48,0) 7%)}
+.page.r{border-radius:0 3px 3px 0;background-image:linear-gradient(to right, rgba(29,35,48,.10), rgba(29,35,48,0) 7%)}
+.page.ep{background-color:var(--endpaper)}
+.in{--mm:calc(100cqw / 148);--lh:calc(5.5 * var(--mm));position:absolute;inset:0;display:flex;flex-direction:column;
+  padding:calc(12 * var(--mm)) calc(14 * var(--mm)) calc(15 * var(--mm)) calc(11 * var(--mm));
+  font-family:var(--serif);font-size:calc(2.75 * var(--mm));line-height:1.38}
+.r .in{padding-left:calc(14 * var(--mm));padding-right:calc(11 * var(--mm))}
+.folio{position:absolute;bottom:calc(7 * var(--mm));font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-3);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.l .folio{left:calc(11 * var(--mm))}
+.r .folio{right:calc(11 * var(--mm))}
+.runner{position:absolute;top:calc(6.2 * var(--mm));font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.l .runner{left:calc(11 * var(--mm))}
+.r .runner{right:calc(11 * var(--mm))}
+
+/* page header */
+.ph{display:flex;justify-content:space-between;align-items:flex-end;gap:calc(4 * var(--mm));border-bottom:calc(.35 * var(--mm)) solid var(--rubric);padding-bottom:calc(1.4 * var(--mm));margin-bottom:calc(1 * var(--mm))}
+.pt{font-family:var(--serif);font-weight:600;font-size:calc(6 * var(--mm));line-height:1;color:var(--rubric);margin:0;letter-spacing:-.005em}
+.pt small{display:block;font:600 calc(2.1 * var(--mm)) var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:calc(1.2 * var(--mm))}
+.pm{display:flex;flex-direction:column;align-items:flex-end;gap:calc(1.2 * var(--mm))}
+.dline{display:flex;align-items:flex-end;gap:calc(1.5 * var(--mm));width:calc(52 * var(--mm));border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(5 * var(--mm))}
+
+/* sections + rows */
+.sec{display:flex;align-items:baseline;gap:calc(1.6 * var(--mm));margin-top:calc(2.6 * var(--mm));font:700 calc(2.25 * var(--mm)) var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--rubric)}
+.sec .no{font-variant-numeric:tabular-nums}
+.sec .m{margin-left:auto;font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--ink-3)}
+.sub{margin-top:calc(2 * var(--mm));font:700 calc(2.15 * var(--mm)) var(--sans);letter-spacing:.06em;color:var(--ink)}
+.sub em{font:italic 400 calc(2.4 * var(--mm)) var(--serif);letter-spacing:0;color:var(--ink-2);margin-left:calc(1.2 * var(--mm))}
+.row{display:grid;grid-template-columns:calc(22 * var(--mm)) minmax(0,1fr);align-items:start;position:relative}
+.row.kf::before{content:"";position:absolute;left:calc(-3.4 * var(--mm));top:calc(1 * var(--mm));bottom:calc(.8 * var(--mm));width:calc(.7 * var(--mm));background:var(--rubric)}
+.lab{font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-2);line-height:1.12;padding-top:calc(var(--lh) - 3.4 * var(--mm));padding-right:calc(1.5 * var(--mm))}
+.lab .g{display:inline-block;font:600 calc(3.6 * var(--mm)) var(--serif);color:var(--rubric);width:calc(4.2 * var(--mm));line-height:1;vertical-align:-.1em}
+.lines{display:flex;flex-direction:column;min-width:0}
+.ln{height:var(--lh);border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);display:flex;align-items:flex-end;gap:calc(1.6 * var(--mm));min-width:0;white-space:nowrap;overflow:hidden}
+.row.tall{--lh:calc(6.4 * var(--mm))}
+.page.dense .in{--lh:calc(5.15 * var(--mm))}
+.ln .half{flex:1 1 0;display:flex;align-items:flex-end;gap:calc(1.4 * var(--mm));min-width:0}
+.pl{font:600 calc(2.1 * var(--mm)) var(--sans);color:var(--ink-3);letter-spacing:.04em;padding-bottom:calc(.9 * var(--mm));flex:none}
+.pi{font:italic 400 calc(2.45 * var(--mm)) var(--serif);color:var(--ink-2);padding-bottom:calc(.8 * var(--mm));flex:none}
+.pr{margin:calc(1.2 * var(--mm)) 0 0;font:italic 400 calc(2.4 * var(--mm)) var(--serif);color:var(--ink-2);line-height:1.4}
+.rb{margin:calc(1 * var(--mm)) 0 calc(.6 * var(--mm));font:italic 400 calc(2.5 * var(--mm)) var(--serif);color:var(--rubric);line-height:1.4}
+.rb cite{font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.06em;font-style:normal;margin-left:calc(1 * var(--mm))}
+.txt{margin:calc(1.2 * var(--mm)) 0 0;font-size:calc(2.7 * var(--mm));line-height:1.45}
+.vs{margin:calc(1.2 * var(--mm)) 0 0 calc(3 * var(--mm));font-size:calc(2.75 * var(--mm));line-height:1.42}
+.vs cite{display:block;font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-top:calc(.6 * var(--mm))}
+.end{margin-top:auto;padding-top:calc(2 * var(--mm));font:italic 400 calc(2.5 * var(--mm)) var(--serif);color:var(--ink-2);text-align:center}
+.grow{flex:1 1 auto}
+
+/* marks, chips, circles, boxes */
+.chips{display:flex;flex-wrap:nowrap;gap:calc(1.6 * var(--mm));align-items:flex-end;padding-bottom:calc(.8 * var(--mm))}
+.chip{position:relative;font:600 calc(2.25 * var(--mm)) var(--sans);color:var(--ink-2);padding:0 calc(.5 * var(--mm));letter-spacing:.02em}
+.days .chip{width:calc(4.6 * var(--mm));text-align:center;padding:0}
+.mk{position:relative;font:700 calc(3.1 * var(--mm)) var(--sans);color:var(--ink-2);width:calc(4.2 * var(--mm));text-align:center;line-height:1}
+.c{display:inline-block;width:calc(3.1 * var(--mm));height:calc(3.1 * var(--mm));border-radius:50%;border:max(1px,calc(.24 * var(--mm))) solid var(--ink-3);box-sizing:border-box;vertical-align:middle}
+.b{position:relative;display:inline-block;width:calc(3 * var(--mm));height:calc(3 * var(--mm));border:max(1px,calc(.24 * var(--mm))) solid var(--ink-3);box-sizing:border-box;vertical-align:middle;flex:none}
+.dash{font:600 calc(2.4 * var(--mm)) var(--sans);color:var(--ink-3)}
+.rest{font:italic 400 calc(2.2 * var(--mm)) var(--serif);color:var(--ink-3)}
+
+/* handwriting (example entries) */
+.hw{display:none;font-family:var(--script);font-weight:500;font-size:calc(4.05 * var(--mm));line-height:1;color:var(--hand);padding:0 0 calc(.45 * var(--mm)) calc(.6 * var(--mm));white-space:nowrap}
+.show .hw{display:inline-block}
+.show .hc::after{content:"";position:absolute;inset:calc(-.9 * var(--mm)) calc(-1.1 * var(--mm));border:calc(.28 * var(--mm)) solid var(--hand);border-radius:50%;transform:rotate(-6deg);opacity:.9;pointer-events:none}
+.show .c.on{background:radial-gradient(circle at 46% 54%, var(--hand) 0 52%, transparent 58%)}
+.show .b.on::after{content:"";position:absolute;left:calc(.75 * var(--mm));top:calc(-1 * var(--mm));width:calc(1.1 * var(--mm));height:calc(2.8 * var(--mm));border:solid var(--hand);border-width:0 calc(.5 * var(--mm)) calc(.5 * var(--mm)) 0;transform:rotate(38deg)}
+.show .nb.on::after{content:"";position:absolute;left:8%;right:8%;top:50%;height:calc(.45 * var(--mm));background:var(--hand);transform:rotate(-52deg);border-radius:2px}
+
+/* silent panel: prayed, not written */
+.silent{margin-top:calc(1.4 * var(--mm));height:calc(13 * var(--mm));background:var(--silent);border-radius:calc(1 * var(--mm));display:grid;place-items:center;font:italic 400 calc(2.6 * var(--mm)) var(--serif);color:var(--ink-2)}
+.silent.sm{height:auto;padding:calc(1.6 * var(--mm)) calc(3 * var(--mm));place-items:start;justify-items:start}
+
+/* tables */
+.tbl{display:grid;margin-top:calc(1.4 * var(--mm))}
+.tbl > div{display:grid;align-items:end;border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);min-height:calc(7.6 * var(--mm))}
+.tbl .th{font:700 calc(1.95 * var(--mm)) var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);min-height:0;padding-bottom:calc(1 * var(--mm));border-bottom-color:var(--ink-3);line-height:1.15}
+.tbl span{min-width:0;overflow:hidden;white-space:nowrap;padding-bottom:calc(1 * var(--mm))}
+.tbl .th span{white-space:normal}
+.tbl .d{font:700 calc(2.4 * var(--mm)) var(--sans);color:var(--rubric)}
+.tbl .ps{font:400 calc(2.6 * var(--mm)) var(--serif);font-variant-numeric:tabular-nums}
+.tbl .st{font:400 calc(2.45 * var(--mm)) var(--serif);color:var(--ink-2)}
+.tbl .hw{padding-bottom:0}
+.tbl span.hw,.ln .hw,.hb span.hw{overflow:visible;padding-right:calc(.8 * var(--mm))}
+.wk > div{grid-template-columns:calc(8 * var(--mm)) calc(18 * var(--mm)) calc(31 * var(--mm)) calc(28 * var(--mm)) minmax(0,1fr)}
+.mo > div{grid-template-columns:calc(22 * var(--mm)) minmax(0,1fr) calc(22 * var(--mm)) calc(17 * var(--mm)) calc(19 * var(--mm));min-height:calc(9.5 * var(--mm))}
+.mo .ck{text-align:center}
+.vz > div{grid-template-columns:calc(27 * var(--mm)) minmax(0,1fr) calc(15 * var(--mm)) calc(10 * var(--mm));min-height:calc(5.6 * var(--mm))}
+.vz .r2{text-align:right;padding-right:calc(.6 * var(--mm))}
+
+.hb{display:grid;grid-template-columns:minmax(0,1fr) repeat(7, calc(8.4 * var(--mm)));align-items:end;margin-top:calc(1.2 * var(--mm))}
+.hb > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(6 * var(--mm));display:flex;align-items:center;min-width:0;overflow:hidden;white-space:nowrap}
+.hb > span.cc{justify-content:center}
+.hb > span.h{font:700 calc(2.1 * var(--mm)) var(--sans);letter-spacing:.06em;color:var(--ink-3);justify-content:center;height:calc(4.6 * var(--mm));border-bottom-color:var(--ink-3)}
+.hb > span.h.lft{justify-content:flex-start;text-transform:uppercase;letter-spacing:.1em}
+.hb > span.n{font-size:calc(2.65 * var(--mm))}
+.hb > span.grp{grid-column:1 / -1;font:700 calc(2.05 * var(--mm)) var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--rubric);height:calc(5.4 * var(--mm));align-items:flex-end;padding-bottom:calc(.8 * var(--mm));border-bottom:none}
+.hb .hw{padding-bottom:0}
+.hb.wa > span{height:calc(6.9 * var(--mm))}
+.hb.wa > span.h{height:calc(4.6 * var(--mm))}
+.hb.wa > span.grp{height:calc(6 * var(--mm))}
+.tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:calc(3 * var(--mm));margin-top:calc(.4 * var(--mm))}
+.tri .ln{--lh:calc(5.6 * var(--mm))}
+.wl{display:grid;gap:calc(1.6 * var(--mm));margin-top:calc(1.4 * var(--mm))}
+.wl label,.wl .it{display:flex;align-items:center;gap:calc(2.2 * var(--mm));font-size:calc(2.75 * var(--mm))}
+
+/* NT grid */
+.nt{display:grid;grid-template-columns:calc(23 * var(--mm)) minmax(0,1fr);row-gap:calc(1.75 * var(--mm));margin-top:calc(2.6 * var(--mm));align-items:center}
+.nt .bk{font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--ink-2);white-space:nowrap}
+.nt .bx{display:flex;flex-wrap:wrap;gap:calc(.35 * var(--mm))}
+.nb{position:relative;width:calc(3.15 * var(--mm));height:calc(3.15 * var(--mm));border:max(1px,calc(.2 * var(--mm))) solid var(--line);box-sizing:border-box;font:600 calc(1.55 * var(--mm)) var(--sans);color:var(--ink-3);display:grid;place-items:center;font-variant-numeric:tabular-nums;line-height:1}
+
+/* catechism list */
+.kt{display:grid;grid-template-columns:minmax(0,1fr) calc(15 * var(--mm)) calc(15 * var(--mm));margin-top:calc(1.6 * var(--mm));align-items:end}
+.kt > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(3.1 * var(--mm));display:flex;align-items:flex-end;padding-bottom:calc(.25 * var(--mm));font-size:calc(2.3 * var(--mm));min-width:0;white-space:nowrap;overflow:hidden}
+.kt > span.cc{justify-content:center;align-items:center;padding:0}
+.kt > span.hs{font:700 calc(2.05 * var(--mm)) var(--sans);letter-spacing:.09em;text-transform:uppercase;color:var(--rubric);height:calc(4.2 * var(--mm));border-bottom-color:transparent}
+.kt > span.hs.w{font-weight:600;letter-spacing:.04em;text-transform:none;color:var(--ink-3)}
+.kt > span.th{font:700 calc(1.85 * var(--mm)) var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);justify-content:center;text-align:center;line-height:1.1;border-bottom-color:var(--ink-3);height:calc(5 * var(--mm))}
+.kt .b{width:calc(2.5 * var(--mm));height:calc(2.5 * var(--mm))}
+
+/* dot grid */
+.dots{flex:1 1 auto;margin-top:calc(2 * var(--mm));position:relative;
+  background-image:radial-gradient(circle, var(--dot) 0 calc(.26 * var(--mm)), transparent calc(.32 * var(--mm)));
+  background-size:calc(5 * var(--mm)) calc(5 * var(--mm));background-position:calc(-2.5 * var(--mm)) calc(-2.5 * var(--mm))}
+.dots .note{position:absolute;left:calc(5 * var(--mm));right:calc(3 * var(--mm));display:flex;flex-direction:column}
+.dots .note .hw{line-height:calc(5 * var(--mm));height:calc(5 * var(--mm));padding:0;white-space:nowrap}
+
+/* timeline */
+.tl{margin-top:calc(2.2 * var(--mm));width:100%;height:auto;display:block}
+.tl text{font-family:var(--sans)}
+.times{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:calc(2.4 * var(--mm));margin-top:calc(2.4 * var(--mm))}
+.times .ln{justify-content:center}
+.times .pl{display:block;text-align:center;padding:0 0 calc(.6 * var(--mm))}
+
+/* toc */
+.toc{display:grid;grid-template-columns:calc(9 * var(--mm)) minmax(0,1fr);row-gap:calc(1.25 * var(--mm));margin-top:calc(2.2 * var(--mm));font-size:calc(2.7 * var(--mm))}
+.toc b{font:600 calc(2.4 * var(--mm)) var(--sans);color:var(--rubric);font-variant-numeric:tabular-nums;padding-top:calc(.25 * var(--mm))}
+.toc span em{color:var(--ink-2)}
+
+/* endpapers + title */
+.legend{display:grid;grid-template-columns:calc(13 * var(--mm)) minmax(0,1fr);row-gap:calc(1.9 * var(--mm));column-gap:calc(2 * var(--mm));margin-top:calc(1.6 * var(--mm));font-size:calc(2.65 * var(--mm));align-items:baseline}
+.legend .k{font:700 calc(3.2 * var(--mm)) var(--sans);color:var(--ink);text-align:center;line-height:1}
+.legend .k.serif{font-family:var(--serif);color:var(--rubric)}
+.legend .bar{display:block;margin:0 auto;width:calc(.7 * var(--mm));height:calc(4 * var(--mm));background:var(--rubric)}
+.sw6{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:calc(1.3 * var(--mm)) calc(3 * var(--mm));margin-top:calc(1.6 * var(--mm));font-size:calc(2.5 * var(--mm))}
+.sw6 span{display:flex;gap:calc(1.8 * var(--mm));align-items:center;line-height:1.2}
+.sw6 i{flex:none;width:calc(6 * var(--mm));height:calc(2.2 * var(--mm));border-radius:calc(1.1 * var(--mm))}
+.title-pg{align-items:center;text-align:center}
+.title-pg .big{font:600 calc(12 * var(--mm)) var(--serif);letter-spacing:.22em;padding-left:.22em;color:var(--rubric);margin:calc(30 * var(--mm)) 0 0;line-height:1}
+.title-pg .rule{width:calc(22 * var(--mm));height:calc(.35 * var(--mm));background:var(--rubric);margin:calc(4 * var(--mm)) auto}
+.title-pg .subt{font-size:calc(3.4 * var(--mm));margin:0}
+.title-pg .vs{margin:calc(12 * var(--mm)) auto 0;font-style:italic;max-width:calc(92 * var(--mm))}
+.own{margin-top:auto;width:100%;text-align:left;display:grid;gap:calc(1 * var(--mm))}
+.bogen p{margin:calc(1 * var(--mm)) 0 0;font-size:calc(2.75 * var(--mm));line-height:1.48}
+.bogen h3{margin:calc(4 * var(--mm)) 0 0;font:700 calc(2.25 * var(--mm)) var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--rubric)}
+.src{margin-top:auto;font:italic 400 calc(2.25 * var(--mm)) var(--serif);color:var(--ink-2);text-align:center;line-height:1.45}
+
+/* page plan */
+.plan{max-width:900px;margin:0 auto}
+.bar{display:flex;height:34px;border-radius:4px;overflow:hidden;box-shadow:0 1px 0 var(--desk-rule)}
+.bar span{display:flex;align-items:center;justify-content:center;color:var(--paper);font:600 .8rem var(--sans);min-width:0;overflow:hidden;white-space:nowrap}
+.parts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;margin-top:18px}
+.parts h3{margin:0 0 6px;font:600 .78rem var(--sans);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.parts h3 i{width:10px;height:10px;border-radius:2px;flex:none}
+.parts h3 b{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--desk-muted)}
+.parts ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-family:var(--serif);font-size:.9rem;line-height:1.35}
+.parts li{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+.parts li span:first-child{font:600 .8rem var(--sans);color:var(--desk-muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.plan .sum{margin:18px 0 0;font-family:var(--serif);color:var(--desk-muted);text-align:center}
+
+/* phones: one page per row */
+@media (max-width: 760px){
+  .top{grid-template-columns:minmax(0,1fr)}
+  .hint{text-align:left;justify-self:start}
+  .toggle{justify-self:start}
+  .cover-row{grid-template-columns:minmax(0,1fr);gap:40px}
+  .book{width:min(320px,100%);margin:0 auto 28px}
+  .spread{grid-template-columns:minmax(0,1fr);row-gap:14px}
+  .parts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .page.l,.page.r{border-radius:3px}
+}
+@media (prefers-reduced-motion: reduce){.toggle .sw,.toggle .sw::after{transition:none}}
+
+/* print: A5 pages only, no desk */
+@page{size:148mm 210mm;margin:0}
+@media print{
+  html,body{background:#fff}
+  :root{padding:0}
+  .wrap{max-width:none;padding:0}
+  .top,.cap,.cover-block,.nav,#seiten,.gap{display:none}
+  .block{margin:0}
+  .spread{display:block;filter:none}
+  .page{width:148mm;height:210mm;aspect-ratio:auto;break-after:page;border-radius:0;background-image:none}
+}
+
+/* Die Ordnung: liturgical typesetting */
+.ord .in{font-size:calc(2.55 * var(--mm));line-height:1.36}
+.ord .sec{margin-top:calc(2.8 * var(--mm))}
+.ord .sub{margin-top:calc(2.1 * var(--mm))}
+.ord .rb{margin:calc(.6 * var(--mm)) 0 0}
+.ord .pr{margin-top:calc(.6 * var(--mm))}
+.lit{margin:calc(.7 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.36}
+.lit.run{text-indent:calc(-2 * var(--mm));padding-left:calc(2 * var(--mm));margin-top:calc(.45 * var(--mm))}
+.lit.ref{color:var(--ink-2);font-style:italic}
+.lit cite{display:block;font:600 calc(1.95 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-top:calc(.4 * var(--mm))}
+.va{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr);margin-top:calc(.35 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.36}
+.va b{font:700 calc(2.25 * var(--mm)) var(--sans);color:var(--rubric);padding-top:calc(.2 * var(--mm))}
+.txt.o{margin-top:calc(.6 * var(--mm));font-size:calc(2.55 * var(--mm));line-height:1.4}
+.txt.st{margin-top:calc(.35 * var(--mm))}
+.txt b{font-weight:600}
+.pst{display:grid;grid-template-columns:calc(17 * var(--mm)) calc(7 * var(--mm)) minmax(0,1fr);margin:calc(1 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.45 * var(--mm));line-height:1.3}
+.pst > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);padding:calc(.55 * var(--mm)) 0}
+.pst .th{font:700 calc(1.9 * var(--mm)) var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);border-bottom-color:var(--ink-3)}
+.pst .d{font:600 calc(2.2 * var(--mm)) var(--sans);color:var(--ink-2)}
+.pst .p{font-variant-numeric:tabular-nums}
+.q7{margin:calc(.6 * var(--mm)) 0 0 calc(3.5 * var(--mm));padding-left:calc(3.5 * var(--mm));columns:2;column-gap:calc(5 * var(--mm));font-size:calc(2.45 * var(--mm));line-height:1.36}
+.q7 li{break-inside:avoid}
+.q7 li::marker{font:600 calc(2.1 * var(--mm)) var(--sans);color:var(--rubric)}
+.kz{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr);row-gap:calc(.9 * var(--mm));margin-top:calc(.8 * var(--mm))}
+.kz .kn{font:700 calc(2.25 * var(--mm)) var(--sans);color:var(--rubric);padding-top:calc(.2 * var(--mm))}
+.kz b{font-weight:600}
+.kz i{display:block;color:var(--ink-2)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.kft{display:grid;grid-template-columns:calc(3.5 * var(--mm)) minmax(0,1fr) calc(10 * var(--mm));margin:calc(.8 * var(--mm)) 0 0 calc(3.5 * var(--mm));font-size:calc(2.45 * var(--mm))}
+.kft > span{border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);padding:calc(.4 * var(--mm)) 0}
+.kft .d{font:700 calc(2.1 * var(--mm)) var(--sans);color:var(--rubric)}
+.kft .m{text-align:right;color:var(--ink-3);font:600 calc(2.1 * var(--mm)) var(--sans)}
+.kft .m::after{content:" Min."}
+
+.atiles{display:grid;gap:calc(2.4 * var(--mm));margin-top:calc(5 * var(--mm))}
+.atile{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:calc(.4 * var(--mm)) calc(3 * var(--mm));padding:calc(3 * var(--mm)) calc(3.4 * var(--mm));border:max(1px,calc(.25 * var(--mm))) solid var(--line);border-radius:calc(1.2 * var(--mm))}
+.atile b{font:600 calc(4 * var(--mm)) var(--serif);color:var(--rubric)}
+.atile span{grid-column:1;font-size:calc(2.6 * var(--mm));color:var(--ink-2)}
+.atile i{grid-column:2;grid-row:1 / span 2;align-self:center;font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-3);font-style:normal}
+.phint{font:italic 400 calc(2.35 * var(--mm)) var(--serif);color:var(--ink-3);padding-bottom:calc(.9 * var(--mm));white-space:nowrap;overflow:hidden}
+.show .phint{display:none}
+.comfort{margin-top:calc(3 * var(--mm));padding-top:calc(2 * var(--mm));border-top:max(1px,calc(.3 * var(--mm))) solid var(--ink-3)}
+.comfort p{margin:calc(1 * var(--mm)) 0 0;font:italic 400 calc(2.6 * var(--mm)) var(--serif);line-height:1.42;color:var(--ink)}
+.comfort cite{display:block;font:600 calc(2 * var(--mm)) var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--rubric);font-style:normal;margin-top:calc(.3 * var(--mm))}
+.arch{display:flex;align-items:flex-end;gap:calc(2 * var(--mm));margin-top:auto;padding-top:calc(2 * var(--mm));font:600 calc(2.3 * var(--mm)) var(--sans);color:var(--ink-2)}
+.afill{flex:1 1 auto;border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);height:calc(4 * var(--mm))}
+.jt > div{grid-template-columns:calc(17 * var(--mm)) minmax(0,1fr) calc(34 * var(--mm)) calc(14 * var(--mm));min-height:calc(6.6 * var(--mm))}
+.ft > div{grid-template-columns:calc(24 * var(--mm)) minmax(0,1fr) calc(15 * var(--mm));min-height:calc(6.6 * var(--mm))}
+.ov .ck{text-align:center;display:flex;justify-content:center;align-items:flex-end}
+.meet{display:flex;align-items:flex-end;gap:calc(2 * var(--mm));margin-top:calc(2 * var(--mm));border-bottom:max(1px,calc(.2 * var(--mm))) solid var(--line);min-height:calc(6 * var(--mm))}
+.pts{margin-top:calc(1.2 * var(--mm))}
+.pt-row{display:grid;grid-template-columns:calc(5 * var(--mm)) minmax(0,1fr);align-items:end;column-gap:calc(1 * var(--mm))}
+.pt-row .b{margin-bottom:calc(1.2 * var(--mm))}
+.pt-row .ln{--lh:calc(6.2 * var(--mm))}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">Henoch · Musterseiten</p>
+      <h1>Henoch Arena</h1>
+      <p class="lede">Die Arena als Notizbuchseiten: die Gebetskammer für das, was dich bewegt, und die Eisenschmiede für das Treffen mit den Brüdern. Texte, Felder und Zuspruch wie in der App.</p>
+    </div>
+    <div style="display:grid">
+      <button class="toggle" id="ex-toggle" type="button" aria-pressed="true"><span class="sw" aria-hidden="true"></span>Beispieleinträge</button>
+      <p class="hint">Blaue Handschrift ist ein Beispiel. Ausgeschaltet zeigen die Seiten, wie sie gedruckt würden.</p>
+    </div>
+  </header>
+  <nav aria-label="Seiten"><ul class="nav"><li><a href="#arena-ueberblick">Zwei Orte</a></li><li><a href="#a-eingang">Eingang</a></li><li><a href="#a-kammer">Gebetskammer</a></li><li><a href="#a-schmiede">Eisenschmiede</a></li></ul></nav>
+  <main id="book" class="show">
+    
+<section class="block" id="arena-ueberblick"><div class="cap"><span class="pg">Arena</span><h2>Zwei Orte</h2>
+<p>Die Arena der App hat die Gebetskammer für dich allein und die Eisenschmiede für das Treffen mit deinen Brüdern. Im Buch folgen sie dem Aufbau der App: dieselben Felder, dieselben Worte, derselbe Zuspruch am Ende. Die Wüstenwanderung bleibt im Buch weg.</p></div>
+<div class="plan"><div class="parts kj" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+<div><h3><i style="background:var(--seg1)"></i>Arena<b>2 S.</b></h3><ul><li><span>S. 1</span><span>Eingang mit dem Vers der Arena</span></li><li><span>S. 2</span><span>Übersicht der Gebetskammer</span></li></ul></div>
+<div><h3><i style="background:var(--seg5)"></i>Gebetskammer<b>16 S.</b></h3><ul><li><span>S. 3–4</span><span>erster Eintrag als Doppelseite</span></li><li><span>S. 5–16</span><span>sechs weitere Einträge</span></li></ul></div>
+<div><h3><i style="background:var(--seg6)"></i>Eisenschmiede<b>16 S.</b></h3><ul><li><span>S. 17</span><span>Übersicht der Treffen</span></li><li><span>S. 18–32</span><span>15 Seiten, je ein Treffen</span></li></ul></div>
+</div><p class="sum">Zusammen 34 Seiten. Die Muster zeigen davon je die ersten.</p></div></section><section class="block" id="a-eingang"><div class="cap"><span class="pg">S. 1–2</span><h2>Eingang und Übersicht</h2><p>Der Eingang trägt den Vers der Arena und nennt die beiden Orte, wie die Kacheln der App. Daneben steht die Übersicht der Gebetskammer: Datum, erste Zeile und Bibelstellen jedes Eintrags, dazu ein Feld „archiviert“.</p></div><div class="spread"><section class="page l " aria-label="Seite 1: Arena"><div class="in">
+<header class="ph"><h2 class="pt">Arena</h2></header>
+<div class="vs ws">„kämpfe den guten Kampf des Glaubens; ergreife das ewige Leben“<cite>1. Timotheus 6,12</cite></div>
+<div class="atiles"><div class="atile"><b>Gebetskammer</b><span>Was dich belastet und womit du ringst</span><i>S. 3</i></div><div class="atile"><b>Eisenschmiede</b><span>Für das Treffen mit deinen Brüdern</span><i>S. 17</i></div></div>
+<span class="runner">Arena</span><span class="folio">1</span></div></section><section class="page r " aria-label="Seite 2: Gebetskammer, Übersicht"><div class="in">
+<header class="ph"><h2 class="pt">Gebetskammer</h2></header>
+<div class="vs ws">„kämpfe den guten Kampf des Glaubens; ergreife das ewige Leben“<cite>1. Timotheus 6,12</cite></div>
+<p class="txt">Hier schreibst du auf, was dich belastet und womit du ringst. Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.</p>
+<div class="tbl ov jt"><div class="th"><span>Datum</span><span>Erste Zeile</span><span>Bibelstellen</span><span class="ck">archiviert</span></div><div><span><span class="hw">12. 10.</span></span><span><span class="hw">Gespräch mit T. morgen</span></span><span><span class="hw">Römer 8,37</span></span><span class="ck"><span class="b"></span></span></div><div><span><span class="hw">14. 10.</span></span><span><span class="hw">Müde, und doch dran bleiben</span></span><span><span class="hw">1. Korinther 10,13</span></span><span class="ck"><span class="b"></span></span></div><div><span><span class="hw">18. 10.</span></span><span><span class="hw">Dank für die ruhige Woche</span></span><span><span class="hw">Psalm 103,2</span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span></span><span class="ck"><span class="b"></span></span></div></div>
+<span class="runner">Gebetskammer</span><span class="folio">2</span></div></section></div></section><section class="block" id="a-kammer"><div class="cap"><span class="pg">S. 3–6</span><h2>Gebetskammer</h2><p>Ein Eintrag hat eine Doppelseite. Oben stehen Bibelstellen und Gebetsanliegen, dann „Was dich bewegt“ auf vielen Zeilen, am Ende der Zuspruch aus Korinther und Römer. Sünde wird gebetet, nicht notiert; das steht auf der Übersicht, und der Eintrag hat dafür keine Zeile. Die zweite Doppelseite zeigt die leere Vorlage.</p></div><div class="spread"><section class="page l " aria-label="Seite 3: Gebetskammer, Eintrag"><div class="in">
+<header class="ph"><h2 class="pt"><small>Eintrag</small>Gebetskammer</h2><div class="pm"><div class="dline" style="width:calc(46 * var(--mm))"><span class="pl">Datum</span><span class="hw">Montag, 12. Oktober 2026</span></div></div></header>
+<div class="sec"><span class="t">Bibelstelle</span></div>
+<div class="lines"><div class="ln "><span class="phint">z. B. Römer 8,37</span><span class="hw">Römer 8,37</span></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Gebetsanliegen</span></div>
+<div class="lines"><div class="ln "><span class="phint">Wofür du betest</span><span class="hw">Das Gespräch mit T. morgen</span></div><div class="ln "><span class="hw">Ruhe vor dem Schlafengehen</span></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Was dich bewegt</span></div>
+<div class="lines"><div class="ln "><span class="phint">Was dich belastet, womit du ringst, was Gott dir heute gezeigt hat …</span><span class="hw">Morgen das Gespräch mit T. Ich merke, wie ich innerlich schon</span></div><div class="ln "><span class="hw">meine Sätze vorbereite. Ich will zuhören, bevor ich antworte.</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<span class="runner">Gebetskammer</span><span class="folio">3</span></div></section><section class="page r " aria-label="Seite 4: Gebetskammer, Eintrag"><div class="in">
+<div class="lines"><div class="ln "><span class="hw">Ich habe heute Morgen gebetet und bin ruhiger geworden.</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<aside class="comfort" aria-label="Zuspruch"><p>Gott ist getreu, der euch nicht läßt versuchen über euer Vermögen, sondern macht, daß die Versuchung so ein Ende gewinne, daß ihr’s könnet ertragen.<cite>1. Korinther 10,13</cite></p><p>Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.<cite>Römer 8,37</cite></p></aside>
+<div class="arch"><span class="b"></span><span>archiviert am</span><span class="afill"></span></div>
+<span class="runner">Gebetskammer</span><span class="folio">4</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l " aria-label="Seite 5: Gebetskammer, Eintrag"><div class="in">
+<header class="ph"><h2 class="pt"><small>Eintrag</small>Gebetskammer</h2><div class="pm"><div class="dline" style="width:calc(46 * var(--mm))"><span class="pl">Datum</span></div></div></header>
+<div class="sec"><span class="t">Bibelstelle</span></div>
+<div class="lines"><div class="ln "><span class="phint">z. B. Römer 8,37</span></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Gebetsanliegen</span></div>
+<div class="lines"><div class="ln "><span class="phint">Wofür du betest</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Was dich bewegt</span></div>
+<div class="lines"><div class="ln "><span class="phint">Was dich belastet, womit du ringst, was Gott dir heute gezeigt hat …</span></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<span class="runner">Gebetskammer</span><span class="folio">5</span></div></section><section class="page r " aria-label="Seite 6: Gebetskammer, Eintrag"><div class="in">
+<div class="lines"><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div><div class="ln "></div></div>
+<aside class="comfort" aria-label="Zuspruch"><p>Gott ist getreu, der euch nicht läßt versuchen über euer Vermögen, sondern macht, daß die Versuchung so ein Ende gewinne, daß ihr’s könnet ertragen.<cite>1. Korinther 10,13</cite></p><p>Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.<cite>Römer 8,37</cite></p></aside>
+<div class="arch"><span class="b"></span><span>archiviert am</span><span class="afill"></span></div>
+<span class="runner">Gebetskammer</span><span class="folio">6</span></div></section></div></section><section class="block" id="a-schmiede"><div class="cap"><span class="pg">S. 17–20</span><h2>Eisenschmiede</h2><p>Links die Übersicht der Treffen, nach dem Datum des Treffens. Ein Treffen hat eine Seite: Bibelstellen, Gebetsanliegen und die Liste der Punkte, jeder mit einem Haken, wenn er besprochen ist. Unten der Zuspruch aus Galater und Matthäus. Was die Brüder einander bekennen, steht nicht im Buch.</p></div><div class="spread"><section class="page l " aria-label="Seite 17: Eisenschmiede, Übersicht"><div class="in">
+<header class="ph"><h2 class="pt">Eisenschmiede</h2></header>
+<div class="vs ws">„Ein Messer wetzt das andere und ein Mann den andern.“<cite>Sprüche 27,17</cite></div>
+<p class="txt">Was du zum nächsten Treffen mit deinen Brüdern mitbringst: was ihr besprechen und wofür ihr miteinander beten sollt. Was ihr einander bekennt, bleibt im Gespräch und wird hier nicht notiert.</p>
+<div class="tbl ov ft"><div class="th"><span>Treffen am</span><span>Erster Punkt</span><span class="ck">besprochen</span></div><div><span><span class="hw">Sa 17. 10.</span></span><span><span class="hw">Küche um 20 Uhr hält noch nicht</span></span><span class="ck"><span class="b on"></span></span></div><div><span><span class="hw">Sa 24. 10.</span></span><span><span class="hw">Wie lade ich einen Bruder ein?</span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div><div><span></span><span></span><span class="ck"><span class="b"></span></span></div></div>
+<span class="runner">Eisenschmiede</span><span class="folio">17</span></div></section><section class="page r " aria-label="Seite 18: Eisenschmiede, Eintrag"><div class="in">
+<header class="ph"><h2 class="pt"><small>fürs Treffen mit den Brüdern</small>Eisenschmiede</h2></header>
+<div class="meet"><span class="pl">Für das Treffen am</span><span class="hw">Samstag, 17. Oktober 2026</span></div>
+<div class="sec"><span class="t">Bibelstelle</span></div>
+<div class="lines"><div class="ln "><span class="phint">z. B. Galater 6,2</span><span class="hw">Galater 6,2</span></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Gebetsanliegen</span></div>
+<div class="lines"><div class="ln "><span class="phint">Wofür ihr gemeinsam betet</span><span class="hw">Matthias: Schlaf, das Kleinkind zahnt</span></div><div class="ln "><span class="hw">Daniel: die Bewerbung</span></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Was du mit den Brüdern besprechen willst</span><span class="m">Haken, wenn besprochen</span></div>
+<div class="pts"><div class="pt-row"><span class="b on"></span><div class="ln"><span class="hw">Küche um 20 Uhr hält noch nicht</span></div></div><div class="pt-row"><span class="b"></span><div class="ln"><span class="hw">Wie lade ich einen Bruder ein?</span></div></div><div class="pt-row"><span class="b"></span><div class="ln"><span class="hw">Rat für das Gespräch mit T.</span></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div></div>
+<aside class="comfort" aria-label="Zuspruch"><p>Einer trage des andern Last, so werdet ihr das Gesetz Christi erfüllen.<cite>Galater 6,2</cite></p><p>Denn wo zwei oder drei versammelt sind in meinem Namen, da bin ich mitten unter ihnen.<cite>Matthäus 18,20</cite></p></aside>
+<div class="arch"><span class="b"></span><span>Besprochen, archiviert am</span><span class="afill"></span></div>
+<span class="runner">Eisenschmiede</span><span class="folio">18</span></div></section></div><div class="gap"></div><div class="spread"><section class="page l " aria-label="Seite 19: Eisenschmiede, Eintrag"><div class="in">
+<header class="ph"><h2 class="pt"><small>fürs Treffen mit den Brüdern</small>Eisenschmiede</h2></header>
+<div class="meet"><span class="pl">Für das Treffen am</span></div>
+<div class="sec"><span class="t">Bibelstelle</span></div>
+<div class="lines"><div class="ln "><span class="phint">z. B. Galater 6,2</span></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Gebetsanliegen</span></div>
+<div class="lines"><div class="ln "><span class="phint">Wofür ihr gemeinsam betet</span></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Was du mit den Brüdern besprechen willst</span><span class="m">Haken, wenn besprochen</span></div>
+<div class="pts"><div class="pt-row"><span class="b"></span><div class="ln"><span class="phint">Was dich umtreibt, wo du Rat brauchst …</span></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div></div>
+<aside class="comfort" aria-label="Zuspruch"><p>Einer trage des andern Last, so werdet ihr das Gesetz Christi erfüllen.<cite>Galater 6,2</cite></p><p>Denn wo zwei oder drei versammelt sind in meinem Namen, da bin ich mitten unter ihnen.<cite>Matthäus 18,20</cite></p></aside>
+<div class="arch"><span class="b"></span><span>Besprochen, archiviert am</span><span class="afill"></span></div>
+<span class="runner">Eisenschmiede</span><span class="folio">19</span></div></section><section class="page r " aria-label="Seite 20: Eisenschmiede, Eintrag"><div class="in">
+<header class="ph"><h2 class="pt"><small>fürs Treffen mit den Brüdern</small>Eisenschmiede</h2></header>
+<div class="meet"><span class="pl">Für das Treffen am</span></div>
+<div class="sec"><span class="t">Bibelstelle</span></div>
+<div class="lines"><div class="ln "><span class="phint">z. B. Galater 6,2</span></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Gebetsanliegen</span></div>
+<div class="lines"><div class="ln "><span class="phint">Wofür ihr gemeinsam betet</span></div><div class="ln "></div><div class="ln "></div></div>
+<div class="sec"><span class="t">Was du mit den Brüdern besprechen willst</span><span class="m">Haken, wenn besprochen</span></div>
+<div class="pts"><div class="pt-row"><span class="b"></span><div class="ln"><span class="phint">Was dich umtreibt, wo du Rat brauchst …</span></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div><div class="pt-row"><span class="b"></span><div class="ln"></div></div></div>
+<aside class="comfort" aria-label="Zuspruch"><p>Einer trage des andern Last, so werdet ihr das Gesetz Christi erfüllen.<cite>Galater 6,2</cite></p><p>Denn wo zwei oder drei versammelt sind in meinem Namen, da bin ich mitten unter ihnen.<cite>Matthäus 18,20</cite></p></aside>
+<div class="arch"><span class="b"></span><span>Besprochen, archiviert am</span><span class="afill"></span></div>
+<span class="runner">Eisenschmiede</span><span class="folio">20</span></div></section></div></section>
+  </main>
+</div>
+<script>
+(function(){
+  var btn=document.getElementById('ex-toggle'), book=document.getElementById('book'), KEY='henoch-arena-examples';
+  function set(on){ book.classList.toggle('show',on); btn.setAttribute('aria-pressed', on?'true':'false'); }
+  try{ var v=localStorage.getItem(KEY); if(v==='0') set(false); }catch(e){}
+  btn.addEventListener('click',function(){
+    var on=!book.classList.contains('show'); set(on);
+    try{ localStorage.setItem(KEY,on?'1':'0'); }catch(e){}
+  });
+})();
+</script>
