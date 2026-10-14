@@ -1178,8 +1178,8 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 .spine{box-shadow:inset 6px 0 10px rgba(0,0,0,.35),inset -6px 0 10px rgba(0,0,0,.35);display:grid;place-items:center}
 .spine span{writing-mode:vertical-rl;font:italic 400 1.9cqw/1 var(--serif);letter-spacing:.06em}
 /* the cross of the app (catechism, Bible, Arena), blind-embossed into the leather */
-.xc{position:absolute;left:50%;top:50%;height:80%;width:auto;transform:translate(-50%,-50%);fill:none;stroke-linecap:butt;
-  stroke:rgba(0,0,0,.13);stroke-width:.95;filter:drop-shadow(0 .35px 0 rgba(255,255,255,.07)) drop-shadow(0 -.3px 0 rgba(0,0,0,.25))}
+.xc{position:absolute;left:50%;top:50%;width:72%;height:auto;transform:translate(-50%,-50%);fill:none;stroke-linecap:butt;
+  stroke:rgba(0,0,0,.22);stroke-width:1.15;filter:drop-shadow(0 .35px 0 rgba(255,255,255,.07)) drop-shadow(0 -.3px 0 rgba(0,0,0,.25))}
 .ft{position:absolute;left:0;right:0;top:42%;display:flex;flex-direction:column;align-items:center;gap:1.6cqw}
 .ft h2,.ft p,.spine span,.bv p,.bv span{background:linear-gradient(175deg,var(--gold1),var(--gold2) 45%,var(--gold3) 80%,var(--gold2));
   -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25)}
@@ -1520,7 +1520,7 @@ def cover():
 <div class="case">
   <div class="board back"><div class="bv"><p>{esc(HENOCH_VERSE[0])}</p><span>{esc(HENOCH_VERSE[1])}</span></div></div>
   <div class="spine"><span>Mit Gott durch den Tag</span></div>
-  <div class="board front"><svg class="xc" viewBox="6 2 12 20" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg><div class="ft"><h2>Henoch</h2></div></div>
+  <div class="board front"><svg class="xc" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M7 8h10"/></svg><div class="ft"><h2>Henoch</h2></div></div>
   <div class="ribs">{rib}</div>
 </div>"""
 
