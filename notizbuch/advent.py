@@ -1164,6 +1164,36 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
   .spread{grid-template-columns:minmax(0,1fr);gap:12px}.spread.solo-r .page{grid-column:1}}
 @media (prefers-reduced-motion: reduce){.toggle .sw,.toggle .sw::after{transition:none}}
 
+/* ---------- the cover: back, spine, front laid flat (148 + 14 + 148 mm), wine-red leather, gold ---------- */
+.case{--w:#5c1a24;--w2:#3f0f17;--gold1:#f3dc93;--gold2:#c9a043;--gold3:#8a6a1e;position:relative;display:grid;grid-template-columns:148fr 14fr 148fr;
+  max-width:1000px;margin:0 auto 90px;aspect-ratio:310/214;container-type:inline-size;filter:drop-shadow(0 18px 26px var(--shade))}
+.board,.spine{position:relative;background:
+  radial-gradient(120% 90% at 30% 20%,rgba(255,255,255,.07),transparent 60%),
+  repeating-radial-gradient(circle at 17% 31%,rgba(0,0,0,.05) 0 .5px,transparent .5px 2.5px),
+  repeating-radial-gradient(circle at 71% 63%,rgba(255,255,255,.035) 0 .6px,transparent .6px 3px),
+  linear-gradient(160deg,var(--w),var(--w2));overflow:hidden}
+.board.back{border-radius:6px 0 0 6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset 8px 0 18px rgba(0,0,0,.25)}
+.board.front{border-radius:0 6px 6px 0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset -8px 0 18px rgba(0,0,0,.25)}
+.board::after{content:"";position:absolute;inset:3.2cqw;border:1px solid rgba(201,160,67,.0)}
+.spine{box-shadow:inset 6px 0 10px rgba(0,0,0,.35),inset -6px 0 10px rgba(0,0,0,.35);display:grid;place-items:center}
+.spine span{writing-mode:vertical-rl;font:600 2.3cqw/1 var(--serif);letter-spacing:.18em}
+.ft{position:absolute;left:0;right:0;top:36%;display:flex;flex-direction:column;align-items:center;gap:1.6cqw}
+.ft h2,.ft p,.spine span,.bv p,.bv span{background:linear-gradient(175deg,var(--gold1),var(--gold2) 45%,var(--gold3) 80%,var(--gold2));
+  -webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.ft h2{margin:0;font:600 7.4cqw/1 var(--serif);letter-spacing:.06em}
+.ft .rule{width:6cqw;height:1px;background:linear-gradient(90deg,transparent,var(--gold2),transparent)}
+.ft p{margin:0;font:italic 400 2.3cqw/1.2 var(--serif);letter-spacing:.04em}
+.bv{position:absolute;left:12%;right:12%;bottom:11%;text-align:center}
+.bv p{margin:0;font:italic 400 1.75cqw/1.5 var(--serif)}
+.bv span{display:block;margin-top:.9cqw;font:600 1.25cqw/1 var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.ribs{position:absolute;left:calc(50% - 2.3cqw);top:97%;display:flex;gap:.7cqw;z-index:2}
+.rib{display:block;width:1.3cqw;height:9cqw;clip-path:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%);box-shadow:inset 0 -1px 0 rgba(0,0,0,.2)}
+.rib:nth-child(2){height:7.4cqw}.rib:nth-child(3){height:8.4cqw}
+.rib.gold{background:linear-gradient(90deg,#b98f2c,#e2c063,#b98f2c)}
+.rib.green{background:linear-gradient(90deg,#3e6114,#5b8a22,#3e6114)}
+.rib.blue{background:linear-gradient(90deg,#1f2e40,#344a66,#1f2e40)}
+@media (max-width:760px){.case{grid-template-columns:148fr 14fr 148fr}}
+
 /* ---------- the page: A5, every length in millimetres of the paper ---------- */
 .page{container-type:inline-size;aspect-ratio:148/210;background:var(--paper);position:relative;color:var(--ink);overflow:hidden}
 .page.l{border-radius:3px 0 0 3px;background-image:linear-gradient(to left,rgba(29,35,48,.08),rgba(29,35,48,0) 6%)}
@@ -1463,7 +1493,7 @@ h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);lin
 @media print{
   html,body{background:#fff}
   .wrap{max-width:none;padding:0}
-  .top,.cap,.nav{display:none}
+  .top,.cap,.nav,#einband{display:none}
   .block{margin:0}
   .spread{display:block;filter:none;margin:0}
   .page{width:148mm;height:210mm;aspect-ratio:auto;break-after:page;border-radius:0;background-image:none;
@@ -1476,9 +1506,28 @@ FONTS = ("https://fonts.googleapis.com/css2?family=Caveat:wght@500"
          "&family=Source+Sans+3:wght@400;600&display=swap")
 
 
+# The cover: wine-red leather, gold lettering, three ribbons. The verse is Luther 1912, checked against xmlbible-lut1912.
+HENOCH_VERSE = ("Und dieweil er ein göttliches Leben führte, nahm ihn Gott hinweg, und er ward nicht mehr gesehen.", "1. Mose 5,24")
+RIBBONS = [("gold", "den Tag"), ("green", "die Ordnung (S. 6–11)"), ("blue", "die Arena")]
+
+
+def cover():
+    rib = "".join(f'<i class="rib {c}"></i>' for c, _ in RIBBONS)
+    return f"""
+<div class="case">
+  <div class="board back"><div class="bv"><p>{esc(HENOCH_VERSE[0])}</p><span>{esc(HENOCH_VERSE[1])}</span></div></div>
+  <div class="spine"><span>Henoch</span></div>
+  <div class="board front"><div class="ft"><h2>Henoch</h2><i class="rule"></i><p>Mit Gott durch den Tag</p></div></div>
+  <div class="ribs">{rib}</div>
+</div>"""
+
+
 def build():
     front, weeks, end = all_pages()
-    blocks = [block("vorn", f"S. 1–{FRONT}", "Vorn im Heft",
+    ribbons = ", ".join(n for _, n in RIBBONS[:-1]) + " und " + RIBBONS[-1][1]
+    blocks = [block("einband", "Einband", "Leder in Weinrot, Prägung in Gold",
+                    f"Vorn groß „Henoch“, darunter „Mit Gott durch den Tag“. Hinten unten der Vers zu Henoch. "
+                    f"Drei Seitenbänder in Gold, Grün und Blau, zum Beispiel für {ribbons}.", cover()),block("vorn", f"S. 1–{FRONT}", "Vorn im Heft",
                     "Titel, die Adventszeit, der Weg durch die Stille Zeit, Lesen und Beten, die Ordnung mit allen Texten, das Nachtgebet, "
                     "Mein Haus, die Gebetsübersicht, Heute und die Gewohnheiten.",
                     spreads(front, 1))]
@@ -1494,7 +1543,7 @@ def build():
                         f"Das Christfest als Ausblick. Dann die Arena: der Eingang, die Gebetskammer mit {CHAMBER_PAGES} Einträgen "
                         f"und die Eisenschmiede mit {FORGE_PAGES} Treffen, je eine Seite, ohne Archiv. Am Ende die Quellen.",
                         spreads(end, P_END)))
-    nav = [("vorn", "Vorn"), ("advent1", "1. Advent"), ("advent2", "2. Advent"), ("advent3", "3. Advent"),
+    nav = [("einband", "Einband"), ("vorn", "Vorn"), ("advent1", "1. Advent"), ("advent2", "2. Advent"), ("advent3", "3. Advent"),
            ("advent4", "4. Advent"), ("arena", "Christfest und Arena")]
     nav_html = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in nav)
     total = P_SOURCES
