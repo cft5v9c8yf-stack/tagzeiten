@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.8.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen im Anhang',
+    changes: [
+      { area: 'Lehre', text: 'Löhes Fragen und Antworten haben eine eigene Kachel unten bei den Büchern für das Haus: „Fragen und Antworten zum Katechismus“. Für jedes Hauptstück eine Karte, die Fragen unter dem Stück, das sie erklären; offen ist zuerst das Hauptstück dieser Woche.' },
+      { area: 'Lehre', text: 'Die Seiten der Hauptstücke zeigen wieder nur Luthers Text, alle Stücke offen. Am Tisch stehen Löhes Fragen des Tages weiter neben dem Stück.' },
+    ],
+  },
+  {
     version: '1.7.0',
     date: '2026-10-14',
     title: 'Löhes Fragen am Tisch',

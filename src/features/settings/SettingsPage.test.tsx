@@ -612,23 +612,30 @@ describe('Katechismus', () => {
     expect(screen.getAllByRole('button', { name: /Bitte\./ })).toHaveLength(7);
   });
 
-  it("puts Löhe's questions under each piece, in the order of his book", async () => {
-    await renderAt('/katechismus/commandments', <CatechismPage />);
-    const piece = await screen.findByRole('button', { name: /^Das erste Gebot/ });
-    const q40 = () => screen.getByText(/Was sollst du nach dem ersten Gebote nicht\?/);
-    if (q40().closest('[hidden]')) fireEvent.click(piece);
-    expect(q40().closest('[hidden]')).toBeNull();
-    // Straight under Luther's answer, nothing more to open or tap.
-    const block = q40().closest('.li')!;
-    expect(block.querySelectorAll('button')).toHaveLength(0);
-    expect(block.textContent).toContain('„Andere Götter haben.“');
-    // Introduction first, transition last, like pieces of their own.
-    const titles = [...document.querySelectorAll('.kpiece-title')].map((t) => t.textContent);
-    expect(titles[0]).toMatch(/^Einleitende Fragen zum ersten Hauptstück/);
-    expect(titles.at(-1)).toMatch(/^Uebergangsfragen zum zweiten Hauptstück/);
-    // The Law ends in the Gospel (rule 1).
-    fireEvent.click(screen.getByRole('button', { name: /^Uebergangsfragen zum zweiten Hauptstück/ }));
+  it("keeps Löhe's questions in the appendix, under the piece they explain", async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    fireEvent.click(await screen.findByRole('link', { name: /^Fragen und Antworten zum Katechismus/ }));
+    expect(await screen.findByRole('heading', { level: 2, name: 'Fragen und Antworten zum Katechismus' })).toBeTruthy();
+    const card = screen.getByRole('button', { name: /^Die Zehn Gebote/ });
+    if (card.getAttribute('aria-expanded') !== 'true') fireEvent.click(card);
+    const q40 = screen.getByText(/Was sollst du nach dem ersten Gebote nicht\?/);
+    expect(q40.closest('[hidden]')).toBeNull();
+    expect(q40.closest('.li')!.querySelector('h4')!.textContent).toBe('Das erste Gebot');
+    // Introduction first, transition last; the Law ends in the Gospel (rule 1).
+    const titles = [...q40.closest('.fold-body')!.querySelectorAll('.li-label')].map((t) => t.textContent);
+    expect(titles[0]).toBe('Einleitende Fragen zum ersten Hauptstück');
+    expect(titles.at(-1)).toBe('Uebergangsfragen zum zweiten Hauptstück');
     expect(document.body.textContent).toContain('„Christus hat uns erlöset vom Fluch des Gesetzes, da Er ward ein Fluch für uns.“');
+    // One card open at a time; the questions on the whole catechism first.
+    fireEvent.click(screen.getByRole('button', { name: /Zum ganzen Katechismus/ }));
+    expect(screen.getByText('Was für ein Büchlein hast du hier in deiner Hand?').closest('[hidden]')).toBeNull();
+    expect(q40.closest('[hidden]')).not.toBeNull();
+  });
+
+  it('no longer puts Löhe under the pieces of a chief part', async () => {
+    await renderAt('/katechismus/commandments', <CatechismPage />);
+    await screen.findByRole('button', { name: /^Das erste Gebot/ });
+    expect(document.querySelector('.li')).toBeNull();
   });
 
   it("shows the day's questions of Löhe at the table all at once", async () => {
@@ -642,12 +649,6 @@ describe('Katechismus', () => {
     // Every answer in view, nothing to tap for the next question.
     expect(dialog.querySelectorAll('.hf-la')).toHaveLength(shown);
     expect(screen.queryByText(/Nächste Frage/)).toBeNull();
-  });
-
-  it("keeps Löhe's questions on the whole catechism on the overview", async () => {
-    await renderAt('/katechismus', <CatechismPage />);
-    fireEvent.click(await screen.findByRole('button', { name: /^Einleitende Fragen zum Catechismus/ }));
-    expect(document.body.textContent).toContain('Was für ein Büchlein hast du hier in deiner Hand?');
   });
 
   it('shows the answer in the house father mode only after a tap', async () => {
@@ -695,7 +696,7 @@ describe('Katechismus', () => {
     await renderAt('/katechismus', <CatechismPage />);
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
-    expect(document.querySelectorAll('.overview-row')).toHaveLength(11); // the Book of Concord, 6 chief parts, 4 appendices
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(12); // the Book of Concord, 6 chief parts, 5 appendices
     expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
     expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.
@@ -916,7 +917,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.7(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.8(?![\d.])/);
     expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
     // The versions before 1.0 fold together, last.
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
@@ -924,11 +925,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.7(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.8(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.7(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.8(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

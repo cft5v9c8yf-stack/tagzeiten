@@ -3491,26 +3491,28 @@ header.top .search-link:focus-visible {
   display: block;
 }
 
-/* Lehre: Löhe's questions straight under Luther's, the same question and answer, quieter. */
+/* Lehre / Anhang, Löhe's questions: under each piece's title, number in the margin, quieter answer. */
 .li {
-  margin-top: 20px;
-  padding-top: 10px;
+  margin-top: 22px;
+  padding-top: 14px;
   border-top: 1px solid var(--rule);
   hyphens: auto;
 }
+.fold-body > .li:first-child {
+  margin-top: 4px;
+  border-top: 0;
+}
 .li-label {
-  margin: 0 0 2px;
-  font: 600 0.75rem var(--sans);
-  color: var(--muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  margin: 0 0 4px;
+  font: 600 1.05rem var(--serif);
+  color: var(--ink);
 }
 .li-qa {
   margin: 10px 0;
 }
 .li-q {
   display: grid;
-  grid-template-columns: 2.1em 1fr;
+  grid-template-columns: 2.4rem 1fr;
   margin: 0 0 2px;
   font: 600 0.88rem var(--sans);
   color: var(--muted);
@@ -3521,10 +3523,10 @@ header.top .search-link:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 .li-a {
-  margin: 0 0 0 2.1em;
+  margin: 0 0 0 2.4rem;
 }
 .li-note {
-  margin: 4px 0 0 2.1em;
+  margin: 4px 0 0 2.4rem;
   font-size: 0.86rem;
   color: var(--muted);
 }

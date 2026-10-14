@@ -68,14 +68,10 @@ export function contentDocs(today: DateKey): SearchDoc[] {
       add(`Lehre · ${part.title}`, piece.title, [piece.words, ...piece.qa.flat()].join(' '), `/katechismus/${part.id}`);
     }
   }
-  const loehe = [
-    ...LOEHE_OVERVIEW.map((c) => [c, '/katechismus'] as const),
-    ...CATECHISM.map((p) => [LOEHE_BY_CHIEF_PART[p.id], `/katechismus/${p.id}`] as const),
-  ];
-  for (const [chapter, to] of loehe) {
+  for (const chapter of [...LOEHE_OVERVIEW, ...CATECHISM.map((p) => LOEHE_BY_CHIEF_PART[p.id])]) {
     for (const lesson of chapter.lessons) {
       const text = lessonQuestions(lesson).flatMap((q) => [q.q, q.a, q.note ?? '', ...(q.footnotes ?? [])]).join(' ');
-      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, to);
+      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, '/katechismus/loehe');
     }
   }
   for (const c of CREEDS) {
