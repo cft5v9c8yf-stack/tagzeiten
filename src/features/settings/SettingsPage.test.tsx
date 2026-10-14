@@ -612,6 +612,29 @@ describe('Katechismus', () => {
     expect(screen.getAllByRole('button', { name: /Bitte\./ })).toHaveLength(7);
   });
 
+  it("folds Löhe's questions under a chief part, lesson by lesson", async () => {
+    await renderAt('/katechismus/commandments', <CatechismPage />);
+    const head = await screen.findByRole('button', { name: 'Erklärung von Wilhelm Löhe' });
+    const first = () => screen.getByText(/Wovon handelt das erste Hauptstück\?/).closest('[hidden]');
+    expect(first()).not.toBeNull();
+    fireEvent.click(head);
+    fireEvent.click(screen.getByRole('button', { name: 'II. Einleitende Fragen zum ersten Hauptstück' }));
+    expect(first()).toBeNull();
+    expect(document.body.textContent).toContain('17. Wovon handelt das erste Hauptstück?');
+    expect(document.body.textContent).toContain('Von den heiligen zehen Geboten.');
+    // The Law ends in the Gospel (rule 1): the last lesson leads to Christ.
+    fireEvent.click(screen.getByRole('button', { name: 'Uebergangsfragen zum zweiten Hauptstück' }));
+    expect(document.body.textContent).toContain('„Christus hat uns erlöset vom Fluch des Gesetzes, da Er ward ein Fluch für uns.“');
+  });
+
+  it("keeps Löhe's questions on the whole catechism on the overview", async () => {
+    await renderAt('/katechismus', <CatechismPage />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Erklärung von Wilhelm Löhe' }));
+    fireEvent.click(screen.getByRole('button', { name: 'I. Einleitende Fragen zum Catechismus' }));
+    expect(document.body.textContent).toContain('1. Was für ein Büchlein hast du hier in deiner Hand?');
+    expect(screen.getByRole('button', { name: 'XIX. Einleitende Fragen zu den vier letzten Hauptstücken' })).toBeTruthy();
+  });
+
   it('shows the answer in the house father mode only after a tap', async () => {
     await renderAt('/katechismus', <CatechismPage />);
     fireEvent.click(await screen.findByText('Am Tisch abfragen'));
@@ -878,7 +901,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.5(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.6(?![\d.])/);
     expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
     // The versions before 1.0 fold together, last.
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
@@ -886,11 +909,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.5(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.6(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.5(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.6(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

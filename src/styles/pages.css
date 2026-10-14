@@ -3490,3 +3490,35 @@ header.top .search-link:focus-visible {
 .lesson-hymn .line {
   display: block;
 }
+
+/* Lehre: Löhe's questions and answers under the pieces, folded by lessons. */
+.loehe {
+  margin-top: 24px;
+}
+.loehe .fold-body {
+  hyphens: auto;
+}
+.loehe-lesson {
+  font: 600 0.92rem var(--sans);
+}
+.loehe-no {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.loehe-mark {
+  margin: 14px 0 2px;
+  font: 600 0.82rem var(--sans);
+  color: var(--muted);
+}
+.loehe-quote {
+  margin: 4px 0 8px 12px;
+  padding-left: 10px;
+  border-left: 2px solid var(--rule);
+  font-size: 0.92rem;
+}
+.loehe-note,
+.loehe-foot {
+  margin: 0 0 8px;
+  font-size: 0.88rem;
+  color: var(--muted);
+}

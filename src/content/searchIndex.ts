@@ -15,6 +15,7 @@ import { LARGE_CATECHISM } from './largeCatechism';
 import { SMALCALD_ARTICLES } from './smalcaldArticles';
 import { TRACTATUS } from './tractatus';
 import { CATECHISM, TABLE_OF_DUTIES } from './catechism';
+import { LOEHE_BY_CHIEF_PART, LOEHE_OVERVIEW, lessonQuestions, lessonTitle } from './loeheCatechism';
 import { CHURCH_YEAR_INTRO } from './churchYearIntro';
 import { SUNDAY_INFO } from './churchYearGuide';
 import { CREEDS } from './creeds';
@@ -65,6 +66,16 @@ export function contentDocs(today: DateKey): SearchDoc[] {
   for (const part of CATECHISM) {
     for (const piece of part.pieces) {
       add(`Lehre · ${part.title}`, piece.title, [piece.words, ...piece.qa.flat()].join(' '), `/katechismus/${part.id}`);
+    }
+  }
+  const loehe = [
+    ...LOEHE_OVERVIEW.map((c) => [c, '/katechismus'] as const),
+    ...CATECHISM.map((p) => [LOEHE_BY_CHIEF_PART[p.id], `/katechismus/${p.id}`] as const),
+  ];
+  for (const [chapter, to] of loehe) {
+    for (const lesson of chapter.lessons) {
+      const text = lessonQuestions(lesson).flatMap((q) => [q.q, q.a, q.note ?? '', ...(q.footnotes ?? [])]).join(' ');
+      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, to);
     }
   }
   for (const c of CREEDS) {

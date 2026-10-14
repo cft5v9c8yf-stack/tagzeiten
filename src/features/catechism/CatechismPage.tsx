@@ -24,6 +24,7 @@ import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
+import { LoeheExplanation } from './LoeheExplanation';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -120,6 +121,7 @@ function ChiefPart({ ci }: { ci: number }) {
           );
         })}
       </div>
+      <LoeheExplanation chief={chief.id} />
     </>
   );
 }
@@ -395,6 +397,7 @@ function CatechismHome() {
         </section>
 
         <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
+        <LoeheExplanation />
       </section>
 
       <section className="cat-area" aria-labelledby="cat-read">

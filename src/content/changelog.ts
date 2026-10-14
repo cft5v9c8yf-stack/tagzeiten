@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.6.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen zum Katechismus',
+    changes: [
+      { area: 'Lehre', text: 'Unter jedem Hauptstück steht eingeklappt die „Erklärung von Wilhelm Löhe“: seine Fragen und Antworten aus dem Haus-, Schul- und Kirchenbuch (1845), wortgetreu und in seine Lektionen eingeteilt. Jede Lektion lässt sich einzeln aufklappen.' },
+      { area: 'Lehre', text: 'Auf der Übersicht der Lehre stehen unter den Hauptstücken Löhes Fragen zum ganzen Katechismus und zu den Gnadenmitteln. Die Suche findet alle 769 Fragen.' },
+    ],
+  },
+  {
     version: '1.5.2',
     date: '2026-10-12',
     title: 'Die Bibellektion ohne Nummern',
