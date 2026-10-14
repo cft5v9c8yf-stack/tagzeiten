@@ -4,9 +4,14 @@ import {
   LOEHE_BY_CHIEF_PART,
   LOEHE_IN_ORDER,
   LOEHE_OVERVIEW,
-  LOEHE_PIECE_RANGES,
+  LOEHE_DAYS,
+  LOEHE_HOME,
+  LOEHE_PLACES,
   isQuestion,
   lessonTitle,
+  loeheBetween,
+  loeheForChiefPart,
+  loeheForDay,
   loeheForPiece,
 } from './loeheCatechism';
 
@@ -51,26 +56,40 @@ describe("Löhe's questions on the chief parts", () => {
     expect(lessonTitle(iv!)).toBe('IV. Fragen 64–77');
   });
 
-  it('give every piece its questions, each question to exactly one piece', () => {
-    const onPieces: number[] = [];
+  it('stand in the order of the book: introduction, pieces, transition, each question once', () => {
+    const nos = (r?: readonly [number, number]) => (r ? loeheBetween(r).flatMap((l) => l.items.filter(isQuestion).map((q) => q.no)) : []);
+    const placed: number[] = [...nos(LOEHE_HOME)];
     for (const part of CATECHISM) {
-      expect(LOEHE_PIECE_RANGES[part.id], part.id).toHaveLength(part.pieces.length);
-      part.pieces.forEach((_, pi) => {
-        const qs = loeheForPiece(part.id, pi).flatMap((l) => l.items.filter(isQuestion).map((q) => q.no));
-        expect(qs.length, `${part.id} ${pi}`).toBeGreaterThan(0);
-        onPieces.push(...qs);
+      const p = LOEHE_PLACES[part.id];
+      expect(p.pieces, part.id).toHaveLength(part.pieces.length);
+      placed.push(...nos(p.intro));
+      p.pieces.forEach((r, pi) => {
+        expect(nos(r).length, `${part.id} ${pi}`).toBeGreaterThan(0);
+        placed.push(...nos(r));
       });
+      placed.push(...nos(p.outro));
     }
-    const overview = numbers(LOEHE_OVERVIEW);
-    expect([...onPieces, ...overview].sort((a, b) => a - b)).toEqual(numbers(LOEHE_IN_ORDER));
+    expect(placed).toEqual(numbers(LOEHE_IN_ORDER));
   });
 
-  it('keep a commandment\'s number over its questions', () => {
+  it("keep a commandment's number over its questions", () => {
     const first = loeheForPiece('commandments', 0);
-    expect(first.map(lessonTitle)).toEqual(['II. Einleitende Fragen zum ersten Hauptstück', 'III. Fragen über den Wortverstand des ersten Hauptstücks']);
-    expect(first[1]!.items[0]).toEqual({ mark: '1.' });
+    expect(first.map(lessonTitle)).toEqual(['III. Fragen über den Wortverstand des ersten Hauptstücks']);
+    expect(first[0]!.items[0]).toEqual({ mark: '1.' });
     const second = loeheForPiece('commandments', 1)[0]!;
     expect(second.items[0]).toEqual({ mark: '2.' });
-    expect(second.items.some((i) => 'mark' in i && i.mark === '1.')).toBe(false);
+  });
+
+  it('share the questions of each chief part out evenly over its seven learning days', () => {
+    const totals: Record<string, number> = {};
+    for (const part of CATECHISM) {
+      const all = loeheForChiefPart(part.id).map((q) => q.no);
+      totals[part.id] = all.length;
+      const days = Array.from({ length: LOEHE_DAYS }, (_, d) => loeheForDay(part.id, d).map((q) => q.no));
+      expect(days.flat(), part.id).toEqual(all);
+      const sizes = days.map((d) => d.length);
+      expect(Math.max(...sizes) - Math.min(...sizes), part.id).toBeLessThanOrEqual(1);
+    }
+    expect(totals).toEqual({ commandments: 156, creed: 192, lordsPrayer: 141, baptism: 95, confession: 73, lordsSupper: 96 });
   });
 });

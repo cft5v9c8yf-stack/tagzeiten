@@ -24,7 +24,9 @@ import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
-import { LoeheExplanation, LoehePiece } from './LoeheExplanation';
+import { mondayIndex } from '../../domain/dates';
+import { LoeheInline } from './LoeheExplanation';
+import { LOEHE_HOME, LOEHE_PLACES, loeheBetween, loeheForPiece } from '../../content/loeheCatechism';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -82,6 +84,10 @@ function ChiefPart({ ci }: { ci: number }) {
     return () => clearTimeout(t);
   }, [target]);
 
+  const places = LOEHE_PLACES[chief.id];
+  const headingOf = (r?: readonly [number, number]) => (r ? loeheBetween(r).find((l) => l.heading)?.heading : undefined);
+  const introTitle = chief.id === 'lordsPrayer' ? 'Einleitende Fragen' : (headingOf(places.intro) ?? 'Einleitende Fragen');
+  const outroTitle = headingOf(places.outro) ?? 'Zum Übergang';
   return (
     <>
       <h2 className="cat-part-title">
@@ -96,6 +102,13 @@ function ChiefPart({ ci }: { ci: number }) {
         </p>
       )}
       <div className="cat-part">
+        {places.intro && (
+          <article className="kpiece">
+            <Section id={`cat.loehe.${chief.id}.intro`} title={introTitle} level={3} defaultOpen={false} titleClassName="kpiece-title">
+              <LoeheInline lessons={loeheBetween(places.intro)} />
+            </Section>
+          </article>
+        )}
         {chief.pieces.map((piece, pi) => {
           const id = pieceId(chief, pi);
           const today = ci === day.chiefIndex && day.pieceIndices.includes(pi);
@@ -110,17 +123,25 @@ function ChiefPart({ ci }: { ci: number }) {
                   </>
                 }
                 level={3}
+                defaultOpen={today || (ci !== day.chiefIndex && pi === 0)}
                 titleClassName="kpiece-title"
               >
                 <PieceText piece={piece} />
                 <button type="button" className="pill" aria-pressed={!!memorized[id]} onClick={() => toggleMemorized(id)}>
                   {memorized[id] ? '✓ auswendig' : 'auswendig gelernt'}
                 </button>
-                <LoehePiece chief={chief.id} pieceIndex={pi} />
+                <LoeheInline lessons={loeheForPiece(chief.id, pi)} />
               </Section>
             </article>
           );
         })}
+        {places.outro && (
+          <article className="kpiece">
+            <Section id={`cat.loehe.${chief.id}.outro`} title={outroTitle} level={3} defaultOpen={false} titleClassName="kpiece-title">
+              <LoeheInline lessons={loeheBetween(places.outro)} />
+            </Section>
+          </article>
+        )}
       </div>
     </>
   );
@@ -397,7 +418,11 @@ function CatechismHome() {
         </section>
 
         <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
-        <LoeheExplanation />
+        <article className="kpiece cat-loehe-home">
+          <Section id="cat.loehe.home" title="Einleitende Fragen zum Catechismus" level={3} defaultOpen={false} titleClassName="kpiece-title">
+            <LoeheInline lessons={loeheBetween(LOEHE_HOME)} />
+          </Section>
+        </article>
       </section>
 
       <section className="cat-area" aria-labelledby="cat-read">
@@ -412,6 +437,7 @@ function CatechismHome() {
         <HouseFatherMode
           chief={day.chief}
           startIndex={day.pieceIndices[0] ?? 0}
+          dayIndex={mondayIndex(date)}
           onClose={() => setHouseFather(false)}
         />
       )}

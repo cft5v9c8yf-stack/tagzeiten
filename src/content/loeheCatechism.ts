@@ -56,42 +56,72 @@ export function lessonTitle(lesson: LoeheLesson): string {
   return lesson.lesson ? `${lesson.lesson}. ${name}` : name;
 }
 
-/**
- * Löhe's questions belonging to each piece of the Small Catechism, as ranges
- * of his numbers, in the order of the pieces. The introductory questions of a
- * chief part go with its first piece, the questions leading on to the next
- * chief part with its last. Questions 1–16 and 365–370 stand on the overview.
- */
-export const LOEHE_PIECE_RANGES: Record<ChiefPartId, readonly (readonly [from: number, to: number])[]> = {
-  commandments: [
-    [17, 46], [47, 63], [64, 77], [78, 86], [87, 96], [97, 104], [105, 113], [114, 122], [123, 127], [128, 152], [153, 172],
-  ],
-  creed: [[173, 227], [228, 286], [287, 364]],
-  lordsPrayer: [[371, 408], [409, 421], [422, 430], [431, 454], [455, 466], [467, 481], [482, 491], [492, 500], [501, 505]],
-  baptism: [[506, 552], [553, 565], [566, 582], [583, 600]],
-  confession: [[601, 650], [651, 660], [661, 668], [669, 673]],
-  lordsSupper: [[674, 745], [746, 748], [749, 756], [757, 769]],
-};
+type Range = readonly [from: number, to: number];
 
 /**
- * The lessons of a chief part cut down to the questions of one piece; a
+ * Where Löhe's questions stand, in the order of his book: the introductory
+ * questions over a chief part, the questions on each piece under the piece,
+ * the questions leading on to the next chief part after the last piece.
+ * Questions 1–16 introduce the whole catechism and stand on the overview;
+ * 365–370 on the means of grace open the Lord's Prayer, as in the book.
+ */
+export const LOEHE_PLACES: Record<ChiefPartId, { intro?: Range; pieces: readonly Range[]; outro?: Range }> = {
+  commandments: {
+    intro: [17, 39],
+    pieces: [[40, 46], [47, 63], [64, 77], [78, 86], [87, 96], [97, 104], [105, 113], [114, 122], [123, 127], [128, 152], [153, 163]],
+    outro: [164, 172],
+  },
+  creed: { intro: [173, 189], pieces: [[190, 227], [228, 286], [287, 364]] },
+  lordsPrayer: {
+    intro: [365, 395],
+    pieces: [[396, 408], [409, 421], [422, 430], [431, 454], [455, 466], [467, 481], [482, 491], [492, 500], [501, 505]],
+  },
+  baptism: { intro: [506, 527], pieces: [[528, 552], [553, 565], [566, 582], [583, 600]] },
+  confession: { intro: [601, 624], pieces: [[625, 650], [651, 660], [661, 668], [669, 673]] },
+  lordsSupper: { pieces: [[674, 745], [746, 748], [749, 756], [757, 769]] },
+};
+
+export const LOEHE_HOME: Range = [1, 16];
+
+/**
+ * The lessons of the book cut down to the questions from `from` to `to`; a
  * commandment's number stays with the questions it stands over.
  */
-export function loeheForPiece(chief: ChiefPartId, pieceIndex: number): LoeheLesson[] {
-  const range = LOEHE_PIECE_RANGES[chief][pieceIndex];
-  if (!range) return [];
-  const [from, to] = range;
+export function loeheBetween([from, to]: Range): LoeheLesson[] {
   const inRange = (i: LoeheItem | undefined) => !!i && isQuestion(i) && i.no >= from && i.no <= to;
   const out: LoeheLesson[] = [];
-  for (const lesson of LOEHE_BY_CHIEF_PART[chief].lessons) {
-    const items = lesson.items.filter((item, i) => (isQuestion(item) ? inRange(item) : inRange(lesson.items[i + 1])));
-    if (items.some(isQuestion)) out.push({ ...lesson, items });
-  }
+  for (const chapter of LOEHE_IN_ORDER)
+    for (const lesson of chapter.lessons) {
+      const items = lesson.items.filter((item, i) => (isQuestion(item) ? inRange(item) : inRange(lesson.items[i + 1])));
+      if (items.some(isQuestion)) out.push({ ...lesson, items });
+    }
   return out;
 }
 
-/** "Fragen 40–46" for the fold under a piece. */
-export function pieceRangeLabel(chief: ChiefPartId, pieceIndex: number): string {
-  const [from, to] = LOEHE_PIECE_RANGES[chief][pieceIndex] ?? [0, 0];
-  return from === to ? `Frage ${from}` : `Fragen ${from}–${to}`;
+export function loeheForPiece(chief: ChiefPartId, pieceIndex: number): LoeheLesson[] {
+  const range = LOEHE_PLACES[chief].pieces[pieceIndex];
+  return range ? loeheBetween(range) : [];
+}
+
+/** All of Löhe's questions on a chief part, from its introduction to its transition, in the order of the book. */
+export function loeheForChiefPart(chief: ChiefPartId): LoeheQuestion[] {
+  const p = LOEHE_PLACES[chief];
+  const from = (p.intro ?? p.pieces[0]!)[0];
+  const to = (p.outro ?? p.pieces.at(-1)!)[1];
+  return loeheBetween([from, to]).flatMap((l) => l.items.filter(isQuestion));
+}
+
+/** Learning days of a chief part: one week, Monday to Sunday. */
+export const LOEHE_DAYS = 7;
+
+/**
+ * The questions for one learning day (0 = Monday): the questions of the chief
+ * part shared out evenly over the week, in the order of the book. Nothing
+ * lapses: what is not asked today simply stays in the book.
+ */
+export function loeheForDay(chief: ChiefPartId, dayIndex: number): LoeheQuestion[] {
+  const all = loeheForChiefPart(chief);
+  const start = Math.round((all.length * dayIndex) / LOEHE_DAYS);
+  const end = Math.round((all.length * (dayIndex + 1)) / LOEHE_DAYS);
+  return all.slice(start, end);
 }

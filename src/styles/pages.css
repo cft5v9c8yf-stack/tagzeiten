@@ -3491,51 +3491,109 @@ header.top .search-link:focus-visible {
   display: block;
 }
 
-/* Lehre: Löhe's questions and answers under the pieces, folded by lessons. */
-.loehe {
-  margin-top: 24px;
-}
-.loehe .fold-body {
+/* Lehre: Löhe's questions straight under Luther's, the same question and answer, quieter. */
+.li {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
   hyphens: auto;
 }
-.loehe-lesson {
-  font: 600 0.92rem var(--sans);
-}
-.loehe-no {
+.li-label {
+  margin: 0 0 2px;
+  font: 600 0.75rem var(--sans);
   color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.li-qa {
+  margin: 10px 0;
+}
+.li-q {
+  display: grid;
+  grid-template-columns: 2.1em 1fr;
+  margin: 0 0 2px;
+  font: 600 0.88rem var(--sans);
+  color: var(--muted);
+  line-height: 1.4;
+}
+.li-no {
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
-.loehe-mark {
-  margin: 14px 0 2px;
-  font: 600 0.82rem var(--sans);
+.li-a {
+  margin: 0 0 0 2.1em;
+}
+.li-note {
+  margin: 4px 0 0 2.1em;
+  font-size: 0.86rem;
   color: var(--muted);
 }
-.loehe-quote {
-  margin: 4px 0 8px 12px;
-  padding-left: 10px;
-  border-left: 2px solid var(--rule);
-  font-size: 0.92rem;
-}
-.loehe-note,
-.loehe-foot {
-  margin: 0 0 8px;
-  font-size: 0.88rem;
+.li-mark {
+  margin: 16px 0 0;
+  font: 600 0.78rem var(--sans);
   color: var(--muted);
 }
-.loehe.loehe-piece {
-  margin-top: 12px;
+
+/* At the table: the piece on the left, the day's questions of Löhe on the right, read by scrolling. */
+.hf-body.hf-two {
+  display: grid;
+  gap: 8px 40px;
+  align-content: start;
 }
-h5.loehe-lesson {
-  margin: 14px 0 4px;
+.hf-loehe {
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+@media (min-width: 900px) {
+  .housefather {
+    --content-width: 1100px;
+  }
+  .housefather .hf-body.hf-two {
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .hf-two .hf-piece,
+  .hf-two .hf-loehe {
+    overflow-y: auto;
+    max-height: 100%;
+  }
+  .hf-two .hf-loehe {
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+    padding: 8px 0 0 32px;
+  }
+}
+.hf-loehe-label {
+  margin: 0 0 12px;
+  font: 600 0.8rem var(--sans);
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+.hf-lqa {
+  margin: 0 0 22px;
+}
+.hf-lq {
+  display: grid;
+  grid-template-columns: 2.2em 1fr;
+  margin: 0 0 4px;
+  font: 600 1.2rem/1.35 var(--sans);
+  color: var(--ink);
+}
+.hf-lno {
+  font-weight: 400;
+  font-size: 0.85rem;
   color: var(--muted);
+  padding-top: 5px;
+  font-variant-numeric: tabular-nums;
 }
-/* House father mode: whose question it is, and Löhe's notes after the answer. */
-.hf-source {
-  margin: 18px 0 -12px;
-  font: 0.85rem var(--sans);
+.hf-la {
+  margin: 0 0 6px 2.2em;
+  font-size: 1.15rem;
   color: var(--muted);
 }
 .hf-note {
-  font-size: 1rem;
+  margin: 0 0 6px 2.2em;
+  font-size: 0.95rem;
   color: var(--muted);
 }

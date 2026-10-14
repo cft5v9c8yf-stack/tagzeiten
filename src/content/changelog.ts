@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.7.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen am Tisch',
+    changes: [
+      { area: 'Lehre', text: 'Am Tisch steht links das Stück zum Lernen und rechts die Fragen von Wilhelm Löhe für den Tag, alle auf einmal und mit Antwort: zum Verstehen, ohne Tippen, einfach weiterlesen. Löhes Fragen eines Hauptstücks sind gleichmäßig auf die sieben Tage der Woche verteilt, in der Reihenfolge seines Buches. Mit einem Wisch zur Seite geht es zum nächsten oder vorigen Stück.' },
+      { area: 'Lehre', text: 'Auf der Seite eines Hauptstücks stehen Löhes Fragen ohne Aufklappen direkt unter Luthers Antwort. Seine einleitenden Fragen stehen vor dem ersten Stück, seine Übergangsfragen nach dem letzten. Offen ist zuerst nur das Stück von heute; die anderen öffnen sich mit einem Tipp auf den Titel.' },
+    ],
+  },
+  {
     version: '1.6.1',
     date: '2026-10-14',
     title: 'Löhes Fragen bei jedem Stück',
