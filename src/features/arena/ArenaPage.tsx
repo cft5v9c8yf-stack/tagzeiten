@@ -483,7 +483,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
         </p>
         <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
-          <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Sichern, abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
+          <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
           {!archived && (
             <IconButton
               icon="pin"
