@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.12.0',
+    date: '2026-10-15',
+    title: 'Symbole oben im Eintrag',
+    changes: [
+      { area: 'Arena', text: 'Oben links im Eintrag stehen neben dem Weg zurück kleine Symbole: Sichern und zurück, oben anheften, archivieren und löschen. Angeheftet leuchtet die Nadel golden. Vor dem Löschen fragt die App gleich darunter noch einmal nach. Die Knöpfe unten bleiben.' },
+    ],
+  },
+  {
     version: '1.11.0',
     date: '2026-10-15',
     title: 'Ein Menü neben jedem Eintrag',

@@ -350,6 +350,25 @@ function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
   );
 }
 
+/** A small round button with a Henoch icon; the label is read out and shown on hover. */
+function IconButton({
+  icon,
+  label,
+  onClick,
+  pressed,
+}: {
+  icon: FlowIconName;
+  label: string;
+  onClick: () => void;
+  pressed?: boolean;
+}) {
+  return (
+    <button type="button" className="icon-btn" aria-label={label} title={label} aria-pressed={pressed} onClick={onClick}>
+      <FlowIcon name={icon} size={22} />
+    </button>
+  );
+}
+
 /** Pins an entry or takes the pin off, and says so; a full place is named, not filled. */
 function usePin() {
   const store = useStore();
@@ -416,18 +435,77 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const titleId = useId();
   const toast = useToast();
   const pin = usePin();
-  const [confirm, setConfirm] = useState(false);
+  // Where deleting was asked: in the bar at the top or among the buttons below.
+  const [confirm, setConfirm] = useState<'top' | 'bottom' | false>(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
   const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
+  const finish = () => {
+    if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
+    navigate(home);
+  };
+  const archive = () => {
+    store.archiveArenaEntry(entry.id, true);
+    toast(
+      kind === 'forge'
+        ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
+        : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
+    );
+    navigate(arenaPath(kind));
+  };
+  const restore = () => {
+    store.archiveArenaEntry(entry.id, false);
+    toast(`Eintrag steht wieder in der ${place.title}`);
+    navigate(arenaPath(kind));
+  };
+  const remove = () => {
+    store.deleteArenaEntry(entry.id);
+    navigate(home);
+  };
+  const deleteAnswer = (
+    <>
+      <button type="button" className="btn" onClick={remove}>
+        Ja, Eintrag löschen
+      </button>
+      <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
+        Behalten
+      </button>
+    </>
+  );
 
   return (
     <article className="arena-entry">
-      <p className="back-link">
-        <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
-      </p>
+      {/* The way back and the actions as small icons at the top left, as on the iPhone. */}
+      <div className="entry-bar">
+        <p className="back-link">
+          <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
+        </p>
+        <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
+          <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Sichern, abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
+          {!archived && (
+            <IconButton
+              icon="pin"
+              label={entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
+              pressed={entry.pinnedAt !== undefined}
+              onClick={() => pin(entry)}
+            />
+          )}
+          {archived ? (
+            <IconButton icon="unarchive" label="Zurückholen" onClick={restore} />
+          ) : (
+            <IconButton icon="archive" label="Archivieren" onClick={archive} />
+          )}
+          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm('top')} />
+        </div>
+      </div>
+      {confirm === 'top' && (
+        <div className="entry-bar-confirm" role="group" aria-label="Eintrag löschen?">
+          <span>Eintrag löschen?</span>
+          {deleteAnswer}
+        </div>
+      )}
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
@@ -499,72 +577,22 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       </aside>
 
       <div className="arena-actions">
-        <button
-          type="button"
-          className="btn primary"
-          onClick={() => {
-            if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
-            navigate(home);
-          }}
-        >
+        <button type="button" className="btn primary" onClick={finish}>
           {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
         </button>
-        {!archived && (
-          <button
-            type="button"
-            className="btn"
-            onClick={() => pin(entry)}
-          >
-            {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
-          </button>
-        )}
         {archived ? (
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              store.archiveArenaEntry(entry.id, false);
-              toast(`Eintrag steht wieder in der ${place.title}`);
-              navigate(arenaPath(kind));
-            }}
-          >
+          <button type="button" className="btn" onClick={restore}>
             {`Zurück in die ${place.title} holen`}
           </button>
         ) : (
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              store.archiveArenaEntry(entry.id, true);
-              toast(
-                kind === 'forge'
-                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
-                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
-              );
-              navigate(arenaPath(kind));
-            }}
-          >
+          <button type="button" className="btn" onClick={archive}>
             {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
           </button>
         )}
-        {confirm ? (
-          <>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => {
-                store.deleteArenaEntry(entry.id);
-                navigate(home);
-              }}
-            >
-              Ja, Eintrag löschen
-            </button>
-            <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
-              Behalten
-            </button>
-          </>
+        {confirm === 'bottom' ? (
+          deleteAnswer
         ) : (
-          <button type="button" className="btn quiet" onClick={() => setConfirm(true)}>
+          <button type="button" className="btn quiet" onClick={() => setConfirm('bottom')}>
             Eintrag löschen
           </button>
         )}

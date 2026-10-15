@@ -1497,6 +1497,49 @@ body.is-sorting * {
   color: var(--ink);
   font-weight: 400;
 }
+.entry-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+}
+.entry-bar .back-link {
+  margin: 0;
+}
+.entry-bar-icons {
+  display: flex;
+  gap: 2px;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.icon-btn:hover,
+.icon-btn:focus-visible {
+  background: var(--paper);
+}
+.icon-btn[aria-pressed='true'] {
+  color: var(--gold);
+  background: var(--gold-soft);
+}
+.entry-bar-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-family: var(--sans);
+}
 .arena-item {
   position: relative;
 }
