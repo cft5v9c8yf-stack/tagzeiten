@@ -19,6 +19,10 @@ import { isQuestion, type LoeheChapter, type LoeheItem, type LoeheLesson, type L
 export type { LoeheChapter, LoeheLesson, LoeheQuestion } from './loehe/types';
 export { isQuestion } from './loehe/types';
 
+/** Why Löhe speaks of six chief parts while the app counts five; his text stays as he wrote it. */
+export const LOEHE_COUNT_NOTE =
+  'Löhe zählt nach der Ausgabe seiner Zeit die Beichte als fünftes Hauptstück mit, das Sakrament des Altars als sechstes. Seine Fragen stehen so, wie er sie geschrieben hat.';
+
 export const LOEHE_SOURCE =
   'Wilhelm Löhe, lutherischer Pfarrer: Haus-, Schul- und Kirchenbuch für Christen des lutherischen Bekenntnisses. Erster Theil. Stuttgart, S. G. Liesching 1845. II. Fragen und Antworten zu den sechs Hauptstücken des kleinen Catechismus Dr. M. Luthers';
 

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.14.1',
+    date: '2026-10-15',
+    title: 'Löhes Zählung erklärt',
+    changes: [
+      { area: 'Lehre', text: 'Unter Löhes Fragen steht, warum er von sechs Hauptstücken spricht: Er zählt nach der Ausgabe seiner Zeit die Beichte mit. Seine Fragen bleiben, wie er sie geschrieben hat.' },
+    ],
+  },
+  {
     version: '1.14.0',
     date: '2026-10-15',
     title: 'Fünf Hauptstücke',

@@ -6,6 +6,7 @@ import { CATECHISM, chiefNumber, WEEKDAY_PIECES, type ChiefPart } from '../../co
 import {
   LOEHE_HOME,
   LOEHE_PLACES,
+  LOEHE_COUNT_NOTE,
   LOEHE_SOURCE,
   isQuestion,
   loeheBetween,
@@ -248,6 +249,7 @@ export function LoeheBook() {
         ))}
       </ul>
       <p className="book-source loehe-source">{LOEHE_SOURCE}</p>
+      <p className="book-source loehe-source">{LOEHE_COUNT_NOTE}</p>
     </>
   );
 }
