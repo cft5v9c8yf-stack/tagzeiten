@@ -318,37 +318,17 @@ describe('Titles and pinned entries', () => {
     await waitFor(() => expect(store.getProfile().arena.find((e) => e.id === forge)!.archivedAt).toBeTypeOf('number'));
   });
 
-  it('has small icons at the top of an entry: save, pin, archive, delete', async () => {
-    const store = await renderArena();
+  it('has a small icon at the top to save; the buttons with words stay below', async () => {
+    await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Oben' } });
-    const bar = screen.getByRole('toolbar', { name: 'Eintrag' });
-    expect(bar.querySelectorAll('svg')).toHaveLength(4);
-    fireEvent.click(within(bar).getByRole('button', { name: 'Oben anheften' }));
-    await waitFor(() => expect(within(bar).getByRole('button', { name: 'Nicht mehr anheften' }).getAttribute('aria-pressed')).toBe('true'));
-
-    // Deleting asks right under the icons; "Behalten" keeps it.
-    fireEvent.click(within(bar).getByRole('button', { name: 'Löschen' }));
-    const ask = screen.getByRole('group', { name: 'Eintrag löschen?' });
-    fireEvent.click(within(ask).getByRole('button', { name: 'Behalten' }));
-    expect(screen.queryByRole('group', { name: 'Eintrag löschen?' })).toBeNull();
-
-    fireEvent.click(within(bar).getByRole('button', { name: 'Sichern und zurück' }));
+    const bar = document.querySelector('.entry-bar')!;
+    expect(bar.querySelectorAll('button')).toHaveLength(1);
+    for (const name of ['Eintrag sichern und zurück', 'Oben anheften', 'Eintrag archivieren', 'Eintrag löschen']) {
+      expect(document.querySelector('.arena-actions')!.textContent).toContain(name);
+    }
+    fireEvent.click(within(bar as HTMLElement).getByRole('button', { name: 'Sichern und zurück' }));
     expect(await screen.findByRole('link', { name: /Oben/ })).toBeTruthy();
-
-    fireEvent.click(screen.getByRole('link', { name: /Oben/ }));
-    const bar2 = await screen.findByRole('toolbar', { name: 'Eintrag' });
-    fireEvent.click(within(bar2).getByRole('button', { name: 'Archivieren' }));
-    await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
-    expect(store.getProfile().arena[0]!.pinnedAt).toBeUndefined();
-
-    fireEvent.click(await screen.findByRole('link', { name: 'Archivierte Einträge im Rückblick' }));
-    fireEvent.click(await screen.findByRole('link', { name: /Oben/ }));
-    const bar3 = await screen.findByRole('toolbar', { name: 'Eintrag' });
-    expect(within(bar3).queryByRole('button', { name: 'Oben anheften' })).toBeNull();
-    fireEvent.click(within(bar3).getByRole('button', { name: 'Löschen' }));
-    fireEvent.click(within(screen.getByRole('group', { name: 'Eintrag löschen?' })).getByRole('button', { name: 'Ja, Eintrag löschen' }));
-    await waitFor(() => expect(store.getProfile().arena).toEqual([]));
   });
 
   it('keeps title and pin through a backup', () => {
