@@ -15,6 +15,7 @@ import { seasonTileLine } from '../desert/SeasonInvite';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
+import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
@@ -349,6 +350,56 @@ function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
   );
 }
 
+/** Pins an entry or takes the pin off, and says so; a full place is named, not filled. */
+function usePin() {
+  const store = useStore();
+  const toast = useToast();
+  return (entry: ArenaEntry) => {
+    const pin = entry.pinnedAt === undefined;
+    if (store.pinArenaEntry(entry.id, pin)) toast(pin ? `Steht jetzt oben in der ${PLACES[kindOf(entry)].title}` : 'Nicht mehr angeheftet');
+    else toast('Oben stehen schon drei Einträge. Löse zuerst einen davon.');
+  };
+}
+
+/** An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting. */
+function ListItem({ entry, children }: { entry: ArenaEntry; children: React.ReactNode }) {
+  const store = useStore();
+  const toast = useToast();
+  const pin = usePin();
+  const forge = kindOf(entry) === 'forge';
+  const name = forge ? entry.title?.trim() || forgeTitle(entry) : entryTitle(entry);
+  return (
+    <li className="arena-item">
+      {children}
+      <EntryMenu
+        label={`Aktionen für „${name}“`}
+        items={[
+          { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
+          {
+            label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
+            onSelect: () => {
+              store.archiveArenaEntry(entry.id, true);
+              toast(
+                forge
+                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
+                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
+              );
+            },
+          },
+          {
+            label: 'Eintrag löschen',
+            confirm: 'Ja, Eintrag löschen',
+            onSelect: () => {
+              store.deleteArenaEntry(entry.id);
+              toast('Eintrag gelöscht');
+            },
+          },
+        ]}
+      />
+    </li>
+  );
+}
+
 function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const store = useStore();
   const profile = useProfile();
@@ -364,6 +415,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const dateId = useId();
   const titleId = useId();
   const toast = useToast();
+  const pin = usePin();
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
@@ -461,11 +513,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           <button
             type="button"
             className="btn"
-            onClick={() => {
-              const pin = entry.pinnedAt === undefined;
-              if (store.pinArenaEntry(entry.id, pin)) toast(pin ? `Steht jetzt oben in der ${place.title}` : 'Nicht mehr angeheftet');
-              else toast('Oben stehen schon drei Einträge. Löse zuerst einen davon.');
-            }}
+            onClick={() => pin(entry)}
           >
             {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
           </button>
@@ -591,9 +639,9 @@ export function ArenaPage() {
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
-            <li key={e.id}>
+            <ListItem key={e.id} entry={e}>
               <ArenaCard entry={e} />
-            </li>
+            </ListItem>
           ))}
         </ul>
       )}
@@ -601,7 +649,7 @@ export function ArenaPage() {
         // Named by the title, else by the meeting; pinned first, then the earliest meeting, entries without a date last.
         <ul className="arena-list">
           {pinnedFirst(byMeeting(shown).flatMap((g) => g.entries)).map((e) => (
-            <li key={e.id}>
+            <ListItem key={e.id} entry={e}>
               <Link className="arena-card" to={`/arena/${e.id}`}>
                 {e.title?.trim() ? (
                   <>
@@ -618,7 +666,7 @@ export function ArenaPage() {
                   </span>
                 )}
               </Link>
-            </li>
+            </ListItem>
           ))}
         </ul>
       )}

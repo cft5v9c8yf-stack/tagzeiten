@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.11.0',
+    date: '2026-10-15',
+    title: 'Ein Menü neben jedem Eintrag',
+    changes: [
+      { area: 'Arena', text: 'Neben jedem Eintrag in der Gebetskammer und in der Eisenschmiede steht das Zeichen „⋯“. Es öffnet ein Menü: oben anheften oder nicht mehr anheften, archivieren und löschen. Vor dem Löschen fragt die App noch einmal nach.' },
+    ],
+  },
+  {
     version: '1.10.0',
     date: '2026-10-15',
     title: 'Titel und angeheftete Einträge',

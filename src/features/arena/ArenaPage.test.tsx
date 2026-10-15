@@ -271,6 +271,53 @@ describe('Titles and pinned entries', () => {
     expect(store.getProfile().arena.find((e) => e.id === eins.id)!.pinnedAt).toBeUndefined();
   });
 
+  it('pins, archives and deletes from the three dots beside an entry', async () => {
+    const store = await renderArena();
+    for (const t of ['Eins', 'Zwei']) {
+      const id = store.addArenaEntry();
+      store.updateArenaEntry(id, (e) => ({ ...e, text: t }));
+    }
+    const menu = async (t: string, item: string) => {
+      fireEvent.click(await screen.findByRole('button', { name: `Aktionen für „${t}“` }));
+      fireEvent.click(within(await screen.findByRole('menu')).getByRole('menuitem', { name: item }));
+    };
+    const titles = () => [...document.querySelectorAll('.arena-list .arena-card-title')].map((x) => x.textContent);
+    await waitFor(() => expect(titles()).toEqual(['Zwei', 'Eins']));
+
+    await menu('Eins', 'Oben anheften');
+    await waitFor(() => expect(titles()).toEqual(['Eins', 'Zwei']));
+    expect(await screen.findByText('Steht jetzt oben in der Gebetskammer')).toBeTruthy();
+    expect(screen.queryByRole('menu')).toBeNull();
+
+    // Escape closes the menu without doing anything.
+    fireEvent.click(screen.getByRole('button', { name: 'Aktionen für „Eins“' }));
+    expect(within(screen.getByRole('menu')).getByRole('menuitem', { name: 'Nicht mehr anheften' })).toBeTruthy();
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(screen.queryByRole('menu')).toBeNull();
+
+    await menu('Eins', 'Eintrag archivieren');
+    await waitFor(() => expect(titles()).toEqual(['Zwei']));
+    expect(store.getProfile().arena.find((e) => e.text === 'Eins')!.archivedAt).toBeTypeOf('number');
+
+    // Deleting asks once more; "Behalten" keeps it.
+    await menu('Zwei', 'Eintrag löschen');
+    fireEvent.click(within(screen.getByRole('menu')).getByRole('menuitem', { name: 'Behalten' }));
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(titles()).toEqual(['Zwei']);
+    await menu('Zwei', 'Eintrag löschen');
+    fireEvent.click(within(screen.getByRole('menu')).getByRole('menuitem', { name: 'Ja, Eintrag löschen' }));
+    await waitFor(() => expect(titles()).toEqual([]));
+    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Eins']);
+
+    // The Eisenschmiede has the same menu.
+    const forge = store.addArenaEntry('forge');
+    store.updateArenaEntry(forge, (e) => ({ ...e, points: [{ text: 'Beruf', done: false }] }));
+    goTo('Eisenschmiede');
+    await screen.findByRole('heading', { level: 2, name: 'Eisenschmiede' });
+    await menu('Treffen noch ohne Termin', 'Besprochen – archivieren');
+    await waitFor(() => expect(store.getProfile().arena.find((e) => e.id === forge)!.archivedAt).toBeTypeOf('number'));
+  });
+
   it('keeps title and pin through a backup', () => {
     const [e] = normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', title: 'Nur ein Titel', pinnedAt: 5 }]);
     expect(e).toMatchObject({ title: 'Nur ein Titel', pinnedAt: 5 });
