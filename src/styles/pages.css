@@ -3498,6 +3498,9 @@ header.top .search-link:focus-visible {
   border-top: 1px solid var(--rule);
   hyphens: auto;
 }
+.loehe-source {
+  margin-top: 18px;
+}
 .fold-body > .li:first-child {
   margin-top: 4px;
   border-top: 0;

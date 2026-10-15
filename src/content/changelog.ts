@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.9.0',
+    date: '2026-10-15',
+    title: 'Löhes Fragen in Kacheln',
+    changes: [
+      { area: 'Lehre', text: 'Die Seite „Fragen und Antworten zum Katechismus“ zeigt die Hauptstücke als Kacheln, wie die Übersicht der Lehre. Ein Tipp öffnet das Hauptstück mit einer Karte für jedes Stück: bei den Geboten für jedes Gebot, beim Glauben für jeden Artikel, beim Vaterunser für jede Bitte. Davor stehen die einleitenden Fragen, danach die Übergangsfragen. Offen ist zuerst das Stück von heute.' },
+      { area: 'Lehre', text: 'Löhes Fragen zum ganzen Katechismus haben eine eigene Kachel. Die Suche führt direkt zum Hauptstück.' },
+    ],
+  },
+  {
     version: '1.8.1',
     date: '2026-10-14',
     title: 'Löhes Fragen passend zum Stück',

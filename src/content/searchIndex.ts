@@ -68,10 +68,16 @@ export function contentDocs(today: DateKey): SearchDoc[] {
       add(`Lehre · ${part.title}`, piece.title, [piece.words, ...piece.qa.flat()].join(' '), `/katechismus/${part.id}`);
     }
   }
-  for (const chapter of [...LOEHE_OVERVIEW, ...CATECHISM.map((p) => LOEHE_BY_CHIEF_PART[p.id])]) {
+  // The questions on the whole catechism have their own page; those on the means of grace open the Lord's Prayer.
+  const loehe = [
+    [LOEHE_OVERVIEW[0]!, 'ganzer-katechismus'],
+    [LOEHE_OVERVIEW[1]!, 'lordsPrayer'],
+    ...CATECHISM.map((p) => [LOEHE_BY_CHIEF_PART[p.id], p.id] as const),
+  ] as const;
+  for (const [chapter, part] of loehe) {
     for (const lesson of chapter.lessons) {
       const text = lessonQuestions(lesson).flatMap((q) => [q.q, q.a, q.note ?? '', ...(q.footnotes ?? [])]).join(' ');
-      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, '/katechismus/loehe');
+      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, `/katechismus/loehe/${part}`);
     }
   }
   for (const c of CREEDS) {

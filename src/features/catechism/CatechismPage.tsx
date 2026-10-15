@@ -247,7 +247,7 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
   return (
     <>
       <h2 className="cat-part-title">{title}</h2>
-      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'apologie' || slug === 'traktat' || slug === 'konkordienbuch' || slug === 'loehe' ? 'dieffenbach-book' : 'cat-part'}>
+      <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'apologie' || slug === 'traktat' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'konkordienbuch' && <Concordia />}
         {slug === 'augsburgische-konfession' && <AugsburgConfession />}
@@ -260,7 +260,6 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
           </Suspense>
         )}
         {slug === 'bekenntnisse' && <Creeds />}
-        {slug === 'loehe' && <LoeheBook />}
         {slug === 'tischgebete' && (
           <>
             <TablePrayer id="before" title="Vor dem Essen" prayer={TABLE_PRAYER_BEFORE} />
@@ -321,10 +320,18 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
 
 /** Katechismus: this week in gold, the chief parts as tiles; a tile opens its part (/katechismus/:teil). */
 export function CatechismPage() {
-  const { teil } = useParams();
+  const { teil, hauptstueck } = useParams();
   const { date, isToday } = useSelectedDate();
   const ci = CATECHISM.findIndex((c) => c.id === teil);
   const appendix = APPENDICES.find((a) => a.slug === teil);
+  // Löhe's book has a level more: its chief parts, then their pieces.
+  if (teil === 'loehe' || hauptstueck) {
+    return (
+      <div className="cat-page">
+        <LoeheBook />
+      </div>
+    );
+  }
   if (ci >= 0 || appendix) {
     return (
       <div className="cat-page">

@@ -43,6 +43,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'sonntag/gebet', element: <ScripturePrayerPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
       { path: 'katechismus/:teil', element: <CatechismPage /> },
+      { path: 'katechismus/loehe/:hauptstueck', element: <CatechismPage /> },
       { path: 'arena', element: <ArenaPage /> },
       { path: 'arena/:eintrag', element: <ArenaPage /> },
       // The archive now stands under "Mehr" as "Rückblick".

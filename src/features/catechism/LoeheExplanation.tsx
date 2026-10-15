@@ -1,5 +1,6 @@
-import { useSelectedDate } from '../../app/useSelectedDate';
-import { CATECHISM } from '../../content/catechism';
+import { Link, useParams } from 'react-router';
+import { useSelectedDate, withDate } from '../../app/useSelectedDate';
+import { CATECHISM, WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
 import {
   LOEHE_HOME,
   LOEHE_PLACES,
@@ -11,6 +12,7 @@ import {
   type LoeheQuestion,
 } from '../../content/loeheCatechism';
 import { useProfile } from '../../data/hooks';
+import { mondayIndex } from '../../domain/dates';
 import { catechismFor } from '../../domain/catechismDay';
 import { Section } from '../../ui/Section';
 
@@ -45,12 +47,12 @@ function Notes({ q }: { q: LoeheQuestion }) {
  * Löhe's questions on one place of the catechism under its title: number in
  * the margin, question, answer, his notes small after it. Nothing to tap.
  */
-function LoeheBlock({ title, lessons }: { title: string; lessons: readonly LoeheLesson[] }) {
+function LoeheBlock({ title, lessons, showTitle = true }: { title: string; lessons: readonly LoeheLesson[]; showTitle?: boolean }) {
   const marks = lessons.flatMap((l) => l.items.filter((i) => !isQuestion(i))).length;
   if (!lessons.some((l) => l.items.some(isQuestion))) return null;
   return (
     <section className="li" aria-label={title}>
-      <h4 className="li-label">{title}</h4>
+      {showTitle && <h4 className="li-label">{title}</h4>}
       {lessons.map((l, li) => (
         <div key={li}>
           {l.items.map((item, i) =>
@@ -79,85 +81,127 @@ function LoeheBlock({ title, lessons }: { title: string; lessons: readonly Loehe
 
 type Range = readonly [number, number];
 const headingOf = (r?: Range) => (r ? loeheBetween(r).find((l) => l.heading)?.heading : undefined);
+const questionsIn = (r: Range) => loeheBetween(r).flatMap((l) => l.items.filter(isQuestion));
 const span = (qs: readonly LoeheQuestion[]) => `Fragen ${qs[0]!.no}–${qs.at(-1)!.no}`;
-const CARD_IDS = ['loehe.home', ...CATECHISM.map((c) => `loehe.${c.id}`)];
+const HOME = 'ganzer-katechismus';
+const BOOK_TITLE = 'Fragen und Antworten zum Katechismus';
+
+/** The places of a chief part in Löhe's book: introduction, each piece, transition. */
+function placesOf(chief: ChiefPart): { key: string; title: string; range: Range; piece?: number }[] {
+  const p = LOEHE_PLACES[chief.id];
+  return [
+    ...(p.intro
+      ? [{ key: 'intro', title: chief.id === 'lordsPrayer' ? 'Einleitende Fragen' : (headingOf(p.intro) ?? 'Einleitende Fragen'), range: p.intro }]
+      : []),
+    ...chief.pieces.map((piece, pi) => ({ key: `${pi}`, title: piece.title, range: p.pieces[pi]!, piece: pi })),
+    ...(p.outro ? [{ key: 'outro', title: headingOf(p.outro) ?? 'Zum Übergang', range: p.outro }] : []),
+  ];
+}
 
 /**
- * Appendix "Fragen und Antworten zum Katechismus": Löhe's book in its own
- * order, one card per chief part, one open at a time; this week's chief part
- * open first. Inside, his questions under the piece they explain.
+ * Appendix "Fragen und Antworten zum Katechismus" (/katechismus/loehe): the
+ * chief parts as tiles, as on the overview of the teaching. A tile opens the
+ * chief part (/katechismus/loehe/:hauptstueck) with a card for each piece,
+ * one open at a time; inside, Löhe's questions on that piece.
  */
 export function LoeheBook() {
-  const { date } = useSelectedDate();
+  const { hauptstueck } = useParams();
+  const { date, isToday } = useSelectedDate();
   const profile = useProfile();
-  const current = catechismFor(date, profile.catechism.weekOffset).chiefIndex;
-  const home = loeheBetween(LOEHE_HOME);
+  const week = catechismFor(date, profile.catechism.weekOffset);
+  const to = (path: string) => withDate(path, date, isToday);
+  const ci = CATECHISM.findIndex((c) => c.id === hauptstueck);
+
+  if (hauptstueck === HOME) {
+    const home = loeheBetween(LOEHE_HOME);
+    return (
+      <>
+        <p className="back-link">
+          <Link to={to('/katechismus/loehe')}>‹ {BOOK_TITLE}</Link>
+        </p>
+        <h2 className="cat-part-title">Zum ganzen Katechismus</h2>
+        <p className="book-source">Wilhelm Löhe · {span(questionsIn(LOEHE_HOME))}</p>
+        <div className="dieffenbach-book">
+          <LoeheBlock title={home[0]?.heading ?? 'Einleitende Fragen'} lessons={home} />
+        </div>
+      </>
+    );
+  }
+
+  if (ci >= 0) {
+    const chief = CATECHISM[ci]!;
+    const places = placesOf(chief);
+    const ids = places.map((pl) => `loehe.${chief.id}.${pl.key}`);
+    const todays = ci === week.chiefIndex ? (WEEKDAY_PIECES[chief.id][mondayIndex(date)] ?? []) : [];
+    return (
+      <>
+        <p className="back-link">
+          <Link to={to('/katechismus/loehe')}>‹ {BOOK_TITLE}</Link>
+        </p>
+        <h2 className="cat-part-title">
+          <span className="no">{ci + 1}</span> {chief.title}
+          {ci === week.chiefIndex && <span className="ktag">diese Woche</span>}
+        </h2>
+        <p className="book-source">Wilhelm Löhe · {span(loeheForChiefPart(chief.id))}</p>
+        <div className="dieffenbach-book">
+          {places.map((pl, i) => {
+            const today = pl.piece !== undefined && todays.includes(pl.piece);
+            return (
+              <Section
+                key={pl.key}
+                id={ids[i]!}
+                group={ids}
+                defaultOpen={today && pl.piece === todays[0]}
+                className="book-card"
+                title={
+                  <span className="book-card-text">
+                    <span className="book-card-title">{pl.title}</span>
+                    <span className="book-card-sub">
+                      {span(questionsIn(pl.range))}
+                      {today && ' · heute'}
+                    </span>
+                  </span>
+                }
+              >
+                <LoeheBlock title={pl.title} lessons={loeheBetween(pl.range)} showTitle={false} />
+              </Section>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
+      <p className="back-link">
+        <Link to={to('/katechismus')}>‹ Lehre</Link>
+      </p>
+      <h2 className="cat-part-title">{BOOK_TITLE}</h2>
       <p className="book-source">
         Wilhelm Löhe, lutherischer Pfarrer in Neuendettelsau, hat zu jedem Stück des Kleinen Katechismus Fragen und
         Antworten geschrieben, damit Kinder verstehen, was sie auswendig lernen. Wortgetreu in der Rechtschreibung der
         Ausgabe. Am Tisch stehen die Fragen des Tages neben dem Stück: „Am Tisch abfragen“ auf der Übersicht.
       </p>
-      <Section
-        id="loehe.home"
-        group={CARD_IDS}
-        defaultOpen={false}
-        className="book-card"
-        title={
-          <>
-            <span className="book-card-mark" aria-hidden="true">
-              ·
-            </span>
-            <span className="book-card-text">
-              <span className="book-card-title">Zum ganzen Katechismus</span>
-              <span className="book-card-sub">{span(home.flatMap((l) => l.items.filter(isQuestion)))}</span>
-            </span>
-          </>
-        }
-      >
-        <LoeheBlock title={home[0]?.heading ?? 'Einleitende Fragen'} lessons={home} />
-      </Section>
-      {CATECHISM.map((chief, ci) => {
-        const places = LOEHE_PLACES[chief.id];
-        return (
-          <Section
-            key={chief.id}
-            id={`loehe.${chief.id}`}
-            group={CARD_IDS}
-            defaultOpen={ci === current}
-            className="book-card"
-            title={
-              <>
-                <span className="book-card-mark" aria-hidden="true">
-                  {ci + 1}
-                </span>
-                <span className="book-card-text">
-                  <span className="book-card-title">{chief.title}</span>
-                  <span className="book-card-sub">
-                    {span(loeheForChiefPart(chief.id))}
-                    {ci === current && ' · diese Woche'}
-                  </span>
-                </span>
-              </>
-            }
-          >
-            {places.intro && (
-              <LoeheBlock
-                title={chief.id === 'lordsPrayer' ? 'Einleitende Fragen' : (headingOf(places.intro) ?? 'Einleitende Fragen')}
-                lessons={loeheBetween(places.intro)}
-              />
-            )}
-            {chief.pieces.map((piece, pi) => (
-              <LoeheBlock key={pi} title={piece.title} lessons={loeheBetween(places.pieces[pi]!)} />
-            ))}
-            {places.outro && (
-              <LoeheBlock title={headingOf(places.outro) ?? 'Zum Übergang'} lessons={loeheBetween(places.outro)} />
-            )}
-          </Section>
-        );
-      })}
-      <p className="small muted">{LOEHE_SOURCE}</p>
+      <ul className="overview-list loehe-tiles">
+        <li className="overview-row wide">
+          <Link className="overview-link" to={to(`/katechismus/loehe/${HOME}`)}>
+            <span className="overview-title">Zum ganzen Katechismus</span>
+            <span className="overview-count">{span(questionsIn(LOEHE_HOME))}</span>
+          </Link>
+        </li>
+        {CATECHISM.map((chief, i) => (
+          <li key={chief.id} className={`overview-row${i === week.chiefIndex ? ' current' : ''}`}>
+            <Link className="overview-link" to={to(`/katechismus/loehe/${chief.id}`)}>
+              <span className="overview-no">{i + 1}</span>
+              <span className="overview-title">{chief.title}</span>
+              {i === week.chiefIndex && <span className="ktag">diese Woche</span>}
+              <span className="overview-count">{span(loeheForChiefPart(chief.id))}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+      <p className="book-source loehe-source">{LOEHE_SOURCE}</p>
     </>
   );
 }
