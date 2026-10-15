@@ -56,7 +56,7 @@ function useMemorize() {
 }
 
 /** One chief part on its own page, piece by piece; ?stueck= jumps to a piece. */
-function ChiefPart({ ci }: { ci: number }) {
+function ChiefPart({ ci, back }: { ci: number; back: React.ReactNode }) {
   const { date } = useSelectedDate();
   const profile = useProfile();
   const [params] = useSearchParams();
@@ -86,10 +86,13 @@ function ChiefPart({ ci }: { ci: number }) {
 
   return (
     <>
-      <h2 className="cat-part-title">
-        <span className="no">{ci + 1}</span> {chief.title}
-        {ci === day.chiefIndex && <span className="ktag">diese Woche</span>}
-      </h2>
+      <div className="title-row">
+        {back}
+        <h2 className="cat-part-title">
+          <span className="no">{ci + 1}</span> {chief.title}
+          {ci === day.chiefIndex && <span className="ktag">diese Woche</span>}
+        </h2>
+      </div>
       {ci !== day.chiefIndex && (
         <p className="cat-part-choose">
           <button type="button" className="pill" onClick={() => chooseChief(ci)}>
@@ -243,11 +246,14 @@ function Concordia() {
   );
 }
 
-function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
+function Appendix({ slug, back }: { slug: (typeof APPENDICES)[number]['slug']; back: React.ReactNode }) {
   const title = APPENDICES.find((a) => a.slug === slug)!.title;
   return (
     <>
-      <h2 className="cat-part-title">{title}</h2>
+      <div className="title-row">
+        {back}
+        <h2 className="cat-part-title">{title}</h2>
+      </div>
       <div className={slug === 'kirchenjahr' ? undefined : slug === 'bekenntnisse' || slug === 'augsburgische-konfession' || slug === 'grosser-katechismus' || slug === 'schmalkaldische-artikel' || slug === 'apologie' || slug === 'traktat' || slug === 'konkordienbuch' ? 'dieffenbach-book' : 'cat-part'}>
         {slug === 'kirchenjahr' && <DieffenbachBook />}
         {slug === 'konkordienbuch' && <Concordia />}
@@ -334,16 +340,18 @@ export function CatechismPage() {
     );
   }
   if (ci >= 0 || appendix) {
+    const back = (
+      <p className="back-link">
+        {appendix && 'book' in appendix ? (
+          <BackLink to={withDate('/katechismus/konkordienbuch', date, isToday)}>Konkordienbuch</BackLink>
+        ) : (
+          <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
+        )}
+      </p>
+    );
     return (
       <div className="cat-page">
-        <p className="back-link">
-          {appendix && 'book' in appendix ? (
-            <BackLink to={withDate('/katechismus/konkordienbuch', date, isToday)}>Konkordienbuch</BackLink>
-          ) : (
-            <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
-          )}
-        </p>
-        {ci >= 0 ? <ChiefPart ci={ci} /> : <Appendix slug={appendix!.slug} />}
+        {ci >= 0 ? <ChiefPart ci={ci} back={back} /> : <Appendix slug={appendix!.slug} back={back} />}
       </div>
     );
   }

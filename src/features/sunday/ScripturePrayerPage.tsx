@@ -68,10 +68,12 @@ export function ScripturePrayerPage() {
   };
   return (
     <article className="scripture-walk">
-      <p className="back-link">
-        <BackLink to={links.sunday()}>Sonntag</BackLink>
-      </p>
-      <h2>{walk.title}</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={links.sunday()}>Sonntag</BackLink>
+        </p>
+        <h2>{walk.title}</h2>
+      </div>
       <p className="small muted">{SCRIPTURE_PRAYER_INTRO}</p>
       <section className="flow-step walk-step" aria-labelledby="walk-step-title">
         <p className="walk-count" aria-label={`Schritt ${i + 1} von ${walk.steps.length}`}>

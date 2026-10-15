@@ -166,10 +166,12 @@ export function LoeheBook() {
     const home = loeheBetween(LOEHE_HOME);
     return (
       <>
-        <p className="back-link">
-          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
-        </p>
-        <h2 className="cat-part-title">Zum ganzen Katechismus</h2>
+        <div className="title-row">
+          <p className="back-link">
+            <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
+          </p>
+          <h2 className="cat-part-title">Zum ganzen Katechismus</h2>
+        </div>
         <p className="book-source">Wilhelm Löhe · {span(questionsIn(LOEHE_HOME))}</p>
         <div className="dieffenbach-book">
           <LoeheBlock title={home[0]?.heading ?? 'Einleitende Fragen'} lessons={home} />
@@ -185,13 +187,15 @@ export function LoeheBook() {
     const shown = places.find((pl) => pl.key === open);
     return (
       <>
-        <p className="back-link">
-          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
-        </p>
-        <h2 className="cat-part-title">
-          <span className="no">{ci + 1}</span> {chief.title}
-          {ci === week.chiefIndex && <span className="ktag">diese Woche</span>}
-        </h2>
+        <div className="title-row">
+          <p className="back-link">
+            <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
+          </p>
+          <h2 className="cat-part-title">
+            <span className="no">{ci + 1}</span> {chief.title}
+            {ci === week.chiefIndex && <span className="ktag">diese Woche</span>}
+          </h2>
+        </div>
         <p className="book-source">Wilhelm Löhe · {span(loeheForChiefPart(chief.id))}</p>
         <ul className="overview-list loehe-pieces">
           {places.map((pl) => {
@@ -214,10 +218,12 @@ export function LoeheBook() {
 
   return (
     <>
-      <p className="back-link">
-        <BackLink to={to('/katechismus')}>Lehre</BackLink>
-      </p>
-      <h2 className="cat-part-title">{BOOK_TITLE}</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={to('/katechismus')}>Lehre</BackLink>
+        </p>
+        <h2 className="cat-part-title">{BOOK_TITLE}</h2>
+      </div>
       <p className="book-source">
         Wilhelm Löhe, lutherischer Pfarrer in Neuendettelsau, hat zu jedem Stück des Kleinen Katechismus Fragen und
         Antworten geschrieben, damit Kinder verstehen, was sie auswendig lernen. Wortgetreu in der Rechtschreibung der

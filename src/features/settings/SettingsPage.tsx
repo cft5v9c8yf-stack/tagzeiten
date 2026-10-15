@@ -258,15 +258,17 @@ export function SettingsPage() {
 
   return (
     <div className="settings more-area">
-      <p className="back-link">
-        <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
-      </p>
-      <div className="fold-head more-area-head">
-        <h2>
-          <FlowIcon name={area.icon} size={24} />
-          {area.title}
-        </h2>
-        <InfoToggle title={area.title}>{area.info}</InfoToggle>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
+        </p>
+        <div className="fold-head more-area-head">
+          <h2>
+            <FlowIcon name={area.icon} size={24} />
+            {area.title}
+          </h2>
+          <InfoToggle title={area.title}>{area.info}</InfoToggle>
+        </div>
       </div>
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
       {area.body()}

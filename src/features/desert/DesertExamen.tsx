@@ -32,10 +32,12 @@ export function DesertExamen() {
   const habit = profile.habits.find((h) => h.id === params.get('gewohnheit'));
   return (
     <article className="arena-entry desert-examen">
-      <p className="back-link">
-        <BackLink to={home}>Zurück zur Liste</BackLink>
-      </p>
-      <h2>Gewissenserforschung</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={home}>Zurück zur Liste</BackLink>
+        </p>
+        <h2>Gewissenserforschung</h2>
+      </div>
       <p className="small muted">{formatLong(date)}</p>
       <WaVerse verse={DESERT_EXAMEN_VERSE} />
       {EXAMEN_STEP.parts.map((part) => (

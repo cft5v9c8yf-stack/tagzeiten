@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.13.1',
+    date: '2026-10-15',
+    title: 'Der Pfeil neben der Überschrift',
+    changes: [
+      { area: 'Henoch', text: 'Der Pfeil zurück steht nicht mehr allein über der Überschrift, sondern links daneben auf ihrer ersten Zeile. Die Seiten beginnen dadurch ruhiger und etwas höher.' },
+    ],
+  },
+  {
     version: '1.13.0',
     date: '2026-10-15',
     title: 'Ein Pfeil für den Weg zurück',

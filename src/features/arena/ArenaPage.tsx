@@ -717,13 +717,15 @@ export function ArenaPage() {
 function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
-      <p className="back-link">
-        <BackLink to="/arena">Arena</BackLink>
-      </p>
-      <h2 className="place-title">
-        {title}
-        {sub && <span className="place-sub">{sub}</span>}
-      </h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to="/arena">Arena</BackLink>
+        </p>
+        <h2 className="place-title">
+          {title}
+          {sub && <span className="place-sub">{sub}</span>}
+        </h2>
+      </div>
     </>
   );
 }
