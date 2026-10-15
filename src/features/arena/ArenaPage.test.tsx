@@ -23,7 +23,7 @@ let n = 0;
 
 /** From a place back to the Arena's entrance, and into another place. */
 function goTo(place: string) {
-  fireEvent.click(screen.getByRole('link', { name: '‹ Arena' }));
+  fireEvent.click(screen.getByRole('link', { name: 'Zurück: Arena' }));
   fireEvent.click(screen.getByRole('link', { name: new RegExp(`^${place}`) }));
 }
 async function renderArena() {
@@ -140,7 +140,7 @@ describe('Arena', () => {
     expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Einer trage des andern Last');
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', points: [{ text: 'Entscheidung im Beruf', done: false }] }));
 
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     // Named by its meeting only; this one has no date yet.
     expect(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull();
@@ -164,11 +164,11 @@ describe('Arena', () => {
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ meetingDate: '2026-10-01', points: [{ text: 'Erstes', done: false }] }));
 
     // The next concern belongs to the same meeting without asking.
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     expect(((await screen.findByLabelText('Für das Treffen am')) as HTMLInputElement).value).toBe('2026-10-01');
     fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Zweites' } });
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
 
     expect(await screen.findAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })).toHaveLength(2);
     fireEvent.click(screen.getAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })[0]!);
@@ -219,7 +219,7 @@ describe('Titles and pinned entries', () => {
     goTo('Eisenschmiede');
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Titel'), { target: { value: 'Beruf' } });
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     const card = await screen.findByRole('link', { name: /Beruf/ });
     expect(card.textContent).toContain('Treffen noch ohne Termin');
   });
@@ -237,7 +237,7 @@ describe('Titles and pinned entries', () => {
     const pin = async (t: string) => {
       fireEvent.click(screen.getByRole('link', { name: new RegExp(t) }));
       fireEvent.click(await screen.findByRole('button', { name: 'Oben anheften' }));
-      fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+      fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
       await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
     };
     await pin('Eins');
@@ -257,10 +257,10 @@ describe('Titles and pinned entries', () => {
     expect(store.pinArenaEntry(forge, true)).toBe(true);
 
     // Taken off, it goes back among the others.
-    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
     fireEvent.click(await screen.findByRole('link', { name: /Drei/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Nicht mehr anheften' }));
-    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
     await waitFor(() => expect(titles()).toEqual(['Eins', 'Zwei', 'Fünf', 'Vier', 'Drei']));
 
     // Archived, it is no longer pinned, and stays so when brought back.
@@ -318,22 +318,48 @@ describe('Titles and pinned entries', () => {
     await waitFor(() => expect(store.getProfile().arena.find((e) => e.id === forge)!.archivedAt).toBeTypeOf('number'));
   });
 
-  it('has a small icon at the top to save; the buttons with words stay below', async () => {
-    await renderArena();
+  it('has small icons at the top of an entry; the buttons with words stay below', async () => {
+    const store = await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Oben' } });
-    const bar = document.querySelector('.entry-bar')!;
-    expect(bar.querySelectorAll('button')).toHaveLength(1);
+    const bar = screen.getByRole('toolbar', { name: 'Eintrag' });
+    expect(bar.querySelectorAll('svg')).toHaveLength(4);
     for (const name of ['Eintrag sichern und zurück', 'Oben anheften', 'Eintrag archivieren', 'Eintrag löschen']) {
       expect(document.querySelector('.arena-actions')!.textContent).toContain(name);
     }
-    fireEvent.click(within(bar as HTMLElement).getByRole('button', { name: 'Sichern und zurück' }));
-    expect(await screen.findByRole('link', { name: /Oben/ })).toBeTruthy();
+    fireEvent.click(within(bar).getByRole('button', { name: 'Anheften' }));
+    await waitFor(() => expect(within(bar).getByRole('button', { name: 'Lösen' }).getAttribute('aria-pressed')).toBe('true'));
+    expect(screen.getByRole('button', { name: 'Nicht mehr anheften' })).toBeTruthy();
+
+    // Deleting asks right under the icons; "Behalten" keeps it.
+    fireEvent.click(within(bar).getByRole('button', { name: 'Löschen' }));
+    const ask = screen.getByRole('group', { name: 'Eintrag löschen?' });
+    fireEvent.click(within(ask).getByRole('button', { name: 'Behalten' }));
+    expect(screen.queryByRole('group', { name: 'Eintrag löschen?' })).toBeNull();
+
+    fireEvent.click(within(bar).getByRole('button', { name: 'Sichern und zurück' }));
+    fireEvent.click(await screen.findByRole('link', { name: /Oben/ }));
+    const bar2 = await screen.findByRole('toolbar', { name: 'Eintrag' });
+    fireEvent.click(within(bar2).getByRole('button', { name: 'Archivieren' }));
+    await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeTypeOf('number'));
+
+    fireEvent.click(await screen.findByRole('link', { name: 'Archivierte Einträge im Rückblick' }));
+    fireEvent.click(await screen.findByRole('link', { name: /Oben/ }));
+    const bar3 = await screen.findByRole('toolbar', { name: 'Eintrag' });
+    expect(within(bar3).queryByRole('button', { name: 'Anheften' })).toBeNull();
+    fireEvent.click(within(bar3).getByRole('button', { name: 'Löschen' }));
+    fireEvent.click(within(screen.getByRole('group', { name: 'Eintrag löschen?' })).getByRole('button', { name: 'Ja, Eintrag löschen' }));
+    await waitFor(() => expect(store.getProfile().arena).toEqual([]));
   });
 
   it('keeps title and pin through a backup', () => {
     const [e] = normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', title: 'Nur ein Titel', pinnedAt: 5 }]);
     expect(e).toMatchObject({ title: 'Nur ein Titel', pinnedAt: 5 });
+    // A backup with more than three pins keeps the three pinned first.
+    const many = normalizeArena(
+      [1, 2, 3, 4].map((k) => ({ id: `p${k}`, createdAt: k, verses: [], concerns: [], text: 'x', pinnedAt: 10 - k })),
+    );
+    expect(many.filter((x) => x.pinnedAt !== undefined).map((x) => x.id).sort()).toEqual(['p2', 'p3', 'p4']);
     const [archived] = normalizeArena([{ id: 'b', createdAt: 1, verses: [], concerns: [], text: 'x', pinnedAt: 5, archivedAt: 6 }]);
     expect(archived!.pinnedAt).toBeUndefined();
   });

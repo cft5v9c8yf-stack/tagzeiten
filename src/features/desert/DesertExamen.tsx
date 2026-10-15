@@ -1,4 +1,5 @@
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate, useSearchParams } from 'react-router';
 import { DESERT_EXAMEN_VERSE } from '../../content/desert';
 import { ORDERS } from '../../content/orders';
 import { useProfile, useStore } from '../../data/hooks';
@@ -31,10 +32,12 @@ export function DesertExamen() {
   const habit = profile.habits.find((h) => h.id === params.get('gewohnheit'));
   return (
     <article className="arena-entry desert-examen">
-      <p className="back-link">
-        <Link to={home}>‹ Zurück zur Liste</Link>
-      </p>
-      <h2>Gewissenserforschung</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={home}>Zurück zur Liste</BackLink>
+        </p>
+        <h2>Gewissenserforschung</h2>
+      </div>
       <p className="small muted">{formatLong(date)}</p>
       <WaVerse verse={DESERT_EXAMEN_VERSE} />
       {EXAMEN_STEP.parts.map((part) => (

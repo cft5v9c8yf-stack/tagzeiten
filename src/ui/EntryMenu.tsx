@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
 export interface EntryMenuItem {
   label: string;
@@ -15,7 +15,17 @@ export function EntryMenu({ label, items }: { label: string; items: readonly Ent
   const [open, setOpen] = useState(false);
   const [asking, setAsking] = useState<EntryMenuItem | null>(null);
   const box = useRef<HTMLDivElement>(null);
+  const list = useRef<HTMLDivElement>(null);
   const id = useId();
+  // Near the bottom of the screen the menu opens upwards, so the tab bar does not cover it.
+  const [up, setUp] = useState(false);
+  useLayoutEffect(() => {
+    if (!open) return setUp(false);
+    const el = list.current;
+    if (!el) return;
+    const navTop = document.querySelector('nav.tabs')?.getBoundingClientRect().top ?? window.innerHeight;
+    if (el.getBoundingClientRect().bottom > navTop - 8) setUp(true);
+  }, [open]);
   const close = () => {
     setOpen(false);
     setAsking(null);
@@ -49,7 +59,7 @@ export function EntryMenu({ label, items }: { label: string; items: readonly Ent
         <span aria-hidden="true">⋯</span>
       </button>
       {open && (
-        <div id={id} className="entry-menu-list" role="menu" aria-label={label}>
+        <div id={id} ref={list} className={`entry-menu-list${up ? ' up' : ''}`} role="menu" aria-label={label}>
           {asking ? (
             <>
               <button

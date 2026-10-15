@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useLocation } from 'react-router';
 import { SUNDAY_GUIDE, SUNDAY_GUIDE_SOURCES, SUNDAY_GUIDE_TITLE, type GuideBlock } from '../../content/sundayGuide';
 import { useSundayLinks } from './SundayPage';
 
@@ -33,10 +34,12 @@ export function SundayGuidePage() {
   }, [hash]);
   return (
     <article className="sunday-guide">
-      <p className="back-link">
-        <Link to={links.sunday()}>‹ Sonntag</Link>
-      </p>
-      <h2>{SUNDAY_GUIDE_TITLE}</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={links.sunday()}>Sonntag</BackLink>
+        </p>
+        <h2>{SUNDAY_GUIDE_TITLE}</h2>
+      </div>
       {SUNDAY_GUIDE.map((s) => (
         <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`}>
           <h3 id={`${s.id}-h`}>{s.title}</h3>

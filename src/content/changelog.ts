@@ -13,6 +13,56 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.14.1',
+    date: '2026-10-15',
+    title: 'Löhes Zählung erklärt',
+    changes: [
+      { area: 'Lehre', text: 'Unter Löhes Fragen steht, warum er von sechs Hauptstücken spricht: Er zählt nach der Ausgabe seiner Zeit die Beichte mit. Seine Fragen bleiben, wie er sie geschrieben hat.' },
+    ],
+  },
+  {
+    version: '1.14.0',
+    date: '2026-10-15',
+    title: 'Fünf Hauptstücke',
+    changes: [
+      { area: 'Lehre', text: 'Der Kleine Katechismus hat fünf Hauptstücke. Die Beichte steht wie bei Luther zwischen Taufe und Abendmahl, aber ohne Nummer; das Sakrament des Altars ist das fünfte Hauptstück. Die Woche der Beichte bleibt im Wechsel, Gelerntes bleibt erhalten. Löhes Fragen zählen nach seiner Ausgabe von 1845 weiter sechs und stehen wortgetreu.' },
+      { area: 'Lehre', text: 'Nummer und Titel eines Hauptstücks stehen in einer Zeile; die Taufe heißt dort kurz „Die heilige Taufe“. Im Hausvater-Modus blättern Pfeile im Strich der übrigen Symbole.' },
+      { area: 'Arena', text: 'Das Menü am untersten Eintrag öffnet nach oben, wenn unten die Leiste im Weg wäre. Im dunklen Modus stehen die Symbole in vollem Gold. Mehr als drei angeheftete Einträge aus einer Sicherung werden auf drei begrenzt.' },
+    ],
+  },
+  {
+    version: '1.13.2',
+    date: '2026-10-15',
+    title: 'Ruhigere Köpfe unter „Mehr“',
+    changes: [
+      { area: 'Mehr', text: 'Oben in jedem Bereich stehen nur noch der Pfeil zurück und der Titel. Was hinter dem „i“ stand, steht jetzt klein darunter; das Symbol des Bereichs bleibt auf seiner Kachel.' },
+    ],
+  },
+  {
+    version: '1.13.1',
+    date: '2026-10-15',
+    title: 'Der Pfeil neben der Überschrift',
+    changes: [
+      { area: 'Henoch', text: 'Der Pfeil zurück steht nicht mehr allein über der Überschrift, sondern links daneben auf ihrer ersten Zeile. Die Seiten beginnen dadurch ruhiger und etwas höher.' },
+    ],
+  },
+  {
+    version: '1.13.0',
+    date: '2026-10-15',
+    title: 'Ein Pfeil für den Weg zurück',
+    changes: [
+      { area: 'Henoch', text: 'Wo oben ein Weg zurückführt, steht jetzt nur ein Pfeil im Strich der übrigen Symbole, ohne Wort: in der Arena, in der Lehre, unter „Mehr“, beim Kirchenjahr und am Sonntag. Wohin er führt, zeigt er, wenn du darauf zeigst.' },
+    ],
+  },
+  {
+    version: '1.12.2',
+    date: '2026-10-15',
+    title: 'Symbole oben, Knöpfe unten',
+    changes: [
+      { area: 'Arena', text: 'Oben im Eintrag stehen wieder kleine, dezente Symbole: sichern und zurück, anheften, archivieren und löschen. Unten bleiben alle Knöpfe mit Text, auch „Oben anheften“.' },
+    ],
+  },
+  {
     version: '1.12.1',
     date: '2026-10-15',
     title: 'Nur noch Sichern oben',

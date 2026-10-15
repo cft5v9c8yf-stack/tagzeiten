@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { BackLink } from '../../ui/BackLink';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
@@ -355,13 +356,15 @@ function IconButton({
   icon,
   label,
   onClick,
+  pressed,
 }: {
   icon: FlowIconName;
   label: string;
   onClick: () => void;
+  pressed?: boolean;
 }) {
   return (
-    <button type="button" className="entry-save" aria-label={label} title={label} onClick={onClick}>
+    <button type="button" className="entry-icon" aria-label={label} title={label} aria-pressed={pressed} onClick={onClick}>
       <FlowIcon name={icon} size={20} />
     </button>
   );
@@ -433,7 +436,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const titleId = useId();
   const toast = useToast();
   const pin = usePin();
-  const [confirm, setConfirm] = useState(false);
+  // Where deleting was asked: under the icons at the top or among the buttons below.
+  const [confirm, setConfirm] = useState<'top' | 'bottom' | false>(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -474,13 +478,35 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
 
   return (
     <article className="arena-entry">
-      {/* The way back, and beside it a small icon to save, as on the iPhone; the buttons with words stay below. */}
+      {/* The way back, and beside it small icons for the actions, as on the iPhone; the buttons with words stay below. */}
       <div className="entry-bar">
         <p className="back-link">
-          <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
+          <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
         </p>
-        <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
+        <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
+          <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
+          {!archived && (
+            <IconButton
+              icon="pin"
+              label={entry.pinnedAt === undefined ? 'Anheften' : 'Lösen'}
+              pressed={entry.pinnedAt !== undefined}
+              onClick={() => pin(entry)}
+            />
+          )}
+          {archived ? (
+            <IconButton icon="unarchive" label="Zurückholen" onClick={restore} />
+          ) : (
+            <IconButton icon="archive" label="Archivieren" onClick={archive} />
+          )}
+          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm('top')} />
+        </div>
       </div>
+      {confirm === 'top' && (
+        <div className="entry-bar-confirm" role="group" aria-label="Eintrag löschen?">
+          <span>Eintrag löschen?</span>
+          {deleteAnswer}
+        </div>
+      )}
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
@@ -569,10 +595,10 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
             {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
           </button>
         )}
-        {confirm ? (
+        {confirm === 'bottom' ? (
           deleteAnswer
         ) : (
-          <button type="button" className="btn quiet" onClick={() => setConfirm(true)}>
+          <button type="button" className="btn quiet" onClick={() => setConfirm('bottom')}>
             Eintrag löschen
           </button>
         )}
@@ -601,10 +627,12 @@ export function ArenaPage() {
     if (entry) return <EntryEditor entry={entry} />;
     return (
       <>
-        <p className="back-link">
-          <Link to="/arena">‹ Arena</Link>
-        </p>
-        <p>Diesen Eintrag gibt es nicht mehr.</p>
+        <div className="title-row">
+          <p className="back-link">
+            <BackLink to="/arena">Arena</BackLink>
+          </p>
+          <p className="title-row-text">Diesen Eintrag gibt es nicht mehr.</p>
+        </div>
       </>
     );
   }
@@ -691,13 +719,15 @@ export function ArenaPage() {
 function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
-      <p className="back-link">
-        <Link to="/arena">‹ Arena</Link>
-      </p>
-      <h2 className="place-title">
-        {title}
-        {sub && <span className="place-sub">{sub}</span>}
-      </h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to="/arena">Arena</BackLink>
+        </p>
+        <h2 className="place-title">
+          {title}
+          {sub && <span className="place-sub">{sub}</span>}
+        </h2>
+      </div>
     </>
   );
 }

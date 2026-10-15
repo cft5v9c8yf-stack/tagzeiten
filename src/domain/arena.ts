@@ -81,6 +81,14 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     seen.add(id);
     out.push(e);
   }
+  // At most MAX_PINNED per place, also from a backup: the earliest pins stay.
+  for (const forge of [false, true]) {
+    out
+      .filter((e) => e.pinnedAt !== undefined && (e.kind === 'forge') === forge)
+      .sort((a, b) => a.pinnedAt! - b.pinnedAt!)
+      .slice(MAX_PINNED)
+      .forEach((e) => delete e.pinnedAt);
+  }
   return out.sort((a, b) => b.createdAt - a.createdAt);
 }
 

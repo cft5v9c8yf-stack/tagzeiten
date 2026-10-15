@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type TouchEvent } from 'react';
 import { WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { loeheForPieceOnDay } from '../../content/loeheCatechism';
 
 const DAY_NAMES = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
@@ -162,7 +163,7 @@ export function HouseFatherMode({
       </div>
       <div className="hf-nav">
         <button type="button" className="btn" disabled={pieceIndex === 0} onClick={() => goPiece(pieceIndex - 1)}>
-          ‹ Voriges Stück
+          <FlowIcon name="back" size={18} /> Voriges Stück
         </button>
         <span className="hf-pos">
           {pieceIndex + 1} / {chief.pieces.length}
@@ -173,7 +174,7 @@ export function HouseFatherMode({
           disabled={pieceIndex === chief.pieces.length - 1}
           onClick={() => goPiece(pieceIndex + 1)}
         >
-          Nächstes Stück ›
+          Nächstes Stück <FlowIcon name="forward" size={18} />
         </button>
       </div>
     </div>

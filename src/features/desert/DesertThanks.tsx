@@ -1,4 +1,5 @@
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import { formatLong, isDateKey } from '../../domain/dates';
 import { isDoneOn } from '../../domain/habits';
@@ -32,10 +33,12 @@ export function DesertThanks() {
   };
   return (
     <article className="arena-entry desert-thanks">
-      <p className="back-link">
-        <Link to={home}>‹ Zurück zur Liste</Link>
-      </p>
-      <h2>{habit?.name ?? 'Dank'}</h2>
+      <div className="title-row">
+        <p className="back-link">
+          <BackLink to={home}>Zurück zur Liste</BackLink>
+        </p>
+        <h2>{habit?.name ?? 'Dank'}</h2>
+      </div>
       <p className="small muted">{formatLong(date)}</p>
       {journal && <DayField date={date} path="morning.verse" label="Der Satz, der mich trifft" />}
       <DayField date={date} path="evening.thanks.0" />
