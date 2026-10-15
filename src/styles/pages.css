@@ -744,10 +744,17 @@ body.is-sorting * {
 .back-link-to {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-left: -8px;
+  border-radius: 50%;
+  opacity: 0.75;
 }
-.back-link-to .flow-icon {
-  color: currentColor;
+.back-link-to:hover,
+.back-link-to:focus-visible {
+  opacity: 1;
+  background: var(--paper);
 }
 .cy-intro {
   font-size: 1.05rem;
@@ -1509,7 +1516,7 @@ body.is-sorting * {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px 14px;
+  gap: 2px;
   margin-top: 6px;
 }
 .entry-bar .back-link {

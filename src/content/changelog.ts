@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-15',
     title: 'Ein Pfeil für den Weg zurück',
     changes: [
-      { area: 'Henoch', text: 'Wo oben ein Weg zurückführt, steht jetzt ein Pfeil im Strich der übrigen Symbole statt des kleinen Winkels: in der Arena, in der Lehre, unter „Mehr“, beim Kirchenjahr und am Sonntag.' },
+      { area: 'Henoch', text: 'Wo oben ein Weg zurückführt, steht jetzt nur ein Pfeil im Strich der übrigen Symbole, ohne Wort: in der Arena, in der Lehre, unter „Mehr“, beim Kirchenjahr und am Sonntag. Wohin er führt, zeigt er, wenn du darauf zeigst.' },
     ],
   },
   {
