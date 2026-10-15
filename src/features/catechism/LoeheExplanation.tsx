@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { BackLink } from '../../ui/BackLink';
 import { Link, useParams } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { CATECHISM, WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
@@ -166,7 +167,7 @@ export function LoeheBook() {
     return (
       <>
         <p className="back-link">
-          <Link to={to('/katechismus/loehe')}>‹ {BOOK_TITLE}</Link>
+          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
         </p>
         <h2 className="cat-part-title">Zum ganzen Katechismus</h2>
         <p className="book-source">Wilhelm Löhe · {span(questionsIn(LOEHE_HOME))}</p>
@@ -185,7 +186,7 @@ export function LoeheBook() {
     return (
       <>
         <p className="back-link">
-          <Link to={to('/katechismus/loehe')}>‹ {BOOK_TITLE}</Link>
+          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
         </p>
         <h2 className="cat-part-title">
           <span className="no">{ci + 1}</span> {chief.title}
@@ -214,7 +215,7 @@ export function LoeheBook() {
   return (
     <>
       <p className="back-link">
-        <Link to={to('/katechismus')}>‹ Lehre</Link>
+        <BackLink to={to('/katechismus')}>Lehre</BackLink>
       </p>
       <h2 className="cat-part-title">{BOOK_TITLE}</h2>
       <p className="book-source">

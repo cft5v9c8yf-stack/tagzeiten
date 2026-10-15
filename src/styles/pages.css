@@ -741,6 +741,14 @@ body.is-sorting * {
 .back-link a {
   text-decoration: none;
 }
+.back-link-to {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.back-link-to .flow-icon {
+  color: currentColor;
+}
 .cy-intro {
   font-size: 1.05rem;
 }

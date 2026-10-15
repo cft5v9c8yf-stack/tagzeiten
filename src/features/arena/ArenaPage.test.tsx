@@ -23,7 +23,7 @@ let n = 0;
 
 /** From a place back to the Arena's entrance, and into another place. */
 function goTo(place: string) {
-  fireEvent.click(screen.getByRole('link', { name: '‹ Arena' }));
+  fireEvent.click(screen.getByRole('link', { name: 'Zurück: Arena' }));
   fireEvent.click(screen.getByRole('link', { name: new RegExp(`^${place}`) }));
 }
 async function renderArena() {
@@ -140,7 +140,7 @@ describe('Arena', () => {
     expect(screen.getByRole('complementary', { name: 'Zuspruch' }).textContent).toContain('Einer trage des andern Last');
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ kind: 'forge', points: [{ text: 'Entscheidung im Beruf', done: false }] }));
 
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     // Named by its meeting only; this one has no date yet.
     expect(await screen.findByRole('link', { name: 'Treffen noch ohne Termin' })).toBeTruthy();
     expect(screen.queryByRole('link', { name: /Entscheidung im Beruf/ })).toBeNull();
@@ -164,11 +164,11 @@ describe('Arena', () => {
     await waitFor(() => expect(store.getProfile().arena[0]).toMatchObject({ meetingDate: '2026-10-01', points: [{ text: 'Erstes', done: false }] }));
 
     // The next concern belongs to the same meeting without asking.
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     expect(((await screen.findByLabelText('Für das Treffen am')) as HTMLInputElement).value).toBe('2026-10-01');
     fireEvent.change(screen.getByLabelText('Punkt 1'), { target: { value: 'Zweites' } });
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
 
     expect(await screen.findAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })).toHaveLength(2);
     fireEvent.click(screen.getAllByRole('link', { name: 'Treffen am Donnerstag, 1. Oktober' })[0]!);
@@ -219,7 +219,7 @@ describe('Titles and pinned entries', () => {
     goTo('Eisenschmiede');
     fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Titel'), { target: { value: 'Beruf' } });
-    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Eisenschmiede' }));
     const card = await screen.findByRole('link', { name: /Beruf/ });
     expect(card.textContent).toContain('Treffen noch ohne Termin');
   });
@@ -237,7 +237,7 @@ describe('Titles and pinned entries', () => {
     const pin = async (t: string) => {
       fireEvent.click(screen.getByRole('link', { name: new RegExp(t) }));
       fireEvent.click(await screen.findByRole('button', { name: 'Oben anheften' }));
-      fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+      fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
       await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
     };
     await pin('Eins');
@@ -257,10 +257,10 @@ describe('Titles and pinned entries', () => {
     expect(store.pinArenaEntry(forge, true)).toBe(true);
 
     // Taken off, it goes back among the others.
-    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
     fireEvent.click(await screen.findByRole('link', { name: /Drei/ }));
     fireEvent.click(await screen.findByRole('button', { name: 'Nicht mehr anheften' }));
-    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Gebetskammer' }));
     await waitFor(() => expect(titles()).toEqual(['Eins', 'Zwei', 'Fünf', 'Vier', 'Drei']));
 
     // Archived, it is no longer pinned, and stays so when brought back.

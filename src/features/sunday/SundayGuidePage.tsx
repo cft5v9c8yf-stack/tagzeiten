@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useLocation } from 'react-router';
 import { SUNDAY_GUIDE, SUNDAY_GUIDE_SOURCES, SUNDAY_GUIDE_TITLE, type GuideBlock } from '../../content/sundayGuide';
 import { useSundayLinks } from './SundayPage';
 
@@ -34,7 +35,7 @@ export function SundayGuidePage() {
   return (
     <article className="sunday-guide">
       <p className="back-link">
-        <Link to={links.sunday()}>‹ Sonntag</Link>
+        <BackLink to={links.sunday()}>Sonntag</BackLink>
       </p>
       <h2>{SUNDAY_GUIDE_TITLE}</h2>
       {SUNDAY_GUIDE.map((s) => (

@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { BackLink } from '../../ui/BackLink';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
@@ -480,7 +481,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       {/* The way back, and beside it small icons for the actions, as on the iPhone; the buttons with words stay below. */}
       <div className="entry-bar">
         <p className="back-link">
-          <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
+          <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
         </p>
         <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
           <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
@@ -627,7 +628,7 @@ export function ArenaPage() {
     return (
       <>
         <p className="back-link">
-          <Link to="/arena">‹ Arena</Link>
+          <BackLink to="/arena">Arena</BackLink>
         </p>
         <p>Diesen Eintrag gibt es nicht mehr.</p>
       </>
@@ -717,7 +718,7 @@ function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
       <p className="back-link">
-        <Link to="/arena">‹ Arena</Link>
+        <BackLink to="/arena">Arena</BackLink>
       </p>
       <h2 className="place-title">
         {title}

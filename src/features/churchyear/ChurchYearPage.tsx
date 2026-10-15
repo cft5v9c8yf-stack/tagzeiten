@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { flushSync } from 'react-dom';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate, useSearchParams } from 'react-router';
 import { CIRCLE_INFO, LECTIONARY_NOTE, SEASON_INFO, SEASON_THEME, SUNDAY_INFO, trinityGroupOf } from '../../content/churchYearGuide';
 import {
   CHURCH_YEAR_INTRO,
@@ -166,7 +167,7 @@ export function ChurchYearPage() {
   return (
     <div className="church-year-page">
       <p className="back-link">
-        <Link to={withDate('/', date, isToday)}>‹ Zurück zu Heute</Link>
+        <BackLink to={withDate('/', date, isToday)}>Zurück zu Heute</BackLink>
       </p>
       <h2>Das Kirchenjahr {outline.churchYear}/{String(outline.churchYear + 1).slice(2)}</h2>
       <Section id="cy.intro" title="Einleitung" defaultOpen={false} className="cy-dieffenbach">

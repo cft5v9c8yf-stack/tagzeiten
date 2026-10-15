@@ -1,6 +1,7 @@
 import { WordSwitch } from '../../ui/WordSwitch';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { BackLink } from '../../ui/BackLink';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
 import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE } from '../../content/augsburgConfession';
@@ -337,9 +338,9 @@ export function CatechismPage() {
       <div className="cat-page">
         <p className="back-link">
           {appendix && 'book' in appendix ? (
-            <Link to={withDate('/katechismus/konkordienbuch', date, isToday)}>‹ Konkordienbuch</Link>
+            <BackLink to={withDate('/katechismus/konkordienbuch', date, isToday)}>Konkordienbuch</BackLink>
           ) : (
-            <Link to={withDate('/katechismus', date, isToday)}>‹ Lehre</Link>
+            <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
           )}
         </p>
         {ci >= 0 ? <ChiefPart ci={ci} /> : <Appendix slug={appendix!.slug} />}

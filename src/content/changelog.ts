@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.13.0',
+    date: '2026-10-15',
+    title: 'Ein Pfeil für den Weg zurück',
+    changes: [
+      { area: 'Henoch', text: 'Wo oben ein Weg zurückführt, steht jetzt ein Pfeil im Strich der übrigen Symbole statt des kleinen Winkels: in der Arena, in der Lehre, unter „Mehr“, beim Kirchenjahr und am Sonntag.' },
+    ],
+  },
+  {
     version: '1.12.2',
     date: '2026-10-15',
     title: 'Symbole oben, Knöpfe unten',

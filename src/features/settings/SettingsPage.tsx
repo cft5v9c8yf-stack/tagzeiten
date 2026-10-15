@@ -1,4 +1,5 @@
 import { useLayoutEffect, type ReactNode } from 'react';
+import { BackLink } from '../../ui/BackLink';
 import { Link, useParams } from 'react-router';
 import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -258,7 +259,7 @@ export function SettingsPage() {
   return (
     <div className="settings more-area">
       <p className="back-link">
-        <Link to={withDate('/mehr', date, isToday)}>‹ Mehr</Link>
+        <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
       </p>
       <div className="fold-head more-area-head">
         <h2>

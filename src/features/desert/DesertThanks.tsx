@@ -1,4 +1,5 @@
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate, useSearchParams } from 'react-router';
 import { useDay, useProfile, useStore } from '../../data/hooks';
 import { formatLong, isDateKey } from '../../domain/dates';
 import { isDoneOn } from '../../domain/habits';
@@ -33,7 +34,7 @@ export function DesertThanks() {
   return (
     <article className="arena-entry desert-thanks">
       <p className="back-link">
-        <Link to={home}>‹ Zurück zur Liste</Link>
+        <BackLink to={home}>Zurück zur Liste</BackLink>
       </p>
       <h2>{habit?.name ?? 'Dank'}</h2>
       <p className="small muted">{formatLong(date)}</p>

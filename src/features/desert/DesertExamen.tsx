@@ -1,4 +1,5 @@
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate, useSearchParams } from 'react-router';
 import { DESERT_EXAMEN_VERSE } from '../../content/desert';
 import { ORDERS } from '../../content/orders';
 import { useProfile, useStore } from '../../data/hooks';
@@ -32,7 +33,7 @@ export function DesertExamen() {
   return (
     <article className="arena-entry desert-examen">
       <p className="back-link">
-        <Link to={home}>‹ Zurück zur Liste</Link>
+        <BackLink to={home}>Zurück zur Liste</BackLink>
       </p>
       <h2>Gewissenserforschung</h2>
       <p className="small muted">{formatLong(date)}</p>

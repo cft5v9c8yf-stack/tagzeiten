@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { BackLink } from '../../ui/BackLink';
+import { useNavigate } from 'react-router';
 import { SCRIPTURE_PRAYER, SCRIPTURE_PRAYER_INTRO, SCRIPTURE_PRAYER_SOURCE, type Passage } from '../../content/scripturePrayer';
 import { useStore } from '../../data/hooks';
 import { formatLong } from '../../domain/dates';
@@ -68,7 +69,7 @@ export function ScripturePrayerPage() {
   return (
     <article className="scripture-walk">
       <p className="back-link">
-        <Link to={links.sunday()}>‹ Sonntag</Link>
+        <BackLink to={links.sunday()}>Sonntag</BackLink>
       </p>
       <h2>{walk.title}</h2>
       <p className="small muted">{SCRIPTURE_PRAYER_INTRO}</p>
