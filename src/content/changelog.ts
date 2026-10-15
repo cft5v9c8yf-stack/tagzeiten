@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.12.2',
+    date: '2026-10-15',
+    title: 'Symbole oben, Knöpfe unten',
+    changes: [
+      { area: 'Arena', text: 'Oben im Eintrag stehen wieder kleine, dezente Symbole: sichern und zurück, anheften, archivieren und löschen. Unten bleiben alle Knöpfe mit Text, auch „Oben anheften“.' },
+    ],
+  },
+  {
     version: '1.12.1',
     date: '2026-10-15',
     title: 'Nur noch Sichern oben',

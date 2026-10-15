@@ -1507,7 +1507,11 @@ body.is-sorting * {
 .entry-bar .back-link {
   margin: 0;
 }
-.entry-save {
+.entry-bar-icons {
+  display: flex;
+  gap: 2px;
+}
+.entry-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1520,10 +1524,22 @@ body.is-sorting * {
   cursor: pointer;
   opacity: 0.75;
 }
-.entry-save:hover,
-.entry-save:focus-visible {
+.entry-icon:hover,
+.entry-icon:focus-visible {
   opacity: 1;
   background: var(--paper);
+}
+.entry-icon[aria-pressed='true'] {
+  opacity: 1;
+  background: var(--gold-soft);
+}
+.entry-bar-confirm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-family: var(--sans);
 }
 .arena-item {
   position: relative;
