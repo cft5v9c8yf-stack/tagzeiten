@@ -199,6 +199,8 @@ export interface ArenaEntry {
   /** Epoch ms. */
   createdAt: number;
   updatedAt: number;
+  /** A title chosen by the user; the list shows it instead of the first line of the text. */
+  title?: string;
   /** Bible references (or short words), one per line in the form. */
   verses: string[];
   /** Prayer concerns for this struggle. */
@@ -214,6 +216,8 @@ export interface ArenaEntry {
   meetingDate?: DateKey;
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
   archivedAt?: number;
+  /** Epoch ms when pinned to the top of its place (at most three per place); absent otherwise. */
+  pinnedAt?: number;
 }
 
 /** Times for some weekdays (0 = Sunday … 6 = Saturday). */

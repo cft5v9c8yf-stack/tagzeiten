@@ -24,6 +24,8 @@ import { PieceText } from '../liturgy/CatechismOfDay';
 import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverview';
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
+import { mondayIndex } from '../../domain/dates';
+import { LoeheBook } from './LoeheExplanation';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -318,10 +320,18 @@ function Appendix({ slug }: { slug: (typeof APPENDICES)[number]['slug'] }) {
 
 /** Katechismus: this week in gold, the chief parts as tiles; a tile opens its part (/katechismus/:teil). */
 export function CatechismPage() {
-  const { teil } = useParams();
+  const { teil, hauptstueck } = useParams();
   const { date, isToday } = useSelectedDate();
   const ci = CATECHISM.findIndex((c) => c.id === teil);
   const appendix = APPENDICES.find((a) => a.slug === teil);
+  // Löhe's book has a level more: its chief parts, then their pieces.
+  if (teil === 'loehe' || hauptstueck) {
+    return (
+      <div className="cat-page">
+        <LoeheBook />
+      </div>
+    );
+  }
   if (ci >= 0 || appendix) {
     return (
       <div className="cat-page">
@@ -409,6 +419,7 @@ function CatechismHome() {
         <HouseFatherMode
           chief={day.chief}
           startIndex={day.pieceIndices[0] ?? 0}
+          dayIndex={mondayIndex(date)}
           onClose={() => setHouseFather(false)}
         />
       )}

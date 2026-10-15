@@ -1497,6 +1497,87 @@ body.is-sorting * {
   color: var(--ink);
   font-weight: 400;
 }
+.entry-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+}
+.entry-bar .back-link {
+  margin: 0;
+}
+.entry-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.75;
+}
+.entry-save:hover,
+.entry-save:focus-visible {
+  opacity: 1;
+  background: var(--paper);
+}
+.arena-item {
+  position: relative;
+}
+.arena-item .arena-card {
+  padding-right: 52px;
+}
+.arena-item .entry-menu {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+.entry-menu-toggle {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: 700 1.3rem/1 var(--sans);
+  cursor: pointer;
+}
+.entry-menu-toggle[aria-expanded='true'] {
+  background: var(--paper);
+  color: var(--ink);
+}
+.entry-menu-list {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  z-index: 20;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.14);
+}
+.entry-menu-list button {
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font: 1rem var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+.entry-menu-list button:hover,
+.entry-menu-list button:focus-visible {
+  background: var(--paper);
+}
 .arena-card-date {
   font: 0.8rem var(--sans);
   color: var(--muted);
@@ -1717,8 +1798,13 @@ mark.placeholder {
   letter-spacing: 0.04em;
   color: var(--gold);
 }
-.arena-card-date .ktag {
+.arena-card-date .ktag,
+.arena-card-title .ktag {
   margin-left: 8px;
+  vertical-align: 2px;
+}
+.arena-title {
+  margin-top: 12px;
 }
 .arena .seg {
   margin-bottom: 10px;
@@ -3489,4 +3575,123 @@ header.top .search-link:focus-visible {
 }
 .lesson-hymn .line {
   display: block;
+}
+
+/* Lehre / Anhang, Löhe's questions: under each piece's title, number in the margin, quieter answer. */
+.li {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  hyphens: auto;
+}
+.loehe-source {
+  margin-top: 18px;
+}
+/* The pieces of a chief part as tiles; a tile opens its questions in a window. */
+.loehe-pieces .overview-link {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fold-body > .li:first-child,
+.lection-body > .li:first-child {
+  margin-top: 4px;
+  border-top: 0;
+}
+.li-label {
+  margin: 0 0 4px;
+  font: 600 1.05rem var(--serif);
+  color: var(--ink);
+}
+.li-qa {
+  margin: 10px 0;
+}
+.li-q {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  margin: 0 0 2px;
+  font: 600 0.88rem var(--sans);
+  color: var(--muted);
+  line-height: 1.4;
+}
+.li-no {
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.li-a {
+  margin: 0 0 0 2.4rem;
+}
+.li-note {
+  margin: 4px 0 0 2.4rem;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+.li-mark {
+  margin: 16px 0 0;
+  font: 600 0.78rem var(--sans);
+  color: var(--muted);
+}
+
+/* At the table: the piece on the left, the day's questions of Löhe on the right, read by scrolling. */
+.hf-body.hf-two {
+  display: grid;
+  gap: 8px 40px;
+  align-content: start;
+}
+.hf-loehe {
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+@media (min-width: 900px) {
+  .housefather {
+    --content-width: 1100px;
+  }
+  .housefather .hf-body.hf-two {
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .hf-two .hf-piece,
+  .hf-two .hf-loehe {
+    overflow-y: auto;
+    max-height: 100%;
+  }
+  .hf-two .hf-loehe {
+    border-top: 0;
+    border-left: 1px solid var(--rule);
+    padding: 8px 0 0 32px;
+  }
+}
+.hf-loehe-label {
+  margin: 0 0 12px;
+  font: 600 0.8rem var(--sans);
+  color: var(--gold);
+  letter-spacing: 0.03em;
+}
+.hf-lqa {
+  margin: 0 0 22px;
+}
+.hf-lq {
+  display: grid;
+  grid-template-columns: 2.2em 1fr;
+  margin: 0 0 4px;
+  font: 600 1.2rem/1.35 var(--sans);
+  color: var(--ink);
+}
+.hf-lno {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding-top: 5px;
+  font-variant-numeric: tabular-nums;
+}
+.hf-la {
+  margin: 0 0 6px 2.2em;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+.hf-note {
+  margin: 0 0 6px 2.2em;
+  font-size: 0.95rem;
+  color: var(--muted);
 }

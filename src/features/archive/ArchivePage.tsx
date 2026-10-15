@@ -120,7 +120,7 @@ function ArenaItem({ e }: { e: ArenaEntry }) {
         {e.kind === 'forge' && <> · Eisenschmiede</>}
       </div>
       <Link className="archive-title" to={`/arena/${e.id}`}>
-        {e.kind === 'forge' ? forgeTitle(e) : entryTitle(e)}
+        {e.kind === 'forge' ? e.title?.trim() || forgeTitle(e) : entryTitle(e)}
       </Link>
       {verses.length > 0 && <p className="small muted">{verses.join(' · ')}</p>}
     </li>

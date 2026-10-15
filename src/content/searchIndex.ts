@@ -15,6 +15,7 @@ import { LARGE_CATECHISM } from './largeCatechism';
 import { SMALCALD_ARTICLES } from './smalcaldArticles';
 import { TRACTATUS } from './tractatus';
 import { CATECHISM, TABLE_OF_DUTIES } from './catechism';
+import { LOEHE_BY_CHIEF_PART, LOEHE_OVERVIEW, lessonQuestions, lessonTitle } from './loeheCatechism';
 import { CHURCH_YEAR_INTRO } from './churchYearIntro';
 import { SUNDAY_INFO } from './churchYearGuide';
 import { CREEDS } from './creeds';
@@ -65,6 +66,18 @@ export function contentDocs(today: DateKey): SearchDoc[] {
   for (const part of CATECHISM) {
     for (const piece of part.pieces) {
       add(`Lehre · ${part.title}`, piece.title, [piece.words, ...piece.qa.flat()].join(' '), `/katechismus/${part.id}`);
+    }
+  }
+  // The questions on the whole catechism have their own page; those on the means of grace open the Lord's Prayer.
+  const loehe = [
+    [LOEHE_OVERVIEW[0]!, 'ganzer-katechismus'],
+    [LOEHE_OVERVIEW[1]!, 'lordsPrayer'],
+    ...CATECHISM.map((p) => [LOEHE_BY_CHIEF_PART[p.id], p.id] as const),
+  ] as const;
+  for (const [chapter, part] of loehe) {
+    for (const lesson of chapter.lessons) {
+      const text = lessonQuestions(lesson).flatMap((q) => [q.q, q.a, q.note ?? '', ...(q.footnotes ?? [])]).join(' ');
+      add('Lehre · Erklärung von Wilhelm Löhe', lessonTitle(lesson), text, `/katechismus/loehe/${part}`);
     }
   }
   for (const c of CREEDS) {
@@ -154,8 +167,8 @@ export function contentDocs(today: DateKey): SearchDoc[] {
 export function arenaDocs(entries: readonly ArenaEntry[]): SearchDoc[] {
   return entries.map((e) => ({
     area: e.kind === 'forge' ? 'Arena · Eisenschmiede' : 'Arena · Gebetskammer',
-    title: e.text.split('\n')[0]!.slice(0, 80) || e.verses[0] || 'Eintrag',
-    text: [e.text, ...e.verses, ...e.concerns, ...(e.points ?? []).map((p) => p.text)].join(' '),
+    title: e.title?.trim() || e.text.split('\n')[0]!.slice(0, 80) || e.verses[0] || 'Eintrag',
+    text: [e.title ?? '', e.text, ...e.verses, ...e.concerns, ...(e.points ?? []).map((p) => p.text)].join(' '),
     to: `/arena/${e.id}`,
   }));
 }

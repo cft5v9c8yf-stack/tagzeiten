@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference } from '../../domain/arena';
+import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
@@ -15,6 +15,7 @@ import { seasonTileLine } from '../desert/SeasonInvite';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun, runName, shortSpan } from '../../domain/winterArc';
 import { InkPad } from './InkPad';
+import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
@@ -329,16 +330,90 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
   );
 }
 
-/** A Gebetskammer entry as a card: date, first line, verses. */
+/** Marks an entry pinned to the top of its place. */
+const PinTag = ({ entry }: { entry: ArenaEntry }) =>
+  entry.pinnedAt !== undefined ? <span className="ktag">Angeheftet</span> : null;
+
+/** A Gebetskammer entry as a card: date, title (or first line), verses. */
 function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
   return (
     <Link className="arena-card" to={`/arena/${e.id}`}>
-      <span className="arena-card-date">{dateOf(e.createdAt)}</span>
+      <span className="arena-card-date">
+        {dateOf(e.createdAt)}
+        <PinTag entry={e} />
+      </span>
       <span className="arena-card-title">{entryTitle(e)}</span>
       {e.verses.some((v) => v.trim()) && (
         <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
       )}
     </Link>
+  );
+}
+
+/** A small round button with a Henoch icon; the label is read out and shown on hover. */
+function IconButton({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: FlowIconName;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button type="button" className="entry-save" aria-label={label} title={label} onClick={onClick}>
+      <FlowIcon name={icon} size={20} />
+    </button>
+  );
+}
+
+/** Pins an entry or takes the pin off, and says so; a full place is named, not filled. */
+function usePin() {
+  const store = useStore();
+  const toast = useToast();
+  return (entry: ArenaEntry) => {
+    const pin = entry.pinnedAt === undefined;
+    if (store.pinArenaEntry(entry.id, pin)) toast(pin ? `Steht jetzt oben in der ${PLACES[kindOf(entry)].title}` : 'Nicht mehr angeheftet');
+    else toast('Oben stehen schon drei Einträge. Löse zuerst einen davon.');
+  };
+}
+
+/** An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting. */
+function ListItem({ entry, children }: { entry: ArenaEntry; children: React.ReactNode }) {
+  const store = useStore();
+  const toast = useToast();
+  const pin = usePin();
+  const forge = kindOf(entry) === 'forge';
+  const name = forge ? entry.title?.trim() || forgeTitle(entry) : entryTitle(entry);
+  return (
+    <li className="arena-item">
+      {children}
+      <EntryMenu
+        label={`Aktionen für „${name}“`}
+        items={[
+          { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
+          {
+            label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
+            onSelect: () => {
+              store.archiveArenaEntry(entry.id, true);
+              toast(
+                forge
+                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
+                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
+              );
+            },
+          },
+          {
+            label: 'Eintrag löschen',
+            confirm: 'Ja, Eintrag löschen',
+            onSelect: () => {
+              store.deleteArenaEntry(entry.id);
+              toast('Eintrag gelöscht');
+            },
+          },
+        ]}
+      />
+    </li>
   );
 }
 
@@ -355,19 +430,57 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       ? profile.habits.find((h) => h.id === params.get('gewohnheit'))
       : undefined;
   const dateId = useId();
+  const titleId = useId();
   const toast = useToast();
+  const pin = usePin();
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
   const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
+  const finish = () => {
+    if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
+    navigate(home);
+  };
+  const archive = () => {
+    store.archiveArenaEntry(entry.id, true);
+    toast(
+      kind === 'forge'
+        ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
+        : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
+    );
+    navigate(arenaPath(kind));
+  };
+  const restore = () => {
+    store.archiveArenaEntry(entry.id, false);
+    toast(`Eintrag steht wieder in der ${place.title}`);
+    navigate(arenaPath(kind));
+  };
+  const remove = () => {
+    store.deleteArenaEntry(entry.id);
+    navigate(home);
+  };
+  const deleteAnswer = (
+    <>
+      <button type="button" className="btn" onClick={remove}>
+        Ja, Eintrag löschen
+      </button>
+      <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
+        Behalten
+      </button>
+    </>
+  );
 
   return (
     <article className="arena-entry">
-      <p className="back-link">
-        <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
-      </p>
+      {/* The way back, and beside it a small icon to save, as on the iPhone; the buttons with words stay below. */}
+      <div className="entry-bar">
+        <p className="back-link">
+          <Link to={home}>{habit ? '‹ Zurück zur Liste' : archived ? '‹ Rückblick' : `‹ ${place.title}`}</Link>
+        </p>
+        <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
+      </div>
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
@@ -389,6 +502,23 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           />
         </div>
       )}
+
+      <div className="field arena-title">
+        <label htmlFor={titleId}>Titel</label>
+        <input
+          id={titleId}
+          type="text"
+          value={entry.title ?? ''}
+          placeholder="Wie der Eintrag in der Übersicht heißen soll"
+          onChange={(e) => {
+            const v = e.target.value;
+            update((x) => {
+              const { title: _, ...rest } = x;
+              return v ? { ...rest, title: v } : rest;
+            });
+          }}
+        />
+      </div>
 
       <LineList
         label="Bibelstelle"
@@ -422,61 +552,25 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       </aside>
 
       <div className="arena-actions">
-        <button
-          type="button"
-          className="btn primary"
-          onClick={() => {
-            if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
-            navigate(home);
-          }}
-        >
+        <button type="button" className="btn primary" onClick={finish}>
           {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
         </button>
+        {!archived && (
+          <button type="button" className="btn" onClick={() => pin(entry)}>
+            {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
+          </button>
+        )}
         {archived ? (
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              store.archiveArenaEntry(entry.id, false);
-              toast(`Eintrag steht wieder in der ${place.title}`);
-              navigate(arenaPath(kind));
-            }}
-          >
+          <button type="button" className="btn" onClick={restore}>
             {`Zurück in die ${place.title} holen`}
           </button>
         ) : (
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              store.archiveArenaEntry(entry.id, true);
-              toast(
-                kind === 'forge'
-                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
-                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
-              );
-              navigate(arenaPath(kind));
-            }}
-          >
+          <button type="button" className="btn" onClick={archive}>
             {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
           </button>
         )}
         {confirm ? (
-          <>
-            <button
-              type="button"
-              className="btn"
-              onClick={() => {
-                store.deleteArenaEntry(entry.id);
-                navigate(home);
-              }}
-            >
-              Ja, Eintrag löschen
-            </button>
-            <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
-              Behalten
-            </button>
-          </>
+          deleteAnswer
         ) : (
           <button type="button" className="btn quiet" onClick={() => setConfirm(true)}>
             Eintrag löschen
@@ -552,25 +646,36 @@ export function ArenaPage() {
       </button>
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
-          {shown.map((e) => (
-            <li key={e.id}>
+          {pinnedFirst(shown).map((e) => (
+            <ListItem key={e.id} entry={e}>
               <ArenaCard entry={e} />
-            </li>
+            </ListItem>
           ))}
         </ul>
       )}
       {kind === 'forge' && shown.length > 0 && (
-        // Named by the meeting only; the earliest meeting first, entries without a date last.
+        // Named by the title, else by the meeting; pinned first, then the earliest meeting, entries without a date last.
         <ul className="arena-list">
-          {byMeeting(shown)
-            .flatMap((g) => g.entries)
-            .map((e) => (
-              <li key={e.id}>
-                <Link className="arena-card" to={`/arena/${e.id}`}>
-                  <span className="arena-card-title">{forgeTitle(e)}</span>
-                </Link>
-              </li>
-            ))}
+          {pinnedFirst(byMeeting(shown).flatMap((g) => g.entries)).map((e) => (
+            <ListItem key={e.id} entry={e}>
+              <Link className="arena-card" to={`/arena/${e.id}`}>
+                {e.title?.trim() ? (
+                  <>
+                    <span className="arena-card-date">
+                      {forgeTitle(e)}
+                      <PinTag entry={e} />
+                    </span>
+                    <span className="arena-card-title">{e.title.trim()}</span>
+                  </>
+                ) : (
+                  <span className="arena-card-title">
+                    {forgeTitle(e)}
+                    <PinTag entry={e} />
+                  </span>
+                )}
+              </Link>
+            </ListItem>
+          ))}
         </ul>
       )}
       {archivedCount > 0 && (

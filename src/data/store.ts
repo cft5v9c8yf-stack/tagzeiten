@@ -13,7 +13,7 @@ import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
 import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
-import { isEmptyEntry, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
+import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
   endRun,
@@ -393,12 +393,42 @@ export class Store {
         ...p,
         arena: p.arena.map((e) => {
           if (e.id !== id) return e;
-          const { archivedAt: _, ...rest } = e;
+          // An archived entry no longer stands pinned; brought back, it stands among the others.
+          const { archivedAt: _, pinnedAt: __, ...rest } = e;
           return archived ? { ...rest, archivedAt: t } : rest;
         }),
       }),
       { immediate: true },
     );
+  }
+
+  /**
+   * Pins an entry to the top of its place, or takes the pin off. At most
+   * MAX_PINNED entries of a place stand pinned; returns false when the place is full.
+   */
+  pinArenaEntry(id: string, pinned: boolean): boolean {
+    const entry = this.profile.arena.find((e) => e.id === id);
+    if (!entry || entry.archivedAt !== undefined) return false;
+    if ((entry.pinnedAt !== undefined) === pinned) return true;
+    const forge = entry.kind === 'forge';
+    const count = this.profile.arena.filter(
+      (e) => e.pinnedAt !== undefined && e.archivedAt === undefined && (e.kind === 'forge') === forge,
+    ).length;
+    if (pinned && count >= MAX_PINNED) return false;
+    // Later than every pin before it, so the order of pinning holds.
+    const t = Math.max(this.now().getTime(), ...this.profile.arena.map((e) => (e.pinnedAt ?? 0) + 1));
+    this.updateProfile(
+      (p) => ({
+        ...p,
+        arena: p.arena.map((e) => {
+          if (e.id !== id) return e;
+          const { pinnedAt: _, ...rest } = e;
+          return pinned ? { ...rest, pinnedAt: t } : rest;
+        }),
+      }),
+      { immediate: true },
+    );
+    return true;
   }
 
   deleteArenaEntry(id: string): void {

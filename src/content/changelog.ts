@@ -13,6 +13,100 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.12.1',
+    date: '2026-10-15',
+    title: 'Nur noch Sichern oben',
+    changes: [
+      { area: 'Arena', text: 'Oben im Eintrag steht nur noch ein kleines, dezentes Symbol zum Sichern. Anheften, Archivieren und Löschen stehen wieder als Knöpfe unten, „Oben anheften“ auch.' },
+    ],
+  },
+  {
+    version: '1.12.0',
+    date: '2026-10-15',
+    title: 'Symbole oben im Eintrag',
+    changes: [
+      { area: 'Arena', text: 'Oben links im Eintrag stehen neben dem Weg zurück kleine Symbole: Sichern und zurück, oben anheften, archivieren und löschen. Angeheftet leuchtet die Nadel golden. Vor dem Löschen fragt die App gleich darunter noch einmal nach. Die Knöpfe unten bleiben.' },
+    ],
+  },
+  {
+    version: '1.11.0',
+    date: '2026-10-15',
+    title: 'Ein Menü neben jedem Eintrag',
+    changes: [
+      { area: 'Arena', text: 'Neben jedem Eintrag in der Gebetskammer und in der Eisenschmiede steht das Zeichen „⋯“. Es öffnet ein Menü: oben anheften oder nicht mehr anheften, archivieren und löschen. Vor dem Löschen fragt die App noch einmal nach.' },
+    ],
+  },
+  {
+    version: '1.10.0',
+    date: '2026-10-15',
+    title: 'Titel und angeheftete Einträge',
+    changes: [
+      { area: 'Arena', text: 'Jeder Eintrag in der Gebetskammer und in der Eisenschmiede kann einen Titel bekommen. In der Übersicht steht dann der Titel statt der ersten Zeile des Textes.' },
+      { area: 'Arena', text: '„Oben anheften“ im Eintrag stellt ihn an den Anfang der Liste, mit dem Zeichen „Angeheftet“. Bis zu drei Einträge je Ort können oben stehen. „Nicht mehr anheften“ stellt ihn zurück zu den anderen; wird er archiviert, ist er nicht mehr angeheftet.' },
+    ],
+  },
+  {
+    version: '1.9.1',
+    date: '2026-10-15',
+    title: 'Löhes Fragen im Fenster',
+    changes: [
+      { area: 'Lehre', text: 'Im Hauptstück stehen Löhes Stücke als Kacheln, zwei nebeneinander, das Stück von heute in Gold. Ein Tipp öffnet seine Fragen in einem Fenster über den Kacheln; „Fragen schließen“ führt zurück, und die Kacheln stehen, wo sie waren.' },
+    ],
+  },
+  {
+    version: '1.9.0',
+    date: '2026-10-15',
+    title: 'Löhes Fragen in Kacheln',
+    changes: [
+      { area: 'Lehre', text: 'Die Seite „Fragen und Antworten zum Katechismus“ zeigt die Hauptstücke als Kacheln, wie die Übersicht der Lehre. Ein Tipp öffnet das Hauptstück mit einer Karte für jedes Stück: bei den Geboten für jedes Gebot, beim Glauben für jeden Artikel, beim Vaterunser für jede Bitte. Davor stehen die einleitenden Fragen, danach die Übergangsfragen. Offen ist zuerst das Stück von heute.' },
+      { area: 'Lehre', text: 'Löhes Fragen zum ganzen Katechismus haben eine eigene Kachel. Die Suche führt direkt zum Hauptstück.' },
+    ],
+  },
+  {
+    version: '1.8.1',
+    date: '2026-10-14',
+    title: 'Löhes Fragen passend zum Stück',
+    changes: [
+      { area: 'Lehre', text: 'Am Tisch stehen rechts jetzt genau Löhes Fragen zu dem Stück, das links steht, etwa beim dritten Gebot die Fragen 64–77. Bisher waren seine Fragen nach der Zahl auf die Woche verteilt und reichten so in das Gebot davor und danach. Wird ein Stück an zwei Tagen gelernt, teilen sich die beiden Tage seine Fragen. Die einleitenden Fragen kommen mit dem ersten Stück, die Übergangsfragen mit dem letzten.' },
+    ],
+  },
+  {
+    version: '1.8.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen im Anhang',
+    changes: [
+      { area: 'Lehre', text: 'Löhes Fragen und Antworten haben eine eigene Kachel unten bei den Büchern für das Haus: „Fragen und Antworten zum Katechismus“. Für jedes Hauptstück eine Karte, die Fragen unter dem Stück, das sie erklären; offen ist zuerst das Hauptstück dieser Woche.' },
+      { area: 'Lehre', text: 'Die Seiten der Hauptstücke zeigen wieder nur Luthers Text, alle Stücke offen. Am Tisch stehen Löhes Fragen des Tages weiter neben dem Stück.' },
+    ],
+  },
+  {
+    version: '1.7.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen am Tisch',
+    changes: [
+      { area: 'Lehre', text: 'Am Tisch steht links das Stück zum Lernen und rechts die Fragen von Wilhelm Löhe für den Tag, alle auf einmal und mit Antwort: zum Verstehen, ohne Tippen, einfach weiterlesen. Löhes Fragen eines Hauptstücks sind gleichmäßig auf die sieben Tage der Woche verteilt, in der Reihenfolge seines Buches. Mit einem Wisch zur Seite geht es zum nächsten oder vorigen Stück.' },
+      { area: 'Lehre', text: 'Auf der Seite eines Hauptstücks stehen Löhes Fragen ohne Aufklappen direkt unter Luthers Antwort. Seine einleitenden Fragen stehen vor dem ersten Stück, seine Übergangsfragen nach dem letzten. Offen ist zuerst nur das Stück von heute; die anderen öffnen sich mit einem Tipp auf den Titel.' },
+    ],
+  },
+  {
+    version: '1.6.1',
+    date: '2026-10-14',
+    title: 'Löhes Fragen bei jedem Stück',
+    changes: [
+      { area: 'Lehre', text: 'Löhes Fragen stehen jetzt unter dem Stück, zu dem sie gehören: eingeklappt als „Fragen von Wilhelm Löhe“, daneben ihre Nummern. Die einleitenden Fragen eines Hauptstücks stehen beim ersten Stück, die Übergangsfragen beim letzten.' },
+      { area: 'Lehre', text: 'Im Hausvater-Modus folgen nach Luthers Fragen zu einem Stück Löhes Fragen, jede mit „Antwort zeigen“. Mit „Nächstes Stück“ geht es ohne sie weiter.' },
+    ],
+  },
+  {
+    version: '1.6.0',
+    date: '2026-10-14',
+    title: 'Löhes Fragen zum Katechismus',
+    changes: [
+      { area: 'Lehre', text: 'Unter jedem Hauptstück steht eingeklappt die „Erklärung von Wilhelm Löhe“: seine Fragen und Antworten aus dem Haus-, Schul- und Kirchenbuch (1845), wortgetreu und in seine Lektionen eingeteilt. Jede Lektion lässt sich einzeln aufklappen.' },
+      { area: 'Lehre', text: 'Auf der Übersicht der Lehre stehen unter den Hauptstücken Löhes Fragen zum ganzen Katechismus und zu den Gnadenmitteln. Die Suche findet alle 769 Fragen.' },
+    ],
+  },
+  {
     version: '1.5.2',
     date: '2026-10-12',
     title: 'Die Bibellektion ohne Nummern',

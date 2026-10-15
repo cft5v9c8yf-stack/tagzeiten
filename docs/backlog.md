@@ -182,8 +182,9 @@ Visitenkarten noch einmal darüber sprechen, damit Karte und App dieselben Schri
 
 ## Schwerpunkt Lehre
 
-Beschlossen am 14.10.2026. **Die Funktionen von Henoch sind für Andreas vorerst vollständig; es kommen
-keine neuen Funktionen mehr dazu.** Der Schwerpunkt liegt jetzt auf dem Inhalt der Lehre. Erwartet werden
+Beschlossen am 14.10.2026. Der Schwerpunkt liegt jetzt auf dem Inhalt der Lehre. **Berichtigung vom
+15.10.2026:** Es gilt kein Stopp für neue Funktionen. Andreas meinte nur „erstmal keine“: Eine App lebt von
+guten Neuerungen, die jederzeit willkommen sind. Erwartet werden
 zwei Texte, die Andreas als bereinigten Export liefert (Wortlaut verbindlich, Prüfung Wort für Wort
 gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`):
 
@@ -198,6 +199,20 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
   eingeklapptes Feld „Erklärung von Wilhelm Löhe“ mit Fragen und Antworten; Fragen zum ganzen Katechismus
   auf der Übersichtsseite der Lehre. Beginn mit „Einleitende Fragen zum ersten Hauptstück“ (Foto S. 31,
   Nr. 17 ff.). Der Text kommt als bereinigter Export, nicht aus der Fraktur abgelesen.
+  **Stand 14.10.2026 (1.6.0):** Die Fragen und Antworten zu den Hauptstücken (Nr. 1–769) sind eingebaut,
+  nach der Ausgabe Stuttgart 1845 (Digitalisat der Bayerischen Staatsbibliothek), nicht nach der 4. Auflage.
+  Wort-Erklärungen, Spruchkatechismus, Rosinus und Kindergebete sind nicht übernommen. Einige Stellen, an
+  denen die Texterkennung unleserlich war, sind nach dem Sinn ergänzt und sollten am Scan geprüft werden:
+  Nr. 34 („zum Lager“), 88, 131, 136, 161 („Kinder“), 238, 244, 256, 259, 272, 273 („Herrschaft“), 298,
+  308, 345 („Vereinigung“), 461, 523, 584, 589, 619 („geschehenden“), 697 („am 11.“), 730, 736; dazu die
+  Stellenangaben Luc. 24 (Nr. 246, 248; Scan: 26) und Luc. 1 (Nr. 563; Scan: 2).
 - **„Lehre und Wehre“:** Vorschlag B (Überschrift über den lutherischen Bekenntnissen im Konkordienbuch,
   mit einem Satz zu Walthers Zeitschrift); der Bereich selbst heißt weiter „Lehre“. Noch nicht entschieden.
 - Zur Schrift der App siehe oben: erst vor dem Druck der Visitenkarten.
+
+## Mögliche Neuerungen (Ideen, nicht beschlossen)
+
+- **Gerätewechsel iPhone/iPad:** Heute hat jedes Gerät seinen eigenen Bestand (Regel 10); Sichern und
+  Einspielen unter Deine Daten ersetzt den Bestand. Denkbar: freiwilliger, Ende-zu-Ende verschlüsselter
+  Abgleich (CLAUDE.md sieht ihn vor), oder ein Einspielen, das zusammenführt, statt zu ersetzen.
+- **Passionszeit** als zweite Gelegenheit für die Wüstenzeit (Aschermittwoch bis Karsamstag, Matthäus 4,1).

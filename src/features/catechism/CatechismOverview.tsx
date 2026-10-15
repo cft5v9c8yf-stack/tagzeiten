@@ -10,6 +10,7 @@ export const APPENDICES = [
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
+  { slug: 'loehe', title: 'Fragen und Antworten zum Katechismus', line: 'Wilhelm Löhe, 1845: zu jedem Stück der sechs Hauptstücke, zum Verstehen' },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
   { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
   { slug: 'apologie', title: 'Die Apologie der Augsburgischen Konfession', line: 'Melanchthons Verteidigung, 1531', book: true },
@@ -79,7 +80,7 @@ export function ReadingOverview() {
   return (
     <ul className="overview-list">
       {rows.map((a) => (
-        <li key={a.slug} className={`overview-row${a.slug === 'konkordienbuch' ? ' wide' : ''}`}>
+        <li key={a.slug} className={`overview-row${a.slug === 'konkordienbuch' || a.slug === 'loehe' ? ' wide' : ''}`}>
           <Link className="overview-link" to={to(a.slug)}>
             <span className="overview-title">{a.title}</span>
             <span className="overview-count">{a.line}</span>
