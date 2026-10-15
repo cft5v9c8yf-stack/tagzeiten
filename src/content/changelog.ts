@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.10.0',
+    date: '2026-10-15',
+    title: 'Titel und angeheftete Einträge',
+    changes: [
+      { area: 'Arena', text: 'Jeder Eintrag in der Gebetskammer und in der Eisenschmiede kann einen Titel bekommen. In der Übersicht steht dann der Titel statt der ersten Zeile des Textes.' },
+      { area: 'Arena', text: '„Oben anheften“ im Eintrag stellt ihn an den Anfang der Liste, mit dem Zeichen „Angeheftet“. Bis zu drei Einträge je Ort können oben stehen. „Nicht mehr anheften“ stellt ihn zurück zu den anderen; wird er archiviert, ist er nicht mehr angeheftet.' },
+    ],
+  },
+  {
     version: '1.9.1',
     date: '2026-10-15',
     title: 'Löhes Fragen im Fenster',

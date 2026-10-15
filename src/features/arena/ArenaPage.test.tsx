@@ -204,6 +204,81 @@ describe('Arena', () => {
   });
 });
 
+describe('Titles and pinned entries', () => {
+  it('names an entry by its title in the list instead of the first line', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    fireEvent.change(await screen.findByLabelText('Titel'), { target: { value: 'Geduld' } });
+    fireEvent.change(screen.getByLabelText('Was dich bewegt'), { target: { value: 'Müde und gereizt.' } });
+    await waitFor(() => expect(store.getProfile().arena[0]!.title).toBe('Geduld'));
+    fireEvent.click(screen.getByRole('button', { name: 'Eintrag sichern und zurück' }));
+    expect(await screen.findByRole('link', { name: /Geduld/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /Müde und gereizt/ })).toBeNull();
+
+    // In the Eisenschmiede the title stands over the meeting.
+    goTo('Eisenschmiede');
+    fireEvent.click(await screen.findByRole('button', { name: 'Anliegen fürs Treffen aufschreiben' }));
+    fireEvent.change(await screen.findByLabelText('Titel'), { target: { value: 'Beruf' } });
+    fireEvent.click(screen.getByRole('link', { name: '‹ Eisenschmiede' }));
+    const card = await screen.findByRole('link', { name: /Beruf/ });
+    expect(card.textContent).toContain('Treffen noch ohne Termin');
+  });
+
+  it('pins up to three entries of a place to the top; archiving takes the pin off', async () => {
+    const store = await renderArena();
+    for (const t of ['Eins', 'Zwei', 'Drei', 'Vier', 'Fünf']) {
+      const id = store.addArenaEntry();
+      store.updateArenaEntry(id, (e) => ({ ...e, text: t }));
+    }
+    // Newest first, until pinned.
+    const titles = () => [...document.querySelectorAll('.arena-list .arena-card-title')].map((x) => x.textContent);
+    await waitFor(() => expect(titles()).toEqual(['Fünf', 'Vier', 'Drei', 'Zwei', 'Eins']));
+
+    const pin = async (t: string) => {
+      fireEvent.click(screen.getByRole('link', { name: new RegExp(t) }));
+      fireEvent.click(await screen.findByRole('button', { name: 'Oben anheften' }));
+      fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+      await screen.findByRole('heading', { level: 2, name: 'Gebetskammer' });
+    };
+    await pin('Eins');
+    await pin('Drei');
+    await pin('Zwei');
+    expect(titles()).toEqual(['Eins', 'Drei', 'Zwei', 'Fünf', 'Vier']);
+    expect(document.querySelectorAll('.arena-list .ktag')).toHaveLength(3);
+
+    // A fourth is not pinned; the place is full.
+    fireEvent.click(screen.getByRole('link', { name: /Vier/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Oben anheften' }));
+    expect(await screen.findByText('Oben stehen schon drei Einträge. Löse zuerst einen davon.')).toBeTruthy();
+    expect(store.getProfile().arena.filter((e) => e.pinnedAt !== undefined)).toHaveLength(3);
+    // The Eisenschmiede counts for itself.
+    const forge = store.addArenaEntry('forge');
+    store.updateArenaEntry(forge, (e) => ({ ...e, points: [{ text: 'Beruf', done: false }] }));
+    expect(store.pinArenaEntry(forge, true)).toBe(true);
+
+    // Taken off, it goes back among the others.
+    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    fireEvent.click(await screen.findByRole('link', { name: /Drei/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Nicht mehr anheften' }));
+    fireEvent.click(screen.getByRole('link', { name: '‹ Gebetskammer' }));
+    await waitFor(() => expect(titles()).toEqual(['Eins', 'Zwei', 'Fünf', 'Vier', 'Drei']));
+
+    // Archived, it is no longer pinned, and stays so when brought back.
+    const eins = store.getProfile().arena.find((e) => e.text === 'Eins')!;
+    store.archiveArenaEntry(eins.id, true);
+    expect(store.getProfile().arena.find((e) => e.id === eins.id)!.pinnedAt).toBeUndefined();
+    store.archiveArenaEntry(eins.id, false);
+    expect(store.getProfile().arena.find((e) => e.id === eins.id)!.pinnedAt).toBeUndefined();
+  });
+
+  it('keeps title and pin through a backup', () => {
+    const [e] = normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', title: 'Nur ein Titel', pinnedAt: 5 }]);
+    expect(e).toMatchObject({ title: 'Nur ein Titel', pinnedAt: 5 });
+    const [archived] = normalizeArena([{ id: 'b', createdAt: 1, verses: [], concerns: [], text: 'x', pinnedAt: 5, archivedAt: 6 }]);
+    expect(archived!.pinnedAt).toBeUndefined();
+  });
+});
+
 describe('Handwriting in the Gebetskammer', () => {
   it('switches to a page for the pencil and keeps strokes, pen and marker, with undo and eraser', async () => {
     const width = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');

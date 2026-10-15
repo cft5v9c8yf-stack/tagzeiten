@@ -25,6 +25,7 @@ export function newEntry(
 
 /** Nothing written yet: such entries are not kept. */
 export const isEmptyEntry = (e: ArenaEntry) =>
+  !e.title?.trim() &&
   !e.text.trim() &&
   e.verses.every((v) => !v.trim()) &&
   e.concerns.every((c) => !c.trim()) &&
@@ -57,7 +58,9 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
       concerns: strs(x.concerns),
       text: str(x.text),
     };
+    if (str(x.title).trim()) e.title = str(x.title);
     if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
+    else if (typeof x.pinnedAt === 'number') e.pinnedAt = x.pinnedAt;
     if (x.kind === 'forge') e.kind = 'forge';
     const ink = e.kind === 'forge' ? [] : normalizeInk(x.ink);
     if (ink.length) e.ink = ink;
@@ -81,8 +84,10 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
   return out.sort((a, b) => b.createdAt - a.createdAt);
 }
 
-/** The first line of the text (or the first point), for the list. */
+/** The title, else the first line of the text (or the first point), for the list. */
 export function entryTitle(e: ArenaEntry): string {
+  const title = e.title?.trim();
+  if (title) return title;
   const line = (e.text.split('\n').find((l) => l.trim()) ?? e.points?.find((p) => p.text.trim())?.text)?.trim();
   if (line) return line.length > 80 ? `${line.slice(0, 79)}…` : line;
   return e.concerns.find((c) => c.trim()) ?? e.verses.find((v) => v.trim()) ?? (e.ink?.length ? 'Handschrift' : '');
@@ -96,7 +101,7 @@ export function searchArena(entries: readonly ArenaEntry[], query: string): Aren
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return [...entries];
   return entries.filter((e) => {
-    const hay = [...e.verses, ...e.concerns, e.text, ...(e.points ?? []).map((p) => p.text)].join(' ').toLowerCase();
+    const hay = [e.title ?? '', ...e.verses, ...e.concerns, e.text, ...(e.points ?? []).map((p) => p.text)].join(' ').toLowerCase();
     return words.every((w) => hay.includes(w));
   });
 }
@@ -125,6 +130,15 @@ export function byMeeting(entries: readonly ArenaEntry[]): { date?: DateKey; ent
 }
 
 export const meetingLabel = (d: DateKey) => `Treffen am ${formatLong(d)}`;
+
+/** At most this many entries stand pinned at the top of a place. */
+export const MAX_PINNED = 3;
+
+/** Pinned entries first, in the order they were pinned; the rest keep their order. */
+export function pinnedFirst(entries: readonly ArenaEntry[]): ArenaEntry[] {
+  const pinned = entries.filter((e) => e.pinnedAt !== undefined).sort((a, b) => a.pinnedAt! - b.pinnedAt!);
+  return [...pinned, ...entries.filter((e) => e.pinnedAt === undefined)];
+}
 
 /** How an Eisenschmiede entry is named: by the meeting it is for. */
 export const forgeTitle = (e: ArenaEntry) => (e.meetingDate ? meetingLabel(e.meetingDate) : 'Treffen noch ohne Termin');

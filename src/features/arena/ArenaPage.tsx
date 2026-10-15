@@ -2,7 +2,7 @@ import { forwardRef, useEffect, useId, useLayoutEffect, useRef, useState } from 
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference } from '../../domain/arena';
+import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
@@ -329,11 +329,18 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
   );
 }
 
-/** A Gebetskammer entry as a card: date, first line, verses. */
+/** Marks an entry pinned to the top of its place. */
+const PinTag = ({ entry }: { entry: ArenaEntry }) =>
+  entry.pinnedAt !== undefined ? <span className="ktag">Angeheftet</span> : null;
+
+/** A Gebetskammer entry as a card: date, title (or first line), verses. */
 function ArenaCard({ entry: e }: { entry: ArenaEntry }) {
   return (
     <Link className="arena-card" to={`/arena/${e.id}`}>
-      <span className="arena-card-date">{dateOf(e.createdAt)}</span>
+      <span className="arena-card-date">
+        {dateOf(e.createdAt)}
+        <PinTag entry={e} />
+      </span>
       <span className="arena-card-title">{entryTitle(e)}</span>
       {e.verses.some((v) => v.trim()) && (
         <span className="arena-card-verses">{e.verses.filter((v) => v.trim()).join(' · ')}</span>
@@ -355,6 +362,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       ? profile.habits.find((h) => h.id === params.get('gewohnheit'))
       : undefined;
   const dateId = useId();
+  const titleId = useId();
   const toast = useToast();
   const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
@@ -389,6 +397,23 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           />
         </div>
       )}
+
+      <div className="field arena-title">
+        <label htmlFor={titleId}>Titel</label>
+        <input
+          id={titleId}
+          type="text"
+          value={entry.title ?? ''}
+          placeholder="Wie der Eintrag in der Übersicht heißen soll"
+          onChange={(e) => {
+            const v = e.target.value;
+            update((x) => {
+              const { title: _, ...rest } = x;
+              return v ? { ...rest, title: v } : rest;
+            });
+          }}
+        />
+      </div>
 
       <LineList
         label="Bibelstelle"
@@ -432,6 +457,19 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         >
           {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
         </button>
+        {!archived && (
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              const pin = entry.pinnedAt === undefined;
+              if (store.pinArenaEntry(entry.id, pin)) toast(pin ? `Steht jetzt oben in der ${place.title}` : 'Nicht mehr angeheftet');
+              else toast('Oben stehen schon drei Einträge. Löse zuerst einen davon.');
+            }}
+          >
+            {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
+          </button>
+        )}
         {archived ? (
           <button
             type="button"
@@ -552,7 +590,7 @@ export function ArenaPage() {
       </button>
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
-          {shown.map((e) => (
+          {pinnedFirst(shown).map((e) => (
             <li key={e.id}>
               <ArenaCard entry={e} />
             </li>
@@ -560,17 +598,28 @@ export function ArenaPage() {
         </ul>
       )}
       {kind === 'forge' && shown.length > 0 && (
-        // Named by the meeting only; the earliest meeting first, entries without a date last.
+        // Named by the title, else by the meeting; pinned first, then the earliest meeting, entries without a date last.
         <ul className="arena-list">
-          {byMeeting(shown)
-            .flatMap((g) => g.entries)
-            .map((e) => (
-              <li key={e.id}>
-                <Link className="arena-card" to={`/arena/${e.id}`}>
-                  <span className="arena-card-title">{forgeTitle(e)}</span>
-                </Link>
-              </li>
-            ))}
+          {pinnedFirst(byMeeting(shown).flatMap((g) => g.entries)).map((e) => (
+            <li key={e.id}>
+              <Link className="arena-card" to={`/arena/${e.id}`}>
+                {e.title?.trim() ? (
+                  <>
+                    <span className="arena-card-date">
+                      {forgeTitle(e)}
+                      <PinTag entry={e} />
+                    </span>
+                    <span className="arena-card-title">{e.title.trim()}</span>
+                  </>
+                ) : (
+                  <span className="arena-card-title">
+                    {forgeTitle(e)}
+                    <PinTag entry={e} />
+                  </span>
+                )}
+              </Link>
+            </li>
+          ))}
         </ul>
       )}
       {archivedCount > 0 && (

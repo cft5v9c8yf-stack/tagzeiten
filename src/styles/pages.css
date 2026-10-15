@@ -1717,8 +1717,13 @@ mark.placeholder {
   letter-spacing: 0.04em;
   color: var(--gold);
 }
-.arena-card-date .ktag {
+.arena-card-date .ktag,
+.arena-card-title .ktag {
   margin-left: 8px;
+  vertical-align: 2px;
+}
+.arena-title {
+  margin-top: 12px;
 }
 .arena .seg {
   margin-bottom: 10px;
