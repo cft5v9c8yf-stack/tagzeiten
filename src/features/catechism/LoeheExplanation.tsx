@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { CATECHISM, WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
@@ -14,7 +15,6 @@ import {
 import { useProfile } from '../../data/hooks';
 import { mondayIndex } from '../../domain/dates';
 import { catechismFor } from '../../domain/catechismDay';
-import { Section } from '../../ui/Section';
 
 function Lines({ text }: { text: string }) {
   return (
@@ -98,11 +98,59 @@ function placesOf(chief: ChiefPart): { key: string; title: string; range: Range;
   ];
 }
 
+/** Löhe's questions on one piece, in a window over the tiles; the tiles stay where they are. */
+function LoeheDialog({ title, range, onClose }: { title: string; range: Range; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  // A dialog: focus inside, Escape closes, the page behind does not scroll.
+  useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseRef.current();
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        closeRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+      previous?.focus();
+    };
+  }, []);
+
+  return (
+    <div className="chooser-backdrop" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="chooser lection" role="dialog" aria-modal="true" aria-labelledby="loehe-title">
+        <div className="chooser-head lection-head">
+          <div className="chooser-title">
+            <h2 id="loehe-title">{title}</h2>
+            <p>Wilhelm Löhe · {span(questionsIn(range))}</p>
+          </div>
+        </div>
+        <div className="chooser-list lection-body">
+          <LoeheBlock title={title} lessons={loeheBetween(range)} showTitle={false} />
+        </div>
+        <div className="chooser-foot">
+          <button type="button" className="btn quiet" ref={closeRef} onClick={onClose}>
+            Fragen schließen
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /**
  * Appendix "Fragen und Antworten zum Katechismus" (/katechismus/loehe): the
  * chief parts as tiles, as on the overview of the teaching. A tile opens the
- * chief part (/katechismus/loehe/:hauptstueck) with a card for each piece,
- * one open at a time; inside, Löhe's questions on that piece.
+ * chief part (/katechismus/loehe/:hauptstueck) with a tile for each piece;
+ * a tile opens Löhe's questions on that piece in a window over the tiles.
  */
 export function LoeheBook() {
   const { hauptstueck } = useParams();
@@ -111,6 +159,7 @@ export function LoeheBook() {
   const week = catechismFor(date, profile.catechism.weekOffset);
   const to = (path: string) => withDate(path, date, isToday);
   const ci = CATECHISM.findIndex((c) => c.id === hauptstueck);
+  const [open, setOpen] = useState<string | null>(null);
 
   if (hauptstueck === HOME) {
     const home = loeheBetween(LOEHE_HOME);
@@ -131,8 +180,8 @@ export function LoeheBook() {
   if (ci >= 0) {
     const chief = CATECHISM[ci]!;
     const places = placesOf(chief);
-    const ids = places.map((pl) => `loehe.${chief.id}.${pl.key}`);
     const todays = ci === week.chiefIndex ? (WEEKDAY_PIECES[chief.id][mondayIndex(date)] ?? []) : [];
+    const shown = places.find((pl) => pl.key === open);
     return (
       <>
         <p className="back-link">
@@ -143,31 +192,21 @@ export function LoeheBook() {
           {ci === week.chiefIndex && <span className="ktag">diese Woche</span>}
         </h2>
         <p className="book-source">Wilhelm Löhe · {span(loeheForChiefPart(chief.id))}</p>
-        <div className="dieffenbach-book">
-          {places.map((pl, i) => {
+        <ul className="overview-list loehe-pieces">
+          {places.map((pl) => {
             const today = pl.piece !== undefined && todays.includes(pl.piece);
             return (
-              <Section
-                key={pl.key}
-                id={ids[i]!}
-                group={ids}
-                defaultOpen={today && pl.piece === todays[0]}
-                className="book-card"
-                title={
-                  <span className="book-card-text">
-                    <span className="book-card-title">{pl.title}</span>
-                    <span className="book-card-sub">
-                      {span(questionsIn(pl.range))}
-                      {today && ' · heute'}
-                    </span>
-                  </span>
-                }
-              >
-                <LoeheBlock title={pl.title} lessons={loeheBetween(pl.range)} showTitle={false} />
-              </Section>
+              <li key={pl.key} className={`overview-row${today ? ' current' : ''}`}>
+                <button type="button" className="overview-link" onClick={() => setOpen(pl.key)}>
+                  <span className="overview-title">{pl.title}</span>
+                  {today && <span className="ktag">heute</span>}
+                  <span className="overview-count">{span(questionsIn(pl.range))}</span>
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
+        {shown && <LoeheDialog title={shown.title} range={shown.range} onClose={() => setOpen(null)} />}
       </>
     );
   }

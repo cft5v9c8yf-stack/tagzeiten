@@ -628,15 +628,19 @@ describe('Katechismus', () => {
     fireEvent.click(await screen.findByRole('link', { name: /Die Zehn Gebote/ }));
     const third = await screen.findByRole('button', { name: /^Das dritte Gebot/ });
     expect(third.textContent).toContain('Fragen 64–77');
-    if (third.getAttribute('aria-expanded') !== 'true') fireEvent.click(third);
-    const q64 = screen.getByText(/Was sollst du nach dem dritten Gebote\?/);
-    expect(q64.closest('[hidden]')).toBeNull();
-    expect(screen.getByText(/Was sollst du nach dem zweiten Gebote nicht thun\?/).closest('[hidden]')).not.toBeNull();
+    // A tile opens the questions on its piece in a window over the tiles.
+    fireEvent.click(third);
+    const dialog = screen.getByRole('dialog', { name: 'Das dritte Gebot' });
+    expect(dialog.textContent).toContain('Was sollst du nach dem dritten Gebote?');
+    expect(dialog.textContent).not.toContain('Was sollst du nach dem zweiten Gebote nicht thun?');
+    fireEvent.click(screen.getByRole('button', { name: 'Fragen schließen' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
     // Introduction first, transition last; the Law ends in the Gospel (rule 1).
-    const cards = [...document.querySelectorAll('.book-card-title')].map((t) => t.textContent);
-    expect(cards[0]).toBe('Einleitende Fragen zum ersten Hauptstück');
-    expect(cards.at(-1)).toBe('Uebergangsfragen zum zweiten Hauptstück');
-    expect(document.body.textContent).toContain('„Christus hat uns erlöset vom Fluch des Gesetzes, da Er ward ein Fluch für uns.“');
+    const tiles = [...document.querySelectorAll('.loehe-pieces .overview-title')].map((t) => t.textContent);
+    expect(tiles[0]).toBe('Einleitende Fragen zum ersten Hauptstück');
+    expect(tiles.at(-1)).toBe('Uebergangsfragen zum zweiten Hauptstück');
+    fireEvent.click(screen.getByRole('button', { name: /^Uebergangsfragen zum zweiten Hauptstück/ }));
+    expect(screen.getByRole('dialog').textContent).toContain('„Christus hat uns erlöset vom Fluch des Gesetzes, da Er ward ein Fluch für uns.“');
   });
 
   it("has Löhe's questions on the whole catechism on a page of their own", async () => {

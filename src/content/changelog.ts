@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.9.1',
+    date: '2026-10-15',
+    title: 'Löhes Fragen im Fenster',
+    changes: [
+      { area: 'Lehre', text: 'Im Hauptstück stehen Löhes Stücke als Kacheln, zwei nebeneinander, das Stück von heute in Gold. Ein Tipp öffnet seine Fragen in einem Fenster über den Kacheln; „Fragen schließen“ führt zurück, und die Kacheln stehen, wo sie waren.' },
+    ],
+  },
+  {
     version: '1.9.0',
     date: '2026-10-15',
     title: 'Löhes Fragen in Kacheln',

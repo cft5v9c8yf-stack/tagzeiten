@@ -3501,7 +3501,14 @@ header.top .search-link:focus-visible {
 .loehe-source {
   margin-top: 18px;
 }
-.fold-body > .li:first-child {
+/* The pieces of a chief part as tiles; a tile opens its questions in a window. */
+.loehe-pieces .overview-link {
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.fold-body > .li:first-child,
+.lection-body > .li:first-child {
   margin-top: 4px;
   border-top: 0;
 }
