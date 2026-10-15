@@ -195,6 +195,11 @@ body.no-scroll {
     calc(var(--gutter) + var(--safe-left));
 }
 .hf-top,
+.hf-nav .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .hf-nav {
   display: flex;
   align-items: center;
@@ -760,6 +765,13 @@ body.is-sorting * {
   flex: none;
   /* The arrow stands on the first line of a heading that wraps. */
   margin: -3px 0 0;
+}
+.title-row > .title-row-text {
+  margin: 0;
+  padding-top: 7px;
+}
+.title-row > .cat-part-title {
+  flex-wrap: nowrap;
 }
 .title-row > h2,
 .title-row > .fold-head {
@@ -1570,6 +1582,17 @@ body.is-sorting * {
   opacity: 1;
   background: var(--paper);
 }
+/* On the dark ground the gold needs its full strength. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .entry-icon,
+  :root:not([data-theme='light']) .back-link-to {
+    opacity: 1;
+  }
+}
+:root[data-theme='dark'] .entry-icon,
+:root[data-theme='dark'] .back-link-to {
+  opacity: 1;
+}
 .entry-icon[aria-pressed='true'] {
   opacity: 1;
   background: var(--gold-soft);
@@ -1620,6 +1643,10 @@ body.is-sorting * {
   border: 1px solid var(--rule);
   border-radius: 12px;
   box-shadow: 0 6px 24px rgb(0 0 0 / 0.14);
+}
+.entry-menu-list.up {
+  top: auto;
+  bottom: 42px;
 }
 .entry-menu-list button {
   padding: 12px 14px;

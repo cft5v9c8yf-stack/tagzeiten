@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATECHISM, WEEKDAY_PIECES } from '../content/catechism';
+import { CATECHISM, chiefNumber, WEEKDAY_PIECES } from '../content/catechism';
 import { addDays, mondayOf } from './dates';
 import {
   ALL_PIECE_IDS,
@@ -86,5 +86,18 @@ describe('catechism', () => {
 
   it('counts only known memorised pieces', () => {
     expect(memorizedCount({ 'commandments.0': true, 'creed.2': true, 'creed.1': false, 'gone.9': true })).toBe(2);
+  });
+});
+
+describe('the five chief parts', () => {
+  it('numbers the chief parts 1 to 5; the confession between them has no number', () => {
+    expect(CATECHISM.map((c) => [c.id, chiefNumber(c)])).toEqual([
+      ['commandments', 1],
+      ['creed', 2],
+      ['lordsPrayer', 3],
+      ['baptism', 4],
+      ['confession', undefined],
+      ['lordsSupper', 5],
+    ]);
   });
 });

@@ -29,7 +29,8 @@ export type FlowIconName =
   | 'archive'
   | 'unarchive'
   | 'trash'
-  | 'back';
+  | 'back'
+  | 'forward';
 
 const PATHS: Record<FlowIconName, JSX.Element> = {
   bed: <path d="M3 7v11M21 13v5M3 16h18M3 13h18M6.5 13a2 2 0 0 1 0-4h2.5a1.5 1.5 0 0 1 1.5 1.5V13" />,
@@ -117,6 +118,7 @@ const PATHS: Record<FlowIconName, JSX.Element> = {
   trash: <path d="M4 6.5h16M9.5 6.5V4h5v2.5M6.5 6.5l1 13.5h9l1-13.5M10.5 10.5v6M13.5 10.5v6" />,
   // The way back
   back: <path d="M19.5 12h-15M10.5 6l-6 6 6 6" />,
+  forward: <path d="M4.5 12h15M13.5 6l6 6-6 6" />,
   // The sun going down: the Vesper
   sunset: <path d="M7 17a5 5 0 0 1 10 0M2 17h20M12 4v5M9.5 6.5 12 9l2.5-2.5M4.5 10.5l1.6 1.2M19.5 10.5l-1.6 1.2" />,
 };

@@ -3,7 +3,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { BackLink } from '../../ui/BackLink';
 import { Link, useParams, useSearchParams } from 'react-router';
-import { CATECHISM, CATECHISM_SUBTITLE, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
+import { CATECHISM, CATECHISM_SUBTITLE, chiefNumber, TABLE_OF_DUTIES, TABLE_OF_DUTIES_SUBTITLE } from '../../content/catechism';
 import { AUGSBURG_CONFESSION, AUGSBURG_SOURCE } from '../../content/augsburgConfession';
 import { LARGE_CATECHISM, LARGE_CATECHISM_SOURCE } from '../../content/largeCatechism';
 import { SMALCALD_ARTICLES, SMALCALD_SOURCE, SMALCALD_TITLE } from '../../content/smalcaldArticles';
@@ -89,7 +89,7 @@ function ChiefPart({ ci, back }: { ci: number; back: React.ReactNode }) {
       <div className="title-row">
         {back}
         <h2 className="cat-part-title">
-          <span className="no">{ci + 1}</span> {chief.title}
+          {chiefNumber(chief) && <span className="no">{chiefNumber(chief)}</span>} {chief.heading ?? chief.title}
           {ci === day.chiefIndex && <span className="ktag">diese Woche</span>}
         </h2>
       </div>
@@ -388,7 +388,7 @@ function CatechismHome() {
           <p className="cat-week-kicker">Diese Woche</p>
           <h4 id="cat-week-title" className="cat-week-title">
             <Link to={partLink}>
-              <span className="no">{day.chiefIndex + 1}</span> {day.chief.title}
+              {chiefNumber(day.chief) && <span className="no">{chiefNumber(day.chief)}</span>} {day.chief.title}
             </Link>
           </h4>
           <p className="cat-today">

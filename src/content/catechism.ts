@@ -2,6 +2,11 @@
  * Luther's Small Catechism word for word after the Book of Concord, St. Louis
  * 1881 (after the text of 1580), pp. 259–266, in the spelling of the edition;
  * the Table of Duties and the weekday table for the six-week cycle.
+ *
+ * The five chief parts are numbered 1 to 5. The confession ("Wie man die
+ * Einfältigen soll lehren beichten") stands between Baptism and the
+ * Sacrament of the Altar without a number: it is no chief part. It keeps its
+ * week in the cycle, and its id, so learned pieces and weeks stay as they are.
  */
 
 export type ChiefPartId = 'commandments' | 'creed' | 'lordsPrayer' | 'baptism' | 'confession' | 'lordsSupper';
@@ -18,6 +23,8 @@ export interface CatechismPiece {
 export interface ChiefPart {
   id: ChiefPartId;
   title: string;
+  /** A shorter heading for the chief part's own page, so that it stands on one line. */
+  heading?: string;
   pieces: readonly CatechismPiece[];
 }
 
@@ -208,6 +215,7 @@ export const CATECHISM: readonly ChiefPart[] = [
   {
     id: 'baptism',
     title: 'Das Sakrament der heiligen Taufe',
+    heading: 'Die heilige Taufe',
     pieces: [
       {
         title: 'Zum ersten',
@@ -312,6 +320,10 @@ export const CATECHISM: readonly ChiefPart[] = [
     ],
   },
 ];
+
+/** The number of a chief part (1 to 5); the confession has none. */
+export const chiefNumber = (chief: ChiefPart): number | undefined =>
+  chief.id === 'confession' ? undefined : CATECHISM.filter((c) => c.id !== 'confession').indexOf(chief) + 1;
 
 /**
  * Pieces per weekday for each chief part, Monday = 0 … Sunday = 6.

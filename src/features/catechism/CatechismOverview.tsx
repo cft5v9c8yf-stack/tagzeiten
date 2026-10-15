@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { CATECHISM } from '../../content/catechism';
+import { CATECHISM, chiefNumber } from '../../content/catechism';
 import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
 
 /** The appendices, opened like the chief parts. `book`: part of the Book of Concord, listed there. */
@@ -10,7 +10,7 @@ export const APPENDICES = [
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
-  { slug: 'loehe', title: 'Fragen und Antworten zum Katechismus', line: 'Wilhelm Löhe, 1845: zu jedem Stück der sechs Hauptstücke, zum Verstehen' },
+  { slug: 'loehe', title: 'Fragen und Antworten zum Katechismus', line: 'Wilhelm Löhe, 1845: zu jedem Stück der Hauptstücke und der Beichte, zum Verstehen' },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
   { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
   { slug: 'apologie', title: 'Die Apologie der Augsburgischen Konfession', line: 'Melanchthons Verteidigung, 1531', book: true },
@@ -48,7 +48,7 @@ export function CatechismOverview({
             return (
               <li key={chief.id} className={`overview-row${ci === currentChief ? ' current' : ''}`}>
                 <Link className="overview-link" to={to(chief.id)}>
-                  <span className="overview-no">{ci + 1}</span>
+                  <span className="overview-no">{chiefNumber(chief) ?? '\u00a0'}</span>
                   <span className="overview-title">{chief.title}</span>
                   {ci === currentChief && <span className="ktag">diese Woche</span>}
                   <span className="overview-pieces" aria-hidden="true">

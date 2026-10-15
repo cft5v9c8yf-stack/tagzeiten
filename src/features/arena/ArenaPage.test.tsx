@@ -355,6 +355,11 @@ describe('Titles and pinned entries', () => {
   it('keeps title and pin through a backup', () => {
     const [e] = normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', title: 'Nur ein Titel', pinnedAt: 5 }]);
     expect(e).toMatchObject({ title: 'Nur ein Titel', pinnedAt: 5 });
+    // A backup with more than three pins keeps the three pinned first.
+    const many = normalizeArena(
+      [1, 2, 3, 4].map((k) => ({ id: `p${k}`, createdAt: k, verses: [], concerns: [], text: 'x', pinnedAt: 10 - k })),
+    );
+    expect(many.filter((x) => x.pinnedAt !== undefined).map((x) => x.id).sort()).toEqual(['p2', 'p3', 'p4']);
     const [archived] = normalizeArena([{ id: 'b', createdAt: 1, verses: [], concerns: [], text: 'x', pinnedAt: 5, archivedAt: 6 }]);
     expect(archived!.pinnedAt).toBeUndefined();
   });

@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.14.0',
+    date: '2026-10-15',
+    title: 'Fünf Hauptstücke',
+    changes: [
+      { area: 'Lehre', text: 'Der Kleine Katechismus hat fünf Hauptstücke. Die Beichte steht wie bei Luther zwischen Taufe und Abendmahl, aber ohne Nummer; das Sakrament des Altars ist das fünfte Hauptstück. Die Woche der Beichte bleibt im Wechsel, Gelerntes bleibt erhalten. Löhes Fragen zählen nach seiner Ausgabe von 1845 weiter sechs und stehen wortgetreu.' },
+      { area: 'Lehre', text: 'Nummer und Titel eines Hauptstücks stehen in einer Zeile; die Taufe heißt dort kurz „Die heilige Taufe“. Im Hausvater-Modus blättern Pfeile im Strich der übrigen Symbole.' },
+      { area: 'Arena', text: 'Das Menü am untersten Eintrag öffnet nach oben, wenn unten die Leiste im Weg wäre. Im dunklen Modus stehen die Symbole in vollem Gold. Mehr als drei angeheftete Einträge aus einer Sicherung werden auf drei begrenzt.' },
+    ],
+  },
+  {
     version: '1.13.2',
     date: '2026-10-15',
     title: 'Ruhigere Köpfe unter „Mehr“',

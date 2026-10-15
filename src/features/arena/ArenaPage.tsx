@@ -627,10 +627,12 @@ export function ArenaPage() {
     if (entry) return <EntryEditor entry={entry} />;
     return (
       <>
-        <p className="back-link">
-          <BackLink to="/arena">Arena</BackLink>
-        </p>
-        <p>Diesen Eintrag gibt es nicht mehr.</p>
+        <div className="title-row">
+          <p className="back-link">
+            <BackLink to="/arena">Arena</BackLink>
+          </p>
+          <p className="title-row-text">Diesen Eintrag gibt es nicht mehr.</p>
+        </div>
       </>
     );
   }
