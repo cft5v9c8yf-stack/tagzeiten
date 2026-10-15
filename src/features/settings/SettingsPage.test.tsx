@@ -314,18 +314,14 @@ describe('Mehr: Aufbau', () => {
     await waitFor(() => expect(store.getProfile().sundayRest).toBe(false));
   });
 
-  it('shows a Bible verse, and the explanation behind the "i" in a bubble', async () => {
+  it('shows only the arrow and the title at the top, the explanation under it, and a Bible verse', async () => {
     await renderAt('/mehr/zeiten', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Zeiten/ });
+    const heading = await screen.findByRole('heading', { level: 2, name: 'Zeiten' });
+    const row = heading.closest('.title-row')!;
+    expect(row.querySelectorAll('svg')).toHaveLength(1);
+    expect(row.querySelector('button')).toBeNull();
+    expect(document.querySelector('.more-area-info')!.textContent).toContain('Nicht jeder steht um vier auf.');
     expect(document.querySelector('.section-verse blockquote')!.textContent).toBe('Meine Zeit steht in deinen Händen.');
-    const info = screen.getByRole('button', { name: 'Info zu Zeiten' });
-    const bubble = document.getElementById(info.getAttribute('aria-controls')!)!;
-    expect(bubble.hidden).toBe(true);
-    fireEvent.click(info);
-    expect(bubble.hidden).toBe(false);
-    expect(bubble.textContent).toContain('Nicht jeder steht um vier auf.');
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(bubble.hidden).toBe(true);
   });
 });
 

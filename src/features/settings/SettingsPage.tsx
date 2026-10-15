@@ -6,7 +6,6 @@ import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { setOpen } from '../../ui/collapseState';
-import { InfoToggle } from '../../ui/Section';
 import { TileGroup } from '../../ui/TileGroup';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
@@ -262,14 +261,10 @@ export function SettingsPage() {
         <p className="back-link">
           <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
         </p>
-        <div className="fold-head more-area-head">
-          <h2>
-            <FlowIcon name={area.icon} size={24} />
-            {area.title}
-          </h2>
-          <InfoToggle title={area.title}>{area.info}</InfoToggle>
-        </div>
+        {/* Only the arrow and the title; the area's icon stays on its tile. */}
+        <h2>{area.title}</h2>
       </div>
+      <div className="more-area-info">{area.info}</div>
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
       {area.body()}
     </div>

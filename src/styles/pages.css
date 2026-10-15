@@ -402,6 +402,14 @@ body.no-scroll {
   color: var(--muted);
 }
 /* An area opened from a tile */
+.more-area-info {
+  margin: -4px 0 12px;
+  font: 0.9rem/1.45 var(--sans);
+  color: var(--muted);
+}
+.more-area-info p {
+  margin: 0 0 6px;
+}
 .more-area-head {
   margin: 10px 0 8px;
 }

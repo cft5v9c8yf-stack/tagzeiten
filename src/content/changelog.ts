@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.13.2',
+    date: '2026-10-15',
+    title: 'Ruhigere Köpfe unter „Mehr“',
+    changes: [
+      { area: 'Mehr', text: 'Oben in jedem Bereich stehen nur noch der Pfeil zurück und der Titel. Was hinter dem „i“ stand, steht jetzt klein darunter; das Symbol des Bereichs bleibt auf seiner Kachel.' },
+    ],
+  },
+  {
     version: '1.13.1',
     date: '2026-10-15',
     title: 'Der Pfeil neben der Überschrift',
