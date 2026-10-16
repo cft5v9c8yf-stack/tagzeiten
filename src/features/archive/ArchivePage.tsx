@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 import { useAllDays, useProfile } from '../../data/hooks';
 import { entryTitle, forgeTitle, searchArena } from '../../domain/arena';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
+import { RoundJournal } from '../desert/DesertJournal';
 import { Section } from '../../ui/Section';
 import { byYearAndMonth } from '../../domain/byMonth';
 import { formatLong, toKey, type DateKey } from '../../domain/dates';
@@ -354,6 +355,9 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
                       className="book-card"
                       aside={r.status === 'active' ? 'läuft' : 'beendet'}
                     >
+                      <h5>Tagebuch</h5>
+                      <RoundJournal run={r} />
+                      <h5>Wochenrückblicke</h5>
                       <RoundReviews run={r} />
                     </Section>
                   </li>

@@ -42,6 +42,14 @@ async function renderToday(date: string, prepare?: (s: Store) => void, now = new
 }
 
 describe('Today', () => {
+  it('shows the thanks of the day under the three things, apart from them, only when there are some', async () => {
+    const store = await renderToday('2026-09-24');
+    expect(screen.queryByRole('heading', { name: 'Dank' })).toBeNull();
+    store.updateDay('2026-09-24', (d) => ({ ...d, evening: { ...d.evening, thanks: ['das Gespräch mit Anna', '', 'Brot'] } }));
+    await screen.findByRole('heading', { name: 'Dank' });
+    expect([...document.querySelectorAll('.day-thanks li')].map((x) => x.textContent)).toEqual(['das Gespräch mit Anna', 'Brot']);
+  });
+
   it('moves on to the new day when the app stayed open over midnight, so nothing is ticked for yesterday', async () => {
     const clock = { now: new Date(2026, 8, 24, 23, 58) };
     const store = new Store({ db: new TagzeitenDB(`today-${++n}`), journal: memoryJournal(), now: () => clock.now });

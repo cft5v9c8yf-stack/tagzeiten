@@ -5,6 +5,7 @@
  */
 import { SEVEN_QUESTIONS } from '../content/questions';
 import { isDateKey } from './dates';
+import { normalizeInk } from './ink';
 import {
   emptyDay,
   EVENING_TEXT_FIELDS,
@@ -70,6 +71,8 @@ export function normalizeDay(raw: unknown): Day | null {
     const v = str(e[f]);
     if (v !== undefined) d.evening[f] = v;
   }
+  const ink = normalizeInk(e.journalInk);
+  if (ink.length) d.evening.journalInk = ink;
   const marks = obj(e.marks);
   const carry = obj(e.carry);
   for (const k of THREE_KEYS) {
@@ -112,6 +115,7 @@ export function isEmptyDay(d: Day): boolean {
     !e.complineDone &&
     e.thanks.every((t) => !t) &&
     EVENING_TEXT_FIELDS.every((f) => !e[f]) &&
+    !e.journalInk?.length &&
     Object.keys(e.marks).length === 0 &&
     Object.values(d.habits).every((v) => !v)
   );

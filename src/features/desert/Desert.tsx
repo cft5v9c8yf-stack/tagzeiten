@@ -23,6 +23,7 @@ import { Segmented } from '../../ui/Choice';
 import { Tick } from '../../ui/Tick';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
+import { DesertJournal, RoundJournal } from './DesertJournal';
 import { DesertChoice } from './DesertChoice';
 import { DesertDay } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
@@ -182,6 +183,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
       <div className="wa-group">
         <DesertDay run={run} date={date} />
       </div>
+      {date <= today && <DesertJournal key={date} date={date} />}
     </section>
   );
 }
@@ -462,6 +464,8 @@ function Closing({ run }: { run: WinterArcRun }) {
         </section>
       )}
       {done && <p role="status">Übernommen. Du findest sie unter „Heute“ und unter „Mehr → Gewohnheiten“.</p>}
+      <h5>Das Tagebuch</h5>
+      <RoundJournal run={run} />
       <h5>Die Wochenrückblicke</h5>
       <RoundReviews run={run} />
       <div className="button-row">

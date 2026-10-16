@@ -754,6 +754,24 @@ body.is-sorting * {
 .back-link a {
   text-decoration: none;
 }
+/* The thanks of the day under "Heute", one line each. */
+.day-thanks {
+  margin: 0;
+}
+.day-thanks > li {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.day-thanks > li + li {
+  margin-top: 0;
+}
+.day-thanks > li::before {
+  top: calc(6px + 0.15em);
+}
+.day-thanks li + li {
+  border-top: 1px solid var(--rule);
+}
+
 /* The arrow back on the line of the page's heading */
 .title-row {
   display: flex;
@@ -2669,6 +2687,31 @@ header.top .search-link:focus-visible {
 }
 
 /* ------------------------------------------------------------ Wüstenzeit (the Streithalle before 0.39) */
+/* The journal of a Wüstenzeit: written under the day, read again day by day. */
+.desert-journal {
+  margin-top: 18px;
+}
+.desert-journal-read {
+  display: grid;
+  gap: 12px;
+  margin: 6px 0 14px;
+}
+.desert-journal-day h5 {
+  margin: 0 0 4px;
+}
+.desert-journal-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.desert-journal-ink {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 6px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
 /* Open things are a plain outline, never red (rules 4 and 5). */
 .wa-title {
   margin: 8px 0 4px;
@@ -3484,7 +3527,6 @@ header.top .search-link:focus-visible {
 }
 .guide-sources ul {
   margin: 0;
-  padding-left: 1.1em;
   font-family: var(--sans);
   font-size: 0.8rem;
   color: var(--muted);
