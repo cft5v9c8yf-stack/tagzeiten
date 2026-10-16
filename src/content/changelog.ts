@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.15.1',
+    date: '2026-10-16',
+    title: 'Der Dank steht unter „Heute“',
+    changes: [
+      { area: 'Heute', text: 'Was du bei „Dankbarkeit“ oder „Tagebuch und drei Dankpunkte“ aufschreibst, steht danach leise unter dem Punkt, unter „Heute“ und in der Wüstenwanderung. Auch der Dank aus dem Nachtgebet erscheint dort.' },
+    ],
+  },
+  {
     version: '1.15.0',
     date: '2026-10-16',
     title: 'Tagebuch der Wüstenwanderung',

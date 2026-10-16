@@ -13,9 +13,12 @@ import { WithInfo } from './DesertInfo';
 
 const periodNote = (h: Habit) => (h.rhythm === 'weekly' ? 'diese Woche' : h.rhythm === 'monthly' ? 'diesen Monat' : undefined);
 
-/** The quiet line under a habit of the day: its period, the reading plan, or that the orders kept it. */
+/** The quiet line under a habit of the day: the thanks written down, its period, the reading plan, or that the orders kept it. */
 function noteOf(h: Habit, date: DateKey, lookup: ReturnType<typeof useDayLookup>): string | undefined {
   if (h.id === READING_HABIT) return 'nach dem Leseplan';
+  // Written down, the thanks stand under it, here and under "Heute".
+  const thanks = canWrite(h) ? (lookup(date)?.evening.thanks ?? []).map((t) => t.trim()).filter(Boolean) : [];
+  if (thanks.length) return thanks.join(' · ');
   if (keptByOrder(h, lookup(date))) return followOf(h) === 'thanks' ? 'im Nachtgebet notiert' : 'aus dem Ablauf';
   return periodNote(h);
 }
