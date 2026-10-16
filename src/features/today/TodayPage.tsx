@@ -87,6 +87,27 @@ function ThreeThings({ day }: { day: Day }) {
   );
 }
 
+/**
+ * The thanks of the day, under the three things and apart from them: what was
+ * written in the Nachtgebet or in the Wüstenzeit, the same three lines. Shown
+ * only when there is some.
+ */
+function DayThanks({ day }: { day: Day }) {
+  const thanks = day.evening.thanks.map((t) => t.trim()).filter(Boolean);
+  if (!thanks.length) return null;
+  return (
+    <Section id="today.thanks" title="Dank">
+      <div className="panel three">
+        <ul className="day-thanks">
+          {thanks.map((t, i) => (
+            <li key={i}>{t}</li>
+          ))}
+        </ul>
+      </div>
+    </Section>
+  );
+}
+
 export function TodayPage() {
   // A new day while the app stayed open: "Heute" follows it, so nothing is ticked for yesterday.
   const today = useToday();
@@ -147,6 +168,7 @@ export function TodayPage() {
 
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} />
+      <DayThanks day={day} />
 
       {!resting && (
         <Section

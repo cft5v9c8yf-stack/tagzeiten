@@ -162,8 +162,7 @@ describe('the Wüstenwanderung in the Arena', () => {
     const day = within(document.querySelector('.wa-day') as HTMLElement);
     const thanks = day.getByRole('checkbox', { name: /^Dankbarkeit/ });
     expect(thanks.getAttribute('aria-checked')).toBe('true');
-    // What was written stands under it, here and under "Heute".
-    expect(thanks.textContent).toContain('das Gespräch mit Anna');
+    expect(thanks.textContent).toContain('im Nachtgebet notiert');
     // On paper: the tick alone, as before.
     fireEvent.click(day.getByRole('checkbox', { name: 'Morgensegen' }));
     expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);

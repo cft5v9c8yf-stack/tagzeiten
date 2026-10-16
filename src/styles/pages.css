@@ -754,6 +754,19 @@ body.is-sorting * {
 .back-link a {
   text-decoration: none;
 }
+/* The thanks of the day under "Heute", one line each. */
+.day-thanks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.day-thanks li {
+  padding: 6px 0;
+}
+.day-thanks li + li {
+  border-top: 1px solid var(--rule);
+}
+
 /* The arrow back on the line of the page's heading */
 .title-row {
   display: flex;

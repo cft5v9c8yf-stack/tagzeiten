@@ -15,9 +15,9 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '1.15.1',
     date: '2026-10-16',
-    title: 'Der Dank steht unter „Heute“',
+    title: 'Der Dank unter „Heute“',
     changes: [
-      { area: 'Heute', text: 'Was du bei „Dankbarkeit“ oder „Tagebuch und drei Dankpunkte“ aufschreibst, steht danach leise unter dem Punkt, unter „Heute“ und in der Wüstenwanderung. Auch der Dank aus dem Nachtgebet erscheint dort.' },
+      { area: 'Heute', text: 'Unter den drei Dingen steht der Dank des Tages in einem eigenen Abschnitt, sobald du ihn aufgeschrieben hast, in der Wüstenzeit oder im Nachtgebet.' },
     ],
   },
   {
