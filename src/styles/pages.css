@@ -693,8 +693,8 @@ body.is-sorting * {
 }
 .overview-no {
   font-weight: 600;
-  font-size: 1.2rem;
-  line-height: 1;
+  font-size: 0.95rem;
+  line-height: 1.2;
   color: var(--rubric);
 }
 .overview-title {
@@ -1720,6 +1720,8 @@ body.is-sorting * {
 .arena-text textarea {
   min-height: 16rem;
   line-height: 1.5;
+  overflow: hidden;
+  resize: none;
 }
 .arena-text .field {
   margin-top: 10px;

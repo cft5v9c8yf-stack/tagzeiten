@@ -325,6 +325,12 @@ export const CATECHISM: readonly ChiefPart[] = [
 export const chiefNumber = (chief: ChiefPart): number | undefined =>
   chief.id === 'confession' ? undefined : CATECHISM.filter((c) => c.id !== 'confession').indexOf(chief) + 1;
 
+/** The first line of a chief part's tile: "1. Hauptstück"; for the confession an empty line, so its name stands on the second too. */
+export const chiefLabel = (chief: ChiefPart): string => {
+  const n = chiefNumber(chief);
+  return n ? `${n}. Hauptstück` : '\u00a0';
+};
+
 /**
  * Pieces per weekday for each chief part, Monday = 0 … Sunday = 6.
  * Every piece of a chief part appears at least once in its week.

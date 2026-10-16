@@ -13,6 +13,22 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.14.3',
+    date: '2026-10-16',
+    title: 'Hauptstücke beim Namen',
+    changes: [
+      { area: 'Lehre', text: 'Auf den Kacheln der Hauptstücke steht oben „1. Hauptstück“ bis „5. Hauptstück“, der Name darunter in der zweiten Zeile, auch bei Löhes Fragen. Bei der Beichte bleibt die obere Zeile frei.' },
+    ],
+  },
+  {
+    version: '1.14.2',
+    date: '2026-10-15',
+    title: 'Langer Text in der Gebetskammer',
+    changes: [
+      { area: 'Arena', text: 'Das Feld „Was dich bewegt“ wächst mit dem Text. Ein langer Eintrag lässt sich bis zum Ende lesen, indem du die Seite scrollst, auch auf dem iPad.' },
+    ],
+  },
+  {
     version: '1.14.1',
     date: '2026-10-15',
     title: 'Löhes Zählung erklärt',

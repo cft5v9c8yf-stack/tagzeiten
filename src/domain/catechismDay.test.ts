@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CATECHISM, chiefNumber, WEEKDAY_PIECES } from '../content/catechism';
+import { CATECHISM, chiefLabel, chiefNumber, WEEKDAY_PIECES } from '../content/catechism';
 import { addDays, mondayOf } from './dates';
 import {
   ALL_PIECE_IDS,
@@ -98,6 +98,19 @@ describe('the five chief parts', () => {
       ['baptism', 4],
       ['confession', undefined],
       ['lordsSupper', 5],
+    ]);
+  });
+});
+
+describe('the tiles of the chief parts', () => {
+  it('name the number on the first line, the confession leaves it empty', () => {
+    expect(CATECHISM.map(chiefLabel)).toEqual([
+      '1. Hauptstück',
+      '2. Hauptstück',
+      '3. Hauptstück',
+      '4. Hauptstück',
+      ' ',
+      '5. Hauptstück',
     ]);
   });
 });

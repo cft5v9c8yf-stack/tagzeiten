@@ -86,6 +86,20 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   const [writing, setWriting] = useState<Writing>(() =>
     hasInk && !hasText ? 'ink' : hasText && !hasInk ? 'text' : lastWriting(),
   );
+  // The field grows with the text, so the page scrolls and not a small window inside it.
+  const area = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const fit = () => {
+      const el = area.current;
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight + 2}px`;
+    };
+    fit();
+    // Turned, the iPad is wider or narrower, and the text needs another height.
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [entry.text, writing]);
   const choose = (w: Writing) => {
     setWriting(w);
     try {
@@ -113,6 +127,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
           </label>
           <textarea
             id={textId}
+            ref={area}
             rows={14}
             value={entry.text}
             placeholder={PLACES.journal.textHint}
