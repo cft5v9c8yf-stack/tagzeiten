@@ -98,7 +98,7 @@ function DayThanks({ day }: { day: Day }) {
   return (
     <Section id="today.thanks" title="Dank">
       <div className="panel three">
-        <ul className="day-thanks">
+        <ul className="henoch-list day-thanks">
           {thanks.map((t, i) => (
             <li key={i}>{t}</li>
           ))}

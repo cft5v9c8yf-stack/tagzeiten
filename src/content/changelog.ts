@@ -18,6 +18,7 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Der Dank unter „Heute“',
     changes: [
       { area: 'Heute', text: 'Unter den drei Dingen steht der Dank des Tages in einem eigenen Abschnitt, sobald du ihn aufgeschrieben hast, in der Wüstenzeit oder im Nachtgebet.' },
+      { area: 'Henoch', text: 'Aufzählungen haben einen eigenen Punkt: eine Ähre im Strich und Gold der übrigen Symbole, beim Dank des Tages und bei den Quellen der Sonntagshilfe gleich.' },
     ],
   },
   {

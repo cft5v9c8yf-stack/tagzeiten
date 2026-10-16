@@ -757,11 +757,16 @@ body.is-sorting * {
 /* The thanks of the day under "Heute", one line each. */
 .day-thanks {
   margin: 0;
-  padding: 0;
-  list-style: none;
 }
-.day-thanks li {
-  padding: 6px 0;
+.day-thanks > li {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+.day-thanks > li + li {
+  margin-top: 0;
+}
+.day-thanks > li::before {
+  top: calc(6px + 0.15em);
 }
 .day-thanks li + li {
   border-top: 1px solid var(--rule);
@@ -3522,7 +3527,6 @@ header.top .search-link:focus-visible {
 }
 .guide-sources ul {
   margin: 0;
-  padding-left: 1.1em;
   font-family: var(--sans);
   font-size: 0.8rem;
   color: var(--muted);

@@ -50,7 +50,7 @@ export function SundayGuidePage() {
       ))}
       <section className="guide-sources" aria-labelledby="guide-sources-h">
         <h3 id="guide-sources-h">Quellen</h3>
-        <ul>
+        <ul className="henoch-list">
           {SUNDAY_GUIDE_SOURCES.map((q) => (
             <li key={q}>{q}</li>
           ))}
