@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { CATECHISM, chiefNumber } from '../../content/catechism';
+import { CATECHISM, chiefLabel } from '../../content/catechism';
 import { memorizedCount, pieceId, TOTAL_PIECES } from '../../domain/catechismDay';
 
 /** The appendices, opened like the chief parts. `book`: part of the Book of Concord, listed there. */
@@ -48,7 +48,7 @@ export function CatechismOverview({
             return (
               <li key={chief.id} className={`overview-row${ci === currentChief ? ' current' : ''}`}>
                 <Link className="overview-link" to={to(chief.id)}>
-                  <span className="overview-no">{chiefNumber(chief) ?? '\u00a0'}</span>
+                  <span className="overview-no">{chiefLabel(chief)}</span>
                   <span className="overview-title">{chief.title}</span>
                   {ci === currentChief && <span className="ktag">diese Woche</span>}
                   <span className="overview-pieces" aria-hidden="true">

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BackLink } from '../../ui/BackLink';
 import { Link, useParams } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
-import { CATECHISM, chiefNumber, WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
+import { CATECHISM, chiefLabel, chiefNumber, WEEKDAY_PIECES, type ChiefPart } from '../../content/catechism';
 import {
   LOEHE_HOME,
   LOEHE_PLACES,
@@ -240,7 +240,7 @@ export function LoeheBook() {
         {CATECHISM.map((chief, i) => (
           <li key={chief.id} className={`overview-row${i === week.chiefIndex ? ' current' : ''}`}>
             <Link className="overview-link" to={to(`/katechismus/loehe/${chief.id}`)}>
-              <span className="overview-no">{chiefNumber(chief) ?? '\u00a0'}</span>
+              <span className="overview-no">{chiefLabel(chief)}</span>
               <span className="overview-title">{chief.title}</span>
               {i === week.chiefIndex && <span className="ktag">diese Woche</span>}
               <span className="overview-count">{span(loeheForChiefPart(chief.id))}</span>
