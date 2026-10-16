@@ -3,6 +3,7 @@ import data from '../../data/dogmatik.json';
 import { getOrder, morningOrder } from '../content/orders';
 import {
   blocks,
+  contents,
   bookProblems,
   defaultDogmatik,
   neighbours,
@@ -62,7 +63,7 @@ describe('text', () => {
 
   it('puts a quotation after its paragraph', () => {
     const d = book.tage.find((x) => x.tag === 47)!;
-    expect(blocks(d).map((b) => `${b.kind}${b.no}`)).toEqual(['p1', 'p2', 'p3', 'q1']);
+    expect(blocks(d).map((b) => `${b.kind}${b.no}`)).toEqual(['p1', 'p2', 'p3', 'q1', 'p4', 'q2', 'p5']);
   });
 });
 
@@ -81,10 +82,13 @@ describe('progress follows the reader, not the calendar (rule 6)', () => {
   });
 
   it('reads a chosen doctrine first', () => {
-    const s: DogmatikSettings = { ...s0, order: 'topic', topic: book.tage.find((d) => d.tag === 51)!.teil };
-    expect(sequence(book, s).map((d) => d.tag)).toEqual([51, 52, 53, 47, 48, 49, 50]);
-    expect(todaysDay(book, s, '2026-10-16')!.tag).toBe(51);
-    expect(neighbours(book, s, 53)).toMatchObject({ next: { tag: 47 } });
+    const two = normalizeBook({
+      tage: [1, 2, 3, 4].map((tag) => ({ tag, titel: `T${tag}`, teil: tag < 3 ? 'Einleitung' : 'Von Gott', absaetze: ['a'] })),
+    });
+    const s: DogmatikSettings = { ...s0, order: 'topic', topic: 'Von Gott' };
+    expect(sequence(two, s).map((d) => d.tag)).toEqual([3, 4, 1, 2]);
+    expect(todaysDay(two, s, '2026-10-16')!.tag).toBe(3);
+    expect(neighbours(two, s, 4)).toMatchObject({ next: { tag: 1 } });
   });
 
   it('lists the last read, newest first', () => {
@@ -102,7 +106,8 @@ describe('search', () => {
   it('finds words in text, notes and quotations', () => {
     expect(searchBook(book, 'Fundament').map((h) => h.doc.to)).toContain('/katechismus/dogmatik/47');
     expect(searchBook(book, 'Schriftbeweis')).toHaveLength(1);
-    expect(searchBook(book, 'ecclesia')).toHaveLength(1);
+    expect(searchBook(book, 'subsistere').map((h) => h.doc.to)).toEqual(['/katechismus/dogmatik/47']);
+    expect(searchBook(book, 'Auferstehung').map((h) => h.doc.to)[0]).toBe('/katechismus/dogmatik/52');
   });
 });
 
@@ -111,5 +116,17 @@ describe('in the Stille Zeit', () => {
     expect(morningOrder('full', true).steps.map((s) => s.id).slice(0, 4)).toEqual(['opening', 'word', 'dogmatik', 'prayer']);
     expect(morningOrder('full', false)).toBe(getOrder('morning', 'full'));
     expect(morningOrder('short', true)).toBe(getOrder('morning', 'short'));
+  });
+});
+
+describe('contents', () => {
+  it('groups by doctrine and chapter in the book\'s order', () => {
+    const c = contents(book);
+    expect(c.map((p) => p.teil)).toEqual(['Wesen und Begriff der Theologie']);
+    expect(c[0]!.chapters.map((ch) => ch.kapitel)).toEqual(['11. Einteilungen der Theologie, als Lehre gefaßt']);
+    expect(c[0]!.chapters[0]!.sections.map((x) => [x.abschnitt, x.tage.map((d) => d.tag)])).toEqual([
+      ['Fundamentale und nichtfundamentale Lehren', [47, 48, 49, 50, 51, 52]],
+      ['Primäre und sekundäre Fundamentallehren', [53]],
+    ]);
   });
 });

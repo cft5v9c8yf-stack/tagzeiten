@@ -27,6 +27,10 @@ export interface DogmatikDay {
   titel: string;
   /** The doctrine (locus) it belongs to, e.g. "Einleitung". */
   teil: string;
+  /** The chapter within the doctrine, as headed in the book. */
+  kapitel?: string;
+  /** A heading within the chapter. */
+  abschnitt?: string;
   /** Page in the book. */
   seite?: string;
   /** Reading time in minutes. */
@@ -44,7 +48,15 @@ export interface DogmatikDay {
 }
 
 export interface DogmatikBook {
-  buch: { autor: string; titel: string; band: number; /** Days the whole plan has (365). */ umfang: number };
+  buch: {
+    autor: string;
+    titel: string;
+    band: number;
+    /** Days the whole plan has (365). */
+    umfang: number;
+    /** Where the text comes from. */
+    quelle?: string;
+  };
   /** In the book's order. */
   tage: DogmatikDay[];
 }
@@ -77,6 +89,8 @@ function day(v: unknown): DogmatikDay | undefined {
     fussnoten: {},
     zitate: Array.isArray(d.zitate) ? d.zitate.map(quote).filter((q): q is DogmatikQuote => !!q) : [],
   };
+  if (str(d.kapitel)) out.kapitel = str(d.kapitel);
+  if (str(d.abschnitt)) out.abschnitt = str(d.abschnitt);
   if (str(d.seite) || typeof d.seite === 'number') out.seite = String(d.seite).trim();
   const bw = d.bibelwort as Record<string, unknown> | undefined;
   if (bw && str(bw.stelle) && str(bw.text)) out.bibelwort = { stelle: str(bw.stelle), text: str(bw.text) };
@@ -112,6 +126,7 @@ export function normalizeBook(raw: unknown): DogmatikBook {
       titel: str(b.titel) || 'Christliche Dogmatik',
       band: Number.isInteger(b.band) ? (b.band as number) : 1,
       umfang: Math.max(Number.isInteger(b.umfang) ? (b.umfang as number) : 0, last),
+      ...(str(b.quelle) ? { quelle: str(b.quelle) } : {}),
     },
     tage,
   };
@@ -232,6 +247,26 @@ export function normalizeDogmatik(raw: unknown): DogmatikSettings {
 /** The doctrines in the book's order. */
 export const parts = (book: DogmatikBook): string[] => [...new Set(book.tage.map((d) => d.teil))];
 
+export interface ContentsPart {
+  teil: string;
+  chapters: { kapitel?: string; sections: { abschnitt?: string; tage: DogmatikDay[] }[] }[];
+}
+
+/** The table of contents: doctrines, chapters, headings and days, in the book's order. */
+export function contents(book: DogmatikBook): ContentsPart[] {
+  const out: ContentsPart[] = [];
+  for (const d of book.tage) {
+    let part = out.find((p) => p.teil === d.teil);
+    if (!part) out.push((part = { teil: d.teil, chapters: [] }));
+    let ch = part.chapters.find((c) => c.kapitel === d.kapitel);
+    if (!ch) part.chapters.push((ch = { kapitel: d.kapitel, sections: [] }));
+    let sec = ch.sections.find((x) => x.abschnitt === d.abschnitt);
+    if (!sec) ch.sections.push((sec = { abschnitt: d.abschnitt, tage: [] }));
+    sec.tage.push(d);
+  }
+  return out;
+}
+
 /** The days in reading order: the book's, or the chosen doctrine first and then the rest of the book. */
 export function sequence(book: DogmatikBook, s: DogmatikSettings): DogmatikDay[] {
   if (s.order !== 'topic' || !s.topic) return book.tage;
@@ -331,7 +366,7 @@ export function searchBook(book: DogmatikBook, query: string, limit = 50): Searc
   let index = prepared.get(book);
   if (!index) {
     index = prepare(
-      book.tage.map((d) => ({ area: `Tag ${d.tag} · ${d.teil}`, title: d.titel, text: dayText(d), to: dayPath(d.tag) })),
+      book.tage.map((d) => ({ area: `Tag ${d.tag} · ${d.abschnitt ?? d.kapitel ?? d.teil}`, title: d.titel, text: dayText(d), to: dayPath(d.tag) })),
     );
     prepared.set(book, index);
   }

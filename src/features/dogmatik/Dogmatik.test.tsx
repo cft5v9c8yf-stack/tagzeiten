@@ -61,7 +61,7 @@ describe('Dogmatik', () => {
     expect(screen.queryByText('Der Schriftbeweis², I, 9. 10.')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Fußnote 313' }));
     expect(screen.getByText('Der Schriftbeweis², I, 9. 10.')).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Übersetzung zeigen' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Übersetzung zeigen' })[0]!);
     expect(screen.getByText(/Dieser Artikel \[von der Rechtfertigung\]/)).toBeTruthy();
     // Bible word, translation, core sentence and question are marked as additions.
     expect(screen.getAllByText('Ergänzung')).toHaveLength(4);
@@ -88,7 +88,9 @@ describe('Dogmatik', () => {
     fireEvent.change(await screen.findByLabelText('Im Buch suchen'), { target: { value: 'Schriftbeweis' } });
     expect(await screen.findByRole('link', { name: /Was ist das Fundament/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Inhalt' }));
-    expect(screen.getByRole('heading', { level: 3, name: 'Einleitung' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Wesen und Begriff der Theologie' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 4, name: '11. Einteilungen der Theologie, als Lehre gefaßt' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 5, name: 'Primäre und sekundäre Fundamentallehren' })).toBeTruthy();
   });
 
   it('stands in the Stille Zeit after the Word when chosen', async () => {

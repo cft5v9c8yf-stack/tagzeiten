@@ -196,7 +196,7 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
         <span>Tag {day.tag}</span>
         <span>{day.minuten} Min.</span>
         <span>{sourceLine(book, day)}</span>
-        <span>{day.teil}</span>
+        <span>{day.abschnitt ?? day.kapitel ?? day.teil}</span>
       </p>
       {ahead}
 

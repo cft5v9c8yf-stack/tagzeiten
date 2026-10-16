@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { NotFound } from '../../app/NotFound';
 import { formatShort } from '../../domain/dates';
-import { dayPath, isRead, parts, searchBook, sequence, sourceLine, todaysDay, type DogmatikBook } from '../../domain/dogmatik';
+import { contents, dayPath, isRead, searchBook, sequence, todaysDay, type DogmatikBook, type DogmatikDay } from '../../domain/dogmatik';
 import { BackLink } from '../../ui/BackLink';
 import { Segmented } from '../../ui/Choice';
 import { Section } from '../../ui/Section';
@@ -16,20 +16,92 @@ type View = 'plan' | 'contents' | 'hits';
 /** How many sections the plan view shows from today on. */
 const PLAN_AHEAD = 7;
 
-function Row({ book, tag, current, read, date, isToday }: { book: DogmatikBook; tag: number; current: boolean; read: string | undefined; date: string; isToday: boolean }) {
-  const day = book.tage.find((d) => d.tag === tag)!;
-  const to = withDate(dayPath(tag), date, isToday);
+/** A link to a day, opened from Nachschlagen (the way back leads here). */
+function useDayLink() {
+  const { date, isToday } = useSelectedDate();
+  return (tag: number) => {
+    const to = withDate(dayPath(tag), date, isToday);
+    return `${to}${to.includes('?') ? '&' : '?'}von=nachschlagen`;
+  };
+}
+
+/** Leseplan: the next sections as a line, today on top. Where one stands, not what is owed (rule 6). */
+function PlanView({ book, today }: { book: DogmatikBook; today?: DogmatikDay }) {
+  const [s] = useDogmatikSettings();
+  const link = useDayLink();
+  const seq = sequence(book, s);
+  const from = Math.max(0, seq.findIndex((d) => d.tag === today?.tag));
   return (
-    <li className={`dogmatik-item${current ? ' current' : ''}${read ? ' read' : ''}`}>
-      <Link className="dogmatik-row" to={`${to}${to.includes('?') ? '&' : '?'}von=nachschlagen`}>
-        <span className="dogmatik-row-no">Tag {tag}</span>
-        <span className="dogmatik-row-title">{day.titel}</span>
-        <span className="dogmatik-row-meta">
-          {current && <span className="ktag">heute</span>} {sourceLine(book, day)} · {day.minuten} Min.
-          {read && <span className="dogmatik-row-read"> · ✓ {formatShort(read)}</span>}
-        </span>
-      </Link>
-    </li>
+    <>
+      {!s.on && <p className="small muted">Der Leseplan ist ausgeschaltet. Das Buch bleibt zum Nachschlagen.</p>}
+      <ol className="dogmatik-timeline">
+        {seq.slice(from, from + PLAN_AHEAD).map((d, i) => {
+          const current = s.on && d.tag === today?.tag;
+          const read = isRead(s, d.tag);
+          return (
+            <li key={d.tag} className={`timeline-item${current ? ' current' : ''}${read ? ' read' : ''}`}>
+              <Link className="timeline-link" to={link(d.tag)}>
+                <span className="timeline-dot" aria-hidden="true">
+                  {read ? '✓' : ''}
+                </span>
+                <span className="timeline-label">
+                  {current ? 'Heute' : i === 1 ? 'Danach' : `${i}. Abschnitt danach`}
+                </span>
+                <span className="timeline-title">{d.titel}</span>
+                <span className="timeline-meta">
+                  Tag {d.tag} · {d.minuten} Min.{read && ` · gelesen am ${formatShort(s.read[String(d.tag)]!)}`}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="small muted">Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter.</p>
+    </>
+  );
+}
+
+/** Inhalt: the book's table of contents, by doctrine and chapter, with the page. */
+function ContentsView({ book, today }: { book: DogmatikBook; today?: DogmatikDay }) {
+  const [s] = useDogmatikSettings();
+  const link = useDayLink();
+  return (
+    <div className="dogmatik-toc">
+      {contents(book).map((part) => (
+        <section key={part.teil} className="toc-part" aria-label={part.teil}>
+          <h3 className="toc-part-title">{part.teil}</h3>
+          {part.chapters.map((ch) => (
+            <div key={ch.kapitel ?? ''} className="toc-chapter">
+              {ch.kapitel && <h4 className="toc-chapter-title">{ch.kapitel}</h4>}
+              {ch.sections.map((sec) => (
+                <div key={sec.abschnitt ?? ''} className="toc-section">
+                  {sec.abschnitt && <h5 className="toc-section-title">{sec.abschnitt}</h5>}
+                  <ol className="toc-list">
+                    {sec.tage.map((d) => {
+                      const current = s.on && d.tag === today?.tag;
+                      const read = isRead(s, d.tag);
+                      return (
+                        <li key={d.tag} className={`toc-item${current ? ' current' : ''}${read ? ' read' : ''}`}>
+                          <Link className="toc-row" to={link(d.tag)}>
+                            <span className="toc-no">{d.tag}</span>
+                            <span className="toc-title">
+                              {d.titel}
+                              {current && <span className="ktag">heute</span>}
+                              {read && <span className="toc-read" aria-label="gelesen"> ✓</span>}
+                            </span>
+                            <span className="toc-page">{d.seite ? `S. ${d.seite}` : ''}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              ))}
+            </div>
+          ))}
+        </section>
+      ))}
+    </div>
   );
 }
 
@@ -42,12 +114,7 @@ function Lookup({ book }: { book: DogmatikBook }) {
   const q = useDeferredValue(query);
   const hits = useMemo(() => searchBook(book, q), [book, q]);
   const today = todaysDay(book, s, date);
-  const seq = sequence(book, s);
-  const from = Math.max(0, seq.findIndex((d) => d.tag === today?.tag));
   const readCount = book.tage.filter((d) => isRead(s, d.tag)).length;
-  const row = (tag: number) => (
-    <Row key={tag} book={book} tag={tag} current={s.on && tag === today?.tag} read={s.read[String(tag)]} date={date} isToday={isToday} />
-  );
   const shown: View = query.trim() ? 'hits' : view;
 
   return (
@@ -87,37 +154,25 @@ function Lookup({ book }: { book: DogmatikBook }) {
         ]}
       />
 
-      {shown === 'plan' && (
-        <>
-          {!s.on && <p className="small muted">Der Leseplan ist ausgeschaltet. Das Buch bleibt zum Nachschlagen.</p>}
-          <ol className="dogmatik-list">{seq.slice(from, from + PLAN_AHEAD).map((d) => row(d.tag))}</ol>
-          <p className="small muted">Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter.</p>
-        </>
-      )}
-      {shown === 'contents' &&
-        parts(book).map((p) => (
-          <section key={p} className="dogmatik-part" aria-label={p}>
-            <h3 className="book-circle">{p}</h3>
-            <ol className="dogmatik-list">{book.tage.filter((d) => d.teil === p).map((d) => row(d.tag))}</ol>
-          </section>
-        ))}
+      {shown === 'plan' && <PlanView book={book} today={today} />}
+      {shown === 'contents' && <ContentsView book={book} today={today} />}
       {shown === 'hits' &&
         (q.trim().length < 2 ? (
           <p className="small muted">Ein Wort eingeben, z. B. „Rechtfertigung“ oder „Fundament“. Die Suche geht über Text, Fußnoten und Zitate.</p>
         ) : hits.length === 0 ? (
           <p className="small muted">Nichts gefunden.</p>
         ) : (
-          <ol className="dogmatik-list dogmatik-hits">
+          <ol className="dogmatik-hits">
             {hits.map((h) => {
               const to = withDate(h.doc.to, date, isToday);
               return (
                 <li key={h.doc.to}>
-                  <Link className="dogmatik-row" to={`${to}${to.includes('?') ? '&' : '?'}von=nachschlagen`}>
-                    <span className="dogmatik-row-no">{h.doc.area}</span>
-                    <span className="dogmatik-row-title">
+                  <Link className="hit-card" to={`${to}${to.includes('?') ? '&' : '?'}von=nachschlagen`}>
+                    <span className="hit-area">{h.doc.area}</span>
+                    <span className="hit-title">
                       {h.titleMarked.map((p, i) => (p.mark ? <mark key={i}>{p.text}</mark> : <span key={i}>{p.text}</span>))}
                     </span>
-                    <span className="dogmatik-row-snippet">
+                    <span className="hit-snippet">
                       {h.snippet.map((p, i) => (p.mark ? <mark key={i}>{p.text}</mark> : <span key={i}>{p.text}</span>))}
                     </span>
                   </Link>
@@ -126,6 +181,8 @@ function Lookup({ book }: { book: DogmatikBook }) {
             })}
           </ol>
         ))}
+
+      {book.buch.quelle && <p className="small muted dogmatik-source">{book.buch.quelle}</p>}
 
       <Section id="dogmatik.settings" title="Leseplan einstellen" defaultOpen={false} className="block block-quiet">
         <DogmatikSettings book={book} />
