@@ -81,10 +81,10 @@ describe('progress follows the reader, not the calendar (rule 6)', () => {
   });
 
   it('reads a chosen doctrine first', () => {
-    const s: DogmatikSettings = { ...s0, order: 'topic', topic: book.tage.find((d) => d.tag === 49)!.teil };
-    expect(sequence(book, s).map((d) => d.tag)).toEqual([49, 47, 48]);
-    expect(todaysDay(book, s, '2026-10-16')!.tag).toBe(49);
-    expect(neighbours(book, s, 49)).toMatchObject({ next: { tag: 47 } });
+    const s: DogmatikSettings = { ...s0, order: 'topic', topic: book.tage.find((d) => d.tag === 51)!.teil };
+    expect(sequence(book, s).map((d) => d.tag)).toEqual([51, 52, 53, 47, 48, 49, 50]);
+    expect(todaysDay(book, s, '2026-10-16')!.tag).toBe(51);
+    expect(neighbours(book, s, 53)).toMatchObject({ next: { tag: 47 } });
   });
 
   it('lists the last read, newest first', () => {

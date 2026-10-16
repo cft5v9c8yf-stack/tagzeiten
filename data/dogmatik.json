@@ -55,11 +55,66 @@
     {
       "tag": 49,
       "titel": "[Platzhalter: Titel von Tag 49]",
-      "teil": "[Platzhalter: weiteres Lehrstück]",
+      "teil": "Einleitung",
       "seite": "92",
       "minuten": 4,
       "absaetze": [
-        "[Platzhalter: Der Text von Tag 49 kommt mit der Texterkennung des Buches. Er steht in einem anderen Lehrstück, damit die Reihenfolge „nach Lehrstücken“ geprüft werden kann.]"
+        "[Platzhalter: Der Text von Tag 49 kommt mit der Texterkennung des Buches.]"
+      ]
+    },
+    {
+      "tag": 50,
+      "titel": "[Platzhalter: Titel von Tag 50]",
+      "teil": "Einleitung",
+      "seite": "94",
+      "minuten": 3,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 50 kommt mit der Texterkennung des Buches.]",
+        "[Platzhalter: Ein zweiter Absatz mit einer Fußnote.][[319]]"
+      ],
+      "fussnoten": {
+        "319": "[Platzhalter: Fußnote 319]"
+      },
+      "zitate": [
+        {
+          "nach": 1,
+          "lat": "[Platzhalter: lateinisches Zitat von Tag 50]",
+          "de": "[Platzhalter: Übersetzung des Zitats von Tag 50]"
+        }
+      ]
+    },
+    {
+      "tag": 51,
+      "titel": "[Platzhalter: Titel von Tag 51]",
+      "teil": "[Platzhalter: weiteres Lehrstück]",
+      "seite": "95",
+      "minuten": 3,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 51 kommt mit der Texterkennung des Buches.]"
+      ]
+    },
+    {
+      "tag": 52,
+      "titel": "[Platzhalter: Titel von Tag 52]",
+      "teil": "[Platzhalter: weiteres Lehrstück]",
+      "seite": "96",
+      "minuten": 5,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 52 kommt mit der Texterkennung des Buches.]",
+        "[Platzhalter: Ein zweiter Absatz mit einer Fußnote.][[320]]"
+      ],
+      "fussnoten": {
+        "320": "[Platzhalter: Fußnote 320]"
+      }
+    },
+    {
+      "tag": 53,
+      "titel": "[Platzhalter: Titel von Tag 53]",
+      "teil": "[Platzhalter: weiteres Lehrstück]",
+      "seite": "98",
+      "minuten": 3,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 53 kommt mit der Texterkennung des Buches.]"
       ]
     }
   ]
