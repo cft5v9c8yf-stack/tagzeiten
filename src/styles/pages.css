@@ -2669,6 +2669,31 @@ header.top .search-link:focus-visible {
 }
 
 /* ------------------------------------------------------------ Wüstenzeit (the Streithalle before 0.39) */
+/* The journal of a Wüstenzeit: written under the day, read again day by day. */
+.desert-journal {
+  margin-top: 18px;
+}
+.desert-journal-read {
+  display: grid;
+  gap: 12px;
+  margin: 6px 0 14px;
+}
+.desert-journal-day h5 {
+  margin: 0 0 4px;
+}
+.desert-journal-text {
+  margin: 0;
+  white-space: pre-wrap;
+}
+.desert-journal-ink {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 6px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
 /* Open things are a plain outline, never red (rules 4 and 5). */
 .wa-title {
   margin: 8px 0 4px;

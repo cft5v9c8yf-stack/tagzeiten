@@ -51,3 +51,17 @@ describe('normalizeDay', () => {
     expect(isEmptyDay(d)).toBe(false);
   });
 });
+
+describe('the journal of a Wüstenzeit', () => {
+  it('keeps text and handwriting, and a day with only these is not empty', () => {
+    const d = normalizeDay({
+      date: '2026-09-26',
+      evening: { journal: 'Still.', journalInk: [{ tool: 'pen', color: 'ink', points: [1, 2, 50] }, { tool: 'laser', color: 'ink', points: [1, 2, 3] }] },
+    })!;
+    expect(d.evening.journal).toBe('Still.');
+    expect(d.evening.journalInk).toEqual([{ tool: 'pen', color: 'ink', points: [1, 2, 50] }]);
+    expect(isEmptyDay(d)).toBe(false);
+    const ink = normalizeDay({ date: '2026-09-26', evening: { journalInk: [{ tool: 'pen', color: 'ink', points: [1, 2, 50] }] } })!;
+    expect(isEmptyDay(ink)).toBe(false);
+  });
+});

@@ -193,6 +193,43 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(store.getDay('2026-09-26').habits['wz-old-journal']).toBe(true);
   });
 
+  it('keeps a journal under the day, not in the Gebetskammer; the days ahead have none yet', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    tab('Tag');
+    const journal = screen.getByRole('group', { name: 'Tagebuch' });
+    expect(journal.textContent).toContain('Sünde wird gebetet, nicht notiert');
+    fireEvent.change(within(journal).getByLabelText('Tagebuch'), { target: { value: 'Heute war es still.\nZweite Zeile.' } });
+    expect(store.getDay('2026-09-26').evening.journal).toBe('Heute war es still.\nZweite Zeile.');
+    expect(store.getProfile().arena).toEqual([]);
+    // The day before has its own page of the journal.
+    fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
+    expect((within(screen.getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch') as HTMLTextAreaElement).value).toBe('');
+    fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Folgetag' }));
+    expect(screen.queryByRole('group', { name: 'Tagebuch' })).toBeNull();
+  });
+
+  it('writes the journal of the 90-Tage-Standard with its sentence and thanks, and ticks it', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      s.startDesert('2026-09-14', 90);
+      const run = s.getProfile().winterArc.runs[0]!;
+      s.chooseDesert(run.id, [pack('standard').habits.find((h) => h.id === 'wz-std-journal')!], true);
+    });
+    tab('Tag');
+    // Under the day, and behind "Aufschreiben", the same journal of the day.
+    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
+    const page = (await screen.findByRole('heading', { level: 2, name: 'Tagebuch und drei Dankpunkte' })).closest('article') as HTMLElement;
+    fireEvent.change(within(within(page).getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch'), {
+      target: { value: 'Was mich heute trägt.' },
+    });
+    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ });
+    expect(store.getDay('2026-09-26').evening.journal).toBe('Was mich heute trägt.');
+    expect(store.getDay('2026-09-26').habits['wz-std-journal']).toBe(true);
+    tab('Tag');
+    expect((within(screen.getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch') as HTMLTextAreaElement).value).toBe('Was mich heute trägt.');
+  });
+
   it('lets the thanks be written freely in the Gebetskammer instead, ticked when saved', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     tab('Tag');
@@ -304,6 +341,18 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.getByText(/^Übernommen\./)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Neue Wüstenzeit beginnen' }));
     expect(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }).textContent).toContain('Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt.');
+  });
+
+  it('gives the journal of a closed Wüstenzeit to read again, day by day', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      withDesert(s, '2026-08-01');
+      s.updateDay('2026-08-02', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der zweite Tag.' } }));
+      s.updateDay('2026-08-05', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der fünfte Tag.' } }));
+      // Outside the Wüstenzeit: not part of its journal.
+      s.updateDay('2026-07-30', (d) => ({ ...d, evening: { ...d.evening, journal: 'Davor.' } }));
+    });
+    const read = document.querySelector('.desert-journal-read')!;
+    expect([...read.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der zweite Tag.', 'Der fünfte Tag.']);
   });
 });
 

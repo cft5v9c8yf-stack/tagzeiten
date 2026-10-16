@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.15.0',
+    date: '2026-10-16',
+    title: 'Tagebuch der Wüstenwanderung',
+    changes: [
+      { area: 'Arena', text: 'Während einer Wüstenzeit steht unter der Liste des Tages ein Tagebuch, mit der Tastatur oder in Handschrift. Es gehört zu diesem Tag; mit „Vortag“ blätterst du zurück. Die Gebetskammer bleibt für das, womit du ringst.' },
+      { area: 'Arena', text: 'Beim 90-Tage-Standard steht das Tagebuch auch bei „Tagebuch und drei Dankpunkte“, zwischen dem Satz und dem Dank.' },
+      { area: 'Rückblick', text: 'Ist eine Wüstenzeit zu Ende, liest du ihr Tagebuch Tag für Tag im Abschluss und unter Rückblick, Wüstenwanderung. Es steht auch in der Suche und im Export.' },
+    ],
+  },
+  {
     version: '1.14.3',
     date: '2026-10-16',
     title: 'Hauptstücke beim Namen',

@@ -52,6 +52,11 @@ export const FIELDS: Record<FieldPath, FieldMeta> = {
   'evening.thanks.0': { label: 'Ich danke dir, mein Gott, für …', single: true },
   'evening.thanks.1': { label: 'und für …', single: true },
   'evening.thanks.2': { label: 'und für …', single: true },
+  'evening.journal': {
+    label: 'Tagebuch',
+    placeholder: 'Was dich in dieser Zeit bewegt, womit du ringst, was Gott dir zeigt …',
+    rows: 8,
+  },
   'evening.people': { label: 'Menschen des Tages', single: true },
   'evening.passedOnTo': { label: 'Weitergegeben an', placeholder: 'Wem habe ich das Gelesene weitergegeben?', single: true },
   'evening.weekWife': { label: 'Meine Frau', placeholder: 'Wofür danke ich?' },

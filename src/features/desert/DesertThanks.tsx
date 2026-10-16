@@ -4,6 +4,7 @@ import { useDay, useProfile, useStore } from '../../data/hooks';
 import { formatLong, isDateKey } from '../../domain/dates';
 import { isDoneOn } from '../../domain/habits';
 import { DayField } from '../../ui/DayField';
+import { DesertJournal, hasJournal } from './DesertJournal';
 
 /** The address of the page, below the Arena like an entry of the Gebetskammer. */
 export const THANKS_SLUG = 'dank';
@@ -27,7 +28,7 @@ export function DesertThanks() {
   const habit = profile.habits.find((h) => h.id === params.get('gewohnheit'));
   const journal = !!habit && /^wz-.+-journal$/.test(habit.id);
   const d = useDay(date);
-  const written = d.evening.thanks.some((t) => t.trim()) || (journal && !!d.morning.verse?.trim());
+  const written = d.evening.thanks.some((t) => t.trim()) || (journal && (!!d.morning.verse?.trim() || hasJournal(d)));
   const freely = () => {
     navigate(`/arena/${store.addArenaEntry()}?${params}`, { replace: true });
   };
@@ -41,12 +42,13 @@ export function DesertThanks() {
       </div>
       <p className="small muted">{formatLong(date)}</p>
       {journal && <DayField date={date} path="morning.verse" label="Der Satz, der mich trifft" />}
+      {journal && <DesertJournal date={date} />}
       <DayField date={date} path="evening.thanks.0" />
       <DayField date={date} path="evening.thanks.1" />
       <DayField date={date} path="evening.thanks.2" />
       <p className="small muted">
         {journal
-          ? 'Der Satz steht auch in der Andacht und in der Versesammlung, der Dank im Nachtgebet und im Wochenrückblick.'
+          ? 'Der Satz steht auch in der Andacht und in der Versesammlung, das Tagebuch in der Wüstenwanderung, der Dank im Nachtgebet und im Wochenrückblick.'
           : 'Der Dank steht auch im Nachtgebet und im Wochenrückblick.'}
       </p>
       <div className="arena-actions">

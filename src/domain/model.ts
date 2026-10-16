@@ -55,6 +55,8 @@ export const EVENING_TEXT_FIELDS = [
   'weekCountry',
   // … and at most one resolve for the new week.
   'weekResolve',
+  // Wüstenzeit: the journal of the day, written freely (never a confession of sin, rule 9).
+  'journal',
 ] as const;
 
 /** Number of thanksgiving lines in compline. */
@@ -102,6 +104,8 @@ export type EveningEntry = {
   thanks: string[];
   marks: Partial<Record<ThreeKey, Mark>>;
   carry: Partial<Record<ThreeKey, Carry>>;
+  /** Wüstenzeit: the journal of the day in handwriting, as in the Gebetskammer. */
+  journalInk?: InkStroke[];
 } & Partial<Record<EveningTextField, string>>;
 
 export interface Day {

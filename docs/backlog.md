@@ -148,6 +148,22 @@ stehen die Gebetszeiten nur als Kacheln; im Rückblick sind die Gewohnheiten
 eine eigene Ansicht. Die Stille Zeit klappt die weiteren Felder der Lesung ein,
 die Vesper lässt die Fürbitte dem Nachtgebet.
 
+## Tagebuch der Wüstenwanderung
+
+Gewünscht (16.10.2026). Wer eine Wüstenwanderung bewusst beginnt, hatte keinen
+eigenen Ort zum Schreiben: nur der 90-Tage-Standard hat „Tagebuch und drei
+Dankpunkte“, und freies Schreiben führte in die Gebetskammer. Die Gebetskammer
+ist aber für einzelne Kämpfe da (anheften, begleiten, archivieren); ein Tagebuch
+ist eine fortlaufende Spur durch eine Zeit mit Anfang und Ende.
+
+**Umgesetzt in 1.15.0, zuerst als Demo zur Abnahme:** Das Tagebuch gehört zum
+Tag (`evening.journal`, Handschrift in `evening.journalInk`) und so zu Sicherung,
+Abgleich, Suche, Export und Löschen. Es steht in der Wüstenwanderung unter der
+Liste des Tages (nicht für Tage, die noch kommen), beim Punkt „Tagebuch und drei
+Dankpunkte“ zwischen Satz und Dank, und ist im Abschluss und im Rückblick einer
+Wüstenzeit Tag für Tag zu lesen (`RoundJournal`). Die Gebetskammer bleibt, wie
+sie ist. Am Feld steht nach Regel 9, dass Sünde gebetet und nicht notiert wird.
+
 ## Schrift der App
 
 Besprochen am 11.10.2026. **Entscheidung: vorerst bleibt alles, wie es ist.** Vor dem Druck der

@@ -58,6 +58,7 @@ export const EVENING_FIELD_LABEL: Record<EveningTextField, string> = {
   weekNeighbours: 'Wochenrückblick: Dank für meine Nächsten',
   weekCountry: 'Wochenrückblick: Dank für unser Land',
   weekResolve: 'Wochenrückblick: Vorsatz für die neue Woche',
+  journal: 'Tagebuch der Wüstenzeit',
 };
 
 const oneLine = (s: string) => s.replace(/\s*\n\s*/g, ' / ').trim();
@@ -134,6 +135,9 @@ export function dayToMarkdown(day: Day, habits: readonly Habit[]): string {
   if (done.length) out.push(`Gebetet: ${done.join(', ')}`, '');
   for (const x of dayEntries(day, habits)) out.push(`- **${x.label}:** ${oneLine(x.value)}`);
   out.push('');
+  if (day.evening.journalInk?.length) {
+    out.push(`![Tagebuch der Wüstenzeit, Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(day.evening.journalInk))})`, '');
+  }
   return out.join('\n');
 }
 
