@@ -10,6 +10,8 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
+import { dogmatikToMarkdown } from '../domain/dogmatik';
+import { loadDogmatik } from '../content/dogmatik';
 import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
@@ -621,7 +623,10 @@ export class Store {
       this.now(),
       this.profile.arena,
       this.profile.answered,
-      winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
+      [
+        ...winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
+        ...dogmatikToMarkdown(this.profile.dogmatik, (await loadDogmatik()).tage),
+      ],
     );
   }
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { morningIcon } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
+import { getOrder, morningOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
@@ -17,6 +17,12 @@ const FORMS: { value: OrderForm; label: string }[] = [
   { value: 'short', label: `Kurzform · ${ORDER_MINUTES.morning.short} Min.` },
 ];
 
+/** The Dogmatik is read in the Stille Zeit. */
+function useDogmatikInMorning(): boolean {
+  const d = useProfile().dogmatik;
+  return d.on && d.when === 'morning';
+}
+
 export function MorningPage() {
   // Left open overnight, the Stille Zeit moves on to the new day (the evening keeps its own until left).
   useToday();
@@ -29,7 +35,7 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
   const store = useStore();
   const day = useDay(date);
   const form = day.morning.form;
-  const order = getOrder('morning', form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const firstOpen = order.steps.find((s) => !day.morning.steps[s.id]);
 
   const setForm = (f: OrderForm) =>
@@ -63,7 +69,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
   const store = useStore();
   const toast = useToast();
   const day = useDay(date);
-  const order = getOrder('morning', form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const atBed = getOrder('atBed', 'full');
   // One mark before the steps of the order when "Am Bett" is prayed.
   const bed = useProfile().showAtBed ? 1 : 0;

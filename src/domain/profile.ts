@@ -3,6 +3,7 @@ import type { DateKey, Weekday } from './dates';
 import { habitsFromPresets, isTimesPerWeek, mergePresets } from './habits';
 import { DEFAULT_SCHEDULE, type Habit, type Profile, type Schedule, type ScheduleGroup } from './model';
 import { normalizeArena } from './arena';
+import { defaultDogmatik, normalizeDogmatik } from './dogmatik';
 import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalizeWinterArcSettings } from './winterArc';
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
@@ -17,6 +18,7 @@ export function defaultProfile(today: DateKey): Profile {
     habits: habitsFromPresets(),
     prayer: emptyPrayer(),
     catechism: { memorized: {}, weekOffset: 0 },
+    dogmatik: defaultDogmatik(),
     schedule: { ...DEFAULT_SCHEDULE },
     house: emptyHouse(),
     answered: [],
@@ -59,6 +61,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
       memorized: { ...(raw.catechism?.memorized ?? {}) },
       weekOffset: Number.isInteger(raw.catechism?.weekOffset) ? (((raw.catechism!.weekOffset % 6) + 6) % 6) : 0,
     },
+    dogmatik: normalizeDogmatik(raw.dogmatik),
     schedule,
     ...cleanScheduleDays(raw.scheduleDays, schedule),
     house: raw.house ? normalizeHouse(raw.house) : base.house,

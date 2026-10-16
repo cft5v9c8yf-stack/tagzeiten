@@ -1,0 +1,66 @@
+{
+  "buch": {
+    "autor": "Francis Pieper",
+    "titel": "Christliche Dogmatik",
+    "band": 1,
+    "umfang": 365
+  },
+  "tage": [
+    {
+      "tag": 47,
+      "titel": "Was ist das Fundament des Glaubens?",
+      "teil": "Einleitung",
+      "seite": "90",
+      "minuten": 3,
+      "bibelwort": {
+        "stelle": "Epheser 2,20",
+        "text": "Erbaut auf den Grund der Apostel und Propheten, da Jesus Christus der Eckstein ist."
+      },
+      "absaetze": [
+        "Wenn wir hier den Begriff „Fundamentallehren“ im Unterschied von nichtfundamentalen Lehren bestimmen wollen, so handelt es sich um die Frage, welche Lehren die Schrift dem christlichen Glauben zum Fundament gibt. Welche Lehren sind dies?",
+        "Bekanntlich wird besonders zu unserer Zeit im Interesse der Lehrfreiheit behauptet, dass der Begriff „Fundamentallehren“ sich nicht klar bestimmen lasse, wie auch die Erfahrung genugsam beweise. So meint z. B. der Erlanger Theologe Hofmann, dass „über den Unterschied von Fundamentalem und Nichtfundamentalem bis auf diesen Tag fruchtloser Streit gewesen“ sei.[[313]] Dagegen ist zu sagen, dass wir über die articuli fundamentales nur so lange im Ungewissen bleiben können, als wir nicht den schriftgemäßen Begriff vom Objekt des seligmachenden Glaubens festhalten.",
+        "Der seligmachende Glaube, den die Schrift lehrt, ist der Glaube an die Vergebung der Sünden um Christi satisfactio vicaria willen; noch anders ausgedrückt: der Glaube an die göttliche Rechtfertigung ohne des Gesetzes Werke, durch den Glauben. Nur wer diese Vergebung oder Rechtfertigung durch Wirkung des Heiligen Geistes glaubt, ist an Christum gläubig im Sinne der Schrift[[314]] und ein Glied der christlichen Kirche.[[315]] Wer diese Lehre nicht glaubt, befindet sich nach der sehr bestimmten Aussage der Schrift außerhalb der Zahl der Gläubigen oder außerhalb der christlichen Kirche.[[316]] Hierher gehören Luthers Worte:"
+      ],
+      "fussnoten": {
+        "313": "Der Schriftbeweis², I, 9. 10.",
+        "314": "Gal. 2,16: „Weil wir wissen, dass der Mensch durch des Gesetzes Werke nicht gerecht wird, sondern durch den Glauben an Jesum Christum, so glauben wir auch an Christum Jesum.“",
+        "315": "Apost. 5,14: Προσετίθεντο [zur Gemeinde] πιστεύοντες τῷ κυρίῳ.",
+        "316": "Gal. 3,6–10.",
+        "317": "Opp. v. a. VII, 512; St. L. XIV, 168."
+      },
+      "zitate": [
+        {
+          "nach": 3,
+          "lat": "Hic locus [iustificationis] caput et angularis lapis est, qui solus ecclesiam gignit, nutrit, aedificat, servat, defendit; ac sine eo ecclesia Dei non potest una hora subsistere.[[317]]",
+          "de": "Dieser Artikel [von der Rechtfertigung] ist das Haupt und der Eckstein, der allein die Kirche zeugt, nährt, baut, erhält und verteidigt; und ohne ihn kann die Kirche Gottes nicht eine Stunde bestehen."
+        }
+      ],
+      "kernsatz": "Das Fundament ist der Glaube an die Vergebung der Sünden um Christi stellvertretender Genugtuung willen.",
+      "frage": "Woran würde ich merken, dass ich mein Vertrauen auf etwas anderes gründe als auf Christi Genugtuung?"
+    },
+    {
+      "tag": 48,
+      "titel": "[Platzhalter: Titel von Tag 48]",
+      "teil": "Einleitung",
+      "seite": "91",
+      "minuten": 3,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 48 kommt mit der Texterkennung des Buches.]",
+        "[Platzhalter: Ein zweiter Absatz mit einer Fußnote.][[318]]"
+      ],
+      "fussnoten": {
+        "318": "[Platzhalter: Fußnote 318]"
+      }
+    },
+    {
+      "tag": 49,
+      "titel": "[Platzhalter: Titel von Tag 49]",
+      "teil": "[Platzhalter: weiteres Lehrstück]",
+      "seite": "92",
+      "minuten": 4,
+      "absaetze": [
+        "[Platzhalter: Der Text von Tag 49 kommt mit der Texterkennung des Buches. Er steht in einem anderen Lehrstück, damit die Reihenfolge „nach Lehrstücken“ geprüft werden kann.]"
+      ]
+    }
+  ]
+}

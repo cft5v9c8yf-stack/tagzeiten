@@ -1,7 +1,7 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
-import { getOrder } from '../../content/orders';
+import { morningOrder } from '../../content/orders';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useStoreVersion, useToday } from '../../data/hooks';
 import { THREE_KEYS, type Day } from '../../domain/model';
@@ -22,9 +22,9 @@ import { SundayRest } from './SundayRest';
 import { todayOffer } from '../../domain/seasons';
 import { TodaySeason } from '../desert/SeasonInvite';
 
-function morningStatus(day: Day): string {
+function morningStatus(day: Day, dogmatik: boolean): string {
   if (day.morning.done) return 'abgeschlossen';
-  const order = getOrder('morning', day.morning.form);
+  const order = morningOrder(day.morning.form, dogmatik);
   const n = order.steps.filter((s) => day.morning.steps[s.id]).length;
   return n === 0 ? 'offen' : `${n} von ${order.steps.length} Schritten`;
 }
@@ -138,7 +138,7 @@ export function TodayPage() {
             {s.stillTime} · {day.morning.form === 'short' ? '20' : '45'} Min.
           </span>
           <span className="tile-name">Stille Zeit</span>
-          <span className="tile-state">{morningStatus(day)}</span>
+          <span className="tile-state">{morningStatus(day, profile.dogmatik.on && profile.dogmatik.when === 'morning')}</span>
         </Link>
         <Link
           to={withDate('/andacht/abend', date, isToday)}

@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.0',
+    date: '2026-10-16',
+    title: 'Die Dogmatik',
+    changes: [
+      { area: 'Lehre', text: 'Neu unter „Wort“ › „Lehre“: Francis Pieper, Christliche Dogmatik, Band 1, ein Abschnitt am Tag. Die Karte zeigt, bei welchem Tag du stehst, den Abschnitt des Tages und die zuletzt gelesenen. Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter. Noch eine Vorschau mit einem Beispieltag; das ganze Buch folgt.' },
+      { area: 'Lehre', text: 'Der Lesetag: Bibelwort zum Einstieg, der Text in der Leseschrift mit A− und A+, Fußnoten zum Antippen, lateinische Zitate mit Übersetzung, Kernsatz und Frage zum Nachdenken. Deine Gedanken lassen sich in die Gebetskammer schreiben. Was nicht aus dem Buch stammt, ist als „Ergänzung“ gekennzeichnet.' },
+      { area: 'Lehre', text: '„Nachschlagen“: der Leseplan ab heute, das Inhaltsverzeichnis nach Lehrstücken und eine Suche durch das ganze Buch. Darunter „Leseplan einstellen“: wann du liest, in welcher Reihenfolge und was der Lesetag zeigt.' },
+      { area: 'Andacht', text: 'Auf Wunsch steht der Abschnitt in der Stillen Zeit als eigener Schritt nach dem Wort, vor dem Gebet, oder in der Vesper nach dem Wort. Die Kurzformen bleiben kurz.' },
+    ],
+  },
+  {
     version: '1.15.2',
     date: '2026-10-16',
     title: 'Der Dank nach der Wüstenzeit',

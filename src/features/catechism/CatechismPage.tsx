@@ -27,6 +27,7 @@ import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
 import { mondayIndex } from '../../domain/dates';
 import { LoeheBook } from './LoeheExplanation';
+import { DogmatikCard } from '../dogmatik/DogmatikCard';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -414,6 +415,14 @@ function CatechismHome() {
         </section>
 
         <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
+      </section>
+
+      <section className="cat-area" aria-labelledby="cat-dogmatik">
+        <div className="cat-area-head">
+          <h3 id="cat-dogmatik">Dogmatik</h3>
+          <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, Band 1: ein Abschnitt am Tag, zugleich zum Nachschlagen</p>
+        </div>
+        <DogmatikCard />
       </section>
 
       <section className="cat-area" aria-labelledby="cat-read">

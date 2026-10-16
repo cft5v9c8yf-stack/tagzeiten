@@ -60,6 +60,7 @@ import { DayField } from '../../ui/DayField';
 import { Segmented } from '../../ui/Choice';
 import { Review } from './Review';
 import { WeekReview } from './WeekReview';
+import { DogmatikPart } from '../dogmatik/DogmatikPart';
 
 export interface PartContext {
   order: OrderId;
@@ -494,6 +495,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
 
     case 'house-blessing':
       return <HouseBlessing />;
+
+    case 'dogmatik':
+      return <DogmatikPart date={ctx.date} from={morning ? 'stille-zeit' : 'vesper'} />;
   }
 }
 

@@ -45,7 +45,8 @@ export type PartKind =
   | 'evening-blessing'
   | 'house-intercession'
   | 'house-blessing'
-  | 'week-review';
+  | 'week-review'
+  | 'dogmatik';
 
 /**
  * Path of a stored value within a Day, e.g. "morning.verse",
@@ -404,6 +405,26 @@ export function getOrder(id: OrderId, form: OrderForm): Order {
   const o = ORDERS.find((x) => x.id === id && x.form === form);
   if (!o) throw new Error(`Unknown order ${id}/${form}`);
   return o;
+}
+
+/**
+ * Today's section of Pieper's Dogmatik as a step of its own, when the reading
+ * plan is read in the Stille Zeit or the Vesper: after the Word, before the
+ * prayer (rule 2).
+ */
+export const DOGMATIK_STEP: Step = {
+  id: 'dogmatik',
+  title: 'Dogmatik',
+  minutes: 3,
+  parts: [p('dogmatik', 'Dogmatik')],
+};
+
+/** The Stille Zeit, with the Dogmatik after the Word in the full form. The short form stays short. */
+export function morningOrder(form: OrderForm, dogmatik: boolean): Order {
+  const o = getOrder('morning', form);
+  if (!dogmatik || form === 'short') return o;
+  const i = o.steps.findIndex((s) => s.id === 'word') + 1;
+  return { ...o, steps: [...o.steps.slice(0, i), DOGMATIK_STEP, ...o.steps.slice(i)] };
 }
 
 export function orderMinutes(o: Order): number {

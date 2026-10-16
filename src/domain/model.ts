@@ -8,6 +8,7 @@
 import type { AnsweredPrayer, House, HouseNeed } from './house';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
+import type { DogmatikSettings } from './dogmatik';
 import type { WinterArcData, WinterArcSettings } from './winterArc';
 
 /* ---------------------------------------------------------------- fields */
@@ -243,6 +244,8 @@ export interface Profile {
   habits: Habit[];
   prayer: Prayer;
   catechism: { memorized: Record<string, boolean>; weekOffset: number };
+  /** The reading plan through Pieper's Dogmatik: settings, the days read, the notes to the questions. */
+  dogmatik: DogmatikSettings;
   /** The same times every day. */
   schedule: Schedule;
   /** Times per weekday, when `on`; the groups stay while switched off, for a return. */

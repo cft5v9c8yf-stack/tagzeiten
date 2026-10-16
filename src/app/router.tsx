@@ -2,6 +2,7 @@ import { createBrowserRouter, createHashRouter, Navigate } from 'react-router';
 import { ArenaPage } from '../features/arena/ArenaPage';
 import { BiblePage } from '../features/bible/BiblePage';
 import { CatechismPage } from '../features/catechism/CatechismPage';
+import { DogmatikPage } from '../features/dogmatik/DogmatikPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
 import { SearchPage } from '../features/search/SearchPage';
 import { DevotionIndex, DevotionPage, DevotionRedirect } from '../features/devotion/DevotionPage';
@@ -42,6 +43,8 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'sonntag/hilfe', element: <SundayGuidePage /> },
       { path: 'sonntag/gebet', element: <ScripturePrayerPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
+      { path: 'katechismus/dogmatik', element: <DogmatikPage /> },
+      { path: 'katechismus/dogmatik/:tag', element: <DogmatikPage /> },
       { path: 'katechismus/:teil', element: <CatechismPage /> },
       { path: 'katechismus/loehe/:hauptstueck', element: <CatechismPage /> },
       { path: 'arena', element: <ArenaPage /> },
