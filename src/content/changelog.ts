@@ -17,10 +17,11 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-16',
     title: 'Die Dogmatik',
     changes: [
-      { area: 'Lehre', text: 'Neu unter „Wort“ › „Lehre“: Francis Pieper, Christliche Dogmatik, Band 1, ein Abschnitt am Tag. Die Karte zeigt, bei welchem Tag du stehst, den Abschnitt des Tages und die zuletzt gelesenen. Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter. Noch eine Vorschau mit einem Beispieltag; das ganze Buch folgt.' },
-      { area: 'Lehre', text: 'Der Lesetag: Bibelwort zum Einstieg, der Text in der Leseschrift mit A− und A+, Fußnoten zum Antippen, lateinische Zitate mit Übersetzung, Kernsatz und Frage zum Nachdenken. Deine Gedanken lassen sich in die Gebetskammer schreiben. Was nicht aus dem Buch stammt, ist als „Ergänzung“ gekennzeichnet.' },
-      { area: 'Lehre', text: '„Nachschlagen“: der Leseplan ab heute, das Inhaltsverzeichnis nach Lehrstücken und eine Suche durch das ganze Buch. Darunter „Leseplan einstellen“: wann du liest, in welcher Reihenfolge und was der Lesetag zeigt.' },
-      { area: 'Andacht', text: 'Auf Wunsch steht der Abschnitt in der Stillen Zeit als eigener Schritt nach dem Wort, vor dem Gebet, oder in der Vesper nach dem Wort. Die Kurzformen bleiben kurz.' },
+      { area: 'Lehre', text: 'Neu unter „Wort“ › „Lehre“: Francis Pieper, Christliche Dogmatik, alle drei Bände, ein Band im Jahr. Die Karte zeigt, wo du stehst, die Lesung des Tages und die zuletzt gelesenen Abschnitte. Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter.' },
+      { area: 'Lehre', text: 'Statt eines Abschnitts am Tag kannst du eine Lesezeit wählen, 5 bis 20 Minuten; dann stehen so viele Abschnitte in der Lesung, wie hineinpassen. Ohne Leseplan bleibt das Buch zum Nachschlagen.' },
+      { area: 'Lehre', text: 'Der Lesetag: der Text in der Leseschrift mit A− und A+, Fußnoten zum Antippen, Zwischenüberschriften des Buches. Wo vorhanden: Bibelwort, lateinische Zitate mit Übersetzung, Kernsatz und Frage zum Nachdenken; deine Gedanken lassen sich in die Gebetskammer schreiben. Was nicht aus dem Buch stammt, heißt „Ergänzung“. Tage, die noch nicht gegen den Druck durchgesehen sind, sagen es.' },
+      { area: 'Lehre', text: '„Nachschlagen“: der Leseplan ab heute, das Inhaltsverzeichnis jedes Bandes nach Lehrstück und Kapitel, und eine Suche durch alle drei Bände. Darunter „Leseplan einstellen“.' },
+      { area: 'Andacht', text: 'Auf Wunsch steht die Lesung in der Stillen Zeit als eigener Schritt nach dem Wort, vor dem Gebet. Die Kurzform bleibt kurz.' },
     ],
   },
   {

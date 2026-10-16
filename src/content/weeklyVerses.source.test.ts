@@ -18,7 +18,9 @@ import { SETTINGS_VERSES } from './settingsVerses';
 import { WINTER_ARC_VERSES } from './winterArc';
 import { DESERT_VERSES } from './desert';
 import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
-import dogmatik from '../../data/dogmatik.json';
+import band1 from '../../data/dogmatik/band-1.json';
+import band2 from '../../data/dogmatik/band-2.json';
+import band3 from '../../data/dogmatik/band-3.json';
 import { normalizeBook } from '../domain/dogmatik';
 
 const dir = process.env.LUT1912_DIR;
@@ -147,7 +149,9 @@ const SCRIPTURE: readonly (readonly [string, string])[] = [
   ...WINTER_ARC_VERSES.map((v) => [v.source, v.text] as const),
   ...DESERT_VERSES.map((v) => [v.source, v.text] as const),
   // The Bible word to begin each day of the Dogmatik.
-  ...normalizeBook(dogmatik).tage.flatMap((d) => (d.bibelwort ? [[shortRef(d.bibelwort.stelle), d.bibelwort.text] as const] : [])),
+  ...[band1, band2, band3]
+    .flatMap((b, i) => normalizeBook(b, i + 1).tage)
+    .flatMap((d) => (d.bibelwort ? [[shortRef(d.bibelwort.stelle), d.bibelwort.text] as const] : [])),
 ];
 
 describe.skipIf(!available)('other Bible texts against Luther 1912', () => {

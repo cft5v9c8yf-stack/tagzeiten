@@ -625,7 +625,7 @@ export class Store {
       this.profile.answered,
       [
         ...winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
-        ...dogmatikToMarkdown(this.profile.dogmatik, (await loadDogmatik()).tage),
+        ...dogmatikToMarkdown(this.profile.dogmatik, await loadDogmatik()),
       ],
     );
   }

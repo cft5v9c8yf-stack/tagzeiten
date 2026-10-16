@@ -420,7 +420,7 @@ function CatechismHome() {
       <section className="cat-area" aria-labelledby="cat-dogmatik">
         <div className="cat-area-head">
           <h3 id="cat-dogmatik">Dogmatik</h3>
-          <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, Band 1: ein Abschnitt am Tag, zugleich zum Nachschlagen</p>
+          <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, drei Bände in drei Jahren, zugleich zum Nachschlagen</p>
         </div>
         <DogmatikCard />
       </section>

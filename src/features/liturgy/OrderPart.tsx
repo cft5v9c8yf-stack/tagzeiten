@@ -497,7 +497,7 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       return <HouseBlessing />;
 
     case 'dogmatik':
-      return <DogmatikPart date={ctx.date} from={morning ? 'stille-zeit' : 'vesper'} />;
+      return <DogmatikPart date={ctx.date} />;
   }
 }
 

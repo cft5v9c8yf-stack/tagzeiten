@@ -44,19 +44,31 @@ async function renderAt(path: string, prepare?: (s: Store) => void) {
   return { store, router };
 }
 
-describe('Dogmatik', () => {
+describe('Dogmatik', { timeout: 20000 }, () => {
   it('shows the plan on "Lehre" and opens today\'s section', async () => {
     const { router } = await renderAt('/katechismus');
-    const card = (await screen.findByText('Leseplan aktiv')).closest('section') as HTMLElement;
-    expect(within(card).getByText('Tag 47 von 365')).toBeTruthy();
-    expect(within(card).getByRole('link', { name: 'Was ist das Fundament des Glaubens?' })).toBeTruthy();
+    const card = (await screen.findByText('Leseplan', {}, { timeout: 8000 })).closest('section') as HTMLElement;
+    expect(within(card).getByText('Jahr 1 · Tag 1 von 365')).toBeTruthy();
+    expect(within(card).getByRole('link', { name: /Die Verständigung über den Standpunkt/ })).toBeTruthy();
     fireEvent.click(within(card).getByRole('link', { name: 'Heute lesen' }));
-    expect(router.state.location.pathname).toBe('/katechismus/dogmatik/47');
+    expect(router.state.location.pathname).toBe('/katechismus/dogmatik/1-1');
+    expect(await screen.findByText(/Noch nicht durchgesehen/)).toBeTruthy();
+  });
+
+  it('gives as many sections as fit into the time chosen', async () => {
+    await renderAt('/katechismus', (s) =>
+      s.updateProfile((p) => ({ ...p, dogmatik: { ...p.dogmatik, minuten: 15 } }), { immediate: true }),
+    );
+    const card = (await screen.findByText('Leseplan', {}, { timeout: 8000 })).closest('section') as HTMLElement;
+    expect(within(card).getByText('Band 1 · Tag 1 von 365')).toBeTruthy();
+    expect(within(card).getAllByRole('listitem').length).toBeGreaterThan(1);
+    expect(within(card).getByText(/Zusammen etwa \d+ Minuten/)).toBeTruthy();
   });
 
   it('reads a day: notes open under the paragraph, the translation on request, then "Gelesen"', async () => {
-    const { store } = await renderAt('/katechismus/dogmatik/47');
-    await screen.findByRole('heading', { level: 2, name: 'Was ist das Fundament des Glaubens?' });
+    const { store } = await renderAt('/katechismus/dogmatik/1-47');
+    await screen.findByRole('heading', { level: 2, name: 'Was ist das Fundament des Glaubens?' }, { timeout: 8000 });
+    expect(screen.queryByText(/Noch nicht durchgesehen/)).toBeNull();
     expect(screen.getByText(/Erbaut auf den Grund/)).toBeTruthy();
     expect(screen.queryByText('Der Schriftbeweis², I, 9. 10.')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Fußnote 313' }));
@@ -68,35 +80,39 @@ describe('Dogmatik', () => {
     // Nothing that counts days in a row (rule 4).
     expect(document.body.textContent).not.toMatch(/in Folge|Serie/);
     fireEvent.click(screen.getByRole('button', { name: 'Gelesen' }));
-    expect(store.getProfile().dogmatik.read).toEqual({ 47: '2026-10-16' });
+    expect(store.getProfile().dogmatik.read).toEqual({ '1-47': '2026-10-16' });
     expect(screen.getByText(/Gelesen am/)).toBeTruthy();
-    expect(screen.getByText(/Woche 7 des Plans/)).toBeTruthy();
   });
 
   it('writes the thought to the question into the Gebetskammer', async () => {
-    const { store } = await renderAt('/katechismus/dogmatik/47');
-    fireEvent.change(await screen.findByLabelText('Deine Gedanken zur Frage'), { target: { value: 'Auf meine Werke.' } });
+    const { store } = await renderAt('/katechismus/dogmatik/1-47');
+    fireEvent.change(await screen.findByLabelText('Deine Gedanken zur Frage', {}, { timeout: 8000 }), { target: { value: 'Auf meine Werke.' } });
     fireEvent.click(screen.getByRole('button', { name: 'In die Gebetskammer schreiben' }));
     const entry = store.getProfile().arena[0]!;
-    expect(entry.title).toBe('Dogmatik, Tag 47: Was ist das Fundament des Glaubens?');
+    expect(entry.title).toBe('Dogmatik, Band 1, Tag 47: Was ist das Fundament des Glaubens?');
     expect(entry.verses).toEqual(['Epheser 2,20']);
     expect(entry.text).toMatch(/Auf meine Werke\.$/);
   });
 
-  it('searches the whole book', async () => {
+  it('opens a link from before the three volumes in Band 1', async () => {
+    await renderAt('/katechismus/dogmatik/47');
+    expect(await screen.findByRole('heading', { level: 2, name: 'Was ist das Fundament des Glaubens?' }, { timeout: 8000 })).toBeTruthy();
+  });
+
+  it('searches all three volumes and shows the contents of each', async () => {
     await renderAt('/katechismus/dogmatik');
-    fireEvent.change(await screen.findByLabelText('Im Buch suchen'), { target: { value: 'Schriftbeweis' } });
+    fireEvent.change(await screen.findByLabelText('In allen drei Bänden suchen', {}, { timeout: 8000 }), { target: { value: 'subsistere' } });
     expect(await screen.findByRole('link', { name: /Was ist das Fundament/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Inhalt' }));
-    expect(screen.getByRole('heading', { level: 3, name: 'Wesen und Begriff der Theologie' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 4, name: '11. Einteilungen der Theologie, als Lehre gefaßt' })).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 5, name: 'Primäre und sekundäre Fundamentallehren' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Wesen und Begriff der Theologie/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Band 3' }));
+    expect(screen.getByRole('button', { name: /^Die letzten Dinge/ })).toBeTruthy();
   });
 
   it('stands in the Stille Zeit after the Word when chosen', async () => {
     await renderAt('/andacht/morgen', (s) =>
-      s.updateProfile((p) => ({ ...p, dogmatik: { ...p.dogmatik, when: 'morning' } }), { immediate: true }),
+      s.updateProfile((p) => ({ ...p, dogmatik: { ...p.dogmatik, stilleZeit: true } }), { immediate: true }),
     );
-    expect(await screen.findByRole('button', { name: /Dogmatik/ })).toBeTruthy();
+    expect(await screen.findByRole('button', { name: /Dogmatik/ }, { timeout: 8000 })).toBeTruthy();
   });
 });

@@ -1,48 +1,60 @@
 import { Link } from 'react-router';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { formatShort } from '../../domain/dates';
-import { dayPath, recentlyRead, todaysDay } from '../../domain/dogmatik';
-import { useDogmatikBook, useDogmatikSettings } from './useDogmatik';
+import { dayPath, isRead, recentlyRead, todaysDay, todaysPortion, type DogmatikDay, type DogmatikSettings } from '../../domain/dogmatik';
+import { useDogmatikLibrary, useDogmatikSettings } from './useDogmatik';
 
 export const LOOKUP_PATH = '/katechismus/dogmatik';
 
+/** "Jahr 1 · Tag 47 von 365" in the plan of three years; "Band 1 · …" when reading by time. */
+export const whereLine = (d: DogmatikDay, s: DogmatikSettings): string =>
+  `${s.minuten === 0 ? 'Jahr' : 'Band'} ${d.band} · Tag ${d.tag} von 365`;
+
 /**
- * On "Lehre": the reading plan through Pieper with today's section, the last
- * ones read, and whether it is read in the Stille Zeit. Progress is shown as
- * where one stands, never as a debt (rules 4 and 6).
+ * On "Lehre": the reading plan through Pieper with today's reading, the last
+ * sections read, and whether it is read in the Stille Zeit. Progress is shown
+ * as where one stands, never as a debt (rules 4 and 6).
  */
 export function DogmatikCard() {
   const { date, isToday } = useSelectedDate();
-  const book = useDogmatikBook();
+  const lib = useDogmatikLibrary();
   const [s, update] = useDogmatikSettings();
   const to = (path: string) => withDate(path, date, isToday);
-  if (!book) return <p className="small muted">Die Dogmatik wird geladen …</p>;
-  const today = todaysDay(book, s, date);
-  const recent = recentlyRead(book, s);
-  const inMorning = s.on && s.when === 'morning';
+  if (!lib) return <p className="small muted">Die Dogmatik wird geladen …</p>;
+  const portion = todaysPortion(lib, s, date);
+  const open = todaysDay(lib, s, date);
+  const recent = recentlyRead(lib, s);
+  const minutes = portion.reduce((a, d) => a + d.minuten, 0);
+  const done = portion.length > 0 && portion.every((d) => isRead(s, d));
 
   return (
     <>
       <section className="block block-hero cat-week dogmatik-card" aria-labelledby="dogmatik-title">
-        <p className="cat-week-kicker">{s.on ? 'Leseplan aktiv' : 'Zum Nachschlagen'}</p>
+        <p className="cat-week-kicker">{s.on ? 'Leseplan' : 'Zum Nachschlagen'}</p>
         <h4 id="dogmatik-title" className="cat-week-title">
-          {book.buch.autor.split(' ').at(-1)}, {book.buch.titel}
+          Pieper, Christliche Dogmatik
         </h4>
-        {s.on && today && (
+        {s.on && portion[0] && (
           <>
-            <p className="dogmatik-progress">
-              Tag {today.tag} von {book.buch.umfang}
-            </p>
-            <p className="cat-today">
-              Abschnitt des Tages: <Link to={to(dayPath(today.tag))}>{today.titel}</Link>
-              <span className="muted"> · {today.minuten} Min.</span>
-            </p>
+            <p className="dogmatik-progress">{whereLine(portion[0], s)}</p>
+            <ul className="dogmatik-portion">
+              {portion.map((d) => (
+                <li key={`${d.band}-${d.tag}`} className={isRead(s, d) ? 'read' : undefined}>
+                  <Link to={to(dayPath(d))}>{d.titel}</Link>
+                  <span className="muted">
+                    {' '}
+                    · {d.minuten} Min.{isRead(s, d) && ' · gelesen'}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {portion.length > 1 && <p className="small muted">Zusammen etwa {minutes} Minuten.</p>}
           </>
         )}
         <div className="cat-actions dogmatik-actions">
-          {s.on && today && (
-            <Link className="btn primary" to={to(dayPath(today.tag))}>
-              Heute lesen
+          {s.on && open && (
+            <Link className="btn primary" to={to(dayPath(open))}>
+              {done ? 'Noch einmal lesen' : 'Heute lesen'}
             </Link>
           )}
           <Link className="btn" to={to(LOOKUP_PATH)}>
@@ -56,9 +68,11 @@ export function DogmatikCard() {
           <h4>Zuletzt gelesen</h4>
           <ul className="dogmatik-list">
             {recent.map(({ day, date: when }) => (
-              <li key={day.tag}>
-                <Link className="dogmatik-row" to={to(dayPath(day.tag))}>
-                  <span className="dogmatik-row-no">Tag {day.tag}</span>
+              <li key={`${day.band}-${day.tag}`}>
+                <Link className="dogmatik-row" to={to(dayPath(day))}>
+                  <span className="dogmatik-row-no">
+                    Band {day.band} · Tag {day.tag}
+                  </span>
                   <span className="dogmatik-row-title">{day.titel}</span>
                   <span className="dogmatik-row-meta">{formatShort(when)}</span>
                 </Link>
@@ -68,21 +82,23 @@ export function DogmatikCard() {
         </div>
       )}
 
-      <div className="dogmatik-switch">
-        <button
-          type="button"
-          className="pill"
-          aria-pressed={inMorning}
-          onClick={() => update((x) => ({ ...x, on: true, when: inMorning ? 'free' : 'morning' }))}
-        >
-          {inMorning ? '✓ In der Stillen Zeit lesen' : 'In der Stillen Zeit lesen'}
-        </button>
-        <p className="small muted">
-          {inMorning
-            ? 'Der Abschnitt steht in der Stillen Zeit nach dem Wort, vor dem Gebet.'
-            : 'Eingeschaltet steht der Abschnitt in der Stillen Zeit nach dem Wort, vor dem Gebet.'}
-        </p>
-      </div>
+      {s.on && (
+        <div className="dogmatik-switch">
+          <button
+            type="button"
+            className="pill"
+            aria-pressed={s.stilleZeit}
+            onClick={() => update((x) => ({ ...x, stilleZeit: !x.stilleZeit }))}
+          >
+            {s.stilleZeit ? '✓ In der Stillen Zeit lesen' : 'In der Stillen Zeit lesen'}
+          </button>
+          <p className="small muted">
+            {s.stilleZeit
+              ? 'Die Lesung steht in der Stillen Zeit nach dem Wort, vor dem Gebet.'
+              : 'Eingeschaltet steht die Lesung in der Stillen Zeit nach dem Wort, vor dem Gebet.'}
+          </p>
+        </div>
+      )}
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { parts, type DogmatikBook, type DogmatikSettings as Settings } from '../../domain/dogmatik';
+import { planDays, planLength, type DailyMinutes, type DogmatikLibrary, type DogmatikSettings as Settings } from '../../domain/dogmatik';
 import { Segmented } from '../../ui/Choice';
 import { useDogmatikSettings } from './useDogmatik';
 
@@ -20,71 +20,59 @@ function OnOff({ label, on, set, note }: { label: string; on: boolean; set: (on:
   );
 }
 
-/** "Leseplan einstellen": whether, when and in which order; what the reading day shows. */
-export function DogmatikSettings({ book }: { book: DogmatikBook }) {
+const TIME_OPTIONS: { value: `${DailyMinutes}`; label: string }[] = [
+  { value: '0', label: 'Ein Abschnitt' },
+  { value: '5', label: '5 Min.' },
+  { value: '10', label: '10 Min.' },
+  { value: '15', label: '15 Min.' },
+  { value: '20', label: '20 Min.' },
+];
+
+/** "Leseplan einstellen": plan or reference only, the Stille Zeit, the time a day, what the reading shows. */
+export function DogmatikSettings({ lib }: { lib: DogmatikLibrary }) {
   const [s, update] = useDogmatikSettings();
   const set = (patch: Partial<Settings>) => update((x) => ({ ...x, ...patch }));
-  const topics = parts(book);
   return (
     <div className="dogmatik-settings">
-      <OnOff
-        label="Leseplan verwenden"
-        on={s.on}
-        set={(on) => set({ on })}
-        note="Ausgeschaltet bleibt das Buch zum Nachschlagen; was du gelesen hast, bleibt gespeichert."
-      />
+      <div className="dogmatik-setting">
+        <h5>Leseplan</h5>
+        <Segmented
+          grid
+          label="Leseplan"
+          value={s.on ? 'plan' : 'book'}
+          onChange={(v) => set({ on: v === 'plan' })}
+          options={[
+            { value: 'plan', label: 'Durch alle drei Bände' },
+            { value: 'book', label: 'Nur nachschlagen' },
+          ]}
+        />
+        <p className="small muted">
+          {s.on
+            ? 'Ein Band im Jahr, Tag für Tag. Der Plan geht nach deinem Lesestand, nicht nach dem Kalender: Wer aussetzt, liest beim nächsten Abschnitt weiter.'
+            : 'Ohne Leseplan bleibt das Buch zum Nachschlagen. Was du gelesen hast, bleibt gespeichert.'}
+        </p>
+      </div>
       {s.on && (
         <>
+          <OnOff
+            label="In der Stillen Zeit lesen"
+            on={s.stilleZeit}
+            set={(stilleZeit) => set({ stilleZeit })}
+            note="Als eigener Schritt nach dem Wort, vor dem Gebet. Die Kurzform bleibt kurz."
+          />
           <div className="dogmatik-setting">
-            <h5>Wann lese ich</h5>
+            <h5>Lesezeit am Tag</h5>
             <Segmented
               grid
-              label="Wann lese ich"
-              value={s.when}
-              onChange={(when) => set({ when })}
-              options={[
-                { value: 'morning', label: 'In der Stillen Zeit' },
-                { value: 'evening', label: 'In der Vesper' },
-                { value: 'free', label: 'Frei' },
-              ]}
+              label="Lesezeit am Tag"
+              value={`${s.minuten}`}
+              onChange={(v) => set({ minuten: Number(v) as DailyMinutes })}
+              options={TIME_OPTIONS}
             />
             <p className="small muted">
-              {s.when === 'morning'
-                ? 'Morgens nach dem Wort, vor dem Gebet, als eigener Schritt der ganzen Ordnung. Die Kurzform bleibt kurz.'
-                : s.when === 'evening'
-                  ? 'In der Vesper nach dem Wort, als eigene Seite.'
-                  : 'Ohne feste Zeit: Du findest den Abschnitt unter „Wort“ › „Lehre“.'}
-            </p>
-          </div>
-          <div className="dogmatik-setting">
-            <h5>Reihenfolge</h5>
-            <Segmented
-              grid
-              label="Reihenfolge"
-              value={s.order}
-              onChange={(order) => set(order === 'topic' ? { order, topic: s.topic ?? topics[0] } : { order })}
-              options={[
-                { value: 'book', label: 'Wie im Buch' },
-                { value: 'topic', label: 'Nach Lehrstücken' },
-              ]}
-            />
-            {s.order === 'topic' && (
-              <label className="dogmatik-topic">
-                <span>Lehrstück</span>
-                <select value={s.topic ?? topics[0]} onChange={(e) => set({ topic: e.target.value })}>
-                  {topics.map((t) => (
-                    <option key={t} value={t}>
-                      {t}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            <p className="small muted">
-              {s.order === 'book'
-                ? `${book.buch.umfang} Abschnitte in der Reihenfolge des Buches.`
-                : 'Erst das gewählte Lehrstück, danach der Rest des Buches.'}{' '}
-              Der Plan geht nach deinem Lesestand, nicht nach dem Kalender.
+              {s.minuten === 0
+                ? 'Ein Abschnitt am Tag, etwa fünf Minuten: drei Jahre für die drei Bände.'
+                : `So viele Abschnitte, wie in ${s.minuten} Minuten passen: alle drei Bände in ${planLength(planDays(lib, s.minuten))}.`}
             </p>
           </div>
         </>

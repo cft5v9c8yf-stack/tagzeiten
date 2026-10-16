@@ -4010,10 +4010,8 @@ header.top .search-link:focus-visible {
 
 /* Inhalt: like the contents of a printed book, doctrine › chapter › days with their page. */
 .toc-part-title {
-  margin: 22px 0 4px;
-  padding-bottom: 4px;
-  border-bottom: 2px solid var(--ink);
-  font-size: 1.15rem;
+  margin: 0;
+  font-size: 1.12rem;
 }
 .toc-chapter-title {
   margin: 14px 0 2px;
@@ -4123,6 +4121,47 @@ header.top .search-link:focus-visible {
   border-radius: 3px;
 }
 
+/* Today's reading on the card and in the Stille Zeit: one or more sections. */
+.dogmatik-portion {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.dogmatik-portion li.read a,
+.dogmatik-portion li.read .dogmatik-step-title {
+  color: var(--muted);
+}
+.dogmatik-step .dogmatik-portion li {
+  display: flex;
+  flex-direction: column;
+}
+.dogmatik-step .dogmatik-meta {
+  margin: 0;
+}
+
+/* Inhalt: each doctrine folds; the one of today stands open. */
+.dogmatik-toc .toc-part {
+  margin: 14px 0 0;
+  border-bottom: 2px solid var(--ink);
+}
+.dogmatik-toc .toc-part.is-open {
+  border-bottom: 0;
+}
+.dogmatik-toc .toc-part > .fold-head .fold-title {
+  margin: 0;
+  font-size: 1.12rem;
+}
+.dogmatik-toc .toc-part > .fold-head button {
+  min-height: 44px;
+}
+.toc-days {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
 /* The reading day: a narrow column in the serif, its size set with A− and A+. */
 .dogmatik-day {
   max-width: 560px;
@@ -4142,6 +4181,31 @@ header.top .search-link:focus-visible {
 }
 .dogmatik-ahead {
   margin-top: -4px;
+}
+.dogmatik-place {
+  margin: -6px 0 12px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  hyphens: auto;
+}
+.dogmatik-unchecked {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-left: 2px solid var(--rule);
+}
+.dogmatik-heading {
+  margin: 1.4em 0 0.6em;
+  font-family: var(--serif);
+  font-size: 1.05em;
+  font-style: italic;
+  font-weight: 600;
+  hyphens: auto;
+}
+.dogmatik-gap {
+  font-family: var(--sans);
+  font-size: 0.8em;
+  color: var(--muted);
 }
 .dogmatik-addition {
   display: inline-block;

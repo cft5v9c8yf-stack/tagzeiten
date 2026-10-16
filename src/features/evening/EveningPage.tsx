@@ -1,7 +1,7 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
-import { DOGMATIK_STEP, getOrder, ORDER_MINUTES, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore } from '../../data/hooks';
@@ -72,11 +72,8 @@ const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
  * the review before the examination, never mixed (rule 3), the examination
  * always on one page with the word of forgiveness (rule 1).
  */
-function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean, dogmatik = false): EveningPage[] {
-  const steps = getOrder('vespers', form).steps;
-  // The Dogmatik after the Word (rule 2); the short form stays short.
-  const at = steps.findIndex((st) => st.id === 'word') + 1;
-  const pages = (dogmatik && form === 'full' ? [...steps.slice(0, at), DOGMATIK_STEP, ...steps.slice(at)] : steps).map((st) => pageOf(st, 'vespers'));
+function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean): EveningPage[] {
+  const pages = getOrder('vespers', form).steps.map((st) => pageOf(st, 'vespers'));
   if (withCompline) return pages;
   if (form === 'short') {
     const review = getOrder('compline', 'short').steps[0]!.parts.find((p) => p.kind === 'review')!;
@@ -107,12 +104,7 @@ function VespersView({
   const profile = useProfile();
   const withCompline = profile.showCompline;
   const form = day.evening.vespersForm;
-  const pages = vespersPages(
-    form,
-    withCompline,
-    isWeekReview(date, form, profile.weekReview),
-    profile.dogmatik.on && profile.dogmatik.when === 'evening',
-  );
+  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview));
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;

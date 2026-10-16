@@ -4,18 +4,18 @@ import { useProfile, useStore } from '../../data/hooks';
 import type { DogmatikSettings } from '../../domain/dogmatik';
 import type { UpdateOptions } from '../../data/store';
 
-/** The book, once loaded (undefined while it loads). */
-export function useDogmatikBook() {
-  const [book, setBook] = useState(loadedDogmatik);
+/** The three volumes, once loaded (undefined while they load). */
+export function useDogmatikLibrary() {
+  const [lib, setLib] = useState(loadedDogmatik);
   useEffect(() => {
-    if (book) return;
+    if (lib) return;
     let live = true;
-    void loadDogmatik().then((b) => live && setBook(b));
+    void loadDogmatik().then((l) => live && setLib(l));
     return () => {
       live = false;
     };
-  }, [book]);
-  return book;
+  }, [lib]);
+  return lib;
 }
 
 /** The reading plan's settings and progress, and a way to change them. */

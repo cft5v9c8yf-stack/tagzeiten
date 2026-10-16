@@ -138,7 +138,7 @@ export function TodayPage() {
             {s.stillTime} · {day.morning.form === 'short' ? '20' : '45'} Min.
           </span>
           <span className="tile-name">Stille Zeit</span>
-          <span className="tile-state">{morningStatus(day, profile.dogmatik.on && profile.dogmatik.when === 'morning')}</span>
+          <span className="tile-state">{morningStatus(day, profile.dogmatik.on && profile.dogmatik.stilleZeit)}</span>
         </Link>
         <Link
           to={withDate('/andacht/abend', date, isToday)}

@@ -9,6 +9,7 @@ import {
   dayPath,
   FONT_STEPS,
   isRead,
+  keyOf,
   neighbours,
   notesIn,
   pieces,
@@ -16,19 +17,18 @@ import {
   setNote,
   setRead,
   sourceLine,
-  todaysDay,
+  todaysPortion,
   weekOfPlan,
-  type DogmatikBook,
   type DogmatikDay,
+  type DogmatikLibrary,
 } from '../../domain/dogmatik';
 import { BackLink } from '../../ui/BackLink';
-import { LOOKUP_PATH } from './DogmatikCard';
+import { LOOKUP_PATH, whereLine } from './DogmatikCard';
 import { useDogmatikSettings } from './useDogmatik';
 
 /** Where the reading was opened from, for the way back (?von=). */
 const FROM: Record<string, { to: string; label: string }> = {
   'stille-zeit': { to: '/andacht/morgen', label: 'Stille Zeit' },
-  vesper: { to: '/andacht/abend', label: 'Vesper' },
   nachschlagen: { to: LOOKUP_PATH, label: 'Nachschlagen' },
 };
 
@@ -41,21 +41,18 @@ function Annotated({
   notes,
   open,
   toggle,
-  as = 'p',
   lang,
 }: {
   text: string;
   notes: Record<string, string>;
   open: ReadonlySet<string>;
   toggle: (n: string) => void;
-  as?: 'p' | 'span';
   lang?: string;
 }) {
-  const Tag = as;
   const shown = notesIn(text).filter((n) => open.has(n) && notes[n]);
   return (
     <>
-      <Tag lang={lang}>
+      <p lang={lang}>
         {pieces(text).map((p, i) =>
           'note' in p ? (
             <button
@@ -68,11 +65,15 @@ function Annotated({
             >
               {p.note}
             </button>
+          ) : 'gap' in p ? (
+            <span key={i} className="dogmatik-gap" title="Hebräischer Text, noch nicht übertragen">
+              [hebräisch]
+            </span>
           ) : (
             <span key={i}>{p.text}</span>
           ),
         )}
-      </Tag>
+      </p>
       {shown.length > 0 && (
         <div className="fn-notes">
           {shown.map((n) => (
@@ -112,14 +113,14 @@ function Question({ day }: { day: DogmatikDay }) {
   const store = useStore();
   const toast = useToast();
   const [s, update] = useDogmatikSettings();
-  const note = s.notes[String(day.tag)] ?? '';
+  const note = s.notes[keyOf(day)] ?? '';
   const toJournal = () => {
     const id = store.addArenaEntry();
     store.updateArenaEntry(
       id,
       (e) => ({
         ...e,
-        title: `Dogmatik, Tag ${day.tag}: ${day.titel}`,
+        title: `Dogmatik, Band ${day.band}, Tag ${day.tag}: ${day.titel}`,
         verses: day.bibelwort ? [day.bibelwort.stelle] : e.verses,
         text: `${day.frage}\n\n${note.trim()}`,
       }),
@@ -141,7 +142,7 @@ function Question({ day }: { day: DogmatikDay }) {
         rows={3}
         placeholder="Deine Gedanken, wenn du magst"
         value={note}
-        onChange={(e) => update((x) => setNote(x, day.tag, e.target.value), {})}
+        onChange={(e) => update((x) => setNote(x, day, e.target.value), {})}
       />
       <button type="button" className="btn" disabled={!note.trim()} onClick={toJournal}>
         In die Gebetskammer schreiben
@@ -150,8 +151,8 @@ function Question({ day }: { day: DogmatikDay }) {
   );
 }
 
-/** One day of the plan: Bible word, the text with its notes, core sentence, question, and "gelesen". */
-export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: DogmatikDay }) {
+/** One section of the plan: Bible word, the text with its notes, core sentence, question, and "gelesen". */
+export function DogmatikDayPage({ lib, day }: { lib: DogmatikLibrary; day: DogmatikDay }) {
   const { date, isToday } = useSelectedDate();
   const [params] = useSearchParams();
   const [s, update] = useDogmatikSettings();
@@ -170,16 +171,18 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
     const url = withDate(path, date, isToday);
     return from ? `${url}${url.includes('?') ? '&' : '?'}von=${params.get('von')}` : url;
   };
-  const read = isRead(s, day.tag);
-  const today = todaysDay(book, s, date);
-  const { prev, next } = neighbours(book, s, day.tag);
+  const read = isRead(s, day);
+  const portion = todaysPortion(lib, s, date);
+  const inPortion = portion.some((d) => d.band === day.band && d.tag === day.tag);
+  const nextInPortion = portion.find((d) => !isRead(s, d) && !(d.band === day.band && d.tag === day.tag));
+  const { prev, next } = neighbours(lib, day);
   const font = (step: number) => update((x) => ({ ...x, fontStep: Math.min(FONT_STEPS.max, Math.max(FONT_STEPS.min, x.fontStep + step)) }));
 
   let ahead: ReactNode = null;
-  if (s.on && today && today.tag !== day.tag && !read) {
+  if (s.on && portion[0] && !inPortion && !read) {
     ahead = (
       <p className="small muted dogmatik-ahead">
-        Vorab gelesen. Dein Plan steht bei <Link to={keep(dayPath(today.tag))}>Tag {today.tag}</Link>.
+        Du liest vorab. Dein Plan steht bei <Link to={keep(dayPath(portion[0]))}>{whereLine(portion[0], s)}</Link>.
       </p>
     );
   }
@@ -193,12 +196,23 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
         <h2 className="dogmatik-title">{day.titel}</h2>
       </div>
       <p className="dogmatik-meta">
-        <span>Tag {day.tag}</span>
+        <span>
+          Band {day.band} · Tag {day.tag}
+        </span>
         <span>{day.minuten} Min.</span>
-        <span>{sourceLine(book, day)}</span>
-        <span>{day.abschnitt ?? day.kapitel ?? day.teil}</span>
+        <span>{sourceLine(day)}</span>
+      </p>
+      <p className="dogmatik-place">
+        {day.teil}
+        {day.kapitel && ` › ${day.kapitel}`}
+        {day.abschnitt && ` › ${day.abschnitt}`}
       </p>
       {ahead}
+      {!day.geprueft && (
+        <p className="small muted dogmatik-unchecked">
+          Noch nicht durchgesehen: Der Text folgt einer Abschrift des Frakturdrucks und kann Lesefehler enthalten.
+        </p>
+      )}
 
       {s.showVerse && day.bibelwort && (
         <blockquote className="dogmatik-verse">
@@ -220,7 +234,11 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
 
       <div className="dogmatik-text">
         {blocks(day).map((b) =>
-          b.kind === 'p' ? (
+          b.kind === 'h' ? (
+            <h3 key={`h${b.no}`} className="dogmatik-heading">
+              {b.text}
+            </h3>
+          ) : b.kind === 'p' ? (
             <Annotated key={`p${b.no}`} text={b.text} notes={day.fussnoten} open={open} toggle={toggle} />
           ) : (
             <Quote key={`q${b.no}`} day={day} index={b.no - 1} open={open} toggle={toggle} />
@@ -242,17 +260,24 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
         {read ? (
           <>
             <p className="dogmatik-done-line">
-              <span className="dogmatik-done-mark">✓ Gelesen am {formatShort(s.read[String(day.tag)]!)}</span>
+              <span className="dogmatik-done-mark">✓ Gelesen am {formatShort(s.read[keyOf(day)]!)}</span>
             </p>
             <p className="small muted">
-              Woche {weekOfPlan(day.tag)} des Plans · {readInThirtyDays(s, date)} Abschnitte in den letzten 30 Tagen
+              {s.minuten === 0 ? `Woche ${weekOfPlan(day.tag)} des ${day.band}. Jahres` : `Band ${day.band}, Tag ${day.tag} von 365`} ·{' '}
+              {readInThirtyDays(s, date)} Abschnitte in den letzten 30 Tagen
             </p>
-            <button type="button" className="btn quiet" onClick={() => update((x) => setRead(x, day.tag, null))}>
+            {s.on && inPortion && nextInPortion && (
+              <Link className="btn primary" to={keep(dayPath(nextInPortion))}>
+                Weiterlesen: {nextInPortion.titel}
+              </Link>
+            )}
+            {s.on && inPortion && !nextInPortion && <p className="dogmatik-done-line">Für heute gelesen.</p>}
+            <button type="button" className="btn quiet" onClick={() => update((x) => setRead(x, day, null))}>
               Nicht gelesen
             </button>
           </>
         ) : (
-          <button type="button" className="btn primary" onClick={() => update((x) => setRead(x, day.tag, date))}>
+          <button type="button" className="btn primary" onClick={() => update((x) => setRead(x, day, date))}>
             Gelesen
           </button>
         )}
@@ -260,15 +285,15 @@ export function DogmatikDayPage({ book, day }: { book: DogmatikBook; day: Dogmat
 
       <nav className="dogmatik-pager" aria-label="Andere Tage">
         {prev ? (
-          <Link className="btn" to={keep(dayPath(prev.tag))} aria-label={`Zurück zu Tag ${prev.tag}: ${prev.titel}`}>
-            ‹ Tag {prev.tag}
+          <Link className="btn" to={keep(dayPath(prev))} aria-label={`Zurück zu Band ${prev.band}, Tag ${prev.tag}: ${prev.titel}`}>
+            ‹ {prev.band !== day.band ? `Band ${prev.band}, ` : ''}Tag {prev.tag}
           </Link>
         ) : (
           <span />
         )}
         {next && (
-          <Link className="btn" to={keep(dayPath(next.tag))} aria-label={`Weiter zu Tag ${next.tag}: ${next.titel}`}>
-            Tag {next.tag} ›
+          <Link className="btn" to={keep(dayPath(next))} aria-label={`Weiter zu Band ${next.band}, Tag ${next.tag}: ${next.titel}`}>
+            {next.band !== day.band ? `Band ${next.band}, ` : ''}Tag {next.tag} ›
           </Link>
         )}
       </nav>

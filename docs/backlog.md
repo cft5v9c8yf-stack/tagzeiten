@@ -2,6 +2,28 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
+## Dogmatik (Pieper) durchsehen
+
+Gewünscht (16.10.2026): Francis Pieper, Christliche Dogmatik, drei Bände als
+Leseplan über drei Jahre (ein Band im Jahr) oder nach Lesezeit, und zum
+Nachschlagen. Eingebaut in 1.16.0 (zunächst nur als Demo, Zweig
+`claude/dogmatik-demo`).
+
+Stand:
+
+- **Text:** aus der Abschrift von BackToLuther (archive.org), aufbereitet mit
+  `node scripts/dogmatik/build.mjs`; Quelle und Vorgehen in
+  `reference/pieper/README.md`, jeder Eingriff in `reference/pieper/BERICHT.md`.
+- **Durchgesehen** (`"geprueft": true`): nur Band 1, Tag 47–53, mit Bibelwort,
+  Kernsatz und Frage von Andreas. Alle anderen Tage tragen in der App den
+  Vermerk „Noch nicht durchgesehen“.
+- **Offen beim Durchsehen:** Lesefehler im Deutschen und Lateinischen, das
+  Griechische (in der Abschrift oft verlesen), das Hebräische (überall
+  „[hebräisch]“), 30 Fußnoten ohne Ziffer im Text (stehen am Absatzende, Liste
+  im Bericht). Scans: archive.org `Christliche_Dogmatik_Erster_Band` usw.
+- **Ergänzungen:** Bibelwort, Kernsatz, Frage schreibt Andreas; Claude schlägt
+  höchstens Bibelstellen vor, die Pieper am Tag selbst anführt (Luther 1912).
+
 ## Lutherische Bekenntnisschriften unter Katechismus / Anhang
 
 Gewünscht (26.09.2026): die Bekenntnisschriften im Anhang des Katechismus, mit

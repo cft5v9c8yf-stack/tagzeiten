@@ -48,6 +48,8 @@ export default defineConfig(({ mode }) => ({
       workbox: {
         // Everything the app needs ships in the bundle, including fonts.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // The three volumes of the Dogmatik are about 2 MB each; they belong offline as well.
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: `${base}index.html`,
         cleanupOutdatedCaches: true,
       },

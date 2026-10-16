@@ -408,9 +408,8 @@ export function getOrder(id: OrderId, form: OrderForm): Order {
 }
 
 /**
- * Today's section of Pieper's Dogmatik as a step of its own, when the reading
- * plan is read in the Stille Zeit or the Vesper: after the Word, before the
- * prayer (rule 2).
+ * Today's reading of Pieper's Dogmatik as a step of its own, when it is read
+ * in the Stille Zeit: after the Word, before the prayer (rule 2).
  */
 export const DOGMATIK_STEP: Step = {
   id: 'dogmatik',
