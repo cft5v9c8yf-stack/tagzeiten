@@ -336,6 +336,8 @@ export function stream(files, { titles = [], rawFixes = [] } = {}) {
         items.push(para);
         pageParas.push(para);
       } else {
+        // Where the paragraph turns the page, so that a day ending within it names its pages rightly.
+        if (para.endPage !== page.no) (para.turns ??= []).push({ page: page.no, at: para.text.length });
         para.text = joinLine(para.text, line.trim());
         para.endPage = page.no;
         if (!pageParas.includes(para)) pageParas.push(para);
@@ -402,6 +404,8 @@ export function stream(files, { titles = [], rawFixes = [] } = {}) {
     p.text += p.pending.map((no) => `[[${no}]]`).join('');
     delete p.pending;
   }
+  // Page turns as shares of the paragraph, which cleaning shortens a little.
+  for (const it of items) if (it.turns) it.turns = it.turns.map((t) => ({ page: t.page, share: t.at / it.text.length }));
   return { items, unplaced, outOfTurn, fixedNos, fixedMarks, missingNos, pages: byNo.length };
 }
 

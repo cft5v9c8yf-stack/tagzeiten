@@ -6,17 +6,28 @@ Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
 Gewünscht (16.10.2026): Francis Pieper, Christliche Dogmatik, drei Bände als
 Leseplan über drei Jahre (ein Band im Jahr) oder nach Lesezeit, und zum
-Nachschlagen. Eingebaut in 1.16.0 (zunächst nur als Demo, Zweig
-`claude/dogmatik-demo`).
+Nachschlagen. Eingebaut in 1.16.0 (erst als Demo auf `claude/dogmatik-demo`,
+am 16.10.2026 auf Wunsch online gebracht).
 
 Stand:
 
 - **Text:** aus der Abschrift von BackToLuther (archive.org), aufbereitet mit
   `node scripts/dogmatik/build.mjs`; Quelle und Vorgehen in
   `reference/pieper/README.md`, jeder Eingriff in `reference/pieper/BERICHT.md`.
-- **Durchgesehen** (`"geprueft": true`): nur Band 1, Tag 47–53, mit Bibelwort,
+- **Durchgesehen** (`"geprueft": true`): Band 1, Tag 1–5 (Claude, 16.10.2026,
+  Seite 1–10 gegen den Scan; Berichtigungen in
+  `reference/pieper/durchsicht/band-1.json`) und Tag 47–53 mit Bibelwort,
   Kernsatz und Frage von Andreas. Alle anderen Tage tragen in der App den
   Vermerk „Noch nicht durchgesehen“.
+- **Befund der ersten zehn Seiten:** Das Deutsche ist sehr sauber (etwa ein
+  Fehler auf zwei Seiten: „uwd“, „bezeichnet“ statt „bezeichnete“, Großschreibung).
+  Häufiger: Stellenangaben in Fußnoten („1,1289“ statt „I, 1289“, „Ies.“),
+  eckige Klammern als runde, verlorene Absatzwechsel (3 auf 10 Seiten). Das
+  Griechische ist fast überall zu ersetzen. Wiederkehrendes steht jetzt in
+  `ocr.mjs` („Ies.“ → „Jes.“, „in bezug aus“, „scil,“).
+- **Aufwand:** etwa zwei Seiten je Tag, rund 2000 Seiten insgesamt. Die ersten
+  zehn Seiten brauchten einen guten Teil einer Sitzung; also in Blöcken, Band
+  für Band, je Block eine neue Sitzung.
 - **Offen beim Durchsehen:** Lesefehler im Deutschen und Lateinischen, das
   Griechische (in der Abschrift oft verlesen), das Hebräische (überall
   „[hebräisch]“), 30 Fußnoten ohne Ziffer im Text (stehen am Absatzende, Liste

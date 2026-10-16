@@ -141,13 +141,13 @@ function pieces(items, max) {
     for (let k = 0; k < bounds.length - 1; k++) {
       const a = bounds[k];
       const z = bounds[k + 1];
-      // The page of a piece, estimated by its place in the paragraph.
-      const span = it.endPage - it.page;
+      // The page of a piece: where the paragraph turned its pages.
+      const pageAt = (at) => (it.turns ?? []).reduce((p, t) => (t.share * len <= at ? t.page : p), it.page);
       out.push({
         ...it,
         text: it.text.slice(a, z).trim(),
-        page: it.page + Math.floor((span * a) / len),
-        endPage: it.page + Math.floor((span * Math.max(a, z - 1)) / len),
+        page: pageAt(a),
+        endPage: pageAt(Math.max(a, z - 1)),
         pid,
         part: k,
         of: bounds.length - 1,
@@ -327,7 +327,11 @@ function makeDay(tag, units, context) {
 
 /** "Die Einheit Gottes (2 von 3)": the heading of the day's place, numbered when it spans several days. */
 function nameDays(days) {
-  const base = days.map((d) => (d.geprueft ? null : titleOf(d.abschnitt ?? d.kapitel ?? d.teil)));
+  // A reviewed day keeps a title given by hand; one named after its place is counted with the others.
+  const base = days.map((d) => {
+    const auto = titleOf(d.abschnitt ?? d.kapitel ?? d.teil);
+    return d.geprueft && d.titel.replace(/ \(\d+ von \d+\)$/, '') !== auto ? null : auto;
+  });
   for (let i = 0; i < days.length; ) {
     if (base[i] === null) {
       i += 1;

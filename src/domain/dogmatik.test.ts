@@ -54,7 +54,7 @@ describe('the files (data/dogmatik/band-1.json … band-3.json)', () => {
 
   it('keep the days read by hand, with their additions', () => {
     const checked = lib.tage.filter((d) => d.geprueft).map((d) => `${d.band}-${d.tag}`);
-    expect(checked).toEqual(['1-47', '1-48', '1-49', '1-50', '1-51', '1-52', '1-53']);
+    expect(checked).toEqual(['1-1', '1-2', '1-3', '1-4', '1-5', '1-47', '1-48', '1-49', '1-50', '1-51', '1-52', '1-53']);
     expect(day(1, 47)).toMatchObject({ titel: 'Was ist das Fundament des Glaubens?', kernsatz: expect.any(String), frage: expect.any(String) });
   });
 

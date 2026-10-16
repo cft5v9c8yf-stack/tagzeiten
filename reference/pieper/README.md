@@ -35,13 +35,23 @@ Die Scans des Drucks zum Nachprüfen: `Christliche_Dogmatik_Erster_Band` (Bildnu
 - **Hebräisch:** in der Abschrift nur teilweise und meist verderbt; jede Stelle
   steht als „[hebräisch]“ und ist am Scan nachzutragen.
 - **Griechisch:** wie in der Abschrift, mit Lesefehlern; nur „ϑ/ΰ“ → „θ“.
+  Beim Durchsehen wird es nach dem Scan neu gesetzt (mit Akzenten).
 - **Durchgesehen:** Tage mit `"geprueft": true` sind von Hand gegen den Druck
   geprüft. Ihr Wortlaut und ihre Grenzen bleiben beim nächsten Lauf erhalten.
 
 ## Einen Tag durchsehen
 
-1. Den Tag in `data/dogmatik/band-N.json` gegen den Scan lesen und berichtigen.
-2. `"geprueft": true` setzen; Ergänzungen (Bibelwort, Kernsatz, Frage, Übersetzung
-   lateinischer Zitate) nach Wunsch.
+1. Den Tag gegen den Scan lesen (Band 1:
+   `https://archive.org/download/Christliche_Dogmatik_Erster_Band/page/n{Seite+10}_w1400.jpg`):
+   Wortlaut, Fußnoten, Absätze (die Abschrift verliert manche Absatzwechsel),
+   eckige Klammern (manchmal zu runden geworden), Griechisch, Hebräisch.
+2. Die Berichtigungen in `reference/pieper/durchsicht/band-N.json` eintragen
+   (Aufbau im Kopf von `scripts/dogmatik/durchsicht.mjs`) und
+   `node scripts/dogmatik/durchsicht.mjs` laufen lassen; es setzt
+   `"geprueft": true`. Ergänzungen (Bibelwort, Kernsatz, Frage, Übersetzung
+   lateinischer Zitate) von Hand nach Wunsch.
 3. `node scripts/dogmatik/build.mjs` muss danach unverändert durchlaufen; die
    Tests prüfen Fußnoten und Bibelworte.
+
+Was in der Durchsicht öfter auffällt und überall gilt, gehört zusätzlich in
+`scripts/dogmatik/ocr.mjs`, damit es auch den übrigen Tagen zugutekommt.

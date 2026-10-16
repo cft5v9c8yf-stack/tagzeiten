@@ -34,7 +34,7 @@ export const WORDS = {
   zuzufchreiben: 'zuzuschreiben', chriftl: 'christl', Schriftausfagen: 'Schriftaussagen', hinzuweifen: 'hinzuweisen',
   fasfen: 'fassen', Schuldfchrift: 'Schuldschrift', fiehet: 'siehet', weift: 'weist', Widerfacher: 'Widersacher',
   Thomafius: 'Thomasius', Apoft: 'Apost', nachgewiefen: 'nachgewiesen', JEfus: 'JEsus', Privatabfolution: 'Privatabsolution',
-  Pf: 'Ps',
+  Pf: 'Ps', Ies: 'Jes', uwd: 'und',
   // Fraktur letters confused: b/d, b/h, s/f, M/W, B/V, n/u, ä/a and others (second pass).
   ber: 'der', bie: 'die', ünd: 'und', uud: 'und', nnd: 'und', lst: 'ist', nickt: 'nicht', baß: 'daß', dass: 'daß',
   vou: 'von', vön: 'von', auck: 'auch', bem: 'dem', äus: 'aus', Mort: 'Wort', sür: 'für', nnr: 'nur', sci: 'sei',
@@ -107,6 +107,9 @@ export const PHRASES = [
   { from: 'Wir aben im vorhergehenden', to: 'Wir haben im vorhergehenden' },
   { from: 'Lutt. reck., p. 234', to: 'Hutt. rediv., p. 234' },
   { from: 'humanisti-schen', to: 'humanistischen' },
+  // "aus" for "auf", and a comma for the point of "scil.".
+  { from: 'in bezug aus ', to: 'in bezug auf ' },
+  { from: ' scil, ', to: ' scil. ' },
 ];
 
 const WORD = /[A-Za-zÄÖÜäöüß]+/g;
