@@ -42,12 +42,26 @@ async function renderToday(date: string, prepare?: (s: Store) => void, now = new
 }
 
 describe('Today', () => {
-  it('shows the thanks of the day under the three things, apart from them, only when there are some', async () => {
-    const store = await renderToday('2026-09-24');
+  it('shows the thanks of the day under the three things during a Wüstenzeit with the thanks, only when there are some', async () => {
+    const store = await renderToday('2026-09-24', (s) => {
+      s.startDesert('2026-09-23', 40);
+      s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, [DESERT_HABITS.find((h) => h.id === 'wz-dankbarkeit')!], true);
+    });
     expect(screen.queryByRole('heading', { name: 'Dank' })).toBeNull();
-    store.updateDay('2026-09-24', (d) => ({ ...d, evening: { ...d.evening, thanks: ['das Gespräch mit Anna', '', 'Brot'] } }));
+    act(() => store.updateDay('2026-09-24', (d) => ({ ...d, evening: { ...d.evening, thanks: ['das Gespräch mit Anna', '', 'Brot'] } })));
     await screen.findByRole('heading', { name: 'Dank' });
     expect([...document.querySelectorAll('.day-thanks li')].map((x) => x.textContent)).toEqual(['das Gespräch mit Anna', 'Brot']);
+    // The Wüstenzeit ended: the thanks leave "Heute", and stay with the day.
+    act(() => store.endWinterArc());
+    await waitFor(() => expect(screen.queryByRole('heading', { name: 'Dank' })).toBeNull());
+    expect(store.getDay('2026-09-24').evening.thanks).toEqual(['das Gespräch mit Anna', '', 'Brot']);
+  });
+
+  it('leaves the thanks of the Nachtgebet off "Heute" without a Wüstenzeit', async () => {
+    const store = await renderToday('2026-09-24');
+    act(() => store.updateDay('2026-09-24', (d) => ({ ...d, evening: { ...d.evening, thanks: ['Brot', '', ''] } })));
+    await screen.findByText('Die drei Dinge');
+    expect(screen.queryByRole('heading', { name: 'Dank' })).toBeNull();
   });
 
   it('moves on to the new day when the app stayed open over midnight, so nothing is ticked for yesterday', async () => {
