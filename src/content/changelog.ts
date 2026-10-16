@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.15.2',
+    date: '2026-10-16',
+    title: 'Der Dank nach der Wüstenzeit',
+    changes: [
+      { area: 'Heute', text: 'Der Dank des Tages steht unter den drei Dingen nur, solange eine Wüstenzeit mit dem Dank läuft. Beendest du sie, verschwindet der Abschnitt; was du aufgeschrieben hast, bleibt beim Nachtgebet, im Wochenrückblick und im Tagebuch der Wüstenwanderung.' },
+    ],
+  },
+  {
     version: '1.15.1',
     date: '2026-10-16',
     title: 'Der Dank unter „Heute“',

@@ -15,7 +15,8 @@ import { Lookback } from './Lookback';
 import { eveningClosed } from '../../domain/stats';
 import { churchDay } from '../../domain/churchYear';
 import { LutherRose } from '../../ui/LutherRose';
-import { activeRun, hallModeIn, runName, shortSpan } from '../../domain/winterArc';
+import { activeRun, hallModeIn, isInRun, runName, shortSpan } from '../../domain/winterArc';
+import { canWrite, habitsOf } from '../../domain/desert';
 import { weekdayOf } from '../../domain/dates';
 import { SundayRest } from './SundayRest';
 import { todayOffer } from '../../domain/seasons';
@@ -90,7 +91,8 @@ function ThreeThings({ day }: { day: Day }) {
 /**
  * The thanks of the day, under the three things and apart from them: what was
  * written in the Nachtgebet or in the Wüstenzeit, the same three lines. Shown
- * only when there is some.
+ * only while a Wüstenzeit with the thanks runs on that day, and when there is
+ * some; ended, the lines stay with the Nachtgebet and the Wüstenwanderung.
  */
 function DayThanks({ day }: { day: Day }) {
   const thanks = day.evening.thanks.map((t) => t.trim()).filter(Boolean);
@@ -168,7 +170,7 @@ export function TodayPage() {
 
       <ReadingPanel date={date} isToday={isToday} />
       <ThreeThings day={day} />
-      <DayThanks day={day} />
+      {hallRun && isInRun(hallRun, date) && habitsOf(hallRun, profile).some(canWrite) && <DayThanks day={day} />}
 
       {!resting && (
         <Section
