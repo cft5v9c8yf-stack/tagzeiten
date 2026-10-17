@@ -4,6 +4,18 @@ Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
 ## Dogmatik (Pieper) durchsehen
 
+**Auf Eis gelegt am 17.10.2026** (Wunsch von Andreas). Aussehen:
+`docs/dogmatik/` (Bildschirmfotos). Zum Weitermachen offen: zwei
+Entscheidungen von Andreas, nämlich der Maßstab (alles Wort für Wort oder
+gezielt Griechisch, Fußnoten, Absatzwechsel, Klammern, Stellenangaben) und das
+Hebräische (Platzhalter lassen oder nach dem Scan setzen). Vorgeschlagen war
+ein Workflow je Band: ein Agent je Block von etwa fünf Tagen liest gegen den
+Scan und liefert Berichtigungen im Format von `reference/pieper/durchsicht/`,
+ein zweiter prüft sie gegen; zuerst Band 1, Tag 6–46 als Probe. Muellers
+Umarbeitung (1946) liegt nicht digital vor und ist bis 2037 geschützt; die
+übrigen Scans auf archive.org haben unbrauchbare Texterkennung. Für Band 2
+gibt es eine neuere Fassung der Abschrift (08.08.2023, „minor corrections“).
+
 Gewünscht (16.10.2026): Francis Pieper, Christliche Dogmatik, drei Bände als
 Leseplan über drei Jahre (ein Band im Jahr) oder nach Lesezeit, und zum
 Nachschlagen. Eingebaut in 1.16.0 (erst als Demo auf `claude/dogmatik-demo`,
