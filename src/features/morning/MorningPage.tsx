@@ -20,7 +20,7 @@ const FORMS: { value: OrderForm; label: string }[] = [
 /** The Dogmatik is read in the Stille Zeit. */
 function useDogmatikInMorning(): boolean {
   const d = useProfile().dogmatik;
-  return d.on && d.stilleZeit;
+  return __DOGMATIK__ && d.on && d.stilleZeit;
 }
 
 export function MorningPage() {

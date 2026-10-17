@@ -497,7 +497,7 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       return <HouseBlessing />;
 
     case 'dogmatik':
-      return <DogmatikPart date={ctx.date} />;
+      return __DOGMATIK__ ? <DogmatikPart date={ctx.date} /> : null;
   }
 }
 

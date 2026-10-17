@@ -7,7 +7,10 @@ Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 Gewünscht (16.10.2026): Francis Pieper, Christliche Dogmatik, drei Bände als
 Leseplan über drei Jahre (ein Band im Jahr) oder nach Lesezeit, und zum
 Nachschlagen. Eingebaut in 1.16.0 (erst als Demo auf `claude/dogmatik-demo`,
-am 16.10.2026 auf Wunsch online gebracht).
+am 16.10.2026 online gebracht). **17.10.2026 auf Wunsch wieder ausgeschaltet**
+(1.16.1): Sie geht erst online, wenn alle Tage durchgesehen sind. Der Code
+bleibt im Zweig, der Schalter ist `__DOGMATIK__` in `vite.config.ts`; die
+Vorschau baut `npm run build:demo:dogmatik`.
 
 Stand:
 

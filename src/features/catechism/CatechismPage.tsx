@@ -417,13 +417,15 @@ function CatechismHome() {
         <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
       </section>
 
-      <section className="cat-area" aria-labelledby="cat-dogmatik">
-        <div className="cat-area-head">
-          <h3 id="cat-dogmatik">Dogmatik</h3>
-          <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, drei Bände in drei Jahren, zugleich zum Nachschlagen</p>
-        </div>
-        <DogmatikCard />
-      </section>
+      {__DOGMATIK__ && (
+        <section className="cat-area" aria-labelledby="cat-dogmatik">
+          <div className="cat-area-head">
+            <h3 id="cat-dogmatik">Dogmatik</h3>
+            <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, drei Bände in drei Jahren, zugleich zum Nachschlagen</p>
+          </div>
+          <DogmatikCard />
+        </section>
+      )}
 
       <section className="cat-area" aria-labelledby="cat-read">
         <div className="cat-area-head">

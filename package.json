@@ -1,7 +1,7 @@
 {
   "name": "tagzeiten",
   "private": true,
-  "version": "1.16.0",
+  "version": "1.16.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.test.json && tsc -p tsconfig.node.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:demo": "vite build --mode demo && node scripts/build-demo.mjs"
+    "build:demo": "vite build --mode demo && node scripts/build-demo.mjs",
+    "build:demo:dogmatik": "DOGMATIK=1 vite build --mode demo --outDir dist-dogmatik && node scripts/build-demo.mjs dist-dogmatik"
   },
   "dependencies": {
     "@fontsource/literata": "^5.3.0",

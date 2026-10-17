@@ -43,8 +43,12 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: 'sonntag/hilfe', element: <SundayGuidePage /> },
       { path: 'sonntag/gebet', element: <ScripturePrayerPage /> },
       { path: 'katechismus', element: <CatechismPage /> },
-      { path: 'katechismus/dogmatik', element: <DogmatikPage /> },
-      { path: 'katechismus/dogmatik/:tag', element: <DogmatikPage /> },
+      ...(__DOGMATIK__
+        ? [
+            { path: 'katechismus/dogmatik', element: <DogmatikPage /> },
+            { path: 'katechismus/dogmatik/:tag', element: <DogmatikPage /> },
+          ]
+        : []),
       { path: 'katechismus/:teil', element: <CatechismPage /> },
       { path: 'katechismus/loehe/:hauptstueck', element: <CatechismPage /> },
       { path: 'arena', element: <ArenaPage /> },

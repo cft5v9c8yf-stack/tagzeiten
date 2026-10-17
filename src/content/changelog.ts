@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.1',
+    date: '2026-10-17',
+    title: 'Die Dogmatik vorerst wieder heraus',
+    changes: [
+      { area: 'Lehre', text: 'Die Dogmatik ist vorerst wieder herausgenommen. Sie kommt zurück, wenn alle Tage gegen den Druck durchgesehen sind. Was du schon gelesen und notiert hast, bleibt gespeichert.' },
+    ],
+  },
+  {
     version: '1.16.0',
     date: '2026-10-16',
     title: 'Die Dogmatik',

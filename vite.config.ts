@@ -9,7 +9,12 @@ import pkg from './package.json' with { type: 'json' };
 const base = process.env.BASE_PATH ?? '/';
 
 export default defineConfig(({ mode }) => ({
-  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    // The Dogmatik stays out of the app until every day is read against the print; the tests and
+    // the preview (npm run build:demo:dogmatik) switch it on.
+    __DOGMATIK__: JSON.stringify(mode === 'test' || process.env.DOGMATIK === '1'),
+  },
   // Without the PWA plugin (demo), the update hook resolves to a no-op stub.
   resolve:
     mode === 'demo' ? { alias: { 'virtual:pwa-register/react': '/src/demo/pwaRegisterStub.ts' } } : undefined,
