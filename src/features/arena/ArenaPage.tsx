@@ -453,8 +453,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const titleId = useId();
   const toast = useToast();
   const pin = usePin();
-  // Where deleting was asked: under the icons at the top or among the buttons below.
-  const [confirm, setConfirm] = useState<'top' | 'bottom' | false>(false);
+  // Deleting is asked right under the icons at the top.
+  const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -495,7 +495,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
 
   return (
     <article className="arena-entry">
-      {/* The way back, and beside it small icons for the actions, as on the iPhone; the buttons with words stay below. */}
+      {/* The way back, and beside it small icons for the actions, as on the iPhone. */}
       <div className="entry-bar">
         <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
         <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
@@ -513,10 +513,10 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           ) : (
             <IconButton icon="archive" label="Archivieren" onClick={archive} />
           )}
-          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm('top')} />
+          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
-      {confirm === 'top' && (
+      {confirm && (
         <div className="entry-bar-confirm" role="group" aria-label="Eintrag löschen?">
           <span>Eintrag löschen?</span>
           {deleteAnswer}
@@ -591,33 +591,6 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           </p>
         ))}
       </aside>
-
-      <div className="arena-actions">
-        <button type="button" className="btn primary" onClick={finish}>
-          {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
-        </button>
-        {!archived && (
-          <button type="button" className="btn" onClick={() => pin(entry)}>
-            {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
-          </button>
-        )}
-        {archived ? (
-          <button type="button" className="btn" onClick={restore}>
-            {`Zurück in die ${place.title} holen`}
-          </button>
-        ) : (
-          <button type="button" className="btn" onClick={archive}>
-            {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
-          </button>
-        )}
-        {confirm === 'bottom' ? (
-          deleteAnswer
-        ) : (
-          <button type="button" className="btn quiet" onClick={() => setConfirm('bottom')}>
-            Eintrag löschen
-          </button>
-        )}
-      </div>
     </article>
   );
 }

@@ -236,7 +236,7 @@ describe('the Wüstenwanderung in the Arena', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
     fireEvent.click(await screen.findByRole('button', { name: 'Lieber frei in der Gebetskammer schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Für das Gespräch mit Anna' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Sichern, abhaken und zurück' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Abhaken und zurück' }));
     expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
     expect(store.getDay('2026-09-26').habits['wz-dankbarkeit']).toBe(true);
     expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Für das Gespräch mit Anna']);

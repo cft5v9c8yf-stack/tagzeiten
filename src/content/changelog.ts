@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.8',
+    date: '2026-10-19',
+    title: 'Arena: Schaltflächen unten entfallen',
+    changes: [
+      { area: 'Arena', text: 'Unter einem Eintrag stehen keine Schaltflächen mehr. Sichern, Anheften, Archivieren und Löschen findest du als Symbole oben. Was du schreibst, bleibt beim Schreiben erhalten.' },
+    ],
+  },
+  {
     version: '1.16.7',
     date: '2026-10-19',
     title: 'Gleiche Maße für Kacheln und Felder',
