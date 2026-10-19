@@ -190,9 +190,7 @@ export function DogmatikDayPage({ lib, day }: { lib: DogmatikLibrary; day: Dogma
   return (
     <article className="dogmatik-day" style={{ ['--dogmatik-size' as string]: `${1.08 + s.fontStep * 0.08}rem` }}>
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={withDate(back.to, date, isToday)}>{back.label}</BackLink>
-        </p>
+        <BackLink to={withDate(back.to, date, isToday)}>{back.label}</BackLink>
         <h2 className="dogmatik-title">{day.titel}</h2>
       </div>
       <p className="dogmatik-meta">

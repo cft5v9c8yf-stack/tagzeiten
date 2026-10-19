@@ -229,7 +229,7 @@ export function SettingsPage() {
   if (!area) {
     return (
       <div className="settings">
-        <h2>Mehr</h2>
+        <h2 className="visually-hidden">Mehr</h2>
         <ul className="more-tiles">
           {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
             <li key={a.slug}>
@@ -261,9 +261,7 @@ export function SettingsPage() {
   return (
     <div className="settings more-area">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
-        </p>
+        <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
         {/* Only the arrow and the title; the area's icon stays on its tile. */}
         <h2>{area.title}</h2>
       </div>

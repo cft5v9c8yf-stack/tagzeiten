@@ -35,9 +35,7 @@ export function DesertThanks() {
   return (
     <article className="arena-entry desert-thanks">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={home}>Zurück zur Liste</BackLink>
-        </p>
+        <BackLink to={home}>Zurück zur Liste</BackLink>
         <h2>{habit?.name ?? 'Dank'}</h2>
       </div>
       <p className="small muted">{formatLong(date)}</p>

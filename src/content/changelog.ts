@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.5',
+    date: '2026-10-19',
+    title: 'Jede Seite beginnt gleich',
+    changes: [
+      { area: 'Henoch', text: 'Alle Seiten haben denselben Kopf: links der Name des Bereichs, rechts die Suche, darunter in einer ruhigen Zeile das Datum, wo es gebraucht wird.' },
+      { area: 'Henoch', text: 'Der Pfeil zurück steht auf jeder Unterseite an derselben Stelle, links neben dem Titel.' },
+    ],
+  },
+  {
     version: '1.16.4',
     date: '2026-10-19',
     title: 'Schaltflächen, die man sieht und spürt',

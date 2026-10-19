@@ -10,7 +10,7 @@ export function WordSwitch({ current }: { current: 'bible' | 'teaching' }) {
   ] as const;
   return (
     <>
-      <h2>Wort</h2>
+      <h2 className="visually-hidden">Wort</h2>
       <nav className="seg word-switch" aria-label="Bibel oder Lehre">
         {items.map((it) => (
           <Link key={it.key} to={withDate(it.to, date, isToday)} aria-current={it.key === current ? 'page' : undefined}>

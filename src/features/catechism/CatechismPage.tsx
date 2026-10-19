@@ -342,13 +342,13 @@ export function CatechismPage() {
   }
   if (ci >= 0 || appendix) {
     const back = (
-      <p className="back-link">
+      <>
         {appendix && 'book' in appendix ? (
           <BackLink to={withDate('/katechismus/konkordienbuch', date, isToday)}>Konkordienbuch</BackLink>
         ) : (
           <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
         )}
-      </p>
+      </>
     );
     return (
       <div className="cat-page">

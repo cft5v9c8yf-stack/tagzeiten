@@ -58,7 +58,7 @@ export function SearchPage() {
 
   return (
     <div className="search-page">
-      <h2>Suchen</h2>
+      <h2 className="visually-hidden">Suchen</h2>
       <form
         role="search"
         className="field search-field"

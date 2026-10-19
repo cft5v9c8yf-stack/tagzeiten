@@ -69,9 +69,7 @@ export function ScripturePrayerPage() {
   return (
     <article className="scripture-walk">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={links.sunday()}>Sonntag</BackLink>
-        </p>
+        <BackLink to={links.sunday()}>Sonntag</BackLink>
         <h2>{walk.title}</h2>
       </div>
       <p className="small muted">{SCRIPTURE_PRAYER_INTRO}</p>

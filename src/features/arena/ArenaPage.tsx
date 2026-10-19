@@ -495,9 +495,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
     <article className="arena-entry">
       {/* The way back, and beside it small icons for the actions, as on the iPhone; the buttons with words stay below. */}
       <div className="entry-bar">
-        <p className="back-link">
-          <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
-        </p>
+        <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
         <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
           <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
           {!archived && (
@@ -643,9 +641,7 @@ export function ArenaPage() {
     return (
       <>
         <div className="title-row">
-          <p className="back-link">
-            <BackLink to="/arena">Arena</BackLink>
-          </p>
+          <BackLink to="/arena">Arena</BackLink>
           <p className="title-row-text">Diesen Eintrag gibt es nicht mehr.</p>
         </div>
       </>
@@ -735,9 +731,7 @@ function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to="/arena">Arena</BackLink>
-        </p>
+        <BackLink to="/arena">Arena</BackLink>
         <h2 className="place-title">
           {title}
           {sub && <span className="place-sub">{sub}</span>}
@@ -787,7 +781,7 @@ function ArenaHome() {
   ];
   return (
     <div className="arena arena-home">
-      <h2>Arena</h2>
+      <h2 className="visually-hidden">Arena</h2>
       <SectionVerse id="arena" />
       <ul className="arena-places">
         {places.map((p) => (

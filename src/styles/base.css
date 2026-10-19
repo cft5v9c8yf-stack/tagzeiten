@@ -113,27 +113,40 @@ dd a:not([class]) {
   white-space: nowrap;
 }
 
+/* The head of every page: (back) title ... search, and one quiet line under it. */
 header.top {
+  padding: 14px 0 4px;
+}
+header.top .top-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 2px 12px;
-  padding: 18px 0 6px;
+  align-items: center;
+  min-height: 44px;
 }
-.top-motto {
-  font-size: 1.05rem;
-  font-weight: 600;
-  font-style: italic;
+header.top .top-back {
+  display: inline-flex;
+  margin-right: 4px;
+  flex: none;
+  align-items: center;
+}
+header.top .top-back:empty {
+  display: none;
+}
+header.top .top-title {
+  flex: 1;
+  min-width: 0;
   margin: 0;
-  letter-spacing: 0.01em;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.25;
+  font-weight: 600;
 }
-header.top .date {
+header.top .top-line {
+  margin: 0;
   font-family: var(--sans);
   font-size: 0.9rem;
   color: var(--muted);
 }
-header.top .date a {
+header.top .top-line a {
   color: var(--accent);
   font-weight: 600;
   margin-left: 8px;
@@ -436,17 +449,4 @@ nav.tabs a[aria-current='page']::before {
   border-radius: var(--radius-s);
   padding: 8px 12px;
   margin: 4px 0 8px;
-}
-/* The name and line of the app at the top of every page. */
-header.top .app-name {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-header.top .app-line {
-  font-weight: 400;
-  font-style: italic;
-  color: var(--muted);
 }

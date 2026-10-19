@@ -167,9 +167,7 @@ export function ChurchYearPage() {
   return (
     <div className="church-year-page">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={withDate('/', date, isToday)}>Zurück zu Heute</BackLink>
-        </p>
+        <BackLink to={withDate('/', date, isToday)}>Zurück zu Heute</BackLink>
         <h2>Das Kirchenjahr {outline.churchYear}/{String(outline.churchYear + 1).slice(2)}</h2>
       </div>
       <Section id="cy.intro" title="Einleitung" defaultOpen={false} className="cy-dieffenbach">

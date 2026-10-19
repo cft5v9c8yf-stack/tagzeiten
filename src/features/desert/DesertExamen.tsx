@@ -33,9 +33,7 @@ export function DesertExamen() {
   return (
     <article className="arena-entry desert-examen">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={home}>Zurück zur Liste</BackLink>
-        </p>
+        <BackLink to={home}>Zurück zur Liste</BackLink>
         <h2>Gewissenserforschung</h2>
       </div>
       <p className="small muted">{formatLong(date)}</p>

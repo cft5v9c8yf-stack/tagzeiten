@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { FlowIcon } from './FlowIcon';
+import { InBackSlot } from './PageHeader';
 
 /**
  * The way back at the top of a page: only an arrow in the line of the Henoch
@@ -8,9 +9,11 @@ import { FlowIcon } from './FlowIcon';
 export function BackLink({ to, children }: { to: string; children: string }) {
   const label = children.startsWith('Zurück') ? children : `Zurück: ${children}`;
   return (
-    <Link to={to} className="back-link-to" title={label}>
-      <FlowIcon name="back" size={22} />
-      <span className="visually-hidden">{label}</span>
-    </Link>
+    <InBackSlot>
+      <Link to={to} className="back-link-to" title={label}>
+        <FlowIcon name="back" size={22} />
+        <span className="visually-hidden">{label}</span>
+      </Link>
+    </InBackSlot>
   );
 }

@@ -157,9 +157,7 @@ function Lookup({ lib }: { lib: DogmatikLibrary }) {
   return (
     <div className="dogmatik-lookup">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
-        </p>
+        <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
         <h2 className="cat-part-title">Dogmatik</h2>
       </div>
       <p className="book-source">
