@@ -12,7 +12,7 @@ import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
 import { dogmatikToMarkdown } from '../domain/dogmatik';
 import { loadDogmatik } from '../content/dogmatik';
-import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert } from '../domain/desert';
+import { addOwn, adopt, choose, chooseOwn, fromRound, habitFromOffer, offerOf, relink, removeOwn, startDesert } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
@@ -454,9 +454,17 @@ export class Store {
   /** Begins a Wüstenzeit with the habits chosen; a round under way is ended, nothing is deleted. */
   startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = ''): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) }), {
-      immediate: true,
-    });
+    // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
+    this.updateProfile(
+      (p) => {
+        const missing = [...new Set(habits)]
+          .map(offerOf)
+          .filter((o): o is DesertHabit => !!o && !p.habits.some((h) => h.id === o.id))
+          .map(habitFromOffer);
+        return { ...p, habits: [...p.habits, ...missing], winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) };
+      },
+      { immediate: true },
+    );
   }
 
   /** "Diesmal nicht": the invitation leaves "Heute" and stays in the Arena. */

@@ -309,6 +309,9 @@ describe('Einrichtung: der Weg Wüstenwanderung', () => {
     const run = store.getProfile().winterArc.runs[0]!;
     expect(run).toMatchObject({ startDate: '2026-10-20', durationDays: 90 });
     expect(run.habits).toEqual(['wz-morgensegen', 'wz-handy-spaeter']);
+    // Each chosen habit exists as a habit of the profile, so the Arena shows all of them, not only one.
+    const have = store.getProfile().habits;
+    for (const id of run.habits!) expect(have.find((h) => h.id === id), id).toMatchObject({ desert: expect.any(String), active: false });
   });
 
   it('asks for a valid own length and start before it goes on', async () => {

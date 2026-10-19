@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.18.5',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: alle gewählten Gewohnheiten',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer in der Einrichtung die Wüstenwanderung wählt, hat danach alle Gewohnheiten, die er angehakt hat, und nicht nur eine.' },
+    ],
+  },
+  {
     version: '1.18.4',
     date: '2026-10-19',
     title: 'Wüstenwanderung: Beginn nicht in der Vergangenheit',
