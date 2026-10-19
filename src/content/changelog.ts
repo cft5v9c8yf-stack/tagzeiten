@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.15',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung ohne Unterzeile',
+    changes: [
+      { area: 'Arena', text: 'Auf der Seite der Wüstenwanderung steht unter dem Titel keine zweite Überschrift mit Unterzeile mehr. Sie beginnt wie die anderen Orte mit dem Wort.' },
+    ],
+  },
+  {
     version: '1.16.14',
     date: '2026-10-19',
     title: 'Keine Unterstreichungen mehr',

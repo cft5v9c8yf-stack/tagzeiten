@@ -51,14 +51,13 @@ const runs = (parts: readonly Run[]) =>
   );
 
 /**
- * The guide: the text of the Wüstenzeit (without its head where the head
+ * The guide: the text of the Wüstenzeit (without its verse where the verse
  * stands above, at the way in). The 90-Tage-Standard is a package (0.40):
  * its guide stands with it in the choice, and here while a Wüstenzeit holds it.
  */
 export function DesertGuide({ head = true, focus, link }: { head?: boolean; focus?: number; link?: string }) {
   return (
     <div className="desert-guide">
-      {head && <GuideHead />}
       {DESERT_GUIDE.paragraphs.map((p, i) => (
         <p key={i}>{runs(p)}</p>
       ))}
@@ -75,17 +74,6 @@ export function DesertGuide({ head = true, focus, link }: { head?: boolean; focu
         </details>
       )}
     </div>
-  );
-}
-
-function GuideHead() {
-  return (
-    <>
-      <h4>{DESERT_GUIDE.title}</h4>
-      <p className="desert-tagline">
-        <em>{DESERT_GUIDE.tagline}</em>
-      </p>
-    </>
   );
 }
 
@@ -486,7 +474,6 @@ function Start() {
   return (
     <>
       <div className="desert-guide">
-        <GuideHead />
         <WaVerse verse={DESERT_GUIDE.verse} />
       </div>
       {offer && !starting && <ArenaSeason offer={offer} onPrepare={() => setStarting('season')} onOther={() => setStarting('free')} />}

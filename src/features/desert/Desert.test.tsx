@@ -79,7 +79,6 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(guide.textContent).toContain('In der Bibel ist die Wüste kein leerer Ort, sondern ein Ort der Begegnung.');
     expect(guide.textContent).toContain('„Ich will sie locken und will sie in die Wüste führen und freundlich mit ihr reden.“ (Hos 2,16)');
     expect([...document.querySelectorAll('.desert-guide em')].map((e) => e.textContent)).toEqual([
-      'Weniger Ablenkung. Mehr Raum für Gott.',
       'Askese',
       'für',
       'aus',
