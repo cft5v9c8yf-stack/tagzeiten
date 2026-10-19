@@ -8,7 +8,7 @@ import type { MorningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
 import { StepFlow, type FlowStep } from '../../ui/StepFlow';
-import { Timer } from '../../ui/Timer';
+import { Timer, TimerStart } from '../../ui/Timer';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
 
@@ -23,7 +23,7 @@ function useDogmatikInMorning(): boolean {
   return __DOGMATIK__ && d.on && d.stilleZeit;
 }
 
-/** The names under the mark of the step in view (the long titles would not fit under seven marks). */
+/** The names under the marks (short: the long titles would not fit under seven marks). */
 const MORNING_SHORT: Record<string, string> = {
   opening: 'Eröffnung',
   word: 'Wort',
@@ -64,9 +64,13 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
 
   return (
     <>
-      {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} />}
+      {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} quietUntilStarted />}
 
-      <OrderHead title="Stille Zeit" rubric={form === 'short' ? RUBRICS.morningShort : undefined}>
+      <OrderHead
+        title="Stille Zeit"
+        rubric={form === 'short' ? RUBRICS.morningShort : undefined}
+        aside={isToday ? <TimerStart totalMinutes={ORDER_MINUTES.morning[form]} /> : undefined}
+      >
         <Segmented label="Form der Stillen Zeit" options={FORMS} value={form} onChange={setForm} />
       </OrderHead>
       {form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
@@ -108,9 +112,6 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
     const k = order.steps.findIndex((s) => !day.morning.steps[s.id]);
     return k < 0 ? null : k + bed;
   });
-
-  // Only the step in view carries its name: seven names would not fit in a row.
-  const named = flow.map((f, i) => (i === current ? f : { ...f, short: undefined }));
 
   const update = (fn: (m: MorningEntry) => MorningEntry) =>
     store.updateDay(date, (d) => ({ ...d, morning: fn(d.morning) }), { immediate: true });
@@ -178,7 +179,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
 
   return (
     <>
-      <StepFlow label="Stille Zeit" steps={named} current={current} onSelect={setCurrent} footer={footer}>
+      <StepFlow label="Stille Zeit" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
         {content}
       </StepFlow>
       {day.morning.done && current === null && (

@@ -181,6 +181,16 @@
 }
 .flow-footer {
   margin-top: 22px;
+  /* Long steps: the way on stays within reach, just above the tab bar. */
+  position: sticky;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 8px);
+  z-index: 2;
+  padding-top: 12px;
+  background: linear-gradient(to bottom, transparent, var(--sheet) 12px);
+}
+.flow-back {
+  margin-top: 6px;
+  text-align: center;
 }
 .flow-footer .btn {
   width: 100%;
@@ -283,6 +293,21 @@
 }
 .placeholder-text {
   font-style: italic;
+}
+/* The confession is prayed, not written: a line to speak, with the word that nothing is noted. */
+.confess-label {
+  margin: 14px 0 6px;
+}
+.confess-line {
+  margin: 0;
+  padding: 4px 0 4px 14px;
+  border-left: 3px solid var(--gold);
+  font-size: 1.05rem;
+}
+.confess-note {
+  color: var(--ink);
+  font-size: 0.95rem;
+  margin: 8px 0 10px;
 }
 
 /* ---------------------------------------------------------------- folds */
@@ -629,6 +654,25 @@ select:focus {
   margin-top: 4px;
   color: var(--ink);
   font-weight: 600;
+}
+/* Where the names do not all fit, only the mark in view keeps its own; the rest stay measurable but unseen. */
+.flow-chain:not(.names-all) li:not(.current) .flow-short {
+  position: absolute;
+  visibility: hidden;
+}
+/* Too narrow even for the marks: the row scrolls. */
+.flow-chain {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.flow-chain::-webkit-scrollbar {
+  display: none;
+}
+.flow-chain ol {
+  min-width: min-content;
+}
+.flow-chain li {
+  flex: none;
 }
 
 /*

@@ -9,6 +9,7 @@ import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
+import { timer } from '../../ui/timerState';
 import { MorningPage } from './MorningPage';
 
 beforeEach(() => {
@@ -118,8 +119,12 @@ describe('Stille Zeit without the bed', () => {
 
   it('names the step in view under its mark and the timer agrees with the bed', async () => {
     await renderMorning();
+    // The strip with the time shows only once the time is started.
+    expect(screen.queryByText(/Jetzt: Am Bett/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Zeit starten' }));
     expect(screen.getByText(/Jetzt: Am Bett/)).toBeTruthy();
-    expect(chain().querySelectorAll('.flow-short')).toHaveLength(1);
+    // Every mark carries its name; the one in view stands first.
     expect(chain().querySelector('.flow-short')!.textContent).toBe('Am Bett');
+    timer.reset(45 * 60);
   });
 });

@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.10',
+    date: '2026-10-19',
+    title: 'Andacht: Text höher, Weg bleibt in Reichweite',
+    changes: [
+      { area: 'Andacht', text: 'Die Stille Zeit beginnt mit einer kleinen Schaltfläche „Zeit starten“. Der Streifen mit der Uhr erscheint erst, wenn die Zeit läuft. Die Wahl zwischen ganzer Ordnung und Kurzform steht direkt über der Schrittleiste.' },
+      { area: 'Andacht', text: 'Unter allen Zeichen der Schrittleiste steht der Name, solange der Platz reicht. Sonst trägt ihn nur der Schritt, in dem du bist. Ist die Leiste noch enger, lässt sie sich zur Seite schieben.' },
+      { area: 'Andacht', text: 'Die Schaltfläche am Ende eines Schritts („Weiter zu: …“, „… abschließen“) bleibt bei langen Texten über der Tab-Leiste stehen. Darunter steht „Zurück zu: …“.' },
+      { area: 'Andacht', text: 'Bei der Beichte im Kranz steht „Ich bekenne dir, daß ich …“ als Gebetszeile. „Wird gebetet, nicht notiert.“ ist besser zu lesen.' },
+    ],
+  },
+  {
     version: '1.16.9',
     date: '2026-10-19',
     title: 'Heute kürzer, ruhigerer Abschluss am Abend',

@@ -932,6 +932,12 @@ body.is-sorting * {
 .order-head h2 {
   margin: 0 0 2px;
 }
+.order-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .order-head .rubric {
   margin: 0 0 6px;
 }
