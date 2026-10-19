@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.18.2',
+    date: '2026-10-19',
+    title: 'Einrichtung: Erklärung nach der Wahl',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf der Seite „Wofür möchtest du Henoch nutzen?“ erscheint die Erklärung erst, wenn du eine Karte wählst, und gilt nur für diese Karte.' },
+    ],
+  },
+  {
     version: '1.18.1',
     date: '2026-10-19',
     title: 'Anleitung ohne Lesemethode, Gewohnheiten gefaltet',

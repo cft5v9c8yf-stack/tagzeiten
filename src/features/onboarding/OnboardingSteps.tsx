@@ -95,23 +95,37 @@ export function OrderStep() {
 /* ------------------------------------------------------------ 2 */
 
 export function WayStep({ way, onChoose }: { way: Way | null; onChoose: (w: Way) => void }) {
-  const card = (w: Way, title: string, line: string) => (
-    <button type="button" className="ob-choice" aria-pressed={way === w} onClick={() => onChoose(w)}>
-      <b>{title}</b>
-      <span>{line}</span>
-    </button>
+  // The explanation comes after the choice, right under the chosen card.
+  const card = (w: Way, title: string, line: string, info: string) => (
+    <>
+      <button type="button" className="ob-choice" aria-pressed={way === w} onClick={() => onChoose(w)}>
+        <b>{title}</b>
+        <span>{line}</span>
+      </button>
+      {way === w && (
+        <p className="ob-text" role="status">
+          {info}
+        </p>
+      )}
+    </>
   );
   return (
     <>
       <p className="ob-lead">Du kannst das später ändern. Die andere Möglichkeit bleibt in der App erhalten.</p>
       <div className="ob-choices" role="group" aria-label="Wofür möchtest du Henoch nutzen?">
-        {card('everyday', 'Alltag', 'Stille Zeit, Bibel lesen, Vesper und Nachtgebet, dazu dein Haus.')}
-        {card('desert', 'Wüstenwanderung', 'Weniger Ablenkung. Mehr Raum für Gott.')}
+        {card(
+          'everyday',
+          'Alltag',
+          'Stille Zeit, Bibel lesen, Vesper und Nachtgebet, dazu dein Haus.',
+          'Der Alltag ist der tägliche Rhythmus, den du danach beibehältst oder in dem du von Anfang an lebst.',
+        )}
+        {card(
+          'desert',
+          'Wüstenwanderung',
+          'Weniger Ablenkung. Mehr Raum für Gott.',
+          'Die Wüstenwanderung ist eine begrenzte Zeit, in der du Ablenkungen beiseitelegst und Gottes Wort mehr Raum gibst.',
+        )}
       </div>
-      <p className="ob-text">
-        Die Wüstenwanderung ist eine begrenzte Zeit, in der du Ablenkungen beiseitelegst und Gottes Wort mehr Raum gibst.
-        Der Alltag ist der tägliche Rhythmus, den du danach beibehältst oder in dem du von Anfang an lebst.
-      </p>
     </>
   );
 }
