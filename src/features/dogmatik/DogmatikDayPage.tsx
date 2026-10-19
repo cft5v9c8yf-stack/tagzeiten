@@ -146,9 +146,20 @@ function Question({ day }: { day: DogmatikDay }) {
         value={note}
         onChange={(e) => update((x) => setNote(x, day, e.target.value), {})}
       />
-      <button type="button" className="btn" disabled={!note.trim()} onClick={toJournal}>
+      <button
+        type="button"
+        className="btn"
+        disabled={!note.trim()}
+        aria-describedby={note.trim() ? undefined : 'dogmatik-note-hint'}
+        onClick={toJournal}
+      >
         In die Gebetskammer schreiben
       </button>
+      {!note.trim() && (
+        <p id="dogmatik-note-hint" className="small muted">
+          Schreibe zuerst deine Gedanken auf.
+        </p>
+      )}
     </section>
   );
 }

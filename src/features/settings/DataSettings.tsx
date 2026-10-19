@@ -6,8 +6,8 @@ import { useStore } from '../../data/hooks';
 import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
 import { BackupError, parseBackup } from '../../domain/backup';
 import { resetOpenState } from '../../ui/collapseState';
-import { FlowIcon } from '../../ui/FlowIcon';
 import { TileGroup } from '../../ui/TileGroup';
+import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
 
 type Pending = { json: string; days: number; exportedAt?: string };
 
@@ -135,7 +135,7 @@ export function DataSettings() {
           id: 'more.data.export',
           title: 'Exportieren',
           line: 'Als Text oder Sicherung',
-          icon: 'scroll',
+          icon: 'export',
           content: (
             <>
       <div className="button-row">
@@ -155,7 +155,7 @@ export function DataSettings() {
           id: 'more.data.import',
           title: 'Sicherung einspielen',
           line: 'Aus einer Datei',
-          icon: 'review',
+          icon: 'import',
           content: (
             <>
       <label className="btn file-btn">
@@ -206,20 +206,17 @@ export function DataSettings() {
             Alle Einträge und Einstellungen auf diesem Gerät werden gelöscht. Das lässt sich nicht rückgängig machen. Wenn
             du sie behalten willst, exportiere vorher eine Sicherung.
           </p>
-          <div className="button-row">
-            <button type="button" className="btn danger" onClick={runDelete} disabled={busy} aria-busy={busy}>
-              <FlowIcon name="trash" size={18} />
-              Endgültig löschen
-            </button>
-            <button type="button" className="btn quiet" onClick={() => setConfirmDelete(false)}>
-              Abbrechen
-            </button>
-          </div>
+          <ConfirmRow
+            label="Alle Einträge löschen?"
+            confirmLabel="Endgültig löschen"
+            cancelLabel="Abbrechen"
+            onConfirm={runDelete}
+            onCancel={() => setConfirmDelete(false)}
+            busy={busy}
+          />
         </div>
       ) : (
-        <button type="button" className="btn" onClick={() => setConfirmDelete(true)}>
-          Alle Einträge löschen …
-        </button>
+        <ConfirmTrigger onClick={() => setConfirmDelete(true)}>Alle Einträge löschen …</ConfirmTrigger>
       )}
             </>
           ),

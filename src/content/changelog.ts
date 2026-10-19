@@ -13,6 +13,18 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.11',
+    date: '2026-10-19',
+    title: 'Zeichen, Bestätigungen und Schaltflächen vereinheitlicht',
+    changes: [
+      { area: 'Henoch', text: 'Neue Zeichen für Gewohnheiten, Sicherung einspielen, Exportieren, App installieren, Flugmodus und Über Henoch. Gebet zeigt gefaltete Hände, die Gebetsübersicht behält die Personen. Der Stern steht nur noch für den Fokus.' },
+      { area: 'Henoch', text: 'Wo etwas gelöscht wird, fragt immer dieselbe Zeile nach: erst „löschen …“, dann die Antwort und „Behalten“.' },
+      { area: 'Henoch', text: 'Was gerade nicht geht, ist überall gleich blass. Fehlt ein Name, steht ein Hinweis dabei. Der Fokusrahmen hat überall dieselbe Farbe.' },
+      { area: 'Henoch', text: 'Schaltflächen haben drei Stufen: gefüllt, umrandet und als Text. Alleinstehende Links sind dünn unterstrichen.' },
+      { area: 'Wüstenzeit', text: 'In den Masken für Dank und Prüfung steht die Hauptschaltfläche über die ganze Breite, die übrigen darunter.' },
+    ],
+  },
+  {
     version: '1.16.10',
     date: '2026-10-19',
     title: 'Andacht: Text höher, Weg bleibt in Reichweite',

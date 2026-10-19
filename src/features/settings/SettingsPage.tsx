@@ -73,7 +73,7 @@ function PrayerTiles() {
           id: 'more.treasury',
           title: 'Gebetsschatz',
           line: 'Gebete der Väter',
-          icon: 'foldedHands',
+          icon: 'candle',
           info: TREASURY_INFO,
           content: <PrayerTreasury />,
         },
@@ -88,7 +88,7 @@ const AREAS: readonly Area[] = [
     id: 'habits',
     title: 'Gewohnheiten',
     line: 'Täglich, wöchentlich, monatlich',
-    icon: 'check',
+    icon: 'habits',
     info: HABITS_INFO,
     body: () => <HabitSettings />,
   },
@@ -97,7 +97,7 @@ const AREAS: readonly Area[] = [
     id: 'prayer',
     title: 'Gebet',
     line: 'Mein Haus, Übersicht, Gebetsschatz',
-    icon: 'people',
+    icon: 'foldedHands',
     info: (
       <p>
         Alles, was in der Stillen Zeit gebetet wird und von dir kommt: deine Frau und deine Kinder mit Namen, deine
@@ -140,7 +140,7 @@ const AREAS: readonly Area[] = [
     id: 'settings',
     title: 'Einstellungen',
     line: 'Darstellung, Daten, Installation, Flugmodus',
-    icon: 'sliders',
+    icon: 'dots',
     info: <p>Darstellung, deine Daten, Installation und Flugmodus, Angaben zur App.</p>,
     body: () => (
       <TileGroup
@@ -166,7 +166,7 @@ const AREAS: readonly Area[] = [
             id: 'more.install',
             title: 'App installieren',
             line: 'Android und iPhone',
-            icon: 'check',
+            icon: 'phone',
             info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
             content: <InstallGuide level={4} />,
           },
@@ -174,7 +174,7 @@ const AREAS: readonly Area[] = [
             id: 'more.airplane',
             title: 'Flugmodus beim Beten',
             line: 'Stille ohne Störung',
-            icon: 'moon',
+            icon: 'airplane',
             info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
             content: <AirplaneGuide level={4} />,
           },
@@ -182,7 +182,7 @@ const AREAS: readonly Area[] = [
             id: 'more.about',
             title: 'Über Henoch',
             line: 'Bogen, Quellen, Privatsphäre',
-            icon: 'cross',
+            icon: 'info',
             info: ABOUT_INFO,
             content: <About />,
           },

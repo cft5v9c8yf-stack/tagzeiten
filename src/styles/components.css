@@ -795,7 +795,7 @@ header.top .search-link:hover,
   color: var(--ink);
 }
 .icon-btn:disabled {
-  opacity: 0.25;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 .link-btn::before {

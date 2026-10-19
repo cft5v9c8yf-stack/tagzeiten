@@ -49,7 +49,7 @@ export function DesertThanks() {
           ? 'Der Satz steht auch in der Andacht und in der Versesammlung, das Tagebuch in der Wüstenwanderung, der Dank im Nachtgebet und im Wochenrückblick.'
           : 'Der Dank steht auch im Nachtgebet und im Wochenrückblick.'}
       </p>
-      <div className="arena-actions">
+      <div className="mask-actions">
         <button
           type="button"
           className="btn primary"

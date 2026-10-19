@@ -22,6 +22,7 @@ import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
 import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
+import { ConfirmRow } from '../../ui/ConfirmRow';
 
 type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
@@ -482,16 +483,6 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
     store.deleteArenaEntry(entry.id);
     navigate(home);
   };
-  const deleteAnswer = (
-    <>
-      <button type="button" className="btn" onClick={remove}>
-        Ja, Eintrag löschen
-      </button>
-      <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
-        Behalten
-      </button>
-    </>
-  );
 
   return (
     <article className="arena-entry">
@@ -517,10 +508,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         </div>
       </div>
       {confirm && (
-        <div className="entry-bar-confirm" role="group" aria-label="Eintrag löschen?">
-          <span>Eintrag löschen?</span>
-          {deleteAnswer}
-        </div>
+        <ConfirmRow label="Eintrag löschen?" showLabel confirmLabel="Ja, Eintrag löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
       {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>

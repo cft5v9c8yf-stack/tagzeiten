@@ -282,7 +282,7 @@ progress::-moz-progress-bar {
 }
 .pill:disabled {
   cursor: default;
-  opacity: 0.8;
+  opacity: var(--disabled-opacity);
 }
 
 /* ---------------------------------------------------------------- lookback */

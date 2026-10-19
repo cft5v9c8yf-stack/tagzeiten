@@ -64,9 +64,20 @@ function ConcernField({
         onChange={(e) => onChange(e.target.value)}
       />
       <div className="house-concern-actions">
-        <button type="button" className="btn" disabled={!person.concern.trim()} onClick={onAnswered}>
+        <button
+          type="button"
+          className="btn"
+          disabled={!person.concern.trim()}
+          aria-describedby={person.concern.trim() ? undefined : `${id}-hint`}
+          onClick={onAnswered}
+        >
           Erhört
         </button>
+        {!person.concern.trim() && (
+          <span id={`${id}-hint`} className="small muted">
+            Erst wenn ein Anliegen dasteht.
+          </span>
+        )}
       </div>
     </div>
   );

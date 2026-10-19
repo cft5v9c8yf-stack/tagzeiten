@@ -181,7 +181,7 @@ export function WinterArcGuide({ currentFocus }: { currentFocus?: number }) {
             id: 'arena.wa.guide.phases',
             title: WINTER_ARC_PHASES.title,
             line: 'Die 13 Wochen',
-            icon: 'star',
+            icon: 'review',
             content: (
               <>
                 <p>{WINTER_ARC_PHASES.lead}</p>

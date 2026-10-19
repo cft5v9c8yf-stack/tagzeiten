@@ -467,9 +467,23 @@ body.no-scroll {
   font-size: 0.78rem;
   color: var(--muted);
 }
-.confirm-inline {
+/* The one confirmation row for deleting (ui/ConfirmRow). */
+.confirm-row {
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-family: var(--sans);
+}
+.confirm-question {
+  flex: 1 0 100%;
+  font-weight: 600;
+}
+.confirm-trigger {
+  min-height: 36px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
 }
 .switch {
   appearance: none;
@@ -619,6 +633,9 @@ body.is-sorting * {
   color: var(--link);
   font-weight: 600;
   cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 .small-btn {
   min-height: 30px;
@@ -1261,7 +1278,7 @@ body.is-sorting * {
   content: ' ›';
 }
 .sunday-reading-open:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 /* The lesson: a title, then numbered paragraphs to read straight through. */
@@ -1544,14 +1561,6 @@ body.is-sorting * {
   opacity: 1;
   background: var(--gold-soft);
 }
-.entry-bar-confirm {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0 0;
-  font-family: var(--sans);
-}
 .arena-item {
   position: relative;
 }
@@ -1698,7 +1707,7 @@ body.is-sorting * {
   box-shadow: 0 0 0 1px var(--accent);
 }
 .ink-color:disabled {
-  opacity: 0.4;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 .ink-undo {
@@ -1750,11 +1759,14 @@ body.is-sorting * {
   font-style: normal;
   font-size: 0.85rem;
 }
-.arena-actions {
-  display: flex;
-  flex-wrap: wrap;
+/* The masks of the Wüstenzeit: the main button across the width, the rest beneath it. */
+.mask-actions {
+  display: grid;
   gap: 8px;
   margin-bottom: 8px;
+}
+.mask-actions .btn {
+  width: 100%;
 }
 .arena-comfort .bible-ref {
   white-space: nowrap;
@@ -2397,7 +2409,7 @@ mark.placeholder {
   box-shadow: inset 0 0 0 1px var(--gold);
 }
 .tile-card:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .tile-panel {
@@ -2780,7 +2792,7 @@ mark.placeholder {
   color: var(--ink);
 }
 .wa-pager-btn:disabled {
-  opacity: 0.3;
+  opacity: var(--disabled-opacity);
 }
 .wa-back {
   text-align: center;
@@ -2874,7 +2886,7 @@ mark.placeholder {
 }
 .wa-tick:disabled {
   cursor: default;
-  opacity: 0.55;
+  opacity: var(--disabled-opacity);
 }
 .wa-tick-note {
   display: block;
@@ -2993,7 +3005,7 @@ mark.placeholder {
   background: var(--accent);
 }
 .wa-dot:disabled {
-  opacity: 0.35;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 .wa-review textarea {
@@ -3302,11 +3314,8 @@ mark.placeholder {
   font-size: 0.75rem;
   color: var(--muted);
 }
-.desert-remove {
-  margin: 0 0 8px 30px;
-  font-size: 0.85rem;
-}
-.desert-item .confirm-inline {
+.desert-item .confirm-trigger,
+.desert-item .confirm-row {
   margin: 0 0 8px 30px;
 }
 .desert-add {

@@ -41,7 +41,7 @@ export function DesertExamen() {
       {EXAMEN_STEP.parts.map((part) => (
         <OrderPart key={part.kind} part={part} ctx={{ order: 'compline', form: 'full', date }} headingLevel={3} />
       ))}
-      <div className="arena-actions">
+      <div className="mask-actions">
         <button
           type="button"
           className="btn primary"
