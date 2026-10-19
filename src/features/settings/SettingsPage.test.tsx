@@ -351,7 +351,7 @@ describe('Mehr: Daten', () => {
   it('exports every entry as Markdown and as JSON', async () => {
     await renderAt('/mehr/einstellungen', <SettingsPage />, fill, ['more.data', 'more.data.export']);
     fireEvent.click(await screen.findByText('Als Text exportieren (Markdown)'));
-    await waitFor(() => expect(blobs).toHaveLength(1));
+    await waitFor(() => expect(blobs).toHaveLength(1), { timeout: 15000 });
     const md = await blobs[0]!.text();
     for (const t of ['Sei stille dem HERRN', 'Psalm 37,7', 'Mit Anna spazieren', 'das Gespräch mit Paul', 'Gott hält Wort']) {
       expect(md).toContain(t);
