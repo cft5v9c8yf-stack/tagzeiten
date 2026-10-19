@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.7',
+    date: '2026-10-19',
+    title: 'Gleiche Maße für Kacheln und Felder',
+    changes: [
+      { area: 'Henoch', text: 'Kacheln, Karten und Felder haben dieselben Rundungen, Abstände und Höhen. Eingabefelder sind mindestens 44 Pixel hoch.' },
+      { area: 'Mehr', text: 'Kacheln, die sich aufklappen, tragen einen kleinen Pfeil nach unten. Kacheln, die auf eine andere Seite führen, bleiben ohne.' },
+    ],
+  },
+  {
     version: '1.16.6',
     date: '2026-10-19',
     title: 'Eine Bildsprache für alle Zeichen',

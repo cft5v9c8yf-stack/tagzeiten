@@ -2,6 +2,8 @@ import { Fragment, useId, type ReactNode } from 'react';
 import { setOpen, useOpenStates } from './collapseState';
 import { FlowIcon, type FlowIconName } from './FlowIcon';
 import { InfoToggle } from './Section';
+import { Chevron } from './Chevron';
+import { ICON_SIZE } from './iconBase';
 
 export interface TileItem {
   /** Stable key, also the remembered open state (e.g. "more.display"). */
@@ -59,6 +61,9 @@ export function TileGroup({ items, level = 3, label }: { items: readonly TileIte
                 <FlowIcon name={it.icon} size={22} />
                 <span className="tile-card-title">{it.title}</span>
                 {it.line !== undefined && <span className="tile-card-line">{it.line}</span>}
+                <span className="tile-card-chev" aria-hidden="true">
+                  <Chevron dir="down" size={ICON_SIZE.s} />
+                </span>
               </button>
             );
           })}

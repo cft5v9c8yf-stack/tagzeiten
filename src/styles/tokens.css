@@ -50,6 +50,13 @@
   --ibtn-m: 32px;
   --ibtn-l: 36px;
 
+  /* Shared measures: cards and tiles, fields and buttons, the height of a field. */
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --field-height: 44px;
+  --card-pad: 14px;
+  --card-gap: 12px;
+
   --radius-s: 8px;
   --radius-m: 10px;
   --radius-l: 12px;

@@ -192,7 +192,7 @@ p {
 .panel {
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   padding: 14px 16px;
   margin: 12px 0;
 }
@@ -206,7 +206,7 @@ p {
   gap: 8px;
   border: 1px solid var(--control-line);
   background: var(--sheet);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-control);
   padding: 8px 14px;
   min-height: 44px;
   font-family: var(--sans);

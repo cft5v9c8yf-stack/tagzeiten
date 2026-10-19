@@ -451,12 +451,18 @@ select {
   width: 100%;
   background: var(--sheet);
   border: 1px solid var(--field-line);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-control);
   padding: 9px 11px;
   font-family: var(--serif);
   font-size: 1rem; /* 16px+ keeps iOS from zooming */
   line-height: 1.45;
   resize: none;
+}
+input[type='text'],
+input[type='time'],
+input[type='search'],
+select {
+  min-height: var(--field-height);
 }
 textarea {
   min-height: 2.8em;
