@@ -8,7 +8,5 @@ prüft das (`src/domain/rules.test.ts`).
 Der Zuspruch des Wochenrückblicks ist seit 0.37.1 derselbe wie in der
 Streithalle (Klagelieder 3,22–23).
 
-Einrichtung beim ersten Start (`src/features/onboarding/`): offen ist nur noch
-
-- „Mehr, Anleitung“, Lesemethode:
-  `[TEXT VON ANDREAS: Kurzbeschreibung der Lesemethode in eigenen Worten]`
+Einrichtung beim ersten Start (`src/features/onboarding/`): nichts mehr offen. Die
+Lesemethode in „Mehr, Anleitung“ nutzt die Beschreibung aus `src/content/method.ts`.

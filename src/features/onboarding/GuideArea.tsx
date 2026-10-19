@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { METHOD_CREDIT } from '../../content/method';
+import { COLOR_CODE, METHOD_CREDIT, READING_PASSES, READING_RUBRICS } from '../../content/method';
 import { ONBOARDING_PATH } from './onboardingState';
 
 export const GUIDE_INFO = (
@@ -9,7 +9,7 @@ export const GUIDE_INFO = (
   </p>
 );
 
-/** "Mehr, Anleitung": reopens the setup, and names the source of the reading method. */
+/** "Mehr, Anleitung": reopens the setup, and describes the reading method in the app's own words with its source (rule 14). */
 export function GuideArea() {
   return (
     <>
@@ -17,7 +17,26 @@ export function GuideArea() {
         Einrichtung ansehen
       </Link>
       <h3 className="ob-guide-head">Lesemethode</h3>
-      <p className="ob-placeholder">[TEXT VON ANDREAS: Kurzbeschreibung der Lesemethode in eigenen Worten]</p>
+      <p className="ob-text">{READING_RUBRICS.paper}</p>
+      <ol className="ob-passes">
+        {READING_PASSES.map(([name, line]) => (
+          <li key={name}>
+            <b>{name}</b>
+            <span>{line}</span>
+          </li>
+        ))}
+      </ol>
+      <h4 className="ob-guide-sub">Farbcode</h4>
+      <ul className="ob-colors">
+        {COLOR_CODE.map((c) => (
+          <li key={c.color}>
+            <i aria-hidden="true" style={{ background: c.hex }} />
+            <span>
+              <b>{c.color}:</b> {c.meaning}
+            </span>
+          </li>
+        ))}
+      </ul>
       <p className="small muted">{METHOD_CREDIT}</p>
     </>
   );

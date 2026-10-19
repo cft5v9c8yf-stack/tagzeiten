@@ -324,6 +324,16 @@ describe('Mehr, Anleitung', () => {
     expect(localStorage.getItem(ONBOARDING_KEY)).toBe('done');
   });
 
+  it('describes the reading method in the app\'s words, with its source and no placeholder', async () => {
+    localStorage.setItem(ONBOARDING_KEY, 'done');
+    await start('/mehr/anleitung');
+    expect(await screen.findByText('Erster Durchgang')).toBeTruthy();
+    expect(screen.getByText('Dritter Durchgang')).toBeTruthy();
+    expect(screen.getByText(/Wer Gott ist und was er tut/)).toBeTruthy();
+    expect(document.body.textContent).toContain('Hanniel Strebel');
+    expect(document.body.textContent).not.toContain('[TEXT VON ANDREAS:');
+  });
+
   it('closes back to the Anleitung when it was opened from there', async () => {
     localStorage.setItem(ONBOARDING_KEY, 'done');
     const { router } = await start(ONBOARDING_PATH);

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.17.2',
+    date: '2026-10-19',
+    title: 'Lesemethode in der Anleitung',
+    changes: [
+      { area: 'Mehr', text: 'Unter „Mehr, Anleitung“ steht jetzt die Lesemethode: die drei Durchgänge und der Farbcode, mit der Quelle.' },
+    ],
+  },
+  {
     version: '1.17.1',
     date: '2026-10-19',
     title: 'Einrichtung: Texte, Leseplan, Wiederaufnahme',

@@ -214,3 +214,39 @@
 .ob-guide-head {
   margin: 12px 0 0;
 }
+.ob-guide-sub {
+  margin: 8px 0 0;
+}
+.ob-passes,
+.ob-colors {
+  display: grid;
+  gap: var(--card-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ob-passes li {
+  display: grid;
+  gap: 2px;
+  padding: 12px var(--card-pad);
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  font-family: var(--sans);
+}
+.ob-passes span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.ob-colors li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+}
+.ob-colors i {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
