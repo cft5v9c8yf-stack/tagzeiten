@@ -510,7 +510,6 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       {confirm && (
         <ConfirmRow label="Eintrag löschen?" showLabel confirmLabel="Ja, Eintrag löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
-      {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 

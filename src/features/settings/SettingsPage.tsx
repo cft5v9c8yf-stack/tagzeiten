@@ -24,7 +24,7 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'settings' | 'review' | 'imprint' | 'changelog';
+  id: SettingsSectionId | 'display' | 'data' | 'about' | 'review' | 'imprint' | 'changelog';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -116,6 +116,24 @@ const AREAS: readonly Area[] = [
     body: () => <ScheduleSettings />,
   },
   {
+    slug: 'darstellung',
+    id: 'display',
+    title: 'Darstellung',
+    line: 'Farben und Teile der Andacht',
+    icon: 'sliders',
+    info: <p>Das Farbschema und welche Teile der Andacht erscheinen.</p>,
+    body: () => <DisplaySettings />,
+  },
+  {
+    slug: 'daten',
+    id: 'data',
+    title: 'Deine Daten',
+    line: 'Sichern, einspielen, löschen',
+    icon: 'archive',
+    info: DATA_INFO,
+    body: () => <DataSettings />,
+  },
+  {
     slug: 'rueckblick',
     id: 'review',
     title: 'Rückblick',
@@ -128,70 +146,47 @@ const AREAS: readonly Area[] = [
           Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar.
         </p>
         <p>
-          Darunter auf Wunsch deine Gewohnheiten der letzten acht Wochen. Ein- und ausschalten unter „Einstellungen“ ›
-          „Darstellung“ › „Gewohnheiten im Rückblick“.
+          Darunter auf Wunsch deine Gewohnheiten der letzten acht Wochen. Ein- und ausschalten unter „Darstellung“ ›
+          „Gewohnheiten im Rückblick“.
         </p>
       </>
     ),
     body: () => <ArchivePage embedded />,
   },
   {
-    slug: 'einstellungen',
-    id: 'settings',
-    title: 'Einstellungen',
-    line: 'Darstellung, Daten, Installation, Flugmodus',
-    icon: 'dots',
-    info: <p>Darstellung, deine Daten, Installation und Flugmodus, Angaben zur App.</p>,
+    slug: 'ueber',
+    id: 'about',
+    title: 'Über Henoch',
+    line: 'Quellen, Installation, Flugmodus',
+    icon: 'info',
+    info: ABOUT_INFO,
     body: () => (
-      <TileGroup
-        label="Einstellungen"
-        items={[
-          {
-            id: 'more.display',
-            title: 'Darstellung',
-            line: 'Farben und Teile der Andacht',
-            icon: 'sliders',
-            info: <p>Das Farbschema und welche Teile der Andacht erscheinen.</p>,
-            content: <DisplaySettings />,
-          },
-          {
-            id: 'more.data',
-            title: 'Deine Daten',
-            line: 'Sichern, einspielen, löschen',
-            icon: 'changes',
-            info: DATA_INFO,
-            content: <DataSettings />,
-          },
-          {
-            id: 'more.install',
-            title: 'App installieren',
-            line: 'Android und iPhone',
-            icon: 'phone',
-            info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
-            content: <InstallGuide level={4} />,
-          },
-          {
-            id: 'more.airplane',
-            title: 'Flugmodus beim Beten',
-            line: 'Stille ohne Störung',
-            icon: 'airplane',
-            info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
-            content: <AirplaneGuide level={4} />,
-          },
-          {
-            id: 'more.about',
-            title: 'Über Henoch',
-            line: 'Bogen, Quellen, Privatsphäre',
-            icon: 'info',
-            info: ABOUT_INFO,
-            content: <About />,
-          },
-        ]}
-      />
+      <>
+        <About />
+        <TileGroup
+          label="Installation und Flugmodus"
+          items={[
+            {
+              id: 'more.install',
+              title: 'App installieren',
+              line: 'Android und iPhone',
+              icon: 'phone',
+              info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
+              content: <InstallGuide level={4} />,
+            },
+            {
+              id: 'more.airplane',
+              title: 'Flugmodus beim Beten',
+              line: 'Stille ohne Störung',
+              icon: 'airplane',
+              info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
+              content: <AirplaneGuide level={4} />,
+            },
+          ]}
+        />
+      </>
     ),
   },
-
-
   {
     slug: 'versionen',
     id: 'changelog',

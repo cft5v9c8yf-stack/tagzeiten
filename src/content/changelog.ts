@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.12',
+    date: '2026-10-19',
+    title: 'Mehr auf einer Ebene',
+    changes: [
+      { area: 'Mehr', text: 'Die Kachel „Einstellungen“ ist aufgelöst. Darstellung, Deine Daten und Über Henoch stehen jetzt direkt unter Mehr. App installieren und Flugmodus findest du unter „Über Henoch“. Alte Links bleiben gültig.' },
+      { area: 'Arena', text: 'Im Eintrag der Eisenschmiede entfällt die Zeile unter den Symbolen. Der Eintrag beginnt wie in der Gebetskammer gleich mit der Überschrift.' },
+    ],
+  },
+  {
     version: '1.16.11',
     date: '2026-10-19',
     title: 'Zeichen, Bestätigungen und Schaltflächen vereinheitlicht',
