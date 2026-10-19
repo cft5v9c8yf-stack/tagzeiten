@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.3',
+    date: '2026-10-19',
+    title: 'Die Schrittleiste nennt ihre Schritte',
+    changes: [
+      { area: 'Stille Zeit', text: 'Unter dem Zeichen des gewählten Schritts steht sein Name. Die Zeit oben sagt „Jetzt: Am Bett“, solange du am Bett bist, und passt so zur Leiste.' },
+      { area: 'Heute', text: 'Die letzten vier Wochen liest ein Bildschirmleser als einen Satz vor, nicht als 28 einzelne Meldungen.' },
+    ],
+  },
+  {
     version: '1.16.2',
     date: '2026-10-19',
     title: 'Besser zu treffen, besser zu lesen',

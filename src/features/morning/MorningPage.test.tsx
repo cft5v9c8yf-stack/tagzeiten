@@ -115,4 +115,11 @@ describe('Stille Zeit without the bed', () => {
     fireEvent.click(screen.getByRole('button', { name: /^Weiter zu: / }));
     await waitFor(() => expect(title()).not.toBe('Eröffnung'));
   });
+
+  it('names the step in view under its mark and the timer agrees with the bed', async () => {
+    await renderMorning();
+    expect(screen.getByText(/Jetzt: Am Bett/)).toBeTruthy();
+    expect(chain().querySelectorAll('.flow-short')).toHaveLength(1);
+    expect(chain().querySelector('.flow-short')!.textContent).toBe('Am Bett');
+  });
 });

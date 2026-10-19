@@ -23,6 +23,17 @@ function useDogmatikInMorning(): boolean {
   return __DOGMATIK__ && d.on && d.stilleZeit;
 }
 
+/** The names under the mark of the step in view (the long titles would not fit under seven marks). */
+const MORNING_SHORT: Record<string, string> = {
+  opening: 'Eröffnung',
+  word: 'Wort',
+  prayer: 'Gebet',
+  response: 'Antwort',
+  lordsPrayer: 'Vaterunser',
+  alignment: 'Ausrichtung',
+  blessing: 'Segen',
+};
+
 export function MorningPage() {
   // Left open overnight, the Stille Zeit moves on to the new day (the evening keeps its own until left).
   useToday();
@@ -41,11 +52,15 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
   const setForm = (f: OrderForm) =>
     store.updateDay(date, (d) => ({ ...d, morning: { ...d.morning, form: f } }), { immediate: true });
 
+  // "Am Bett" is the first mark of the row while it is prayed and not yet done.
+  const atBedOpen = useProfile().showAtBed && !day.morning.atBed && !order.steps.some((s) => day.morning.steps[s.id]);
   const hint = day.morning.done
     ? 'Stille Zeit abgeschlossen'
-    : firstOpen
-      ? `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
-      : '';
+    : atBedOpen
+      ? 'Jetzt: Am Bett'
+      : firstOpen
+        ? `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
+        : '';
 
   return (
     <>
@@ -75,10 +90,11 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
   const bed = useProfile().showAtBed ? 1 : 0;
 
   const flow: FlowStep[] = [
-    ...(bed ? [{ id: 'atBed', title: 'Am Bett', mark: '·', icon: 'bed' as const, done: day.morning.atBed }] : []),
+    ...(bed ? [{ id: 'atBed', title: 'Am Bett', short: 'Am Bett', mark: '·', icon: 'bed' as const, done: day.morning.atBed }] : []),
     ...order.steps.map((s, i) => ({
       id: s.id,
       title: s.title,
+      short: MORNING_SHORT[s.id] ?? s.title,
       mark: i + 1,
       icon: morningIcon(s.id, form),
       done: !!day.morning.steps[s.id],
@@ -92,6 +108,9 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
     const k = order.steps.findIndex((s) => !day.morning.steps[s.id]);
     return k < 0 ? null : k + bed;
   });
+
+  // Only the step in view carries its name: seven names would not fit in a row.
+  const named = flow.map((f, i) => (i === current ? f : { ...f, short: undefined }));
 
   const update = (fn: (m: MorningEntry) => MorningEntry) =>
     store.updateDay(date, (d) => ({ ...d, morning: fn(d.morning) }), { immediate: true });
@@ -159,7 +178,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
 
   return (
     <>
-      <StepFlow label="Stille Zeit" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
+      <StepFlow label="Stille Zeit" steps={named} current={current} onSelect={setCurrent} footer={footer}>
         {content}
       </StepFlow>
       {day.morning.done && current === null && (
