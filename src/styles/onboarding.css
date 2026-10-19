@@ -270,3 +270,13 @@
   font-weight: 400;
   color: var(--muted);
 }
+/* A choice with only a name: no second line. */
+.ob-choice-short {
+  min-height: 48px;
+}
+.ob-label {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+}

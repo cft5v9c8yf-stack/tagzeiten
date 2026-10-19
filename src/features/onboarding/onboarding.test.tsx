@@ -10,6 +10,7 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
 import { clearDevicePreferences } from '../../app/files';
+import { getPlan } from '../../domain/readingPlan';
 import { SettingsPage } from '../settings/SettingsPage';
 import { FirstStartGate } from './FirstStartGate';
 import { OnboardingPage } from './OnboardingPage';
@@ -357,6 +358,98 @@ describe('Einrichtung: der Weg Wüstenwanderung', () => {
     next();
     expect(screen.getByRole('button', { name: '90 Tage' }).getAttribute('aria-pressed')).toBe('true');
     expect(store.getProfile().house.wife.name).toBe('Anna');
+  });
+});
+
+/** To the page "Dein Leseplan" on the way "Alltag". */
+function toPlan() {
+  toHouse();
+  click('Überspringen');
+  click('Überspringen');
+  click('Überspringen');
+  expect(heading()).toBe('Dein Leseplan');
+}
+const scope = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
+const select = (label: string, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
+
+describe('Einrichtung: Leseplan mit einem Testament', () => {
+  it('reads only the New Testament, with its own start and amount', async () => {
+    const { store } = await start(ONBOARDING_PATH);
+    toPlan();
+    scope('Nur das Neue Testament');
+    let plan = store.getProfile().plan;
+    expect(plan.planId).toBe('eigen-k1');
+    // The place of the New Testament is kept: Matthäus 1.
+    expect(getPlan(plan.planId).tracks[0]!.portions[plan.positions.bibel!]).toMatchObject({ book: 39, from: 1 });
+    expect(screen.queryByText(/Nächste Lesung AT/)).toBeNull();
+    select('Anfangen bei', '43');
+    select('Kapitel am Tag', '2');
+    plan = store.getProfile().plan;
+    expect(plan.planId).toBe('eigen-k2');
+    const book = getPlan(plan.planId).tracks[0]!.portions[plan.positions.bibel!]!;
+    expect(book.book).toBe(43);
+    // Only the books of the New Testament are offered.
+    const options = [...(screen.getByLabelText('Anfangen bei') as HTMLSelectElement).options].map((o) => o.textContent);
+    expect(options[0]).toBe('Matthäus');
+    expect(options).not.toContain('1. Mose');
+    expect(screen.queryByRole('button', { name: 'Eigener Plan' })).toBeNull();
+    next();
+    next();
+    // The summary names the one reading.
+    const text = document.querySelector('.ob-sum')!.textContent!;
+    expect(text).toContain('Apostelgeschichte');
+    expect(text).not.toContain('1. Mose');
+  });
+
+  it('reads only the Old Testament', async () => {
+    const { store } = await start(ONBOARDING_PATH);
+    toPlan();
+    scope('Nur das Alte Testament');
+    const plan = store.getProfile().plan;
+    expect(plan.planId).toBe('eigen-k1');
+    expect(getPlan(plan.planId).tracks[0]!.portions[plan.positions.bibel!]).toMatchObject({ book: 0, from: 1 });
+    const options = [...(screen.getByLabelText('Anfangen bei') as HTMLSelectElement).options].map((o) => o.textContent);
+    expect(options[0]).toBe('1. Mose');
+    expect(options).not.toContain('Matthäus');
+    select('Anfangen bei', '18');
+    expect(getPlan('eigen-k1').tracks[0]!.portions[store.getProfile().plan.positions.bibel!]!.book).toBe(18);
+  });
+
+  it('goes back to both and finds the places again', async () => {
+    const { store } = await start(ONBOARDING_PATH);
+    toPlan();
+    fireEvent.change(screen.getAllByLabelText('Kapitel am Tag')[0]!, { target: { value: '2' } });
+    scope('Nur das Neue Testament');
+    select('Anfangen bei', '43');
+    select('Kapitel am Tag', '3');
+    scope('Altes und Neues Testament');
+    const plan = store.getProfile().plan;
+    // The amount chosen for the New Testament stays, the Old Testament keeps its place and amount.
+    expect(plan.planId).toBe('atnt-2-3');
+    const fixed = getPlan(plan.planId);
+    expect(fixed.tracks[1]!.portions[plan.positions.nt!]).toMatchObject({ book: 43 - 39, from: 1 });
+    expect(fixed.tracks[0]!.portions[plan.positions.at!]).toMatchObject({ book: 0, from: 1 });
+    expect(screen.getAllByLabelText('Kapitel am Tag')).toHaveLength(2);
+  });
+
+  it('goes on at the same place after a reload', async () => {
+    const first = await start(ONBOARDING_PATH, undefined, 'ob-plan-resume');
+    toPlan();
+    scope('Nur das Neue Testament');
+    select('Anfangen bei', '43');
+    await first.store.flush();
+    cleanup();
+    await start('/', undefined, 'ob-plan-resume');
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Dein Leseplan');
+    expect(screen.getByRole('button', { name: 'Nur das Neue Testament' }).getAttribute('aria-pressed')).toBe('true');
+    expect((screen.getByLabelText('Anfangen bei') as HTMLSelectElement).value).toBe('43');
+  });
+
+  it('leaves a plan of several books as it is', async () => {
+    await start(ONBOARDING_PATH, (s) => s.setPlan('eigen-k2.k1'));
+    toPlan();
+    expect(screen.queryByRole('button', { name: 'Nur das Neue Testament' })).toBeNull();
+    expect(document.body.textContent).toContain('Du liest nach einem eigenen Plan.');
   });
 });
 

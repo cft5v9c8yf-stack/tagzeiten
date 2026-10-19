@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.18.3',
+    date: '2026-10-19',
+    title: 'Einrichtung: ein Testament lesen',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf der Seite „Dein Leseplan“ wählst du, was du liest: beide Testamente, nur das Neue oder nur das Alte. Bei einem Testament gibst du die Startstelle und die Kapitel am Tag an. Wechselst du zurück, findest du deine Stellen wieder.' },
+    ],
+  },
+  {
     version: '1.18.2',
     date: '2026-10-19',
     title: 'Einrichtung: Erklärung nach der Wahl',

@@ -10,7 +10,18 @@ import { ABSOLUTION_EVENING } from '../../content/liturgy';
 import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText } from '../../ui/PrayerText';
 import { Segmented } from '../../ui/Choice';
-import { fixedAmounts, getPlan, portionLabel } from '../../domain/readingPlan';
+import { fixedAmounts, getPlan, ownPlanId, portionLabel, positionFor } from '../../domain/readingPlan';
+import { useToast } from '../../app/Toast';
+import {
+  changeScope,
+  scopeOf,
+  singleChapters,
+  singlePlace,
+  SINGLE_CHOICES,
+  TESTAMENT_BOOKS,
+  TESTAMENT_OFFSET,
+  type Scope,
+} from './planScope';
 import { useProfile, useStore } from '../../data/hooks';
 import { fitsHouse, habitsOfRhythm, RHYTHM_ORDER, setHabitActive } from '../../domain/habits';
 import {
@@ -315,14 +326,104 @@ export function HabitsStep() {
 
 /* ------------------------------------------------------------ 6 */
 
+const SCOPE_CARDS: readonly [Scope, string][] = [
+  ['both', 'Altes und Neues Testament'],
+  ['nt', 'Nur das Neue Testament'],
+  ['at', 'Nur das Alte Testament'],
+];
+
+/** One Testament alone: where to begin (book and chapter) and how many chapters a day. */
+function SingleTestament({ scope }: { scope: 'at' | 'nt' }) {
+  const store = useStore();
+  const toast = useToast();
+  const profile = useProfile();
+  const bookId = useId();
+  const chapterId = useId();
+  const amountId = useId();
+  const plan = getPlan(profile.plan.planId);
+  const track = plan.tracks[0]!;
+  const place = singlePlace(profile) ?? { book: TESTAMENT_OFFSET[scope], chapter: 1 };
+  const books = TESTAMENT_BOOKS[scope];
+  const offset = TESTAMENT_OFFSET[scope];
+  const book = track.def.books[place.book]!;
+  const set = (b: number, chapter: number) => {
+    store.setPlanPositions({ [track.def.id]: positionFor(track, b, chapter) });
+    toast('Leseplan angepasst');
+  };
+  return (
+    <>
+      <div className="grid2">
+        <div className="field">
+          <label htmlFor={bookId}>Anfangen bei</label>
+          <select id={bookId} value={place.book} onChange={(e) => set(Number(e.target.value), 1)}>
+            {books.map((b, i) => (
+              <option key={b.slug} value={offset + i}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor={chapterId}>Kapitel</label>
+          <select id={chapterId} value={place.chapter} onChange={(e) => set(place.book, Number(e.target.value))}>
+            {Array.from({ length: book.chapters }, (_, i) => (
+              <option key={i} value={i + 1}>
+                Kapitel {i + 1}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div className="field">
+        <label htmlFor={amountId}>Kapitel am Tag</label>
+        <select
+          id={amountId}
+          value={singleChapters(profile)}
+          onChange={(e) => {
+            store.setPlan(ownPlanId([{ unit: 'chapters', value: Number(e.target.value) }]));
+            toast('Leseplan angepasst');
+          }}
+        >
+          {SINGLE_CHOICES.map((n) => (
+            <option key={n} value={n}>
+              {n === 1 ? '1 Kapitel' : `${n} Kapitel`}
+            </option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+}
+
 export function PlanStep() {
-  const planId = useProfile().plan.planId;
-  const amounts = fixedAmounts(planId);
+  const store = useStore();
+  const toast = useToast();
+  const profile = useProfile();
+  const amounts = fixedAmounts(profile.plan.planId);
+  const scope = scopeOf(profile);
+  const choose = (to: Scope) => {
+    if (!scope || to === scope) return;
+    const { planId, starts } = changeScope(profile, scope, to);
+    store.setPlan(planId, starts);
+    toast('Leseplan angepasst');
+  };
   return (
     <>
       <p className="ob-lead">Du liest auf Papier. Die App merkt sich nur, wo du stehst.</p>
-      {amounts ? (
-        <FixedPlan amounts={amounts} />
+      {scope ? (
+        <>
+          <p id="ob-scope" className="ob-label">
+            Was liest du?
+          </p>
+          <div className="ob-choices" role="group" aria-labelledby="ob-scope">
+            {SCOPE_CARDS.map(([value, label]) => (
+              <button key={value} type="button" className="ob-choice ob-choice-short" aria-pressed={scope === value} onClick={() => choose(value)}>
+                <b>{label}</b>
+              </button>
+            ))}
+          </div>
+          {scope === 'both' && amounts ? <FixedPlan amounts={amounts} /> : <SingleTestament scope={scope as 'at' | 'nt'} />}
+        </>
       ) : (
         <p className="ob-hint">Du liest nach einem eigenen Plan. Den änderst du unter „Wort“.</p>
       )}
