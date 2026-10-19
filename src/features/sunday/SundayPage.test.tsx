@@ -126,10 +126,10 @@ describe('Sonntag', () => {
 
   it('goes to the Sunday before and after, also across the turn of the church year', async () => {
     const router = await renderSunday('/sonntag?d=2026-09-24');
-    fireEvent.click(screen.getByRole('link', { name: /^Letzter Sonntag/ }));
+    fireEvent.click(screen.getByRole('link', { name: /^Vorheriger Sonntag/ }));
     await waitFor(() => expect(title()).toBe('15. Sonntag nach Trinitatis'));
     expect(new URLSearchParams(router.state.location.search).get('s')).toBe('2026-09-13');
-    expect(screen.getByRole('link', { name: 'Zu dieser Woche' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Zu dieser Kirchenwoche' })).toBeTruthy();
     fireEvent.click(screen.getByRole('link', { name: /^Nächster Sonntag/ }));
     fireEvent.click(await screen.findByRole('link', { name: /^Nächster Sonntag: 17\./ }));
     await waitFor(() => expect(title()).toBe('17. Sonntag nach Trinitatis'));
@@ -147,7 +147,7 @@ describe('Sonntag', () => {
     const card = await screen.findByRole('dialog', { name: 'Alle Sonntage' });
     const shown = card.querySelector('.week-link[aria-current="true"]')!;
     expect(shown.textContent).toContain('16. Sonntag nach Trinitatis');
-    expect(shown.textContent).toContain('diese Woche');
+    expect(shown.textContent).toContain('diese Kirchenwoche');
     // Escape closes the card without leaving the page.
     fireEvent.keyDown(document, { key: 'Escape' });
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());

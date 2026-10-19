@@ -134,7 +134,6 @@ function VespersView({
       onClick={() => {
         complete(true);
         setCurrent(null);
-        if (withCompline) onOpenCompline();
       }}
     >
       {withCompline ? 'Vesper abschließen' : 'Tag abschließen'}

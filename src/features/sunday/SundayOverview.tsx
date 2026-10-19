@@ -122,7 +122,7 @@ export function SundayChooser({
                           >
                             <span className="week-date">{formatShort(w.date)}</span>
                             <span className="week-name">{w.name}</span>
-                            {w.date === current && <span className="ktag">diese Woche</span>}
+                            {w.date === current && <span className="ktag">diese Kirchenwoche</span>}
                           </button>
                         </li>
                       ))}

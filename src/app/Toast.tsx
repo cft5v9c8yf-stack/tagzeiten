@@ -14,7 +14,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setMessage(m);
     setVisible(true);
     clearTimeout(timer.current);
-    timer.current = setTimeout(() => setVisible(false), 2200);
+    timer.current = setTimeout(() => setVisible(false), 1800);
   }, []);
 
   useEffect(() => () => clearTimeout(timer.current), []);

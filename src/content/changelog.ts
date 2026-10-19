@@ -13,6 +13,19 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.9',
+    date: '2026-10-19',
+    title: 'Heute kürzer, ruhigerer Abschluss am Abend',
+    changes: [
+      { area: 'Heute', text: 'Die letzten vier Wochen sind eingeklappt, die Wochenübersicht ebenso. Was du aufklappst, merkt sich die App.' },
+      { area: 'Heute', text: 'Der Sonntag trägt jetzt den Namen „Sonntag dieser Kirchenwoche“. Im Tab Wort unter Lehre führt „Der kommende Sonntag“ direkt zum nächsten Sonntag.' },
+      { area: 'Sonntag', text: 'Der Schritt zurück heißt „Vorheriger Sonntag“, die laufende Woche „diese Kirchenwoche“.' },
+      { area: 'Rückschau', text: 'Was nicht erreicht wurde, heißt „offen geblieben“.' },
+      { area: 'Vesper', text: 'Nach „Vesper abschließen“ bleibst du bei der Vesper. „Weiter zum Nachtgebet“ und „Zurück zu Heute“ stehen bereit, wann du magst.' },
+      { area: 'Henoch', text: 'Die kurze Meldung unten steht knapp über der Tab-Leiste und verschwindet nach knapp zwei Sekunden.' },
+    ],
+  },
+  {
     version: '1.16.8',
     date: '2026-10-19',
     title: 'Arena: Schaltflächen unten entfallen',

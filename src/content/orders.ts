@@ -470,7 +470,7 @@ export const RUBRICS = {
   complineCreed: 'Der Tag wird nicht an deinem Gewissen gemessen, sondern an dem, was bekannt und gebetet wird.',
   thanks: 'Zwei oder drei Dinge dieses Tages. Konkret, nicht pauschal. Auch das Kleine, gerade das Kleine.',
   review: 'Rechenschaft, nicht Beichte. Ein Zeichen, kein Kommentar.',
-  reviewMarks: '+ geschehen · ~ angefangen · – nicht geschehen',
+  reviewMarks: '+ geschehen · ~ angefangen · – offen geblieben',
   reviewCarry: '„Morgen wieder“ erscheint morgen früh als Vorschlag. „Fallenlassen“: Es war heute Morgen wichtig und ist es nicht mehr.',
   reviewNotSin:
     'Ein nicht erreichtes Ziel ist keine Sünde. Nur wenn wirklich ein Gebot dahintersteht, gehört es in die Prüfung.',

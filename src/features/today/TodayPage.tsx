@@ -159,7 +159,7 @@ export function TodayPage() {
             <LutherRose size={30} />
           </span>
           <span className="sunday-link-text">
-            <span className="sunday-link-label">Diese Woche</span>
+            <span className="sunday-link-label">Sonntag dieser Kirchenwoche</span>
             <span className="sunday-link-week">{church.week}</span>
           </span>
           <span className="sunday-link-go" aria-hidden="true">
@@ -189,7 +189,7 @@ export function TodayPage() {
         </Section>
       )}
 
-      <Section id="today.lookback" title="Die letzten vier Wochen">
+      <Section id="today.lookback" title="Die letzten vier Wochen" defaultOpen={false}>
         <Lookback date={date} />
       </Section>
 

@@ -26,6 +26,9 @@ import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverv
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
 import { mondayIndex } from '../../domain/dates';
+import { churchDay, nextWeekStart } from '../../domain/churchYear';
+import { Chevron } from '../../ui/Chevron';
+import { LutherRose } from '../../ui/LutherRose';
 import { LoeheBook } from './LoeheExplanation';
 import { DogmatikCard } from '../dogmatik/DogmatikCard';
 
@@ -372,11 +375,24 @@ function CatechismHome() {
   const withChildren = habit ? isDoneInPeriod(habit, date, lookup) : false;
   const todayPiece = pieceId(day.chief, day.pieceIndices[0] ?? 0);
   const partLink = withDate(`/katechismus/${day.chief.id}`, date, isToday);
-
+  const comingSunday = nextWeekStart(churchDay(date).weekStart);
 
   return (
     <>
       <WordSwitch current="teaching" />
+
+      <Link className="sunday-link" to={`/sonntag?s=${comingSunday}${isToday ? '' : `&d=${date}`}`}>
+        <span className="sunday-link-rose" aria-hidden="true">
+          <LutherRose size={30} />
+        </span>
+        <span className="sunday-link-text">
+          <span className="sunday-link-label">Der kommende Sonntag</span>
+          <span className="sunday-link-week">{churchDay(comingSunday).week}</span>
+        </span>
+        <span className="sunday-link-go" aria-hidden="true">
+          <Chevron dir="right" />
+        </span>
+      </Link>
 
       <section className="cat-area" aria-labelledby="cat-learn">
         <div className="cat-area-head">

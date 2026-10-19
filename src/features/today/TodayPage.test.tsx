@@ -335,7 +335,7 @@ describe('Today', () => {
 
   it('leads from "Heute" to the Sunday of the week', async () => {
     await renderToday('2026-09-24');
-    const link = screen.getByRole('link', { name: /Diese Woche/ });
+    const link = screen.getByRole('link', { name: /Sonntag dieser Kirchenwoche/ });
     expect(link.textContent).toContain('16. Sonntag nach Trinitatis');
   });
 

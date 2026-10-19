@@ -409,7 +409,7 @@ nav.tabs a[aria-current='page']::before {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 18px);
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 10px);
   transform: translateX(-50%);
   max-width: calc(100% - 2 * var(--gutter));
   background: var(--ink);

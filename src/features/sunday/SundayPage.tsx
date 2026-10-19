@@ -129,12 +129,12 @@ export function SundayPage() {
     <div className="sunday-page">
       {saturdayEvening && <PreparationHint page={links.page} />}
       <header className="sunday-head">
-        <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Letzter Sonntag: ${churchDay(prev).week}`}>
+        <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Vorheriger Sonntag: ${churchDay(prev).week}`}>
           <span className="sunday-step-circle">
             <Chevron dir="left" />
           </span>
           <span className="sunday-step-label" aria-hidden="true">
-            Letzter Sonntag
+            Vorheriger Sonntag
           </span>
         </Link>
         <div className="sunday-center">
@@ -154,10 +154,10 @@ export function SundayPage() {
           <p className="sunday-week">
             {c.weekNumber}. Woche im Kirchenjahr
             {s === links.current ? (
-              <span className="ktag">diese Woche</span>
+              <span className="ktag">diese Kirchenwoche</span>
             ) : (
               <Link className="sunday-back" to={links.sunday()}>
-                Zu dieser Woche
+                Zu dieser Kirchenwoche
               </Link>
             )}
           </p>
