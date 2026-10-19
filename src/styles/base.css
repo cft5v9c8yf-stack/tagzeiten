@@ -195,7 +195,7 @@ p {
   background: var(--sheet);
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
-  padding: 14px 16px;
+  padding: var(--card-pad);
   margin: 12px 0;
 }
 
@@ -278,7 +278,7 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px;
   width: 100%;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
 }
 .seg.seg-grid button {
   border-radius: var(--radius-s);
@@ -304,6 +304,16 @@ nav.tabs {
   background: var(--sheet);
   border-top: 1px solid var(--rule);
   padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+/* On a wide screen the bar is as wide as the content, not the window. */
+@media (min-width: 700px) {
+  nav.tabs {
+    margin: 0 auto;
+    width: var(--content-width);
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
 }
 /* Fills any gap below the bar with its own colour, whatever the viewport reports. */
 nav.tabs::after {

@@ -236,7 +236,7 @@ export function SettingsPage() {
             </li>
           ))}
           <li className="more-tile-wide">
-            <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer">
+            <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer" aria-label="Neuigkeiten, Neues auf henoch.app, öffnet im Browser">
               <FlowIcon name="scroll" size={22} />
               <span className="more-tile-title">
                 Neuigkeiten<OutArrow />

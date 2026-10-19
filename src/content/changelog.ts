@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.13',
+    date: '2026-10-19',
+    title: 'Kirchenjahr, Versionen und Maße',
+    changes: [
+      { area: 'Kirchenjahr', text: 'Die Zeiten des Kirchenjahres sind eingeklappt, nur die laufende steht offen. Die Sprungmarken oben bleiben.' },
+      { area: 'Versionen', text: 'Der Verlauf zeigt die letzten drei Fassungen der neuesten Nummer. Frühere klappst du darunter auf.' },
+      { area: 'Henoch', text: 'Links, die im Browser öffnen, sagen es dem Vorleseprogramm: „öffnet im Browser“.' },
+      { area: 'Henoch', text: 'Karten, Schritte und Schaltflächen haben dieselben Rundungen und Abstände. Am Computer ist die Tab-Leiste so breit wie der Inhalt.' },
+    ],
+  },
+  {
     version: '1.16.12',
     date: '2026-10-19',
     title: 'Mehr auf einer Ebene',

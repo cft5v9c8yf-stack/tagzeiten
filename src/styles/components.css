@@ -21,7 +21,7 @@
   margin: 12px 0 0;
   padding: 8px 8px 8px 14px;
   border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
 }
 .timer .clock {
@@ -154,10 +154,10 @@
 /* The step in view: a card of its own below the row */
 .flow-step {
   margin-top: 12px;
-  padding: 4px 18px 18px;
+  padding: 4px var(--card-pad) var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
 }
 .flow-title {
   display: flex;
@@ -195,7 +195,7 @@
 .flow-footer .btn {
   width: 100%;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   font-size: 0.98rem;
 }
 .flow + .panel {
@@ -416,7 +416,7 @@ details.fold[open] > summary {
   flex-direction: column;
   gap: 2px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid var(--rule);
   color: inherit;

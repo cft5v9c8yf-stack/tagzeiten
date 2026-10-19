@@ -211,7 +211,13 @@ export function ChurchYearPage() {
       {seasons.map((s) => {
         const entries = outline.entries.filter((e) => e.season === s.season);
         return (
-          <Section key={s.season} id={`cy.phase.${s.season}`} title={SEASON_LABEL[s.season]} className="cy-phase">
+          <Section
+            key={s.season}
+            id={`cy.phase.${s.season}`}
+            title={SEASON_LABEL[s.season]}
+            defaultOpen={s.season === today.season}
+            className="cy-phase"
+          >
             <p className="cy-phase-dates">
               {dayMonth(s.from)} – {dayMonth(s.to)}
             </p>
@@ -229,6 +235,7 @@ export function ChurchYearPage() {
                     </>
                   }
                   level={4}
+                  defaultOpen={trinityGroupOf(today.weekKey)?.title === g.title}
                   className="cy-group"
                   titleClassName="cy-group-title"
                 >

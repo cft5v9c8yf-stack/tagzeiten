@@ -719,8 +719,8 @@ a.cy-week-name {
 /* Sunday rest: the Sunday in place of the habits, at the top of "Heute". */
 .sunday-rest {
   margin: 14px 0 18px;
-  padding: 18px 18px 20px;
-  border-radius: var(--radius-l);
+  padding: var(--card-pad) var(--card-pad) 18px;
+  border-radius: var(--radius-card);
   border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--rule));
   background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 10%, var(--sheet)), var(--sheet));
 }

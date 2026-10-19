@@ -80,7 +80,7 @@ body.no-scroll {
 .cat-actions .btn.primary {
   width: 100%;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
 }
 .cat-choose {
   margin-top: 14px;
@@ -136,7 +136,7 @@ body.no-scroll {
   margin: 4px -10px;
   padding: 10px 10px 14px;
   border-top: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   background: var(--gold-soft);
   box-shadow: inset 0 0 0 1.5px var(--gold);
 }
@@ -251,7 +251,7 @@ body.no-scroll {
   width: 100%;
   min-height: 120px;
   border: 1.5px dashed var(--accent);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--accent-soft);
   color: var(--ink);
   font-family: var(--sans);
@@ -314,7 +314,7 @@ body.no-scroll {
 .archive-summary {
   margin: 6px 0 4px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid var(--rule);
 }
@@ -1177,7 +1177,7 @@ body.is-sorting * {
   padding: 9px 12px;
   margin: 2px 0;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   background: none;
   font: inherit;
   text-align: left;
@@ -1242,7 +1242,7 @@ body.is-sorting * {
   flex-direction: column;
   gap: 2px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
 }
@@ -1343,7 +1343,7 @@ body.is-sorting * {
   margin: 14px 0 0;
   padding: 12px 14px 14px;
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
 }
 .schedule-group legend {
@@ -1482,7 +1482,7 @@ body.is-sorting * {
 .armor-piece {
   margin: 10px 0;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--gold-soft);
   border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
 }
@@ -1587,7 +1587,7 @@ body.is-sorting * {
   padding: 6px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   box-shadow: 0 6px 24px rgb(0 0 0 / 0.14);
 }
 .entry-menu-list.up {
@@ -1718,7 +1718,7 @@ body.is-sorting * {
 }
 .ink-page {
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   overflow: hidden;
 }
@@ -2073,7 +2073,7 @@ mark.placeholder {
 .house-focus {
   margin: 10px 0;
   padding: 10px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--gold-soft);
   border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
 }
@@ -2625,7 +2625,7 @@ mark.placeholder {
   margin-top: 6px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
 }
 /* Open things are a plain outline, never red (rules 4 and 5). */
 .wa-title {
@@ -3493,7 +3493,7 @@ mark.placeholder {
 .season-invite {
   margin: 12px 0;
   padding: 14px 16px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--rule));
   background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, var(--sheet)), var(--sheet));
 }
@@ -3743,7 +3743,7 @@ mark.placeholder {
   align-items: center;
   justify-content: center;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   color: var(--ink);
 }
 .dogmatik-actions .btn.primary {
@@ -3772,7 +3772,7 @@ mark.placeholder {
   padding: 10px 14px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   color: var(--ink);
   font-weight: 400;
 }
@@ -4262,7 +4262,7 @@ mark.placeholder {
 .dogmatik-done .btn.primary {
   width: 100%;
   min-height: 52px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   font-size: 1rem;
 }
 .dogmatik-done-line {
