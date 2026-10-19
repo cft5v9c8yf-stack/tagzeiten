@@ -1,7 +1,9 @@
 import { useId, useState, type ReactNode } from 'react';
+import { ABSOLUTION_EVENING } from '../../content/liturgy';
 import { BibleRef } from '../../ui/BibleRef';
+import { PrayerText } from '../../ui/PrayerText';
 import { Segmented } from '../../ui/Choice';
-import { getPlan, portionLabel } from '../../domain/readingPlan';
+import { fixedAmounts, getPlan, portionLabel } from '../../domain/readingPlan';
 import { useProfile, useStore } from '../../data/hooks';
 import { fitsHouse, habitsOfRhythm, RHYTHM_ORDER, setHabitActive } from '../../domain/habits';
 import {
@@ -15,17 +17,12 @@ import {
   type House,
 } from '../../domain/house';
 import type { Rhythm } from '../../domain/model';
-import { PlanSettings } from '../settings/PlanSettings';
+import { FixedPlan } from '../settings/PlanSettings';
 import { TimesGrid } from '../settings/ScheduleSettings';
 
 export type Way = 'everyday' | 'desert';
 
 /** Everything below writes straight into the app's own stores (profile: house, schedule, habits, plan); nothing is kept twice. */
-
-/** A text still to be written by Andreas (CLAUDE.md, Arbeitsweise); listed in content/TEXTE-OFFEN.md. */
-function Placeholder({ children }: { children: string }) {
-  return <p className="ob-placeholder">{children}</p>;
-}
 
 /** A row with a name, a short line and a switch; the whole row is the tap area. */
 function SwitchRow({
@@ -81,7 +78,9 @@ export function OrderStep() {
           <span>Du legst den Tag vor Gott hin.</span>
         </li>
       </ol>
-      <Placeholder>[TEXT VON ANDREAS: zwei, drei Sätze zur Stillen Zeit und zur Kurzform, die vollwertig ist]</Placeholder>
+      <p className="ob-text">
+        Die Stille Zeit dauert etwa 45 Minuten. Hast du weniger Zeit, betest du die Kurzform. Sie gilt genauso.
+      </p>
     </>
   );
 }
@@ -102,6 +101,10 @@ export function WayStep({ way, onChoose }: { way: Way | null; onChoose: (w: Way)
         {card('everyday', 'Alltag', 'Stille Zeit, Bibel lesen, Vesper und Nachtgebet, dazu dein Haus.')}
         {card('desert', 'Wüstenwanderung', 'Weniger Ablenkung. Mehr Raum für Gott.')}
       </div>
+      <p className="ob-text">
+        Die Wüstenwanderung ist eine begrenzte Zeit, in der du Ablenkungen beiseitelegst und Gottes Wort mehr Raum gibst.
+        Der Alltag ist der tägliche Rhythmus, den du danach beibehältst oder in dem du von Anfang an lebst.
+      </p>
     </>
   );
 }
@@ -241,7 +244,7 @@ export function TimesStep() {
           onChange={(k, v) => store.updateProfile((p) => ({ ...p, schedule: { ...p.schedule, [k]: v } }))}
         />
       )}
-      <p className="ob-hint">Sie bestimmen den Tagesbogen unter „Heute“. Nicht jeder steht um vier auf.</p>
+      <p className="ob-text">Die Zeit erinnert dich an die Stunde. Verpasst du sie, fragt dich die App nicht danach.</p>
     </>
   );
 }
@@ -292,12 +295,19 @@ export function HabitsStep() {
 /* ------------------------------------------------------------ 6 */
 
 export function PlanStep() {
+  const planId = useProfile().plan.planId;
+  const amounts = fixedAmounts(planId);
   return (
     <>
       <p className="ob-lead">Du liest auf Papier. Die App merkt sich nur, wo du stehst.</p>
-      <PlanSettings />
+      {amounts ? (
+        <FixedPlan amounts={amounts} />
+      ) : (
+        <p className="ob-hint">Du liest nach einem eigenen Plan. Den änderst du unter „Wort“.</p>
+      )}
       <p className="ob-hint">
         Der Plan läuft nach Fortschritt, nicht nach Datum. Wer drei Tage aussetzt, liest beim nächsten Abschnitt weiter.
+        Einen eigenen Plan stellst du später unter „Wort“ ein.
       </p>
     </>
   );
@@ -318,7 +328,7 @@ export function PrivacyStep() {
           <span>Für Schuld gibt es kein Eingabefeld. Sie wird vor Gott ausgesprochen.</span>
         </li>
       </ul>
-      <Placeholder>[TEXT VON ANDREAS: Zuspruch zum Schluss, etwa 1. Joh 1,9]</Placeholder>
+      <PrayerText text={ABSOLUTION_EVENING} className="absolution" />
     </>
   );
 }

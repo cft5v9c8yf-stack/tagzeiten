@@ -21,6 +21,7 @@
 .ob-leave {
   flex: none;
 }
+.ob-text,
 .ob-lead,
 .ob-hint {
   margin: 0;

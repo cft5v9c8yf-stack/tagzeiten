@@ -2,7 +2,13 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { PageHeader } from '../../ui/PageHeader';
 import { DoneStep, HabitsStep, HouseStep, OrderStep, PlanStep, PrivacyStep, TimesStep, WayStep, type Way } from './OnboardingSteps';
-import { ONBOARDING_PATH, readOnboardingMark, writeOnboardingMark } from './onboardingState';
+import {
+  ONBOARDING_PATH,
+  readOnboardingMark,
+  readOnboardingStep,
+  writeOnboardingMark,
+  writeOnboardingStep,
+} from './onboardingState';
 
 type StepId = 'order' | 'way' | 'house' | 'times' | 'habits' | 'plan' | 'privacy' | 'done';
 
@@ -35,19 +41,26 @@ const DESERT_PATH = '/arena?bereich=wuestenwanderung';
  */
 export function OnboardingPage() {
   const navigate = useNavigate();
-  const [index, setIndex] = useState(0);
-  const [way, setWay] = useState<Way | null>(null);
+  const [mark] = useState(readOnboardingMark);
   // Reopened later (the setup was finished or put aside before): leaving goes back to "Mehr".
-  const [reopened] = useState(() => readOnboardingMark() !== null);
+  const reopened = mark === 'done' || mark === 'skipped';
+  // Reloaded midway: back to the page where it was (past the choice, the way is "Alltag").
+  const [index, setIndex] = useState(() => (mark === 'started' ? Math.min(readOnboardingStep(), STEPS.length - 1) : 0));
+  const [way, setWay] = useState<Way | null>(() => (mark === 'started' && readOnboardingStep() > 1 ? 'everyday' : null));
   const titleRef = useRef<HTMLHeadingElement>(null);
   const step = STEPS[index]!;
   const last = index === STEPS.length - 1;
 
   // A new page: back to the top, and the focus on its heading, so keyboard and screen reader begin there.
   useEffect(() => {
+    // The first start is remembered as begun, and the page it has reached.
+    if (!reopened) {
+      writeOnboardingMark('started');
+      writeOnboardingStep(index);
+    }
     window.scrollTo(0, 0);
     titleRef.current?.focus({ preventScroll: true });
-  }, [index]);
+  }, [index, reopened]);
 
   const leave = () => {
     if (!reopened) writeOnboardingMark('skipped');

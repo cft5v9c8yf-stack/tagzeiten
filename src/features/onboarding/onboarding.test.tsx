@@ -29,8 +29,8 @@ function Where() {
 }
 
 let n = 0;
-async function start(path: string, prepare?: (s: Store) => void) {
-  const db = new TagzeitenDB(`ob-${++n}`);
+async function start(path: string, prepare?: (s: Store) => void, dbName = `ob-${++n}`) {
+  const db = new TagzeitenDB(dbName);
   const store = new Store({ db, journal: memoryJournal(), now: () => new Date(2026, 9, 19, 9) });
   await store.load();
   prepare?.(store);
@@ -107,6 +107,27 @@ describe('Einrichtung: wann sie erscheint', () => {
   });
 });
 
+describe('Einrichtung: Wiederaufnahme', () => {
+  it('comes back to the page where it was left, also with settings already changed', async () => {
+    const first = await start(ONBOARDING_PATH, undefined, 'ob-resume');
+    toHouse();
+    fireEvent.click(screen.getByRole('switch', { name: /Ich habe eine Frau/ }));
+    fireEvent.change(screen.getByLabelText('Name deiner Frau'), { target: { value: 'Anna' } });
+    next();
+    expect(heading()).toBe('Deine Zeiten');
+    await first.store.flush();
+    expect(localStorage.getItem(ONBOARDING_KEY)).toBe('started');
+    cleanup();
+    // Reload: the profile holds changes now, and yet the setup opens again.
+    const { router, store } = await start('/', undefined, 'ob-resume');
+    expect(store.getProfile().updatedAt).toBeGreaterThan(0);
+    await waitFor(() => expect(router.state.location.pathname).toBe(ONBOARDING_PATH));
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Deine Zeiten');
+    click('Zurück');
+    expect((screen.getByLabelText('Name deiner Frau') as HTMLInputElement).value).toBe('Anna');
+  });
+});
+
 describe('Einrichtung: Überspringen', () => {
   it('"Später ansehen" puts it aside, remembers that, and leads to Heute', async () => {
     const { router, store } = await start('/');
@@ -142,7 +163,7 @@ describe('Einrichtung: der Weg Alltag', () => {
     expect(document.body.textContent).toContain(
       '„Trachtet am ersten nach dem Reich Gottes und nach seiner Gerechtigkeit, so wird euch solches alles zufallen.“',
     );
-    expect(document.body.textContent).toContain('[TEXT VON ANDREAS:');
+    expect(document.body.textContent).toContain('Die Stille Zeit dauert etwa 45 Minuten.');
 
     // The way must be chosen before it goes on.
     next();
@@ -191,11 +212,15 @@ describe('Einrichtung: der Weg Alltag', () => {
     expect(document.body.textContent).toContain('nach Fortschritt, nicht nach Datum');
     fireEvent.change(screen.getAllByLabelText('Kapitel am Tag')[0]!, { target: { value: '2' } });
     expect(store.getProfile().plan.planId).toBe('atnt-2-1');
+    // Only start and amount: no plan of one's own here.
+    expect(screen.queryByRole('button', { name: 'Eigener Plan' })).toBeNull();
     next();
 
     expect(heading()).toBe('Was auf deinem Gerät bleibt');
     expect(document.body.textContent).toContain('Wird gebetet, nicht notiert.');
-    expect(document.body.textContent).toContain('[TEXT VON ANDREAS:');
+    // The word of forgiveness follows, the same text as in the evening order.
+    expect(document.querySelector('.absolution')!.textContent).toContain('so ist er treu und gerecht');
+    expect(document.querySelector('.absolution')!.textContent).toContain('1. Johannes 1,9');
     next();
 
     // The summary is a quiet list; its button leads to Heute.

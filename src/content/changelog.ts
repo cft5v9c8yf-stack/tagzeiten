@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.17.1',
+    date: '2026-10-19',
+    title: 'Einrichtung: Texte, Leseplan, Wiederaufnahme',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer die Einrichtung mittendrin verlässt oder die Seite neu lädt, kommt beim nächsten Start auf die Seite zurück, an der er war.' },
+      { area: 'Einrichtung', text: 'Der Leseplan hat nur noch die Startstelle für Altes und Neues Testament und die Kapitel am Tag. Einen eigenen Plan stellst du unter „Wort“ ein.' },
+      { area: 'Einrichtung', text: 'Neue Texte zur Stillen Zeit und ihrer Kurzform, zu Wüstenwanderung und Alltag, zu deinen Zeiten, und am Ende das Wort aus 1. Johannes 1,9.' },
+    ],
+  },
+  {
     version: '1.17.0',
     date: '2026-10-19',
     title: 'Einrichtung beim ersten Start',

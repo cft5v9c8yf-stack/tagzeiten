@@ -108,7 +108,7 @@ function ChaptersADay({ value, onChange }: { value: number; onChange: (v: number
 }
 
 /** Old and New Testament side by side, each with its own amount a day. */
-function FixedPlan({ amounts }: { amounts: FixedAmounts }) {
+export function FixedPlan({ amounts }: { amounts: FixedAmounts }) {
   const store = useStore();
   const toast = useToast();
   const profile = useProfile();
