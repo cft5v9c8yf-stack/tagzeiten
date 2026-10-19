@@ -46,7 +46,7 @@
   height: 1.2em;
   margin-top: 10px;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
@@ -409,7 +409,7 @@ progress::-moz-progress-bar {
 .habits .group-row th {
   text-align: left;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -498,7 +498,7 @@ progress::-moz-progress-bar {
 }
 .cy-circles .cy-season {
   font-weight: 400;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--ink);
   opacity: 0.8;
 }
@@ -509,7 +509,7 @@ progress::-moz-progress-bar {
 }
 .cy-verse figcaption {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -597,7 +597,7 @@ a.cy-week-name {
 .next-track-title {
   margin: 0 0 2px;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -653,7 +653,7 @@ a.cy-week-name {
 .habits td.wa-off {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 
@@ -736,7 +736,7 @@ a.cy-week-name {
 .sunday-rest-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;

@@ -102,7 +102,7 @@ dd a:not([class]) {
   margin: 40px 0 -20px;
   text-align: center;
   font-family: var(--serif);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-style: italic;
   letter-spacing: 0.04em;
   line-height: 1.7;
@@ -306,7 +306,7 @@ nav.tabs a {
   padding: 8px 0 9px;
   text-decoration: none;
   font-family: var(--sans);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
 }

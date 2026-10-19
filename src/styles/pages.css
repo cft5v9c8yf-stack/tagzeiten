@@ -54,7 +54,7 @@ body.no-scroll {
 .cat-week-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -152,7 +152,7 @@ body.no-scroll {
 }
 .ktag {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink);
   border: 1px solid var(--gold);
@@ -1020,14 +1020,14 @@ body.is-sorting * {
 .sunday-step-label {
   max-width: 52px;
   font-family: var(--sans);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   line-height: 1.2;
   text-align: center;
 }
 .sunday-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1133,7 +1133,7 @@ body.is-sorting * {
 .chooser-title p {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1169,7 +1169,7 @@ body.is-sorting * {
 .week-group-title {
   margin: 10px 0 2px;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1218,7 +1218,7 @@ body.is-sorting * {
 }
 .sunday-verse figcaption {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1260,7 +1260,7 @@ body.is-sorting * {
 }
 .sunday-reading .track {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2549,7 +2549,7 @@ mark.placeholder {
   border-radius: 999px;
   background: var(--paper);
   border: 1px solid var(--rule);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.5;
 }
 .switch:checked {
@@ -3015,7 +3015,7 @@ header.top .search-link:focus-visible {
 .wa-off {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 .wa-grid-wrap {
   overflow-x: auto;
@@ -3053,7 +3053,7 @@ header.top .search-link:focus-visible {
 .wa-grid-group th {
   text-align: left;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
@@ -3218,7 +3218,7 @@ header.top .search-link:focus-visible {
   cursor: pointer;
 }
 .day-strip-wd {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.03em;
 }
 .day-strip-d {
@@ -3310,7 +3310,7 @@ header.top .search-link:focus-visible {
 
 .marks-word {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
@@ -3609,7 +3609,7 @@ header.top .search-link:focus-visible {
 .season-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;

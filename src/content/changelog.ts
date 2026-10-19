@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.2',
+    date: '2026-10-19',
+    title: 'Besser zu treffen, besser zu lesen',
+    changes: [
+      { area: 'Henoch', text: 'Kleine Knöpfe lassen sich leichter treffen: die Kreise der Woche, die Schrittleiste, die Lupe, der Pfeil zurück und Textlinks haben eine Tippfläche von 44 Pixeln, ohne dass sie größer aussehen.' },
+      { area: 'Henoch', text: 'Eingabefelder haben einen deutlicheren Rand, Platzhalter und das Gold der Symbole sind kräftiger, und die kleinsten Beschriftungen sind etwas größer, auch in der Leiste unten.' },
+    ],
+  },
+  {
     version: '1.16.1',
     date: '2026-10-17',
     title: 'Die Dogmatik vorerst wieder heraus',

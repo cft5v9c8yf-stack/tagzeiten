@@ -10,6 +10,8 @@
   --ink: #1d2330;
   --muted: #636a76;
   --rule: #ddd8ce;
+  /* Border of input fields: 3:1 against paper and sheet (WCAG 1.4.11). */
+  --field-line: #8a8578;
   --rubric: #8c2f2f;
   --rubric-soft: #f1e3e1;
   --accent: #2e4057;
@@ -17,7 +19,7 @@
   --on-accent: #ffffff;
   --done: #4f7a17;
   --done-soft: #e8f2d9;
-  --half: #9a7b2f;
+  --half: #7d6220;
   --half-soft: #f3ecd9;
   /* From Luther's rose: gold for links and the Today tab, sky for "now" and the
      current, green for done. Red stays with the rubrics (rule 5); in the rose it
@@ -28,7 +30,7 @@
   --sky: #0a7fae;
   --rose-gold: #d9ae00;
   /* The rose's gold, a shade deeper on light paper so thin lines stay visible. */
-  --icon-gold: #c49c00;
+  --icon-gold: #a78100;
   --rose-sky: #0bc8ff;
   --rose-green: #9acd32;
   --rose-red: #e31e24;
@@ -64,6 +66,7 @@
     --ink: #e8e3d8;
     --muted: #9aa2af;
     --rule: #2c3748;
+    --field-line: #66707f;
     --rubric: #e07a6e;
     --rubric-soft: #3a2327;
     --accent: #d8d0c0;
@@ -89,6 +92,7 @@
   --ink: #e8e3d8;
   --muted: #9aa2af;
   --rule: #2c3748;
+  --field-line: #66707f;
   --rubric: #e07a6e;
   --rubric-soft: #3a2327;
   --accent: #d8d0c0;
