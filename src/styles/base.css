@@ -34,7 +34,7 @@ select {
   color: inherit;
 }
 
-/* Links without underline: gold from Luther's rose; inside running text also bold,
+/* Links never underlined: gold from Luther's rose; inside running text also bold,
    so they do not depend on colour alone. */
 a {
   color: var(--link);
@@ -44,9 +44,6 @@ p a,
 li > a:only-child:not([class]),
 dd a:not([class]) {
   font-weight: 600;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
 }
 
 :focus-visible {
@@ -226,9 +223,6 @@ p {
   background: transparent;
   border-color: transparent;
   color: var(--link);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
 }
 .btn.quiet.timer-start,
 .btn.quiet.ink-undo,

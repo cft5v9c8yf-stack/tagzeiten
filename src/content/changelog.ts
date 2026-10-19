@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.14',
+    date: '2026-10-19',
+    title: 'Keine Unterstreichungen mehr',
+    changes: [
+      { area: 'Henoch', text: 'Links und Textschaltflächen sind nirgends mehr unterstrichen, auch nicht „Gestern nachtragen“. Sie bleiben in Gold, im Fließtext zusätzlich fett.' },
+    ],
+  },
+  {
     version: '1.16.13',
     date: '2026-10-19',
     title: 'Kirchenjahr, Versionen und Maße',

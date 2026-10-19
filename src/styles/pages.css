@@ -633,9 +633,6 @@ body.is-sorting * {
   color: var(--link);
   font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
 }
 .small-btn {
   min-height: 30px;
@@ -3566,10 +3563,6 @@ mark.placeholder {
   font-weight: 600;
   color: var(--link);
   text-decoration: none;
-}
-.season-link:hover,
-.season-link:focus-visible {
-  text-decoration: underline;
 }
 .desert-guide .season-link {
   margin-top: 0;
