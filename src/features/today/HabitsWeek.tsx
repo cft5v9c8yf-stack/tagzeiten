@@ -4,9 +4,9 @@ import { addDays, formatLong, formatShort, fromKey, mondayOf, WEEKDAY_SHORT, wee
 import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
 import type { Habit, Rhythm } from '../../domain/model';
-import { activeRun, hallModeIn, isInRun } from '../../domain/winterArc';
+import { activeRun, hallModeIn, isInRun, stageOf } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
-import { DesertDay, DesertWeekRows } from '../desert/DesertHabits';
+import { DesertCare, DesertDay, DesertWeekRows } from '../desert/DesertHabits';
 import { Tick } from '../../ui/Tick';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
@@ -53,6 +53,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const hallMode = hallModeIn(profile.winterArc, date);
   const run = activeRun(profile.winterArc);
   const desertIds = new Set(hallMode ? (run?.habits ?? []) : []);
+  // A Wüstenzeit not yet in this week (or not begun) still has its habits chosen here.
+  const careOnly = !!run && !hallMode && stageOf(run, today) !== 'after';
   const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house) && !desertIds.has(h.id));
   // Sunday rest: no usual habits on Sundays; what was ticked before stays stored. The Wüstenzeit keeps its days.
   const resting = (k: DateKey) => profile.sundayRest && weekdayOf(k) === 0;
@@ -110,7 +112,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     );
   };
 
-  if (active.length === 0 && !hallMode) {
+  if (active.length === 0 && !hallMode && !careOnly) {
     return <p className="empty">Keine Gewohnheiten ausgewählt. Unter „Mehr“ kannst du welche wählen oder anlegen.</p>;
   }
 
@@ -184,6 +186,13 @@ export function HabitsWeek({ date }: { date: DateKey }) {
           <DesertDay key={sel} run={run} date={sel} />
         </div>
       )}
+      {careOnly && run && (
+        <div className="wa-group desert-group">
+          <h5>Wüstenzeit</h5>
+          <p className="small muted">Die Wüstenzeit beginnt am {formatLong(run.startDate)}.</p>
+        </div>
+      )}
+      {careOnly && run && <DesertCare run={run} />}
       {byHand(active).length === 0 ? (
         !hallMode && <p className="small muted">Die Gebetszeiten stehen oben. Weitere Gewohnheiten wählst du unter „Mehr“.</p>
       ) : resting(sel) ? (
@@ -202,6 +211,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
             </div>
           ))
       )}
+      {hallMode && run && stageOf(run, today) !== 'after' && <DesertCare run={run} />}
     </section>
     <details className="habits-week">
     <summary className="habits-week-title">Wochenübersicht</summary>

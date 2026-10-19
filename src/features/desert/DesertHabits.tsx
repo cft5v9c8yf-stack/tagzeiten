@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { formatShort, type DateKey } from '../../domain/dates';
@@ -9,6 +10,7 @@ import { READING_HABIT } from '../../content/habits';
 import type { Habit } from '../../domain/model';
 import { isInRun, type WinterArcRun } from '../../domain/winterArc';
 import { Tick } from '../../ui/Tick';
+import { DesertChoice } from './DesertChoice';
 import { WithInfo } from './DesertInfo';
 
 const periodNote = (h: Habit) => (h.rhythm === 'weekly' ? 'diese Woche' : h.rhythm === 'monthly' ? 'diesen Monat' : undefined);
@@ -147,5 +149,20 @@ export function DesertWeekRows({ run, week, date }: { run: WinterArcRun; week: r
         );
       })}
     </tbody>
+  );
+}
+
+/**
+ * Under "Heute": the habits of the Wüstenzeit are chosen here, folded, with the choice of the packages,
+ * the further ones and the user's own (the same as under "Mehr"). Open while none is chosen yet.
+ */
+export function DesertCare({ run }: { run: WinterArcRun }) {
+  // Open at first while nothing is chosen; it stays as the person leaves it.
+  const [open, setOpen] = useState(() => !(run.habits ?? []).length);
+  return (
+    <details className="wa-settings desert-care" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
+      <summary>Gewohnheiten dieser Wüstenzeit anpassen</summary>
+      <DesertChoice run={run} level={6} />
+    </details>
   );
 }

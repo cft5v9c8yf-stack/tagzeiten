@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.19.0',
+    date: '2026-10-19',
+    title: 'Wüstenzeit: die Gewohnheiten unter „Heute“',
+    changes: [
+      { area: 'Heute', text: 'Die Gewohnheiten der Wüstenzeit pflegst und hakst du nur noch unter „Heute“ ab. Unter der Gruppe „Wüstenzeit“ steht eine einklappbare Auswahl: Pakete und Vorschläge wählen und abwählen, eigene anlegen und löschen, mit dem „i“ bei jeder Gewohnheit.' },
+      { area: 'Arena', text: 'Die Wüstenwanderung zeigt keine Gewohnheiten zum Abhaken oder Auswählen mehr. Sie hat vier Ansichten: den Verlauf (die Tage der Wüstenzeit, Woche für Woche, ein Tag mit Haken gefüllt, sonst grau), das Tagebuch, den Rückblick und die Anleitung. Wo früher die Gewohnheiten standen, führt ein Hinweis nach „Heute“.' },
+    ],
+  },
+  {
     version: '1.18.5',
     date: '2026-10-19',
     title: 'Wüstenwanderung: alle gewählten Gewohnheiten',

@@ -12,36 +12,28 @@ import {
   keptIn,
   keptLine,
   leadVerse,
-  meantFor,
   tickedOn,
   usesStandard,
 } from '../../domain/desert';
 import { arenaOffer, seasonLinkOf } from '../../domain/seasons';
-import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import { activeRun, endDateOf, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
-import { Tick } from '../../ui/Tick';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertJournal, RoundJournal } from './DesertJournal';
-import { DesertChoice } from './DesertChoice';
-import { DesertDay } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
-import { WithInfo } from './DesertInfo';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
 
-const dayLabel = (d: DateKey) => `${WEEKDAY_SHORT[fromKey(d).getDay()]} ${fromKey(d).getDate()}.${fromKey(d).getMonth() + 1}.`;
-
-type View = 'day' | 'week' | 'guide';
+type View = 'course' | 'journal' | 'review' | 'guide';
 const VIEW_KEY = 'tz:wuestenzeit-view';
 /** The tab last chosen, on this device: a convenience only. */
 const lastView = (): View => {
   try {
     const v = localStorage.getItem(VIEW_KEY);
-    return v === 'week' || v === 'guide' ? v : 'day';
+    return v === 'journal' || v === 'review' || v === 'guide' ? v : 'course';
   } catch {
-    return 'day';
+    return 'course';
   }
 };
 
@@ -126,8 +118,8 @@ function Head({ run, today }: { run: WinterArcRun; today: DateKey }) {
   );
 }
 
-/** One day's list to tick, with a pager through the whole Wüstenzeit; later days are ticked only when they come. */
-function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
+/** The journal, day by day, with a pager through the whole Wüstenzeit; a later day is written when it comes. */
+function JournalView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const end = endDateOf(run.startDate, run.durationDays);
   const [shown, setShown] = useState<DateKey>(end < today ? end : today);
   const date = shown < run.startDate ? run.startDate : shown > end ? end : shown;
@@ -138,13 +130,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           <Chevron dir="left" />
         </button>
         <h4 id="desert-day-title">
-          {date === today ? (
-            <Link to="/" className="wa-today-link">
-              Heute
-            </Link>
-          ) : (
-            formatLong(date)
-          )}
+          {date === today ? 'Heute' : formatLong(date)}
           <span className="wa-pager-sub">
             {date === today ? `${formatLong(date)} · ` : ''}Tag {positionOf(run, date).day}
           </span>
@@ -153,7 +139,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           <Chevron dir="right" />
         </button>
       </div>
-      {date > today && <p className="small muted wa-back">Dieser Tag liegt noch vor dir. Abhaken kannst du erst an ihm.</p>}
+      {date > today && <p className="small muted wa-back">Dieser Tag liegt noch vor dir. Schreiben kannst du erst an ihm.</p>}
       {date !== today && (
         <p className="wa-back">
           <button type="button" className="link-btn" onClick={() => setShown(today)}>
@@ -161,9 +147,6 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           </button>
         </p>
       )}
-      <div className="wa-group">
-        <DesertDay run={run} date={date} />
-      </div>
       {date <= today && <DesertJournal key={date} date={date} />}
     </section>
   );
@@ -215,24 +198,78 @@ function Kept({ run, today }: { run: WinterArcRun; today: DateKey }) {
   );
 }
 
-/** One calendar week: the grid of the daily habits, the weekly ones, what was kept so far, and the review. */
-function WeekView({ run, today }: { run: WinterArcRun; today: DateKey }) {
-  const store = useStore();
+/**
+ * The course of the Wüstenzeit: its days in calendar weeks, Monday to Sunday. A day with a tick is filled,
+ * a day without one stays grey, a day to come is only outlined. A record, never a rating (rules 4 and 5).
+ */
+function Course({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const profile = useProfile();
   const lookup = useDayLookup();
+  const habits = habitsOf(run, profile);
+  return (
+    <section className="panel wa-course" aria-labelledby="desert-course-title">
+      <h4 id="desert-course-title">Verlauf</h4>
+      <table className="wa-course-grid">
+        <caption className="visually-hidden">Die Tage der Wüstenzeit, Woche für Woche</caption>
+        <thead>
+          <tr>
+            <th scope="col">
+              <span className="visually-hidden">Woche</span>
+            </th>
+            {[1, 2, 3, 4, 5, 6, 0].map((d) => (
+              <th key={d} scope="col">
+                {WEEKDAY_SHORT[d]}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {desertWeeks(run).map((monday, i) => (
+            <tr key={monday}>
+              <th scope="row">
+                <span>Woche {i + 1}</span>
+                <span className="wa-course-date">
+                  {fromKey(monday).getDate()}.{fromKey(monday).getMonth() + 1}.
+                </span>
+              </th>
+              {Array.from({ length: 7 }, (_, k) => addDays(monday, k)).map((d) => {
+                if (!isInRun(run, d))
+                  return (
+                    <td key={d} aria-label="außerhalb der Wüstenzeit">
+                      <span className="wa-course-cell is-outside" aria-hidden="true" />
+                    </td>
+                  );
+                const future = d > today;
+                const ticked = !future && tickedOn(habits, d, lookup);
+                const state = future ? 'liegt noch vor dir' : ticked ? 'mit Haken' : 'ohne Haken';
+                return (
+                  <td key={d} aria-label={`${formatLong(d)}: ${state}`}>
+                    <span
+                      className={`wa-course-cell${future ? ' is-future' : ticked ? ' is-ticked' : ' is-open'}${d === today ? ' is-today' : ''}`}
+                      aria-hidden="true"
+                    />
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="small muted">Gefüllt ist ein Tag mit mindestens einem Haken. Ein grauer Tag ist kein Urteil, nur eine ehrliche Auskunft.</p>
+      <h5>Bisher</h5>
+      <Kept run={run} today={today} />
+    </section>
+  );
+}
+
+/** The review, week by week: the week's focus (with the 90-Tage-Standard), and the Sunday evening's three lines. */
+function ReviewView({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const weeks = desertWeeks(run);
   const current = Math.min(desertWeekOf(run, today), weeks.length);
   const [shown, setShown] = useState(current);
   const week = Math.min(Math.max(shown, 1), current);
   const monday = weeks[week - 1]!;
-  const dates = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
-  const habits = habitsOf(run, profile);
-  const perDay = habits.filter(isPerDay);
-  const periodic = habits.filter((h) => !isPerDay(h) && dates.some((d) => isInRun(run, d) && meantFor(h, d)));
-  // The day the week's weekly ones are ticked on: today in this week, else its last day in the Wüstenzeit.
-  const inWeek = dates.filter((d) => isInRun(run, d) && d <= today);
-  const tickDay = inWeek.includes(today) ? today : inWeek[inWeek.length - 1];
-  const lastDay = dates.filter((d) => isInRun(run, d)).pop()!;
+  const lastDay = Array.from({ length: 7 }, (_, i) => addDays(monday, i)).filter((d) => isInRun(run, d)).pop()!;
   return (
     <>
       {usesStandard(run) && <StandardFocus week={week} weeks={weeks.length} />}
@@ -251,88 +288,23 @@ function WeekView({ run, today }: { run: WinterArcRun; today: DateKey }) {
             <Chevron dir="right" />
           </button>
         </div>
-        {perDay.length > 0 && (
-          <div className="wa-grid-wrap">
-            <table className="wa-grid">
-              <thead>
-                <tr>
-                  <th scope="col" className="visually-hidden">
-                    Gewohnheit
-                  </th>
-                  {dates.map((d) => (
-                    <th key={d} scope="col" className={[isInRun(run, d) ? '' : 'is-outside', d === today ? 'is-today' : ''].join(' ').trim() || undefined} title={formatFullDate(d)}>
-                      <span>{WEEKDAY_SHORT[fromKey(d).getDay()]}</span>
-                      <span className="wa-grid-date">{fromKey(d).getDate()}.</span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {perDay.map((h) => (
-                  <tr key={h.id}>
-                    <th scope="row">{h.name}</th>
-                    {dates.map((d) => {
-                      if (!isInRun(run, d))
-                        return (
-                          <td key={d} className="is-outside" aria-label="außerhalb der Wüstenzeit">
-                            <span className="wa-void" aria-hidden="true" />
-                          </td>
-                        );
-                      if (!meantFor(h, d))
-                        return (
-                          <td key={d} className="wa-off">
-                            –
-                          </td>
-                        );
-                      const done = isDoneOn(h, lookup(d));
-                      return (
-                        <td key={d}>
-                          <button
-                            type="button"
-                            className={done ? 'wa-dot is-done' : 'wa-dot'}
-                            aria-pressed={done}
-                            disabled={!canToggle(h, d, today, lookup)}
-                            aria-label={`${h.name}, ${dayLabel(d)}`}
-                            onClick={() => store.toggleHabit(d, h)}
-                          />
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <p className="small muted">Ein leeres Kästchen ist kein Urteil, nur eine ehrliche Auskunft.</p>
-      </section>
-      {periodic.length > 0 && tickDay && (
-        <section className="panel wa-weekly" aria-labelledby="desert-weekly-title">
-          <h5 id="desert-weekly-title">Woche und Monat</h5>
-          {periodic.map((h) => (
-            <WithInfo key={h.id} habit={h}>
-              <Tick
-                checked={isDoneInPeriod(h, tickDay, lookup)}
-                disabled={!canToggle(h, tickDay, today, lookup)}
-                note={h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat'}
-                onToggle={() => store.toggleHabit(tickDay, h)}
-              >
-                {h.name}
-              </Tick>
-            </WithInfo>
-          ))}
-        </section>
-      )}
-      <section className="panel wa-weekly" aria-labelledby="desert-kept-title">
-        <h5 id="desert-kept-title">Bisher</h5>
-        <Kept run={run} today={today} />
+        {today < lastDay && <p className="small muted">Der Wochenrückblick steht am letzten Tag der Woche bereit.</p>}
       </section>
       {today >= lastDay && <WeekReview key={week} run={run} week={week} />}
     </>
   );
 }
 
-/** The dashboard: where the Wüstenzeit stands, then three tabs – the day, the week, the guide. */
+/** What the habits of the Wüstenzeit have not moved here: they are chosen and ticked under "Heute". */
+function ToToday() {
+  return (
+    <p className="small muted wa-to-today">
+      Die Gewohnheiten pflegst und hakst du unter <Link to="/">Heute</Link> ab.
+    </p>
+  );
+}
+
+/** The dashboard: where the Wüstenzeit stands, then four tabs – the course, the journal, the review, the guide. */
 function Dashboard({ run }: { run: WinterArcRun }) {
   const store = useStore();
   const today = store.today();
@@ -349,36 +321,28 @@ function Dashboard({ run }: { run: WinterArcRun }) {
   return (
     <div className="wa-dashboard">
       <Head run={run} today={today} />
-      {none ? (
-        <section className="panel desert-first" aria-label="Gewohnheiten wählen">
-          <h4>Gewohnheiten wählen</h4>
-          <DesertChoice run={run} level={5} />
-        </section>
-      ) : (
-        <>
-          <Segmented<View>
-            label="Ansicht der Wüstenzeit"
-            value={view}
-            onChange={choose}
-            options={[
-              { value: 'day', label: 'Tag' },
-              { value: 'week', label: 'Woche' },
-              { value: 'guide', label: 'Anleitung' },
-            ]}
-          />
-          {view === 'day' && <DayView run={run} today={today} />}
-          {view === 'week' && <WeekView run={run} today={today} />}
-          {view === 'guide' && (
-            <DesertGuide
-              focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), desertWeeks(run).length), desertWeeks(run).length) : undefined}
-              link={seasonLinkOf(run)}
-            />
-          )}
-          <details className="wa-settings">
-            <summary>Gewohnheiten wählen</summary>
-            <DesertChoice run={run} level={5} />
-          </details>
-        </>
+      {none && <p className="wa-to-today">Du hast noch keine Gewohnheiten gewählt.</p>}
+      <ToToday />
+      <Segmented<View>
+        grid
+        label="Ansicht der Wüstenzeit"
+        value={view}
+        onChange={choose}
+        options={[
+          { value: 'course', label: 'Verlauf' },
+          { value: 'journal', label: 'Tagebuch' },
+          { value: 'review', label: 'Rückblick' },
+          { value: 'guide', label: 'Anleitung' },
+        ]}
+      />
+      {view === 'course' && <Course run={run} today={today} />}
+      {view === 'journal' && <JournalView run={run} today={today} />}
+      {view === 'review' && <ReviewView run={run} today={today} />}
+      {view === 'guide' && (
+        <DesertGuide
+          focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), desertWeeks(run).length), desertWeeks(run).length) : undefined}
+          link={seasonLinkOf(run)}
+        />
       )}
     </div>
   );

@@ -2999,6 +2999,62 @@ mark.placeholder {
   opacity: var(--disabled-opacity);
   cursor: default;
 }
+.wa-course-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-family: var(--sans);
+}
+.wa-course-grid th,
+.wa-course-grid td {
+  padding: 3px 2px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.wa-course-grid tbody th {
+  text-align: left;
+  font-weight: 400;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+.wa-course-date {
+  display: block;
+  font-size: 0.7rem;
+}
+/* A day with a tick is filled, one without stays grey (never red, rule 5); a day to come is only outlined. */
+.wa-course-cell {
+  display: block;
+  width: 100%;
+  min-width: 18px;
+  height: 22px;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+.wa-course-cell.is-ticked {
+  background: var(--accent);
+}
+.wa-course-cell.is-open {
+  background: var(--rule);
+}
+.wa-course-cell.is-future {
+  border: 1px solid var(--rule);
+}
+.wa-course-cell.is-outside {
+  height: 4px;
+  width: 4px;
+  min-width: 0;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.wa-course-cell.is-today {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+}
+.wa-to-today {
+  margin: 0;
+}
 .wa-review textarea {
   width: 100%;
 }
