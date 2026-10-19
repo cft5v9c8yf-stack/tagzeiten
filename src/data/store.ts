@@ -371,7 +371,7 @@ export class Store {
   /* ------------------------------------------------------------ arena */
 
   /** Starts a new Arena entry (or one for the Eisenschmiede) and returns its id. Entries left empty are cleared away. */
-  addArenaEntry(kind?: 'forge'): string {
+  addArenaEntry(kind?: 'forge' | 'desert'): string {
     const entry = newEntry(this.now().getTime(), kind);
     // A new concern for the brothers belongs to the next meeting already planned.
     const meeting = kind === 'forge' ? nextMeeting(this.profile.arena, this.today()) : undefined;
@@ -412,9 +412,8 @@ export class Store {
     const entry = this.profile.arena.find((e) => e.id === id);
     if (!entry || entry.archivedAt !== undefined) return false;
     if ((entry.pinnedAt !== undefined) === pinned) return true;
-    const forge = entry.kind === 'forge';
     const count = this.profile.arena.filter(
-      (e) => e.pinnedAt !== undefined && e.archivedAt === undefined && (e.kind === 'forge') === forge,
+      (e) => e.pinnedAt !== undefined && e.archivedAt === undefined && e.kind === entry.kind,
     ).length;
     if (pinned && count >= MAX_PINNED) return false;
     // Later than every pin before it, so the order of pinning holds.

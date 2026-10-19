@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { FIELDS } from '../../content/fields';
-import { useDay, useDayLookup, useStore } from '../../data/hooks';
+import { useAllDays, useDay, useDayLookup, useStore } from '../../data/hooks';
 import { addDays, formatLong, type DateKey } from '../../domain/dates';
 import { inkToSvg } from '../../domain/ink';
 import type { Day } from '../../domain/model';
@@ -104,6 +104,10 @@ export function RoundJournal({ run }: { run: WinterArcRun }) {
     if (hasJournal(day)) days.push(day!);
   }
   if (!days.length) return <p className="small muted">In dieser Wüstenzeit hast du kein Tagebuch geschrieben.</p>;
+  return <DaySheetList days={days} />;
+}
+
+function DaySheetList({ days }: { days: readonly Day[] }) {
   return (
     <div className="desert-journal-read">
       {days.map((d) => (
@@ -120,5 +124,20 @@ export function RoundJournal({ run }: { run: WinterArcRun }) {
         </section>
       ))}
     </div>
+  );
+}
+
+/**
+ * The sheets of single days, as the journal was written before it became entries: every day with a
+ * text or handwriting, newest first, folded. They stay as they were (rule 11).
+ */
+export function DaySheets() {
+  const days = useAllDays().filter(hasJournal);
+  if (!days.length) return null;
+  return (
+    <details className="wa-settings desert-sheets">
+      <summary>Aus den Tagesblättern</summary>
+      <DaySheetList days={days} />
+    </details>
   );
 }

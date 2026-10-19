@@ -146,7 +146,7 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
   if (kept.length === 0) return [];
   const out = ['', '# Arena', ''];
   for (const e of kept) {
-    out.push(`## ${new Date(e.createdAt).toLocaleDateString('de-DE')}${e.kind === 'forge' ? ' · Eisenschmiede' : ''}`, '');
+    out.push(`## ${new Date(e.createdAt).toLocaleDateString('de-DE')}${e.kind === 'forge' ? ' · Eisenschmiede' : e.kind === 'desert' ? ' · Wüstenwanderung' : ''}`, '');
     if (e.title?.trim()) out.push(`**Titel:** ${e.title.trim()}`, '');
     const verses = e.verses.filter((v) => v.trim());
     const concerns = e.concerns.filter((c) => c.trim());

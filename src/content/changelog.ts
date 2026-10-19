@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.20.0',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: Überblick und Tagebuch mit Einträgen',
+    changes: [
+      { area: 'Arena', text: 'Die Wüstenwanderung beginnt jetzt oben mit einem Überblick: je Gewohnheit eine Zeile, je Tag ein Feld, nach Wochen geordnet. Abgehakt ist gefüllt, nicht abgehakt grau, ein kommender Tag nur umrandet. Wöchentliche und monatliche Gewohnheiten haben ein Feld je Woche und je Monat. Der Überblick ist nur zum Lesen.' },
+      { area: 'Arena', text: 'Darunter steht das Tagebuch als Einträge, wie in der Gebetskammer: neuer Eintrag, Titel, Bibelstellen, Gebetsanliegen, Text oder Handschrift, anheften, archivieren, löschen. Die Einträge gehören zur Wüstenwanderung und stehen nicht in der Gebetskammer. Sie sind in Sicherung und Export enthalten.' },
+      { area: 'Arena', text: 'Was du früher auf den Tagesblättern geschrieben hast, bleibt lesbar: eingeklappt unter „Aus den Tagesblättern“. Rückblick und Anleitung stehen eingeklappt darunter. Die Ansichten Tag und Woche sind entfallen.' },
+    ],
+  },
+  {
     version: '1.19.0',
     date: '2026-10-19',
     title: 'Wüstenzeit: die Gewohnheiten unter „Heute“',

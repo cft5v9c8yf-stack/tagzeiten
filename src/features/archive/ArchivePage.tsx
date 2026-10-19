@@ -119,6 +119,7 @@ function ArenaItem({ e }: { e: ArenaEntry }) {
       <div className="archive-date">
         {formatLong(toKey(new Date(e.createdAt)))}
         {e.kind === 'forge' && <> · Eisenschmiede</>}
+        {e.kind === 'desert' && <> · Wüstenwanderung</>}
       </div>
       <Link className="archive-title" to={`/arena/${e.id}`}>
         {e.kind === 'forge' ? e.title?.trim() || forgeTitle(e) : entryTitle(e)}

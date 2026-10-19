@@ -215,8 +215,11 @@ export interface ArenaEntry {
   ink?: InkStroke[];
   /** Eisenschmiede: what to bring to the meeting, one point each, ticked off when spoken of. */
   points?: ArenaPoint[];
-  /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
-  kind?: 'forge';
+  /**
+   * "forge": for the meeting with the brothers (Eisenschmiede); "desert": the journal of the
+   * Wüstenwanderung (written like the Gebetskammer's, kept apart from it); absent: the Gebetskammer.
+   */
+  kind?: 'forge' | 'desert';
   /** Eisenschmiede: the day of the meeting this entry is for. */
   meetingDate?: DateKey;
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */

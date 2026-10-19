@@ -56,8 +56,6 @@ const withDesert = (s: Store, start = '2026-09-14') => {
   s.chooseDesert(run.id, [...pack('aufbruch').habits, pack('wuestenweg').habits.find((h) => h.id === 'wz-freitagsfasten')!], true);
   return run.id;
 };
-const tab = (name: string) =>
-  fireEvent.click(within(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).getByRole('button', { name }));
 
 describe('the Wüstenwanderung in the Arena', () => {
   it('stands in the Arena as the third place, with the guide and the way in', async () => {
@@ -95,7 +93,8 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
     expect(screen.getByText('Du hast noch keine Gewohnheiten gewählt.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
-    expect(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeTruthy();
+    // The journal stands on the page, as entries.
+    expect(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' })).toBeTruthy();
   });
 
   it('opens from the old addresses of the Streithalle and of 0.39.0', async () => {
@@ -118,20 +117,68 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(head.textContent).not.toMatch(/verpasst|Streak|Serie/i);
   });
 
-  it('keeps a journal under the day, not in the Gebetskammer; the days ahead have none yet', async () => {
+  it('keeps the journal as entries of its own, apart from the Gebetskammer: made, changed, pinned, archived, deleted', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tagebuch');
-    const journal = screen.getByRole('group', { name: 'Tagebuch' });
-    expect(journal.textContent).toContain('Sünde wird gebetet, nicht notiert');
-    fireEvent.change(within(journal).getByLabelText('Tagebuch'), { target: { value: 'Heute war es still.\nZweite Zeile.' } });
-    expect(store.getDay('2026-09-26').evening.journal).toBe('Heute war es still.\nZweite Zeile.');
+    expect(document.body.textContent).toContain('Sünde wird gebetet, nicht notiert');
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const article = (await screen.findByRole('article')) as HTMLElement;
+    fireEvent.change(within(article).getByLabelText('Titel'), { target: { value: 'Stille am Morgen' } });
+    fireEvent.change(within(article).getByLabelText('Bibelstelle 1'), { target: { value: 'Psalm 62,2' } });
+    fireEvent.change(within(article).getByLabelText('Was dich in dieser Zeit bewegt'), { target: { value: 'Heute war es still.' } });
+    // Its own kind: not in the Gebetskammer; the word of comfort of the Wüstenzeit stands under it.
+    expect(store.getProfile().arena).toHaveLength(1);
+    expect(store.getProfile().arena[0]).toMatchObject({ kind: 'desert', title: 'Stille am Morgen', text: 'Heute war es still.' });
+    expect(within(article).getByLabelText('Zuspruch').textContent).toContain('alle Morgen neu');
+    fireEvent.click(within(article).getByRole('button', { name: 'Anheften' }));
+    expect(store.getProfile().arena[0]!.pinnedAt).toBeDefined();
+    // Back to the page of the Wüstenwanderung: the entry stands there as a card.
+    fireEvent.click(within(article).getByRole('link', { name: 'Zurück: Wüstenwanderung' }));
+    expect((await screen.findByRole('heading', { level: 2, name: 'Wüstenwanderung' })).textContent).toBe('Wüstenwanderung');
+    const card = screen.getByRole('link', { name: /Stille am Morgen/ });
+    expect(card.textContent).toContain('Angeheftet');
+    // The three dots: archive. It leaves the list and stands in the Rückblick.
+    fireEvent.click(screen.getByRole('button', { name: 'Aktionen für „Stille am Morgen“' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Eintrag archivieren' }));
+    expect(store.getProfile().arena[0]!.archivedAt).toBeDefined();
+    expect(screen.queryByRole('link', { name: /Stille am Morgen/ })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Archivierte Einträge im Rückblick' })).toBeTruthy();
+    // Brought back and deleted from its page.
+    store.archiveArenaEntry(store.getProfile().arena[0]!.id, false);
+    fireEvent.click(await screen.findByRole('link', { name: /Stille am Morgen/ }));
+    const again = (await screen.findByRole('article')) as HTMLElement;
+    fireEvent.click(within(again).getByRole('button', { name: 'Löschen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ja, Eintrag löschen' }));
     expect(store.getProfile().arena).toEqual([]);
-    // The day before has its own page of the journal.
-    fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
-    expect((within(screen.getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch') as HTMLTextAreaElement).value).toBe('');
-    fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Folgetag' }));
-    expect(screen.queryByRole('group', { name: 'Tagebuch' })).toBeNull();
+  });
+
+  it('keeps the entries of the Wüstenwanderung out of the Gebetskammer, and the entries of the Gebetskammer out of it', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      const id = s.addArenaEntry();
+      s.updateArenaEntry(id, (e) => ({ ...e, title: 'Aus der Gebetskammer', text: 'Etwas anderes.' }));
+      const d = s.addArenaEntry('desert');
+      s.updateArenaEntry(d, (e) => ({ ...e, title: 'Aus der Wüste', text: 'Still.' }));
+    });
+    expect(screen.getByRole('link', { name: /Aus der Wüste/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /Aus der Gebetskammer/ })).toBeNull();
+    cleanup();
+    await renderArena('/arena?bereich=gebetskammer', (s) => {
+      const d = s.addArenaEntry('desert');
+      s.updateArenaEntry(d, (e) => ({ ...e, title: 'Aus der Wüste', text: 'Still.' }));
+    });
+    expect(screen.queryByRole('link', { name: /Aus der Wüste/ })).toBeNull();
+    expect(store.getProfile().arena).toHaveLength(2);
+  });
+
+  it('keeps the old sheets of single days readable, folded, and does not rewrite them', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      withDesert(s);
+      s.updateDay('2026-09-20', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der alte Tag.' } }));
+    });
+    const sheets = document.querySelector('.desert-sheets') as HTMLElement;
+    expect(sheets.querySelector('summary')!.textContent).toBe('Aus den Tagesblättern');
+    expect(sheets.textContent).toContain('Der alte Tag.');
+    expect(store.getDay('2026-09-20').evening.journal).toBe('Der alte Tag.');
+    expect(store.getProfile().arena).toEqual([]);
   });
 
   it('carries the phases and weekly focuses of the 90-Tage-Standard when its points are chosen, the verse first', async () => {
@@ -139,7 +186,6 @@ describe('the Wüstenwanderung in the Arena', () => {
       s.startDesert('2026-09-14', 40);
       s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, pack('standard').habits, true);
     });
-    tab('Rückblick');
     const focus = screen.getByRole('region', { name: 'Schwerpunkt der Woche' });
     // Week 2 of 6: the thirteen focuses spread over the weeks.
     expect(focus.firstElementChild!.className).toContain('wa-verse');
@@ -147,63 +193,114 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(focus.textContent).toContain('Die Arbeit schützen.');
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     expect(screen.getByRole('region', { name: 'Schwerpunkt der Woche' }).textContent).toContain('Einfach da sein.');
-    tab('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).getByText('Der 90-Tage-Standard')).toBeTruthy();
   });
 
   it('has no weekly focus without the points of the standard', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Rückblick');
     expect(screen.queryByRole('region', { name: 'Schwerpunkt der Woche' })).toBeNull();
-    tab('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).queryByText('Der 90-Tage-Standard')).toBeNull();
   });
 
-  it('shows the course as calendar weeks, what was kept so far, and the review at the end of a week', async () => {
+  it('shows the overview of the habits: a row for each, a box for each day, ticked filled, open grey, to come outlined', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);
       const h = s.getProfile().habits.find((x) => x.id === 'wz-handy-spaeter')!;
       s.toggleHabit('2026-09-15', h);
       s.toggleHabit('2026-09-22', h);
+      s.toggleHabit('2026-09-25', s.getProfile().habits.find((x) => x.id === 'wz-freitagsfasten')!);
     });
-    // The course is the first view: a table of days, the ones with a tick filled, the others grey, those to come outlined.
-    const grid = document.querySelector('.wa-course-grid') as HTMLElement;
-    expect([...grid.querySelectorAll('thead th')].slice(1).map((t) => t.textContent)).toEqual(['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
-    expect(grid.querySelectorAll('tbody tr')).toHaveLength(6);
-    expect(grid.querySelectorAll('.is-ticked')).toHaveLength(2);
-    expect(grid.querySelector('td[aria-label$="mit Haken"]')).not.toBeNull();
-    expect(grid.querySelectorAll('td[aria-label$="mit Haken"]')).toHaveLength(2);
-    expect(grid.querySelector('td[aria-label^="Mittwoch, 16. September: ohne Haken"] .is-open')).not.toBeNull();
-    expect(grid.querySelector('td[aria-label^="Sonntag, 27. September: liegt noch vor dir"] .is-future')).not.toBeNull();
-    // Nothing to tick here.
-    expect(grid.querySelectorAll('button, input')).toHaveLength(0);
-    expect(document.querySelector('.desert-kept')!.textContent).toContain('Handy späteran 2 Tagen gehalten');
+    const table = document.querySelector('.wa-chart-table') as HTMLElement;
+    // On top of the page, above the journal.
+    const chart = document.querySelector('.wa-chart')!;
+    expect(chart.compareDocumentPosition(document.querySelector('.desert-entries')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // One row for each habit of the Wüstenzeit (Aufbruch and Friday fasting).
+    expect([...table.querySelectorAll('tbody th')].map((t) => t.textContent)).toEqual([
+      'Morgensegen',
+      'Bibel lesen',
+      'Handy später',
+      'Dankbarkeit',
+      'Freitagsfasten',
+    ]);
+    // 40 days, grouped by weeks; today (26 September) is marked.
+    expect(table.querySelectorAll('thead th')).toHaveLength(41);
+    expect(table.querySelector('thead th.is-today')!.textContent).toBe('26');
+    const row = (name: string) => within(within(table).getByRole('rowheader', { name }).closest('tr') as HTMLElement);
+    const handy = row('Handy später');
+    expect(handy.getByLabelText('Dienstag, 15. September: abgehakt').querySelector('.is-ticked')).not.toBeNull();
+    expect(handy.getByLabelText('Dienstag, 22. September: abgehakt')).toBeTruthy();
+    expect(handy.getByLabelText('Mittwoch, 16. September: nicht abgehakt').querySelector('.is-open')).not.toBeNull();
+    expect(handy.getByLabelText('Sonntag, 27. September: liegt noch vor dir').querySelector('.is-future')).not.toBeNull();
+    // Friday fasting is meant for Fridays only; ticked on the 25th.
+    const fasting = row('Freitagsfasten');
+    expect(fasting.getByLabelText('Freitag, 25. September: abgehakt')).toBeTruthy();
+    expect(fasting.getByLabelText('Samstag, 26. September: nicht vorgesehen')).toBeTruthy();
+    // Nothing to tap, and no count.
+    expect(table.querySelectorAll('button, input, a')).toHaveLength(0);
+    expect(chart.textContent).not.toMatch(/\d+\s*%|in Folge|Streak|Serie/);
     // The review: the week before has ended; its three lines end in the word of comfort (rule 1).
-    tab('Rückblick');
     expect(document.querySelector('.wa-review')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     const review = document.querySelector('.wa-review') as HTMLElement;
     fireEvent.change(within(review).getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen gelesen' } });
     expect(store.getProfile().winterArc.weeks[0]).toMatchObject({ week: 1, review: { win: 'Jeden Morgen gelesen' } });
     expect(review.lastElementChild!.textContent).toContain('alle Morgen neu');
+    expect(document.querySelector('.desert-kept')!.textContent).toContain('Handy späteran 2 Tagen gehalten');
+  });
+
+  it('shows weekly and monthly habits as one box for each week or month, with the ticks of "Heute"', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      s.startDesert('2026-09-14', 40);
+      const run = s.getProfile().winterArc.runs[0]!;
+      s.chooseDesert(run.id, [pack('wuestenweg').habits.find((h) => h.id === 'wz-freitagsfasten')!], true);
+      s.updateProfile((p) => ({
+        ...p,
+        habits: [
+          ...p.habits,
+          { id: 'x-weekly', name: 'Wochenwerk', rhythm: 'weekly', auto: null, active: false, preset: false, focus: false, desert: 'own' },
+          { id: 'x-monthly', name: 'Monatswerk', rhythm: 'monthly', auto: null, active: false, preset: false, focus: false, desert: 'own' },
+        ],
+        winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: [...(r.habits ?? []), 'x-weekly', 'x-monthly'] })) },
+      }));
+      const get = (id: string) => s.getProfile().habits.find((h) => h.id === id)!;
+      // Ticked on a Wednesday of the first week, and on a day of September.
+      s.toggleHabit('2026-09-16', get('x-weekly'));
+      s.toggleHabit('2026-09-18', get('x-monthly'));
+    });
+    const table = document.querySelector('.wa-chart-table') as HTMLElement;
+    const weekly = within(within(table).getByRole('rowheader', { name: 'Wochenwerk' }).closest('tr') as HTMLElement);
+    const cells = [...weekly.getAllByRole('cell')];
+    // Six calendar weeks, each one box across its days; the first is ticked, a week to come is outlined.
+    expect(cells).toHaveLength(6);
+    expect(cells[0]!.getAttribute('colspan')).toBe('7');
+    expect(cells[0]!.querySelector('.is-ticked')).not.toBeNull();
+    expect(cells[1]!.querySelector('.is-open')).not.toBeNull();
+    expect(cells[5]!.querySelector('.is-future')).not.toBeNull();
+    // Months: September (ticked) and October (to come).
+    const monthly = within(within(table).getByRole('rowheader', { name: 'Monatswerk' }).closest('tr') as HTMLElement);
+    const months = monthly.getAllByRole('cell');
+    expect(months).toHaveLength(2);
+    expect(months[0]!.querySelector('.is-ticked')).not.toBeNull();
+    expect(months[1]!.querySelector('.is-future')).not.toBeNull();
   });
 
   it('has nothing to tick or to choose: the habits are kept under "Heute"', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    for (const view of ['Verlauf', 'Tagebuch', 'Rückblick', 'Anleitung']) {
-      tab(view);
-      expect(screen.queryAllByRole('checkbox'), view).toHaveLength(0);
-      expect(screen.queryByRole('button', { name: 'Paket übernehmen' }), view).toBeNull();
-    }
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+    expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
     expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
     expect(document.body.textContent).toContain('Die Gewohnheiten pflegst und hakst du unter Heute ab.');
-    // What stays: the way to start and to end it, in the settings.
+    // No title line under the head, like the other places; no more days or weeks to page through.
+    expect(document.querySelector('.place-sub')).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeNull();
+    // Review and guide stay, folded; and the way to end it.
+    expect(screen.getByText('Rückblick', { selector: 'summary' })).toBeTruthy();
+    expect(screen.getByText('Anleitung', { selector: 'summary' })).toBeTruthy();
     expect(screen.getByText('Einstellungen der Wüstenzeit')).toBeTruthy();
   });
 
   it('never marks anything in red, as a streak or as a rate', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Verlauf');
     const desert = document.querySelector('.desert')!;
     expect(desert.querySelector('[class*="danger"], [class*="rubric"], [class*="warn"]')).toBeNull();
     expect(desert.textContent).not.toMatch(/in Folge|Streak|%|Quote/i);

@@ -12,14 +12,12 @@ const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => ty
 
 export function newEntry(
   now: number,
-  kind?: 'forge',
+  kind?: 'forge' | 'desert',
   id = `${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
 ): ArenaEntry {
   const e: ArenaEntry = { id, createdAt: now, updatedAt: now, verses: [''], concerns: [''], text: '' };
-  if (kind) {
-    e.kind = kind;
-    e.points = [{ text: '', done: false }];
-  }
+  if (kind) e.kind = kind;
+  if (kind === 'forge') e.points = [{ text: '', done: false }];
   return e;
 }
 
@@ -61,7 +59,7 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     if (str(x.title).trim()) e.title = str(x.title);
     if (typeof x.archivedAt === 'number') e.archivedAt = x.archivedAt;
     else if (typeof x.pinnedAt === 'number') e.pinnedAt = x.pinnedAt;
-    if (x.kind === 'forge') e.kind = 'forge';
+    if (x.kind === 'forge' || x.kind === 'desert') e.kind = x.kind;
     const ink = e.kind === 'forge' ? [] : normalizeInk(x.ink);
     if (ink.length) e.ink = ink;
     if (e.kind === 'forge' && isDateKey(x.meetingDate)) e.meetingDate = x.meetingDate;
@@ -82,9 +80,9 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     out.push(e);
   }
   // At most MAX_PINNED per place, also from a backup: the earliest pins stay.
-  for (const forge of [false, true]) {
+  for (const kind of [undefined, 'forge', 'desert']) {
     out
-      .filter((e) => e.pinnedAt !== undefined && (e.kind === 'forge') === forge)
+      .filter((e) => e.pinnedAt !== undefined && e.kind === kind)
       .sort((a, b) => a.pinnedAt! - b.pinnedAt!)
       .slice(MAX_PINNED)
       .forEach((e) => delete e.pinnedAt);
