@@ -1,5 +1,6 @@
 import { useLayoutEffect, type ReactNode } from 'react';
 import { BackLink } from '../../ui/BackLink';
+import { OutArrow } from '../../ui/OutArrow';
 import { Link, useParams } from 'react-router';
 import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
@@ -242,7 +243,9 @@ export function SettingsPage() {
           <li className="more-tile-wide">
             <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer">
               <FlowIcon name="scroll" size={22} />
-              <span className="more-tile-title">Neuigkeiten</span>
+              <span className="more-tile-title">
+                Neuigkeiten<OutArrow />
+              </span>
               <span className="more-tile-line">Neues auf henoch.app</span>
             </a>
           </li>

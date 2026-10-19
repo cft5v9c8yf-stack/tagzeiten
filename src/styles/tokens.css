@@ -12,6 +12,8 @@
   --rule: #ddd8ce;
   /* Border of input fields: 3:1 against paper and sheet (WCAG 1.4.11). */
   --field-line: #8a8578;
+  /* Border of buttons, pills and open step marks: also 3:1. */
+  --control-line: #8a8578;
   --rubric: #8c2f2f;
   --rubric-soft: #f1e3e1;
   --accent: #2e4057;
@@ -67,6 +69,7 @@
     --muted: #9aa2af;
     --rule: #2c3748;
     --field-line: #66707f;
+    --control-line: #66707f;
     --rubric: #e07a6e;
     --rubric-soft: #3a2327;
     --accent: #d8d0c0;
@@ -93,6 +96,7 @@
   --muted: #9aa2af;
   --rule: #2c3748;
   --field-line: #66707f;
+  --control-line: #66707f;
   --rubric: #e07a6e;
   --rubric-soft: #3a2327;
   --accent: #d8d0c0;

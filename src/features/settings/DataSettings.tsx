@@ -6,6 +6,7 @@ import { useStore } from '../../data/hooks';
 import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
 import { BackupError, parseBackup } from '../../domain/backup';
 import { resetOpenState } from '../../ui/collapseState';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { TileGroup } from '../../ui/TileGroup';
 
 type Pending = { json: string; days: number; exportedAt?: string };
@@ -21,6 +22,8 @@ export function DataSettings() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<Pending | null>(null);
   const [importError, setImportError] = useState('');
+  // Guards against a second tap while an import or the deletion is running.
+  const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const stamp = store.today();
   const [kept, setKept] = useState<Persistence | null>(null);
@@ -63,23 +66,32 @@ export function DataSettings() {
   };
 
   const runImport = async () => {
-    if (!pending) return;
+    if (!pending || busy) return;
+    setBusy(true);
     try {
       const { days } = await store.importBackup(pending.json);
       toast(`Sicherung eingespielt: ${days} Tage`);
       setPending(null);
     } catch (e) {
       setImportError(e instanceof BackupError ? e.message : 'Die Sicherung konnte nicht eingespielt werden.');
+    } finally {
+      setBusy(false);
     }
   };
 
   const runDelete = async () => {
-    await store.deleteAll();
-    clearDevicePreferences();
-    resetOpenState();
-    setConfirmDelete(false);
-    toast('Alle Einträge gelöscht');
-    navigate('/');
+    if (busy) return;
+    setBusy(true);
+    try {
+      await store.deleteAll();
+      clearDevicePreferences();
+      resetOpenState();
+      setConfirmDelete(false);
+      toast('Alle Einträge gelöscht');
+      navigate('/');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const exportedOn = pending?.exportedAt ? new Date(pending.exportedAt).toLocaleDateString('de-DE') : null;
@@ -147,7 +159,7 @@ export function DataSettings() {
           content: (
             <>
       <label className="btn file-btn">
-        Datei wählen …
+        Sicherung aus Datei wählen
         <input
           ref={fileRef}
           type="file"
@@ -168,7 +180,7 @@ export function DataSettings() {
             Alle Einträge und Einstellungen auf diesem Gerät werden durch sie ersetzt.
           </p>
           <div className="button-row">
-            <button type="button" className="btn primary" onClick={runImport}>
+            <button type="button" className="btn primary" onClick={runImport} disabled={busy} aria-busy={busy}>
               Sicherung einspielen
             </button>
             <button type="button" className="btn quiet" onClick={() => setPending(null)}>
@@ -185,7 +197,7 @@ export function DataSettings() {
           id: 'more.data.delete',
           title: 'Alles löschen',
           line: 'Alle Einträge',
-          icon: 'changes',
+          icon: 'trash',
           content: (
             <>
       {confirmDelete ? (
@@ -195,7 +207,8 @@ export function DataSettings() {
             du sie behalten willst, exportiere vorher eine Sicherung.
           </p>
           <div className="button-row">
-            <button type="button" className="btn danger" onClick={runDelete}>
+            <button type="button" className="btn danger" onClick={runDelete} disabled={busy} aria-busy={busy}>
+              <FlowIcon name="trash" size={18} />
               Endgültig löschen
             </button>
             <button type="button" className="btn quiet" onClick={() => setConfirmDelete(false)}>

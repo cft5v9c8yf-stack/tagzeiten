@@ -187,11 +187,15 @@ p {
 /* Buttons */
 .btn {
   appearance: none;
-  border: 1px solid var(--rule);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--control-line);
   background: var(--sheet);
   border-radius: var(--radius-s);
   padding: 8px 14px;
-  min-height: 40px;
+  min-height: 44px;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 0.92rem;

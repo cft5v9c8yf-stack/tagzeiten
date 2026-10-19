@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.4',
+    date: '2026-10-19',
+    title: 'Schaltflächen, die man sieht und spürt',
+    changes: [
+      { area: 'Henoch', text: 'Schaltflächen sind mindestens 44 Pixel hoch, haben einen deutlicheren Rand und geben beim Drücken sichtbar nach. Kleine Knöpfe wie Pillen, Fürbitten-Zeichen und das „i“ lassen sich mit 44 Pixeln Tippfläche leichter treffen.' },
+      { area: 'Mehr', text: 'Löschen erkennst du auch ohne Farbe: Rand statt Füllung und ein Papierkorb. „Neuigkeiten“ trägt den Pfeil, der aus der App hinausführt, und der Knopf zum Einspielen heißt „Sicherung aus Datei wählen“.' },
+      { area: 'Mehr', text: 'Einspielen, Löschen und „Jetzt aktualisieren“ lassen sich nicht zweimal auslösen, solange sie laufen.' },
+    ],
+  },
+  {
     version: '1.16.3',
     date: '2026-10-19',
     title: 'Die Schrittleiste nennt ihre Schritte',

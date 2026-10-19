@@ -230,7 +230,7 @@ progress::-moz-progress-bar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   background: transparent;
   cursor: pointer;
   padding: 0;
@@ -268,7 +268,7 @@ progress::-moz-progress-bar {
   font-family: var(--sans);
   font-size: 0.82rem;
   font-weight: 600;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   border-radius: 999px;
   padding: 4px 12px;
   min-height: 32px;

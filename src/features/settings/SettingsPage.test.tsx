@@ -392,7 +392,7 @@ describe('Mehr: Daten', () => {
     const backup = JSON.stringify(await source.exportBackup());
 
     const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
-    const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
+    const input = (await screen.findByText('Sicherung aus Datei wählen')).querySelector('input')!;
     const file = new File([backup], 'sicherung.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
@@ -409,7 +409,7 @@ describe('Mehr: Daten', () => {
 
   it('rejects a file that is not a backup', async () => {
     await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
-    const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
+    const input = (await screen.findByText('Sicherung aus Datei wählen')).querySelector('input')!;
     await act(async () => {
       fireEvent.change(input, { target: { files: [new File(['{"a":1}'], 'x.json')] } });
     });

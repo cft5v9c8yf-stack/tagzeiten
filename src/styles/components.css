@@ -83,7 +83,7 @@
   margin: 10px 0;
   padding: 0;
   border-radius: 50%;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   background: var(--paper);
   color: var(--rubric);
   font-family: var(--serif);
@@ -659,14 +659,25 @@ select:focus {
 .back-link-to,
 .entry-icon,
 header.top .search-link,
-.link-btn {
+.link-btn,
+.small-btn,
+.pill,
+.wa-row-action,
+.concern-chip button,
+.concern-add,
+.arena-remove,
+.info-btn {
   position: relative;
 }
 .cell::before,
 .flow-chain button::before,
 .back-link-to::before,
 .entry-icon::before,
-header.top .search-link::before {
+header.top .search-link::before,
+.concern-chip button::before,
+.concern-add::before,
+.arena-remove::before,
+.info-btn::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -679,4 +690,40 @@ header.top .search-link::before {
   content: '';
   position: absolute;
   inset: -12px -6px;
+}
+/* Wide small controls: full width, 44 px high. */
+.small-btn::before,
+.pill::before,
+.wa-row-action::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+
+/* Press feedback; hover only where a pointer can hover. Opacity, so it needs no motion. */
+.btn:not(:disabled):active,
+.pill:not(:disabled):active,
+.wa-row-action:active,
+.tile:active,
+.tile-card:active,
+.more-tile:active {
+  opacity: 0.7;
+}
+@media (hover: hover) {
+  .btn:not(:disabled):not(.primary):hover,
+  .pill:not(:disabled):not([aria-pressed='true']):hover,
+  .wa-row-action:hover {
+    background: var(--warm-soft);
+  }
+  .btn.primary:not(:disabled):hover {
+    opacity: 0.9;
+  }
+}
+.out-arrow {
+  vertical-align: -2px;
+  margin-left: 6px;
 }

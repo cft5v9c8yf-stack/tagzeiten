@@ -7,9 +7,9 @@
 }
 /* Destructive, but not red: red belongs to the rubrics (rule 5). */
 .btn.danger {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: transparent;
+  border: 2px solid var(--ink);
+  color: var(--ink);
 }
 .confirm-panel {
   display: grid;
@@ -2937,7 +2937,7 @@ header.top .search-link:focus-visible {
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--control-line);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;

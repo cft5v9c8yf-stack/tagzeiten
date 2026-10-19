@@ -22,6 +22,7 @@ import {
   TIMES_PER_WEEK,
   fitsHouse,
 } from '../../domain/habits';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
@@ -121,6 +122,7 @@ function HabitRow({
             (confirming ? (
               <span className="confirm-inline">
                 <button type="button" className="btn danger small-btn" onClick={() => update((hs) => removeHabit(hs, habit.id))}>
+                  <FlowIcon name="trash" size={16} />
                   Löschen
                 </button>
                 <button type="button" className="btn quiet small-btn" onClick={() => setConfirming(false)}>
