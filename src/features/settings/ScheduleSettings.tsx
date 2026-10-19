@@ -13,14 +13,22 @@ const TIMES = TIME_ORDER;
 
 const TIME_OK = /^\d{2}:\d{2}$/;
 
-/** The five times of a day, as a grid of time fields. */
-function TimesGrid({ times, onChange }: { times: Schedule; onChange: (key: keyof Schedule, v: string) => void }) {
+/** The five times of a day (or only some of them), as a grid of time fields. */
+export function TimesGrid({
+  times,
+  onChange,
+  keys,
+}: {
+  times: Schedule;
+  onChange: (key: keyof Schedule, v: string) => void;
+  keys?: readonly (keyof Schedule)[];
+}) {
   const base = useId();
   const issue = orderIssue(times);
   return (
     <>
       <div className="times-grid">
-        {TIMES.map((t) => (
+        {TIMES.filter((t) => !keys || keys.includes(t.key)).map((t) => (
           <div className="field" key={t.key}>
             <label htmlFor={`${base}-${t.key}`}>{t.label}</label>
             <input

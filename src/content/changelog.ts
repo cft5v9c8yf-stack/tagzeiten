@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.17.0',
+    date: '2026-10-19',
+    title: 'Einrichtung beim ersten Start',
+    changes: [
+      { area: 'Einrichtung', text: 'Beim allerersten Start führt Henoch durch eine kurze Einrichtung: der Tag mit Wort, Gebet und Ausrichtung, dann dein Haus, deine Zeiten, deine Gewohnheiten und dein Leseplan. Alles lässt sich überspringen oder mit „Später ansehen“ auf später legen.' },
+      { area: 'Einrichtung', text: 'Zur Wahl stehen „Alltag“ und „Wüstenwanderung“. Die Wüstenwanderung öffnet gleich ihren Anfang in der Arena.' },
+      { area: 'Mehr', text: 'Unter „Mehr“ gibt es die „Anleitung“. Dort öffnest du die Einrichtung noch einmal; sie ändert nur, was du änderst.' },
+    ],
+  },
+  {
     version: '1.16.15',
     date: '2026-10-19',
     title: 'Wüstenwanderung ohne Unterzeile',

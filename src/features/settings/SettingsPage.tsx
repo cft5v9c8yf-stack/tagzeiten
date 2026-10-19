@@ -12,6 +12,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
 import { AirplaneGuide } from './AirplaneGuide';
+import { GUIDE_INFO, GuideArea } from '../onboarding/GuideArea';
 import { Imprint } from './Imprint';
 import { Changelog } from './Changelog';
 import { InstallGuide } from './InstallGuide';
@@ -24,13 +25,15 @@ import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'display' | 'data' | 'about' | 'review' | 'imprint' | 'changelog';
+  id: SettingsSectionId | 'display' | 'data' | 'about' | 'review' | 'imprint' | 'changelog' | 'guide';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
   icon: FlowIconName;
   info: ReactNode;
   body: () => ReactNode;
+  /** Across both columns of the overview, like the news. */
+  wide?: boolean;
 }
 
 /**
@@ -197,6 +200,16 @@ const AREAS: readonly Area[] = [
     body: () => <Changelog />,
   },
   {
+    slug: 'anleitung',
+    id: 'guide',
+    title: 'Anleitung',
+    line: 'Einrichtung noch einmal ansehen',
+    icon: 'compass',
+    info: GUIDE_INFO,
+    body: () => <GuideArea />,
+    wide: true,
+  },
+  {
     slug: 'impressum',
     id: 'imprint',
     title: 'Impressum',
@@ -227,7 +240,7 @@ export function SettingsPage() {
         <h2 className="visually-hidden">Mehr</h2>
         <ul className="more-tiles">
           {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
-            <li key={a.slug}>
+            <li key={a.slug} className={a.wide ? 'more-tile-wide' : undefined}>
               <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
                 <FlowIcon name={a.icon} size={22} />
                 <span className="more-tile-title">{a.title}</span>

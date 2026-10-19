@@ -6,6 +6,9 @@ import { DogmatikPage } from '../features/dogmatik/DogmatikPage';
 import { ChurchYearPage } from '../features/churchyear/ChurchYearPage';
 import { SearchPage } from '../features/search/SearchPage';
 import { DevotionIndex, DevotionPage, DevotionRedirect } from '../features/devotion/DevotionPage';
+import { FirstStartGate } from '../features/onboarding/FirstStartGate';
+import { OnboardingPage } from '../features/onboarding/OnboardingPage';
+import { ONBOARDING_PATH } from '../features/onboarding/onboardingState';
 import { EveningPage } from '../features/evening/EveningPage';
 import { MorningPage } from '../features/morning/MorningPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
@@ -24,7 +27,11 @@ if (IS_DEMO && !location.hash) location.hash = '#/';
 export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <FirstStartGate enabled={!IS_DEMO}>
+        <Layout />
+      </FirstStartGate>
+    ),
     children: [
       { index: true, element: <TodayPage /> },
       { path: 'bibel', element: <BiblePage /> },
@@ -66,4 +73,6 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       { path: '*', element: <NotFound /> },
     ],
   },
+  // The setup of the first start: a screen of its own, without the tab bar.
+  { path: ONBOARDING_PATH, element: <OnboardingPage /> },
 ], IS_DEMO ? undefined : { basename: import.meta.env.BASE_URL });
