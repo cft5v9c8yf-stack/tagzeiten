@@ -1,6 +1,8 @@
 import { Link } from 'react-router';
 import { PREPARATION_ANCHOR, SUNDAY_GUIDE_TITLE } from '../../content/sundayGuide';
 import { SCRIPTURE_PRAYER } from '../../content/scripturePrayer';
+import { Chevron } from '../../ui/Chevron';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 export const GUIDE_PATH = '/sonntag/hilfe';
 export const WALK_PATH = '/sonntag/gebet';
@@ -29,7 +31,7 @@ export function SundayHelps({ page }: { page: (path: string) => string }) {
 export function PreparationHint({ page }: { page: (path: string) => string }) {
   return (
     <Link className="preparation-hint" to={`${page(GUIDE_PATH)}#${PREPARATION_ANCHOR}`}>
-      Morgen ist Sonntag. Zur Vorbereitung am Samstagabend <span aria-hidden="true">›</span>
+      Morgen ist Sonntag. Zur Vorbereitung am Samstagabend <Chevron dir="right" size={ICON_SIZE.s} />
     </Link>
   );
 }

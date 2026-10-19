@@ -15,6 +15,8 @@ import { SundayChooser } from './SundayOverview';
 import { PreparationHint, SundayHelps } from './SundayHelps';
 import { useStore } from '../../data/hooks';
 import { weekdayOf } from '../../domain/dates';
+import { Chevron } from '../../ui/Chevron';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 const SUNDAY_PARAM = 's';
 
@@ -93,25 +95,6 @@ export function useSundayLinks() {
     /** A page within the Sunday area (the guide, the prayer walk), keeping the selected day. */
     page: (path: string) => to(path),
   };
-}
-
-export function Chevron({ dir }: { dir: 'left' | 'right' }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="20"
-      height="20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d={dir === 'left' ? 'm14.5 6-6 6 6 6' : 'm9.5 6 6 6-6 6'} />
-    </svg>
-  );
 }
 
 /**
@@ -269,7 +252,7 @@ export function SundayPage() {
         {!/^advent[1-4]$/.test(c.weekKey) && (
           <p className="sunday-lessons-link">
             <Link to={links.sunday(adventAhead(links.current))}>
-              Die Bibellektionen der Adventssonntage <span aria-hidden="true">›</span>
+              Die Bibellektionen der Adventssonntage <Chevron dir="right" size={ICON_SIZE.s} />
             </Link>
           </p>
         )}

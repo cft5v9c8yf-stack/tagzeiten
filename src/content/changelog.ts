@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.6',
+    date: '2026-10-19',
+    title: 'Eine Bildsprache für alle Zeichen',
+    changes: [
+      { area: 'Henoch', text: 'Alle Zeichen haben dieselbe Strichstärke, und Knöpfe mit Zeichen gibt es in drei festen Größen. Die Tippfläche bleibt überall 44 Pixel groß.' },
+      { area: 'Henoch', text: 'Plus, Kreuz zum Entfernen, das Zeichen für das Menü und die Pfeile nach rechts und links sind jetzt gezeichnete Zeichen statt Textzeichen und sehen überall gleich aus.' },
+    ],
+  },
+  {
     version: '1.16.5',
     date: '2026-10-19',
     title: 'Jede Seite beginnt gleich',

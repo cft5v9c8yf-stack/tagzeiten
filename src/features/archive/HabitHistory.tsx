@@ -6,6 +6,8 @@ import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
 import { habitsOfRhythm, isPerDay, RHYTHM_ORDER, fitsHouse } from '../../domain/habits';
 import type { Habit, Rhythm } from '../../domain/model';
+import { Chevron } from '../../ui/Chevron';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
@@ -145,7 +147,7 @@ export function HabitHistory() {
                   <strong>{runName(run)}</strong>
                   <span className="small muted"> · {desertLine(profile, today)}</span>
                 </span>
-                <span aria-hidden="true">›</span>
+                <Chevron dir="right" size={ICON_SIZE.s} />
               </Link>
             </li>
           </ul>

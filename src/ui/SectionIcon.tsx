@@ -1,13 +1,9 @@
 import type { SectionIcon as Name } from '../app/routes';
+import { FLOW_PATHS } from './FlowIcon';
+import { ICON_STROKE } from './iconBase';
 
 const PATHS: Record<Name, JSX.Element> = {
-  // A closed book with a cross on its cover
-  bible: (
-    <>
-      <path d="M6 3.5h11a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1-1.5Z" />
-      <path d="M11.5 7v7M9 9.5h5" />
-    </>
-  ),
+  bible: FLOW_PATHS.bible,
   // The app's sign: the sun over the horizon, its light in rings, and the way that leads to it
   today: (
     <>
@@ -18,8 +14,7 @@ const PATHS: Record<Name, JSX.Element> = {
       <path d="M12 10.4c-.6 4.4-2.6 8.2-7.2 11.1M12 10.4c.9 3.8 5.4 6.2 6.9 11.1" />
     </>
   ),
-  // Folded hands: Stille Zeit, Vesper and Nachtgebet
-  prayer: <path d="M12 3c-1.6 2-2.5 5-2.5 8.5V16l-3.5 4.5M12 3c1.6 2 2.5 5 2.5 8.5V16l3.5 4.5M12 5v12" />,
+  prayer: FLOW_PATHS.foldedHands,
   // The Sunday is drawn as Luther's rose in the bar; this is the fallback.
   sunday: (
     <>
@@ -27,7 +22,7 @@ const PATHS: Record<Name, JSX.Element> = {
       <path d="M12 7v10M8.5 10.5h7" />
     </>
   ),
-  catechism: <path d="M12 3v18M7 8h10" />,
+  catechism: FLOW_PATHS.cross,
   // A shield with the cross: the Arena, where the fight of faith is written down
   arena: (
     <>
@@ -35,13 +30,7 @@ const PATHS: Record<Name, JSX.Element> = {
       <path d="M12 8v8M9 11h6" />
     </>
   ),
-  more: (
-    <>
-      <circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none" />
-      <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
-      <circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none" />
-    </>
-  ),
+  more: FLOW_PATHS.dots,
 };
 
 export function SectionIcon({ name, size = 22 }: { name: Name; size?: number }) {
@@ -53,7 +42,7 @@ export function SectionIcon({ name, size = 22 }: { name: Name; size?: number }) 
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth={ICON_STROKE}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"

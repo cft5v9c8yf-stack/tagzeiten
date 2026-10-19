@@ -6,6 +6,8 @@ import { TileGroup } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
 import { DesertSettings, desertLine } from '../desert/DesertSettings';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 const TIMES = TIME_ORDER;
 
@@ -131,7 +133,7 @@ export function ScheduleSettings() {
               className="btn schedule-add"
               onClick={() => setGroups([...groups, { days: [], times: { ...(groups.at(-1)?.times ?? profile.schedule) } }])}
             >
-              <span aria-hidden="true">+</span> Zeiten für weitere Tage
+              <FlowIcon name="plus" size={ICON_SIZE.s} plain /> Zeiten für weitere Tage
             </button>
           )}
         </>

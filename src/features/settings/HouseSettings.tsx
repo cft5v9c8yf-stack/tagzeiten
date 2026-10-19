@@ -13,6 +13,8 @@ import { Segmented } from '../../ui/Choice';
 import { GripIcon } from '../../ui/Icons';
 import { TileGroup } from '../../ui/TileGroup';
 import { useSortable } from '../../ui/useSortable';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 export const HOUSE_INFO = (
   <>
@@ -143,7 +145,7 @@ function ChildRow({
           aria-label={`${label} entfernen`}
           onClick={() => update(() => null)}
         >
-          ×
+          <FlowIcon name="close" size={ICON_SIZE.m} plain />
         </button>
       )}
     </li>
@@ -297,7 +299,7 @@ export function HouseSettings() {
           aria-label="Weiteres Kind hinzufügen"
           onClick={() => setHouse((h) => ({ ...h, children: [...h.children, emptyChild()] }))}
         >
-          +
+          <FlowIcon name="plus" size={ICON_SIZE.m} plain />
         </button>
             </>
           ),

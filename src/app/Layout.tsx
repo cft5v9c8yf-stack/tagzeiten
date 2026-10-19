@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
+import { FlowIcon } from '../ui/FlowIcon';
+import { ICON_SIZE } from '../ui/iconBase';
 import { BackSlotContext, PageHeader } from '../ui/PageHeader';
 import { SectionIcon } from '../ui/SectionIcon';
 import { UpdateBanner } from './UpdateBanner';
@@ -65,10 +67,7 @@ export function Layout() {
           action={
             !pathname.startsWith('/suche') && (
               <Link className="search-link" to="/suche" aria-label="Suchen">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false">
-                  <circle cx="10.5" cy="10.5" r="6" />
-                  <path d="m15 15 5.5 5.5" />
-                </svg>
+                <FlowIcon name="search" size={ICON_SIZE.l} plain />
               </Link>
             )
           }

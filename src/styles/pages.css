@@ -568,26 +568,6 @@ body.no-scroll {
   position: relative;
   background: var(--paper);
 }
-.icon-btn {
-  appearance: none;
-  display: inline-grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-s);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 0;
-}
-.icon-btn:hover:not(:disabled) {
-  border-color: var(--rule);
-}
-.icon-btn:disabled {
-  opacity: 0.25;
-  cursor: default;
-}
 .star-btn[aria-pressed='true'] {
   color: var(--accent);
 }
@@ -796,21 +776,6 @@ body.is-sorting * {
   flex: 1;
   min-width: 0;
   margin: 0;
-}
-.back-link-to {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-left: -8px;
-  border-radius: 50%;
-  opacity: 0.75;
-}
-.back-link-to:hover,
-.back-link-to:focus-visible {
-  opacity: 1;
-  background: var(--paper);
 }
 .cy-intro {
   font-size: 1.05rem;
@@ -1413,19 +1378,6 @@ body.is-sorting * {
   border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
   font: 500 0.9rem var(--sans);
 }
-.concern-chip button,
-.concern-add {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 600 1.1rem var(--sans);
-  cursor: pointer;
-}
 .concern-add {
   border: 1px dashed var(--rule);
   color: var(--gold);
@@ -1582,35 +1534,6 @@ body.is-sorting * {
   display: flex;
   gap: 2px;
 }
-.entry-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.75;
-}
-.entry-icon:hover,
-.entry-icon:focus-visible {
-  opacity: 1;
-  background: var(--paper);
-}
-/* On the dark ground the gold needs its full strength. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .entry-icon,
-  :root:not([data-theme='light']) .back-link-to {
-    opacity: 1;
-  }
-}
-:root[data-theme='dark'] .entry-icon,
-:root[data-theme='dark'] .back-link-to {
-  opacity: 1;
-}
 .entry-icon[aria-pressed='true'] {
   opacity: 1;
   background: var(--gold-soft);
@@ -1633,16 +1556,6 @@ body.is-sorting * {
   position: absolute;
   top: 6px;
   right: 6px;
-}
-.entry-menu-toggle {
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 700 1.3rem/1 var(--sans);
-  cursor: pointer;
 }
 .entry-menu-toggle[aria-expanded='true'] {
   background: var(--paper);
@@ -1717,16 +1630,6 @@ body.is-sorting * {
 .arena-line-input input {
   flex: 1;
   min-width: 0;
-}
-.arena-remove {
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 600 1.1rem var(--sans);
-  cursor: pointer;
 }
 .arena-line-view {
   margin: 4px 0 0 4px;
@@ -2573,19 +2476,6 @@ mark.placeholder {
 }
 
 /* ---------------------------------------------------------------- search */
-header.top .search-link {
-  margin-left: auto;
-  align-self: center;
-  display: inline-flex;
-  padding: 6px;
-  margin-right: -6px;
-  color: var(--muted);
-  border-radius: 999px;
-}
-header.top .search-link:hover,
-header.top .search-link:focus-visible {
-  color: var(--accent);
-}
 .search-hits {
   list-style: none;
   padding: 0;
@@ -2866,15 +2756,9 @@ header.top .search-link:focus-visible {
   color: var(--muted);
 }
 .wa-pager-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink);
-  display: grid;
-  place-items: center;
-  padding: 0;
 }
 .wa-pager-btn:disabled {
   opacity: 0.3;

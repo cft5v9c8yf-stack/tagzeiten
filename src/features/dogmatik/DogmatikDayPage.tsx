@@ -25,6 +25,8 @@ import {
 import { BackLink } from '../../ui/BackLink';
 import { LOOKUP_PATH, whereLine } from './DogmatikCard';
 import { useDogmatikSettings } from './useDogmatik';
+import { Chevron } from '../../ui/Chevron';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 /** Where the reading was opened from, for the way back (?von=). */
 const FROM: Record<string, { to: string; label: string }> = {
@@ -284,14 +286,14 @@ export function DogmatikDayPage({ lib, day }: { lib: DogmatikLibrary; day: Dogma
       <nav className="dogmatik-pager" aria-label="Andere Tage">
         {prev ? (
           <Link className="btn" to={keep(dayPath(prev))} aria-label={`Zurück zu Band ${prev.band}, Tag ${prev.tag}: ${prev.titel}`}>
-            ‹ {prev.band !== day.band ? `Band ${prev.band}, ` : ''}Tag {prev.tag}
+            <Chevron dir="left" size={ICON_SIZE.s} /> {prev.band !== day.band ? `Band ${prev.band}, ` : ''}Tag {prev.tag}
           </Link>
         ) : (
           <span />
         )}
         {next && (
           <Link className="btn" to={keep(dayPath(next))} aria-label={`Weiter zu Band ${next.band}, Tag ${next.tag}: ${next.titel}`}>
-            {next.band !== day.band ? `Band ${next.band}, ` : ''}Tag {next.tag} ›
+            {next.band !== day.band ? `Band ${next.band}, ` : ''}Tag {next.tag} <Chevron dir="right" size={ICON_SIZE.s} />
           </Link>
         )}
       </nav>

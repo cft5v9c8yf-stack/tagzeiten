@@ -21,6 +21,7 @@ import { weekdayOf } from '../../domain/dates';
 import { SundayRest } from './SundayRest';
 import { todayOffer } from '../../domain/seasons';
 import { TodaySeason } from '../desert/SeasonInvite';
+import { Chevron } from '../../ui/Chevron';
 
 function morningStatus(day: Day, dogmatik: boolean): string {
   if (day.morning.done) return 'abgeschlossen';
@@ -162,7 +163,7 @@ export function TodayPage() {
             <span className="sunday-link-week">{church.week}</span>
           </span>
           <span className="sunday-link-go" aria-hidden="true">
-            ›
+            <Chevron dir="right" />
           </span>
         </Link>
       )}

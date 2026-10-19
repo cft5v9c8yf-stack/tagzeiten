@@ -45,6 +45,11 @@
   --serif: 'Literata', Georgia, 'Times New Roman', serif;
   --sans: 'Source Sans 3', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 
+  /* Icon buttons: the size of the mark's button (the tap area is always 44 px). */
+  --ibtn-s: 24px;
+  --ibtn-m: 32px;
+  --ibtn-l: 36px;
+
   --radius-s: 8px;
   --radius-m: 10px;
   --radius-l: 12px;

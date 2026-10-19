@@ -20,6 +20,8 @@ import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
+import { ICON_SIZE } from '../../ui/iconBase';
+import { Chevron } from '../../ui/Chevron';
 
 type Kind = 'journal' | 'forge';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
@@ -246,7 +248,7 @@ function LineList({
                 aria-label={`${label} ${i + 1} entfernen`}
                 onClick={() => onChange(list.filter((_, k) => k !== i))}
               >
-                ×
+                <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
             )}
           </div>
@@ -269,7 +271,7 @@ function LineList({
         </div>
       ))}
       <button type="button" className="concern-add arena-add" aria-label={addLabel} onClick={() => onChange([...list, ''])}>
-        +
+        <FlowIcon name="plus" size={ICON_SIZE.m} plain />
       </button>
     </fieldset>
   );
@@ -333,14 +335,14 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
             />
             {list.length > 1 && (
               <button type="button" className="arena-remove" aria-label={`Punkt ${i + 1} entfernen`} onClick={() => remove(i)}>
-                ×
+                <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
             )}
           </li>
         ))}
       </ul>
       <button type="button" className="concern-add arena-add" aria-label="Weiteren Punkt hinzufügen" onClick={() => insertAfter(list.length - 1)}>
-        +
+        <FlowIcon name="plus" size={ICON_SIZE.m} plain />
       </button>
     </fieldset>
   );
@@ -788,14 +790,14 @@ function ArenaHome() {
           <li key={p.place}>
             <Link className={`arena-place-tile arena-place-${p.place}`} to={arenaPath(p.place)}>
               <span className="arena-place-icon" aria-hidden="true">
-                <FlowIcon name={p.icon} size={26} />
+                <FlowIcon name={p.icon} size={22} />
               </span>
               <span className="arena-place-text">
                 <span className="arena-place-title">{p.title}</span>
                 <span className="arena-place-line">{p.line}</span>
               </span>
               <span className="arena-place-go" aria-hidden="true">
-                ›
+                <Chevron dir="right" />
               </span>
             </Link>
           </li>

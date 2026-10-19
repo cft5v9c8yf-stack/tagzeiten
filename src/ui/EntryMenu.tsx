@@ -1,4 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { FlowIcon } from './FlowIcon';
+import { ICON_SIZE } from './iconBase';
 
 export interface EntryMenuItem {
   label: string;
@@ -56,7 +58,7 @@ export function EntryMenu({ label, items }: { label: string; items: readonly Ent
         aria-controls={open ? id : undefined}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <span aria-hidden="true">⋯</span>
+        <FlowIcon name="dots" size={ICON_SIZE.m} plain />
       </button>
       {open && (
         <div id={id} ref={list} className={`entry-menu-list${up ? ' up' : ''}`} role="menu" aria-label={label}>

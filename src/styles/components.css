@@ -146,6 +146,11 @@
   color: var(--icon-gold);
   flex: none;
 }
+/* Chevrons, plus, close and the like take the colour of their button or text. */
+.flow-icon.is-plain {
+  color: inherit;
+  vertical-align: -0.15em;
+}
 /* The step in view: a card of its own below the row */
 .flow-step {
   margin-top: 12px;
@@ -656,26 +661,68 @@ select:focus {
  */
 .cell,
 .flow-chain button,
-.back-link-to,
-.entry-icon,
-header.top .search-link,
 .link-btn,
 .small-btn,
 .pill,
-.wa-row-action,
-.concern-chip button,
-.concern-add,
-.arena-remove,
-.info-btn {
+.wa-row-action {
   position: relative;
 }
 .cell::before,
-.flow-chain button::before,
-.back-link-to::before,
+.flow-chain button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/*
+ * Icon buttons: one foundation, three sizes (--ibtn-s, --ibtn-m, --ibtn-l),
+ * round, quiet, and a 44 px area to tap whatever the size of the mark.
+ */
+.icon-btn,
+.entry-icon,
+.entry-menu-toggle,
+.back-link-to,
+header.top .search-link,
+.wa-pager-btn,
+.concern-add,
+.concern-chip button,
+.arena-remove,
+.info-btn {
+  --ibtn: var(--ibtn-l);
+  appearance: none;
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--ibtn);
+  height: var(--ibtn);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.concern-add,
+.concern-chip button,
+.arena-remove {
+  --ibtn: var(--ibtn-m);
+}
+.info-btn {
+  --ibtn: var(--ibtn-s);
+}
+.icon-btn::before,
 .entry-icon::before,
+.entry-menu-toggle::before,
+.back-link-to::before,
 header.top .search-link::before,
-.concern-chip button::before,
+.wa-pager-btn::before,
 .concern-add::before,
+.concern-chip button::before,
 .arena-remove::before,
 .info-btn::before {
   content: '';
@@ -685,6 +732,21 @@ header.top .search-link::before,
   width: 44px;
   height: 44px;
   transform: translate(-50%, -50%);
+}
+.icon-btn:hover:not(:disabled),
+.entry-icon:hover,
+.entry-menu-toggle:hover,
+.back-link-to:hover,
+header.top .search-link:hover,
+.concern-add:hover,
+.concern-chip button:hover,
+.arena-remove:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.icon-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
 }
 .link-btn::before {
   content: '';
@@ -724,6 +786,7 @@ header.top .search-link::before,
   }
 }
 .out-arrow {
-  vertical-align: -2px;
+  display: inline-block;
+  vertical-align: -3px;
   margin-left: 6px;
 }
