@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.18.4',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: Beginn nicht in der Vergangenheit',
+    changes: [
+      { area: 'Einrichtung', text: 'Bei „Anderer Tag“ gilt frühestens heute. Ein Tag in der Vergangenheit lässt sich nicht wählen.' },
+    ],
+  },
+  {
     version: '1.18.3',
     date: '2026-10-19',
     title: 'Einrichtung: ein Testament lesen',

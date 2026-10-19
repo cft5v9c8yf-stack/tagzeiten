@@ -60,9 +60,9 @@ export function draftDays(d: DesertDraft): number | undefined {
   return (d.length !== 'own' || d.ownDays.trim() !== '') && isValidDuration(n) ? n : undefined;
 }
 
-/** The first day, or undefined while it is not valid. */
+/** The first day, or undefined while it is not valid. A day of one's own is today or later, never in the past. */
 export function draftStart(d: DesertDraft, today: DateKey): DateKey | undefined {
   if (d.when === 'today') return today;
   if (d.when === 'tomorrow') return addDays(today, 1);
-  return isDateKey(d.other) ? d.other : undefined;
+  return isDateKey(d.other) && d.other >= today ? d.other : undefined;
 }

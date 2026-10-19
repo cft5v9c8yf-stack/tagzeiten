@@ -319,6 +319,10 @@ describe('Einrichtung: der Weg Wüstenwanderung', () => {
     fireEvent.change(screen.getByLabelText('Dauer in Kalendertagen'), { target: { value: '21' } });
     fireEvent.click(screen.getByRole('button', { name: 'Anderer Tag' }));
     expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
+    // A day in the past does not do: the first day is today or later.
+    fireEvent.change(screen.getByLabelText('Startdatum'), { target: { value: '2025-01-01' } });
+    expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText(/liegt in der Vergangenheit/)).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Startdatum'), { target: { value: '2026-11-01' } });
     expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(false);
   });

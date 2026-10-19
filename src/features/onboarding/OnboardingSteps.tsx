@@ -2,6 +2,7 @@ import { useId, useState, type ReactNode } from 'react';
 import { DESERT_MORE, DESERT_PACKS, type DesertHabit } from '../../content/desert';
 import { HABIT_NEEDS } from '../../content/habits';
 import { QUICK_DESERT_DAYS } from '../../domain/desert';
+import { isDateKey } from '../../domain/dates';
 import { endDateOf, isValidDuration, MAX_DURATION, MIN_DURATION, activeRun } from '../../domain/winterArc';
 import { houseHas, NEED_NOTE, type HouseNeed } from '../../domain/house';
 import { formatFullDate } from '../desert/DesertSettings';
@@ -554,8 +555,10 @@ export function DesertStartStep({ draft, set }: { draft: DesertDraft; set: SetDr
         {draft.when === 'other' && (
           <div className="field">
             <label htmlFor={`${id}-start`}>Startdatum</label>
-            <input id={`${id}-start`} type="date" value={draft.other} onChange={(e) => set({ other: e.target.value })} />
-            {!start && <p className="ob-hint">Wähle ein Startdatum.</p>}
+            <input id={`${id}-start`} type="date" min={today} value={draft.other} onChange={(e) => set({ other: e.target.value })} />
+            {!start && (
+              <p className="ob-hint">{isDateKey(draft.other) && draft.other < today ? 'Der Tag liegt in der Vergangenheit. Wähle heute oder einen späteren Tag.' : 'Wähle ein Startdatum.'}</p>
+            )}
           </div>
         )}
       </fieldset>
