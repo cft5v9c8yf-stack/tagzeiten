@@ -1,4 +1,11 @@
 import { useId, useState, type ReactNode } from 'react';
+import { DESERT_MORE, DESERT_PACKS, type DesertHabit } from '../../content/desert';
+import { HABIT_NEEDS } from '../../content/habits';
+import { QUICK_DESERT_DAYS } from '../../domain/desert';
+import { endDateOf, isValidDuration, MAX_DURATION, MIN_DURATION, activeRun } from '../../domain/winterArc';
+import { houseHas, NEED_NOTE, type HouseNeed } from '../../domain/house';
+import { formatFullDate } from '../desert/DesertSettings';
+import { draftDays, draftStart, type DesertDraft } from './desertDraft';
 import { ABSOLUTION_EVENING } from '../../content/liturgy';
 import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText } from '../../ui/PrayerText';
@@ -368,3 +375,170 @@ export function DoneStep() {
     </>
   );
 }
+
+/* ------------------------------------------------------------ the way "Wüstenwanderung" */
+
+type SetDraft = (patch: Partial<DesertDraft>) => void;
+
+export function DesertStartStep({ draft, set }: { draft: DesertDraft; set: SetDraft }) {
+  const store = useStore();
+  const profile = useProfile();
+  const id = useId();
+  const today = store.today();
+  const days = draftDays(draft);
+  const start = draftStart(draft, today);
+  const running = activeRun(profile.winterArc);
+  const seg = (label: string, value: string, options: [string, string][], onChange: (v: string) => void) => (
+    <Segmented<string> grid label={label} value={value} onChange={onChange} options={options.map(([v, l]) => ({ value: v, label: l }))} />
+  );
+  return (
+    <>
+      <blockquote className="ob-verse">
+        <p>„… übe dich selbst aber in der Gottseligkeit.“</p>
+        <cite>
+          <BibleRef reference="1. Timotheus 4,7" />
+        </cite>
+      </blockquote>
+      <fieldset className="ob-fieldset">
+        <legend>Wie lange?</legend>
+        {seg(
+          'Wie lange?',
+          draft.length,
+          [...QUICK_DESERT_DAYS.map((n): [string, string] => [String(n), `${n} Tage`]), ['own', 'Eigene Dauer']],
+          (length) => set({ length }),
+        )}
+        {draft.length === 'own' && (
+          <div className="field">
+            <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
+            <input
+              id={`${id}-days`}
+              type="number"
+              inputMode="numeric"
+              min={MIN_DURATION}
+              max={MAX_DURATION}
+              step={1}
+              value={draft.ownDays}
+              onChange={(e) => set({ ownDays: e.target.value })}
+            />
+            {!days && <p className="ob-hint">Wähle eine Dauer von {MIN_DURATION} bis {MAX_DURATION} Tagen.</p>}
+          </div>
+        )}
+      </fieldset>
+      <fieldset className="ob-fieldset">
+        <legend>Wann beginnst du?</legend>
+        {seg(
+          'Wann beginnst du?',
+          draft.when,
+          [
+            ['today', 'Heute'],
+            ['tomorrow', 'Morgen'],
+            ['other', 'Anderer Tag'],
+          ],
+          (when) => set({ when: when as DesertDraft['when'] }),
+        )}
+        {draft.when === 'other' && (
+          <div className="field">
+            <label htmlFor={`${id}-start`}>Startdatum</label>
+            <input id={`${id}-start`} type="date" value={draft.other} onChange={(e) => set({ other: e.target.value })} />
+            {!start && <p className="ob-hint">Wähle ein Startdatum.</p>}
+          </div>
+        )}
+      </fieldset>
+      {days && start && isValidDuration(days) && (
+        <p className="ob-text">
+          Von {formatFullDate(start)} bis {formatFullDate(endDateOf(start, days))}.
+        </p>
+      )}
+      {running && (
+        <p className="ob-hint">
+          Es läuft schon eine Wüstenzeit. Beginnst du eine neue, wird die laufende beendet. Haken und Rückblicke bleiben
+          gespeichert.
+        </p>
+      )}
+      <p className="ob-hint">Die Wüstenzeit beginnt erst mit dem letzten Schritt dieser Einrichtung.</p>
+    </>
+  );
+}
+
+export function DesertHabitsStep({ draft, set }: { draft: DesertDraft; set: SetDraft }) {
+  const profile = useProfile();
+  const chosen = new Set(draft.habits);
+  const toggle = (id: string, on: boolean) => set({ habits: on ? [...chosen, id] : draft.habits.filter((x) => x !== id) });
+  const waits = (o: DesertHabit) => {
+    const need: HouseNeed | undefined = o.needs ?? HABIT_NEEDS[o.id];
+    return need && !houseHas(profile.house, need) ? NEED_NOTE[need] : undefined;
+  };
+  // A habit that stands in several packages is listed once, in the first.
+  const seen = new Set<string>();
+  const fresh = (list: readonly DesertHabit[]) => list.filter((o) => !seen.has(o.id) && !!seen.add(o.id));
+  const groups = [
+    ...DESERT_PACKS.map((p) => ({ id: p.id, title: p.name, line: p.tagline, list: fresh(p.habits) })),
+    { id: 'more', title: 'Weitere Vorschläge', line: '', list: fresh(DESERT_MORE) },
+  ].filter((g) => g.list.length);
+  const own = profile.habits.filter((h) => h.desert === 'own');
+  return (
+    <>
+      <p className="ob-lead">Diese Gewohnheiten gelten nur für die Wüstenzeit. Danach kannst du sie in den Alltag mitnehmen.</p>
+      {groups.map((g) => {
+        const n = g.list.filter((o) => chosen.has(o.id)).length;
+        return (
+          // Open at first only where something is already chosen; after that the person's own folding stays.
+          <details
+            key={g.id}
+            className="ob-fold"
+            ref={(el) => {
+              if (el && !el.dataset.init) {
+                el.dataset.init = '1';
+                el.open = n > 0;
+              }
+            }}
+          >
+            <summary>
+              <span>{g.title}</span>
+              <span className="ob-fold-count">{n > 0 ? `${n} gewählt` : ''}</span>
+            </summary>
+            {g.line && <p className="ob-hint">{g.line}</p>}
+            {g.list.map((o) => (
+              <SwitchRow key={o.id} label={o.name} line={waits(o)} checked={chosen.has(o.id)} onChange={(on) => toggle(o.id, on)} />
+            ))}
+          </details>
+        );
+      })}
+      {own.length > 0 && (
+        <section className="ob-group" aria-labelledby="ob-dh-own">
+          <h3 id="ob-dh-own">Eigene</h3>
+          {own.map((h) => (
+            <SwitchRow key={h.id} label={h.name} checked={chosen.has(h.id)} onChange={(on) => toggle(h.id, on)} />
+          ))}
+        </section>
+      )}
+      <p className="ob-hint">Eigene Gewohnheiten legst du später in der Arena an.</p>
+    </>
+  );
+}
+
+export function DesertDoneStep({ draft }: { draft: DesertDraft }) {
+  const store = useStore();
+  const profile = useProfile();
+  const days = draftDays(draft);
+  const start = draftStart(draft, store.today());
+  const names = draft.habits.map((id) => DESERT_NAMES.get(id) ?? profile.habits.find((h) => h.id === id)?.name).filter((n): n is string => !!n);
+  const s = profile.schedule;
+  return (
+    <>
+      <dl className="ob-sum">
+        <Fact name="Weg">Wüstenwanderung</Fact>
+        <Fact name="Dauer und Beginn">
+          {days && start ? `${days} Tage, von ${formatFullDate(start)} bis ${formatFullDate(endDateOf(start, days))}` : 'noch offen'}
+        </Fact>
+        <Fact name="Gewohnheiten">{names.length ? names.join(', ') : 'keine gewählt'}</Fact>
+        <Fact name="Zeiten">
+          {profile.scheduleDays?.on ? 'je Wochentag' : `Stille Zeit ${s.stillTime} · Vesper ${s.vespers} · Nachtgebet ${s.compline}`}
+        </Fact>
+      </dl>
+      <p className="ob-hint">Mit „Zur Wüstenwanderung“ beginnt die Wüstenzeit. Alles lässt sich später ändern.</p>
+    </>
+  );
+}
+
+const DESERT_NAMES = new Map<string, string>([...DESERT_PACKS.flatMap((p) => p.habits), ...DESERT_MORE].map((o) => [o.id, o.name]));

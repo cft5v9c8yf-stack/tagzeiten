@@ -1,16 +1,33 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { PageHeader } from '../../ui/PageHeader';
-import { DoneStep, HabitsStep, HouseStep, OrderStep, PlanStep, PrivacyStep, TimesStep, WayStep, type Way } from './OnboardingSteps';
+import { useStore } from '../../data/hooks';
+import { draftDays, draftStart, useDesertDraft } from './desertDraft';
+import {
+  DesertDoneStep,
+  DesertHabitsStep,
+  DesertStartStep,
+  DoneStep,
+  HabitsStep,
+  HouseStep,
+  OrderStep,
+  PlanStep,
+  PrivacyStep,
+  TimesStep,
+  WayStep,
+  type Way,
+} from './OnboardingSteps';
 import {
   ONBOARDING_PATH,
   readOnboardingMark,
   readOnboardingStep,
+  readOnboardingWay,
   writeOnboardingMark,
   writeOnboardingStep,
+  writeOnboardingWay,
 } from './onboardingState';
 
-type StepId = 'order' | 'way' | 'house' | 'times' | 'habits' | 'plan' | 'privacy' | 'done';
+type StepId = 'order' | 'way' | 'house' | 'times' | 'habits' | 'plan' | 'privacy' | 'done' | 'dstart' | 'dhabits' | 'ddone';
 
 interface Step {
   id: StepId;
@@ -19,37 +36,53 @@ interface Step {
   skippable: boolean;
 }
 
-/** The way "Alltag". The way "Wüstenwanderung" leaves the setup at the choice (see below). */
-const STEPS: readonly Step[] = [
-  { id: 'order', title: 'So beginnt der Tag', skippable: false },
-  { id: 'way', title: 'Wofür möchtest du Henoch nutzen?', skippable: false },
-  { id: 'house', title: 'Mein Haus', skippable: true },
-  { id: 'times', title: 'Deine Zeiten', skippable: true },
-  { id: 'habits', title: 'Deine Gewohnheiten', skippable: true },
-  { id: 'plan', title: 'Dein Leseplan', skippable: true },
-  { id: 'privacy', title: 'Was auf deinem Gerät bleibt', skippable: false },
-  { id: 'done', title: 'Das ist eingerichtet', skippable: false },
-];
+const STEP_LIST: Record<StepId, Step> = {
+  order: { id: 'order', title: 'So beginnt der Tag', skippable: false },
+  way: { id: 'way', title: 'Wofür möchtest du Henoch nutzen?', skippable: false },
+  house: { id: 'house', title: 'Mein Haus', skippable: true },
+  times: { id: 'times', title: 'Deine Zeiten', skippable: true },
+  habits: { id: 'habits', title: 'Deine Gewohnheiten', skippable: true },
+  plan: { id: 'plan', title: 'Dein Leseplan', skippable: true },
+  privacy: { id: 'privacy', title: 'Was auf deinem Gerät bleibt', skippable: false },
+  done: { id: 'done', title: 'Das ist eingerichtet', skippable: false },
+  dstart: { id: 'dstart', title: 'Wüstenwanderung beginnen', skippable: false },
+  dhabits: { id: 'dhabits', title: 'Gewohnheiten für diese Zeit', skippable: true },
+  ddone: { id: 'ddone', title: 'Das ist eingerichtet', skippable: false },
+};
 
-/** Where the Arena opens the start of the Wüstenzeit. */
+/** The two pages every way begins with, then the pages of the way chosen. */
+const BASE: readonly StepId[] = ['order', 'way'];
+const WAYS: Record<Way, readonly StepId[]> = {
+  everyday: ['house', 'times', 'habits', 'plan', 'privacy', 'done'],
+  desert: ['dstart', 'dhabits', 'times', 'privacy', 'ddone'],
+};
+const stepsOf = (way: Way | null): readonly Step[] => [...BASE, ...(way ? WAYS[way] : [])].map((id) => STEP_LIST[id]);
+
+/** Where the Arena opens the Wüstenzeit. */
 const DESERT_PATH = '/arena?bereich=wuestenwanderung';
 
 /**
  * The setup at the first start, also reopened from "Mehr, Anleitung". A screen of
- * its own, without the tab bar. Every control writes straight into the app's
- * settings, so a run changes only what the person changes.
+ * its own, without the tab bar. On the way "Alltag" every control writes straight
+ * into the app's settings, so a run changes only what the person changes. On the
+ * way "Wüstenwanderung" the Wüstenzeit begins only at the last page.
  */
 export function OnboardingPage() {
   const navigate = useNavigate();
+  const store = useStore();
   const [mark] = useState(readOnboardingMark);
   // Reopened later (the setup was finished or put aside before): leaving goes back to "Mehr".
   const reopened = mark === 'done' || mark === 'skipped';
-  // Reloaded midway: back to the page where it was (past the choice, the way is "Alltag").
-  const [index, setIndex] = useState(() => (mark === 'started' ? Math.min(readOnboardingStep(), STEPS.length - 1) : 0));
-  const [way, setWay] = useState<Way | null>(() => (mark === 'started' && readOnboardingStep() > 1 ? 'everyday' : null));
+  // Reloaded midway: back to the page where it was, on the way chosen.
+  const [way, setWay] = useState<Way | null>(() => (mark === 'started' ? readOnboardingWay() : null));
+  const [index, setIndex] = useState(() =>
+    mark === 'started' ? Math.min(readOnboardingStep(), stepsOf(readOnboardingWay()).length - 1) : 0,
+  );
+  const [draft, setDraft] = useDesertDraft();
   const titleRef = useRef<HTMLHeadingElement>(null);
-  const step = STEPS[index]!;
-  const last = index === STEPS.length - 1;
+  const steps = stepsOf(way);
+  const step = steps[index]!;
+  const last = !!way && index === steps.length - 1;
 
   // A new page: back to the top, and the focus on its heading, so keyboard and screen reader begin there.
   useEffect(() => {
@@ -57,10 +90,11 @@ export function OnboardingPage() {
     if (!reopened) {
       writeOnboardingMark('started');
       writeOnboardingStep(index);
+      if (way) writeOnboardingWay(way);
     }
     window.scrollTo(0, 0);
     titleRef.current?.focus({ preventScroll: true });
-  }, [index, reopened]);
+  }, [index, reopened, way]);
 
   const leave = () => {
     if (!reopened) writeOnboardingMark('skipped');
@@ -70,14 +104,15 @@ export function OnboardingPage() {
     writeOnboardingMark('done');
     navigate('/', { replace: true });
   };
-  const next = () => {
-    if (step.id === 'way' && way === 'desert') {
-      // The way "Wüstenwanderung" has no pages here (yet): the setup ends, the Arena opens its start.
-      writeOnboardingMark('done');
-      navigate(DESERT_PATH, { replace: true });
-      return;
-    }
-    setIndex(index + 1);
+  const next = () => setIndex(index + 1);
+  const days = draftDays(draft);
+  const start = draftStart(draft, store.today());
+  // The Wüstenzeit begins here and nowhere before: going back or skipping starts nothing.
+  const beginDesert = () => {
+    if (!days || !start) return;
+    store.startDesert(start, days, draft.habits);
+    writeOnboardingMark('done');
+    navigate(DESERT_PATH, { replace: true });
   };
 
   const body: Record<StepId, ReactNode> = {
@@ -89,9 +124,12 @@ export function OnboardingPage() {
     plan: <PlanStep />,
     privacy: <PrivacyStep />,
     done: <DoneStep />,
+    dstart: <DesertStartStep draft={draft} set={setDraft} />,
+    dhabits: <DesertHabitsStep draft={draft} set={setDraft} />,
+    ddone: <DesertDoneStep draft={draft} />,
   };
-  const needsChoice = step.id === 'way' && !way;
-  const nextLabel = last ? 'Zu Heute' : step.id === 'way' && way === 'desert' ? 'Zur Wüstenwanderung' : 'Weiter';
+  const blocked = (step.id === 'way' && !way) || ((step.id === 'dstart' || step.id === 'ddone') && !(days && start));
+  const nextLabel = last ? (way === 'desert' ? 'Zur Wüstenwanderung' : 'Zu Heute') : 'Weiter';
 
   return (
     <>
@@ -116,7 +154,7 @@ export function OnboardingPage() {
           </h2>
           {body[step.id]}
           <div className="ob-foot">
-            <button type="button" className="btn primary" disabled={needsChoice} onClick={last ? finish : next}>
+            <button type="button" className="btn primary" disabled={blocked} onClick={last ? (way === 'desert' ? beginDesert : finish) : next}>
               {nextLabel}
             </button>
             {index > 0 && (

@@ -260,15 +260,103 @@ describe('Einrichtung: der Weg Alltag', () => {
   });
 });
 
+/** To the first page of the way "Wüstenwanderung". */
+function toDesert() {
+  next();
+  fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
+  next();
+}
+
 describe('Einrichtung: der Weg Wüstenwanderung', () => {
-  it('ends the setup and opens the start of the Wüstenzeit in the Arena', async () => {
-    const { router } = await start(ONBOARDING_PATH);
+  it('goes its own way, and the Wüstenzeit begins only with the last button', async () => {
+    const { router, store } = await start(ONBOARDING_PATH);
+    toDesert();
+    expect(heading()).toBe('Wüstenwanderung beginnen');
+    expect(document.body.textContent).toContain('übe dich selbst aber in der Gottseligkeit.');
+    expect(document.body.textContent).toContain('1. Timotheus 4,7');
+    fireEvent.click(screen.getByRole('button', { name: '90 Tage' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Morgen' }));
+    expect(document.body.textContent).toContain('Dienstag, 20. Oktober 2026');
     next();
-    fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
+
+    expect(heading()).toBe('Gewohnheiten für diese Zeit');
+    fireEvent.click(screen.getByRole('switch', { name: 'Morgensegen' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'Handy später' }));
+    expect(document.body.textContent).toContain('Eigene Gewohnheiten legst du später in der Arena an.');
+    // Back and forth and skipping start nothing.
+    click('Zurück');
+    next();
+    click('Überspringen');
+    expect(heading()).toBe('Deine Zeiten');
+    expect(store.getProfile().winterArc.runs).toHaveLength(0);
+    // No page of the way "Alltag".
+    expect(screen.queryByLabelText('Name deiner Frau')).toBeNull();
+    next();
+    expect(heading()).toBe('Was auf deinem Gerät bleibt');
+    next();
+
+    expect(heading()).toBe('Das ist eingerichtet');
+    const text = document.querySelector('.ob-sum')!.textContent!;
+    expect(text).toContain('Wüstenwanderung');
+    expect(text).toContain('90 Tage');
+    expect(text).toContain('Morgensegen, Handy später');
+    expect(store.getProfile().winterArc.runs).toHaveLength(0);
     click('Zur Wüstenwanderung');
     await waitFor(() => expect(router.state.location.pathname).toBe('/arena'));
     expect(router.state.location.search).toBe('?bereich=wuestenwanderung');
     expect(localStorage.getItem(ONBOARDING_KEY)).toBe('done');
+    const run = store.getProfile().winterArc.runs[0]!;
+    expect(run).toMatchObject({ startDate: '2026-10-20', durationDays: 90 });
+    expect(run.habits).toEqual(['wz-morgensegen', 'wz-handy-spaeter']);
+  });
+
+  it('asks for a valid own length and start before it goes on', async () => {
+    await start(ONBOARDING_PATH);
+    toDesert();
+    fireEvent.click(screen.getByRole('button', { name: 'Eigene Dauer' }));
+    expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('Dauer in Kalendertagen'), { target: { value: '21' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Anderer Tag' }));
+    expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
+    fireEvent.change(screen.getByLabelText('Startdatum'), { target: { value: '2026-11-01' } });
+    expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('goes on after a reload on the same way, with what was entered', async () => {
+    const first = await start(ONBOARDING_PATH, undefined, 'ob-desert-resume');
+    toDesert();
+    fireEvent.click(screen.getByRole('button', { name: '90 Tage' }));
+    next();
+    fireEvent.click(screen.getByRole('switch', { name: 'Morgensegen' }));
+    await first.store.flush();
+    cleanup();
+    const { router } = await start('/', undefined, 'ob-desert-resume');
+    await waitFor(() => expect(router.state.location.pathname).toBe(ONBOARDING_PATH));
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Gewohnheiten für diese Zeit');
+    expect((screen.getByRole('switch', { name: 'Morgensegen' }) as HTMLInputElement).checked).toBe(true);
+    click('Zurück');
+    expect(screen.getByRole('button', { name: '90 Tage' }).getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('keeps the entries of the other way when the way is changed', async () => {
+    const { store } = await start(ONBOARDING_PATH);
+    toHouse();
+    fireEvent.click(screen.getByRole('switch', { name: /Ich habe eine Frau/ }));
+    fireEvent.change(screen.getByLabelText('Name deiner Frau'), { target: { value: 'Anna' } });
+    click('Zurück');
+    fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
+    next();
+    fireEvent.click(screen.getByRole('button', { name: '90 Tage' }));
+    click('Zurück');
+    fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
+    next();
+    expect((screen.getByLabelText('Name deiner Frau') as HTMLInputElement).value).toBe('Anna');
+    expect(store.getProfile().winterArc.runs).toHaveLength(0);
+    click('Zurück');
+    fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
+    next();
+    expect(screen.getByRole('button', { name: '90 Tage' }).getAttribute('aria-pressed')).toBe('true');
+    expect(store.getProfile().house.wife.name).toBe('Anna');
   });
 });
 
@@ -324,22 +412,11 @@ describe('Mehr, Anleitung', () => {
     expect(localStorage.getItem(ONBOARDING_KEY)).toBe('done');
   });
 
-  it('describes the reading method in the app\'s words, with its source and no placeholder', async () => {
-    localStorage.setItem(ONBOARDING_KEY, 'done');
-    await start('/mehr/anleitung');
-    expect(await screen.findByText('Erster Durchgang')).toBeTruthy();
-    expect(screen.getByText('Dritter Durchgang')).toBeTruthy();
-    expect(screen.getByText(/Wer Gott ist und was er tut/)).toBeTruthy();
-    expect(document.body.textContent).toContain('Hanniel Strebel');
-    expect(document.body.textContent).not.toContain('[TEXT VON ANDREAS:');
-  });
-
   it('closes back to the Anleitung when it was opened from there', async () => {
     localStorage.setItem(ONBOARDING_KEY, 'done');
     const { router } = await start(ONBOARDING_PATH);
     click('Schließen');
     await waitFor(() => expect(router.state.location.pathname).toBe('/mehr/anleitung'));
     expect(await screen.findByRole('link', { name: 'Einrichtung ansehen' })).toBeTruthy();
-    expect(document.body.textContent).toContain('Hanniel Strebel');
   });
 });

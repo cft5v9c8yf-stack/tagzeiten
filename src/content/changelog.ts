@@ -13,6 +13,24 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.18.1',
+    date: '2026-10-19',
+    title: 'Anleitung ohne Lesemethode, Gewohnheiten gefaltet',
+    changes: [
+      { area: 'Mehr', text: 'Die Lesemethode steht nicht mehr unter „Mehr, Anleitung“. Die Anleitung öffnet nur die Einrichtung.' },
+      { area: 'Einrichtung', text: 'Bei der Wüstenwanderung sind die Pakete der Gewohnheiten zugeklappt. Wo schon etwas gewählt ist, steht es offen.' },
+    ],
+  },
+  {
+    version: '1.18.0',
+    date: '2026-10-19',
+    title: 'Einrichtung: der Weg Wüstenwanderung',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer „Wüstenwanderung“ wählt, hat jetzt einen eigenen Weg: Dauer (40 Tage, 90 Tage oder eigene) und Beginn (heute, morgen oder ein anderer Tag), die Gewohnheiten für diese Zeit, deine Zeiten und die Zusammenfassung.' },
+      { area: 'Einrichtung', text: 'Die Wüstenzeit beginnt erst mit „Zur Wüstenwanderung“ auf der letzten Seite. Zurückgehen und Überspringen starten nichts. Wer den Weg wechselt, behält, was er auf dem anderen eingegeben hat.' },
+    ],
+  },
+  {
     version: '1.17.2',
     date: '2026-10-19',
     title: 'Lesemethode in der Anleitung',

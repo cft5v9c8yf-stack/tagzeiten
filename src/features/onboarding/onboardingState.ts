@@ -9,6 +9,12 @@ export const ONBOARDING_PATH = '/einrichtung';
 /** Mid-setup: whoever reloads then comes back into it, at the page where they were. */
 export const ONBOARDING_STEP_KEY = 'tz:onboarding-step';
 
+/** The way chosen on page 2, kept with the page so that a reload midway goes on on the same way. */
+export const ONBOARDING_WAY_KEY = 'tz:onboarding-way';
+
+/** What was entered for the Wüstenwanderung, which begins only at its last page. */
+export const ONBOARDING_DESERT_KEY = 'tz:onboarding-desert';
+
 export type OnboardingMark = 'done' | 'skipped' | 'started';
 
 export function readOnboardingMark(): OnboardingMark | null {
@@ -23,7 +29,9 @@ export function readOnboardingMark(): OnboardingMark | null {
 export function writeOnboardingMark(mark: OnboardingMark): void {
   try {
     localStorage.setItem(ONBOARDING_KEY, mark);
-    if (mark !== 'started') localStorage.removeItem(ONBOARDING_STEP_KEY);
+    if (mark !== 'started') {
+      for (const k of [ONBOARDING_STEP_KEY, ONBOARDING_WAY_KEY, ONBOARDING_DESERT_KEY]) localStorage.removeItem(k);
+    }
   } catch {
     // Only a convenience: without storage the setup may show again next time.
   }
@@ -41,6 +49,23 @@ export function readOnboardingStep(): number {
 export function writeOnboardingStep(index: number): void {
   try {
     localStorage.setItem(ONBOARDING_STEP_KEY, String(index));
+  } catch {
+    // Only a convenience.
+  }
+}
+
+export function readOnboardingWay(): 'everyday' | 'desert' | null {
+  try {
+    const v = localStorage.getItem(ONBOARDING_WAY_KEY);
+    return v === 'everyday' || v === 'desert' ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeOnboardingWay(way: 'everyday' | 'desert'): void {
+  try {
+    localStorage.setItem(ONBOARDING_WAY_KEY, way);
   } catch {
     // Only a convenience.
   }
