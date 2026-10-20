@@ -27,12 +27,24 @@ const PER_ROW = 2;
  * across the full width. One tile is open at a time: opening another closes the
  * one before. The open tile is remembered on the device like the folding headings.
  */
-export function TileGroup({ items, level = 3, label }: { items: readonly TileItem[]; level?: 3 | 4 | 5; label?: string }) {
+export function TileGroup({
+  items,
+  level = 3,
+  label,
+  wide = false,
+}: {
+  items: readonly TileItem[];
+  level?: 3 | 4 | 5;
+  label?: string;
+  /** One tile to a row, across the full width. */
+  wide?: boolean;
+}) {
   const base = useId();
   const open = useOpenStates();
   const Heading = `h${level}` as 'h3' | 'h4' | 'h5';
   const rows: TileItem[][] = [];
-  for (let i = 0; i < items.length; i += PER_ROW) rows.push(items.slice(i, i + PER_ROW));
+  const perRow = wide ? 1 : PER_ROW;
+  for (let i = 0; i < items.length; i += perRow) rows.push(items.slice(i, i + perRow));
   // One at a time; should several be remembered open, the first one wins.
   const openId = items.find((it) => open[it.id] ?? !!it.defaultOpen)?.id;
   const isOpen = (it: TileItem) => it.id === openId;
@@ -44,7 +56,7 @@ export function TileGroup({ items, level = 3, label }: { items: readonly TileIte
   const panelId = (it: TileItem) => `${base}-${it.id.replace(/\W/g, '-')}`;
 
   return (
-    <div className="tile-group" role="group" aria-label={label}>
+    <div className={`tile-group${wide ? ' is-wide' : ''}`} role="group" aria-label={label}>
       {rows.map((row, r) => (
         <Fragment key={r}>
           {row.map((it) => {

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.20.3',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Kacheln statt loser Kästen',
+    changes: [
+      { area: 'Arena', text: 'Die Wüstenwanderung ist neu geordnet: Überblick, der Hinweis nach „Heute“, der Rückblick als eingeklappte Kachel über die volle Breite, dann das Tagebuch. Ganz unten stehen „Anleitung“ und „Einstellungen der Wüstenzeit“ als zwei Kacheln nebeneinander, wie unter „Mehr“. Ein Panel öffnet sich unter der Reihe; die Einstellungen und das Beenden sind unverändert.' },
+    ],
+  },
+  {
     version: '1.20.2',
     date: '2026-10-20',
     title: 'Wüstenwanderung: Abschluss mit einem Tagebuch',

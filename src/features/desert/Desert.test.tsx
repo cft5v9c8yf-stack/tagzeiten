@@ -12,6 +12,7 @@ import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
+import { activeRun } from '../../domain/winterArc';
 import { ArenaPage } from '../arena/ArenaPage';
 
 beforeEach(() => {
@@ -47,6 +48,9 @@ async function renderArena(path: string, prepare?: (s: Store) => void, now = new
   await screen.findAllByRole('heading', { level: 2 });
   return store;
 }
+
+/** A tile of the Arena opened (they stand folded): by the start of its title. */
+const openTile = (title: string) => fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${title}`) }));
 
 const pack = (id: string) => DESERT_PACKS.find((p) => p.id === id)!;
 /** A Wüstenzeit from Monday 14 September, 40 days, with the habits of Aufbruch and Friday fasting. */
@@ -186,6 +190,7 @@ describe('the Wüstenwanderung in the Arena', () => {
       s.startDesert('2026-09-14', 40);
       s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, pack('standard').habits, true);
     });
+    openTile('Rückblick');
     const focus = screen.getByRole('region', { name: 'Schwerpunkt der Woche' });
     // Week 2 of 6: the thirteen focuses spread over the weeks.
     expect(focus.firstElementChild!.className).toContain('wa-verse');
@@ -193,12 +198,15 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(focus.textContent).toContain('Die Arbeit schützen.');
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     expect(screen.getByRole('region', { name: 'Schwerpunkt der Woche' }).textContent).toContain('Einfach da sein.');
+    openTile('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).getByText('Der 90-Tage-Standard')).toBeTruthy();
   });
 
   it('has no weekly focus without the points of the standard', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    openTile('Rückblick');
     expect(screen.queryByRole('region', { name: 'Schwerpunkt der Woche' })).toBeNull();
+    openTile('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).queryByText('Der 90-Tage-Standard')).toBeNull();
   });
 
@@ -245,7 +253,8 @@ describe('the Wüstenwanderung in the Arena', () => {
     for (let i = 0; i < 5; i++) fireEvent.click(within(overview).getByRole('button', { name: 'Folgewoche' }));
     expect(overview.querySelector('h4')!.textContent).toBe('Woche 6Woche 6 von 6');
     expect(within(overview).getByRole('button', { name: 'Folgewoche' })).toHaveProperty('disabled', true);
-    // The review: the week before has ended; its three lines end in the word of comfort (rule 1).
+    // The review (folded under the overview): the week before has ended; its three lines end in the word of comfort (rule 1).
+    openTile('Rückblick');
     expect(document.querySelector('.wa-review')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     const review = document.querySelector('.wa-review') as HTMLElement;
@@ -299,6 +308,50 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(document.querySelector('.wa-overview')).toBeNull();
   });
 
+  it('orders the page: overview, the note, the review, the journal, then the guide and the settings as two tiles', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const at = (el: Element | null) => {
+      expect(el).not.toBeNull();
+      return el!;
+    };
+    const parts = [
+      at(document.querySelector('.wa-overview')),
+      at(document.querySelector('.wa-to-today')),
+      screen.getByRole('button', { name: /^Rückblick/ }),
+      at(document.querySelector('.desert-entries')),
+      screen.getByRole('button', { name: /^Anleitung/ }),
+      screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ }),
+    ];
+    parts.forEach((el, i) => i > 0 && expect(parts[i - 1]!.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING, `part ${i}`).toBeTruthy());
+    // The review is a tile across the full width; the guide and the settings stand side by side, in one group.
+    expect(parts[2]!.closest('.tile-group')!.classList.contains('is-wide')).toBe(true);
+    expect(parts[4]!.closest('.tile-group')).toBe(parts[5]!.closest('.tile-group'));
+    expect(parts[4]!.closest('.tile-group')!.classList.contains('is-wide')).toBe(false);
+  });
+
+  it('opens and closes the tiles, one at a time within a group; the settings still end the Wüstenzeit', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const guide = screen.getByRole('button', { name: /^Anleitung/ });
+    const settings = screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ });
+    fireEvent.click(guide);
+    expect(guide.getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('.desert-guide')).not.toBeNull();
+    // A second tap closes it.
+    fireEvent.click(guide);
+    expect(guide.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(guide);
+    // Opening the settings closes the guide; the panel stands beneath the row.
+    fireEvent.click(settings);
+    expect(guide.getAttribute('aria-expanded')).toBe('false');
+    expect(settings.getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Aus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beenden' }));
+    // Ended: no Wüstenzeit runs, the way in stands again; nothing is deleted.
+    expect(activeRun(store.getProfile().winterArc)).toBeUndefined();
+    expect(store.getProfile().winterArc.runs).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
+  });
+
   it('has nothing to tick or to choose: the habits are kept under "Heute"', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
@@ -308,10 +361,9 @@ describe('the Wüstenwanderung in the Arena', () => {
     // No title line under the head, like the other places; no more days or weeks to page through.
     expect(document.querySelector('.place-sub')).toBeNull();
     expect(screen.queryByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeNull();
-    // Review and guide stay, folded; and the way to end it.
-    expect(screen.getByText('Rückblick', { selector: 'summary' })).toBeTruthy();
-    expect(screen.getByText('Anleitung', { selector: 'summary' })).toBeTruthy();
-    expect(screen.getByText('Einstellungen der Wüstenzeit')).toBeTruthy();
+    // Review, guide and settings stand as tiles, folded.
+    for (const t of ['Rückblick', 'Anleitung', 'Einstellungen der Wüstenzeit'])
+      expect(screen.getByRole('button', { name: new RegExp(`^${t}`) }).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('never marks anything in red, as a streak or as a rate', async () => {
@@ -363,7 +415,7 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect([...sheets.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der fünfte Tag.', 'Der zweite Tag.']);
     // The close keeps its own part.
     expect(screen.getByRole('button', { name: 'Neue Wüstenzeit beginnen' })).toBeTruthy();
-    expect(screen.getByText('Einstellungen der Wüstenzeit')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ })).toBeTruthy();
   });
 });
 

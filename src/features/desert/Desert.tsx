@@ -23,6 +23,7 @@ import { DesertWeekRows } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
+import { TileGroup, type TileItem } from '../../ui/TileGroup';
 
 const runs = (parts: readonly Run[]) =>
   parts.map((p, i) =>
@@ -247,7 +248,18 @@ function ToToday() {
   );
 }
 
-/** The dashboard: where the Wüstenzeit stands, the overview of the habits, then the journal, the review and the guide. */
+/** The guide of the Wüstenzeit, with the week's focus where the 90-Tage-Standard is chosen. */
+function GuideOf({ run, today }: { run: WinterArcRun; today: DateKey }) {
+  const weeks = desertWeeks(run);
+  return (
+    <DesertGuide
+      focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), weeks.length), weeks.length) : undefined}
+      link={seasonLinkOf(run)}
+    />
+  );
+}
+
+/** The dashboard: where the Wüstenzeit stands, the overview of the habits, the review under it, then the journal. */
 function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
   const store = useStore();
   const today = store.today();
@@ -258,22 +270,29 @@ function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) 
       <Overview run={run} today={today} />
       {none && <p className="wa-to-today">Du hast noch keine Gewohnheiten gewählt.</p>}
       <ToToday />
+      <TileGroup
+        wide
+        level={4}
+        label="Rückblick"
+        items={[
+          {
+            id: 'arena.desert.review',
+            title: 'Rückblick',
+            line: 'Bisher und Woche für Woche',
+            icon: 'review',
+            content: (
+              <>
+                <section className="wa-weekly" aria-labelledby="desert-kept-title">
+                  <h5 id="desert-kept-title">Bisher</h5>
+                  <Kept run={run} today={today} />
+                </section>
+                <ReviewView run={run} today={today} />
+              </>
+            ),
+          },
+        ]}
+      />
       {journal}
-      <details className="wa-settings">
-        <summary>Rückblick</summary>
-        <section className="panel wa-weekly" aria-labelledby="desert-kept-title">
-          <h5 id="desert-kept-title">Bisher</h5>
-          <Kept run={run} today={today} />
-        </section>
-        <ReviewView run={run} today={today} />
-      </details>
-      <details className="wa-settings">
-        <summary>Anleitung</summary>
-        <DesertGuide
-          focus={usesStandard(run) ? focusOf(Math.min(desertWeekOf(run, today), desertWeeks(run).length), desertWeeks(run).length) : undefined}
-          link={seasonLinkOf(run)}
-        />
-      </details>
     </div>
   );
 }
@@ -413,14 +432,27 @@ export function Desert({ journal = null }: { journal?: ReactNode }) {
       </div>
     );
   }
-  const stage = stageOf(run, store.today());
+  const today = store.today();
+  const stage = stageOf(run, today);
+  // At the foot, two tiles side by side like those of "Mehr": the guide, and the settings (to end the Wüstenzeit).
+  const settings: TileItem = {
+    id: 'arena.desert.settings',
+    title: 'Einstellungen der Wüstenzeit',
+    line: 'Beginn, Dauer, Beenden',
+    icon: 'sliders',
+    content: <DesertSettings withChoice={false} />,
+  };
+  const guide: TileItem = {
+    id: 'arena.desert.guide',
+    title: 'Anleitung',
+    line: 'Was die Wüstenzeit ist',
+    icon: 'compass',
+    content: <GuideOf run={run} today={today} />,
+  };
   return (
     <div className="desert">
       {stage === 'after' ? <Closing run={run} journal={journal} /> : <Dashboard run={run} journal={journal} />}
-      <details className="wa-settings">
-        <summary>Einstellungen der Wüstenzeit</summary>
-        <DesertSettings withChoice={false} />
-      </details>
+      <TileGroup level={4} label="Anleitung und Einstellungen" wide={stage === 'after'} items={stage === 'after' ? [settings] : [guide, settings]} />
     </div>
   );
 }

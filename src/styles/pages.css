@@ -2345,6 +2345,13 @@ mark.placeholder {
   gap: var(--card-gap);
   margin: 8px 0 12px;
 }
+.tile-group.is-wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+.tile-group.is-wide .tile-card {
+  min-height: 0;
+  padding-right: 40px;
+}
 .tile-card {
   appearance: none;
   /* Icon and title side by side, the line beneath, the chevron (it opens) in the corner. */
@@ -2422,6 +2429,14 @@ mark.placeholder {
 .tile-panel-title {
   margin: 0;
   font-size: 1.05rem;
+}
+/* A card inside a tile panel needs no second frame. */
+.tile-panel .panel {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
 }
 /* A group inside a panel sits on the page colour, so its tiles and panels stand out. */
 .tile-panel .tile-card,
