@@ -237,11 +237,13 @@ progress::-moz-progress-bar {
   display: inline-grid;
   place-items: center;
 }
-.cell[aria-pressed='true'] {
+.cell[aria-pressed='true'],
+.cell.is-on {
   background: var(--done);
   border-color: var(--done);
 }
-.cell[aria-pressed='true']::after {
+.cell[aria-pressed='true']::after,
+.cell.is-on::after {
   content: '';
   width: 8px;
   height: 8px;
@@ -251,7 +253,8 @@ progress::-moz-progress-bar {
 .cell.today {
   border-color: var(--accent);
 }
-.cell.today[aria-pressed='true'] {
+.cell.today[aria-pressed='true'],
+.cell.today.is-on {
   border-color: var(--done);
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--accent);
 }
@@ -275,10 +278,16 @@ progress::-moz-progress-bar {
   background: transparent;
   cursor: pointer;
 }
-.pill[aria-pressed='true'] {
+.pill[aria-pressed='true'],
+.pill.is-on {
   background: var(--done);
   border-color: var(--done);
   color: var(--sheet);
+}
+/* The same pill to read only (the overview in the Arena). */
+span.pill {
+  display: inline-block;
+  cursor: default;
 }
 .pill:disabled {
   cursor: default;

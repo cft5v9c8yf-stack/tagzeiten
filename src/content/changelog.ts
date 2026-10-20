@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.20.1',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Überblick wie die Wochenübersicht',
+    changes: [
+      { area: 'Arena', text: 'Der Überblick oben in der Wüstenwanderung sieht aus wie die Wochenübersicht unter „Heute“: Mo bis So, eine Zeile je Gewohnheit der Wüstenzeit, je Tag ein Kreis, wöchentliche und monatliche Gewohnheiten als Plakette. Du blätterst Woche für Woche; er beginnt in der laufenden Woche. Er ist nur zum Lesen: Abhaken kannst du unter „Heute“.' },
+    ],
+  },
+  {
     version: '1.20.0',
     date: '2026-10-19',
     title: 'Wüstenwanderung: Überblick und Tagebuch mit Einträgen',

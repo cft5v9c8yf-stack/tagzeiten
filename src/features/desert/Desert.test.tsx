@@ -202,7 +202,7 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(within(document.querySelector('.desert-guide') as HTMLElement).queryByText('Der 90-Tage-Standard')).toBeNull();
   });
 
-  it('shows the overview of the habits: a row for each, a box for each day, ticked filled, open grey, to come outlined', async () => {
+  it('shows the overview as the week grid of "Heute", one week at a time, to read only', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);
       const h = s.getProfile().habits.find((x) => x.id === 'wz-handy-spaeter')!;
@@ -210,34 +210,41 @@ describe('the Wüstenwanderung in the Arena', () => {
       s.toggleHabit('2026-09-22', h);
       s.toggleHabit('2026-09-25', s.getProfile().habits.find((x) => x.id === 'wz-freitagsfasten')!);
     });
-    const table = document.querySelector('.wa-chart-table') as HTMLElement;
-    // On top of the page, above the journal.
-    const chart = document.querySelector('.wa-chart')!;
-    expect(chart.compareDocumentPosition(document.querySelector('.desert-entries')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    // One row for each habit of the Wüstenzeit (Aufbruch and Friday fasting).
-    expect([...table.querySelectorAll('tbody th')].map((t) => t.textContent)).toEqual([
+    const overview = document.querySelector('.wa-overview') as HTMLElement;
+    // On top of the page, above the journal; the table is the one of "Heute" (class "habits").
+    expect(overview.compareDocumentPosition(document.querySelector('.desert-entries')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const table = overview.querySelector('table.habits') as HTMLElement;
+    expect([...table.querySelectorAll('thead th')].slice(1).map((t) => t.textContent)).toEqual(['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
+    expect(table.querySelector('thead th.is-today')!.textContent).toBe('Sa');
+    expect(table.querySelector('.group-row')!.textContent).toBe('Wüstenzeit');
+    // Starts in this week (week 2 of 6), with the habits of the Wüstenzeit only.
+    expect(overview.querySelector('h4')!.textContent).toBe('Diese WocheWoche 2 von 6');
+    expect([...table.querySelectorAll('tbody th[scope="row"]')].map((t) => t.textContent)).toEqual([
       'Morgensegen',
       'Bibel lesen',
       'Handy später',
       'Dankbarkeit',
       'Freitagsfasten',
     ]);
-    // 40 days, grouped by weeks; today (26 September) is marked.
-    expect(table.querySelectorAll('thead th')).toHaveLength(41);
-    expect(table.querySelector('thead th.is-today')!.textContent).toBe('26');
-    const row = (name: string) => within(within(table).getByRole('rowheader', { name }).closest('tr') as HTMLElement);
-    const handy = row('Handy später');
-    expect(handy.getByLabelText('Dienstag, 15. September: abgehakt').querySelector('.is-ticked')).not.toBeNull();
-    expect(handy.getByLabelText('Dienstag, 22. September: abgehakt')).toBeTruthy();
-    expect(handy.getByLabelText('Mittwoch, 16. September: nicht abgehakt').querySelector('.is-open')).not.toBeNull();
-    expect(handy.getByLabelText('Sonntag, 27. September: liegt noch vor dir').querySelector('.is-future')).not.toBeNull();
-    // Friday fasting is meant for Fridays only; ticked on the 25th.
-    const fasting = row('Freitagsfasten');
-    expect(fasting.getByLabelText('Freitag, 25. September: abgehakt')).toBeTruthy();
-    expect(fasting.getByLabelText('Samstag, 26. September: nicht vorgesehen')).toBeTruthy();
+    const mark = (label: string) => within(table).getByRole('img', { name: label });
+    expect(mark('Handy später, Di 22.9.: abgehakt').className).toContain('is-on');
+    expect(mark('Handy später, Mi 23.9.: nicht abgehakt').className).not.toContain('is-on');
+    expect(mark('Handy später, Sa 26.9.: nicht abgehakt').className).toContain('today');
+    expect(mark('Handy später, So 27.9.: liegt noch vor dir').className).toContain('future');
+    // Friday fasting: meant for Fridays only, the other days a dash.
+    expect(mark('Freitagsfasten, Fr 25.9.: abgehakt').className).toContain('is-on');
+    expect(table.querySelectorAll('td.wa-off')).toHaveLength(6);
     // Nothing to tap, and no count.
     expect(table.querySelectorAll('button, input, a')).toHaveLength(0);
-    expect(chart.textContent).not.toMatch(/\d+\s*%|in Folge|Streak|Serie/);
+    expect(overview.textContent).not.toMatch(/\d+\s*%|in Folge|Streak|Serie/);
+    // The week before, with its ticks; the arrows stop at the first and the last week.
+    fireEvent.click(within(overview).getByRole('button', { name: 'Vorwoche' }));
+    expect(overview.querySelector('h4')!.textContent).toBe('Woche 1Woche 1 von 6');
+    expect(mark('Handy später, Di 15.9.: abgehakt').className).toContain('is-on');
+    expect(within(overview).getByRole('button', { name: 'Vorwoche' })).toHaveProperty('disabled', true);
+    for (let i = 0; i < 5; i++) fireEvent.click(within(overview).getByRole('button', { name: 'Folgewoche' }));
+    expect(overview.querySelector('h4')!.textContent).toBe('Woche 6Woche 6 von 6');
+    expect(within(overview).getByRole('button', { name: 'Folgewoche' })).toHaveProperty('disabled', true);
     // The review: the week before has ended; its three lines end in the word of comfort (rule 1).
     expect(document.querySelector('.wa-review')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
@@ -248,7 +255,7 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(document.querySelector('.desert-kept')!.textContent).toContain('Handy späteran 2 Tagen gehalten');
   });
 
-  it('shows weekly and monthly habits as one box for each week or month, with the ticks of "Heute"', async () => {
+  it('shows weekly and monthly habits as the pill of "Heute", to read only', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       s.startDesert('2026-09-14', 40);
       const run = s.getProfile().winterArc.runs[0]!;
@@ -263,25 +270,33 @@ describe('the Wüstenwanderung in the Arena', () => {
         winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: [...(r.habits ?? []), 'x-weekly', 'x-monthly'] })) },
       }));
       const get = (id: string) => s.getProfile().habits.find((h) => h.id === id)!;
-      // Ticked on a Wednesday of the first week, and on a day of September.
+      // A Wednesday of the first week, and a day of September.
       s.toggleHabit('2026-09-16', get('x-weekly'));
       s.toggleHabit('2026-09-18', get('x-monthly'));
     });
-    const table = document.querySelector('.wa-chart-table') as HTMLElement;
-    const weekly = within(within(table).getByRole('rowheader', { name: 'Wochenwerk' }).closest('tr') as HTMLElement);
-    const cells = [...weekly.getAllByRole('cell')];
-    // Six calendar weeks, each one box across its days; the first is ticked, a week to come is outlined.
-    expect(cells).toHaveLength(6);
-    expect(cells[0]!.getAttribute('colspan')).toBe('7');
-    expect(cells[0]!.querySelector('.is-ticked')).not.toBeNull();
-    expect(cells[1]!.querySelector('.is-open')).not.toBeNull();
-    expect(cells[5]!.querySelector('.is-future')).not.toBeNull();
-    // Months: September (ticked) and October (to come).
-    const monthly = within(within(table).getByRole('rowheader', { name: 'Monatswerk' }).closest('tr') as HTMLElement);
-    const months = monthly.getAllByRole('cell');
-    expect(months).toHaveLength(2);
-    expect(months[0]!.querySelector('.is-ticked')).not.toBeNull();
-    expect(months[1]!.querySelector('.is-future')).not.toBeNull();
+    const overview = document.querySelector('.wa-overview') as HTMLElement;
+    const pill = (name: string) => within(overview).getByRole('img', { name: new RegExp(`^${name},`) });
+    // Week 2: this week not yet ticked; September is.
+    expect(pill('Wochenwerk').textContent).toBe('diese Woche');
+    expect(pill('Wochenwerk').className).not.toContain('is-on');
+    expect(pill('Monatswerk').textContent).toBe('✓ diesen Monat');
+    expect(pill('Monatswerk').className).toContain('is-on');
+    fireEvent.click(within(overview).getByRole('button', { name: 'Vorwoche' }));
+    expect(pill('Wochenwerk').textContent).toBe('✓ diese Woche');
+    // The last week lies in October: not ticked there.
+    for (let i = 0; i < 5; i++) fireEvent.click(within(overview).getByRole('button', { name: 'Folgewoche' }));
+    expect(pill('Monatswerk').textContent).toBe('diesen Monat');
+    expect(overview.querySelectorAll('button:not(.wa-pager-btn)')).toHaveLength(0);
+  });
+
+  it('opens on the first week before the beginning, and on the last after the end', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s), new Date(2026, 8, 1, 7));
+    expect(document.querySelector('.wa-overview h4')!.textContent).toBe('Woche 1Woche 1 von 6');
+    cleanup();
+    // After the last day (23 October) the close stands in the Arena; nothing of the overview is left to tick there.
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s), new Date(2026, 9, 24, 7));
+    expect(screen.getByRole('heading', { name: 'Die Wüstenzeit ist zu Ende' })).toBeTruthy();
+    expect(document.querySelector('.wa-overview')).toBeNull();
   });
 
   it('has nothing to tick or to choose: the habits are kept under "Heute"', async () => {

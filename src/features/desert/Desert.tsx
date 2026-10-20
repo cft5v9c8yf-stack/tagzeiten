@@ -1,10 +1,10 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { downloadText } from '../../app/files';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
 import { useDayLookup, useProfile, useStore, useToday } from '../../data/hooks';
-import { addDays, formatLong, fromKey, mondayOf, weekdayOf, type DateKey } from '../../domain/dates';
+import { addDays, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
 import {
   desertWeekOf,
   desertWeeks,
@@ -12,16 +12,15 @@ import {
   keptIn,
   keptLine,
   leadVerse,
-  meantFor,
   tickedOn,
   usesStandard,
 } from '../../domain/desert';
 import { arenaOffer, seasonLinkOf } from '../../domain/seasons';
-import { isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
-import { activeRun, endDateOf, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
+import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { RoundJournal } from './DesertJournal';
+import { DesertWeekRows } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
@@ -154,106 +153,55 @@ function Kept({ run, today }: { run: WinterArcRun; today: DateKey }) {
 }
 
 /**
- * The course of the Wüstenzeit as an overview, to read only: one row for each habit, one box for each day
- * (grouped by calendar weeks); weekly habits have one box for each week, monthly ones one for each month,
- * with the same ticks as under "Heute". Ticked is filled, not ticked stays grey (never red, rule 5),
- * a day to come is only outlined. No count, no chain, no rate (rule 4).
+ * The overview of the Wüstenzeit: the same week grid as under "Heute" (Wochenübersicht), one calendar week at a
+ * time, with the habits of the Wüstenzeit and the same marks, but to read only. Starts in the week now; before the
+ * beginning the first week stands, after the end the last. No count, no chain, no rate (rule 4); open stays neutral (rule 5).
  */
-function Chart({ run, today }: { run: WinterArcRun; today: DateKey }) {
+function Overview({ run, today }: { run: WinterArcRun; today: DateKey }) {
   const profile = useProfile();
-  const lookup = useDayLookup();
-  const habits = habitsOf(run, profile);
-  const wrap = useRef<HTMLDivElement>(null);
-  const end = endDateOf(run.startDate, run.durationDays);
-  const days: DateKey[] = [];
-  for (let d = run.startDate; d <= end; d = addDays(d, 1)) days.push(d);
-  const weekStart = (d: DateKey) => weekdayOf(d) === 1 || d === run.startDate;
-  // The chart opens where today is, not at the first day.
-  useEffect(() => {
-    const el = wrap.current;
-    const mark = el?.querySelector<HTMLElement>('th.is-today');
-    if (el && mark) el.scrollLeft = Math.max(0, mark.offsetLeft - el.clientWidth / 2);
-  }, []);
-  if (!habits.length) return null;
-
-  // The boxes of a weekly or monthly habit: one for each stretch of days in its period.
-  const stretches = (rhythm: 'weekly' | 'monthly') => {
-    const out: { from: DateKey; span: number }[] = [];
-    const key = (d: DateKey) => (rhythm === 'weekly' ? mondayOf(d) : d.slice(0, 7));
-    for (const d of days) {
-      const last = out[out.length - 1];
-      if (last && key(last.from) === key(d)) last.span++;
-      else out.push({ from: d, span: 1 });
-    }
-    return out;
-  };
-  const box = (state: 'ticked' | 'open' | 'future') => <span className={`wa-box is-${state}`} aria-hidden="true" />;
+  const weeks = desertWeeks(run);
+  const current = Math.min(desertWeekOf(run, today), weeks.length);
+  const [shown, setShown] = useState(current);
+  const week = Math.min(Math.max(shown, 1), weeks.length);
+  if (!habitsOf(run, profile).length) return null;
+  const dates = Array.from({ length: 7 }, (_, i) => addDays(weeks[week - 1]!, i));
+  const inRun = dates.filter((d) => isInRun(run, d));
+  // The day the weekly and monthly ones are read on: today in this week, else the first day of it in the Wüstenzeit.
+  const date = inRun.includes(today) ? today : inRun[0]!;
   return (
-    <section className="panel wa-chart" aria-labelledby="desert-chart-title">
-      <h4 id="desert-chart-title">Überblick</h4>
-      <div className="wa-chart-wrap" ref={wrap} tabIndex={0} role="region" aria-label="Überblick über die Gewohnheiten, nach rechts zu scrollen">
-        <table className="wa-chart-table">
-          <caption className="visually-hidden">Die abgehakten Gewohnheiten der Wüstenzeit, Tag für Tag, nach Wochen geordnet</caption>
+    <section className="panel wa-overview" aria-labelledby="desert-overview-title">
+      <div className="wa-pager">
+        <button type="button" className="icon-btn wa-pager-btn" aria-label="Vorwoche" disabled={week <= 1} onClick={() => setShown(week - 1)}>
+          <Chevron dir="left" />
+        </button>
+        <h4 id="desert-overview-title">
+          {dates.includes(today) ? 'Diese Woche' : `Woche ${week}`}
+          <span className="wa-pager-sub">
+            Woche {week} von {weeks.length}
+          </span>
+        </h4>
+        <button type="button" className="icon-btn wa-pager-btn" aria-label="Folgewoche" disabled={week >= weeks.length} onClick={() => setShown(week + 1)}>
+          <Chevron dir="right" />
+        </button>
+      </div>
+      <div className="habits-panel">
+        <table className="habits">
+          <caption className="visually-hidden">Die Gewohnheiten der Wüstenzeit in dieser Woche, nur zum Lesen</caption>
           <thead>
             <tr>
-              <th scope="col" className="wa-chart-name">
+              <th scope="col">
                 <span className="visually-hidden">Gewohnheit</span>
               </th>
-              {days.map((d) => (
-                <th
-                  key={d}
-                  scope="col"
-                  className={`${weekStart(d) ? 'is-week-start' : ''}${d === today ? ' is-today' : ''}`.trim() || undefined}
-                  aria-current={d === today ? 'date' : undefined}
-                  title={formatLong(d)}
-                >
-                  {fromKey(d).getDate()}
+              {dates.map((k) => (
+                <th key={k} scope="col" className={k === today ? 'is-today' : undefined} aria-current={k === today ? 'date' : undefined}>
+                  {WEEKDAY_SHORT[weekdayOf(k)]}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
-            {habits.map((h) => (
-              <tr key={h.id}>
-                <th scope="row" className="wa-chart-name">
-                  {h.name}
-                </th>
-                {isPerDay(h)
-                  ? days.map((d) => {
-                      const edge = weekStart(d) ? 'is-week-start' : undefined;
-                      if (!meantFor(h, d))
-                        return (
-                          <td key={d} className={edge} aria-label={`${formatLong(d)}: nicht vorgesehen`}>
-                            <span className="wa-box is-off" aria-hidden="true" />
-                          </td>
-                        );
-                      const state = d > today ? 'future' : isDoneOn(h, lookup(d)) ? 'ticked' : 'open';
-                      return (
-                        <td key={d} className={edge} aria-label={`${formatLong(d)}: ${state === 'ticked' ? 'abgehakt' : state === 'open' ? 'nicht abgehakt' : 'liegt noch vor dir'}`}>
-                          {box(state)}
-                        </td>
-                      );
-                    })
-                  : stretches(h.rhythm === 'weekly' ? 'weekly' : 'monthly').map((st) => {
-                      const state = st.from > today ? 'future' : isDoneInPeriod(h, st.from, lookup) ? 'ticked' : 'open';
-                      const what = h.rhythm === 'weekly' ? 'Woche' : 'Monat';
-                      return (
-                        <td
-                          key={st.from}
-                          colSpan={st.span}
-                          className={weekStart(st.from) ? 'is-week-start' : undefined}
-                          aria-label={`${what} ab ${formatLong(st.from)}: ${state === 'ticked' ? 'abgehakt' : state === 'open' ? 'nicht abgehakt' : 'liegt noch vor dir'}`}
-                        >
-                          {box(state)}
-                        </td>
-                      );
-                    })}
-              </tr>
-            ))}
-          </tbody>
+          <DesertWeekRows run={run} week={dates} date={date} readOnly />
         </table>
       </div>
-      <p className="small muted">Gefüllt ist abgehakt. Grau ist kein Urteil, nur eine ehrliche Auskunft.</p>
     </section>
   );
 }
@@ -308,7 +256,7 @@ function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) 
   return (
     <div className="wa-dashboard">
       <Head run={run} today={today} />
-      <Chart run={run} today={today} />
+      <Overview run={run} today={today} />
       {none && <p className="wa-to-today">Du hast noch keine Gewohnheiten gewählt.</p>}
       <ToToday />
       {journal}

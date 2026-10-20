@@ -72,8 +72,21 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   );
 }
 
-/** The habits of the Wüstenzeit in the grid of the week under "Heute": the same ticks as everywhere. */
-export function DesertWeekRows({ run, week, date }: { run: WinterArcRun; week: readonly DateKey[]; date: DateKey }) {
+/**
+ * The habits of the Wüstenzeit in the grid of the week under "Heute": the same ticks as everywhere.
+ * `readOnly` shows the same marks to read only (the overview in the Arena): nothing to tap.
+ */
+export function DesertWeekRows({
+  run,
+  week,
+  date,
+  readOnly = false,
+}: {
+  run: WinterArcRun;
+  week: readonly DateKey[];
+  date: DateKey;
+  readOnly?: boolean;
+}) {
   const store = useStore();
   const profile = useProfile();
   const lookup = useDayLookup();
@@ -112,6 +125,16 @@ export function DesertWeekRows({ run, week, date }: { run: WinterArcRun; week: r
                     </td>
                   );
                 const on = isDoneOn(h, lookup(k));
+                if (readOnly)
+                  return (
+                    <td key={k}>
+                      <span
+                        role="img"
+                        className={`cell${k === today ? ' today' : ''}${k > today ? ' future' : ''}${on ? ' is-on' : ''}`}
+                        aria-label={`${h.name}, ${formatShort(k)}: ${on ? 'abgehakt' : k > today ? 'liegt noch vor dir' : 'nicht abgehakt'}`}
+                      />
+                    </td>
+                  );
                 return (
                   <td key={k}>
                     <button
@@ -134,6 +157,15 @@ export function DesertWeekRows({ run, week, date }: { run: WinterArcRun; week: r
           <tr key={h.id}>
             {name(h)}
             <td colSpan={7} className="period-cell">
+              {readOnly ? (
+                <span
+                  role="img"
+                  className={`pill${on ? ' is-on' : ''}`}
+                  aria-label={`${h.name}, ${period}: ${on ? 'abgehakt' : 'nicht abgehakt'}`}
+                >
+                  {on ? `✓ ${period}` : period}
+                </span>
+              ) : (
               <button
                 type="button"
                 className="pill"
@@ -144,6 +176,7 @@ export function DesertWeekRows({ run, week, date }: { run: WinterArcRun; week: r
               >
                 {on ? `✓ ${period}` : period}
               </button>
+              )}
             </td>
           </tr>
         );

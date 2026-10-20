@@ -4300,83 +4300,12 @@ mark.placeholder {
   color: var(--ink);
 }
 
-/* The overview of the habits of the Wüstenzeit: to read only; filled is ticked, grey is open (never red), outlined is to come. */
-.wa-chart-wrap {
-  overflow-x: auto;
-  margin: 8px calc(var(--card-pad) * -1);
-  padding: 0 var(--card-pad);
-}
-.wa-chart-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  font-family: var(--sans);
-}
-.wa-chart-table th,
-.wa-chart-table td {
-  padding: 3px 1px;
-  text-align: center;
-  font-size: 0.68rem;
-  font-weight: 400;
-  color: var(--muted);
-}
-.wa-chart-table .is-week-start {
-  padding-left: 6px;
-}
-.wa-chart-table th.is-today {
-  color: var(--ink);
-  font-weight: 600;
-  box-shadow: inset 0 -2px 0 var(--gold);
-}
-.wa-chart-name {
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  min-width: 7.5rem;
-  max-width: 9rem;
-  padding-right: 8px !important;
-  background: var(--sheet);
-  text-align: left !important;
-  font-size: 0.82rem !important;
-  color: var(--ink) !important;
-  font-weight: 400 !important;
-  white-space: normal;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-}
-.wa-box {
-  display: block;
-  width: 14px;
-  height: 18px;
-  margin: 0 auto;
-  border-radius: 4px;
-}
-.wa-box.is-ticked {
-  background: var(--accent);
-}
-.wa-box.is-open {
-  background: var(--rule);
-}
-.wa-box.is-future {
-  border: 1px solid var(--rule);
-}
-.wa-box.is-off {
-  height: 2px;
-  width: 6px;
-  background: var(--rule);
-}
-td[colspan] > .wa-box {
-  width: calc(100% - 2px);
-  min-width: 14px;
-}
 .desert-entries {
   display: grid;
   gap: var(--card-gap);
 }
 .desert-entries h3 {
   margin: 8px 0 0;
-}
-.wa-chart h4 {
-  margin: 0;
 }
 .desert-entries {
   margin-top: 12px;
