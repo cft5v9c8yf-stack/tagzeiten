@@ -342,16 +342,28 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }).textContent).toContain('Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt.');
   });
 
-  it('gives the journal of a closed Wüstenzeit to read again, day by day', async () => {
+  it('shows the journal once in the close, as entries, with the old day sheets folded below', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s, '2026-08-01');
       s.updateDay('2026-08-02', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der zweite Tag.' } }));
       s.updateDay('2026-08-05', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der fünfte Tag.' } }));
-      // Outside the Wüstenzeit: not part of its journal.
-      s.updateDay('2026-07-30', (d) => ({ ...d, evening: { ...d.evening, journal: 'Davor.' } }));
+      const id = s.addArenaEntry('desert');
+      s.updateArenaEntry(id, (e) => ({ ...e, title: 'Zum Schluss', text: 'Es war gut.' }));
     });
-    const read = document.querySelector('.desert-journal-read')!;
-    expect([...read.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der zweite Tag.', 'Der fünfte Tag.']);
+    expect(screen.getByRole('heading', { name: 'Die Wüstenzeit ist zu Ende' })).toBeTruthy();
+    // One journal only: the entries; no second "Das Tagebuch" of day sheets.
+    expect(document.querySelectorAll('.desert-entries')).toHaveLength(1);
+    expect(screen.getAllByRole('heading', { name: 'Tagebuch' })).toHaveLength(1);
+    expect(screen.queryByRole('heading', { name: 'Das Tagebuch' })).toBeNull();
+    expect(screen.getByRole('link', { name: /Zum Schluss/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' })).toBeTruthy();
+    // The day sheets stay readable, folded, below the entries.
+    const sheets = document.querySelector('.desert-sheets') as HTMLElement;
+    expect(document.querySelector('.desert-entries')!.contains(sheets)).toBe(true);
+    expect([...sheets.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der fünfte Tag.', 'Der zweite Tag.']);
+    // The close keeps its own part.
+    expect(screen.getByRole('button', { name: 'Neue Wüstenzeit beginnen' })).toBeTruthy();
+    expect(screen.getByText('Einstellungen der Wüstenzeit')).toBeTruthy();
   });
 });
 

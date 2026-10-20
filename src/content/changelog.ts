@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.20.2',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Abschluss mit einem Tagebuch',
+    changes: [
+      { area: 'Arena', text: 'Nach dem letzten Tag der Wüstenzeit steht das Tagebuch nur noch einmal da, mit den Einträgen wie zuvor. Die alten Tagesblätter bleiben darunter eingeklappt unter „Aus den Tagesblättern“ lesbar.' },
+    ],
+  },
+  {
     version: '1.20.1',
     date: '2026-10-20',
     title: 'Wüstenwanderung: Überblick wie die Wochenübersicht',

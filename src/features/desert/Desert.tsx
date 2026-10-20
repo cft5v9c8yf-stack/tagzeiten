@@ -19,7 +19,6 @@ import { arenaOffer, seasonLinkOf } from '../../domain/seasons';
 import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
-import { RoundJournal } from './DesertJournal';
 import { DesertWeekRows } from './DesertHabits';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
@@ -340,8 +339,6 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
         </section>
       )}
       {done && <p role="status">Übernommen. Du findest sie unter „Heute“ und unter „Mehr → Gewohnheiten“.</p>}
-      <h5>Das Tagebuch</h5>
-      <RoundJournal run={run} />
       <h5>Die Wochenrückblicke</h5>
       <RoundReviews run={run} />
       <div className="button-row">
