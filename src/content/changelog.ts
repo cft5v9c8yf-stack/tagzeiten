@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.21.0',
+    date: '2026-10-21',
+    title: 'Stille Zeit: „Bibel lesen“ wird mit dem Wort abgehakt',
+    changes: [
+      { area: 'Stille Zeit', text: 'Wenn du im Schritt „Das Wort“ weiterklickst, ist die Lesung des Tages gelesen: „Bibel lesen“ ist abgehakt und der Leseplan rückt zum nächsten Abschnitt. Das gilt in der Kurzform genauso. Von Hand kannst du den Haken weiterhin setzen und wieder wegnehmen.' },
+    ],
+  },
+  {
     version: '1.20.3',
     date: '2026-10-20',
     title: 'Wüstenwanderung: Kacheln statt loser Kästen',

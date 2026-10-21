@@ -90,6 +90,20 @@ describe('Stille Zeit as a flow', () => {
 
 });
 
+describe('Stille Zeit and the reading habit', () => {
+  it('marks the day\'s reading as read when the step "Das Wort" is left, and moves the plan on', async () => {
+    const store = await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    await waitFor(() => expect(store.getDay(store.today()).reading).toBeTruthy());
+    const before = JSON.stringify(store.getProfile().plan.positions);
+    expect(store.getDay(store.today()).reading!.done).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: /^Weiter zu: / }));
+    await waitFor(() => expect(store.getDay(store.today()).reading!.done).toBe(true));
+    expect(JSON.stringify(store.getProfile().plan.positions)).not.toBe(before);
+  });
+});
+
 describe('Stille Zeit without the bed', () => {
   it('shows the verse and the double question in the reading, the rest folded until something is written in it', async () => {
     await renderMorning();

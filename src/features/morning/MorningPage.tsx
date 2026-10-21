@@ -123,6 +123,9 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
 
   const completeStep = (index: number) => {
     const step = order.steps[index]!;
+    // Reading the day's portion keeps the habit "Bibel lesen" and moves the plan on. A past day
+    // without a portion owes nothing (rule 6).
+    if (step.id === 'word' && (isToday || day.reading)) store.setReadingDone(date, true);
     if (index + 1 < order.steps.length) {
       update((m) => ({ ...m, steps: { ...m.steps, [step.id]: true } }));
       setCurrent(index + 1 + bed);
