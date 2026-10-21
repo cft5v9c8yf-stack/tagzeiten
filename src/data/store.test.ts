@@ -371,3 +371,51 @@ describe('the Arena in its own table (v2)', () => {
     expect(other.getProfile().arena).toEqual([]);
   });
 });
+
+describe('the reading of the Wüstenzeit (1.16)', () => {
+  it('proposes "Bewährung und Nachfolge" from its first section and returns to the plan before', async () => {
+    const { store } = freshStore();
+    await store.load();
+    store.setPlan('nt90');
+    store.setPlanPositions({ nt90: 5, wueste: 12 });
+    store.startDesert('2026-09-25', 90, []);
+    const run = store.getProfile().winterArc.runs[0]!;
+    expect(store.getProfile().plan).toMatchObject({ planId: 'wueste-90', beforeDesert: 'nt90' });
+    // A new Wüstenzeit begins at the first section, whatever an earlier one left.
+    expect(store.getProfile().plan.positions.wueste).toBe(0);
+    store.ensureTodayReading();
+    store.setReadingDone('2026-09-25', true);
+    expect(store.getProfile().plan.positions.wueste).toBe(1);
+
+    // The plan of the Bible area: back to the one before, at the place it stood.
+    store.setDesertReading(run.id, 'bible');
+    expect(store.getProfile().plan.planId).toBe('nt90');
+    expect(store.getProfile().plan.positions.nt90).toBe(5);
+    // Chosen again, it goes on where it stood.
+    store.setDesertReading(run.id, 'desert');
+    expect(store.getProfile().plan.planId).toBe('wueste-90');
+    expect(store.getProfile().plan.positions.wueste).toBe(1);
+
+    // Without reading: the dashboard shows none, the plan stays.
+    store.setDesertReading(run.id, 'none');
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBe(false);
+    store.setDesertReading(run.id, 'desert');
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBeUndefined();
+
+    // Ending the Wüstenzeit returns to the plan before it.
+    store.endWinterArc();
+    expect(store.getProfile().plan.planId).toBe('nt90');
+  });
+
+  it('keeps the plan of the Bible area, or shows no reading, if so chosen', async () => {
+    const { store } = freshStore();
+    await store.load();
+    const before = store.getProfile().plan.planId;
+    store.startDesert('2026-09-25', 40, [], '', 'bible');
+    expect(store.getProfile().plan.planId).toBe(before);
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBeUndefined();
+    store.startDesert('2026-09-25', 40, [], '', 'none');
+    expect(store.getProfile().plan.planId).toBe(before);
+    expect(store.getProfile().winterArc.runs.at(-1)!.reading).toBe(false);
+  });
+});

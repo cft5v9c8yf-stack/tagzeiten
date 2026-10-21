@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
-import { activeDesert, DEFAULT_DESERT_DAYS, isDesert, QUICK_DESERT_DAYS } from '../../domain/desert';
+import { activeDesert, DEFAULT_DESERT_DAYS, isDesert, QUICK_DESERT_DAYS, type DesertReading } from '../../domain/desert';
 import { fromKey, isDateKey, MONTH_LONG, WEEKDAY_LONG, type DateKey } from '../../domain/dates';
 import type { Profile } from '../../domain/model';
 import {
@@ -15,6 +15,7 @@ import {
 } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
 import { DesertChoice } from './DesertChoice';
+import { DesertReadingChoice } from './DesertReading';
 
 /** "Samstag, 2. Januar 2027" */
 export function formatFullDate(k: DateKey): string {
@@ -54,6 +55,8 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
   const today = store.today();
   const [start, setStart] = useState<DateKey>(preset?.start ?? today);
   const [duration, setDuration] = useState(String(preset?.days ?? DEFAULT_DESERT_DAYS));
+  // The plan of the Wüstenzeit is proposed; it can be left out, or the plan of the Bible area kept.
+  const [reading, setReading] = useState<DesertReading>('desert');
   const quick = preset && !(QUICK_DESERT_DAYS as readonly number[]).includes(preset.days) ? [preset.days, ...QUICK_DESERT_DAYS] : QUICK_DESERT_DAYS;
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
@@ -111,6 +114,7 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           {validStart ? `Wähle eine Dauer von ${MIN_DURATION} bis ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
+      <DesertReadingChoice value={reading} days={validDays ? days : DEFAULT_DESERT_DAYS} onChange={setReading} />
       <p className="small muted">
         {last?.habits?.length
           ? 'Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt. Danach kannst du sie ändern.'
@@ -122,7 +126,7 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           className="btn primary"
           disabled={!end}
           onClick={() => {
-            store.startDesert(start, days, last?.habits ?? [], preset?.name);
+            store.startDesert(start, days, last?.habits ?? [], preset?.name, reading);
             onDone();
           }}
         >

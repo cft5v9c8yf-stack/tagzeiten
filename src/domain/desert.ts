@@ -14,6 +14,7 @@ import { fitsHouse, followOf, isDoneOn, isPerDay, periodDates, type DayLookup } 
 import type { Day, Habit, Profile, Rhythm } from './model';
 import { activeRun, endDateOf, isInRun, lastDayOfWeek, startRun, type WinterArcData, type WinterArcRun } from './winterArc';
 import { pointsOf } from './winterArcPoints';
+import { sectionKind } from './readingPlan';
 
 export const DEFAULT_DESERT_DAYS = 40;
 export const QUICK_DESERT_DAYS = [40, 90] as const;
@@ -40,6 +41,19 @@ export function startDesert(
   const next = startRun(data, startDate, durationDays, now, id, name);
   const run = next.runs[next.runs.length - 1]!;
   return { ...next, runs: next.runs.map((r) => (r === run ? { ...r, habits: [...new Set(habits)] } : r)) };
+}
+
+/* ------------------------------------------------------------ the reading (1.16) */
+
+/**
+ * The reading of a Wüstenzeit: its own plan "Bewährung und Nachfolge", the
+ * plan of the Bible area, or none in its dashboard.
+ */
+export type DesertReading = 'desert' | 'bible' | 'none';
+
+export function desertReadingOf(run: Pick<WinterArcRun, 'reading'>, planId: string): DesertReading {
+  if (run.reading === false) return 'none';
+  return sectionKind(planId) === 'desert' ? 'desert' : 'bible';
 }
 
 /** Whether a Wüstenzeit holds points of the 90-Tage-Standard: then its phases and weekly focuses go with it. */

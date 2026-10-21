@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.16.0',
+    date: '2026-10-21',
+    title: 'Lesepläne nach Abschnitten',
+    changes: [
+      { area: 'Wort', text: 'Unter „Leseplan einstellen“ stehen neue Pläne zur Wahl: Einsteiger mit Markus und Johannes, auf Wunsch mit einem Psalm; das Neue Testament in 90 Tagen; „Mit Paulus unterwegs“, die Apostelgeschichte mit den Briefen an ihrem Ort, in 40, 60 oder einer eigenen Zahl von Tagen; die Johannes-Schriften, auf Wunsch mit der Offenbarung; die Bibel in einem Jahr. Die Kapitel sind gleichmäßig auf die Abschnitte verteilt.' },
+      { area: 'Wort', text: 'Unter „Heute lesen“ steht, welcher Abschnitt dran ist, und du hakst ihn dort ab, wie mit „Bibel lesen“ unter „Heute“. Jeder Plan merkt sich, wo du stehst; wer aussetzt, macht beim nächsten Abschnitt weiter.' },
+      { area: 'Arena', text: 'Zur Wüstenzeit gehört der Leseplan „Bewährung und Nachfolge“: die Versuchung Jesu, die Bergpredigt, das Evangelium nach Johannes, Jakobus, 1. Petrus und Hebräer, verteilt auf die Tage der Wüstenzeit, bei vielen Tagen in kleineren Abschnitten. Beim Beginnen ist er vorgeschlagen; du kannst deinen Plan behalten oder ohne Lesung gehen, und das jederzeit ändern.' },
+      { area: 'Arena', text: 'In der Wüstenwanderung steht der Abschnitt des Tages über den Gewohnheiten und wird dort abgehakt. Nach der Wüstenzeit kehrst du mit einem Tipp zu deinem vorigen Plan zurück, an die Stelle, wo du ihn verlassen hast; beendest du sie vorzeitig, geschieht das von selbst.' },
+    ],
+  },
+  {
     version: '1.15.2',
     date: '2026-10-16',
     title: 'Der Dank nach der Wüstenzeit',

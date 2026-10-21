@@ -10,12 +10,13 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
-import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert } from '../domain/desert';
+import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert, type DesertReading } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
+  activeRun,
   endRun,
   normalizeWinterArc,
   setReview,
@@ -30,7 +31,18 @@ import {
 } from '../domain/winterArc';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
-import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
+import {
+  assignReading,
+  carryPositions,
+  DESERT_TRACK,
+  desertPlanId,
+  fixedAmounts,
+  getPlan,
+  isOwnPlan,
+  markRead as markReadInPlan,
+  sectionKind,
+} from '../domain/readingPlan';
+import { START_PLAN_ID } from '../content/readingPlans';
 import { PROFILE_KEY, TagzeitenDB, type StoredProfile } from './db';
 import { localJournal, type Journal } from './journal';
 import { WriteQueue } from './writeQueue';
@@ -449,12 +461,52 @@ export class Store {
     );
   }
 
-  /** Begins a Wüstenzeit with the habits chosen; a round under way is ended, nothing is deleted. */
-  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = ''): void {
+  /**
+   * Begins a Wüstenzeit with the habits chosen; a round under way is ended,
+   * nothing is deleted. Its reading (1.16): "Bewährung und Nachfolge" over its
+   * days, the plan of the Bible area, or none in its dashboard.
+   */
+  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = '', reading: DesertReading = 'desert'): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) }), {
       immediate: true,
     });
+    const run = activeRun(this.profile.winterArc);
+    if (run) this.setDesertReading(run.id, reading, true);
+  }
+
+  /**
+   * The reading of a Wüstenzeit, chosen and changed at any time: its own plan,
+   * over as many sections as it has days; the plan of the Bible area (leaving
+   * its own plan, back to the one before); or none in its dashboard. A new
+   * Wüstenzeit begins its plan with the first section.
+   */
+  setDesertReading(runId: string, reading: DesertReading, fresh = false): void {
+    const run = this.profile.winterArc.runs.find((r) => r.id === runId);
+    if (!run) return;
+    const t = this.now().getTime();
+    this.updateProfile(
+      (p) => ({
+        ...p,
+        winterArc: {
+          ...p.winterArc,
+          runs: p.winterArc.runs.map((r) => {
+            if (r.id !== runId) return r;
+            const { reading: _, ...rest } = r;
+            return { ...(reading === 'none' ? { ...rest, reading: false as const } : rest), updatedAt: t };
+          }),
+        },
+      }),
+      { immediate: true },
+    );
+    if (reading === 'desert') this.setPlan(desertPlanId(run.durationDays), fresh ? { [DESERT_TRACK]: 0 } : {});
+    else if (reading === 'bible') this.leaveDesertPlan();
+  }
+
+  /** From "Bewährung und Nachfolge" back to the plan chosen before it. */
+  leaveDesertPlan(): void {
+    if (sectionKind(this.profile.plan.planId) !== 'desert') return;
+    this.setPlan(this.profile.plan.beforeDesert ?? START_PLAN_ID);
   }
 
   /** "Diesmal nicht": the invitation leaves "Heute" and stays in the Arena. */
@@ -495,6 +547,7 @@ export class Store {
   endWinterArc(): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
+    this.leaveDesertPlan();
   }
 
   /** A line of the weekly review; saved as you type. */
@@ -569,11 +622,12 @@ export class Store {
     // Coming back to a plan of one's own with another amount: start where the last one stood.
     const from = getPlan(isOwnPlan(current.planId) || !current.own ? current.planId : current.own);
     const positions = { ...carryPositions(from, to, current.positions), ...starts };
+    const remember = isOwnPlan(to.def.id) ? { own: to.def.id } : fixedAmounts(to.def.id) ? { fixed: to.def.id } : {};
+    // Into the Wüstenzeit's plan: the plan before it is kept, to return to.
+    const desert = sectionKind(to.def.id) === 'desert';
+    const before = desert && sectionKind(current.planId) !== 'desert' ? { beforeDesert: current.planId } : {};
     this.updateProfile(
-      (p) => ({
-        ...p,
-        plan: { ...p.plan, planId: to.def.id, positions, ...(isOwnPlan(to.def.id) ? { own: to.def.id } : { fixed: to.def.id }) },
-      }),
+      (p) => ({ ...p, plan: { ...p.plan, planId: to.def.id, positions, ...remember, ...before } }),
       { immediate: true },
     );
     this.followToday();

@@ -1,7 +1,17 @@
-import { useId, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { useToast } from '../../app/Toast';
-import { CHAPTER_CHOICES, MINUTE_CHOICES, OT_BOOKS } from '../../content/readingPlans';
+import {
+  CHAPTER_CHOICES,
+  MINUTE_CHOICES,
+  OT_BOOKS,
+  PAUL_DAYS,
+  PAUL_MAX_DAYS,
+  PAUL_MIN_DAYS,
+  SECTION_PLANS,
+} from '../../content/readingPlans';
 import { useProfile, useStore } from '../../data/hooks';
+import { activeDesert } from '../../domain/desert';
+import { stageOf } from '../../domain/winterArc';
 import {
   fixedAmounts,
   fixedPlanId,
@@ -10,8 +20,14 @@ import {
   ownAmounts,
   ownPlanId,
   ownTrackId,
+  paulPlanId,
   portionLabel,
   positionFor,
+  PSALM_TRACK,
+  sectionDays,
+  sectionKind,
+  desertPlanId,
+  type SectionKind,
   type Amount,
   type FixedAmounts,
   type Track,
@@ -246,34 +262,196 @@ function OneBookAmount({ amount, onChange, label }: { amount: Amount; onChange: 
   );
 }
 
-type Kind = 'fixed' | 'own';
+/** Where a plan by sections goes on: any of its sections, by number and passage. */
+function SectionPosition({ track, position }: { track: Track; position: number }) {
+  const store = useStore();
+  const toast = useToast();
+  const id = useId();
+  const i = position < track.portions.length ? position : 0;
+  return (
+    <fieldset className="plan-track">
+      <legend>
+        Nächster Abschnitt: <b>{portionLabel(track, track.portions[i]!)}</b>
+      </legend>
+      <div className="field">
+        <label htmlFor={id}>Weiter mit</label>
+        <select
+          id={id}
+          value={i}
+          onChange={(e) => {
+            store.setPlanPositions({ [track.def.id]: Number(e.target.value) });
+            toast('Leseplan angepasst');
+          }}
+        >
+          {track.portions.map((p, k) => (
+            <option key={k} value={k}>
+              Abschnitt {k + 1}: {portionLabel(track, p)}
+            </option>
+          ))}
+        </select>
+      </div>
+    </fieldset>
+  );
+}
+
+/** "Mit Paulus unterwegs": 40 or 60 days, or a number of one's own. */
+function PaulDays({ days, onChange }: { days: number; onChange: (d: number) => void }) {
+  const id = useId();
+  const [text, setText] = useState(String(days));
+  const n = Number(text);
+  const valid = Number.isInteger(n) && n >= PAUL_MIN_DAYS && n <= PAUL_MAX_DAYS;
+  return (
+    <div className="field">
+      <label htmlFor={id}>Dauer in Tagen</label>
+      <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
+        {PAUL_DAYS.map((d) => (
+          <button
+            key={d}
+            type="button"
+            aria-pressed={days === d}
+            onClick={() => {
+              setText(String(d));
+              onChange(d);
+            }}
+          >
+            {d}
+          </button>
+        ))}
+      </div>
+      <input
+        id={id}
+        type="number"
+        inputMode="numeric"
+        min={PAUL_MIN_DAYS}
+        max={PAUL_MAX_DAYS}
+        step={1}
+        value={text}
+        onChange={(e) => {
+          setText(e.target.value);
+          const d = Number(e.target.value);
+          if (Number.isInteger(d) && d >= PAUL_MIN_DAYS && d <= PAUL_MAX_DAYS) onChange(d);
+        }}
+      />
+      {!valid && (
+        <p className="small muted" role="status">
+          Wähle eine Dauer von {PAUL_MIN_DAYS} bis {PAUL_MAX_DAYS} Tagen.
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** A plan by sections: what can be chosen for it, and where it goes on. */
+function SectionPlan({ kind }: { kind: SectionKind }) {
+  const store = useStore();
+  const toast = useToast();
+  const profile = useProfile();
+  const plan = getPlan(profile.plan.planId);
+  const planId = plan.def.id;
+  const positions = profile.plan.positions;
+  const set = (id: string) => {
+    store.setPlan(id);
+    toast('Leseplan angepasst');
+  };
+  const [main, ...rest] = plan.tracks;
+  return (
+    <>
+      {kind === 'beginner' && (
+        <Segmented<'without' | 'with'>
+          label="Psalm dazu"
+          options={[
+            { value: 'without', label: 'Ohne Psalm' },
+            { value: 'with', label: 'Mit einem Psalm' },
+          ]}
+          value={planId === 'einsteiger-psalm' ? 'with' : 'without'}
+          onChange={(v) => set(v === 'with' ? 'einsteiger-psalm' : 'einsteiger')}
+        />
+      )}
+      {kind === 'john' && (
+        <Segmented<'johannes' | 'johannes-offb'>
+          label="Offenbarung dazu"
+          options={[
+            { value: 'johannes', label: 'Ohne Offenbarung, 28 Tage' },
+            { value: 'johannes-offb', label: 'Mit Offenbarung, 50 Tage' },
+          ]}
+          value={planId === 'johannes-offb' ? 'johannes-offb' : 'johannes'}
+          onChange={set}
+        />
+      )}
+      {kind === 'paul' && <PaulDays days={sectionDays(planId) ?? PAUL_DAYS[0]} onChange={(d) => set(paulPlanId(d))} />}
+      {kind === 'desert' && (
+        <p className="small muted">Verteilt auf die {sectionDays(planId)} Tage der Wüstenzeit.</p>
+      )}
+      {main && <SectionPosition track={main} position={positions[main.def.id] ?? 0} />}
+      {rest.map((t) =>
+        t.def.id === PSALM_TRACK ? (
+          <TrackPosition key={t.def.id} track={t} position={positions[t.def.id] ?? 0} legend="Nächster Psalm" />
+        ) : null,
+      )}
+    </>
+  );
+}
+
+type Kind = 'fixed' | 'own' | SectionKind;
+
+const KIND_LABEL: Record<Kind, string> = {
+  fixed: 'Altes und Neues Testament',
+  own: 'Eigener Plan',
+  beginner: SECTION_PLANS.beginner.name,
+  nt90: SECTION_PLANS.nt90.name,
+  paul: SECTION_PLANS.paul.name,
+  john: SECTION_PLANS.john.name,
+  year: `${SECTION_PLANS.year.name} (für Fortgeschrittene)`,
+  desert: `${SECTION_PLANS.desert.name} (Wüstenzeit)`,
+};
+
+const SECTION_START: Record<Exclude<SectionKind, 'desert'>, string> = {
+  beginner: 'einsteiger',
+  nt90: 'nt90',
+  paul: paulPlanId(PAUL_DAYS[0]),
+  john: 'johannes',
+  year: 'jahr',
+};
 
 export function PlanSettings() {
   const store = useStore();
   const toast = useToast();
   const profile = useProfile();
+  const id = useId();
   const planId = getPlan(profile.plan.planId).def.id;
   const own = ownAmounts(planId);
+  const section = sectionKind(planId);
   const fixed = fixedAmounts(planId) ?? { at: 'base', nt: 1 };
-  const choose = (kind: Kind) => {
-    if ((kind === 'own') === Boolean(own)) return;
-    // Each kind comes back as it was left.
-    const back = kind === 'own' ? (profile.plan.own ?? ownPlanId([{ unit: 'chapters', value: 2 }])) : profile.plan.fixed;
-    store.setPlan(back ?? fixedPlanId({ at: 'base', nt: 1 }));
+  const kind: Kind = own ? 'own' : (section ?? 'fixed');
+  // The plan of the Wüstenzeit only while one is under way.
+  const desert = activeDesert(profile.winterArc);
+  const desertOpen = desert && stageOf(desert, store.today()) !== 'after' ? desert : undefined;
+  const kinds = (Object.keys(KIND_LABEL) as Kind[]).filter((k) => k !== 'desert' || desertOpen || kind === 'desert');
+  const choose = (next: Kind) => {
+    if (next === kind) return;
+    if (next === 'desert') {
+      if (desertOpen) store.setDesertReading(desertOpen.id, 'desert');
+      else store.setPlan(desertPlanId(40));
+    } else if (next === 'own' || next === 'fixed') {
+      // Each kind comes back as it was left.
+      const back = next === 'own' ? (profile.plan.own ?? ownPlanId([{ unit: 'chapters', value: 2 }])) : profile.plan.fixed;
+      store.setPlan(back ?? fixedPlanId({ at: 'base', nt: 1 }));
+    } else store.setPlan(SECTION_START[next]);
     toast('Leseplan angepasst');
   };
   return (
     <>
-      <Segmented<Kind>
-        label="Leseplan"
-        options={[
-          { value: 'fixed', label: 'AT und NT' },
-          { value: 'own', label: 'Eigener Plan' },
-        ]}
-        value={own ? 'own' : 'fixed'}
-        onChange={choose}
-      />
-      {own ? <OwnPlan amounts={own} /> : <FixedPlan amounts={fixed} />}
+      <div className="field">
+        <label htmlFor={id}>Leseplan</label>
+        <select id={id} value={kind} onChange={(e) => choose(e.target.value as Kind)}>
+          {kinds.map((k) => (
+            <option key={k} value={k}>
+              {KIND_LABEL[k]}
+            </option>
+          ))}
+        </select>
+      </div>
+      {own ? <OwnPlan amounts={own} /> : section ? <SectionPlan key={planId} kind={section} /> : <FixedPlan amounts={fixed} />}
     </>
   );
 }
