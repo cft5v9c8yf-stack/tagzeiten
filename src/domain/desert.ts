@@ -14,7 +14,7 @@ import { fitsHouse, followOf, isDoneOn, isPerDay, periodDates, type DayLookup } 
 import type { Day, Habit, Profile, Rhythm } from './model';
 import { activeRun, endDateOf, isInRun, lastDayOfWeek, startRun, type WinterArcData, type WinterArcRun } from './winterArc';
 import { pointsOf } from './winterArcPoints';
-import { sectionKind } from './readingPlan';
+import { desertPlanId } from './readingPlan';
 
 export const DEFAULT_DESERT_DAYS = 40;
 export const QUICK_DESERT_DAYS = [40, 90] as const;
@@ -51,9 +51,16 @@ export function startDesert(
  */
 export type DesertReading = 'desert' | 'bible' | 'none';
 
-export function desertReadingOf(run: Pick<WinterArcRun, 'reading'>, planId: string): DesertReading {
-  if (run.reading === false) return 'none';
-  return sectionKind(planId) === 'desert' ? 'desert' : 'bible';
+export const desertReadingOf = (run: Pick<WinterArcRun, 'reading'>): DesertReading => run.reading ?? 'desert';
+
+/**
+ * The plan a Wüstenzeit asks for today: its own over its days, from its first
+ * day to its last; otherwise none, and the plan resting meanwhile comes back.
+ */
+export function desertPlanFor(data: WinterArcData, today: DateKey): { runId: string; planId: string } | undefined {
+  const run = activeDesert(data);
+  if (!run || desertReadingOf(run) !== 'desert' || !isInRun(run, today)) return undefined;
+  return { runId: run.id, planId: desertPlanId(run.durationDays) };
 }
 
 /** Whether a Wüstenzeit holds points of the 90-Tage-Standard: then its phases and weekly focuses go with it. */

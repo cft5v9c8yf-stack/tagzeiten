@@ -431,7 +431,7 @@ describe('the package "Erbe" (1.3)', () => {
     expect(day().querySelector('.desert-reading')).toBeTruthy();
     fireEvent.click(screen.getByText('Leseplan der Wüstenzeit'));
     fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Ohne Lesung' }));
-    expect(store.getProfile().winterArc.runs[0]!.reading).toBe(false);
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBe('none');
     expect(day().querySelector('.desert-reading')).toBeNull();
     // Without the reading above, "Bibel lesen" stands in the list again.
     expect(within(day()).getByRole('checkbox', { name: /^Bibel lesen/ })).toBeTruthy();

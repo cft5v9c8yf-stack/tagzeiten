@@ -8,10 +8,11 @@ import {
   PAUL_MAX_DAYS,
   PAUL_MIN_DAYS,
   SECTION_PLANS,
+  START_PLAN_ID,
 } from '../../content/readingPlans';
 import { useProfile, useStore } from '../../data/hooks';
 import { activeDesert } from '../../domain/desert';
-import { stageOf } from '../../domain/winterArc';
+import { isInRun } from '../../domain/winterArc';
 import {
   fixedAmounts,
   fixedPlanId,
@@ -380,7 +381,11 @@ function SectionPlan({ kind }: { kind: SectionKind }) {
       )}
       {kind === 'paul' && <PaulDays days={sectionDays(planId) ?? PAUL_DAYS[0]} onChange={(d) => set(paulPlanId(d))} />}
       {kind === 'desert' && (
-        <p className="small muted">Verteilt auf die {sectionDays(planId)} Tage der Wüstenzeit.</p>
+        <p className="small muted">
+          Verteilt auf die {sectionDays(planId)} Tage der Wüstenzeit. Dein Plan „
+          {getPlan(profile.plan.beforeDesert ?? START_PLAN_ID).def.name}“ ruht so lange und geht danach von selbst dort
+          weiter, wo du aufgehört hast.
+        </p>
       )}
       {main && <SectionPosition track={main} position={positions[main.def.id] ?? 0} />}
       {rest.map((t) =>
@@ -423,15 +428,14 @@ export function PlanSettings() {
   const section = sectionKind(planId);
   const fixed = fixedAmounts(planId) ?? { at: 'base', nt: 1 };
   const kind: Kind = own ? 'own' : (section ?? 'fixed');
-  // The plan of the Wüstenzeit only while one is under way.
+  // The plan of the Wüstenzeit only on its days.
   const desert = activeDesert(profile.winterArc);
-  const desertOpen = desert && stageOf(desert, store.today()) !== 'after' ? desert : undefined;
-  const kinds = (Object.keys(KIND_LABEL) as Kind[]).filter((k) => k !== 'desert' || desertOpen || kind === 'desert');
+  const desertNow = desert && isInRun(desert, store.today()) ? desert : undefined;
+  const kinds = (Object.keys(KIND_LABEL) as Kind[]).filter((k) => k !== 'desert' || desertNow || kind === 'desert');
   const choose = (next: Kind) => {
     if (next === kind) return;
     if (next === 'desert') {
-      if (desertOpen) store.setDesertReading(desertOpen.id, 'desert');
-      else store.setPlan(desertPlanId(40));
+      if (desertNow) store.setPlan(desertPlanId(desertNow.durationDays));
     } else if (next === 'own' || next === 'fixed') {
       // Each kind comes back as it was left.
       const back = next === 'own' ? (profile.plan.own ?? ownPlanId([{ unit: 'chapters', value: 2 }])) : profile.plan.fixed;

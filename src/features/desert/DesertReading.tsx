@@ -21,7 +21,7 @@ export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateK
   const profile = useProfile();
   useStoreVersion();
   const today = store.today();
-  const shown = run.reading !== false && isInRun(run, date) && date <= today;
+  const shown = run.reading !== 'none' && isInRun(run, date) && date <= today;
   useEffect(() => {
     if (shown && date === today) store.ensureTodayReading();
   }, [store, shown, date, today]);
@@ -59,7 +59,7 @@ export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateK
 /** What each choice of reading means, beside the choice. */
 function readingNote(value: DesertReading, days: number, bibleName: string): string {
   if (value === 'desert')
-    return `Die Versuchung Jesu (Matthäus 4), die Bergpredigt (Matthäus 5–7), das Evangelium nach Johannes, der Jakobusbrief, der 1. Petrusbrief und der Hebräerbrief, gleichmäßig auf ${days === 1 ? 'einen Tag' : `${days} Tage`} verteilt. Der Abschnitt des Tages steht in der Wüstenwanderung über den Gewohnheiten und unter „Wort“.`;
+    return `Die Versuchung Jesu (Matthäus 4), die Bergpredigt (Matthäus 5–7), das Evangelium nach Johannes, der Jakobusbrief, der 1. Petrusbrief und der Hebräerbrief, gleichmäßig auf ${days === 1 ? 'einen Tag' : `${days} Tage`} verteilt. Vom ersten bis zum letzten Tag der Wüstenzeit steht der Abschnitt des Tages in der Wüstenwanderung über den Gewohnheiten und unter „Wort“. Dein Plan „${bibleName}“ ruht so lange und geht danach von selbst dort weiter, wo du aufgehört hast.`;
   if (value === 'bible')
     return `Du liest weiter nach deinem Plan „${bibleName}“. Der Abschnitt des Tages steht in der Wüstenwanderung über den Gewohnheiten. Einen anderen Plan wählst du unter „Wort“, Bibel.`;
   return 'Die Wüstenwanderung zeigt keine Lesung. Dein Leseplan unter „Wort“ bleibt, wie er ist.';
@@ -100,11 +100,10 @@ export function DesertReadingChoice({
 /** The reading of a Wüstenzeit under way, to change at any time. */
 export function DesertReadingSettings({ run }: { run: WinterArcRun }) {
   const store = useStore();
-  const profile = useProfile();
   if (stageOf(run, store.today()) === 'after') return null;
   return (
     <DesertReadingChoice
-      value={desertReadingOf(run, profile.plan.planId)}
+      value={desertReadingOf(run)}
       days={run.durationDays}
       onChange={(v) => store.setDesertReading(run.id, v)}
     />

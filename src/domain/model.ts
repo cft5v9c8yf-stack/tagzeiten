@@ -239,8 +239,10 @@ export interface Profile {
     own?: string;
     /** The last amounts of the fixed plan (e.g. "atnt-3-1"), remembered while a plan of one's own is chosen. */
     fixed?: string;
-    /** The plan chosen before the Wüstenzeit's "Bewährung und Nachfolge", to return to (1.16). */
+    /** The plan resting while the Wüstenzeit's "Bewährung und Nachfolge" is read, to return to (1.16). */
     beforeDesert?: string;
+    /** The Wüstenzeit the place in "Bewährung und Nachfolge" belongs to; a new one begins at its first section. */
+    desertRun?: string;
   };
   habits: Habit[];
   prayer: Prayer;

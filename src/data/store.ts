@@ -10,7 +10,7 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
-import { addOwn, adopt, choose, chooseOwn, fromRound, relink, removeOwn, startDesert, type DesertReading } from '../domain/desert';
+import { activeDesert, addOwn, adopt, choose, chooseOwn, desertPlanFor, desertReadingOf, fromRound, relink, removeOwn, startDesert, type DesertReading } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
@@ -18,6 +18,7 @@ import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '.
 import {
   activeRun,
   endRun,
+  isInRun,
   normalizeWinterArc,
   setReview,
   startRun,
@@ -35,7 +36,6 @@ import {
   assignReading,
   carryPositions,
   DESERT_TRACK,
-  desertPlanId,
   fixedAmounts,
   getPlan,
   isOwnPlan,
@@ -161,6 +161,7 @@ export class Store {
     if (reading && !reading.done && reading.planId !== this.profile.plan.planId) this.followToday();
     this.roundToDesert();
     this.relinkDesert();
+    this.syncDesertPlan();
     this.emit();
   }
 
@@ -310,6 +311,7 @@ export class Store {
     const today = this.today();
     if (today === this.shownDay) return false;
     this.shownDay = today;
+    this.syncDesertPlan();
     this.emit();
     return true;
   }
@@ -472,18 +474,15 @@ export class Store {
       immediate: true,
     });
     const run = activeRun(this.profile.winterArc);
-    if (run) this.setDesertReading(run.id, reading, true);
+    if (run) this.setDesertReading(run.id, reading);
   }
 
   /**
    * The reading of a Wüstenzeit, chosen and changed at any time: its own plan,
-   * over as many sections as it has days; the plan of the Bible area (leaving
-   * its own plan, back to the one before); or none in its dashboard. A new
-   * Wüstenzeit begins its plan with the first section.
+   * the plan of the Bible area, or none in its dashboard.
    */
-  setDesertReading(runId: string, reading: DesertReading, fresh = false): void {
-    const run = this.profile.winterArc.runs.find((r) => r.id === runId);
-    if (!run) return;
+  setDesertReading(runId: string, reading: DesertReading): void {
+    if (!this.profile.winterArc.runs.some((r) => r.id === runId)) return;
     const t = this.now().getTime();
     this.updateProfile(
       (p) => ({
@@ -493,20 +492,32 @@ export class Store {
           runs: p.winterArc.runs.map((r) => {
             if (r.id !== runId) return r;
             const { reading: _, ...rest } = r;
-            return { ...(reading === 'none' ? { ...rest, reading: false as const } : rest), updatedAt: t };
+            return { ...rest, ...(reading === 'desert' ? {} : { reading }), updatedAt: t };
           }),
         },
       }),
       { immediate: true },
     );
-    if (reading === 'desert') this.setPlan(desertPlanId(run.durationDays), fresh ? { [DESERT_TRACK]: 0 } : {});
-    else if (reading === 'bible') this.leaveDesertPlan();
+    this.syncDesertPlan();
   }
 
-  /** From "Bewährung und Nachfolge" back to the plan chosen before it. */
-  leaveDesertPlan(): void {
-    if (sectionKind(this.profile.plan.planId) !== 'desert') return;
-    this.setPlan(this.profile.plan.beforeDesert ?? START_PLAN_ID);
+  /**
+   * "Bewährung und Nachfolge" is read on the days of its Wüstenzeit only: from
+   * its first day (not when it is set up for later) to its last. Meanwhile the
+   * plan read before rests, and afterwards goes on where it stood. A new
+   * Wüstenzeit begins at the first section; one taken up again where it stood.
+   */
+  private syncDesertPlan(): void {
+    const want = desertPlanFor(this.profile.winterArc, this.today());
+    const current = this.profile.plan;
+    if (want) {
+      if (current.planId === want.planId && current.desertRun === want.runId) return;
+      const fresh = current.desertRun !== want.runId;
+      this.switchPlan(want.planId, fresh ? { [DESERT_TRACK]: 0 } : {});
+      this.updateProfile((p) => ({ ...p, plan: { ...p.plan, desertRun: want.runId } }), { immediate: true });
+    } else if (sectionKind(current.planId) === 'desert') {
+      this.switchPlan(current.beforeDesert ?? START_PLAN_ID);
+    }
   }
 
   /** "Diesmal nicht": the invitation leaves "Heute" and stays in the Arena. */
@@ -547,7 +558,7 @@ export class Store {
   endWinterArc(): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
-    this.leaveDesertPlan();
+    this.syncDesertPlan();
   }
 
   /** A line of the weekly review; saved as you type. */
@@ -616,6 +627,18 @@ export class Store {
    * already read.
    */
   setPlan(planId: string, starts: Record<string, number> = {}): void {
+    // During a Wüstenzeit its plan is chosen as its reading; another plan chosen then becomes its reading instead.
+    const run = activeDesert(this.profile.winterArc);
+    const during = run && isInRun(run, this.today());
+    if (sectionKind(planId) === 'desert') {
+      if (run && during) this.setDesertReading(run.id, 'desert');
+      return;
+    }
+    if (run && during && desertReadingOf(run) === 'desert') this.setDesertReading(run.id, 'bible');
+    this.switchPlan(planId, starts);
+  }
+
+  private switchPlan(planId: string, starts: Record<string, number> = {}): void {
     const to = getPlan(planId);
     const current = this.profile.plan;
     if (to.def.id === current.planId && Object.keys(starts).length === 0) return;

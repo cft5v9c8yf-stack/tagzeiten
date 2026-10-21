@@ -17,8 +17,6 @@ import {
   usesStandard,
 } from '../../domain/desert';
 import { arenaOffer, seasonLinkOf } from '../../domain/seasons';
-import { getPlan, sectionKind } from '../../domain/readingPlan';
-import { START_PLAN_ID } from '../../content/readingPlans';
 import { canToggle, isDoneInPeriod, isDoneOn, isPerDay } from '../../domain/habits';
 import { activeRun, endDateOf, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
@@ -185,7 +183,7 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
       )}
       <DesertReadingDay run={run} date={date} />
       <div className="wa-group">
-        <DesertDay run={run} date={date} withoutReading={run.reading !== false} />
+        <DesertDay run={run} date={date} withoutReading={run.reading !== 'none'} />
       </div>
       {date <= today && <DesertJournal key={date} date={date} />}
     </section>
@@ -472,7 +470,6 @@ function Closing({ run }: { run: WinterArcRun }) {
         </section>
       )}
       {done && <p role="status">Übernommen. Du findest sie unter „Heute“ und unter „Mehr → Gewohnheiten“.</p>}
-      <DesertPlanAfter />
       <h5>Das Tagebuch</h5>
       <RoundJournal run={run} />
       <h5>Die Wochenrückblicke</h5>
@@ -487,26 +484,6 @@ function Closing({ run }: { run: WinterArcRun }) {
       </div>
       {starting && <DesertStartPanel onDone={() => setStarting(false)} />}
     </div>
-  );
-}
-
-/** After the Wüstenzeit, its plan goes on by progress; or back to the plan before it, at the place it stood. */
-function DesertPlanAfter() {
-  const store = useStore();
-  const profile = useProfile();
-  if (sectionKind(profile.plan.planId) !== 'desert') return null;
-  const before = getPlan(profile.plan.beforeDesert ?? START_PLAN_ID);
-  return (
-    <section className="desert-adopt" aria-labelledby="desert-plan-after">
-      <h5 id="desert-plan-after">Leseplan</h5>
-      <p className="small muted">
-        „Bewährung und Nachfolge“ geht weiter, bis du einen anderen Plan wählst. Dein voriger Plan wartet dort, wo du
-        aufgehört hast.
-      </p>
-      <button type="button" className="btn" onClick={() => store.leaveDesertPlan()}>
-        Zurück zu „{before.def.name}“
-      </button>
-    </section>
   );
 }
 

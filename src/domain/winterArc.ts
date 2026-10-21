@@ -99,8 +99,11 @@ export interface WinterArcRun {
   points?: WinterArcPoint[];
   /** A Wüstenzeit (since 0.39): the ids of the profile's habits chosen for it, ticked like all habits. */
   habits?: string[];
-  /** A Wüstenzeit without the day's reading in its dashboard (1.16); absent: with it. */
-  reading?: false;
+  /**
+   * The reading of a Wüstenzeit (1.16): the plan of the Bible area, or none in
+   * its dashboard; absent: its own plan "Bewährung und Nachfolge".
+   */
+  reading?: 'bible' | 'none';
 }
 
 /** Ticks by point id. */
@@ -362,7 +365,7 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
       updatedAt: num(r.updatedAt),
       ...(Array.isArray(r.points) ? { points: normalizePoints(r.points) } : {}),
       ...(Array.isArray(r.habits) ? { habits: habitIds(r.habits) } : {}),
-      ...(r.reading === false ? { reading: false as const } : {}),
+      ...(r.reading === 'bible' || r.reading === 'none' ? { reading: r.reading } : {}),
     });
   }
   // At most one round is under way: the newest.

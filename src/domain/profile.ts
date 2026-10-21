@@ -126,6 +126,7 @@ function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined
   if (typeof raw?.fixed === 'string' && fixedAmounts(raw.fixed)) out.fixed = withoutAlternation(raw.fixed);
   const before = raw?.beforeDesert;
   if (typeof before === 'string' && isKnownPlan(before) && sectionKind(before) !== 'desert') out.beforeDesert = withoutAlternation(before);
+  if (typeof raw?.desertRun === 'string' && raw.desertRun) out.desertRun = raw.desertRun;
   return out;
 }
 
