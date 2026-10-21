@@ -173,18 +173,24 @@ export const NT_SEQUENCE: readonly Stretch[] = whole(NT_BOOKS);
 
 export const BIBLE_SEQUENCE: readonly Stretch[] = whole(ALL_BOOKS);
 
-/** Acts with Paul's letters woven in where they belong in his way. */
+/**
+ * Acts with Paul's letters woven in where they belong in his way: Galatians
+ * early, before the council of Acts 15; 1 Corinthians from Ephesus (Acts 19),
+ * 2 Corinthians and Romans on the way through Macedonia to Corinth (Acts 20,1–3),
+ * before the farewell at Miletus; the letters from prison in Rome after Acts 28;
+ * the pastoral letters after Acts.
+ */
 export const PAUL_SEQUENCE: readonly Stretch[] = [
   { slug: 'Apostelgeschichte', from: 1, to: 14 },
   { slug: 'Galater' },
   { slug: 'Apostelgeschichte', from: 15, to: 18 },
   { slug: '1.Thessalonicher' },
   { slug: '2.Thessalonicher' },
-  { slug: 'Apostelgeschichte', from: 19, to: 20 },
+  { slug: 'Apostelgeschichte', from: 19, to: 19 },
   { slug: '1.Korinther' },
   { slug: '2.Korinther' },
   { slug: 'Römer' },
-  { slug: 'Apostelgeschichte', from: 21, to: 28 },
+  { slug: 'Apostelgeschichte', from: 20, to: 28 },
   { slug: 'Epheser' },
   { slug: 'Philipper' },
   { slug: 'Kolosser' },
@@ -245,7 +251,7 @@ export const SECTION_PLANS = {
   },
   paul: {
     name: 'Mit Paulus unterwegs',
-    description: `Die Apostelgeschichte, dazwischen die Briefe des Paulus an der Stelle seines Weges, an die sie gehören: Apostelgeschichte 1–14, Galater, Apostelgeschichte 15–18, 1. und 2. Thessalonicher, Apostelgeschichte 19–20, 1. und 2. Korinther, Römer, Apostelgeschichte 21–28, Epheser, Philipper, Kolosser, Philemon, 1. Timotheus, Titus, 2. Timotheus. Die 115 Kapitel werden gleichmäßig auf die gewählte Dauer verteilt. ${BY_PROGRESS}`,
+    description: `Die Apostelgeschichte, dazwischen die Briefe des Paulus an der Stelle seines Weges, an die sie gehören: Apostelgeschichte 1–14, Galater, Apostelgeschichte 15–18, 1. und 2. Thessalonicher, Apostelgeschichte 19, 1. und 2. Korinther, Römer, Apostelgeschichte 20–28, Epheser, Philipper, Kolosser, Philemon, 1. Timotheus, Titus, 2. Timotheus. Die 115 Kapitel werden gleichmäßig auf die gewählte Dauer verteilt. ${BY_PROGRESS}`,
   },
   john: {
     name: 'Johannes-Schriften',

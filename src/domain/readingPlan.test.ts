@@ -272,6 +272,9 @@ describe('plans by sections (1.16)', () => {
     const list = chapterList('paulus-115');
     expect(list.indexOf('Apostelgeschichte 14') + 1).toBe(list.indexOf('Galater 1'));
     expect(list.indexOf('Galater 6') + 1).toBe(list.indexOf('Apostelgeschichte 15'));
+    // Corinthians and Romans between Acts 19 and 20, before the farewell at Miletus.
+    expect(list.indexOf('Apostelgeschichte 19') + 1).toBe(list.indexOf('1.Korinther 1'));
+    expect(list.indexOf('Römer 16') + 1).toBe(list.indexOf('Apostelgeschichte 20'));
     const t = getPlan('paulus-40').tracks[0]!;
     expect(portionLabel(t, t.portions[8]!)).toBe('Apostelgeschichte 18; 1. Thessalonicher 1');
   });
