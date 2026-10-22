@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.27.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: dieselben Zeichen wie überall in der Arena',
+    changes: [
+      { area: 'Arena', text: 'Ein Treffen am Abendbrunnen hat oben dieselben Zeichen wie jeder Eintrag der Arena: Sichern und zurück, Anheften, Archivieren und Löschen. Dasselbe bietet das Menü neben dem Eintrag in der Liste. Angeheftete Treffen stehen oben (höchstens drei). Archivierte stehen im Rückblick unter „Arena“ und lassen sich zurückholen.' },
+    ],
+  },
+  {
     version: '1.26.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: Rahmen und Haltung als Kacheln',

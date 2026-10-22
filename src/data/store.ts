@@ -404,6 +404,38 @@ export class Store {
     );
   }
 
+  /** Puts a meeting at the Abendbrunnen into the Rückblick, or brings it back into the list. */
+  archiveWellMeeting(id: string, archived: boolean): void {
+    const t = this.now().getTime();
+    this.updateWellMeeting(
+      id,
+      (m) => {
+        const { archivedAt: _, pinnedAt: __, ...rest } = m;
+        return archived ? { ...rest, archivedAt: t } : rest;
+      },
+      { immediate: true },
+    );
+  }
+
+  /** Pins a meeting to the top of the list, or takes the pin off; false when three already stand pinned. */
+  pinWellMeeting(id: string, pinned: boolean): boolean {
+    const meetings = this.profile.well.meetings;
+    const m = meetings.find((x) => x.id === id);
+    if (!m || m.archivedAt !== undefined) return false;
+    if ((m.pinnedAt !== undefined) === pinned) return true;
+    if (pinned && meetings.filter((x) => x.pinnedAt !== undefined && x.archivedAt === undefined).length >= MAX_PINNED) return false;
+    const t = Math.max(this.now().getTime(), ...meetings.map((x) => (x.pinnedAt ?? 0) + 1));
+    this.updateWellMeeting(
+      id,
+      (x) => {
+        const { pinnedAt: _, ...rest } = x;
+        return pinned ? { ...rest, pinnedAt: t } : rest;
+      },
+      { immediate: true },
+    );
+    return true;
+  }
+
   /** Puts an entry into the Rückblick, or brings it back into the Arena. */
   archiveArenaEntry(id: string, archived: boolean): void {
     const t = this.now().getTime();

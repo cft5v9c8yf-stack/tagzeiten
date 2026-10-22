@@ -4,6 +4,7 @@
  * of what is confessed is noted (rule 9): the fields hold resolutions, wishes
  * and prayer concerns only.
  */
+import { MAX_PINNED } from './arena';
 import { addDays, isDateKey, type DateKey } from './dates';
 
 export interface WellMeeting {
@@ -19,6 +20,10 @@ export interface WellMeeting {
   myConcern: string;
   /** The day of the next meeting, if fixed. */
   next?: DateKey;
+  /** Epoch ms when put into the Rückblick; absent while it stands in the list. */
+  archivedAt?: number;
+  /** Epoch ms when pinned to the top of the list (at most three); absent otherwise. */
+  pinnedAt?: number;
 }
 
 export interface Well {
@@ -67,10 +72,18 @@ export function normalizeWell(raw: unknown): Well {
       myConcern: str(x.myConcern),
     };
     if (isDateKey(x.next)) m.next = x.next;
+    if (typeof x.archivedAt === 'number') m.archivedAt = x.archivedAt;
+    else if (typeof x.pinnedAt === 'number') m.pinnedAt = x.pinnedAt;
     if (isEmptyMeeting(m)) continue;
     seen.add(id);
     meetings.push(m);
   }
+  // At most MAX_PINNED pinned, also from a backup: the earliest pins stay.
+  meetings
+    .filter((m) => m.pinnedAt !== undefined)
+    .sort((a, b) => a.pinnedAt! - b.pinnedAt!)
+    .slice(MAX_PINNED)
+    .forEach((m) => delete m.pinnedAt);
   return { on: r.on === true, meetings: meetings.sort(newestFirst) };
 }
 
@@ -100,4 +113,19 @@ export function weekIntent(well: Well, today: DateKey): { resolution: string; wi
   const from = addDays(today, -6);
   const m = well.meetings.find((x) => x.date <= today && x.date >= from && (x.resolution.trim() || x.herWish.trim()));
   return m ? { resolution: m.resolution.trim(), wish: m.herWish.trim() } : undefined;
+}
+
+/** Pinned meetings first, in the order they were pinned; the rest keep their order. */
+export function pinnedFirstMeetings(meetings: readonly WellMeeting[]): WellMeeting[] {
+  const pinned = meetings.filter((m) => m.pinnedAt !== undefined).sort((a, b) => a.pinnedAt! - b.pinnedAt!);
+  return [...pinned, ...meetings.filter((m) => m.pinnedAt === undefined)];
+}
+
+/** Meetings whose notes contain every word of the query. */
+export function searchMeetings(meetings: readonly WellMeeting[], query: string): WellMeeting[] {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  return meetings.filter((m) => {
+    const hay = [m.resolution, m.herWish, m.herConcern, m.myConcern].join(' ').toLowerCase();
+    return words.every((w) => hay.includes(w));
+  });
 }

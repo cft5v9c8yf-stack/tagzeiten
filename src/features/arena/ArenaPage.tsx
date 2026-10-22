@@ -3,7 +3,7 @@ import { BackLink } from '../../ui/BackLink';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst } from '../../domain/arena';
+import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst, REVIEW_PATH } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
@@ -176,8 +176,7 @@ const JOURNAL_SLUG = 'gebetskammer';
 const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, well: WELL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
 const arenaPath = (k: Place | 'desert') => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
 
-/** Archived entries stand in the Rückblick under "Mehr". */
-export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
+export { REVIEW_PATH };
 
 const dateOf = (ms: number) =>
   new Date(ms).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });

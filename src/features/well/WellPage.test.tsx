@@ -175,6 +175,29 @@ describe('Treffen am Abendbrunnen', () => {
     expect(router.state.location.search).toBe('?bereich=abendbrunnen');
   });
 
+  it('has the same icons as every entry of the Arena: save, pin, archive, delete', async () => {
+    const meetings = ['a', 'b', 'c', 'd'].map((id, i) => ({ id, date: `2026-10-0${i + 1}`, resolution: `Vorsatz ${id}`, resolutionDone: false, herWish: '', herConcern: '', myConcern: '' }));
+    const { store, router } = await mount('/arena/treffen-a', (s) => s.updateProfile((p) => ({ ...p, well: { on: true, meetings } }), { immediate: true }));
+    const bar = screen.getByRole('toolbar', { name: 'Treffen' });
+    expect([...bar.querySelectorAll('button')].map((b) => b.getAttribute('aria-label'))).toEqual(['Sichern und zurück', 'Anheften', 'Archivieren', 'Löschen']);
+    fireEvent.click(within(bar).getByRole('button', { name: 'Anheften' }));
+    expect(store.getProfile().well.meetings.find((m) => m.id === 'a')!.pinnedAt).toBeTypeOf('number');
+    // At most three stand pinned.
+    for (const id of ['b', 'c']) expect(store.pinWellMeeting(id, true)).toBe(true);
+    expect(store.pinWellMeeting('d', true)).toBe(false);
+    // Archived, a meeting leaves the list for the Rückblick and is no longer pinned.
+    fireEvent.click(within(bar).getByRole('button', { name: 'Archivieren' }));
+    const a = store.getProfile().well.meetings.find((m) => m.id === 'a')!;
+    expect(a.archivedAt).toBeTypeOf('number');
+    expect(a.pinnedAt).toBeUndefined();
+    expect(router.state.location.search).toBe('?bereich=abendbrunnen');
+    await screen.findByRole('link', { name: /Archivierte Einträge im Rückblick/ });
+    expect(screen.queryByRole('link', { name: /Vorsatz a$/ })).toBeNull();
+    // The pinned stand first.
+    const titles = [...document.querySelectorAll('.arena-list .arena-card-title')].map((x) => x.textContent);
+    expect(titles.slice(0, 2)).toEqual(['Vorsatz b', 'Vorsatz c']);
+  });
+
   it('is in the Markdown export and gone with the deletion', async () => {
     const { store } = await mount('/arena?bereich=abendbrunnen', (s) =>
       s.updateProfile((p) => ({ ...p, well: { on: true, meetings: [{ id: 'a', date: '2026-10-15', resolution: 'Zuhören', resolutionDone: true, herWish: '', herConcern: '', myConcern: '' }] } }), {

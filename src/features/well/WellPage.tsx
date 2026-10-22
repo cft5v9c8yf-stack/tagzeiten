@@ -15,9 +15,10 @@ import {
   WELL_VERSES,
 } from '../../content/well';
 import type { WeeklyVerse } from '../../content/weeklyVerses';
-import { formatLong, isDateKey } from '../../domain/dates';
+import { formatLong, isDateKey, toKey } from '../../domain/dates';
 import { composeVerse } from '../../domain/weeklyVerse';
-import { isEmptyMeeting, meetingTitle, previousResolution, wifeName, type WellMeeting } from '../../domain/well';
+import { REVIEW_PATH } from '../../domain/arena';
+import { isEmptyMeeting, meetingTitle, pinnedFirstMeetings, previousResolution, wifeName, type WellMeeting } from '../../domain/well';
 import { BibleRef } from '../../ui/BibleRef';
 import { BackLink } from '../../ui/BackLink';
 import { ConfirmRow } from '../../ui/ConfirmRow';
@@ -120,12 +121,23 @@ function LastResolution({ meeting }: { meeting: WellMeeting }) {
 }
 
 /** A small round button with an icon, as in the entries of the Arena. */
-function IconButton({ icon, label, onClick }: { icon: FlowIconName; label: string; onClick: () => void }) {
+function IconButton({ icon, label, onClick, pressed }: { icon: FlowIconName; label: string; onClick: () => void; pressed?: boolean }) {
   return (
-    <button type="button" className="entry-icon" aria-label={label} title={label} onClick={onClick}>
+    <button type="button" className="entry-icon" aria-label={label} title={label} aria-pressed={pressed} onClick={onClick}>
       <FlowIcon name={icon} size={20} />
     </button>
   );
+}
+
+/** Pins a meeting or takes the pin off, and says so; a full list is named, not filled. */
+function usePin() {
+  const store = useStore();
+  const toast = useToast();
+  return (m: WellMeeting) => {
+    const pin = m.pinnedAt === undefined;
+    if (store.pinWellMeeting(m.id, pin)) toast(pin ? `Steht jetzt oben im ${WELL_TITLE}` : 'Nicht mehr angeheftet');
+    else toast('Oben stehen schon drei Einträge. Löse zuerst einen davon.');
+  };
 }
 
 /** One meeting on a page of its own: the resolution of the last one on top, then the notes of this one. */
@@ -135,13 +147,17 @@ export function WellMeetingPage({ id }: { id: string }) {
   const navigate = useNavigate();
   const dateId = useId();
   const nextId = useId();
+  const toast = useToast();
+  const pin = usePin();
   const [confirm, setConfirm] = useState(false);
   const meeting = profile.well.meetings.find((m) => m.id === id);
-  const home = `/arena?bereich=${WELL_SLUG}`;
+  const place = `/arena?bereich=${WELL_SLUG}`;
+  const archived = meeting?.archivedAt !== undefined;
+  const home = archived ? REVIEW_PATH : place;
   if (!meeting) {
     return (
       <div className="title-row">
-        <BackLink to={home}>{WELL_TITLE}</BackLink>
+        <BackLink to={place}>{WELL_TITLE}</BackLink>
         <p className="title-row-text">Dieses Treffen gibt es nicht mehr.</p>
       </div>
     );
@@ -152,12 +168,30 @@ export function WellMeetingPage({ id }: { id: string }) {
     store.updateProfile((p) => ({ ...p, well: { ...p.well, meetings: p.well.meetings.filter((m) => m.id !== id) } }), { immediate: true });
     navigate(home);
   };
+  const archive = () => {
+    store.archiveWellMeeting(id, true);
+    toast('Treffen archiviert – zu finden unter Mehr, Rückblick');
+    navigate(place);
+  };
+  const restore = () => {
+    store.archiveWellMeeting(id, false);
+    toast(`Treffen steht wieder im ${WELL_TITLE}`);
+    navigate(place);
+  };
   return (
     <article className="arena-entry">
       <div className="entry-bar">
-        <BackLink to={home}>{WELL_TITLE}</BackLink>
+        <BackLink to={home}>{archived ? 'Rückblick' : WELL_TITLE}</BackLink>
         <div className="entry-bar-icons" role="toolbar" aria-label="Treffen">
           <IconButton icon="check" label="Sichern und zurück" onClick={() => navigate(home)} />
+          {!archived && (
+            <IconButton icon="pin" label={meeting.pinnedAt === undefined ? 'Anheften' : 'Lösen'} pressed={meeting.pinnedAt !== undefined} onClick={() => pin(meeting)} />
+          )}
+          {archived ? (
+            <IconButton icon="unarchive" label="Zurückholen" onClick={restore} />
+          ) : (
+            <IconButton icon="archive" label="Archivieren" onClick={archive} />
+          )}
           <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
@@ -165,6 +199,7 @@ export function WellMeetingPage({ id }: { id: string }) {
         <ConfirmRow label="Treffen löschen?" showLabel confirmLabel="Ja, Treffen löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
       <h2 className="arena-entry-date">Treffen am {dateLabel(meeting.date)}</h2>
+      {archived && <p className="small muted">Archiviert am {dateLabel(toKey(new Date(meeting.archivedAt!)))}. Steht im Rückblick.</p>}
       {last && <LastResolution meeting={last} />}
       <div className="field arena-meeting">
         <label htmlFor={dateId}>Treffen am</label>
@@ -202,16 +237,28 @@ export function WellMeetingPage({ id }: { id: string }) {
 function ListItem({ meeting: m }: { meeting: WellMeeting }) {
   const store = useStore();
   const toast = useToast();
+  const pin = usePin();
   return (
     <li className="arena-item">
       <Link className="arena-card" to={meetingPath(m.id)}>
-        <span className="arena-card-date">{dateLabel(m.date)}</span>
+        <span className="arena-card-date">
+          {dateLabel(m.date)}
+          {m.pinnedAt !== undefined && <span className="ktag">Angeheftet</span>}
+        </span>
         <span className="arena-card-title">{meetingTitle(m)}</span>
         {m.resolutionDone && <span className="arena-card-verses">Vorsatz umgesetzt</span>}
       </Link>
       <EntryMenu
         label={`Aktionen für das Treffen am ${dateLabel(m.date)}`}
         items={[
+          { label: m.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(m) },
+          {
+            label: 'Besprochen – archivieren',
+            onSelect: () => {
+              store.archiveWellMeeting(m.id, true);
+              toast('Treffen archiviert – zu finden unter Mehr, Rückblick');
+            },
+          },
           {
             label: 'Treffen löschen',
             confirm: 'Ja, Treffen löschen',
@@ -236,7 +283,8 @@ export function WellPage() {
   const profile = useProfile();
   const navigate = useNavigate();
   const name = wifeName(profile.house.wife.name);
-  const shown = profile.well.meetings.filter((m) => !isEmptyMeeting(m));
+  const shown = pinnedFirstMeetings(profile.well.meetings.filter((m) => !isEmptyMeeting(m) && m.archivedAt === undefined));
+  const archivedCount = profile.well.meetings.filter((m) => m.archivedAt !== undefined).length;
   return (
     <>
       {WELL_VERSES.map((v) => (
@@ -306,6 +354,11 @@ export function WellPage() {
               <ListItem key={m.id} meeting={m} />
             ))}
           </ul>
+        )}
+        {archivedCount > 0 && (
+          <p className="small arena-archived">
+            <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
+          </p>
         )}
       </section>
     </>
