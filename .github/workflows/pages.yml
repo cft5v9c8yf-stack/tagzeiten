@@ -1,5 +1,8 @@
 # Builds the app and publishes it on GitHub Pages at https://mein.henoch.app/.
 # One-time setup: Settings → Pages → Source: "GitHub Actions", Custom domain: mein.henoch.app.
+# Beside it, the branch "vorschau" becomes the preview at https://mein.henoch.app/vorschau/ (PREVIEW=1:
+# own name and database). A push to "vorschau" starts this workflow on main (vorschau.yml): the app
+# is built from main as it is, only the preview is new.
 name: Pages
 
 on:
@@ -44,7 +47,22 @@ jobs:
         env:
           BASE_PATH: /
       # Pages has no rewrites: unknown paths (e.g. /abend) get 404.html, which is the app.
-      - run: cp dist/index.html dist/404.html
+      # Under /vorschau/ it leads to the preview's start instead.
+      - run: |
+          cp dist/index.html dist/404.html
+          sed -i 's#<head>#<head><script>var p=location.pathname;if(p.indexOf("/vorschau/")===0\&\&p!=="/vorschau/")location.replace("/vorschau/")</script>#' dist/404.html
+      # The preview: the branch "vorschau", if there is one. If it fails, the app is published without it.
+      - name: Preview
+        continue-on-error: true
+        run: |
+          git ls-remote --exit-code --heads origin vorschau || { echo "No branch vorschau"; exit 0; }
+          git fetch --depth=1 origin vorschau
+          git worktree add ../vorschau FETCH_HEAD
+          cd ../vorschau
+          npm ci
+          LUT1912_DIR=$GITHUB_WORKSPACE/../lut1912/package/text npm test
+          BASE_PATH=/vorschau/ PREVIEW=1 npm run build
+          cp -r dist "$GITHUB_WORKSPACE/dist/vorschau"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
