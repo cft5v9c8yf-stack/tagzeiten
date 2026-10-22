@@ -6,6 +6,7 @@ import { normalizeArena } from './arena';
 import { defaultDogmatik, normalizeDogmatik } from './dogmatik';
 import { defaultWinterArcSettings, emptyWinterArc, normalizeWinterArc, normalizeWinterArcSettings } from './winterArc';
 import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
+import { emptyWell, normalizeWell } from './well';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays, WEEK } from './schedule';
 import { normalizeDeclined } from './seasons';
@@ -23,6 +24,7 @@ export function defaultProfile(today: DateKey): Profile {
     house: emptyHouse(),
     answered: [],
     armor: true,
+    well: emptyWell(),
     showHabitHistory: false,
     sundayRest: false,
     weekReview: true,
@@ -67,6 +69,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     house: raw.house ? normalizeHouse(raw.house) : base.house,
     answered: normalizeAnswered(raw.answered),
     armor: raw.armor !== false,
+    well: normalizeWell(raw.well),
     showHabitHistory: raw.showHabitHistory === true,
     sundayRest: raw.sundayRest === true,
     weekReview: raw.weekReview !== false,

@@ -16,6 +16,7 @@ import { addOwn, adopt, choose, chooseOwn, fromRound, habitFromOffer, offerOf, r
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
+import { isEmptyMeeting, newMeeting, type WellMeeting } from '../domain/well';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
   endRun,
@@ -387,6 +388,22 @@ export class Store {
     this.updateProfile((p) => ({ ...p, arena: p.arena.map((e) => (e.id === id ? { ...fn(e), id, updatedAt: t } : e)) }), opts);
   }
 
+  /** Begins this week's meeting at the Abendbrunnen and returns its id; meetings left empty are cleared away. */
+  addWellMeeting(): string {
+    const m = newMeeting(this.today());
+    this.updateProfile((p) => ({ ...p, well: { ...p.well, meetings: [m, ...p.well.meetings.filter((x) => !isEmptyMeeting(x))] } }), {
+      immediate: true,
+    });
+    return m.id;
+  }
+
+  updateWellMeeting(id: string, fn: (m: WellMeeting) => WellMeeting, opts: UpdateOptions = {}): void {
+    this.updateProfile(
+      (p) => ({ ...p, well: { ...p.well, meetings: p.well.meetings.map((m) => (m.id === id ? { ...fn(m), id } : m)) } }),
+      opts,
+    );
+  }
+
   /** Puts an entry into the Rückblick, or brings it back into the Arena. */
   archiveArenaEntry(id: string, archived: boolean): void {
     const t = this.now().getTime();
@@ -634,6 +651,7 @@ export class Store {
         ...winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
         ...(__DOGMATIK__ ? dogmatikToMarkdown(this.profile.dogmatik, await loadDogmatik()) : []),
       ],
+      this.profile.well,
     );
   }
 

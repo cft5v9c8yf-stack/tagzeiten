@@ -170,6 +170,39 @@ function ShowHide({ label, on, set, note }: { label: string; on: boolean; set: (
   );
 }
 
+/** The Abendbrunnen: switched on by a married man; the wife's name is the one of "Mein Haus". */
+function WellSettings() {
+  const store = useStore();
+  const profile = useProfile();
+  const nameId = useId();
+  return (
+    <>
+      <ShowHide
+        label="Ich bin verheiratet – Abendbrunnen anzeigen"
+        on={profile.well.on}
+        set={(on) => store.updateProfile((p) => ({ ...p, well: { ...p.well, on } }), { immediate: true })}
+        note="Der wöchentliche Ehe-Check-in erscheint dann als Kachel in der Arena. Ausgeblendet ist er nirgends zu sehen; was du notiert hast, bleibt auf dem Gerät gespeichert."
+      />
+      <div className="field">
+        <label htmlFor={nameId}>Name meiner Frau (freiwillig)</label>
+        <input
+          id={nameId}
+          type="text"
+          value={profile.house.wife.name}
+          placeholder="Name"
+          onChange={(e) => {
+            const name = e.target.value;
+            store.updateProfile((p) => ({ ...p, house: { ...p.house, wife: { ...p.house.wife, name } } }));
+          }}
+        />
+      </div>
+      <p className="small muted">
+        Ist ein Name eingetragen, steht er in den Leitfragen, die du dir selbst stellst. Es ist derselbe Name wie unter „Mein Haus“.
+      </p>
+    </>
+  );
+}
+
 /** "Darstellung" as tiles: each setting with what is set now; it opens beneath. */
 export function DisplaySettings() {
   const store = useStore();
@@ -305,6 +338,13 @@ export function DisplaySettings() {
               note="Epheser 6,10–18: In der Stillen Zeit steht vor der Ausrichtung ein Stück der Rüstung für den Tag, im Nachtgebet 1. Petrus 5,8–9 zur Eröffnung und eine Frage in der Prüfung."
             />
           ),
+        },
+        {
+          id: 'more.display.well',
+          title: 'Treffen am Abendbrunnen',
+          line: state(profile.well.on),
+          icon: 'well',
+          content: <WellSettings />,
         },
         {
           id: 'more.display.desert',

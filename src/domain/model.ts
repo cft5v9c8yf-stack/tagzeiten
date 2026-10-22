@@ -6,6 +6,7 @@
  * schema at runtime (rule 9: there is no field for confessing sins, anywhere).
  */
 import type { AnsweredPrayer, House, HouseNeed } from './house';
+import type { Well } from './well';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
 import type { DogmatikSettings } from './dogmatik';
@@ -261,6 +262,8 @@ export interface Profile {
   answered: AnsweredPrayer[];
   /** The spiritual armour in morning and night prayer. */
   armor: boolean;
+  /** "Treffen am Abendbrunnen": the weekly check-in with the wife; invisible while off. */
+  well: Well;
   /** The overview of the habits in the Rückblick; off unless switched on. */
   showHabitHistory: boolean;
   /**

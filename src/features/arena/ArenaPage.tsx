@@ -25,6 +25,8 @@ import { DaySheets } from '../desert/DesertJournal';
 import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
+import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
+import { WELL_SLUG, WellPage } from '../well/WellPage';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -33,7 +35,7 @@ const FORGE_SLUG = 'eisenschmiede';
 /** The Wüstenwanderung, the Arena's place of the Wüstenzeit; the addresses of 0.39.0 and of the Streithalle lead there too. */
 const HALL_SLUG = 'wuestenwanderung';
 const OLD_HALL_SLUGS = ['wuestenzeit', 'streithalle'];
-type Place = 'journal' | 'forge' | 'hall';
+type Place = 'journal' | 'forge' | 'hall' | 'well';
 
 /** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
 const PLACES = {
@@ -171,7 +173,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
 }
 
 const JOURNAL_SLUG = 'gebetskammer';
-const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
+const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, well: WELL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
 const arenaPath = (k: Place | 'desert') => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
 
 /** Archived entries stand in the Rückblick under "Mehr". */
@@ -670,8 +672,18 @@ export function ArenaPage() {
         ? 'hall'
         : param === JOURNAL_SLUG
           ? 'journal'
-          : undefined;
+          : param === WELL_SLUG && profile.well.on
+            ? 'well'
+            : undefined;
   if (!shownPlace) return <ArenaHome />;
+  if (shownPlace === 'well') {
+    return (
+      <div className="arena arena-place arena-well">
+        <PlaceHead title={WELL_TITLE} />
+        <WellPage />
+      </div>
+    );
+  }
   if (shownPlace === 'hall') {
     return (
       <div className="arena arena-place">
@@ -768,6 +780,7 @@ function ArenaHome() {
   const meeting = byMeeting(forge).find((g) => g.date && g.date >= today)?.date;
   const run = activeRun(profile.winterArc);
   const offer = arenaOffer(profile, today);
+  // The order of life (rule 18): the house before the congregation, so the Abendbrunnen stands before the Eisenschmiede.
   const places: { place: Place; title: string; icon: FlowIconName; line: string }[] = [
     {
       place: 'journal',
@@ -775,6 +788,7 @@ function ArenaHome() {
       icon: 'candle',
       line: lastJournal ? `Zuletzt: ${entryTitle(lastJournal)}` : 'Was dich belastet und womit du ringst',
     },
+    ...(profile.well.on ? [{ place: 'well' as const, title: WELL_TITLE, icon: 'well' as const, line: WELL_SUBTITLE }] : []),
     {
       place: 'forge',
       title: PLACES.forge.title,

@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.22.0',
+    date: '2026-10-22',
+    title: 'Treffen am Abendbrunnen: der wöchentliche Ehe-Check-in',
+    changes: [
+      { area: 'Arena', text: 'Neu für Verheiratete: das „Treffen am Abendbrunnen“. Es hat zwei Bibelworte, den Rahmen, sechs Schritte für den Abend zu zweit (Dank, Befinden, Entlastung, Beziehung, Ausblick, Gebet), die Haltung im Gespräch und Notizen für jede Woche. Beim nächsten Treffen steht dein Vorsatz vom letzten oben, zum Abhaken. Ein Zuspruch folgt auf die Frage nach dem, was zwischen euch steht; was ihr einander bekennt, wird nicht notiert.' },
+      { area: 'Einstellungen', text: 'Unter „Mehr“, Darstellung gibt es „Treffen am Abendbrunnen“: ein Schalter „Ich bin verheiratet – Abendbrunnen anzeigen“ und das Feld „Name meiner Frau“. Ist der Schalter aus, ist das Treffen nirgends zu sehen. Die Notizen bleiben auf dem Gerät, sind in der Sicherung und im Export und lassen sich löschen.' },
+    ],
+  },
+  {
     version: '1.21.0',
     date: '2026-10-21',
     title: 'Stille Zeit: „Bibel lesen“ wird mit dem Wort abgehakt',

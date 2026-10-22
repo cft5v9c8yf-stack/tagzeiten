@@ -61,6 +61,20 @@ export function DemoSetup() {
         ...p,
         habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
         showHabitHistory: true,
+        well: {
+          on: true,
+          meetings: [
+            {
+              id: 'demo-well',
+              date: addDays(today, -7),
+              resolution: 'Jeden Abend zehn Minuten ohne Handy zuhören',
+              resolutionDone: false,
+              herWish: 'Einen Abend in der Woche ohne Termine',
+              herConcern: 'Kraft für die neue Woche',
+              myConcern: 'Geduld mit den Kindern',
+            },
+          ],
+        },
         sundayRest: sundayPreview() || p.sundayRest,
         arena: [
           {
