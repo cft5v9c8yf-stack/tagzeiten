@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useStore } from '../data/hooks';
 
@@ -9,6 +10,7 @@ const HOUR = 60 * 60 * 1000;
  */
 export function UpdateBanner() {
   const store = useStore();
+  const [updating, setUpdating] = useState(false);
   const {
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
@@ -30,7 +32,11 @@ export function UpdateBanner() {
         <button
           type="button"
           className="btn primary"
+          disabled={updating}
+          aria-busy={updating}
           onClick={async () => {
+            if (updating) return;
+            setUpdating(true);
             await store.suspend();
             await updateServiceWorker(true);
           }}

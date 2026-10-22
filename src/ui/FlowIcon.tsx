@@ -1,3 +1,5 @@
+import { ICON_STROKE } from './iconBase';
+
 /** Small line icons naming the steps of an order (under the marks of ui/StepFlow). */
 export type FlowIconName =
   | 'bed'
@@ -30,9 +32,24 @@ export type FlowIconName =
   | 'unarchive'
   | 'trash'
   | 'back'
-  | 'forward';
+  | 'forward'
+  | 'plus'
+  | 'close'
+  | 'dots'
+  | 'search'
+  | 'chevronLeft'
+  | 'chevronRight'
+  | 'chevronDown'
+  | 'out'
+  | 'grip'
+  | 'import'
+  | 'export'
+  | 'habits'
+  | 'phone'
+  | 'airplane'
+  | 'info';
 
-const PATHS: Record<FlowIconName, JSX.Element> = {
+export const FLOW_PATHS: Record<FlowIconName, JSX.Element> = {
   bed: <path d="M3 7v11M21 13v5M3 16h18M3 13h18M6.5 13a2 2 0 0 1 0-4h2.5a1.5 1.5 0 0 1 1.5 1.5V13" />,
   // Hands open to receive
   openHands: (
@@ -44,7 +61,10 @@ const PATHS: Record<FlowIconName, JSX.Element> = {
       <path d="M11.5 7v7M9 9.5h5" />
     </>
   ),
-  foldedHands: <path d="M12 3c-1.6 2-2.5 5-2.5 8.5V16l-3.5 4.5M12 3c1.6 2 2.5 5 2.5 8.5V16l3.5 4.5M12 5v12" />,
+  // Two hands pressed together, fingers up, the sleeves at the wrists
+  foldedHands: (
+    <path d="M12 3.2c-2.3 2.4-3.6 5.4-3.6 8.8v4.3L5.5 20.5h5.3l1.2-1.6 1.2 1.6h5.3l-2.9-4.2V12c0-3.4-1.3-6.4-3.6-8.8ZM12 3.2v15.7" />
+  ),
   candle: (
     <path d="M9 11h6v10H9zM12 11V8.5M12 3.5c1.3 1.5 1.7 2.6 1 3.6a1.2 1.2 0 0 1-2 0c-.7-1 0-2.1 1-3.6Z" />
   ),
@@ -119,26 +139,82 @@ const PATHS: Record<FlowIconName, JSX.Element> = {
   // The way back
   back: <path d="M19.5 12h-15M10.5 6l-6 6 6 6" />,
   forward: <path d="M4.5 12h15M13.5 6l6 6-6 6" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  close: <path d="M6 6l12 12M18 6 6 18" />,
+  dots: (
+    <>
+      <circle cx="6" cy="12" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="12" r="1.3" fill="currentColor" stroke="none" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="10.5" cy="10.5" r="6" />
+      <path d="m15 15 5.5 5.5" />
+    </>
+  ),
+  chevronLeft: <path d="m14.5 6-6 6 6 6" />,
+  chevronRight: <path d="m9.5 6 6 6-6 6" />,
+  chevronDown: <path d="m6 9.5 6 6 6-6" />,
+  // An arrow that points out of the app
+  out: <path d="M7 17 17 7M9 7h8v8" />,
+  // A drag handle: two columns of dots
+  grip: (
+    <>
+      {[6, 12, 18].map((y) => (
+        <g key={y}>
+          <circle cx={9} cy={y} r={1.6} fill="currentColor" stroke="none" />
+          <circle cx={15} cy={y} r={1.6} fill="currentColor" stroke="none" />
+        </g>
+      ))}
+    </>
+  ),
+  // Back up: a tray that takes a file in
+  import: <path d="M12 4v10M8.5 10.5 12 14l3.5-3.5M4.5 15.5V20h15v-4.5" />,
+  // A sheet with an arrow going out
+  export: <path d="M14 3H6.5v18h11V7.5ZM14 3v4.5h3.5M12 17.5v-6M9.5 14 12 11.5l2.5 2.5" />,
+  // The ring of a habit, with its point
+  habits: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none" />
+    </>
+  ),
+  phone: (
+    <>
+      <rect x="7" y="2.8" width="10" height="18.4" rx="2" />
+      <path d="M11 18.2h2" />
+    </>
+  ),
+  airplane: <path d="M21 15.5v-1.6l-8-5V4.6a1.5 1.5 0 0 0-3 0v4.3l-8 5v1.6l8-2.3v4.3l-2 1.5v1.4l3.5-1 3.5 1v-1.4l-2-1.5v-4.3Z" />,
+  info: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 11v5.5M12 7.8v.2" />
+    </>
+  ),
   // The sun going down: the Vesper
   sunset: <path d="M7 17a5 5 0 0 1 10 0M2 17h20M12 4v5M9.5 6.5 12 9l2.5-2.5M4.5 10.5l1.6 1.2M19.5 10.5l-1.6 1.2" />,
 };
 
-export function FlowIcon({ name, size = 16 }: { name: FlowIconName; size?: number }) {
+/** `plain` draws in the colour of the text (buttons, chevrons); otherwise in the gold of the rose. */
+export function FlowIcon({ name, size = 16, plain, filled }: { name: FlowIconName; size?: number; plain?: boolean; filled?: boolean }) {
   return (
     <svg
-      className="flow-icon"
+      className={plain ? 'flow-icon is-plain' : 'flow-icon'}
       viewBox="0 0 24 24"
       width={size}
       height={size}
-      fill="none"
+      fill={filled ? 'currentColor' : 'none'}
       stroke="currentColor"
-      strokeWidth="1.7"
+      strokeWidth={ICON_STROKE}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
-      {PATHS[name]}
+      {FLOW_PATHS[name]}
     </svg>
   );
 }

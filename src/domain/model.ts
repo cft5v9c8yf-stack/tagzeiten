@@ -8,6 +8,7 @@
 import type { AnsweredPrayer, House, HouseNeed } from './house';
 import type { InkStroke } from './ink';
 import type { DateKey, Weekday } from './dates';
+import type { DogmatikSettings } from './dogmatik';
 import type { WinterArcData, WinterArcSettings } from './winterArc';
 
 /* ---------------------------------------------------------------- fields */
@@ -214,8 +215,11 @@ export interface ArenaEntry {
   ink?: InkStroke[];
   /** Eisenschmiede: what to bring to the meeting, one point each, ticked off when spoken of. */
   points?: ArenaPoint[];
-  /** "forge": for the meeting with the brothers (Eisenschmiede); absent: the journal. */
-  kind?: 'forge';
+  /**
+   * "forge": for the meeting with the brothers (Eisenschmiede); "desert": the journal of the
+   * Wüstenwanderung (written like the Gebetskammer's, kept apart from it); absent: the Gebetskammer.
+   */
+  kind?: 'forge' | 'desert';
   /** Eisenschmiede: the day of the meeting this entry is for. */
   meetingDate?: DateKey;
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
@@ -247,6 +251,8 @@ export interface Profile {
   habits: Habit[];
   prayer: Prayer;
   catechism: { memorized: Record<string, boolean>; weekOffset: number };
+  /** The reading plan through Pieper's Dogmatik: settings, the days read, the notes to the questions. */
+  dogmatik: DogmatikSettings;
   /** The same times every day. */
   schedule: Schedule;
   /** Times per weekday, when `on`; the groups stay while switched off, for a return. */

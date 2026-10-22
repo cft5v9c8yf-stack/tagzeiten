@@ -21,7 +21,7 @@
   margin: 12px 0 0;
   padding: 8px 8px 8px 14px;
   border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
 }
 .timer .clock {
@@ -83,7 +83,7 @@
   margin: 10px 0;
   padding: 0;
   border-radius: 50%;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   background: var(--paper);
   color: var(--rubric);
   font-family: var(--serif);
@@ -146,13 +146,18 @@
   color: var(--icon-gold);
   flex: none;
 }
+/* Chevrons, plus, close and the like take the colour of their button or text. */
+.flow-icon.is-plain {
+  color: inherit;
+  vertical-align: -0.15em;
+}
 /* The step in view: a card of its own below the row */
 .flow-step {
   margin-top: 12px;
-  padding: 4px 18px 18px;
+  padding: 4px var(--card-pad) var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 18px;
+  border-radius: var(--radius-card);
 }
 .flow-title {
   display: flex;
@@ -176,11 +181,21 @@
 }
 .flow-footer {
   margin-top: 22px;
+  /* Long steps: the way on stays within reach, just above the tab bar. */
+  position: sticky;
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 8px);
+  z-index: 2;
+  padding-top: 12px;
+  background: linear-gradient(to bottom, transparent, var(--sheet) 12px);
+}
+.flow-back {
+  margin-top: 6px;
+  text-align: center;
 }
 .flow-footer .btn {
   width: 100%;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   font-size: 0.98rem;
 }
 .flow + .panel {
@@ -278,6 +293,21 @@
 }
 .placeholder-text {
   font-style: italic;
+}
+/* The confession is prayed, not written: a line to speak, with the word that nothing is noted. */
+.confess-label {
+  margin: 14px 0 6px;
+}
+.confess-line {
+  margin: 0;
+  padding: 4px 0 4px 14px;
+  border-left: 3px solid var(--gold);
+  font-size: 1.05rem;
+}
+.confess-note {
+  color: var(--ink);
+  font-size: 0.95rem;
+  margin: 8px 0 10px;
 }
 
 /* ---------------------------------------------------------------- folds */
@@ -386,7 +416,7 @@ details.fold[open] > summary {
   flex-direction: column;
   gap: 2px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid var(--rule);
   color: inherit;
@@ -395,7 +425,7 @@ details.fold[open] > summary {
 }
 .reading-refs .track {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -445,13 +475,19 @@ input[type='search'],
 select {
   width: 100%;
   background: var(--sheet);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-s);
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-control);
   padding: 9px 11px;
   font-family: var(--serif);
   font-size: 1rem; /* 16px+ keeps iOS from zooming */
   line-height: 1.45;
   resize: none;
+}
+input[type='text'],
+input[type='time'],
+input[type='search'],
+select {
+  min-height: var(--field-height);
 }
 textarea {
   min-height: 2.8em;
@@ -462,7 +498,7 @@ select {
 }
 ::placeholder {
   color: var(--muted);
-  opacity: 0.75;
+  opacity: 1;
 }
 .check {
   display: flex;
@@ -610,7 +646,7 @@ select:focus {
 .flow-short {
   margin-top: -4px;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -618,6 +654,25 @@ select:focus {
   margin-top: 4px;
   color: var(--ink);
   font-weight: 600;
+}
+/* Where the names do not all fit, only the mark in view keeps its own; the rest stay measurable but unseen. */
+.flow-chain:not(.names-all) li:not(.current) .flow-short {
+  position: absolute;
+  visibility: hidden;
+}
+/* Too narrow even for the marks: the row scrolls. */
+.flow-chain {
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.flow-chain::-webkit-scrollbar {
+  display: none;
+}
+.flow-chain ol {
+  min-width: min-content;
+}
+.flow-chain li {
+  flex: none;
 }
 
 /*
@@ -647,4 +702,141 @@ select:focus {
   background: var(--icon-gold);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8.6V21'/%3E%3Cellipse cx='12' cy='5.2' rx='1.4' ry='2.3'/%3E%3Cellipse cx='9.2' cy='10.4' rx='1.3' ry='2.1' transform='rotate(-38 9.2 10.4)'/%3E%3Cellipse cx='14.8' cy='10.4' rx='1.3' ry='2.1' transform='rotate(38 14.8 10.4)'/%3E%3Cellipse cx='9.2' cy='15.2' rx='1.3' ry='2.1' transform='rotate(-38 9.2 15.2)'/%3E%3Cellipse cx='14.8' cy='15.2' rx='1.3' ry='2.1' transform='rotate(38 14.8 15.2)'/%3E%3C/svg%3E") center / contain no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 8.6V21'/%3E%3Cellipse cx='12' cy='5.2' rx='1.4' ry='2.3'/%3E%3Cellipse cx='9.2' cy='10.4' rx='1.3' ry='2.1' transform='rotate(-38 9.2 10.4)'/%3E%3Cellipse cx='14.8' cy='10.4' rx='1.3' ry='2.1' transform='rotate(38 14.8 10.4)'/%3E%3Cellipse cx='9.2' cy='15.2' rx='1.3' ry='2.1' transform='rotate(-38 9.2 15.2)'/%3E%3Cellipse cx='14.8' cy='15.2' rx='1.3' ry='2.1' transform='rotate(38 14.8 15.2)'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/*
+ * Touch targets of 44 px (WCAG 2.5.5): the mark keeps its look, an invisible
+ * area around it takes the tap. Neighbours are at least 44 px apart or the
+ * later one in the document wins the overlap.
+ */
+.cell,
+.flow-chain button,
+.link-btn,
+.small-btn,
+.pill,
+.wa-row-action {
+  position: relative;
+}
+.cell::before,
+.flow-chain button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+
+/*
+ * Icon buttons: one foundation, three sizes (--ibtn-s, --ibtn-m, --ibtn-l),
+ * round, quiet, and a 44 px area to tap whatever the size of the mark.
+ */
+.icon-btn,
+.entry-icon,
+.entry-menu-toggle,
+.back-link-to,
+header.top .search-link,
+.wa-pager-btn,
+.concern-add,
+.concern-chip button,
+.arena-remove,
+.info-btn {
+  --ibtn: var(--ibtn-l);
+  appearance: none;
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--ibtn);
+  height: var(--ibtn);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.concern-add,
+.concern-chip button,
+.arena-remove {
+  --ibtn: var(--ibtn-m);
+}
+.info-btn {
+  --ibtn: var(--ibtn-s);
+}
+.icon-btn::before,
+.entry-icon::before,
+.entry-menu-toggle::before,
+.back-link-to::before,
+header.top .search-link::before,
+.wa-pager-btn::before,
+.concern-add::before,
+.concern-chip button::before,
+.arena-remove::before,
+.info-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+}
+.icon-btn:hover:not(:disabled),
+.entry-icon:hover,
+.entry-menu-toggle:hover,
+.back-link-to:hover,
+header.top .search-link:hover,
+.concern-add:hover,
+.concern-chip button:hover,
+.arena-remove:hover {
+  background: var(--paper);
+  color: var(--ink);
+}
+.icon-btn:disabled {
+  opacity: var(--disabled-opacity);
+  cursor: default;
+}
+.link-btn::before {
+  content: '';
+  position: absolute;
+  inset: -12px -6px;
+}
+/* Wide small controls: full width, 44 px high. */
+.small-btn::before,
+.pill::before,
+.wa-row-action::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+
+/* Press feedback; hover only where a pointer can hover. Opacity, so it needs no motion. */
+.btn:not(:disabled):active,
+.pill:not(:disabled):active,
+.wa-row-action:active,
+.tile:active,
+.tile-card:active,
+.more-tile:active {
+  opacity: 0.7;
+}
+@media (hover: hover) {
+  .btn:not(:disabled):not(.primary):hover,
+  .pill:not(:disabled):not([aria-pressed='true']):hover,
+  .wa-row-action:hover {
+    background: var(--warm-soft);
+  }
+  .btn.primary:not(:disabled):hover {
+    opacity: 0.9;
+  }
+}
+.out-arrow {
+  display: inline-block;
+  vertical-align: -3px;
+  margin-left: 6px;
 }

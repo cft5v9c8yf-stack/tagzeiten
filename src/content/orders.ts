@@ -45,7 +45,8 @@ export type PartKind =
   | 'evening-blessing'
   | 'house-intercession'
   | 'house-blessing'
-  | 'week-review';
+  | 'week-review'
+  | 'dogmatik';
 
 /**
  * Path of a stored value within a Day, e.g. "morning.verse",
@@ -406,6 +407,25 @@ export function getOrder(id: OrderId, form: OrderForm): Order {
   return o;
 }
 
+/**
+ * Today's reading of Pieper's Dogmatik as a step of its own, when it is read
+ * in the Stille Zeit: after the Word, before the prayer (rule 2).
+ */
+export const DOGMATIK_STEP: Step = {
+  id: 'dogmatik',
+  title: 'Dogmatik',
+  minutes: 3,
+  parts: [p('dogmatik', 'Dogmatik')],
+};
+
+/** The Stille Zeit, with the Dogmatik after the Word in the full form. The short form stays short. */
+export function morningOrder(form: OrderForm, dogmatik: boolean): Order {
+  const o = getOrder('morning', form);
+  if (!dogmatik || form === 'short') return o;
+  const i = o.steps.findIndex((s) => s.id === 'word') + 1;
+  return { ...o, steps: [...o.steps.slice(0, i), DOGMATIK_STEP, ...o.steps.slice(i)] };
+}
+
 export function orderMinutes(o: Order): number {
   return o.steps.reduce((s, st) => s + st.minutes, 0);
 }
@@ -450,7 +470,7 @@ export const RUBRICS = {
   complineCreed: 'Der Tag wird nicht an deinem Gewissen gemessen, sondern an dem, was bekannt und gebetet wird.',
   thanks: 'Zwei oder drei Dinge dieses Tages. Konkret, nicht pauschal. Auch das Kleine, gerade das Kleine.',
   review: 'Rechenschaft, nicht Beichte. Ein Zeichen, kein Kommentar.',
-  reviewMarks: '+ geschehen · ~ angefangen · – nicht geschehen',
+  reviewMarks: '+ geschehen · ~ angefangen · – offen geblieben',
   reviewCarry: '„Morgen wieder“ erscheint morgen früh als Vorschlag. „Fallenlassen“: Es war heute Morgen wichtig und ist es nicht mehr.',
   reviewNotSin:
     'Ein nicht erreichtes Ziel ist keine Sünde. Nur wenn wirklich ein Gebot dahintersteht, gehört es in die Prüfung.',

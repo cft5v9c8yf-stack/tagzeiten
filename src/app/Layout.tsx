@@ -1,18 +1,46 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router';
 import { formatLong, formatShort } from '../domain/dates';
 import { DemoBanner } from '../demo/DemoSetup';
+import { FlowIcon } from '../ui/FlowIcon';
+import { ICON_SIZE } from '../ui/iconBase';
+import { BackSlotContext, PageHeader } from '../ui/PageHeader';
 import { SectionIcon } from '../ui/SectionIcon';
 import { UpdateBanner } from './UpdateBanner';
 import { inSection, SECTIONS, SUNDAY_PATH } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
+
+/** The title of the page head: the section the page belongs to. */
+function pageTitle(pathname: string): string {
+  if (pathname.startsWith(SUNDAY_PATH)) return 'Sonntag';
+  if (pathname.startsWith('/suche')) return 'Suchen';
+  if (pathname.startsWith('/kirchenjahr')) return 'Heute';
+  return SECTIONS.find((s) => inSection(s, pathname))?.label ?? 'Henoch';
+}
 
 export function Layout() {
   const { date, isToday } = useSelectedDate();
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
   const firstRender = useRef(true);
-
+  const [backSlot, setBackSlot] = useState<HTMLElement | null>(null);
+  const title = pageTitle(pathname);
+  // Today and the Sunday head their pages with the date themselves; elsewhere
+  // the date stands under the title, or which other day is open.
+  const own = pathname === '/' || pathname.startsWith(SUNDAY_PATH);
+  const line = isToday ? (
+    pathname.startsWith('/mehr') ? (
+      'Henoch – mit Gott durch den Tag'
+    ) : own ? null : (
+      formatLong(date)
+    )
+  ) : (
+    // Another day is open: say which, with the way back to today.
+    <>
+      {formatShort(date)}
+      <Link to={pathname}>Heute</Link>
+    </>
+  );
 
   // On section change: back to the top, and move focus into the new content
   // so keyboard and screen-reader users land where the page begins.
@@ -30,39 +58,20 @@ export function Layout() {
       <a className="skip-link" href="#main">
         Zum Inhalt
       </a>
+      <BackSlotContext.Provider value={backSlot}>
       <div className="wrap">
-        <header className="top">
-          {isToday && pathname.startsWith('/mehr') ? (
-            // Under "Mehr", the name and line of the app.
-            <h1 className="app-name">
-              Henoch <span className="app-line">– mit Gott durch den Tag</span>
-            </h1>
-          ) : (
-            <>
-              <h1 className="visually-hidden">Henoch</h1>
-              <div className="date">
-                {isToday ? (
-                  // Today and the Sunday head their pages themselves; elsewhere the date.
-                  pathname === '/' || pathname.startsWith(SUNDAY_PATH) ? null : formatLong(date)
-                ) : (
-                  // Another day is open: say which, with the way back to today.
-                  <>
-                    {formatShort(date)}
-                    <Link to={pathname}>Heute</Link>
-                  </>
-                )}
-              </div>
-            </>
-          )}
-          {!pathname.startsWith('/suche') && (
-            <Link className="search-link" to="/suche" aria-label="Suchen">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true" focusable="false">
-                <circle cx="10.5" cy="10.5" r="6" />
-                <path d="m15 15 5.5 5.5" />
-              </svg>
-            </Link>
-          )}
-        </header>
+        <PageHeader
+          title={title}
+          backRef={setBackSlot}
+          line={line}
+          action={
+            !pathname.startsWith('/suche') && (
+              <Link className="search-link" to="/suche" aria-label="Suchen">
+                <FlowIcon name="search" size={ICON_SIZE.l} plain />
+              </Link>
+            )
+          }
+        />
         <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
           {import.meta.env.MODE === 'demo' && <DemoBanner />}
           <UpdateBanner />
@@ -73,6 +82,7 @@ export function Layout() {
           <span>Sola scriptura</span> · <span>Sola gratia</span> · <span>Sola fide</span> · <span>Solus Christus</span>
         </footer>
       </div>
+      </BackSlotContext.Provider>
       <nav className="tabs" aria-label="Bereiche">
         <ul>
           {SECTIONS.map((s) => (

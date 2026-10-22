@@ -3,7 +3,6 @@ import { useProfile } from '../../data/hooks';
 import { EXAMEN_INTRO, EXAMEN_NOTE, STATIONS, STATION_BY_WEEKDAY } from '../../content/examen';
 import { weekdayOf, type DateKey } from '../../domain/dates';
 import { BibleRef } from '../../ui/BibleRef';
-import { Note } from '../../ui/PrayerText';
 
 /**
  * Examination at the Decalogue in the station of the weekday.
@@ -32,7 +31,7 @@ export function Examination({ date }: { date: DateKey }) {
           </span>
         ))}
       </p>
-      <Note>{EXAMEN_NOTE}</Note>
+      <p className="note confess-note">{EXAMEN_NOTE}</p>
     </>
   );
 }

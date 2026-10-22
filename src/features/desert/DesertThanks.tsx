@@ -35,9 +35,7 @@ export function DesertThanks() {
   return (
     <article className="arena-entry desert-thanks">
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={home}>Zurück zur Liste</BackLink>
-        </p>
+        <BackLink to={home}>Zurück zur Liste</BackLink>
         <h2>{habit?.name ?? 'Dank'}</h2>
       </div>
       <p className="small muted">{formatLong(date)}</p>
@@ -51,7 +49,7 @@ export function DesertThanks() {
           ? 'Der Satz steht auch in der Andacht und in der Versesammlung, das Tagebuch in der Wüstenwanderung, der Dank im Nachtgebet und im Wochenrückblick.'
           : 'Der Dank steht auch im Nachtgebet und im Wochenrückblick.'}
       </p>
-      <div className="arena-actions">
+      <div className="mask-actions">
         <button
           type="button"
           className="btn primary"

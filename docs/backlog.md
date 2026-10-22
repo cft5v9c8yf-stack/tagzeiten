@@ -2,6 +2,54 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
+## Dogmatik (Pieper) durchsehen
+
+**Auf Eis gelegt am 17.10.2026** (Wunsch von Andreas). Aussehen:
+`docs/dogmatik/` (Bildschirmfotos). Zum Weitermachen offen: zwei
+Entscheidungen von Andreas, nämlich der Maßstab (alles Wort für Wort oder
+gezielt Griechisch, Fußnoten, Absatzwechsel, Klammern, Stellenangaben) und das
+Hebräische (Platzhalter lassen oder nach dem Scan setzen). Vorgeschlagen war
+ein Workflow je Band: ein Agent je Block von etwa fünf Tagen liest gegen den
+Scan und liefert Berichtigungen im Format von `reference/pieper/durchsicht/`,
+ein zweiter prüft sie gegen; zuerst Band 1, Tag 6–46 als Probe. Muellers
+Umarbeitung (1946) liegt nicht digital vor und ist bis 2037 geschützt; die
+übrigen Scans auf archive.org haben unbrauchbare Texterkennung. Für Band 2
+gibt es eine neuere Fassung der Abschrift (08.08.2023, „minor corrections“).
+
+Gewünscht (16.10.2026): Francis Pieper, Christliche Dogmatik, drei Bände als
+Leseplan über drei Jahre (ein Band im Jahr) oder nach Lesezeit, und zum
+Nachschlagen. Eingebaut in 1.16.0 (erst als Demo auf `claude/dogmatik-demo`,
+am 16.10.2026 online gebracht). **17.10.2026 auf Wunsch wieder ausgeschaltet**
+(1.16.1): Sie geht erst online, wenn alle Tage durchgesehen sind. Der Code
+bleibt im Zweig, der Schalter ist `__DOGMATIK__` in `vite.config.ts`; die
+Vorschau baut `npm run build:demo:dogmatik`.
+
+Stand:
+
+- **Text:** aus der Abschrift von BackToLuther (archive.org), aufbereitet mit
+  `node scripts/dogmatik/build.mjs`; Quelle und Vorgehen in
+  `reference/pieper/README.md`, jeder Eingriff in `reference/pieper/BERICHT.md`.
+- **Durchgesehen** (`"geprueft": true`): Band 1, Tag 1–5 (Claude, 16.10.2026,
+  Seite 1–10 gegen den Scan; Berichtigungen in
+  `reference/pieper/durchsicht/band-1.json`) und Tag 47–53 mit Bibelwort,
+  Kernsatz und Frage von Andreas. Alle anderen Tage tragen in der App den
+  Vermerk „Noch nicht durchgesehen“.
+- **Befund der ersten zehn Seiten:** Das Deutsche ist sehr sauber (etwa ein
+  Fehler auf zwei Seiten: „uwd“, „bezeichnet“ statt „bezeichnete“, Großschreibung).
+  Häufiger: Stellenangaben in Fußnoten („1,1289“ statt „I, 1289“, „Ies.“),
+  eckige Klammern als runde, verlorene Absatzwechsel (3 auf 10 Seiten). Das
+  Griechische ist fast überall zu ersetzen. Wiederkehrendes steht jetzt in
+  `ocr.mjs` („Ies.“ → „Jes.“, „in bezug aus“, „scil,“).
+- **Aufwand:** etwa zwei Seiten je Tag, rund 2000 Seiten insgesamt. Die ersten
+  zehn Seiten brauchten einen guten Teil einer Sitzung; also in Blöcken, Band
+  für Band, je Block eine neue Sitzung.
+- **Offen beim Durchsehen:** Lesefehler im Deutschen und Lateinischen, das
+  Griechische (in der Abschrift oft verlesen), das Hebräische (überall
+  „[hebräisch]“), 30 Fußnoten ohne Ziffer im Text (stehen am Absatzende, Liste
+  im Bericht). Scans: archive.org `Christliche_Dogmatik_Erster_Band` usw.
+- **Ergänzungen:** Bibelwort, Kernsatz, Frage schreibt Andreas; Claude schlägt
+  höchstens Bibelstellen vor, die Pieper am Tag selbst anführt (Luther 1912).
+
 ## Lutherische Bekenntnisschriften unter Katechismus / Anhang
 
 Gewünscht (26.09.2026): die Bekenntnisschriften im Anhang des Katechismus, mit

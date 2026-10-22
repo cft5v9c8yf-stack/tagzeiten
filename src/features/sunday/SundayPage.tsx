@@ -15,6 +15,8 @@ import { SundayChooser } from './SundayOverview';
 import { PreparationHint, SundayHelps } from './SundayHelps';
 import { useStore } from '../../data/hooks';
 import { weekdayOf } from '../../domain/dates';
+import { Chevron } from '../../ui/Chevron';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 const SUNDAY_PARAM = 's';
 
@@ -95,25 +97,6 @@ export function useSundayLinks() {
   };
 }
 
-export function Chevron({ dir }: { dir: 'left' | 'right' }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="20"
-      height="20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path d={dir === 'left' ? 'm14.5 6-6 6 6 6' : 'm9.5 6 6 6-6 6'} />
-    </svg>
-  );
-}
-
 /**
  * The week comes from its Sunday: the Sunday with its verse, its meaning, its
  * place in the church year, and Gospel and Epistle – as references to read in
@@ -146,12 +129,12 @@ export function SundayPage() {
     <div className="sunday-page">
       {saturdayEvening && <PreparationHint page={links.page} />}
       <header className="sunday-head">
-        <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Letzter Sonntag: ${churchDay(prev).week}`}>
+        <Link className="sunday-step" to={links.sunday(prev)} aria-label={`Vorheriger Sonntag: ${churchDay(prev).week}`}>
           <span className="sunday-step-circle">
             <Chevron dir="left" />
           </span>
           <span className="sunday-step-label" aria-hidden="true">
-            Letzter Sonntag
+            Vorheriger Sonntag
           </span>
         </Link>
         <div className="sunday-center">
@@ -171,10 +154,10 @@ export function SundayPage() {
           <p className="sunday-week">
             {c.weekNumber}. Woche im Kirchenjahr
             {s === links.current ? (
-              <span className="ktag">diese Woche</span>
+              <span className="ktag">diese Kirchenwoche</span>
             ) : (
               <Link className="sunday-back" to={links.sunday()}>
-                Zu dieser Woche
+                Zu dieser Kirchenwoche
               </Link>
             )}
           </p>
@@ -269,7 +252,7 @@ export function SundayPage() {
         {!/^advent[1-4]$/.test(c.weekKey) && (
           <p className="sunday-lessons-link">
             <Link to={links.sunday(adventAhead(links.current))}>
-              Die Bibellektionen der Adventssonntage <span aria-hidden="true">›</span>
+              Die Bibellektionen der Adventssonntage <Chevron dir="right" size={ICON_SIZE.s} />
             </Link>
           </p>
         )}

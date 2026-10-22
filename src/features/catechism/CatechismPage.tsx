@@ -26,7 +26,11 @@ import { APPENDICES, CatechismOverview, ReadingOverview } from './CatechismOverv
 import { BookParts } from './BookParts';
 import { HouseFatherMode } from './HouseFatherMode';
 import { mondayIndex } from '../../domain/dates';
+import { churchDay, nextWeekStart } from '../../domain/churchYear';
+import { Chevron } from '../../ui/Chevron';
+import { LutherRose } from '../../ui/LutherRose';
 import { LoeheBook } from './LoeheExplanation';
+import { DogmatikCard } from '../dogmatik/DogmatikCard';
 
 /** The Apology is long: loaded only when opened. */
 const ApologyBook = lazy(() => import('./ApologyBook'));
@@ -341,13 +345,13 @@ export function CatechismPage() {
   }
   if (ci >= 0 || appendix) {
     const back = (
-      <p className="back-link">
+      <>
         {appendix && 'book' in appendix ? (
           <BackLink to={withDate('/katechismus/konkordienbuch', date, isToday)}>Konkordienbuch</BackLink>
         ) : (
           <BackLink to={withDate('/katechismus', date, isToday)}>Lehre</BackLink>
         )}
-      </p>
+      </>
     );
     return (
       <div className="cat-page">
@@ -371,11 +375,24 @@ function CatechismHome() {
   const withChildren = habit ? isDoneInPeriod(habit, date, lookup) : false;
   const todayPiece = pieceId(day.chief, day.pieceIndices[0] ?? 0);
   const partLink = withDate(`/katechismus/${day.chief.id}`, date, isToday);
-
+  const comingSunday = nextWeekStart(churchDay(date).weekStart);
 
   return (
     <>
       <WordSwitch current="teaching" />
+
+      <Link className="sunday-link" to={`/sonntag?s=${comingSunday}${isToday ? '' : `&d=${date}`}`}>
+        <span className="sunday-link-rose" aria-hidden="true">
+          <LutherRose size={30} />
+        </span>
+        <span className="sunday-link-text">
+          <span className="sunday-link-label">Der kommende Sonntag</span>
+          <span className="sunday-link-week">{churchDay(comingSunday).week}</span>
+        </span>
+        <span className="sunday-link-go" aria-hidden="true">
+          <Chevron dir="right" />
+        </span>
+      </Link>
 
       <section className="cat-area" aria-labelledby="cat-learn">
         <div className="cat-area-head">
@@ -415,6 +432,16 @@ function CatechismHome() {
 
         <CatechismOverview memorized={memorized} currentChief={day.chiefIndex} />
       </section>
+
+      {__DOGMATIK__ && (
+        <section className="cat-area" aria-labelledby="cat-dogmatik">
+          <div className="cat-area-head">
+            <h3 id="cat-dogmatik">Dogmatik</h3>
+            <p className="cat-area-line">Francis Pieper, Christliche Dogmatik, drei Bände in drei Jahren, zugleich zum Nachschlagen</p>
+          </div>
+          <DogmatikCard />
+        </section>
+      )}
 
       <section className="cat-area" aria-labelledby="cat-read">
         <div className="cat-area-head">

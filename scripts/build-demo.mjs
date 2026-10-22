@@ -2,12 +2,14 @@
  * Packs the demo build (vite build --mode demo) into one self-contained HTML
  * fragment: CSS and JS inline, fonts as data URIs (woff2 only).
  * Output: dist-demo/tagzeiten-demo.html, and dist-demo/tagzeiten-demo-sonntag.html
- * with the clock on the coming Sunday.
+ * with the clock on the coming Sunday. With "dist-dogmatik" (npm run
+ * build:demo:dogmatik): dist-dogmatik/henoch-dogmatik-vorschau.html, the app
+ * with the Dogmatik switched on.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const dir = 'dist-demo';
+const dir = process.argv[2] ?? 'dist-demo';
 const html = readFileSync(join(dir, 'index.html'), 'utf8');
 
 const cssHref = /<link rel="stylesheet"[^>]*href="\.\/([^"]+)"/.exec(html)?.[1];
@@ -51,10 +53,14 @@ const page = (title, extra = '') => `<title>${title}</title>
 <div id="root"></div>
 <script type="module">${js}</script>
 `;
-for (const [file, out] of [
-  ['tagzeiten-demo.html', page('Henoch')],
-  ['tagzeiten-demo-sonntag.html', page('Henoch Sonntagsvorschau', `\n<script>${sundayClock}</script>`)],
-]) {
+const pages =
+  dir === 'dist-dogmatik'
+    ? [['henoch-dogmatik-vorschau.html', page('Henoch Dogmatik-Vorschau')]]
+    : [
+        ['tagzeiten-demo.html', page('Henoch')],
+        ['tagzeiten-demo-sonntag.html', page('Henoch Sonntagsvorschau', `\n<script>${sundayClock}</script>`)],
+      ];
+for (const [file, out] of pages) {
   writeFileSync(join(dir, file), out);
-  console.log(`dist-demo/${file} ${(out.length / 1024).toFixed(0)} KB`);
+  console.log(`${dir}/${file} ${(out.length / 1024).toFixed(0)} KB`);
 }

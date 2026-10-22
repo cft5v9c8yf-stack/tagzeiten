@@ -10,7 +10,7 @@ export const MARK_SYMBOL: Record<Mark, string> = { plus: '+', tilde: '~', minus:
 export const MARK_LABEL: Record<Mark, string> = {
   plus: 'geschehen',
   tilde: 'angefangen',
-  minus: 'nicht geschehen',
+  minus: 'offen geblieben',
 };
 export const CARRY_LABEL: Record<Carry, string> = { again: 'Morgen wieder', drop: 'Fallenlassen' };
 export const THREE_LABEL: Record<ThreeKey, string> = { word: 'Wort', house: 'Haus', work: 'Werk' };

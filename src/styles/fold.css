@@ -38,23 +38,12 @@
   align-self: center;
 }
 .info-btn {
-  appearance: none;
-  width: 24px;
-  height: 24px;
-  flex: none;
-  border-radius: 50%;
   border: 1.5px solid var(--muted);
-  background: transparent;
-  color: var(--muted);
   font-family: var(--serif);
   font-style: italic;
   font-weight: 600;
   font-size: 0.85rem;
   line-height: 1;
-  padding: 0;
-  cursor: pointer;
-  display: inline-grid;
-  place-items: center;
 }
 .info-btn[aria-expanded='true'] {
   border-color: var(--accent);

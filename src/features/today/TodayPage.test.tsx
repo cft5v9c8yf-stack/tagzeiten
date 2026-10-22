@@ -266,7 +266,38 @@ describe('Today', () => {
     ]);
     // The usual habits stay, below.
     expect(within(thursday).getByRole('checkbox', { name: /^Bibel lesen/ })).toBeTruthy();
-    expect(document.body.textContent).not.toMatch(/Streithalle|Winter Arc|Serie|verpasst/);
+    // The folded care of the habits holds the package texts; the rest of the page stays free of such words.
+    const page = document.body.cloneNode(true) as HTMLElement;
+    page.querySelector('.desert-care')!.remove();
+    expect(page.textContent).not.toMatch(/Streithalle|Winter Arc|Serie|verpasst/);
+  });
+
+  it('lets the habits of the Wüstenzeit be chosen and made under "Heute", folded under the day', async () => {
+    const store = await renderToday('2026-09-25', (s) => s.startDesert('2026-09-23', 40));
+    // None chosen yet: the care stands open, with the packages, the further habits and the user\'s own.
+    const care = document.querySelector('.desert-care') as HTMLDetailsElement;
+    expect(care.open).toBe(true);
+    expect(within(care).getByText('Gewohnheiten dieser Wüstenzeit anpassen')).toBeTruthy();
+    fireEvent.click(within(within(care).getByRole('region', { name: 'Aufbruch' })).getByRole('button', { name: 'Paket übernehmen' }));
+    expect(store.getProfile().winterArc.runs[0]!.habits).toHaveLength(4);
+    // The habits chosen stand in the list to tick, outside the care.
+    const desert = within(document.querySelector('.desert-group') as HTMLElement);
+    fireEvent.click(desert.getByRole('checkbox', { name: 'Morgensegen' }));
+    expect(store.getDay('2026-09-25').habits['wz-morgensegen']).toBe(true);
+    // One of one's own: made and deleted here.
+    fireEvent.change(within(care).getByLabelText('Titel'), { target: { value: 'Psalm 23 sprechen' } });
+    fireEvent.click(within(care).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
+    expect(store.getProfile().habits.some((h) => h.name === 'Psalm 23 sprechen' && h.desert === 'own')).toBe(true);
+    expect(desert.getByRole('checkbox', { name: 'Psalm 23 sprechen' })).toBeTruthy();
+    fireEvent.click(within(care).getByRole('button', { name: 'Psalm 23 sprechen löschen' }));
+    fireEvent.click(within(care).getByRole('button', { name: 'Löschen' }));
+    expect(store.getProfile().habits.some((h) => h.name === 'Psalm 23 sprechen')).toBe(false);
+  });
+
+  it('offers the care also before the Wüstenzeit has reached the week shown', async () => {
+    await renderToday('2026-09-25', (s) => s.startDesert('2026-10-12', 40));
+    expect(document.querySelector('.desert-care')).not.toBeNull();
+    expect(document.body.textContent).toContain('Die Wüstenzeit beginnt am');
   });
 
   it('lets the day before be filled in on a Monday, from the week before', async () => {
@@ -280,7 +311,7 @@ describe('Today', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Gestern nachtragen' }));
     const sunday = screen.getByRole('region', { name: 'Gewohnheiten, Sonntag, 27. September' });
-    fireEvent.click(within(sunday).getByRole('checkbox', { name: 'Psalm des Tages' }));
+    fireEvent.click(within(sunday.querySelector('.desert-group') as HTMLElement).getByRole('checkbox', { name: 'Psalm des Tages' }));
     expect(store.getDay('2026-09-27').habits['wz-psalm']).toBe(true);
   });
 
@@ -335,7 +366,7 @@ describe('Today', () => {
 
   it('leads from "Heute" to the Sunday of the week', async () => {
     await renderToday('2026-09-24');
-    const link = screen.getByRole('link', { name: /Diese Woche/ });
+    const link = screen.getByRole('link', { name: /Sonntag dieser Kirchenwoche/ });
     expect(link.textContent).toContain('16. Sonntag nach Trinitatis');
   });
 

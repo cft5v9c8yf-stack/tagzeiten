@@ -49,19 +49,19 @@ export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateK
   // "Bibel lesen" taken into the Wüstenzeit is this tick: its "i" stands here.
   const habit = habitsOf(run, profile).find((h) => h.id === READING_HABIT);
   return (
-    <div className="wa-group desert-reading">
-      <h5>Lesung</h5>
+    <section className="panel wa-group desert-reading" aria-labelledby="desert-reading-title">
+      <h5 id="desert-reading-title">Lesung</h5>
       {habit ? <WithInfo habit={habit}>{tick}</WithInfo> : tick}
-    </div>
+    </section>
   );
 }
 
 /** What each choice of reading means, beside the choice. */
 function readingNote(value: DesertReading, days: number, bibleName: string): string {
   if (value === 'desert')
-    return `Die Versuchung Jesu (Matthäus 4), die Bergpredigt (Matthäus 5–7), das Evangelium nach Johannes, der Jakobusbrief, der 1. Petrusbrief und der Hebräerbrief, gleichmäßig auf ${days === 1 ? 'einen Tag' : `${days} Tage`} verteilt. Vom ersten bis zum letzten Tag der Wüstenzeit steht der Abschnitt des Tages in der Wüstenwanderung über den Gewohnheiten und unter „Wort“. Dein Plan „${bibleName}“ ruht so lange und geht danach von selbst dort weiter, wo du aufgehört hast.`;
+    return `Die Versuchung Jesu (Matthäus 4), die Bergpredigt (Matthäus 5–7), das Evangelium nach Johannes, der Jakobusbrief, der 1. Petrusbrief und der Hebräerbrief, gleichmäßig auf ${days === 1 ? 'einen Tag' : `${days} Tage`} verteilt. Vom ersten bis zum letzten Tag der Wüstenzeit steht der Abschnitt des Tages oben in der Wüstenwanderung und unter „Wort“. Dein Plan „${bibleName}“ ruht so lange und geht danach von selbst dort weiter, wo du aufgehört hast.`;
   if (value === 'bible')
-    return `Du liest weiter nach deinem Plan „${bibleName}“. Der Abschnitt des Tages steht in der Wüstenwanderung über den Gewohnheiten. Einen anderen Plan wählst du unter „Wort“, Bibel.`;
+    return `Du liest weiter nach deinem Plan „${bibleName}“. Der Abschnitt des Tages steht oben in der Wüstenwanderung. Einen anderen Plan wählst du unter „Wort“, Bibel.`;
   return 'Die Wüstenwanderung zeigt keine Lesung. Dein Leseplan unter „Wort“ bleibt, wie er ist.';
 }
 

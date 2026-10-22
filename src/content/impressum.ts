@@ -51,7 +51,7 @@ export const PRIVACY_NOTICE: readonly ImprintSection[] = [
     title: 'Deine Einträge',
     lines: [
       'Alles, was du einträgst – Andachten, Gewohnheiten, Gebetsanliegen, die Arena –, bleibt auf deinem Gerät (im Speicher des Browsers). Der Anbieter erhält davon nichts. Es gibt keine Konten, keine Analyse, keine Werbung und keine Tracker.',
-      'Unter Mehr → Einstellungen → Deine Daten kannst du jederzeit alles exportieren oder vollständig löschen.',
+      'Unter Mehr → Deine Daten kannst du jederzeit alles exportieren oder vollständig löschen.',
     ],
   },
   {

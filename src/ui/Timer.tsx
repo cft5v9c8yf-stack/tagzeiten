@@ -35,11 +35,14 @@ export function Timer({
   hint,
   timer = morningTimer,
   className,
+  quietUntilStarted,
 }: {
   totalMinutes: number;
   hint: string;
   timer?: Countdown;
   className?: string;
+  /** Shows nothing until the time is started (see TimerStart for the small button that starts it). */
+  quietUntilStarted?: boolean;
 }) {
   const state = useSyncExternalStore(timer.subscribe, timer.get);
   const [, tick] = useState(0);
@@ -77,6 +80,7 @@ export function Timer({
 
   const left = timer.left();
   const started = running || state.elapsedSec > 0;
+  if (quietUntilStarted && !started) return null;
 
   return (
     <div className={`timer${stuck ? ' is-stuck' : ''}${className ? ` ${className}` : ''}`} ref={barRef}>
@@ -93,5 +97,17 @@ export function Timer({
         </button>
       )}
     </div>
+  );
+}
+
+/** The small button that starts the time; gone once the strip of the timer takes over. */
+export function TimerStart({ totalMinutes, timer = morningTimer }: { totalMinutes: number; timer?: Countdown }) {
+  const state = useSyncExternalStore(timer.subscribe, timer.get);
+  useEffect(() => timer.setTotal(totalMinutes * 60), [timer, totalMinutes]);
+  if (state.startedAt !== null || state.elapsedSec > 0) return null;
+  return (
+    <button type="button" className="btn quiet timer-start" onClick={() => timer.start()}>
+      Zeit starten
+    </button>
   );
 }

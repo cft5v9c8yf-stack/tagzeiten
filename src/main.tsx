@@ -11,6 +11,7 @@ import './styles/components.css';
 import './styles/today.css';
 import './styles/pages.css';
 import './styles/fold.css';
+import './styles/onboarding.css';
 import { App } from './app/App';
 
 const root = document.getElementById('root');

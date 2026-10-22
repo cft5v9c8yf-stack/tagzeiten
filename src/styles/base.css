@@ -34,7 +34,7 @@ select {
   color: inherit;
 }
 
-/* Links without underline: gold from Luther's rose; inside running text also bold,
+/* Links never underlined: gold from Luther's rose; inside running text also bold,
    so they do not depend on colour alone. */
 a {
   color: var(--link);
@@ -49,7 +49,6 @@ dd a:not([class]) {
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 4px;
 }
 
 .visually-hidden {
@@ -102,7 +101,7 @@ dd a:not([class]) {
   margin: 40px 0 -20px;
   text-align: center;
   font-family: var(--serif);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-style: italic;
   letter-spacing: 0.04em;
   line-height: 1.7;
@@ -113,27 +112,40 @@ dd a:not([class]) {
   white-space: nowrap;
 }
 
+/* The head of every page: (back) title ... search, and one quiet line under it. */
 header.top {
+  padding: 14px 0 4px;
+}
+header.top .top-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 2px 12px;
-  padding: 18px 0 6px;
+  align-items: center;
+  min-height: 44px;
 }
-.top-motto {
-  font-size: 1.05rem;
-  font-weight: 600;
-  font-style: italic;
+header.top .top-back {
+  display: inline-flex;
+  margin-right: 4px;
+  flex: none;
+  align-items: center;
+}
+header.top .top-back:empty {
+  display: none;
+}
+header.top .top-title {
+  flex: 1;
+  min-width: 0;
   margin: 0;
-  letter-spacing: 0.01em;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.25;
+  font-weight: 600;
 }
-header.top .date {
+header.top .top-line {
+  margin: 0;
   font-family: var(--sans);
   font-size: 0.9rem;
   color: var(--muted);
 }
-header.top .date a {
+header.top .top-line a {
   color: var(--accent);
   font-weight: 600;
   margin-left: 8px;
@@ -179,19 +191,23 @@ p {
 .panel {
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
-  padding: 14px 16px;
+  border-radius: var(--radius-card);
+  padding: var(--card-pad);
   margin: 12px 0;
 }
 
 /* Buttons */
 .btn {
   appearance: none;
-  border: 1px solid var(--rule);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--control-line);
   background: var(--sheet);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-control);
   padding: 8px 14px;
-  min-height: 40px;
+  min-height: 44px;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 0.92rem;
@@ -202,11 +218,21 @@ p {
   border-color: var(--accent);
   color: var(--on-accent);
 }
+/* The third step after the filled and the outlined button: text only, still a button. */
 .btn.quiet {
   background: transparent;
+  border-color: transparent;
+  color: var(--link);
+}
+.btn.quiet.timer-start,
+.btn.quiet.ink-undo,
+.dogmatik-font .btn.quiet {
+  border-color: var(--control-line);
+  text-decoration: none;
+  color: inherit;
 }
 .btn:disabled {
-  opacity: 0.45;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 
@@ -246,7 +272,7 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 3px;
   width: 100%;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
 }
 .seg.seg-grid button {
   border-radius: var(--radius-s);
@@ -272,6 +298,16 @@ nav.tabs {
   background: var(--sheet);
   border-top: 1px solid var(--rule);
   padding: 0 var(--safe-right) var(--safe-bottom) var(--safe-left);
+}
+/* On a wide screen the bar is as wide as the content, not the window. */
+@media (min-width: 700px) {
+  nav.tabs {
+    margin: 0 auto;
+    width: var(--content-width);
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+  }
 }
 /* Fills any gap below the bar with its own colour, whatever the viewport reports. */
 nav.tabs::after {
@@ -306,7 +342,7 @@ nav.tabs a {
   padding: 8px 0 9px;
   text-decoration: none;
   font-family: var(--sans);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
 }
@@ -392,7 +428,7 @@ nav.tabs a[aria-current='page']::before {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 18px);
+  bottom: calc(var(--tabbar-height) + var(--safe-bottom) + 10px);
   transform: translateX(-50%);
   max-width: calc(100% - 2 * var(--gutter));
   background: var(--ink);
@@ -432,17 +468,4 @@ nav.tabs a[aria-current='page']::before {
   border-radius: var(--radius-s);
   padding: 8px 12px;
   margin: 4px 0 8px;
-}
-/* The name and line of the app at the top of every page. */
-header.top .app-name {
-  margin: 0;
-  font-family: var(--serif);
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-header.top .app-line {
-  font-weight: 400;
-  font-style: italic;
-  color: var(--muted);
 }

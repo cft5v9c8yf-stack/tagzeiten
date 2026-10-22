@@ -29,7 +29,7 @@ export const seasonPreset = (o: SeasonOffer) => ({
 /** The article on the homepage; it opens in the browser, so the arrow points out of the app. */
 export function SeasonLink({ href }: { href: string }) {
   return (
-    <a className="season-link" href={href} target="_blank" rel="noopener noreferrer">
+    <a className="season-link" href={href} target="_blank" rel="noopener noreferrer" aria-label="Mehr dazu auf henoch.app, öffnet im Browser">
       Mehr dazu auf henoch.app
       <OutArrow />
     </a>

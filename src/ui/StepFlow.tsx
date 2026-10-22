@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { FlowIcon, type FlowIconName } from './FlowIcon';
 
 export interface FlowStep {
@@ -53,13 +53,44 @@ export function StepFlow({
     titleRef.current?.focus({ preventScroll: true });
   }, [current]);
 
+  // Names under all marks while they fit in the row, otherwise only under the one in view.
+  const listRef = useRef<HTMLOListElement>(null);
+  const [allNames, setAllNames] = useState(true);
+  const namesKey = steps.map((s) => `${s.short ?? ''}|${s.icon ?? ''}`).join('\n');
+  useLayoutEffect(() => {
+    const ol = listRef.current;
+    if (!ol) return;
+    const measure = () => {
+      const items = Array.from(ol.children) as HTMLElement[];
+      const named = items.filter((li) => li.querySelector('.flow-short'));
+      if (named.length === 0) return;
+      let total = 4 * (items.length - 1) + 28;
+      for (const li of items) {
+        const nameW = li.querySelector<HTMLElement>('.flow-short')?.offsetWidth ?? 0;
+        const btnW = li.classList.contains('current') ? 48 : 28;
+        total += Math.max(btnW, nameW) + 4;
+      }
+      setAllNames(total <= ol.clientWidth);
+    };
+    measure();
+    const ro = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(measure);
+    ro?.observe(ol);
+    return () => ro?.disconnect();
+  }, [namesKey, current]);
+
+  // The mark in view stays in view when the row scrolls.
+  useEffect(() => {
+    const li = listRef.current?.children[current ?? -1] as HTMLElement | undefined;
+    li?.scrollIntoView?.({ inline: 'center', block: 'nearest' });
+  }, [current]);
+
   const step = current === null ? undefined : steps[current];
   const Title = titleLevel === 4 ? 'h4' : 'h3';
 
   return (
     <div className="flow" ref={rootRef}>
-      <nav className="flow-chain" aria-label={`Ablauf: ${label}`}>
-        <ol>
+      <nav className={`flow-chain${allNames ? ' names-all' : ''}`} aria-label={`Ablauf: ${label}`}>
+        <ol ref={listRef}>
           {steps.map((s, i) => (
             <li
               key={s.id}
@@ -92,6 +123,13 @@ export function StepFlow({
           </Title>
           {children}
           {footer && <div className="flow-footer">{footer}</div>}
+          {current !== null && current > 0 && (
+            <div className="flow-back">
+              <button type="button" className="btn quiet" onClick={() => onSelect(current - 1)}>
+                Zurück zu: {steps[current - 1]!.title}
+              </button>
+            </div>
+          )}
         </section>
       )}
     </div>

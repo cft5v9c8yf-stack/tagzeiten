@@ -168,9 +168,7 @@ export function LoeheBook() {
     return (
       <>
         <div className="title-row">
-          <p className="back-link">
-            <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
-          </p>
+          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
           <h2 className="cat-part-title">Zum ganzen Katechismus</h2>
         </div>
         <p className="book-source">Wilhelm Löhe · {span(questionsIn(LOEHE_HOME))}</p>
@@ -189,9 +187,7 @@ export function LoeheBook() {
     return (
       <>
         <div className="title-row">
-          <p className="back-link">
-            <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
-          </p>
+          <BackLink to={to('/katechismus/loehe')}>{BOOK_TITLE}</BackLink>
           <h2 className="cat-part-title">
             {chiefNumber(chief) && <span className="no">{chiefNumber(chief)}</span>} {chief.heading ?? chief.title}
             {ci === week.chiefIndex && <span className="ktag">diese Woche</span>}
@@ -220,9 +216,7 @@ export function LoeheBook() {
   return (
     <>
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to={to('/katechismus')}>Lehre</BackLink>
-        </p>
+        <BackLink to={to('/katechismus')}>Lehre</BackLink>
         <h2 className="cat-part-title">{BOOK_TITLE}</h2>
       </div>
       <p className="book-source">

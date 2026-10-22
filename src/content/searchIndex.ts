@@ -166,7 +166,7 @@ export function contentDocs(today: DateKey): SearchDoc[] {
 /** The user's own Arena entries: searched on the device, like everything else. */
 export function arenaDocs(entries: readonly ArenaEntry[]): SearchDoc[] {
   return entries.map((e) => ({
-    area: e.kind === 'forge' ? 'Arena · Eisenschmiede' : 'Arena · Gebetskammer',
+    area: e.kind === 'forge' ? 'Arena · Eisenschmiede' : e.kind === 'desert' ? 'Arena · Wüstenwanderung' : 'Arena · Gebetskammer',
     title: e.title?.trim() || e.text.split('\n')[0]!.slice(0, 80) || e.verses[0] || 'Eintrag',
     text: [e.title ?? '', e.text, ...e.verses, ...e.concerns, ...(e.points ?? []).map((p) => p.text)].join(' '),
     to: `/arena/${e.id}`,

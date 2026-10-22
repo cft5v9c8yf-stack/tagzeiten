@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { trinityGroupOf } from '../../content/churchYearGuide';
 import { churchDay, churchYearOutline, SEASON_LABEL, type OutlineEntry } from '../../domain/churchYear';
 import { addDays, formatShort, type DateKey } from '../../domain/dates';
-import { Chevron } from './SundayPage';
+import { Chevron } from '../../ui/Chevron';
 
 /** Splits the weeks of a season into the Trinity groups, where there are any. */
 function groupsOf(weeks: OutlineEntry[]) {
@@ -122,7 +122,7 @@ export function SundayChooser({
                           >
                             <span className="week-date">{formatShort(w.date)}</span>
                             <span className="week-name">{w.name}</span>
-                            {w.date === current && <span className="ktag">diese Woche</span>}
+                            {w.date === current && <span className="ktag">diese Kirchenwoche</span>}
                           </button>
                         </li>
                       ))}
