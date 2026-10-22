@@ -42,7 +42,8 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 
 Am 06.10.2026 aus der ersten, langen Sitzung übernommen, damit jede neue Sitzung damit weiterarbeiten kann.
 
-- **Zweig:** Gearbeitet und gepusht wird nur auf `claude/focused-pascal-sol6ng` (PR #1 nach `main`).
+- **Zweig:** Gearbeitet und gepusht wird auf `claude/focused-pascal-sol6ng`. Vor Beginn `main` hineinholen (`git fetch origin main && git merge origin/main`). Gibt eine Sitzung einen anderen Zweig vor, gilt dasselbe: zuerst `main` hineinholen.
+- **Veröffentlicht wird nur von `main`** (seit 22.10.2026): Live geht eine Änderung über einen PR nach `main`, den Andreas freigibt. Vorher veröffentlichte auch der Arbeitszweig, und zwei Sitzungen hätten sich beinahe gegenseitig überschrieben. Nach dem Merge den Arbeitszweig wieder auf `main` bringen.
 - **Nie umbenennen:** den Namen der Datenbank (`'tagzeiten'` in `src/data/db.ts`) und `BACKUP_FORMAT` (`'tagzeiten'` in `src/domain/backup.ts`). Sonst findet die App die Einträge und alte Sicherungen nicht mehr.
 - **Die App startet immer auf „Heute“**, auch am Sonntag.
 - **Vor jedem Push:** `npx vitest run`, `npm run build` (prüft auch die Typen) und `npm run build:demo`. Schlägt etwas fehl, wird nicht gepusht.

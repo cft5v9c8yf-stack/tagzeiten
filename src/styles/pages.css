@@ -4332,9 +4332,10 @@ mark.placeholder {
 .bible-tick .wa-tick {
   border-bottom: 0;
 }
-/* Wüstenwanderung: the day's reading above the habits. */
-.desert-reading .wa-tick {
-  border-bottom: 0;
+/* Wüstenwanderung: the day's reading above the habits, to read only. */
+.desert-reading-ref {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
 }
 .desert-reading-choice .seg {
   margin-top: 4px;

@@ -4,7 +4,8 @@ name: Pages
 
 on:
   push:
-    branches: [claude/focused-pascal-sol6ng, main]
+    # Published from main only (22.10.2026): two branches publishing overwrote each other.
+    branches: [main]
   workflow_dispatch:
 
 permissions:
