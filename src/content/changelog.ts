@@ -13,11 +13,19 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.28.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: ein Titel für jedes Treffen, der Vorsatz bricht um',
+    changes: [
+      { area: 'Arena', text: 'Ein Treffen am Abendbrunnen hat wie die Eisenschmiede ein Feld „Titel“: So heißt es in der Übersicht, sonst nach deinem Vorsatz. Der Vorsatz bricht im Feld um und ist ganz zu lesen; Enter macht keine neue Zeile, er bleibt ein Satz. Alle Felder eines Treffens sind so hoch wie ihr Text.' },
+    ],
+  },
+  {
     version: '1.27.1',
     date: '2026-10-22',
     title: 'Abendbrunnen: die Notizfelder wachsen mit dem Text',
     changes: [
-      { area: 'Arena', text: 'Die Felder eines Treffens am Abendbrunnen waren bei langem Text zu niedrig, der Text war halb verdeckt. Sie wachsen jetzt mit, wie in der Gebetskammer. Der Vorsatz ist ein kurzer Satz in einer Zeile (bis 100 Zeichen); unter „Heute“ darf er umbrechen, nur „Mein Vorsatz“ davor bleibt in einer Zeile.' },
+      { area: 'Arena', text: 'Die Felder eines Treffens am Abendbrunnen waren bei langem Text zu niedrig, der Text war halb verdeckt. Sie wachsen jetzt mit, wie in der Gebetskammer. Unter „Heute“ bricht der Vorsatz um, nur „Mein Vorsatz“ davor bleibt in einer Zeile.' },
     ],
   },
   {

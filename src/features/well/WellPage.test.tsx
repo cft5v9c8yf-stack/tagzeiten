@@ -128,13 +128,23 @@ describe('Treffen am Abendbrunnen', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Mein Vorsatz für diese Woche'), { target: { value: 'Jeden Abend zehn Minuten zuhören' } });
     fireEvent.change(screen.getByLabelText('Gebetsanliegen von ihr'), { target: { value: 'Kraft für die Woche' } });
+    // The resolution is one sentence: it wraps in a growing field, a line break becomes a space.
+    expect(screen.getByLabelText('Mein Vorsatz für diese Woche').tagName).toBe('TEXTAREA');
+    fireEvent.change(screen.getByLabelText('Mein Vorsatz für diese Woche'), { target: { value: 'Jeden Abend\nzehn Minuten zuhören' } });
+    expect(first.store.getProfile().well.meetings[0]!.resolution).toBe('Jeden Abend zehn Minuten zuhören');
     fireEvent.change(screen.getByLabelText('Nächstes Treffen am Abendbrunnen'), { target: { value: '2026-10-29' } });
     await first.store.flush();
     const saved = first.store.getProfile().well.meetings[0]!;
     expect(saved).toMatchObject({ date: '2026-10-22', resolution: 'Jeden Abend zehn Minuten zuhören', next: '2026-10-29' });
-    // Back on the title page the meeting stands in the list, named by its resolution.
+    // Back on the title page the meeting stands in the list, named by its resolution …
     fireEvent.click(screen.getByRole('link', { name: 'Zurück: Treffen am Abendbrunnen' }));
     expect(await screen.findByRole('link', { name: /Jeden Abend zehn Minuten zuhören/ })).toBeTruthy();
+    // … or by a title of its own, as in the Eisenschmiede.
+    fireEvent.click(screen.getByRole('link', { name: /Jeden Abend zehn Minuten zuhören/ }));
+    fireEvent.change(await screen.findByLabelText('Titel'), { target: { value: 'Nach dem Urlaub' } });
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Treffen am Abendbrunnen' }));
+    expect(await screen.findByRole('link', { name: /Nach dem Urlaub/ })).toBeTruthy();
+    await first.store.flush();
     cleanup();
     await mount(`/arena/treffen-${saved.id}`, undefined, db);
     expect((screen.getByLabelText('Mein Vorsatz für diese Woche') as HTMLTextAreaElement).value).toBe('Jeden Abend zehn Minuten zuhören');

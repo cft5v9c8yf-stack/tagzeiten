@@ -44,7 +44,20 @@ function Verse({ verse }: { verse: WeeklyVerse }) {
 }
 
 /** A few lines of free text; the field grows with the text, so the page scrolls and not a small window inside it. */
-function NoteField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function NoteField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  single = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  /** One sentence: it wraps, but Enter adds no line break. */
+  single?: boolean;
+}) {
   const id = useId();
   const area = useRef<HTMLTextAreaElement>(null);
   useLayoutEffect(() => {
@@ -62,24 +75,17 @@ function NoteField({ label, value, onChange }: { label: string; value: string; o
   return (
     <div className="field well-note">
       <label htmlFor={id}>{label}</label>
-      <textarea id={id} ref={area} rows={2} value={value} onChange={(e) => onChange(e.target.value)} />
-    </div>
-  );
-}
-
-/** The resolution is one short sentence: a one-line field. */
-function LineField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
-  const id = useId();
-  return (
-    <div className="field well-note">
-      <label htmlFor={id}>{label}</label>
-      <input
+      <textarea
         id={id}
-        type="text"
-        maxLength={100}
+        ref={area}
+        className="grow-field"
+        rows={1}
         value={value}
-        placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
-        onChange={(e) => onChange(e.target.value.replace(/\n/g, ' '))}
+        placeholder={placeholder}
+        onChange={(e) => onChange(single ? e.target.value.replace(/\n/g, ' ') : e.target.value)}
+        onKeyDown={(e) => {
+          if (single && e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault();
+        }}
       />
     </div>
   );
@@ -177,6 +183,7 @@ export function WellMeetingPage({ id }: { id: string }) {
   const profile = useProfile();
   const navigate = useNavigate();
   const dateId = useId();
+  const titleId = useId();
   const nextId = useId();
   const toast = useToast();
   const pin = usePin();
@@ -241,7 +248,29 @@ export function WellMeetingPage({ id }: { id: string }) {
           onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
         />
       </div>
-      <LineField label={WELL_NOTES.resolution} value={meeting.resolution} onChange={(resolution) => set({ resolution })} />
+      <div className="field arena-title">
+        <label htmlFor={titleId}>Titel</label>
+        <input
+          id={titleId}
+          type="text"
+          value={meeting.title ?? ''}
+          placeholder="Wie das Treffen in der Übersicht heißen soll"
+          onChange={(e) => {
+            const v = e.target.value;
+            store.updateWellMeeting(id, (m) => {
+              const { title: _, ...rest } = m;
+              return v ? { ...rest, title: v } : rest;
+            });
+          }}
+        />
+      </div>
+      <NoteField
+        single
+        label={WELL_NOTES.resolution}
+        value={meeting.resolution}
+        placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+        onChange={(resolution) => set({ resolution })}
+      />
       <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
       <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
       <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />

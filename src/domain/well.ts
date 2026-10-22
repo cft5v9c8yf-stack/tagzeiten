@@ -10,6 +10,8 @@ import { addDays, isDateKey, type DateKey } from './dates';
 export interface WellMeeting {
   id: string;
   date: DateKey;
+  /** A title chosen by the user; the list shows it instead of the resolution. */
+  title?: string;
   /** "Mein Vorsatz für diese Woche". */
   resolution: string;
   /** Ticked at the next meeting: "Umgesetzt?". */
@@ -51,6 +53,7 @@ export const newMeeting = (date: DateKey, id = newMeetingId()): WellMeeting => (
 
 /** Nothing written yet: such a meeting is not kept. */
 export const isEmptyMeeting = (m: WellMeeting) =>
+  !m.title?.trim() &&
   !m.resolution.trim() && !m.herWish.trim() && !m.herConcern.trim() && !m.myConcern.trim() && !m.next;
 
 export function normalizeWell(raw: unknown): Well {
@@ -72,6 +75,7 @@ export function normalizeWell(raw: unknown): Well {
       myConcern: str(x.myConcern),
     };
     if (isDateKey(x.next)) m.next = x.next;
+    if (str(x.title).trim()) m.title = str(x.title);
     if (typeof x.archivedAt === 'number') m.archivedAt = x.archivedAt;
     else if (typeof x.pinnedAt === 'number') m.pinnedAt = x.pinnedAt;
     if (isEmptyMeeting(m)) continue;
@@ -94,9 +98,9 @@ export function previousResolution(well: Well, current: Pick<WellMeeting, 'id' |
   return well.meetings.find((m) => m.id !== current.id && m.date < current.date && m.resolution.trim() !== '');
 }
 
-/** How a meeting is named in the list: by its resolution, else by its first note. */
+/** How a meeting is named in the list: by its title, else by its resolution, else by its first note. */
 export function meetingTitle(m: WellMeeting): string {
-  const line = [m.resolution, m.herWish, m.herConcern, m.myConcern].map((t) => t.trim()).find(Boolean) ?? 'Treffen';
+  const line = [m.title ?? '', m.resolution, m.herWish, m.herConcern, m.myConcern].map((t) => t.trim()).find(Boolean) ?? 'Treffen';
   const first = line.split('\n')[0]!;
   return first.length > 80 ? `${first.slice(0, 79)}…` : first;
 }
@@ -125,7 +129,7 @@ export function pinnedFirstMeetings(meetings: readonly WellMeeting[]): WellMeeti
 export function searchMeetings(meetings: readonly WellMeeting[], query: string): WellMeeting[] {
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   return meetings.filter((m) => {
-    const hay = [m.resolution, m.herWish, m.herConcern, m.myConcern].join(' ').toLowerCase();
+    const hay = [m.title ?? '', m.resolution, m.herWish, m.herConcern, m.myConcern].join(' ').toLowerCase();
     return words.every((w) => hay.includes(w));
   });
 }

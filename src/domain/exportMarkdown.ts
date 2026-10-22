@@ -169,6 +169,7 @@ function wellToMarkdown(well: Well | undefined): string[] {
   const out = ['', '# Treffen am Abendbrunnen', ''];
   for (const m of [...meetings].sort((a, b) => (a.date < b.date ? -1 : 1))) {
     out.push(`## ${date(m.date)}`, '');
+    if (m.title?.trim()) out.push(`**Titel:** ${m.title.trim()}`, '');
     if (m.resolution.trim()) out.push(`**Mein Vorsatz:** ${oneLine(m.resolution)}${m.resolutionDone ? ' (umgesetzt)' : ''}`, '');
     if (m.herWish.trim()) out.push(`**Ihr Wunsch an mich:** ${oneLine(m.herWish)}`, '');
     if (m.herConcern.trim()) out.push(`**Gebetsanliegen von ihr:** ${oneLine(m.herConcern)}`, '');
