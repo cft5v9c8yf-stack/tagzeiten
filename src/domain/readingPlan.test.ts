@@ -241,7 +241,7 @@ describe('plans by sections (1.16)', () => {
 
   it('spreads the chapters evenly over the sections, in order, without gap', () => {
     const cases: [string, number, number][] = [
-      ['einsteiger', 43, 43],
+      ['einsteiger', 59, 59],
       ['nt90', 90, 260],
       ['johannes', 28, 28],
       ['johannes-offb', 50, 50],
@@ -279,9 +279,9 @@ describe('plans by sections (1.16)', () => {
     expect(portionLabel(t, t.portions[8]!)).toBe('Apostelgeschichte 18; 1. Thessalonicher 1');
   });
 
-  it('Christus finden: John, 1 John, Galatians, Ephesians, 1 Peter, a chapter a day', () => {
+  it('Christus finden: John, 1 John, Romans, Galatians, Ephesians, 1 Peter, a chapter a day', () => {
     const books = [...new Set(chapterList('einsteiger').map((c) => c.replace(/ \d+$/, '')))];
-    expect(books).toEqual(['Johannes', '1.Johannes', 'Galater', 'Epheser', '1.Petrus']);
+    expect(books).toEqual(['Johannes', '1.Johannes', 'Römer', 'Galater', 'Epheser', '1.Petrus']);
     const t = getPlan('einsteiger').tracks[0]!;
     expect(t.portions.every((p) => p.from === p.to && !p.more)).toBe(true);
     expect(getPlan('einsteiger').def.name).toBe('Christus finden');

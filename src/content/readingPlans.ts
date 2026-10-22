@@ -169,12 +169,12 @@ const whole = (books: readonly Book[]): Stretch[] => books.map((b) => ({ slug: b
 
 /**
  * "Christus finden", for beginners: the books Luther in his preface to the New
- * Testament (1522) names as those that show Christ most plainly; of Paul's
- * letters Galatians and Ephesians, as wished (22.10.2026).
+ * Testament (1522) names as those that show Christ most plainly, in his order.
  */
 export const BEGINNER_SEQUENCE: readonly Stretch[] = [
   { slug: 'Johannes' },
   { slug: '1.Johannes' },
+  { slug: 'Römer' },
   { slug: 'Galater' },
   { slug: 'Epheser' },
   { slug: '1.Petrus' },
@@ -254,7 +254,7 @@ const BY_PROGRESS = 'Der Plan läuft nach Fortschritt, nicht nach Datum: wer aus
 export const SECTION_PLANS = {
   beginner: {
     name: 'Christus finden',
-    description: `Für den Anfang: die Bücher, die nach Luthers Vorrede auf das Neue Testament (1522) Christus am deutlichsten zeigen. Das Evangelium nach Johannes und sein erster Brief, von Paulus der Galater- und der Epheserbrief, dazu der 1. Petrusbrief: 43 Kapitel, eines am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
+    description: `Für den Anfang die Bücher, die Luther in seiner Vorrede auf das Neue Testament (1522) nennt: „Summa, Sankt Johannes' Evangelium und seine erste Epistel, Sankt Pauli Epistel, sonderlich die zu den Römern, Galatern und Ephesern, und Sankt Peters erste Epistel, das sind die Bücher, die dir Christum zeigen und alles lehren, das dir zu wissen nötig und selig ist, ob du schon kein ander Buch noch Lehre nimmer sähest noch hörtest.“ In dieser Reihenfolge, 59 Kapitel, eines am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
   },
   nt90: {
     name: 'Neues Testament in 90 Tagen',
