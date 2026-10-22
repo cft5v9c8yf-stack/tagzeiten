@@ -4,6 +4,7 @@
  * of what is confessed is noted (rule 9): the fields hold resolutions, wishes
  * and prayer concerns only.
  */
+import { WELL_HABIT } from '../content/habits';
 import { MAX_PINNED } from './arena';
 import { addDays, isDateKey, type DateKey } from './dates';
 
@@ -33,6 +34,8 @@ export interface Well {
   on: boolean;
   /** Newest first. */
   meetings: WellMeeting[];
+  /** The habit that leads from "Heute" to the Abendbrunnen, if another than the preset "Treffen am Abendbrunnen". */
+  habitId?: string;
 }
 
 export const emptyWell = (): Well => ({ on: false, meetings: [] });
@@ -88,7 +91,9 @@ export function normalizeWell(raw: unknown): Well {
     .sort((a, b) => a.pinnedAt! - b.pinnedAt!)
     .slice(MAX_PINNED)
     .forEach((m) => delete m.pinnedAt);
-  return { on: r.on === true, meetings: meetings.sort(newestFirst) };
+  const out: Well = { on: r.on === true, meetings: meetings.sort(newestFirst) };
+  if (str(r.habitId)) out.habitId = str(r.habitId);
+  return out;
 }
 
 const newestFirst = (a: WellMeeting, b: WellMeeting) => (a.date === b.date ? 0 : a.date < b.date ? 1 : -1);
@@ -133,3 +138,7 @@ export function searchMeetings(meetings: readonly WellMeeting[], query: string):
     return words.every((w) => hay.includes(w));
   });
 }
+
+/** The habit that leads to the Abendbrunnen: the one chosen while it exists, else the preset. */
+export const linkedHabit = (well: Well, habits: readonly { id: string }[]): string =>
+  well.habitId && habits.some((h) => h.id === well.habitId) ? well.habitId : WELL_HABIT;

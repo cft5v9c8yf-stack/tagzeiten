@@ -5,6 +5,8 @@ import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model
 import { TileGroup } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
+import { WELL_HABIT } from '../../content/habits';
+import { linkedHabit } from '../../domain/well';
 import { DesertSettings, desertLine } from '../desert/DesertSettings';
 import { FlowIcon } from '../../ui/FlowIcon';
 import { ICON_SIZE } from '../../ui/iconBase';
@@ -175,6 +177,10 @@ function WellSettings() {
   const store = useStore();
   const profile = useProfile();
   const nameId = useId();
+  const habitId = useId();
+  // Any habit ticked by hand can lead to the Abendbrunnen, also one of one's own.
+  const habits = profile.habits.filter((h) => !h.auto && !h.desert);
+  const linked = linkedHabit(profile.well, habits);
   return (
     <>
       <ShowHide
@@ -199,6 +205,37 @@ function WellSettings() {
       <p className="small muted">
         Ist ein Name eingetragen, steht er in den Leitfragen, die du dir selbst stellst. Es ist derselbe Name wie unter „Mein Haus“.
       </p>
+      {profile.well.on && (
+        <>
+          <div className="field">
+            <label htmlFor={habitId}>Gewohnheit, die zum Treffen führt</label>
+            <select
+              id={habitId}
+              value={linked}
+              onChange={(e) => {
+                const v = e.target.value;
+                store.updateProfile(
+                  (p) => {
+                    const { habitId: _, ...rest } = p.well;
+                    return { ...p, well: v === WELL_HABIT ? rest : { ...rest, habitId: v } };
+                  },
+                  { immediate: true },
+                );
+              }}
+            >
+              {habits.map((h) => (
+                <option key={h.id} value={h.id}>
+                  {h.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="small muted">
+            Ist diese Gewohnheit eingeschaltet, steht unter „Heute“ bei ihr der Weg zum Treffen am Abendbrunnen. Das kann
+            auch eine eigene sein, etwa „Gespräch mit meiner Frau“.
+          </p>
+        </>
+      )}
     </>
   );
 }

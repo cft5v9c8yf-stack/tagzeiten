@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.29.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: von der Gewohnheit unter „Heute“ direkt zum Treffen',
+    changes: [
+      { area: 'Heute', text: 'Neue wöchentliche Gewohnheit „Treffen am Abendbrunnen“. Ist sie eingeschaltet, steht unter „Heute“ bei ihr der Weg zum Treffen in der Arena. Sie ist nur zu sehen, solange der Abendbrunnen eingeschaltet ist.' },
+      { area: 'Einstellungen', text: 'Unter „Treffen am Abendbrunnen“ wählst du, welche Gewohnheit zum Treffen führt. Das kann auch eine eigene sein, etwa „Gespräch mit meiner Frau“. Löschst du sie, führt wieder die Vorlage hin.' },
+    ],
+  },
+  {
     version: '1.28.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: ein Titel für jedes Treffen, der Vorsatz bricht um',

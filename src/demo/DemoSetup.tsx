@@ -59,7 +59,7 @@ export function DemoSetup() {
     store.updateProfile(
       (p) => ({
         ...p,
-        habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h)),
+        habits: p.habits.map((h) => (h.id === 'blessChildren' ? { ...h, focus: true } : h.id === 'wellMeeting' ? { ...h, active: true } : h)),
         showHabitHistory: true,
         well: {
           on: true,

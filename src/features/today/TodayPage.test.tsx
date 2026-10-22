@@ -52,6 +52,36 @@ describe('Today', () => {
     expect(screen.queryByText('Die drei Dinge')).toBeNull();
   });
 
+  it('leads from the weekly habit of the Abendbrunnen into the Arena, and hides the habit while the Abendbrunnen is off', async () => {
+    const withHabit = (on: boolean) => (s: Store) => {
+      withHouse(s);
+      s.updateProfile((p) => ({ ...p, well: { ...p.well, on }, habits: p.habits.map((h) => (h.id === 'wellMeeting' ? { ...h, active: true } : h)) }), { immediate: true });
+    };
+    await renderToday('2026-09-25', withHabit(true));
+    expect(screen.getByRole('checkbox', { name: /Treffen am Abendbrunnen/ })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Zum Treffen am Abendbrunnen' }).getAttribute('href')).toBe('/arena?bereich=abendbrunnen');
+    cleanup();
+    await renderToday('2026-09-25', withHabit(false));
+    expect(screen.queryByText('Treffen am Abendbrunnen')).toBeNull();
+  });
+
+  it('leads from a habit of one\'s own into the Abendbrunnen, when it is chosen for it', async () => {
+    await renderToday('2026-09-25', (s) => {
+      withHouse(s);
+      s.updateProfile(
+        (p) => ({
+          ...p,
+          well: { ...p.well, on: true, habitId: 'eigen-gespraech' },
+          habits: [...p.habits, { id: 'eigen-gespraech', name: 'Gespräch mit meiner Frau', rhythm: 'weekly', auto: null, active: true, preset: false, focus: false }],
+        }),
+        { immediate: true },
+      );
+    });
+    const link = screen.getByRole('link', { name: 'Zum Treffen am Abendbrunnen' });
+    // The way in stands right under the habit it belongs to.
+    expect(link.closest('p')!.previousElementSibling!.textContent).toContain('Gespräch mit meiner Frau');
+  });
+
   it('keeps "Die drei Dinge" as it was while the Abendbrunnen is off', async () => {
     await renderToday('2026-09-25');
     expect(screen.getByText('Die drei Dinge')).toBeTruthy();

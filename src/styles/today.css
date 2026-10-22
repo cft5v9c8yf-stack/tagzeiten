@@ -781,3 +781,7 @@ a.cy-week-name {
 .focus-row .three-key {
   white-space: nowrap;
 }
+/* Under the habit of the Abendbrunnen: the way into its place in the Arena. */
+.habit-link {
+  margin: -2px 0 8px 40px;
+}
