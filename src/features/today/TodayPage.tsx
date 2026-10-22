@@ -94,13 +94,13 @@ function ThreeThings({ day, date }: { day: Day; date: string }) {
           <h4 className="focus-head">Familie</h4>
           <div className="panel three">
             {family.resolution && (
-              <div className="three-row">
+              <div className="three-row focus-row">
                 <span className="three-key">Mein Vorsatz</span>
                 <span>{family.resolution}</span>
               </div>
             )}
             {family.wish && (
-              <div className="three-row">
+              <div className="three-row focus-row">
                 <span className="three-key">Ihr Wunsch</span>
                 <span>{family.wish}</span>
               </div>

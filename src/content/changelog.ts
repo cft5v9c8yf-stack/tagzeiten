@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.27.1',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: die Notizfelder wachsen mit dem Text',
+    changes: [
+      { area: 'Arena', text: 'Die Felder eines Treffens am Abendbrunnen waren bei langem Text zu niedrig, der Text war halb verdeckt. Sie wachsen jetzt mit, wie in der Gebetskammer. Der Vorsatz ist ein kurzer Satz in einer Zeile (bis 100 Zeichen); unter „Heute“ darf er umbrechen, nur „Mein Vorsatz“ davor bleibt in einer Zeile.' },
+    ],
+  },
+  {
     version: '1.27.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: dieselben Zeichen wie überall in der Arena',

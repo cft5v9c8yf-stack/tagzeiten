@@ -4351,7 +4351,8 @@ mark.placeholder {
 }
 .well-note textarea {
   width: 100%;
-  resize: vertical;
+  resize: none;
+  overflow: hidden;
 }
 .well-last {
   margin: 0 0 16px;

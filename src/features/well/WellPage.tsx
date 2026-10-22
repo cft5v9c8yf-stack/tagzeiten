@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { TileGroup } from '../../ui/TileGroup';
 import { useToast } from '../../app/Toast';
@@ -43,13 +43,44 @@ function Verse({ verse }: { verse: WeeklyVerse }) {
   );
 }
 
-/** A few lines of free text; the field grows with a taller rows count only when the text is long. */
+/** A few lines of free text; the field grows with the text, so the page scrolls and not a small window inside it. */
 function NoteField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  const id = useId();
+  const area = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const fit = () => {
+      const el = area.current;
+      if (!el) return;
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight + 2}px`;
+    };
+    fit();
+    // Turned, the phone is wider or narrower, and the text needs another height.
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, [value]);
+  return (
+    <div className="field well-note">
+      <label htmlFor={id}>{label}</label>
+      <textarea id={id} ref={area} rows={2} value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+/** The resolution is one short sentence: a one-line field. */
+function LineField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const id = useId();
   return (
     <div className="field well-note">
       <label htmlFor={id}>{label}</label>
-      <textarea id={id} rows={Math.max(2, Math.min(8, value.split('\n').length + 1))} value={value} onChange={(e) => onChange(e.target.value)} />
+      <input
+        id={id}
+        type="text"
+        maxLength={100}
+        value={value}
+        placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+        onChange={(e) => onChange(e.target.value.replace(/\n/g, ' '))}
+      />
     </div>
   );
 }
@@ -210,7 +241,7 @@ export function WellMeetingPage({ id }: { id: string }) {
           onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
         />
       </div>
-      <NoteField label={WELL_NOTES.resolution} value={meeting.resolution} onChange={(resolution) => set({ resolution })} />
+      <LineField label={WELL_NOTES.resolution} value={meeting.resolution} onChange={(resolution) => set({ resolution })} />
       <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
       <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
       <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
