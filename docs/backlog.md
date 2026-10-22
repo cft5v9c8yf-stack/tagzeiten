@@ -279,4 +279,24 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
 - **Gerätewechsel iPhone/iPad:** Heute hat jedes Gerät seinen eigenen Bestand (Regel 10); Sichern und
   Einspielen unter Deine Daten ersetzt den Bestand. Denkbar: freiwilliger, Ende-zu-Ende verschlüsselter
   Abgleich (CLAUDE.md sieht ihn vor), oder ein Einspielen, das zusammenführt, statt zu ersetzen.
+  **Überlegung vom 21.10.2026 (nur Theorie, nichts gebaut):** Drei Stufen, von leicht nach schwer:
+  (1) Einspielen, das zusammenführt; (2) verschlüsselte Sicherung in einem Ordner, den der Nutzer selbst
+  wählt (iCloud, Nextcloud); (3) echter Abgleich mit eigenem Server (Schlüssel aus Passphrase, Koppeln per
+  QR-Code, Löschmarkierungen, Betrieb). Empfehlung: erst Stufe 1.
+  - **Stufe 1, Entwurf:** unter Deine Daten neben „Alles ersetzen“ ein zweiter Weg „Sicherung
+    zusammenführen“, mit Vorschau in neutralen Worten (X Tage neu, Y geändert, Z unverändert). Reine
+    Funktion `mergeBackup(current, incoming)` in `src/domain/backup.ts`, dazu `store.mergeBackup(json)` mit
+    `bulkPut` statt `clear` in derselben Transaktion wie `importBackup`. Dateiformat und `BACKUP_FORMAT`
+    bleiben, alte Sicherungen gehen weiter.
+  - **Regeln:** Je Eintrag gewinnt der neuere `updatedAt`. Tage (Schlüssel Datum), Arena-Einträge (`id`) und
+    Winter-Arc-Zeilen (`id`, `[runId+date]` usw.) ganz, nie Feld für Feld gemischt. Gehört ein
+    Winter-Arc-Tag zu einer Runde, die fehlt, kommt die Runde mit. Zu prüfen: Sind die Arena-IDs
+    geräteübergreifend eindeutig (zufällig, nicht fortlaufend)?
+  - **Profil:** Leseplan je Plan die weitere Position (Fortschritt, kein Rückstand, Regel 6); Einstellungen
+    gewinnen auf dem Gerät, auf dem eingespielt wird (das Profil hat kein `updatedAt`); beantwortete
+    Fragen und Ähnliches als Vereinigung.
+  - **Grenzen:** Löschen wird nicht übertragen (keine Löschmarkierungen), ein gelöschter Eintrag kommt
+    beim Zusammenführen zurück; das in der Hilfe sagen. Falsch gehende Uhren können den falschen Eintrag
+    gewinnen lassen.
+  - **Aufwand:** etwa eine Sitzung; Tests für Randfälle (leere Tage, gleiche Zeitstempel, fehlende Runden).
 - **Passionszeit** als zweite Gelegenheit für die Wüstenzeit (Aschermittwoch bis Karsamstag, Matthäus 4,1).
