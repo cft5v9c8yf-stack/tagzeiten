@@ -11,6 +11,10 @@ Ein Parameter, der nicht erfüllt ist, hält die Freigabe an. Es wird nichts „
 
 ## A. Automatisch (`node scripts/freigabe.mjs`)
 
+Den Teil A und die Regelprüfung der Änderung führt der Prüfer aus: der Agent `freigabe-pruefer`
+(`.claude/agents/freigabe-pruefer.md`). Claude ruft ihn auf, wenn Andreas „Freigabe starten“ sagt. Er berichtet nur,
+ändert nichts und beantwortet nie die Parameter B. Erst bei „Parameter B können abgefragt werden“ stellt Claude die Fragen.
+
 | # | Parameter | Erfüllt, wenn |
 |---|-----------|---------------|
 | A1 | Stand des Zweigs | Arbeitsverzeichnis sauber, `main` ist in `vorschau` enthalten |
