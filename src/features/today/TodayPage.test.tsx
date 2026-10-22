@@ -37,11 +37,27 @@ async function renderToday(date: string, prepare?: (s: Store) => void, now = new
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByText('Die drei Dinge');
+  await screen.findByText(/^(Die drei Dinge|Mein Fokus heute)$/);
   return store;
 }
 
 describe('Today', () => {
+  it('splits the focus into a personal and a family part when the Abendbrunnen has set a resolution', async () => {
+    const meeting = { id: 'a', date: '2026-09-23', resolution: 'Abends zuhören', resolutionDone: false, herWish: 'Ein freier Abend', herConcern: '', myConcern: '' };
+    await renderToday('2026-09-25', (s) => s.updateProfile((p) => ({ ...p, well: { on: true, meetings: [meeting] } }), { immediate: true }));
+    expect(screen.getByText('Persönlich')).toBeTruthy();
+    expect(screen.getByText('Vorsatz für das Familienleben')).toBeTruthy();
+    expect(screen.getByText('Abends zuhören')).toBeTruthy();
+    expect(screen.getByText('Ein freier Abend')).toBeTruthy();
+    expect(screen.queryByText('Die drei Dinge')).toBeNull();
+  });
+
+  it('keeps "Die drei Dinge" as it was while the Abendbrunnen is off', async () => {
+    await renderToday('2026-09-25');
+    expect(screen.getByText('Die drei Dinge')).toBeTruthy();
+    expect(screen.queryByText('Persönlich')).toBeNull();
+  });
+
   it('shows the thanks of the day under the three things during a Wüstenzeit with the thanks, only when there are some', async () => {
     const store = await renderToday('2026-09-24', (s) => {
       s.startDesert('2026-09-23', 40);

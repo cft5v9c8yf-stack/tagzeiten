@@ -4404,3 +4404,10 @@ mark.placeholder {
 .well-intent p {
   margin: 0 0 4px;
 }
+.focus-head {
+  margin: 14px 0 6px;
+  font: 600 0.85rem var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

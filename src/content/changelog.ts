@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.24.0',
+    date: '2026-10-22',
+    title: 'Heute: „Mein Fokus heute“ mit dem Vorsatz fürs Familienleben',
+    changes: [
+      { area: 'Heute', text: 'Hat das Treffen am Abendbrunnen für die Woche einen Vorsatz oder einen Wunsch festgehalten, heißt der Abschnitt „Mein Fokus heute“. Er hat zwei Teile: „Persönlich“ mit den drei Dingen aus der Stillen Zeit und „Vorsatz für das Familienleben“ mit deinem Vorsatz und ihrem Wunsch. Sonst bleibt „Die drei Dinge“ wie bisher.' },
+    ],
+  },
+  {
     version: '1.23.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: der Vorsatz der Woche in der Stillen Zeit',

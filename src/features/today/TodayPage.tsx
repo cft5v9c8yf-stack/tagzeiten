@@ -18,6 +18,7 @@ import { LutherRose } from '../../ui/LutherRose';
 import { activeRun, hallModeIn, isInRun, runName, shortSpan } from '../../domain/winterArc';
 import { canWrite, habitsOf } from '../../domain/desert';
 import { weekdayOf } from '../../domain/dates';
+import { weekIntent } from '../../domain/well';
 import { SundayRest } from './SundayRest';
 import { todayOffer } from '../../domain/seasons';
 import { TodaySeason } from '../desert/SeasonInvite';
@@ -58,10 +59,13 @@ function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
   );
 }
 
-function ThreeThings({ day }: { day: Day }) {
+function ThreeThings({ day, date }: { day: Day; date: string }) {
   const any = THREE_KEYS.some((k) => day.morning.three[k]);
+  // With the Abendbrunnen on and a resolution of the week: the focus has a personal and a family part.
+  const family = weekIntent(useProfile().well, date);
   return (
-    <Section id="today.three" title="Die drei Dinge">
+    <Section id="today.three" title={family ? 'Mein Fokus heute' : 'Die drei Dinge'}>
+      {family && <h4 className="focus-head">Persönlich</h4>}
       <div className="panel three">
         {any ? (
           THREE_KEYS.map((k) => {
@@ -85,6 +89,25 @@ function ThreeThings({ day }: { day: Day }) {
           </p>
         )}
       </div>
+      {family && (
+        <>
+          <h4 className="focus-head">Vorsatz für das Familienleben</h4>
+          <div className="panel three">
+            {family.resolution && (
+              <div className="three-row">
+                <span className="three-key">Mein Vorsatz</span>
+                <span>{family.resolution}</span>
+              </div>
+            )}
+            {family.wish && (
+              <div className="three-row">
+                <span className="three-key">Ihr Wunsch</span>
+                <span>{family.wish}</span>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </Section>
   );
 }
@@ -170,7 +193,7 @@ export function TodayPage() {
       {season && <TodaySeason offer={season} />}
 
       <ReadingPanel date={date} isToday={isToday} />
-      <ThreeThings day={day} />
+      <ThreeThings day={day} date={date} />
       {hallRun && isInRun(hallRun, date) && habitsOf(hallRun, profile).some(canWrite) && <DayThanks day={day} />}
 
       {!resting && (
