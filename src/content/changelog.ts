@@ -13,14 +13,298 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
-    version: '1.16.0',
-    date: '2026-10-21',
+    version: '1.22.0',
+    date: '2026-10-22',
     title: 'Lesepläne nach Abschnitten',
     changes: [
       { area: 'Wort', text: 'Unter „Leseplan einstellen“ stehen neue Pläne zur Wahl: für Einsteiger „Christus finden“ mit den Büchern, die nach Luthers Vorrede auf das Neue Testament Christus am deutlichsten zeigen (Johannes, 1. Johannes, Römer, Galater, Epheser, 1. Petrus), mit Luthers Worten dazu, auf Wunsch mit einem Psalm; „Mit Paulus unterwegs“, die Apostelgeschichte mit den Briefen an ihrem Ort, in 40, 60 oder einer eigenen Zahl von Tagen; die Bibel in einem Jahr. Die Kapitel sind gleichmäßig auf die Abschnitte verteilt.' },
       { area: 'Wort', text: 'Unter „Heute lesen“ steht, welcher Abschnitt dran ist, und du hakst ihn dort ab, wie mit „Bibel lesen“ unter „Heute“. Jeder Plan merkt sich, wo du stehst; wer aussetzt, macht beim nächsten Abschnitt weiter.' },
-      { area: 'Arena', text: 'Zur Wüstenzeit gehört der Leseplan „Bewährung und Nachfolge“: die Versuchung Jesu, die Bergpredigt, das Evangelium nach Johannes, Jakobus, 1. Petrus und Hebräer, verteilt auf die Tage der Wüstenzeit, bei vielen Tagen in kleineren Abschnitten. Beim Beginnen ist er vorgeschlagen; du kannst deinen Plan behalten oder ohne Lesung gehen, und das jederzeit ändern.' },
-      { area: 'Arena', text: 'In der Wüstenwanderung steht der Abschnitt des Tages über den Gewohnheiten und wird dort abgehakt. „Bewährung und Nachfolge“ gilt vom ersten bis zum letzten Tag der Wüstenzeit, auch wenn du sie für später anlegst. So lange ruht dein bisheriger Plan; danach, oder wenn du sie vorzeitig beendest, geht er von selbst dort weiter, wo du aufgehört hast.' },
+      { area: 'Arena', text: 'Zur Wüstenzeit gehört der Leseplan „Bewährung und Nachfolge“: die Versuchung Jesu, die Bergpredigt, das Evangelium nach Johannes, Jakobus, 1. Petrus und Hebräer, verteilt auf die Tage der Wüstenzeit, bei vielen Tagen in kleineren Abschnitten. Beim Beginnen ist er vorgeschlagen; du kannst deinen Plan behalten oder ohne Lesung gehen, und das jederzeit unter „Einstellungen der Wüstenzeit“ ändern.' },
+      { area: 'Arena', text: 'In der Wüstenwanderung steht der Abschnitt des Tages oben, vor der Wochenübersicht, und wird dort abgehakt, derselbe Haken wie „Bibel lesen“ unter „Heute“. „Bewährung und Nachfolge“ gilt vom ersten bis zum letzten Tag der Wüstenzeit, auch wenn du sie für später anlegst. So lange ruht dein bisheriger Plan; danach, oder wenn du sie vorzeitig beendest, geht er von selbst dort weiter, wo du aufgehört hast.' },
+    ],
+  },
+  {
+    version: '1.21.0',
+    date: '2026-10-21',
+    title: 'Stille Zeit: „Bibel lesen“ wird mit dem Wort abgehakt',
+    changes: [
+      { area: 'Stille Zeit', text: 'Wenn du im Schritt „Das Wort“ weiterklickst, ist die Lesung des Tages gelesen: „Bibel lesen“ ist abgehakt und der Leseplan rückt zum nächsten Abschnitt. Das gilt in der Kurzform genauso. Von Hand kannst du den Haken weiterhin setzen und wieder wegnehmen.' },
+    ],
+  },
+  {
+    version: '1.20.3',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Kacheln statt loser Kästen',
+    changes: [
+      { area: 'Arena', text: 'Die Wüstenwanderung ist neu geordnet: Überblick, der Hinweis nach „Heute“, der Rückblick als eingeklappte Kachel über die volle Breite, dann das Tagebuch. Ganz unten stehen „Anleitung“ und „Einstellungen der Wüstenzeit“ als zwei Kacheln nebeneinander, wie unter „Mehr“. Ein Panel öffnet sich unter der Reihe; die Einstellungen und das Beenden sind unverändert.' },
+    ],
+  },
+  {
+    version: '1.20.2',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Abschluss mit einem Tagebuch',
+    changes: [
+      { area: 'Arena', text: 'Nach dem letzten Tag der Wüstenzeit steht das Tagebuch nur noch einmal da, mit den Einträgen wie zuvor. Die alten Tagesblätter bleiben darunter eingeklappt unter „Aus den Tagesblättern“ lesbar.' },
+    ],
+  },
+  {
+    version: '1.20.1',
+    date: '2026-10-20',
+    title: 'Wüstenwanderung: Überblick wie die Wochenübersicht',
+    changes: [
+      { area: 'Arena', text: 'Der Überblick oben in der Wüstenwanderung sieht aus wie die Wochenübersicht unter „Heute“: Mo bis So, eine Zeile je Gewohnheit der Wüstenzeit, je Tag ein Kreis, wöchentliche und monatliche Gewohnheiten als Plakette. Du blätterst Woche für Woche; er beginnt in der laufenden Woche. Er ist nur zum Lesen: Abhaken kannst du unter „Heute“.' },
+    ],
+  },
+  {
+    version: '1.20.0',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: Überblick und Tagebuch mit Einträgen',
+    changes: [
+      { area: 'Arena', text: 'Die Wüstenwanderung beginnt jetzt oben mit einem Überblick: je Gewohnheit eine Zeile, je Tag ein Feld, nach Wochen geordnet. Abgehakt ist gefüllt, nicht abgehakt grau, ein kommender Tag nur umrandet. Wöchentliche und monatliche Gewohnheiten haben ein Feld je Woche und je Monat. Der Überblick ist nur zum Lesen.' },
+      { area: 'Arena', text: 'Darunter steht das Tagebuch als Einträge, wie in der Gebetskammer: neuer Eintrag, Titel, Bibelstellen, Gebetsanliegen, Text oder Handschrift, anheften, archivieren, löschen. Die Einträge gehören zur Wüstenwanderung und stehen nicht in der Gebetskammer. Sie sind in Sicherung und Export enthalten.' },
+      { area: 'Arena', text: 'Was du früher auf den Tagesblättern geschrieben hast, bleibt lesbar: eingeklappt unter „Aus den Tagesblättern“. Rückblick und Anleitung stehen eingeklappt darunter. Die Ansichten Tag und Woche sind entfallen.' },
+    ],
+  },
+  {
+    version: '1.19.0',
+    date: '2026-10-19',
+    title: 'Wüstenzeit: die Gewohnheiten unter „Heute“',
+    changes: [
+      { area: 'Heute', text: 'Die Gewohnheiten der Wüstenzeit pflegst und hakst du nur noch unter „Heute“ ab. Unter der Gruppe „Wüstenzeit“ steht eine einklappbare Auswahl: Pakete und Vorschläge wählen und abwählen, eigene anlegen und löschen, mit dem „i“ bei jeder Gewohnheit.' },
+      { area: 'Arena', text: 'Die Wüstenwanderung zeigt keine Gewohnheiten zum Abhaken oder Auswählen mehr. Sie hat vier Ansichten: den Verlauf (die Tage der Wüstenzeit, Woche für Woche, ein Tag mit Haken gefüllt, sonst grau), das Tagebuch, den Rückblick und die Anleitung. Wo früher die Gewohnheiten standen, führt ein Hinweis nach „Heute“.' },
+    ],
+  },
+  {
+    version: '1.18.5',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: alle gewählten Gewohnheiten',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer in der Einrichtung die Wüstenwanderung wählt, hat danach alle Gewohnheiten, die er angehakt hat, und nicht nur eine.' },
+    ],
+  },
+  {
+    version: '1.18.4',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung: Beginn nicht in der Vergangenheit',
+    changes: [
+      { area: 'Einrichtung', text: 'Bei „Anderer Tag“ gilt frühestens heute. Ein Tag in der Vergangenheit lässt sich nicht wählen.' },
+    ],
+  },
+  {
+    version: '1.18.3',
+    date: '2026-10-19',
+    title: 'Einrichtung: ein Testament lesen',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf der Seite „Dein Leseplan“ wählst du, was du liest: beide Testamente, nur das Neue oder nur das Alte. Bei einem Testament gibst du die Startstelle und die Kapitel am Tag an. Wechselst du zurück, findest du deine Stellen wieder.' },
+    ],
+  },
+  {
+    version: '1.18.2',
+    date: '2026-10-19',
+    title: 'Einrichtung: Erklärung nach der Wahl',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf der Seite „Wofür möchtest du Henoch nutzen?“ erscheint die Erklärung erst, wenn du eine Karte wählst, und gilt nur für diese Karte.' },
+    ],
+  },
+  {
+    version: '1.18.1',
+    date: '2026-10-19',
+    title: 'Anleitung ohne Lesemethode, Gewohnheiten gefaltet',
+    changes: [
+      { area: 'Mehr', text: 'Die Lesemethode steht nicht mehr unter „Mehr, Anleitung“. Die Anleitung öffnet nur die Einrichtung.' },
+      { area: 'Einrichtung', text: 'Bei der Wüstenwanderung sind die Pakete der Gewohnheiten zugeklappt. Wo schon etwas gewählt ist, steht es offen.' },
+    ],
+  },
+  {
+    version: '1.18.0',
+    date: '2026-10-19',
+    title: 'Einrichtung: der Weg Wüstenwanderung',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer „Wüstenwanderung“ wählt, hat jetzt einen eigenen Weg: Dauer (40 Tage, 90 Tage oder eigene) und Beginn (heute, morgen oder ein anderer Tag), die Gewohnheiten für diese Zeit, deine Zeiten und die Zusammenfassung.' },
+      { area: 'Einrichtung', text: 'Die Wüstenzeit beginnt erst mit „Zur Wüstenwanderung“ auf der letzten Seite. Zurückgehen und Überspringen starten nichts. Wer den Weg wechselt, behält, was er auf dem anderen eingegeben hat.' },
+    ],
+  },
+  {
+    version: '1.17.2',
+    date: '2026-10-19',
+    title: 'Lesemethode in der Anleitung',
+    changes: [
+      { area: 'Mehr', text: 'Unter „Mehr, Anleitung“ steht jetzt die Lesemethode: die drei Durchgänge und der Farbcode, mit der Quelle.' },
+    ],
+  },
+  {
+    version: '1.17.1',
+    date: '2026-10-19',
+    title: 'Einrichtung: Texte, Leseplan, Wiederaufnahme',
+    changes: [
+      { area: 'Einrichtung', text: 'Wer die Einrichtung mittendrin verlässt oder die Seite neu lädt, kommt beim nächsten Start auf die Seite zurück, an der er war.' },
+      { area: 'Einrichtung', text: 'Der Leseplan hat nur noch die Startstelle für Altes und Neues Testament und die Kapitel am Tag. Einen eigenen Plan stellst du unter „Wort“ ein.' },
+      { area: 'Einrichtung', text: 'Neue Texte zur Stillen Zeit und ihrer Kurzform, zu Wüstenwanderung und Alltag, zu deinen Zeiten, und am Ende das Wort aus 1. Johannes 1,9.' },
+    ],
+  },
+  {
+    version: '1.17.0',
+    date: '2026-10-19',
+    title: 'Einrichtung beim ersten Start',
+    changes: [
+      { area: 'Einrichtung', text: 'Beim allerersten Start führt Henoch durch eine kurze Einrichtung: der Tag mit Wort, Gebet und Ausrichtung, dann dein Haus, deine Zeiten, deine Gewohnheiten und dein Leseplan. Alles lässt sich überspringen oder mit „Später ansehen“ auf später legen.' },
+      { area: 'Einrichtung', text: 'Zur Wahl stehen „Alltag“ und „Wüstenwanderung“. Die Wüstenwanderung öffnet gleich ihren Anfang in der Arena.' },
+      { area: 'Mehr', text: 'Unter „Mehr“ gibt es die „Anleitung“. Dort öffnest du die Einrichtung noch einmal; sie ändert nur, was du änderst.' },
+    ],
+  },
+  {
+    version: '1.16.15',
+    date: '2026-10-19',
+    title: 'Wüstenwanderung ohne Unterzeile',
+    changes: [
+      { area: 'Arena', text: 'Auf der Seite der Wüstenwanderung steht unter dem Titel keine zweite Überschrift mit Unterzeile mehr. Sie beginnt wie die anderen Orte mit dem Wort.' },
+    ],
+  },
+  {
+    version: '1.16.14',
+    date: '2026-10-19',
+    title: 'Keine Unterstreichungen mehr',
+    changes: [
+      { area: 'Henoch', text: 'Links und Textschaltflächen sind nirgends mehr unterstrichen, auch nicht „Gestern nachtragen“. Sie bleiben in Gold, im Fließtext zusätzlich fett.' },
+    ],
+  },
+  {
+    version: '1.16.13',
+    date: '2026-10-19',
+    title: 'Kirchenjahr, Versionen und Maße',
+    changes: [
+      { area: 'Kirchenjahr', text: 'Die Zeiten des Kirchenjahres sind eingeklappt, nur die laufende steht offen. Die Sprungmarken oben bleiben.' },
+      { area: 'Versionen', text: 'Der Verlauf zeigt die letzten drei Fassungen der neuesten Nummer. Frühere klappst du darunter auf.' },
+      { area: 'Henoch', text: 'Links, die im Browser öffnen, sagen es dem Vorleseprogramm: „öffnet im Browser“.' },
+      { area: 'Henoch', text: 'Karten, Schritte und Schaltflächen haben dieselben Rundungen und Abstände. Am Computer ist die Tab-Leiste so breit wie der Inhalt.' },
+    ],
+  },
+  {
+    version: '1.16.12',
+    date: '2026-10-19',
+    title: 'Mehr auf einer Ebene',
+    changes: [
+      { area: 'Mehr', text: 'Die Kachel „Einstellungen“ ist aufgelöst. Darstellung, Deine Daten und Über Henoch stehen jetzt direkt unter Mehr. App installieren und Flugmodus findest du unter „Über Henoch“. Alte Links bleiben gültig.' },
+      { area: 'Arena', text: 'Im Eintrag der Eisenschmiede entfällt die Zeile unter den Symbolen. Der Eintrag beginnt wie in der Gebetskammer gleich mit der Überschrift.' },
+    ],
+  },
+  {
+    version: '1.16.11',
+    date: '2026-10-19',
+    title: 'Zeichen, Bestätigungen und Schaltflächen vereinheitlicht',
+    changes: [
+      { area: 'Henoch', text: 'Neue Zeichen für Gewohnheiten, Sicherung einspielen, Exportieren, App installieren, Flugmodus und Über Henoch. Gebet zeigt gefaltete Hände, die Gebetsübersicht behält die Personen. Der Stern steht nur noch für den Fokus.' },
+      { area: 'Henoch', text: 'Wo etwas gelöscht wird, fragt immer dieselbe Zeile nach: erst „löschen …“, dann die Antwort und „Behalten“.' },
+      { area: 'Henoch', text: 'Was gerade nicht geht, ist überall gleich blass. Fehlt ein Name, steht ein Hinweis dabei. Der Fokusrahmen hat überall dieselbe Farbe.' },
+      { area: 'Henoch', text: 'Schaltflächen haben drei Stufen: gefüllt, umrandet und als Text. Alleinstehende Links sind dünn unterstrichen.' },
+      { area: 'Wüstenzeit', text: 'In den Masken für Dank und Prüfung steht die Hauptschaltfläche über die ganze Breite, die übrigen darunter.' },
+    ],
+  },
+  {
+    version: '1.16.10',
+    date: '2026-10-19',
+    title: 'Andacht: Text höher, Weg bleibt in Reichweite',
+    changes: [
+      { area: 'Andacht', text: 'Die Stille Zeit beginnt mit einer kleinen Schaltfläche „Zeit starten“. Der Streifen mit der Uhr erscheint erst, wenn die Zeit läuft. Die Wahl zwischen ganzer Ordnung und Kurzform steht direkt über der Schrittleiste.' },
+      { area: 'Andacht', text: 'Unter allen Zeichen der Schrittleiste steht der Name, solange der Platz reicht. Sonst trägt ihn nur der Schritt, in dem du bist. Ist die Leiste noch enger, lässt sie sich zur Seite schieben.' },
+      { area: 'Andacht', text: 'Die Schaltfläche am Ende eines Schritts („Weiter zu: …“, „… abschließen“) bleibt bei langen Texten über der Tab-Leiste stehen. Darunter steht „Zurück zu: …“.' },
+      { area: 'Andacht', text: 'Bei der Beichte im Kranz steht „Ich bekenne dir, daß ich …“ als Gebetszeile. „Wird gebetet, nicht notiert.“ ist besser zu lesen.' },
+    ],
+  },
+  {
+    version: '1.16.9',
+    date: '2026-10-19',
+    title: 'Heute kürzer, ruhigerer Abschluss am Abend',
+    changes: [
+      { area: 'Heute', text: 'Die letzten vier Wochen sind eingeklappt, die Wochenübersicht ebenso. Was du aufklappst, merkt sich die App.' },
+      { area: 'Heute', text: 'Der Sonntag trägt jetzt den Namen „Sonntag dieser Kirchenwoche“. Im Tab Wort unter Lehre führt „Der kommende Sonntag“ direkt zum nächsten Sonntag.' },
+      { area: 'Sonntag', text: 'Der Schritt zurück heißt „Vorheriger Sonntag“, die laufende Woche „diese Kirchenwoche“.' },
+      { area: 'Rückschau', text: 'Was nicht erreicht wurde, heißt „offen geblieben“.' },
+      { area: 'Vesper', text: 'Nach „Vesper abschließen“ bleibst du bei der Vesper. „Weiter zum Nachtgebet“ und „Zurück zu Heute“ stehen bereit, wann du magst.' },
+      { area: 'Henoch', text: 'Die kurze Meldung unten steht knapp über der Tab-Leiste und verschwindet nach knapp zwei Sekunden.' },
+    ],
+  },
+  {
+    version: '1.16.8',
+    date: '2026-10-19',
+    title: 'Arena: Schaltflächen unten entfallen',
+    changes: [
+      { area: 'Arena', text: 'Unter einem Eintrag stehen keine Schaltflächen mehr. Sichern, Anheften, Archivieren und Löschen findest du als Symbole oben. Was du schreibst, bleibt beim Schreiben erhalten.' },
+    ],
+  },
+  {
+    version: '1.16.7',
+    date: '2026-10-19',
+    title: 'Gleiche Maße für Kacheln und Felder',
+    changes: [
+      { area: 'Henoch', text: 'Kacheln, Karten und Felder haben dieselben Rundungen, Abstände und Höhen. Eingabefelder sind mindestens 44 Pixel hoch.' },
+      { area: 'Mehr', text: 'Kacheln, die sich aufklappen, tragen einen kleinen Pfeil nach unten. Kacheln, die auf eine andere Seite führen, bleiben ohne.' },
+    ],
+  },
+  {
+    version: '1.16.6',
+    date: '2026-10-19',
+    title: 'Eine Bildsprache für alle Zeichen',
+    changes: [
+      { area: 'Henoch', text: 'Alle Zeichen haben dieselbe Strichstärke, und Knöpfe mit Zeichen gibt es in drei festen Größen. Die Tippfläche bleibt überall 44 Pixel groß.' },
+      { area: 'Henoch', text: 'Plus, Kreuz zum Entfernen, das Zeichen für das Menü und die Pfeile nach rechts und links sind jetzt gezeichnete Zeichen statt Textzeichen und sehen überall gleich aus.' },
+    ],
+  },
+  {
+    version: '1.16.5',
+    date: '2026-10-19',
+    title: 'Jede Seite beginnt gleich',
+    changes: [
+      { area: 'Henoch', text: 'Alle Seiten haben denselben Kopf: links der Name des Bereichs, rechts die Suche, darunter in einer ruhigen Zeile das Datum, wo es gebraucht wird.' },
+      { area: 'Henoch', text: 'Der Pfeil zurück steht auf jeder Unterseite an derselben Stelle, links neben dem Titel.' },
+    ],
+  },
+  {
+    version: '1.16.4',
+    date: '2026-10-19',
+    title: 'Schaltflächen, die man sieht und spürt',
+    changes: [
+      { area: 'Henoch', text: 'Schaltflächen sind mindestens 44 Pixel hoch, haben einen deutlicheren Rand und geben beim Drücken sichtbar nach. Kleine Knöpfe wie Pillen, Fürbitten-Zeichen und das „i“ lassen sich mit 44 Pixeln Tippfläche leichter treffen.' },
+      { area: 'Mehr', text: 'Löschen erkennst du auch ohne Farbe: Rand statt Füllung und ein Papierkorb. „Neuigkeiten“ trägt den Pfeil, der aus der App hinausführt, und der Knopf zum Einspielen heißt „Sicherung aus Datei wählen“.' },
+      { area: 'Mehr', text: 'Einspielen, Löschen und „Jetzt aktualisieren“ lassen sich nicht zweimal auslösen, solange sie laufen.' },
+    ],
+  },
+  {
+    version: '1.16.3',
+    date: '2026-10-19',
+    title: 'Die Schrittleiste nennt ihre Schritte',
+    changes: [
+      { area: 'Stille Zeit', text: 'Unter dem Zeichen des gewählten Schritts steht sein Name. Die Zeit oben sagt „Jetzt: Am Bett“, solange du am Bett bist, und passt so zur Leiste.' },
+      { area: 'Heute', text: 'Die letzten vier Wochen liest ein Bildschirmleser als einen Satz vor, nicht als 28 einzelne Meldungen.' },
+    ],
+  },
+  {
+    version: '1.16.2',
+    date: '2026-10-19',
+    title: 'Besser zu treffen, besser zu lesen',
+    changes: [
+      { area: 'Henoch', text: 'Kleine Knöpfe lassen sich leichter treffen: die Kreise der Woche, die Schrittleiste, die Lupe, der Pfeil zurück und Textlinks haben eine Tippfläche von 44 Pixeln, ohne dass sie größer aussehen.' },
+      { area: 'Henoch', text: 'Eingabefelder haben einen deutlicheren Rand, Platzhalter und das Gold der Symbole sind kräftiger, und die kleinsten Beschriftungen sind etwas größer, auch in der Leiste unten.' },
+    ],
+  },
+  {
+    version: '1.16.1',
+    date: '2026-10-17',
+    title: 'Die Dogmatik vorerst wieder heraus',
+    changes: [
+      { area: 'Lehre', text: 'Die Dogmatik ist vorerst wieder herausgenommen. Sie kommt zurück, wenn alle Tage gegen den Druck durchgesehen sind. Was du schon gelesen und notiert hast, bleibt gespeichert.' },
+    ],
+  },
+  {
+    version: '1.16.0',
+    date: '2026-10-16',
+    title: 'Die Dogmatik',
+    changes: [
+      { area: 'Lehre', text: 'Neu unter „Wort“ › „Lehre“: Francis Pieper, Christliche Dogmatik, alle drei Bände, ein Band im Jahr. Die Karte zeigt, wo du stehst, die Lesung des Tages und die zuletzt gelesenen Abschnitte. Der Plan geht nach deinem Lesestand: Wer aussetzt, liest beim nächsten Abschnitt weiter.' },
+      { area: 'Lehre', text: 'Statt eines Abschnitts am Tag kannst du eine Lesezeit wählen, 5 bis 20 Minuten; dann stehen so viele Abschnitte in der Lesung, wie hineinpassen. Ohne Leseplan bleibt das Buch zum Nachschlagen.' },
+      { area: 'Lehre', text: 'Der Lesetag: der Text in der Leseschrift mit A− und A+, Fußnoten zum Antippen, Zwischenüberschriften des Buches. Wo vorhanden: Bibelwort, lateinische Zitate mit Übersetzung, Kernsatz und Frage zum Nachdenken; deine Gedanken lassen sich in die Gebetskammer schreiben. Was nicht aus dem Buch stammt, heißt „Ergänzung“. Tage, die noch nicht gegen den Druck durchgesehen sind, sagen es.' },
+      { area: 'Lehre', text: '„Nachschlagen“: der Leseplan ab heute, das Inhaltsverzeichnis jedes Bandes nach Lehrstück und Kapitel, und eine Suche durch alle drei Bände. Darunter „Leseplan einstellen“.' },
+      { area: 'Andacht', text: 'Auf Wunsch steht die Lesung in der Stillen Zeit als eigener Schritt nach dem Wort, vor dem Gebet. Die Kurzform bleibt kurz.' },
     ],
   },
   {

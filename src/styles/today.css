@@ -46,7 +46,7 @@
   height: 1.2em;
   margin-top: 10px;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
@@ -67,17 +67,17 @@
 .tiles {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: var(--card-gap);
   margin: 6px 0 4px;
 }
 .tile {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 12px 14px;
+  padding: 12px var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-card);
   color: inherit;
   text-decoration: none;
 }
@@ -230,18 +230,20 @@ progress::-moz-progress-bar {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   background: transparent;
   cursor: pointer;
   padding: 0;
   display: inline-grid;
   place-items: center;
 }
-.cell[aria-pressed='true'] {
+.cell[aria-pressed='true'],
+.cell.is-on {
   background: var(--done);
   border-color: var(--done);
 }
-.cell[aria-pressed='true']::after {
+.cell[aria-pressed='true']::after,
+.cell.is-on::after {
   content: '';
   width: 8px;
   height: 8px;
@@ -251,7 +253,8 @@ progress::-moz-progress-bar {
 .cell.today {
   border-color: var(--accent);
 }
-.cell.today[aria-pressed='true'] {
+.cell.today[aria-pressed='true'],
+.cell.today.is-on {
   border-color: var(--done);
   box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--accent);
 }
@@ -268,21 +271,27 @@ progress::-moz-progress-bar {
   font-family: var(--sans);
   font-size: 0.82rem;
   font-weight: 600;
-  border: 1.5px solid var(--rule);
+  border: 1.5px solid var(--control-line);
   border-radius: 999px;
   padding: 4px 12px;
   min-height: 32px;
   background: transparent;
   cursor: pointer;
 }
-.pill[aria-pressed='true'] {
+.pill[aria-pressed='true'],
+.pill.is-on {
   background: var(--done);
   border-color: var(--done);
   color: var(--sheet);
 }
+/* The same pill to read only (the overview in the Arena). */
+span.pill {
+  display: inline-block;
+  cursor: default;
+}
 .pill:disabled {
   cursor: default;
-  opacity: 0.8;
+  opacity: var(--disabled-opacity);
 }
 
 /* ---------------------------------------------------------------- lookback */
@@ -409,7 +418,7 @@ progress::-moz-progress-bar {
 .habits .group-row th {
   text-align: left;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -498,7 +507,7 @@ progress::-moz-progress-bar {
 }
 .cy-circles .cy-season {
   font-weight: 400;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--ink);
   opacity: 0.8;
 }
@@ -509,7 +518,7 @@ progress::-moz-progress-bar {
 }
 .cy-verse figcaption {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -554,7 +563,7 @@ a.cy-week-name {
 .bible-page .block {
   margin: 14px 0;
   padding: 14px 16px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .bible-page .block > .fold-head h3 {
   margin: 0;
@@ -597,7 +606,7 @@ a.cy-week-name {
 .next-track-title {
   margin: 0 0 2px;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -653,7 +662,7 @@ a.cy-week-name {
 .habits td.wa-off {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 
@@ -686,8 +695,8 @@ a.cy-week-name {
   align-items: center;
   gap: 12px;
   margin: 12px 0;
-  padding: 12px 16px;
-  border-radius: var(--radius-l);
+  padding: 12px var(--card-pad);
+  border-radius: var(--radius-card);
   border: 1px solid var(--rule);
   background: var(--sheet);
   color: inherit;
@@ -719,8 +728,8 @@ a.cy-week-name {
 /* Sunday rest: the Sunday in place of the habits, at the top of "Heute". */
 .sunday-rest {
   margin: 14px 0 18px;
-  padding: 18px 18px 20px;
-  border-radius: var(--radius-l);
+  padding: var(--card-pad) var(--card-pad) 18px;
+  border-radius: var(--radius-card);
   border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--rule));
   background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 10%, var(--sheet)), var(--sheet));
 }
@@ -736,7 +745,7 @@ a.cy-week-name {
 .sunday-rest-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;

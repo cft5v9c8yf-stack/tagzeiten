@@ -14,21 +14,26 @@ import { desertLine } from '../desert/DesertSettings';
 import { arenaOffer } from '../../domain/seasons';
 import { seasonTileLine } from '../desert/SeasonInvite';
 import { SectionVerse } from '../../ui/SectionVerse';
-import { activeRun, runName, shortSpan } from '../../domain/winterArc';
+import { activeRun } from '../../domain/winterArc';
+import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
 import { DesertThanks, THANKS_SLUG } from '../desert/DesertThanks';
+import { DaySheets } from '../desert/DesertJournal';
+import { ICON_SIZE } from '../../ui/iconBase';
+import { Chevron } from '../../ui/Chevron';
+import { ConfirmRow } from '../../ui/ConfirmRow';
 
-type Kind = 'journal' | 'forge';
-const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : 'journal');
+type Kind = 'journal' | 'forge' | 'desert';
+const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
 const FORGE_PARAM = 'bereich';
 const FORGE_SLUG = 'eisenschmiede';
 /** The Wüstenwanderung, the Arena's place of the Wüstenzeit; the addresses of 0.39.0 and of the Streithalle lead there too. */
 const HALL_SLUG = 'wuestenwanderung';
 const OLD_HALL_SLUGS = ['wuestenzeit', 'streithalle'];
-type Place = Kind | 'hall';
+type Place = 'journal' | 'forge' | 'hall';
 
 /** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
 const PLACES = {
@@ -64,6 +69,17 @@ const PLACES = {
       },
     ],
   },
+  // The journal of the Wüstenwanderung: written like the Gebetskammer's, kept apart from it.
+  desert: {
+    title: 'Wüstenwanderung',
+    verse: 'arena',
+    note: 'Hier schreibst du auf, was dich in dieser Zeit bewegt und was Gott dir zeigt. Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.',
+    add: 'Neuen Eintrag schreiben',
+    textLabel: 'Was dich in dieser Zeit bewegt',
+    textHint: 'Was dich in dieser Zeit bewegt, womit du ringst, was Gott dir zeigt …',
+    concernHint: 'Wofür du betest',
+    comfort: [{ text: WINTER_ARC_COMFORT.verse.text, ref: WINTER_ARC_COMFORT.verse.ref }],
+  },
 } as const;
 
 type Writing = 'text' | 'ink';
@@ -80,6 +96,7 @@ const lastWriting = (): Writing => {
 
 /** Typed text or handwriting: an entry may hold both; one is shown at a time. */
 function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: ArenaEntry) => ArenaEntry) => void }) {
+  const place = PLACES[kindOf(entry) === 'desert' ? 'desert' : 'journal'];
   const textId = useId();
   const hasText = !!entry.text.trim();
   const hasInk = !!entry.ink?.length;
@@ -110,7 +127,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   };
   return (
     <fieldset className="arena-lines arena-text">
-      <legend>{PLACES.journal.textLabel}</legend>
+      <legend>{place.textLabel}</legend>
       <Segmented<Writing>
         label="Schreiben mit"
         value={writing}
@@ -123,14 +140,14 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
       {writing === 'text' ? (
         <div className="field">
           <label htmlFor={textId} className="visually-hidden">
-            {PLACES.journal.textLabel}
+            {place.textLabel}
           </label>
           <textarea
             id={textId}
             ref={area}
             rows={14}
             value={entry.text}
-            placeholder={PLACES.journal.textHint}
+            placeholder={place.textHint}
             onChange={(e) => update((x) => ({ ...x, text: e.target.value }))}
           />
           {hasInk && <p className="small muted">Dazu gibt es auch Handgeschriebenes.</p>}
@@ -154,8 +171,8 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
 }
 
 const JOURNAL_SLUG = 'gebetskammer';
-const SLUG: Record<Place, string> = { journal: JOURNAL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG };
-const arenaPath = (k: Place) => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
+const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
+const arenaPath = (k: Place | 'desert') => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
 
 /** Archived entries stand in the Rückblick under "Mehr". */
 export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
@@ -246,7 +263,7 @@ function LineList({
                 aria-label={`${label} ${i + 1} entfernen`}
                 onClick={() => onChange(list.filter((_, k) => k !== i))}
               >
-                ×
+                <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
             )}
           </div>
@@ -269,7 +286,7 @@ function LineList({
         </div>
       ))}
       <button type="button" className="concern-add arena-add" aria-label={addLabel} onClick={() => onChange([...list, ''])}>
-        +
+        <FlowIcon name="plus" size={ICON_SIZE.m} plain />
       </button>
     </fieldset>
   );
@@ -333,14 +350,14 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
             />
             {list.length > 1 && (
               <button type="button" className="arena-remove" aria-label={`Punkt ${i + 1} entfernen`} onClick={() => remove(i)}>
-                ×
+                <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
             )}
           </li>
         ))}
       </ul>
       <button type="button" className="concern-add arena-add" aria-label="Weiteren Punkt hinzufügen" onClick={() => insertAfter(list.length - 1)}>
-        +
+        <FlowIcon name="plus" size={ICON_SIZE.m} plain />
       </button>
     </fieldset>
   );
@@ -451,8 +468,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const titleId = useId();
   const toast = useToast();
   const pin = usePin();
-  // Where deleting was asked: under the icons at the top or among the buttons below.
-  const [confirm, setConfirm] = useState<'top' | 'bottom' | false>(false);
+  // Deleting is asked right under the icons at the top.
+  const [confirm, setConfirm] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -480,24 +497,12 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
     store.deleteArenaEntry(entry.id);
     navigate(home);
   };
-  const deleteAnswer = (
-    <>
-      <button type="button" className="btn" onClick={remove}>
-        Ja, Eintrag löschen
-      </button>
-      <button type="button" className="btn quiet" onClick={() => setConfirm(false)}>
-        Behalten
-      </button>
-    </>
-  );
 
   return (
     <article className="arena-entry">
-      {/* The way back, and beside it small icons for the actions, as on the iPhone; the buttons with words stay below. */}
+      {/* The way back, and beside it small icons for the actions, as on the iPhone. */}
       <div className="entry-bar">
-        <p className="back-link">
-          <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
-        </p>
+        <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
         <div className="entry-bar-icons" role="toolbar" aria-label="Eintrag">
           <IconButton icon="check" label={habit && !isEmptyEntry(entry) ? 'Abhaken und zurück' : 'Sichern und zurück'} onClick={finish} />
           {!archived && (
@@ -513,16 +518,12 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           ) : (
             <IconButton icon="archive" label="Archivieren" onClick={archive} />
           )}
-          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm('top')} />
+          <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
-      {confirm === 'top' && (
-        <div className="entry-bar-confirm" role="group" aria-label="Eintrag löschen?">
-          <span>Eintrag löschen?</span>
-          {deleteAnswer}
-        </div>
+      {confirm && (
+        <ConfirmRow label="Eintrag löschen?" showLabel confirmLabel="Ja, Eintrag löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
-      {kind === 'forge' && <p className="arena-entry-kind">Eisenschmiede · fürs Treffen mit den Brüdern</p>}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
@@ -591,34 +592,45 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           </p>
         ))}
       </aside>
-
-      <div className="arena-actions">
-        <button type="button" className="btn primary" onClick={finish}>
-          {habit ? (isEmptyEntry(entry) ? 'Zurück zur Liste' : 'Sichern, abhaken und zurück') : 'Eintrag sichern und zurück'}
-        </button>
-        {!archived && (
-          <button type="button" className="btn" onClick={() => pin(entry)}>
-            {entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften'}
-          </button>
-        )}
-        {archived ? (
-          <button type="button" className="btn" onClick={restore}>
-            {`Zurück in die ${place.title} holen`}
-          </button>
-        ) : (
-          <button type="button" className="btn" onClick={archive}>
-            {kind === 'forge' ? 'Besprochen – archivieren' : 'Eintrag archivieren'}
-          </button>
-        )}
-        {confirm === 'bottom' ? (
-          deleteAnswer
-        ) : (
-          <button type="button" className="btn quiet" onClick={() => setConfirm('bottom')}>
-            Eintrag löschen
-          </button>
-        )}
-      </div>
     </article>
+  );
+}
+
+/**
+ * The journal of the Wüstenwanderung: entries one under the other, newest first (pinned ones on top),
+ * written and kept like those of the Gebetskammer, but apart from them. The old sheets of single days
+ * stand folded below, to be read as they were written.
+ */
+function DesertEntries() {
+  const store = useStore();
+  const profile = useProfile();
+  const navigate = useNavigate();
+  const place = PLACES.desert;
+  const shown = profile.arena.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === 'desert');
+  const archivedCount = profile.arena.filter((e) => e.archivedAt !== undefined && kindOf(e) === 'desert').length;
+  return (
+    <section className="desert-entries" aria-labelledby="desert-entries-title">
+      <h3 id="desert-entries-title">Tagebuch</h3>
+      <p className="arena-note">{place.note}</p>
+      <button type="button" className="btn primary arena-new" onClick={() => navigate(`/arena/${store.addArenaEntry('desert')}`)}>
+        {place.add}
+      </button>
+      {shown.length > 0 && (
+        <ul className="arena-list">
+          {pinnedFirst(shown).map((e) => (
+            <ListItem key={e.id} entry={e}>
+              <ArenaCard entry={e} />
+            </ListItem>
+          ))}
+        </ul>
+      )}
+      {archivedCount > 0 && (
+        <p className="small arena-archived">
+          <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
+        </p>
+      )}
+      <DaySheets />
+    </section>
   );
 }
 
@@ -643,9 +655,7 @@ export function ArenaPage() {
     return (
       <>
         <div className="title-row">
-          <p className="back-link">
-            <BackLink to="/arena">Arena</BackLink>
-          </p>
+          <BackLink to="/arena">Arena</BackLink>
           <p className="title-row-text">Diesen Eintrag gibt es nicht mehr.</p>
         </div>
       </>
@@ -663,11 +673,10 @@ export function ArenaPage() {
           : undefined;
   if (!shownPlace) return <ArenaHome />;
   if (shownPlace === 'hall') {
-    const hallRun = activeRun(profile.winterArc);
     return (
       <div className="arena arena-place">
-        <PlaceHead title="Wüstenwanderung" sub={hallRun ? `${runName(hallRun)} · ${shortSpan(hallRun)}` : undefined} />
-        <Desert />
+        <PlaceHead title="Wüstenwanderung" />
+        <Desert journal={<DesertEntries />} />
       </div>
     );
   }
@@ -735,9 +744,7 @@ function PlaceHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <>
       <div className="title-row">
-        <p className="back-link">
-          <BackLink to="/arena">Arena</BackLink>
-        </p>
+        <BackLink to="/arena">Arena</BackLink>
         <h2 className="place-title">
           {title}
           {sub && <span className="place-sub">{sub}</span>}
@@ -787,21 +794,21 @@ function ArenaHome() {
   ];
   return (
     <div className="arena arena-home">
-      <h2>Arena</h2>
+      <h2 className="visually-hidden">Arena</h2>
       <SectionVerse id="arena" />
       <ul className="arena-places">
         {places.map((p) => (
           <li key={p.place}>
             <Link className={`arena-place-tile arena-place-${p.place}`} to={arenaPath(p.place)}>
               <span className="arena-place-icon" aria-hidden="true">
-                <FlowIcon name={p.icon} size={26} />
+                <FlowIcon name={p.icon} size={22} />
               </span>
               <span className="arena-place-text">
                 <span className="arena-place-title">{p.title}</span>
                 <span className="arena-place-line">{p.line}</span>
               </span>
               <span className="arena-place-go" aria-hidden="true">
-                ›
+                <Chevron dir="right" />
               </span>
             </Link>
           </li>

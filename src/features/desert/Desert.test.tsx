@@ -12,6 +12,7 @@ import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
+import { activeRun } from '../../domain/winterArc';
 import { ArenaPage } from '../arena/ArenaPage';
 
 beforeEach(() => {
@@ -48,6 +49,9 @@ async function renderArena(path: string, prepare?: (s: Store) => void, now = new
   return store;
 }
 
+/** A tile of the Arena opened (they stand folded): by the start of its title. */
+const openTile = (title: string) => fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${title}`) }));
+
 const pack = (id: string) => DESERT_PACKS.find((p) => p.id === id)!;
 /** A Wüstenzeit from Monday 14 September, 40 days, with the habits of Aufbruch and Friday fasting. */
 const withDesert = (s: Store, start = '2026-09-14') => {
@@ -56,8 +60,6 @@ const withDesert = (s: Store, start = '2026-09-14') => {
   s.chooseDesert(run.id, [...pack('aufbruch').habits, pack('wuestenweg').habits.find((h) => h.id === 'wz-freitagsfasten')!], true);
   return run.id;
 };
-const tab = (name: string) =>
-  fireEvent.click(within(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).getByRole('button', { name }));
 
 describe('the Wüstenwanderung in the Arena', () => {
   it('stands in the Arena as the third place, with the guide and the way in', async () => {
@@ -79,7 +81,6 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(guide.textContent).toContain('In der Bibel ist die Wüste kein leerer Ort, sondern ein Ort der Begegnung.');
     expect(guide.textContent).toContain('„Ich will sie locken und will sie in die Wüste führen und freundlich mit ihr reden.“ (Hos 2,16)');
     expect([...document.querySelectorAll('.desert-guide em')].map((e) => e.textContent)).toEqual([
-      'Weniger Ablenkung. Mehr Raum für Gott.',
       'Askese',
       'für',
       'aus',
@@ -97,13 +98,13 @@ describe('the Wüstenwanderung in the Arena', () => {
     fireEvent.click(dialog.getByRole('button', { name: 'Wüstenzeit beginnen' }));
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-09-26', durationDays: 40, habits: [] });
     expect(store.getProfile().plan.planId).toBe('wueste-40');
-    // Then the choice, right there; the 90-Tage-Standard among the packages, with its guide.
-    expect(screen.getByRole('heading', { name: 'Gewohnheiten wählen' })).toBeTruthy();
-    const std = screen.getByRole('region', { name: 'Der 90-Tage-Standard' });
-    expect(within(std).getByText('Anleitung zum 90-Tage-Standard')).toBeTruthy();
-    fireEvent.click(within(screen.getByRole('region', { name: 'Aufbruch' })).getByRole('button', { name: 'Paket übernehmen' }));
-    expect(store.getProfile().winterArc.runs[0]!.habits).toHaveLength(4);
-    expect(screen.getByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeTruthy();
+    // The habits are no longer chosen here: the Arena points to "Heute", where they are chosen and ticked.
+    expect(screen.queryByRole('heading', { name: 'Gewohnheiten wählen' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
+    expect(screen.getByText('Du hast noch keine Gewohnheiten gewählt.')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
+    // The journal stands on the page, as entries.
+    expect(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' })).toBeTruthy();
   });
 
   it('opens from the old addresses of the Streithalle and of 0.39.0', async () => {
@@ -126,158 +127,68 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(head.textContent).not.toMatch(/verpasst|Streak|Serie/i);
   });
 
-  it('ticks the day like under "Heute", each habit with its "i"; Friday fasting only on Fridays', async () => {
+  it('keeps the journal as entries of its own, apart from the Gebetskammer: made, changed, pinned, archived, deleted', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tag');
-    const day = document.querySelector('.wa-day') as HTMLElement;
-    expect(within(day).queryByRole('checkbox', { name: 'Freitagsfasten' })).toBeNull();
-    fireEvent.click(within(day).getByRole('checkbox', { name: 'Morgensegen' }));
-    expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
-    fireEvent.click(within(day).getByRole('button', { name: 'Info zu Morgensegen' }));
-    expect(within(day).getByRole('note').textContent).toContain('Beginne den Tag mit Luthers Morgensegen.');
-    // The bubble hangs below its own line; another "i" closes it, so only one stands open.
-    expect(within(day).getByRole('note').closest('.desert-line')!.textContent).toContain('Morgensegen');
-    // The day's section of "Bewährung und Nachfolge" stands first, ticked like the habits (1.16).
-    expect(store.getProfile().plan.planId).toBe('wueste-40');
-    const reading = within(day).getByRole('checkbox', { name: /^Matthäus 4Bewährung/ });
-    expect(reading.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
-    expect(within(day).queryByRole('checkbox', { name: /^Bibel lesen/ })).toBeNull();
-    fireEvent.click(reading);
-    expect(store.getDay('2026-09-26').reading?.done).toBe(true);
-    expect(store.getProfile().plan.positions.wueste).toBe(1);
-    // The reading Henoch already has, under its name in Henoch.
-    const next = within(day).getByRole('button', { name: 'Info zu Bibel lesen' });
-    fireEvent.pointerDown(next);
-    fireEvent.click(next);
-    expect(within(day).getAllByRole('note')).toHaveLength(1);
-    expect(within(day).getByRole('note').textContent).toContain('Lies täglich einen kurzen Abschnitt aus einem Evangelium.');
-    expect(within(day).getByRole('note').textContent).toContain('„Bibel lesen“ nach deinem Leseplan');
-    // Yesterday, a Friday, can still be filled in.
-    fireEvent.click(within(day).getByRole('button', { name: 'Vortag' }));
-    fireEvent.click(within(day).getByRole('checkbox', { name: 'Freitagsfasten' }));
-    expect(store.getDay('2026-09-25').habits['wz-freitagsfasten']).toBe(true);
-  });
-
-  it('writes the thanks in the lines of the Nachtgebet: saved, ticked, and back in the list; on paper the tick alone does', async () => {
-    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tag');
-    // Only the thanks can be written down, nothing else of the list.
-    expect(screen.getAllByRole('button', { name: 'Aufschreiben' })).toHaveLength(1);
-    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
-    const page = (await screen.findByRole('heading', { level: 2, name: 'Dankbarkeit' })).closest('article') as HTMLElement;
-    // The way back is named; without a word written, nothing is ticked.
-    expect(within(page).getByRole('button', { name: 'Zurück zur Liste' })).toBeTruthy();
-    fireEvent.change(within(page).getByLabelText('Ich danke dir, mein Gott, für …'), { target: { value: 'das Gespräch mit Anna' } });
-    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
-    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
-    // The same thanks as in the Nachtgebet, and the line written ticks it (0.40); no entry in the Gebetskammer.
-    expect(store.getDay('2026-09-26').evening.thanks[0]).toBe('das Gespräch mit Anna');
-    expect(store.getProfile().arena).toHaveLength(0);
-    const day = within(document.querySelector('.wa-day') as HTMLElement);
-    const thanks = day.getByRole('checkbox', { name: /^Dankbarkeit/ });
-    expect(thanks.getAttribute('aria-checked')).toBe('true');
-    expect(thanks.textContent).toContain('im Nachtgebet notiert');
-    // On paper: the tick alone, as before.
-    fireEvent.click(day.getByRole('checkbox', { name: 'Morgensegen' }));
-    expect(store.getDay('2026-09-26').habits['wz-morgensegen']).toBe(true);
-  });
-
-  it('asks the journal of a round taken over for the sentence of the day too', async () => {
-    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
-      s.startDesert('2026-09-14', 40);
-      s.updateProfile(
-        (p) => ({
-          ...p,
-          habits: [
-            ...p.habits,
-            { id: 'wz-old-journal', name: 'Tagebuch und drei Dankpunkte', rhythm: 'daily', auto: null, active: false, preset: false, focus: false, desert: 'own' },
-          ],
-          winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: ['wz-old-journal'] })) },
-        }),
-        { immediate: true },
-      );
-    });
-    tab('Tag');
-    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
-    const page = (await screen.findByRole('heading', { level: 2, name: 'Tagebuch und drei Dankpunkte' })).closest('article') as HTMLElement;
-    fireEvent.change(within(page).getByLabelText('Der Satz, der mich trifft'), { target: { value: 'Seid stille und erkennet' } });
-    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
-    await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ });
-    expect(store.getDay('2026-09-26').morning.verse).toBe('Seid stille und erkennet');
-    expect(store.getDay('2026-09-26').habits['wz-old-journal']).toBe(true);
-  });
-
-  it('keeps a journal under the day, not in the Gebetskammer; the days ahead have none yet', async () => {
-    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tag');
-    const journal = screen.getByRole('group', { name: 'Tagebuch' });
-    expect(journal.textContent).toContain('Sünde wird gebetet, nicht notiert');
-    fireEvent.change(within(journal).getByLabelText('Tagebuch'), { target: { value: 'Heute war es still.\nZweite Zeile.' } });
-    expect(store.getDay('2026-09-26').evening.journal).toBe('Heute war es still.\nZweite Zeile.');
+    expect(document.body.textContent).toContain('Sünde wird gebetet, nicht notiert');
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const article = (await screen.findByRole('article')) as HTMLElement;
+    fireEvent.change(within(article).getByLabelText('Titel'), { target: { value: 'Stille am Morgen' } });
+    fireEvent.change(within(article).getByLabelText('Bibelstelle 1'), { target: { value: 'Psalm 62,2' } });
+    fireEvent.change(within(article).getByLabelText('Was dich in dieser Zeit bewegt'), { target: { value: 'Heute war es still.' } });
+    // Its own kind: not in the Gebetskammer; the word of comfort of the Wüstenzeit stands under it.
+    expect(store.getProfile().arena).toHaveLength(1);
+    expect(store.getProfile().arena[0]).toMatchObject({ kind: 'desert', title: 'Stille am Morgen', text: 'Heute war es still.' });
+    expect(within(article).getByLabelText('Zuspruch').textContent).toContain('alle Morgen neu');
+    fireEvent.click(within(article).getByRole('button', { name: 'Anheften' }));
+    expect(store.getProfile().arena[0]!.pinnedAt).toBeDefined();
+    // Back to the page of the Wüstenwanderung: the entry stands there as a card.
+    fireEvent.click(within(article).getByRole('link', { name: 'Zurück: Wüstenwanderung' }));
+    expect((await screen.findByRole('heading', { level: 2, name: 'Wüstenwanderung' })).textContent).toBe('Wüstenwanderung');
+    const card = screen.getByRole('link', { name: /Stille am Morgen/ });
+    expect(card.textContent).toContain('Angeheftet');
+    // The three dots: archive. It leaves the list and stands in the Rückblick.
+    fireEvent.click(screen.getByRole('button', { name: 'Aktionen für „Stille am Morgen“' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Eintrag archivieren' }));
+    expect(store.getProfile().arena[0]!.archivedAt).toBeDefined();
+    expect(screen.queryByRole('link', { name: /Stille am Morgen/ })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Archivierte Einträge im Rückblick' })).toBeTruthy();
+    // Brought back and deleted from its page.
+    store.archiveArenaEntry(store.getProfile().arena[0]!.id, false);
+    fireEvent.click(await screen.findByRole('link', { name: /Stille am Morgen/ }));
+    const again = (await screen.findByRole('article')) as HTMLElement;
+    fireEvent.click(within(again).getByRole('button', { name: 'Löschen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ja, Eintrag löschen' }));
     expect(store.getProfile().arena).toEqual([]);
-    // The day before has its own page of the journal.
-    fireEvent.click(screen.getByRole('button', { name: 'Vortag' }));
-    expect((within(screen.getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch') as HTMLTextAreaElement).value).toBe('');
-    fireEvent.click(screen.getByRole('button', { name: 'Zu heute' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Folgetag' }));
-    expect(screen.queryByRole('group', { name: 'Tagebuch' })).toBeNull();
   });
 
-  it('writes the journal of the 90-Tage-Standard with its sentence and thanks, and ticks it', async () => {
+  it('keeps the entries of the Wüstenwanderung out of the Gebetskammer, and the entries of the Gebetskammer out of it', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
-      s.startDesert('2026-09-14', 90);
-      const run = s.getProfile().winterArc.runs[0]!;
-      s.chooseDesert(run.id, [pack('standard').habits.find((h) => h.id === 'wz-std-journal')!], true);
+      const id = s.addArenaEntry();
+      s.updateArenaEntry(id, (e) => ({ ...e, title: 'Aus der Gebetskammer', text: 'Etwas anderes.' }));
+      const d = s.addArenaEntry('desert');
+      s.updateArenaEntry(d, (e) => ({ ...e, title: 'Aus der Wüste', text: 'Still.' }));
     });
-    tab('Tag');
-    // Under the day, and behind "Aufschreiben", the same journal of the day.
-    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
-    const page = (await screen.findByRole('heading', { level: 2, name: 'Tagebuch und drei Dankpunkte' })).closest('article') as HTMLElement;
-    fireEvent.change(within(within(page).getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch'), {
-      target: { value: 'Was mich heute trägt.' },
+    expect(screen.getByRole('link', { name: /Aus der Wüste/ })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: /Aus der Gebetskammer/ })).toBeNull();
+    cleanup();
+    await renderArena('/arena?bereich=gebetskammer', (s) => {
+      const d = s.addArenaEntry('desert');
+      s.updateArenaEntry(d, (e) => ({ ...e, title: 'Aus der Wüste', text: 'Still.' }));
     });
-    fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
-    await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ });
-    expect(store.getDay('2026-09-26').evening.journal).toBe('Was mich heute trägt.');
-    expect(store.getDay('2026-09-26').habits['wz-std-journal']).toBe(true);
-    tab('Tag');
-    expect((within(screen.getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch') as HTMLTextAreaElement).value).toBe('Was mich heute trägt.');
+    expect(screen.queryByRole('link', { name: /Aus der Wüste/ })).toBeNull();
+    expect(store.getProfile().arena).toHaveLength(2);
   });
 
-  it('lets the thanks be written freely in the Gebetskammer instead, ticked when saved', async () => {
-    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tag');
-    fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Lieber frei in der Gebetskammer schreiben' }));
-    fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Für das Gespräch mit Anna' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Sichern, abhaken und zurück' }));
-    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
-    expect(store.getDay('2026-09-26').habits['wz-dankbarkeit']).toBe(true);
-    expect(store.getProfile().arena.map((e) => e.text)).toEqual(['Für das Gespräch mit Anna']);
-  });
-
-  it('prays the examination of conscience on a page of its own: Word first, no field, ending in the absolution', async () => {
+  it('keeps the old sheets of single days readable, folded, and does not rewrite them', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
-      const id = withDesert(s);
-      s.chooseDesert(id, [pack('wuestenvaeter').habits.find((h) => h.id === 'wz-gewissen')!], true);
+      withDesert(s);
+      s.updateDay('2026-09-20', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der alte Tag.' } }));
     });
-    tab('Tag');
-    const before = JSON.stringify(store.getProfile().arena);
-    fireEvent.click(screen.getByRole('button', { name: 'Beten' }));
-    const page = (await screen.findByRole('heading', { level: 2, name: 'Gewissenserforschung' })).closest('article') as HTMLElement;
-    // Word first (rule 2): Psalm 139 before the question of the day.
-    expect(page.querySelector('.wa-verse')!.textContent).toContain('Erforsche mich, Gott, und erfahre mein Herz');
-    expect(page.textContent).toContain('Wird gebetet, nicht notiert.');
-    // Nowhere to write a sin (rule 9).
-    expect(page.querySelectorAll('textarea, input[type="text"], [contenteditable]')).toHaveLength(0);
-    // The absolution comes last (rule 1).
-    const parts = [...page.querySelectorAll('.part')].map((p) => p.className);
-    expect(parts.at(-1)).toContain('part-absolution');
-    fireEvent.click(within(page).getByRole('button', { name: 'Gebetet, abhaken und zurück' }));
-    expect(await screen.findByRole('heading', { level: 2, name: /^Wüstenwanderung/ })).toBeTruthy();
-    expect(store.getDay('2026-09-26').habits['wz-gewissen']).toBe(true);
-    // Only the tick: no entry in the Gebetskammer.
-    expect(JSON.stringify(store.getProfile().arena)).toBe(before);
+    const sheets = document.querySelector('.desert-sheets') as HTMLElement;
+    expect(sheets.querySelector('summary')!.textContent).toBe('Aus den Tagesblättern');
+    expect(sheets.textContent).toContain('Der alte Tag.');
+    expect(store.getDay('2026-09-20').evening.journal).toBe('Der alte Tag.');
+    expect(store.getProfile().arena).toEqual([]);
   });
 
   it('carries the phases and weekly focuses of the 90-Tage-Standard when its points are chosen, the verse first', async () => {
@@ -285,7 +196,7 @@ describe('the Wüstenwanderung in the Arena', () => {
       s.startDesert('2026-09-14', 40);
       s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, pack('standard').habits, true);
     });
-    tab('Woche');
+    openTile('Rückblick');
     const focus = screen.getByRole('region', { name: 'Schwerpunkt der Woche' });
     // Week 2 of 6: the thirteen focuses spread over the weeks.
     expect(focus.firstElementChild!.className).toContain('wa-verse');
@@ -293,44 +204,177 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(focus.textContent).toContain('Die Arbeit schützen.');
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     expect(screen.getByRole('region', { name: 'Schwerpunkt der Woche' }).textContent).toContain('Einfach da sein.');
-    tab('Anleitung');
+    openTile('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).getByText('Der 90-Tage-Standard')).toBeTruthy();
   });
 
   it('has no weekly focus without the points of the standard', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Woche');
+    openTile('Rückblick');
     expect(screen.queryByRole('region', { name: 'Schwerpunkt der Woche' })).toBeNull();
-    tab('Anleitung');
+    openTile('Anleitung');
     expect(within(document.querySelector('.desert-guide') as HTMLElement).queryByText('Der 90-Tage-Standard')).toBeNull();
   });
 
-  it('shows the week as a grid of calendar weeks, what was kept so far, and the review at its end', async () => {
+  it('shows the overview as the week grid of "Heute", one week at a time, to read only', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s);
       const h = s.getProfile().habits.find((x) => x.id === 'wz-handy-spaeter')!;
       s.toggleHabit('2026-09-15', h);
       s.toggleHabit('2026-09-22', h);
+      s.toggleHabit('2026-09-25', s.getProfile().habits.find((x) => x.id === 'wz-freitagsfasten')!);
     });
-    tab('Woche');
-    const grid = document.querySelector('.wa-grid') as HTMLElement;
-    expect([...grid.querySelectorAll('thead th span:first-child')].map((t) => t.textContent)).toEqual(['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
-    // Friday fasting: a quiet dash on the other days.
-    const fasting = within(grid).getByRole('row', { name: /Freitagsfasten/ });
-    expect(fasting.querySelectorAll('td.wa-off')).toHaveLength(6);
-    expect(document.querySelector('.desert-kept')!.textContent).toContain('Handy späteran 2 Tagen gehalten');
-    // The week before has ended: its review, ending in the word of comfort (rule 1).
+    const overview = document.querySelector('.wa-overview') as HTMLElement;
+    // On top of the page, above the journal; the table is the one of "Heute" (class "habits").
+    expect(overview.compareDocumentPosition(document.querySelector('.desert-entries')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const table = overview.querySelector('table.habits') as HTMLElement;
+    expect([...table.querySelectorAll('thead th')].slice(1).map((t) => t.textContent)).toEqual(['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So']);
+    expect(table.querySelector('thead th.is-today')!.textContent).toBe('Sa');
+    expect(table.querySelector('.group-row')!.textContent).toBe('Wüstenzeit');
+    // Starts in this week (week 2 of 6), with the habits of the Wüstenzeit only.
+    expect(overview.querySelector('h4')!.textContent).toBe('Diese WocheWoche 2 von 6');
+    expect([...table.querySelectorAll('tbody th[scope="row"]')].map((t) => t.textContent)).toEqual([
+      'Morgensegen',
+      'Bibel lesen',
+      'Handy später',
+      'Dankbarkeit',
+      'Freitagsfasten',
+    ]);
+    const mark = (label: string) => within(table).getByRole('img', { name: label });
+    expect(mark('Handy später, Di 22.9.: abgehakt').className).toContain('is-on');
+    expect(mark('Handy später, Mi 23.9.: nicht abgehakt').className).not.toContain('is-on');
+    expect(mark('Handy später, Sa 26.9.: nicht abgehakt').className).toContain('today');
+    expect(mark('Handy später, So 27.9.: liegt noch vor dir').className).toContain('future');
+    // Friday fasting: meant for Fridays only, the other days a dash.
+    expect(mark('Freitagsfasten, Fr 25.9.: abgehakt').className).toContain('is-on');
+    expect(table.querySelectorAll('td.wa-off')).toHaveLength(6);
+    // Nothing to tap, and no count.
+    expect(table.querySelectorAll('button, input, a')).toHaveLength(0);
+    expect(overview.textContent).not.toMatch(/\d+\s*%|in Folge|Streak|Serie/);
+    // The week before, with its ticks; the arrows stop at the first and the last week.
+    fireEvent.click(within(overview).getByRole('button', { name: 'Vorwoche' }));
+    expect(overview.querySelector('h4')!.textContent).toBe('Woche 1Woche 1 von 6');
+    expect(mark('Handy später, Di 15.9.: abgehakt').className).toContain('is-on');
+    expect(within(overview).getByRole('button', { name: 'Vorwoche' })).toHaveProperty('disabled', true);
+    for (let i = 0; i < 5; i++) fireEvent.click(within(overview).getByRole('button', { name: 'Folgewoche' }));
+    expect(overview.querySelector('h4')!.textContent).toBe('Woche 6Woche 6 von 6');
+    expect(within(overview).getByRole('button', { name: 'Folgewoche' })).toHaveProperty('disabled', true);
+    // The review (folded under the overview): the week before has ended; its three lines end in the word of comfort (rule 1).
+    openTile('Rückblick');
     expect(document.querySelector('.wa-review')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Frühere Woche' }));
     const review = document.querySelector('.wa-review') as HTMLElement;
     fireEvent.change(within(review).getByLabelText('Ein Sieg dieser Woche'), { target: { value: 'Jeden Morgen gelesen' } });
     expect(store.getProfile().winterArc.weeks[0]).toMatchObject({ week: 1, review: { win: 'Jeden Morgen gelesen' } });
     expect(review.lastElementChild!.textContent).toContain('alle Morgen neu');
+    expect(document.querySelector('.desert-kept')!.textContent).toContain('Handy späteran 2 Tagen gehalten');
+  });
+
+  it('shows weekly and monthly habits as the pill of "Heute", to read only', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => {
+      s.startDesert('2026-09-14', 40);
+      const run = s.getProfile().winterArc.runs[0]!;
+      s.chooseDesert(run.id, [pack('wuestenweg').habits.find((h) => h.id === 'wz-freitagsfasten')!], true);
+      s.updateProfile((p) => ({
+        ...p,
+        habits: [
+          ...p.habits,
+          { id: 'x-weekly', name: 'Wochenwerk', rhythm: 'weekly', auto: null, active: false, preset: false, focus: false, desert: 'own' },
+          { id: 'x-monthly', name: 'Monatswerk', rhythm: 'monthly', auto: null, active: false, preset: false, focus: false, desert: 'own' },
+        ],
+        winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => ({ ...r, habits: [...(r.habits ?? []), 'x-weekly', 'x-monthly'] })) },
+      }));
+      const get = (id: string) => s.getProfile().habits.find((h) => h.id === id)!;
+      // A Wednesday of the first week, and a day of September.
+      s.toggleHabit('2026-09-16', get('x-weekly'));
+      s.toggleHabit('2026-09-18', get('x-monthly'));
+    });
+    const overview = document.querySelector('.wa-overview') as HTMLElement;
+    const pill = (name: string) => within(overview).getByRole('img', { name: new RegExp(`^${name},`) });
+    // Week 2: this week not yet ticked; September is.
+    expect(pill('Wochenwerk').textContent).toBe('diese Woche');
+    expect(pill('Wochenwerk').className).not.toContain('is-on');
+    expect(pill('Monatswerk').textContent).toBe('✓ diesen Monat');
+    expect(pill('Monatswerk').className).toContain('is-on');
+    fireEvent.click(within(overview).getByRole('button', { name: 'Vorwoche' }));
+    expect(pill('Wochenwerk').textContent).toBe('✓ diese Woche');
+    // The last week lies in October: not ticked there.
+    for (let i = 0; i < 5; i++) fireEvent.click(within(overview).getByRole('button', { name: 'Folgewoche' }));
+    expect(pill('Monatswerk').textContent).toBe('diesen Monat');
+    expect(overview.querySelectorAll('button:not(.wa-pager-btn)')).toHaveLength(0);
+  });
+
+  it('opens on the first week before the beginning, and on the last after the end', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s), new Date(2026, 8, 1, 7));
+    expect(document.querySelector('.wa-overview h4')!.textContent).toBe('Woche 1Woche 1 von 6');
+    cleanup();
+    // After the last day (23 October) the close stands in the Arena; nothing of the overview is left to tick there.
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s), new Date(2026, 9, 24, 7));
+    expect(screen.getByRole('heading', { name: 'Die Wüstenzeit ist zu Ende' })).toBeTruthy();
+    expect(document.querySelector('.wa-overview')).toBeNull();
+  });
+
+  it('orders the page: overview, the note, the review, the journal, then the guide and the settings as two tiles', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const at = (el: Element | null) => {
+      expect(el).not.toBeNull();
+      return el!;
+    };
+    const parts = [
+      at(document.querySelector('.wa-overview')),
+      at(document.querySelector('.wa-to-today')),
+      screen.getByRole('button', { name: /^Rückblick/ }),
+      at(document.querySelector('.desert-entries')),
+      screen.getByRole('button', { name: /^Anleitung/ }),
+      screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ }),
+    ];
+    parts.forEach((el, i) => i > 0 && expect(parts[i - 1]!.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING, `part ${i}`).toBeTruthy());
+    // The review is a tile across the full width; the guide and the settings stand side by side, in one group.
+    expect(parts[2]!.closest('.tile-group')!.classList.contains('is-wide')).toBe(true);
+    expect(parts[4]!.closest('.tile-group')).toBe(parts[5]!.closest('.tile-group'));
+    expect(parts[4]!.closest('.tile-group')!.classList.contains('is-wide')).toBe(false);
+  });
+
+  it('opens and closes the tiles, one at a time within a group; the settings still end the Wüstenzeit', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const guide = screen.getByRole('button', { name: /^Anleitung/ });
+    const settings = screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ });
+    fireEvent.click(guide);
+    expect(guide.getAttribute('aria-expanded')).toBe('true');
+    expect(document.querySelector('.desert-guide')).not.toBeNull();
+    // A second tap closes it.
+    fireEvent.click(guide);
+    expect(guide.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(guide);
+    // Opening the settings closes the guide; the panel stands beneath the row.
+    fireEvent.click(settings);
+    expect(guide.getAttribute('aria-expanded')).toBe('false');
+    expect(settings.getAttribute('aria-expanded')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: 'Aus' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beenden' }));
+    // Ended: no Wüstenzeit runs, the way in stands again; nothing is deleted.
+    expect(activeRun(store.getProfile().winterArc)).toBeUndefined();
+    expect(store.getProfile().winterArc.runs).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
+  });
+
+  it('has no habit to tick or to choose: the habits are kept under "Heute"', async () => {
+    await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    // Only the section of the day of the reading plan is ticked here (1.22), the same tick as "Bibel lesen".
+    expect(screen.queryAllByRole('checkbox').map((c) => c.closest('.desert-reading') !== null)).toEqual([true]);
+    expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
+    expect(document.body.textContent).toContain('Die Gewohnheiten pflegst und hakst du unter Heute ab.');
+    // No title line under the head, like the other places; no more days or weeks to page through.
+    expect(document.querySelector('.place-sub')).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Ansicht der Wüstenzeit' })).toBeNull();
+    // Review, guide and settings stand as tiles, folded.
+    for (const t of ['Rückblick', 'Anleitung', 'Einstellungen der Wüstenzeit'])
+      expect(screen.getByRole('button', { name: new RegExp(`^${t}`) }).getAttribute('aria-expanded')).toBe('false');
   });
 
   it('never marks anything in red, as a streak or as a rate', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Woche');
     const desert = document.querySelector('.desert')!;
     expect(desert.querySelector('[class*="danger"], [class*="rubric"], [class*="warn"]')).toBeNull();
     expect(desert.textContent).not.toMatch(/in Folge|Streak|%|Quote/i);
@@ -357,16 +401,28 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }).textContent).toContain('Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt.');
   });
 
-  it('gives the journal of a closed Wüstenzeit to read again, day by day', async () => {
+  it('shows the journal once in the close, as entries, with the old day sheets folded below', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => {
       withDesert(s, '2026-08-01');
       s.updateDay('2026-08-02', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der zweite Tag.' } }));
       s.updateDay('2026-08-05', (d) => ({ ...d, evening: { ...d.evening, journal: 'Der fünfte Tag.' } }));
-      // Outside the Wüstenzeit: not part of its journal.
-      s.updateDay('2026-07-30', (d) => ({ ...d, evening: { ...d.evening, journal: 'Davor.' } }));
+      const id = s.addArenaEntry('desert');
+      s.updateArenaEntry(id, (e) => ({ ...e, title: 'Zum Schluss', text: 'Es war gut.' }));
     });
-    const read = document.querySelector('.desert-journal-read')!;
-    expect([...read.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der zweite Tag.', 'Der fünfte Tag.']);
+    expect(screen.getByRole('heading', { name: 'Die Wüstenzeit ist zu Ende' })).toBeTruthy();
+    // One journal only: the entries; no second "Das Tagebuch" of day sheets.
+    expect(document.querySelectorAll('.desert-entries')).toHaveLength(1);
+    expect(screen.getAllByRole('heading', { name: 'Tagebuch' })).toHaveLength(1);
+    expect(screen.queryByRole('heading', { name: 'Das Tagebuch' })).toBeNull();
+    expect(screen.getByRole('link', { name: /Zum Schluss/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' })).toBeTruthy();
+    // The day sheets stay readable, folded, below the entries.
+    const sheets = document.querySelector('.desert-sheets') as HTMLElement;
+    expect(document.querySelector('.desert-entries')!.contains(sheets)).toBe(true);
+    expect([...sheets.querySelectorAll('.desert-journal-text')].map((x) => x.textContent)).toEqual(['Der fünfte Tag.', 'Der zweite Tag.']);
+    // The close keeps its own part.
+    expect(screen.getByRole('button', { name: 'Neue Wüstenzeit beginnen' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ })).toBeTruthy();
   });
 });
 
@@ -410,33 +466,30 @@ describe('a Wüstenzeit in Advent', () => {
   });
 });
 
-describe('the package "Erbe" (1.3)', () => {
-  it('combines with another package; a habit in both counts once', async () => {
-    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => s.startDesert('2026-09-14', 40));
-    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByRole('button', { name: 'Paket übernehmen' }));
-    fireEvent.click(screen.getByText('Gewohnheiten wählen', { selector: 'summary' }));
-    const erbe = screen.getByRole('region', { name: 'Erbe' });
-    expect(erbe.textContent).toContain('Was du nicht angehst, erben deine Kinder.');
-    fireEvent.click(within(erbe).getByRole('button', { name: 'Paket übernehmen' }));
-    const ids = store.getProfile().winterArc.runs[0]!.habits!;
-    for (const id of ['wz-stille', 'wz-gewissen', 'wz-familienzeit', 'wz-kindzeit', 'brothers']) expect(ids, id).toContain(id);
-    expect(ids.filter((id) => id === 'wz-gewissen')).toHaveLength(1);
-    expect(within(erbe).getByRole('button', { name: 'Paket übernehmen' })).toHaveProperty('disabled', true);
+describe('the reading of the Wüstenzeit in the Arena (1.22)', () => {
+  it('shows the section of the day first and ticks it, the same tick as "Bibel lesen"', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const panel = screen.getByRole('region', { name: 'Lesung' });
+    expect(store.getProfile().plan.planId).toBe('wueste-40');
+    const reading = within(panel).getByRole('checkbox', { name: /^Matthäus 4Bewährung/ });
+    expect(reading.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
+    // The Word first (rule 2): above the overview of the habits.
+    const overview = screen.getByRole('region', { name: /Woche/ });
+    expect(panel.compareDocumentPosition(overview) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    fireEvent.click(reading);
+    expect(store.getDay('2026-09-26').reading?.done).toBe(true);
+    expect(store.getProfile().plan.positions.wueste).toBe(1);
   });
 
-  it('leaves the reading out, or takes it in again, at any time (1.16)', async () => {
+  it('leaves the reading out, or takes the plan of the Bible area, at any time in the settings', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    tab('Tag');
-    const day = () => document.querySelector('.wa-day') as HTMLElement;
-    expect(day().querySelector('.desert-reading')).toBeTruthy();
-    fireEvent.click(screen.getByText('Leseplan der Wüstenzeit'));
-    fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Ohne Lesung' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ }));
+    const choice = await screen.findByRole('group', { name: 'Leseplan der Wüstenzeit' });
+    fireEvent.click(within(choice).getByRole('button', { name: 'Ohne Lesung' }));
     expect(store.getProfile().winterArc.runs[0]!.reading).toBe('none');
-    expect(day().querySelector('.desert-reading')).toBeNull();
-    // Without the reading above, "Bibel lesen" stands in the list again.
-    expect(within(day()).getByRole('checkbox', { name: /^Bibel lesen/ })).toBeTruthy();
+    expect(screen.queryByRole('region', { name: 'Lesung' })).toBeNull();
     fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Mein Leseplan' }));
     expect(store.getProfile().plan.planId).toBe('atnt-1-1');
-    expect(within(day()).getByRole('checkbox', { name: /^1\. Mose 1 · Matthäus 1/ })).toBeTruthy();
+    expect(within(screen.getByRole('region', { name: 'Lesung' })).getByRole('checkbox', { name: /^1\. Mose 1 · Matthäus 1/ })).toBeTruthy();
   });
 });

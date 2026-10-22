@@ -19,6 +19,10 @@ import { WINTER_ARC_VERSES } from './winterArc';
 import { DESERT_VERSES } from './desert';
 import { CHAPTER_VERSES } from './readingPlans';
 import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
+import band1 from '../../data/dogmatik/band-1.json';
+import band2 from '../../data/dogmatik/band-2.json';
+import band3 from '../../data/dogmatik/band-3.json';
+import { normalizeBook } from '../domain/dogmatik';
 
 const dir = process.env.LUT1912_DIR;
 const available = !!dir && existsSync(dir);
@@ -80,6 +84,21 @@ function verseList(source: string): [string, string, string[]] {
   return [book, chapter, verses];
 }
 
+/** "Epheser 2,20" → "Eph 2,20", the book names of the source. */
+const BOOK_SHORT: Record<string, string> = {
+  '1. Mose': '1Mo', '2. Mose': '2Mo', '3. Mose': '3Mo', '4. Mose': '4Mo', '5. Mose': '5Mo', Josua: 'Jos', Richter: 'Ri',
+  Hiob: 'Hi', Psalm: 'Ps', Sprüche: 'Spr', Prediger: 'Pred', Jesaja: 'Jes', Jeremia: 'Jer', Hesekiel: 'Hesekiel', Daniel: 'Dan',
+  Matthäus: 'Mt', Markus: 'Mk', Lukas: 'Lk', Johannes: 'Joh', Apostelgeschichte: 'Apg', Römer: 'Röm',
+  '1. Korinther': '1Kor', '2. Korinther': '2Kor', Galater: 'Gal', Epheser: 'Eph', Philipper: 'Phil', Kolosser: 'Kol',
+  '1. Thessalonicher': '1Thes', '2. Thessalonicher': '2Thes', '1. Timotheus': '1Tim', '2. Timotheus': '2Tim', Titus: 'Tit',
+  Hebräer: 'Hebr', Jakobus: 'Jak', '1. Petrus': '1Petr', '2. Petrus': '2Petr', '1. Johannes': '1Jo', Offenbarung: 'Offb',
+};
+function shortRef(ref: string): string {
+  const m = /^(.+) (\d+,[\d.-]+)$/.exec(ref.replace(/–/g, '-'));
+  if (!m || !BOOK_SHORT[m[1]!]) throw new Error(`Unbekannte Bibelstelle: ${ref}`);
+  return `${BOOK_SHORT[m[1]!]} ${m[2]}`;
+}
+
 const lines = (t: { lines: readonly string[] }) => t.lines.join(' ');
 const versicle = (v: { v: string; a: string }) => `${v.v} ${v.a}`;
 
@@ -130,6 +149,10 @@ const SCRIPTURE: readonly (readonly [string, string])[] = [
   // The 90-Tage-Standard, and the Wüstenzeit.
   ...WINTER_ARC_VERSES.map((v) => [v.source, v.text] as const),
   ...DESERT_VERSES.map((v) => [v.source, v.text] as const),
+  // The Bible word to begin each day of the Dogmatik.
+  ...[band1, band2, band3]
+    .flatMap((b, i) => normalizeBook(b, i + 1).tage)
+    .flatMap((d) => (d.bibelwort ? [[shortRef(d.bibelwort.stelle), d.bibelwort.text] as const] : [])),
 ];
 
 describe.skipIf(!available)('other Bible texts against Luther 1912', () => {

@@ -13,6 +13,8 @@ import { Segmented } from '../../ui/Choice';
 import { GripIcon } from '../../ui/Icons';
 import { TileGroup } from '../../ui/TileGroup';
 import { useSortable } from '../../ui/useSortable';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 export const HOUSE_INFO = (
   <>
@@ -62,9 +64,20 @@ function ConcernField({
         onChange={(e) => onChange(e.target.value)}
       />
       <div className="house-concern-actions">
-        <button type="button" className="btn" disabled={!person.concern.trim()} onClick={onAnswered}>
+        <button
+          type="button"
+          className="btn"
+          disabled={!person.concern.trim()}
+          aria-describedby={person.concern.trim() ? undefined : `${id}-hint`}
+          onClick={onAnswered}
+        >
           Erhört
         </button>
+        {!person.concern.trim() && (
+          <span id={`${id}-hint`} className="small muted">
+            Erst wenn ein Anliegen dasteht.
+          </span>
+        )}
       </div>
     </div>
   );
@@ -143,7 +156,7 @@ function ChildRow({
           aria-label={`${label} entfernen`}
           onClick={() => update(() => null)}
         >
-          ×
+          <FlowIcon name="close" size={ICON_SIZE.m} plain />
         </button>
       )}
     </li>
@@ -297,7 +310,7 @@ export function HouseSettings() {
           aria-label="Weiteres Kind hinzufügen"
           onClick={() => setHouse((h) => ({ ...h, children: [...h.children, emptyChild()] }))}
         >
-          +
+          <FlowIcon name="plus" size={ICON_SIZE.m} plain />
         </button>
             </>
           ),

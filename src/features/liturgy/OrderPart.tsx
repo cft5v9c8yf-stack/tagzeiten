@@ -48,7 +48,7 @@ import { isPassiontide } from '../../domain/churchYear';
 import { WEEKDAY_LONG, weekdayOf, type DateKey } from '../../domain/dates';
 import type { OrderForm } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
-import { Note, PrayerText, Rubric, VersicleView } from '../../ui/PrayerText';
+import { PrayerText, Rubric, VersicleView } from '../../ui/PrayerText';
 import { Section } from '../../ui/Section';
 import { Alignment } from './Alignment';
 import { CatechismOfDay } from './CatechismOfDay';
@@ -60,6 +60,7 @@ import { DayField } from '../../ui/DayField';
 import { Segmented } from '../../ui/Choice';
 import { Review } from './Review';
 import { WeekReview } from './WeekReview';
+import { DogmatikPart } from '../dogmatik/DogmatikPart';
 
 export interface PartContext {
   order: OrderId;
@@ -259,11 +260,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
       if (ctx.order === 'morning') {
         return (
           <>
-            <p className="field-like">
-              <span className="field-label">Beichte – Wo stehe ich dagegen?</span>
-              <span className="placeholder-text">Ich bekenne dir, daß ich …</span>
-            </p>
-            <Note>{RUBRICS.confessionNote}</Note>
+            <p className="field-label confess-label">Beichte – Wo stehe ich dagegen?</p>
+            <blockquote className="confess-line">Ich bekenne dir, daß ich …</blockquote>
+            <p className="note confess-note">{RUBRICS.confessionNote}</p>
           </>
         );
       }
@@ -494,6 +493,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
 
     case 'house-blessing':
       return <HouseBlessing />;
+
+    case 'dogmatik':
+      return __DOGMATIK__ ? <DogmatikPart date={ctx.date} /> : null;
   }
 }
 

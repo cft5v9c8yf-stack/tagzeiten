@@ -146,7 +146,10 @@ describe('Vesper', () => {
     fireEvent.click(buttons.at(-2)!);
     fireEvent.click(await screen.findByRole('button', { name: 'Vesper abschließen' }));
     await waitFor(() => expect(store.getDay('2026-09-24').evening.vespersDone).toBe(true));
-    // On to the Nachtgebet: its row begins with the Vesper, now prayed.
+    // The Vesper rests with its closing panel; the Nachtgebet is one quiet button away.
+    expect(screen.getByRole('link', { name: 'Zurück zu Heute' })).toBeTruthy();
+    fireEvent.click(await screen.findByRole('button', { name: 'Weiter zum Nachtgebet' }));
+    // Its row begins with the Vesper, now prayed.
     await screen.findByRole('navigation', { name: 'Ablauf: Nachtgebet' });
     expect(screen.queryByRole('navigation', { name: 'Ablauf: Vesper' })).toBeNull();
     expect(within(chainOf('Nachtgebet')).getAllByRole('button')[0]!.getAttribute('aria-label')).toBe('Vesper, gebetet');

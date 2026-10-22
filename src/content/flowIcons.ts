@@ -14,6 +14,7 @@ export const MORNING_ICONS: Record<string, FlowIconName> = {
   lordsPrayer: 'foldedHands',
   alignment: 'compass',
   blessing: 'blessing',
+  dogmatik: 'scroll',
 };
 
 /** In the short form the prayer step is the free prayer over the verse, from the heart. */

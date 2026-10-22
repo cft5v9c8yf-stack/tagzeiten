@@ -51,7 +51,7 @@ export const INSTALL_GUIDE: readonly GuidePart[] = [
 
 export const INSTALL_NOTES: readonly string[] = [
   'Deine Einträge bleiben auf dem Gerät. Die installierte App und der Browser teilen sie auf Android miteinander; auf dem iPhone hat die App vom Home-Bildschirm einen eigenen Speicher.',
-  'Wer im Browser „Websitedaten löschen“ für diese Seite wählt oder die App deinstalliert, löscht auch die Einträge. Eine Sicherung unter Mehr → Einstellungen → Deine Daten schützt davor.',
+  'Wer im Browser „Websitedaten löschen“ für diese Seite wählt oder die App deinstalliert, löscht auch die Einträge. Eine Sicherung unter Mehr → Deine Daten schützt davor.',
   'Neue Versionen kommen von selbst, sobald die App mit Internet geöffnet wird. Du musst nichts aus einem Store laden.',
   'Die Bezeichnungen im Menü können je nach Gerät und Browserversion leicht abweichen.',
 ];

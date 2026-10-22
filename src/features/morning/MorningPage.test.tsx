@@ -9,6 +9,7 @@ import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
+import { timer } from '../../ui/timerState';
 import { MorningPage } from './MorningPage';
 
 beforeEach(() => {
@@ -89,6 +90,20 @@ describe('Stille Zeit as a flow', () => {
 
 });
 
+describe('Stille Zeit and the reading habit', () => {
+  it('marks the day\'s reading as read when the step "Das Wort" is left, and moves the plan on', async () => {
+    const store = await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    await waitFor(() => expect(store.getDay(store.today()).reading).toBeTruthy());
+    const before = JSON.stringify(store.getProfile().plan.positions);
+    expect(store.getDay(store.today()).reading!.done).toBe(false);
+    fireEvent.click(screen.getByRole('button', { name: /^Weiter zu: / }));
+    await waitFor(() => expect(store.getDay(store.today()).reading!.done).toBe(true));
+    expect(JSON.stringify(store.getProfile().plan.positions)).not.toBe(before);
+  });
+});
+
 describe('Stille Zeit without the bed', () => {
   it('shows the verse and the double question in the reading, the rest folded until something is written in it', async () => {
     await renderMorning();
@@ -114,5 +129,16 @@ describe('Stille Zeit without the bed', () => {
     expect(within(chain()).queryByRole('button', { name: /Am Bett/ })).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /^Weiter zu: / }));
     await waitFor(() => expect(title()).not.toBe('Eröffnung'));
+  });
+
+  it('names the step in view under its mark and the timer agrees with the bed', async () => {
+    await renderMorning();
+    // The strip with the time shows only once the time is started.
+    expect(screen.queryByText(/Jetzt: Am Bett/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Zeit starten' }));
+    expect(screen.getByText(/Jetzt: Am Bett/)).toBeTruthy();
+    // Every mark carries its name; the one in view stands first.
+    expect(chain().querySelector('.flow-short')!.textContent).toBe('Am Bett');
+    timer.reset(45 * 60);
   });
 });

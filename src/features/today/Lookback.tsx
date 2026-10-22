@@ -5,6 +5,14 @@ import { collectedVerses, lookback, markCounts, stillTimesIn } from '../../domai
 
 const STATE_LABEL = { none: 'nichts eingetragen', one: 'Morgen oder Abend gebetet', both: 'Morgen und Abend gebetet' } as const;
 
+/** What the row of dots shows, in words; empty days are not counted (rule 5). */
+export function lookbackSummary(dots: readonly { state: keyof typeof STATE_LABEL }[]): string {
+  const both = dots.filter((d) => d.state === 'both').length;
+  const one = dots.filter((d) => d.state === 'one').length;
+  const days = (n: number) => `${n} ${n === 1 ? 'Tag' : 'Tagen'}`;
+  return `Die letzten ${dots.length} Tage: an ${days(both)} Morgen und Abend gebetet, an ${days(one)} eines von beiden.`;
+}
+
 /**
  * The last four weeks as a neutral row of dots, and three plain numbers.
  * Documentation, not assessment: empty days are grey (rules 4 and 5).
@@ -18,13 +26,11 @@ export function Lookback({ date }: { date: DateKey }) {
 
   return (
     <div className="panel">
-      <ol className="dots" aria-label="Die letzten 28 Tage">
+      {/* One sentence for screen readers instead of 28 single announcements. */}
+      <p className="visually-hidden">{lookbackSummary(dots)}</p>
+      <ol className="dots" aria-hidden="true">
         {dots.map((d) => (
-          <li key={d.date} className={`dot ${d.state}`} title={`${formatShort(d.date)}: ${STATE_LABEL[d.state]}`}>
-            <span className="visually-hidden">
-              {formatShort(d.date)}: {STATE_LABEL[d.state]}
-            </span>
-          </li>
+          <li key={d.date} className={`dot ${d.state}`} title={`${formatShort(d.date)}: ${STATE_LABEL[d.state]}`} />
         ))}
       </ol>
       <p className="dots-legend">

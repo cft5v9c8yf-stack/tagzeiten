@@ -370,6 +370,44 @@ describe('the Arena in its own table (v2)', () => {
     expect(await otherDb.arena.count()).toBe(0);
     expect(other.getProfile().arena).toEqual([]);
   });
+
+  it('keeps the entries of the Wüstenwanderung through export, import and deleting, with their kind and pin', async () => {
+    const { store } = freshStore();
+    await store.load();
+    const id = store.addArenaEntry('desert');
+    store.updateArenaEntry(id, (e) => ({ ...e, title: 'Still', text: 'Aus der Wüste' }), { immediate: true });
+    store.pinArenaEntry(id, true);
+    const own = store.addArenaEntry();
+    store.updateArenaEntry(own, (e) => ({ ...e, text: 'Gebetskammer' }), { immediate: true });
+    const json = JSON.stringify(await store.exportBackup());
+    expect(JSON.parse(json).format).toBe('tagzeiten');
+
+    const { db: otherDb, store: other } = freshStore();
+    await other.load();
+    await other.importBackup(json);
+    const kinds = other.getProfile().arena.map((e) => [e.text, e.kind]);
+    expect(kinds).toContainEqual(['Aus der Wüste', 'desert']);
+    expect(kinds).toContainEqual(['Gebetskammer', undefined]);
+    expect(other.getProfile().arena.find((e) => e.kind === 'desert')!.pinnedAt).toBeDefined();
+    expect(await otherDb.arena.count()).toBe(2);
+    // Also in the Markdown export.
+    expect(await other.exportMarkdown()).toContain(' · Wüstenwanderung');
+
+    await other.deleteAll();
+    expect(await otherDb.arena.count()).toBe(0);
+  });
+
+  it('loads a backup from before the entries of the Wüstenwanderung: entries without a kind stay the Gebetskammer\'s', async () => {
+    const { store } = freshStore();
+    await store.load();
+    store.updateProfile((p) => ({ ...p, arena: [entry('k', 3000, 'alt')] }), { immediate: true });
+    const backup = JSON.parse(JSON.stringify(await store.exportBackup()));
+    for (const e of backup.profile.arena) delete e.kind;
+    const { store: other } = freshStore();
+    await other.load();
+    await other.importBackup(JSON.stringify(backup));
+    expect(other.getProfile().arena.map((e) => [e.id, e.kind])).toEqual([['k', undefined]]);
+  });
 });
 
 describe('the reading of the Wüstenzeit (1.16)', () => {

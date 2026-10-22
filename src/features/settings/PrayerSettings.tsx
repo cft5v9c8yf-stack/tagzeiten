@@ -4,6 +4,8 @@ import { WEEKDAY_LONG } from '../../domain/dates';
 import type { Prayer } from '../../domain/model';
 import { addConcern, concernsOn, removeConcern, type PrayerDay } from '../../domain/prayer';
 import { WEEK } from '../../domain/schedule';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { ICON_SIZE } from '../../ui/iconBase';
 
 const DAYS: PrayerDay[] = ['daily', ...WEEK];
 const dayName = (d: PrayerDay) => (d === 'daily' ? 'Täglich' : WEEKDAY_LONG[d]);
@@ -80,7 +82,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
               aria-label={`„${c}“ ${day === 'daily' ? 'aus Täglich' : `am ${name}`} entfernen`}
               onClick={() => update((p) => removeConcern(p, c, day))}
             >
-              ×
+              <FlowIcon name="close" size={ICON_SIZE.m} plain />
             </button>
           </li>
         ))}
@@ -92,7 +94,7 @@ function PrayerDayRow({ day, prayer, update }: { day: PrayerDay; prayer: Prayer;
             aria-label={`Anliegen ${day === 'daily' ? 'für jeden Tag' : `am ${name}`} hinzufügen`}
             onClick={() => setAdding((a) => !a)}
           >
-            +
+            <FlowIcon name="plus" size={ICON_SIZE.m} plain />
           </button>
         </li>
       </ul>
@@ -134,7 +136,7 @@ export function PrayerSettings() {
               <li key={c} className="concern-chip">
                 <span>{c}</span>
                 <button type="button" aria-label={`„${c}“ ganz entfernen`} onClick={() => update((p) => removeConcern(p, c))}>
-                  ×
+                  <FlowIcon name="close" size={ICON_SIZE.m} plain />
                 </button>
               </li>
             ))}

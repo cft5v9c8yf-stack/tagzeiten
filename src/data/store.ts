@@ -10,7 +10,24 @@ import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/da
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
-import { activeDesert, addOwn, adopt, choose, chooseOwn, desertPlanFor, desertReadingOf, fromRound, relink, removeOwn, startDesert, type DesertReading } from '../domain/desert';
+import { dogmatikToMarkdown } from '../domain/dogmatik';
+import { loadDogmatik } from '../content/dogmatik';
+import {
+  activeDesert,
+  addOwn,
+  adopt,
+  choose,
+  chooseOwn,
+  desertPlanFor,
+  desertReadingOf,
+  fromRound,
+  habitFromOffer,
+  offerOf,
+  relink,
+  removeOwn,
+  startDesert,
+  type DesertReading,
+} from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
@@ -383,7 +400,7 @@ export class Store {
   /* ------------------------------------------------------------ arena */
 
   /** Starts a new Arena entry (or one for the Eisenschmiede) and returns its id. Entries left empty are cleared away. */
-  addArenaEntry(kind?: 'forge'): string {
+  addArenaEntry(kind?: 'forge' | 'desert'): string {
     const entry = newEntry(this.now().getTime(), kind);
     // A new concern for the brothers belongs to the next meeting already planned.
     const meeting = kind === 'forge' ? nextMeeting(this.profile.arena, this.today()) : undefined;
@@ -424,9 +441,8 @@ export class Store {
     const entry = this.profile.arena.find((e) => e.id === id);
     if (!entry || entry.archivedAt !== undefined) return false;
     if ((entry.pinnedAt !== undefined) === pinned) return true;
-    const forge = entry.kind === 'forge';
     const count = this.profile.arena.filter(
-      (e) => e.pinnedAt !== undefined && e.archivedAt === undefined && (e.kind === 'forge') === forge,
+      (e) => e.pinnedAt !== undefined && e.archivedAt === undefined && e.kind === entry.kind,
     ).length;
     if (pinned && count >= MAX_PINNED) return false;
     // Later than every pin before it, so the order of pinning holds.
@@ -470,9 +486,17 @@ export class Store {
    */
   startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = '', reading: DesertReading = 'desert'): void {
     const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) }), {
-      immediate: true,
-    });
+    // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
+    this.updateProfile(
+      (p) => {
+        const missing = [...new Set(habits)]
+          .map(offerOf)
+          .filter((o): o is DesertHabit => !!o && !p.habits.some((h) => h.id === o.id))
+          .map(habitFromOffer);
+        return { ...p, habits: [...p.habits, ...missing], winterArc: startDesert(p.winterArc, startDate, durationDays, t, habits, undefined, name) };
+      },
+      { immediate: true },
+    );
     const run = activeRun(this.profile.winterArc);
     if (run) this.setDesertReading(run.id, reading);
   }
@@ -698,7 +722,10 @@ export class Store {
       this.now(),
       this.profile.arena,
       this.profile.answered,
-      winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
+      [
+        ...winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
+        ...(__DOGMATIK__ ? dogmatikToMarkdown(this.profile.dogmatik, await loadDogmatik()) : []),
+      ],
     );
   }
 

@@ -26,6 +26,7 @@ import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
 import type { Habit, Rhythm } from '../../domain/model';
+import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
 
 const RHYTHMS = RHYTHM_ORDER;
 const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
@@ -119,23 +120,16 @@ function HabitRow({
           )}
           {!habit.preset &&
             (confirming ? (
-              <span className="confirm-inline">
-                <button type="button" className="btn danger small-btn" onClick={() => update((hs) => removeHabit(hs, habit.id))}>
-                  Löschen
-                </button>
-                <button type="button" className="btn quiet small-btn" onClick={() => setConfirming(false)}>
-                  Behalten
-                </button>
-              </span>
+              <ConfirmRow
+                label={`${habit.name} löschen?`}
+                confirmLabel="Löschen"
+                onConfirm={() => update((hs) => removeHabit(hs, habit.id))}
+                onCancel={() => setConfirming(false)}
+              />
             ) : (
-              <button
-                type="button"
-                className="link-btn"
-                onClick={() => setConfirming(true)}
-                aria-label={`${habit.name} löschen`}
-              >
+              <ConfirmTrigger label={`${habit.name} löschen`} onClick={() => setConfirming(true)}>
                 löschen …
-              </button>
+              </ConfirmTrigger>
             ))}
         </span>
       </div>
@@ -275,9 +269,14 @@ export function HabitSettings() {
             <TimesSelect id={timesId} value={times} onChange={setTimes} />
           </div>
         )}
-        <button type="submit" className="btn primary" disabled={!name.trim()}>
+        <button type="submit" className="btn primary" disabled={!name.trim()} aria-describedby={name.trim() ? undefined : `${timesId}-hint`}>
           Gewohnheit anlegen
         </button>
+        {!name.trim() && (
+          <p id={`${timesId}-hint`} className="small muted">
+            Gib der Gewohnheit zuerst einen Namen.
+          </p>
+        )}
       </form>
       </Section>
     </>

@@ -93,7 +93,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Rückblick', 'Einstellungen', 'Versionen', 'Neuigkeiten']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Darstellung', 'Deine Daten', 'Rückblick', 'Über Henoch', 'Versionen', 'Anleitung', 'Neuigkeiten']);
     // The news open on the homepage, in the browser.
     const news = screen.getByRole('link', { name: /Neuigkeiten/ });
     expect(news.getAttribute('href')).toBe('https://henoch.app/neuigkeiten/');
@@ -133,34 +133,14 @@ describe('Mehr: Aufbau', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Mein Haus' })).toBeTruthy();
   });
 
-  it('gathers Darstellung, Deine Daten, the two guides and Über under "Einstellungen", folded and remembered', async () => {
-    resetOpenState();
-    const db = new TagzeitenDB(`m6-fold-${++n}`);
-    const store = new Store({ db, journal: memoryJournal() });
-    const page = () => (
-      <ToastProvider>
-        <StoreProvider store={store}>
-          <RouterProvider
-            router={createMemoryRouter([{ path: '/mehr/:bereich', element: <SettingsPage /> }], {
-              initialEntries: ['/mehr/einstellungen'],
-            })}
-          />
-        </StoreProvider>
-      </ToastProvider>
-    );
-    const view = render(page());
-    await screen.findByRole('heading', { level: 2, name: /Einstellungen/ });
-    const tiles = [...document.querySelectorAll('.tile-card-title')].map((t) => t.textContent);
-    expect(tiles).toEqual(['Darstellung', 'Deine Daten', 'App installieren', 'Flugmodus beim Beten', 'Über Henoch']);
+  it('leads to Darstellung, Daten and Über directly from Mehr, and the old "Einstellungen" address to Darstellung', async () => {
+    await renderAt('/mehr/darstellung', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Darstellung' });
     // No verse above the settings, only their explanations.
     expect(document.querySelector('.section-verse')).toBeNull();
-    const display = screen.getByRole('button', { name: /^Darstellung/ });
-    expect(display.getAttribute('aria-expanded')).toBe('false');
-    fireEvent.click(display);
-    await waitFor(() => expect(display.getAttribute('aria-expanded')).toBe('true'));
-    expect(screen.getByRole('button', { name: 'Info zu Darstellung' })).toBeTruthy();
-    // Inside: the settings as tiles with what is set now; no choice of wording for Lord's Prayer and Creed.
-    const inner = [...document.querySelectorAll('.tile-panel .tile-card')].map((t) => t.textContent);
+    expect(document.querySelector('.more-area-info')!.textContent).toContain('Farbschema');
+    // Inside: the settings as tiles with what is set now.
+    const inner = [...document.querySelectorAll('.tile-card')].map((t) => t.textContent);
     expect(inner).toEqual([
       'FarbschemaSystem',
       'Gewohnheiten im RückblickAusblenden',
@@ -171,13 +151,10 @@ describe('Mehr: Aufbau', () => {
       'Geistliche WaffenrüstungAnzeigen',
       'WüstenzeitAus',
     ]);
-    view.unmount();
-    render(page());
-    expect((await screen.findByRole('button', { name: /^Darstellung/ })).getAttribute('aria-expanded')).toBe('true');
   });
 
   it('switches the Wüstenzeit on with span and start, chooses its habits, and switches it off without deleting', async () => {
-    const { store, db } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.desert']);
+    const { store, db } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.desert']);
     const toggle = await screen.findByRole('group', { name: 'Wüstenzeit' });
     expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
@@ -291,7 +268,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.atBed']);
+    const { store } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
     expect(within(bed).getByRole('button', { name: 'Anzeigen' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(bed).getByRole('button', { name: 'Ausblenden' }));
@@ -305,7 +282,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('switches the Sunday rest on and off', async () => {
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.sundayRest']);
+    const { store } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.sundayRest']);
     const rest = await screen.findByRole('group', { name: 'Sonntagsruhe' });
     expect(within(rest).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(rest).getByRole('button', { name: 'Ein' }));
@@ -335,7 +312,7 @@ describe('Mehr: Daten', () => {
       value: { persisted: () => Promise.resolve(granted), persist },
     });
     try {
-      await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data']);
+      await renderAt('/mehr/daten', <SettingsPage />, undefined, ['more.data']);
       // Asked once on start; the browser declined.
       await waitFor(() => expect(persist).toHaveBeenCalledOnce());
       expect(await screen.findByText(/noch nicht zugesagt/)).toBeTruthy();
@@ -349,9 +326,9 @@ describe('Mehr: Daten', () => {
   });
 
   it('exports every entry as Markdown and as JSON', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />, fill, ['more.data', 'more.data.export']);
+    await renderAt('/mehr/daten', <SettingsPage />, fill, ['more.data', 'more.data.export']);
     fireEvent.click(await screen.findByText('Als Text exportieren (Markdown)'));
-    await waitFor(() => expect(blobs).toHaveLength(1));
+    await waitFor(() => expect(blobs).toHaveLength(1), { timeout: 15000 });
     const md = await blobs[0]!.text();
     for (const t of ['Sei stille dem HERRN', 'Psalm 37,7', 'Mit Anna spazieren', 'das Gespräch mit Paul', 'Gott hält Wort']) {
       expect(md).toContain(t);
@@ -363,7 +340,7 @@ describe('Mehr: Daten', () => {
   });
 
   it('asks on the page before deleting, then leaves the database empty', async () => {
-    const { db } = await renderAt('/mehr/einstellungen', <SettingsPage />, fill, ['more.data', 'more.data.delete']);
+    const { db } = await renderAt('/mehr/daten', <SettingsPage />, fill, ['more.data', 'more.data.delete']);
     expect(await db.days.count()).toBe(2);
     fireEvent.click(await screen.findByText('Alle Einträge löschen …'));
     expect(screen.getByText(/lässt sich nicht rückgängig machen/)).toBeTruthy();
@@ -391,8 +368,8 @@ describe('Mehr: Daten', () => {
     fill(source);
     const backup = JSON.stringify(await source.exportBackup());
 
-    const { store } = await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
-    const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
+    const { store } = await renderAt('/mehr/daten', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
+    const input = (await screen.findByText('Sicherung aus Datei wählen')).querySelector('input')!;
     const file = new File([backup], 'sicherung.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
@@ -408,8 +385,8 @@ describe('Mehr: Daten', () => {
   });
 
   it('rejects a file that is not a backup', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
-    const input = (await screen.findByText('Datei wählen …')).querySelector('input')!;
+    await renderAt('/mehr/daten', <SettingsPage />, undefined, ['more.data', 'more.data.import']);
+    const input = (await screen.findByText('Sicherung aus Datei wählen')).querySelector('input')!;
     await act(async () => {
       fireEvent.change(input, { target: { files: [new File(['{"a":1}'], 'x.json')] } });
     });
@@ -821,7 +798,7 @@ describe('Rückblick', () => {
     expect(screen.queryByRole('button', { name: 'Gewohnheiten' })).toBeNull();
     cleanup();
 
-    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.display.habitHistory']);
+    await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.habitHistory']);
     const group = await screen.findByRole('group', { name: 'Gewohnheiten im Rückblick' });
     expect(within(group).getByRole('button', { name: 'Ausblenden' }).getAttribute('aria-pressed')).toBe('true');
     cleanup();
@@ -929,7 +906,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.16(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.22(?![\d.])/);
     expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
     // The versions before 1.0 fold together, last.
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
@@ -937,11 +914,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.16(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.22(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.16(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.22(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);
@@ -968,7 +945,7 @@ describe('Rückblick', () => {
   });
 
   it('explains how to install the app on Android and on the iPhone', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.install']);
+    await renderAt('/mehr/ueber', <SettingsPage />, undefined, ['more.install']);
     await screen.findByRole('heading', { level: 3, name: /App installieren/ });
     for (const t of ['Android mit Chrome', 'Android mit Samsung Internet', 'iPhone mit Safari']) {
       expect(screen.getByRole('heading', { level: 4, name: t })).toBeTruthy();
@@ -978,8 +955,8 @@ describe('Rückblick', () => {
     expect(text).toContain('https://mein.henoch.app/');
   });
 
-  it('explains, under Einstellungen, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
-    await renderAt('/mehr/einstellungen', <SettingsPage />, undefined, ['more.airplane']);
+  it('explains, under Über Henoch, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
+    await renderAt('/mehr/ueber', <SettingsPage />, undefined, ['more.airplane']);
     await screen.findByRole('heading', { level: 3, name: /Flugmodus beim Beten/ });
     const text = document.body.textContent!;
     expect(text).toContain('„Wird geöffnet“');

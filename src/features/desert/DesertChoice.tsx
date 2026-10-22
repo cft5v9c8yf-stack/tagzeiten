@@ -8,6 +8,7 @@ import type { Habit, Rhythm } from '../../domain/model';
 import type { WinterArcRun } from '../../domain/winterArc';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { WithInfo } from './DesertInfo';
+import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
 
 type Heading = 'h4' | 'h5' | 'h6';
 const RHYTHMS: readonly Rhythm[] = ['daily', 'weekly', 'monthly'];
@@ -41,18 +42,11 @@ function ChoiceRow({
       </WithInfo>
       {remove &&
         (confirming ? (
-          <span className="confirm-inline">
-            <button type="button" className="btn small-btn" onClick={remove}>
-              Löschen
-            </button>
-            <button type="button" className="btn quiet small-btn" onClick={() => setConfirming(false)}>
-              Behalten
-            </button>
-          </span>
+          <ConfirmRow label={`${habit.name} löschen?`} confirmLabel="Löschen" onConfirm={remove} onCancel={() => setConfirming(false)} />
         ) : (
-          <button type="button" className="link-btn desert-remove" aria-label={`${habit.name} löschen`} onClick={() => setConfirming(true)}>
+          <ConfirmTrigger label={`${habit.name} löschen`} onClick={() => setConfirming(true)}>
             löschen …
-          </button>
+          </ConfirmTrigger>
         ))}
     </li>
   );
@@ -97,9 +91,14 @@ function AddOwn({ run, H }: { run: WinterArcRun; H: Heading }) {
           ))}
         </select>
       </div>
-      <button type="submit" className="btn primary" disabled={!name.trim()}>
+      <button type="submit" className="btn primary" disabled={!name.trim()} aria-describedby={name.trim() ? undefined : `${id}-hint`}>
         Gewohnheit hinzufügen
       </button>
+      {!name.trim() && (
+        <p id={`${id}-hint`} className="small muted">
+          Gib der Gewohnheit zuerst einen Namen.
+        </p>
+      )}
       <p className="visually-hidden" aria-live="polite">
         {added && `${added} ist gewählt.`}
       </p>

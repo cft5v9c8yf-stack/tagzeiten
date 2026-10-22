@@ -48,6 +48,9 @@ function span(groups: Group[]): string {
 
 function Entry({ g, group, level, open }: { g: Group; group: readonly string[]; level: 3 | 4; open: boolean }) {
   const Patch = level === 3 ? 'h4' : 'h5';
+  // The newest number shows its last three versions; the rest folds away beneath.
+  const shown = level === 3 && g.releases.length > 3 ? g.releases.slice(0, 3) : g.releases;
+  const older = g.releases.slice(shown.length);
   return (
     <Section
       id={idOf(g)}
@@ -64,9 +67,9 @@ function Entry({ g, group, level, open }: { g: Group; group: readonly string[]; 
         </span>
       }
     >
-      {g.releases.map((r) => (
+      {shown.map((r) => (
         <div key={r.version} className="changelog-patch">
-          {g.releases.length > 1 && (
+          {shown.length + older.length > 1 && (
             <Patch className="changelog-patch-head">
               {r.version} · {r.title}
             </Patch>
@@ -81,6 +84,26 @@ function Entry({ g, group, level, open }: { g: Group; group: readonly string[]; 
           </dl>
         </div>
       ))}
+      {older.length > 0 && (
+        <details className="fold changelog-older">
+          <summary>Frühere Fassungen von {g.minor} ({older.length})</summary>
+          {older.map((r) => (
+            <div key={r.version} className="changelog-patch">
+              <Patch className="changelog-patch-head">
+                {r.version} · {r.title}
+              </Patch>
+              <dl className="changelog-changes">
+                {r.changes.map((c, k) => (
+                  <div key={k}>
+                    <dt>{c.area}</dt>
+                    <dd>{c.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </details>
+      )}
     </Section>
   );
 }

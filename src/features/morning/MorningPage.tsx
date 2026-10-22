@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { morningIcon } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
+import { getOrder, morningOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
@@ -8,7 +8,7 @@ import type { MorningEntry, OrderForm } from '../../domain/model';
 import { Segmented } from '../../ui/Choice';
 import { Rubric } from '../../ui/PrayerText';
 import { StepFlow, type FlowStep } from '../../ui/StepFlow';
-import { Timer } from '../../ui/Timer';
+import { Timer, TimerStart } from '../../ui/Timer';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
 
@@ -16,6 +16,23 @@ const FORMS: { value: OrderForm; label: string }[] = [
   { value: 'full', label: `Ganze Ordnung · ${ORDER_MINUTES.morning.full} Min.` },
   { value: 'short', label: `Kurzform · ${ORDER_MINUTES.morning.short} Min.` },
 ];
+
+/** The Dogmatik is read in the Stille Zeit. */
+function useDogmatikInMorning(): boolean {
+  const d = useProfile().dogmatik;
+  return __DOGMATIK__ && d.on && d.stilleZeit;
+}
+
+/** The names under the marks (short: the long titles would not fit under seven marks). */
+const MORNING_SHORT: Record<string, string> = {
+  opening: 'Eröffnung',
+  word: 'Wort',
+  prayer: 'Gebet',
+  response: 'Antwort',
+  lordsPrayer: 'Vaterunser',
+  alignment: 'Ausrichtung',
+  blessing: 'Segen',
+};
 
 export function MorningPage() {
   // Left open overnight, the Stille Zeit moves on to the new day (the evening keeps its own until left).
@@ -29,23 +46,31 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
   const store = useStore();
   const day = useDay(date);
   const form = day.morning.form;
-  const order = getOrder('morning', form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const firstOpen = order.steps.find((s) => !day.morning.steps[s.id]);
 
   const setForm = (f: OrderForm) =>
     store.updateDay(date, (d) => ({ ...d, morning: { ...d.morning, form: f } }), { immediate: true });
 
+  // "Am Bett" is the first mark of the row while it is prayed and not yet done.
+  const atBedOpen = useProfile().showAtBed && !day.morning.atBed && !order.steps.some((s) => day.morning.steps[s.id]);
   const hint = day.morning.done
     ? 'Stille Zeit abgeschlossen'
-    : firstOpen
-      ? `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
-      : '';
+    : atBedOpen
+      ? 'Jetzt: Am Bett'
+      : firstOpen
+        ? `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
+        : '';
 
   return (
     <>
-      {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} />}
+      {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} quietUntilStarted />}
 
-      <OrderHead title="Stille Zeit" rubric={form === 'short' ? RUBRICS.morningShort : undefined}>
+      <OrderHead
+        title="Stille Zeit"
+        rubric={form === 'short' ? RUBRICS.morningShort : undefined}
+        aside={isToday ? <TimerStart totalMinutes={ORDER_MINUTES.morning[form]} /> : undefined}
+      >
         <Segmented label="Form der Stillen Zeit" options={FORMS} value={form} onChange={setForm} />
       </OrderHead>
       {form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
@@ -63,16 +88,17 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
   const store = useStore();
   const toast = useToast();
   const day = useDay(date);
-  const order = getOrder('morning', form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const atBed = getOrder('atBed', 'full');
   // One mark before the steps of the order when "Am Bett" is prayed.
   const bed = useProfile().showAtBed ? 1 : 0;
 
   const flow: FlowStep[] = [
-    ...(bed ? [{ id: 'atBed', title: 'Am Bett', mark: '·', icon: 'bed' as const, done: day.morning.atBed }] : []),
+    ...(bed ? [{ id: 'atBed', title: 'Am Bett', short: 'Am Bett', mark: '·', icon: 'bed' as const, done: day.morning.atBed }] : []),
     ...order.steps.map((s, i) => ({
       id: s.id,
       title: s.title,
+      short: MORNING_SHORT[s.id] ?? s.title,
       mark: i + 1,
       icon: morningIcon(s.id, form),
       done: !!day.morning.steps[s.id],
@@ -97,6 +123,9 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
 
   const completeStep = (index: number) => {
     const step = order.steps[index]!;
+    // Reading the day's portion keeps the habit "Bibel lesen" and moves the plan on. A past day
+    // without a portion owes nothing (rule 6).
+    if (step.id === 'word' && (isToday || day.reading)) store.setReadingDone(date, true);
     if (index + 1 < order.steps.length) {
       update((m) => ({ ...m, steps: { ...m.steps, [step.id]: true } }));
       setCurrent(index + 1 + bed);

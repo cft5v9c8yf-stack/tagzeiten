@@ -7,9 +7,9 @@
 }
 /* Destructive, but not red: red belongs to the rubrics (rule 5). */
 .btn.danger {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--paper);
+  background: transparent;
+  border: 2px solid var(--ink);
+  color: var(--ink);
 }
 .confirm-panel {
   display: grid;
@@ -49,12 +49,12 @@ body.no-scroll {
 .cat-week {
   margin: 14px 0;
   padding: 14px 16px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .cat-week-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -80,7 +80,7 @@ body.no-scroll {
 .cat-actions .btn.primary {
   width: 100%;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
 }
 .cat-choose {
   margin-top: 14px;
@@ -94,7 +94,7 @@ body.no-scroll {
   padding: 0 16px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .chief > .fold-head {
   padding: 14px 0 12px;
@@ -136,7 +136,7 @@ body.no-scroll {
   margin: 4px -10px;
   padding: 10px 10px 14px;
   border-top: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   background: var(--gold-soft);
   box-shadow: inset 0 0 0 1.5px var(--gold);
 }
@@ -152,7 +152,7 @@ body.no-scroll {
 }
 .ktag {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink);
   border: 1px solid var(--gold);
@@ -251,7 +251,7 @@ body.no-scroll {
   width: 100%;
   min-height: 120px;
   border: 1.5px dashed var(--accent);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--accent-soft);
   color: var(--ink);
   font-family: var(--sans);
@@ -314,7 +314,7 @@ body.no-scroll {
 .archive-summary {
   margin: 6px 0 4px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid var(--rule);
 }
@@ -361,7 +361,7 @@ body.no-scroll {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-auto-rows: 1fr;
-  gap: 12px;
+  gap: var(--card-gap);
 }
 .more-tile {
   /* Icon and title side by side, the line beneath across the tile. */
@@ -373,10 +373,10 @@ body.no-scroll {
   row-gap: 6px;
   height: 100%;
   min-height: 104px;
-  padding: 14px;
+  padding: var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   color: var(--ink);
   font-weight: 400;
 }
@@ -433,7 +433,7 @@ body.no-scroll {
   padding: 0 16px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .settings .more-section > .fold-head h3 {
   margin: 14px 0 12px;
@@ -467,9 +467,23 @@ body.no-scroll {
   font-size: 0.78rem;
   color: var(--muted);
 }
-.confirm-inline {
+/* The one confirmation row for deleting (ui/ConfirmRow). */
+.confirm-row {
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-family: var(--sans);
+}
+.confirm-question {
+  flex: 1 0 100%;
+  font-weight: 600;
+}
+.confirm-trigger {
+  min-height: 36px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
 }
 .switch {
   appearance: none;
@@ -568,26 +582,6 @@ body.no-scroll {
   position: relative;
   background: var(--paper);
 }
-.icon-btn {
-  appearance: none;
-  display: inline-grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-s);
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  padding: 0;
-}
-.icon-btn:hover:not(:disabled) {
-  border-color: var(--rule);
-}
-.icon-btn:disabled {
-  opacity: 0.25;
-  cursor: default;
-}
 .star-btn[aria-pressed='true'] {
   color: var(--accent);
 }
@@ -680,10 +674,10 @@ body.is-sorting * {
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
-  padding: 14px;
+  padding: var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   color: var(--ink);
   font-weight: 400;
 }
@@ -796,21 +790,6 @@ body.is-sorting * {
   flex: 1;
   min-width: 0;
   margin: 0;
-}
-.back-link-to {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-left: -8px;
-  border-radius: 50%;
-  opacity: 0.75;
-}
-.back-link-to:hover,
-.back-link-to:focus-visible {
-  opacity: 1;
-  background: var(--paper);
 }
 .cy-intro {
   font-size: 1.05rem;
@@ -967,6 +946,12 @@ body.is-sorting * {
 .order-head h2 {
   margin: 0 0 2px;
 }
+.order-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .order-head .rubric {
   margin: 0 0 6px;
 }
@@ -1020,14 +1005,14 @@ body.is-sorting * {
 .sunday-step-label {
   max-width: 52px;
   font-family: var(--sans);
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   line-height: 1.2;
   text-align: center;
 }
 .sunday-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1133,7 +1118,7 @@ body.is-sorting * {
 .chooser-title p {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1169,7 +1154,7 @@ body.is-sorting * {
 .week-group-title {
   margin: 10px 0 2px;
   font-family: var(--sans);
-  font-size: 0.74rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1189,7 +1174,7 @@ body.is-sorting * {
   padding: 9px 12px;
   margin: 2px 0;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   background: none;
   font: inherit;
   text-align: left;
@@ -1218,7 +1203,7 @@ body.is-sorting * {
 }
 .sunday-verse figcaption {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1232,7 +1217,7 @@ body.is-sorting * {
 .sunday-page .block {
   margin: 14px 0;
   padding: 14px 16px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .sunday-page .block h3 {
   margin: 0 0 8px;
@@ -1254,13 +1239,13 @@ body.is-sorting * {
   flex-direction: column;
   gap: 2px;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   border: 1px solid color-mix(in srgb, var(--gold) 25%, transparent);
 }
 .sunday-reading .track {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1290,7 +1275,7 @@ body.is-sorting * {
   content: ' ›';
 }
 .sunday-reading-open:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 /* The lesson: a title, then numbered paragraphs to read straight through. */
@@ -1336,7 +1321,7 @@ body.is-sorting * {
   padding: 4px 16px 12px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .cat-part > .kpiece:first-child {
   border-top: 0;
@@ -1355,7 +1340,7 @@ body.is-sorting * {
   margin: 14px 0 0;
   padding: 12px 14px 14px;
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
 }
 .schedule-group legend {
@@ -1413,19 +1398,6 @@ body.is-sorting * {
   border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent);
   font: 500 0.9rem var(--sans);
 }
-.concern-chip button,
-.concern-add {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 600 1.1rem var(--sans);
-  cursor: pointer;
-}
 .concern-add {
   border: 1px dashed var(--rule);
   color: var(--gold);
@@ -1452,7 +1424,7 @@ body.is-sorting * {
   padding: 12px 12px 10px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .prayer-day-daily {
   grid-column: 1 / -1;
@@ -1507,7 +1479,7 @@ body.is-sorting * {
 .armor-piece {
   margin: 10px 0;
   padding: 12px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--gold-soft);
   border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
 }
@@ -1561,10 +1533,10 @@ body.is-sorting * {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 14px;
+  padding: var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   color: var(--ink);
   font-weight: 400;
 }
@@ -1582,46 +1554,9 @@ body.is-sorting * {
   display: flex;
   gap: 2px;
 }
-.entry-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  opacity: 0.75;
-}
-.entry-icon:hover,
-.entry-icon:focus-visible {
-  opacity: 1;
-  background: var(--paper);
-}
-/* On the dark ground the gold needs its full strength. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .entry-icon,
-  :root:not([data-theme='light']) .back-link-to {
-    opacity: 1;
-  }
-}
-:root[data-theme='dark'] .entry-icon,
-:root[data-theme='dark'] .back-link-to {
-  opacity: 1;
-}
 .entry-icon[aria-pressed='true'] {
   opacity: 1;
   background: var(--gold-soft);
-}
-.entry-bar-confirm {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0 0;
-  font-family: var(--sans);
 }
 .arena-item {
   position: relative;
@@ -1633,16 +1568,6 @@ body.is-sorting * {
   position: absolute;
   top: 6px;
   right: 6px;
-}
-.entry-menu-toggle {
-  width: 40px;
-  height: 40px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 700 1.3rem/1 var(--sans);
-  cursor: pointer;
 }
 .entry-menu-toggle[aria-expanded='true'] {
   background: var(--paper);
@@ -1659,7 +1584,7 @@ body.is-sorting * {
   padding: 6px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   box-shadow: 0 6px 24px rgb(0 0 0 / 0.14);
 }
 .entry-menu-list.up {
@@ -1717,16 +1642,6 @@ body.is-sorting * {
 .arena-line-input input {
   flex: 1;
   min-width: 0;
-}
-.arena-remove {
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--muted);
-  font: 600 1.1rem var(--sans);
-  cursor: pointer;
 }
 .arena-line-view {
   margin: 4px 0 0 4px;
@@ -1789,7 +1704,7 @@ body.is-sorting * {
   box-shadow: 0 0 0 1px var(--accent);
 }
 .ink-color:disabled {
-  opacity: 0.4;
+  opacity: var(--disabled-opacity);
   cursor: default;
 }
 .ink-undo {
@@ -1800,7 +1715,7 @@ body.is-sorting * {
 }
 .ink-page {
   border: 1px solid var(--rule);
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--sheet);
   overflow: hidden;
 }
@@ -1830,7 +1745,7 @@ body.is-sorting * {
 .arena-comfort {
   margin: 16px 0;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--warm-soft);
   font-style: italic;
 }
@@ -1841,11 +1756,14 @@ body.is-sorting * {
   font-style: normal;
   font-size: 0.85rem;
 }
-.arena-actions {
-  display: flex;
-  flex-wrap: wrap;
+/* The masks of the Wüstenzeit: the main button across the width, the rest beneath it. */
+.mask-actions {
+  display: grid;
   gap: 8px;
   margin-bottom: 8px;
+}
+.mask-actions .btn {
+  width: 100%;
 }
 .arena-comfort .bible-ref {
   white-space: nowrap;
@@ -1895,12 +1813,6 @@ mark.placeholder {
 }
 .guide-notes li {
   margin-bottom: 10px;
-}
-.arena-entry-kind {
-  margin: 8px 0 -4px;
-  font: 600 0.8rem var(--sans);
-  letter-spacing: 0.04em;
-  color: var(--gold);
 }
 .arena-card-date .ktag,
 .arena-card-title .ktag {
@@ -2158,7 +2070,7 @@ mark.placeholder {
 .house-focus {
   margin: 10px 0;
   padding: 10px 14px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   background: var(--gold-soft);
   border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
 }
@@ -2355,7 +2267,7 @@ mark.placeholder {
   padding: 0 16px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .book-card > .fold-head .fold-title {
   flex: 1 1 auto;
@@ -2430,12 +2342,20 @@ mark.placeholder {
 .tile-group {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: var(--card-gap);
   margin: 8px 0 12px;
+}
+.tile-group.is-wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+.tile-group.is-wide .tile-card {
+  min-height: 0;
+  padding-right: 40px;
 }
 .tile-card {
   appearance: none;
-  /* Icon and title side by side, the line beneath across the tile. */
+  /* Icon and title side by side, the line beneath, the chevron (it opens) in the corner. */
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
   align-content: start;
@@ -2443,10 +2363,10 @@ mark.placeholder {
   column-gap: 10px;
   row-gap: 6px;
   min-height: 104px;
-  padding: 14px;
+  padding: var(--card-pad);
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   color: var(--ink);
   font: inherit;
   text-align: left;
@@ -2465,8 +2385,20 @@ mark.placeholder {
   font-size: 1.05rem;
   line-height: 1.25;
 }
+.tile-card-chev {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  color: var(--muted);
+  display: inline-flex;
+  transition: transform 0.15s;
+}
+.tile-card.is-open .tile-card-chev {
+  transform: rotate(180deg);
+}
 .tile-card-line {
   grid-column: 1 / -1;
+  padding-right: 20px;
   font: 0.82rem/1.35 var(--sans);
   color: var(--muted);
 }
@@ -2475,7 +2407,7 @@ mark.placeholder {
   box-shadow: inset 0 0 0 1px var(--gold);
 }
 .tile-card:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .tile-panel {
@@ -2484,7 +2416,7 @@ mark.placeholder {
   padding: 12px 16px 16px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .tile-panel-head {
   /* The info bubble hangs from this row. */
@@ -2497,6 +2429,14 @@ mark.placeholder {
 .tile-panel-title {
   margin: 0;
   font-size: 1.05rem;
+}
+/* A card inside a tile panel needs no second frame. */
+.tile-panel .panel {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
 }
 /* A group inside a panel sits on the page colour, so its tiles and panels stand out. */
 .tile-panel .tile-card,
@@ -2511,7 +2451,7 @@ mark.placeholder {
   padding: 0 16px 6px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .habit-card > .fold-head {
   justify-content: space-between;
@@ -2549,7 +2489,7 @@ mark.placeholder {
   border-radius: 999px;
   background: var(--paper);
   border: 1px solid var(--rule);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.5;
 }
 .switch:checked {
@@ -2573,19 +2513,6 @@ mark.placeholder {
 }
 
 /* ---------------------------------------------------------------- search */
-header.top .search-link {
-  margin-left: auto;
-  align-self: center;
-  display: inline-flex;
-  padding: 6px;
-  margin-right: -6px;
-  color: var(--muted);
-  border-radius: 999px;
-}
-header.top .search-link:hover,
-header.top .search-link:focus-visible {
-  color: var(--accent);
-}
 .search-hits {
   list-style: none;
   padding: 0;
@@ -2710,7 +2637,7 @@ header.top .search-link:focus-visible {
   margin-top: 6px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 12px;
+  border-radius: var(--radius-control);
 }
 /* Open things are a plain outline, never red (rules 4 and 5). */
 .wa-title {
@@ -2866,18 +2793,12 @@ header.top .search-link:focus-visible {
   color: var(--muted);
 }
 .wa-pager-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink);
-  display: grid;
-  place-items: center;
-  padding: 0;
 }
 .wa-pager-btn:disabled {
-  opacity: 0.3;
+  opacity: var(--disabled-opacity);
 }
 .wa-back {
   text-align: center;
@@ -2937,7 +2858,7 @@ header.top .search-link:focus-visible {
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 999px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--control-line);
   background: var(--paper);
   color: var(--ink);
   cursor: pointer;
@@ -2971,7 +2892,7 @@ header.top .search-link:focus-visible {
 }
 .wa-tick:disabled {
   cursor: default;
-  opacity: 0.55;
+  opacity: var(--disabled-opacity);
 }
 .wa-tick-note {
   display: block;
@@ -3015,7 +2936,7 @@ header.top .search-link:focus-visible {
 .wa-off {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 .wa-grid-wrap {
   overflow-x: auto;
@@ -3053,7 +2974,7 @@ header.top .search-link:focus-visible {
 .wa-grid-group th {
   text-align: left;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
@@ -3090,8 +3011,11 @@ header.top .search-link:focus-visible {
   background: var(--accent);
 }
 .wa-dot:disabled {
-  opacity: 0.35;
+  opacity: var(--disabled-opacity);
   cursor: default;
+}
+.wa-to-today {
+  margin: 0;
 }
 .wa-review textarea {
   width: 100%;
@@ -3124,8 +3048,8 @@ header.top .search-link:focus-visible {
   grid-template-columns: 48px 1fr auto;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  border-radius: var(--radius-l);
+  padding: var(--card-pad);
+  border-radius: var(--radius-card);
   border: 1px solid var(--rule);
   background: var(--sheet);
   color: inherit;
@@ -3218,7 +3142,7 @@ header.top .search-link:focus-visible {
   cursor: pointer;
 }
 .day-strip-wd {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   letter-spacing: 0.03em;
 }
 .day-strip-d {
@@ -3310,7 +3234,7 @@ header.top .search-link:focus-visible {
 
 .marks-word {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
@@ -3346,7 +3270,7 @@ header.top .search-link:focus-visible {
   padding: 4px 16px 10px;
   background: var(--sheet);
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
 }
 .desert-pack > :is(h4, h5, h6) {
   margin: 12px 0 0;
@@ -3399,11 +3323,8 @@ header.top .search-link:focus-visible {
   font-size: 0.75rem;
   color: var(--muted);
 }
-.desert-remove {
-  margin: 0 0 8px 30px;
-  font-size: 0.85rem;
-}
-.desert-item .confirm-inline {
+.desert-item .confirm-trigger,
+.desert-item .confirm-row {
   margin: 0 0 8px 30px;
 }
 .desert-add {
@@ -3587,7 +3508,7 @@ header.top .search-link:focus-visible {
 .season-invite {
   margin: 12px 0;
   padding: 14px 16px;
-  border-radius: var(--radius-l);
+  border-radius: var(--radius-card);
   border: 1px solid color-mix(in srgb, var(--gold) 40%, var(--rule));
   background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 8%, var(--sheet)), var(--sheet));
 }
@@ -3609,7 +3530,7 @@ header.top .search-link:focus-visible {
 .season-kicker {
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -3660,10 +3581,6 @@ header.top .search-link:focus-visible {
   font-weight: 600;
   color: var(--link);
   text-decoration: none;
-}
-.season-link:hover,
-.season-link:focus-visible {
-  text-decoration: underline;
 }
 .desert-guide .season-link {
   margin-top: 0;
@@ -3824,6 +3741,590 @@ header.top .search-link:focus-visible {
   color: var(--muted);
 }
 
+/* ---------------------------------------------------------------- Dogmatik */
+/* Pieper's Dogmatik under "Lehre": the card, the reading day, Nachschlagen. */
+.dogmatik-progress {
+  margin: 0 0 4px;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+.dogmatik-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  border-radius: var(--radius-control);
+  color: var(--ink);
+}
+.dogmatik-actions .btn.primary {
+  color: var(--on-accent);
+  flex: 1 1 60%;
+}
+.dogmatik-actions .btn:not(.primary) {
+  flex: 1 1 30%;
+}
+.dogmatik-recent h4 {
+  margin: 18px 0 6px;
+  font-size: 1.05rem;
+}
+.dogmatik-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.dogmatik-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  font-weight: 400;
+}
+.dogmatik-row-no,
+.dogmatik-row-meta {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.dogmatik-row-title {
+  font-weight: 600;
+  line-height: 1.3;
+  hyphens: auto;
+}
+.dogmatik-row-snippet {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.dogmatik-item.current .dogmatik-row {
+  border: 2px solid var(--gold);
+  background: var(--gold-soft);
+}
+.dogmatik-row-read {
+  color: var(--done);
+  font-weight: 600;
+}
+.dogmatik-switch {
+  margin-top: 14px;
+}
+.dogmatik-switch .pill,
+.dogmatik-step .pill {
+  min-height: 44px;
+  padding: 6px 16px;
+}
+.dogmatik-search {
+  width: 100%;
+  min-height: 44px;
+  margin: 6px 0 2px;
+  font-family: var(--sans);
+}
+.dogmatik-part h3 {
+  margin: 18px 0 4px;
+}
+.dogmatik-settings h5 {
+  margin: 14px 0 0;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+.dogmatik-setting-group {
+  margin-top: 22px !important;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+.dogmatik-topic {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+.dogmatik-topic select {
+  min-height: 44px;
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+.dogmatik-lookup .block {
+  margin: 22px 0;
+  padding: 14px 16px 16px;
+  border-radius: var(--radius-card);
+}
+
+/* Leseplan: a line from today on, a dot per section. */
+.dogmatik-timeline {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+}
+.timeline-item {
+  position: relative;
+}
+.timeline-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 30px;
+  bottom: -4px;
+  border-left: 2px solid var(--rule);
+}
+.timeline-link {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 12px;
+  min-height: 44px;
+  padding: 8px 0 14px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.timeline-dot {
+  grid-row: 1 / span 3;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  border: 2px solid var(--rule);
+  border-radius: 50%;
+  background: var(--paper);
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  line-height: 20px;
+  text-align: center;
+  color: var(--done);
+}
+.timeline-item.current .timeline-dot {
+  border-color: var(--gold);
+  background: var(--gold-soft);
+}
+.timeline-item.read .timeline-dot {
+  border-color: var(--done);
+}
+.timeline-label {
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.timeline-item.current .timeline-label {
+  color: var(--gold);
+}
+.timeline-title {
+  font-family: var(--sans);
+  font-weight: 600;
+  line-height: 1.3;
+  hyphens: auto;
+}
+.timeline-meta {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Inhalt: like the contents of a printed book, doctrine › chapter › days with their page. */
+.toc-part-title {
+  margin: 0;
+  font-size: 1.12rem;
+}
+.toc-chapter-title {
+  margin: 14px 0 2px;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.toc-section-title {
+  margin: 10px 0 0;
+  font-family: var(--serif);
+  font-size: 0.98rem;
+  font-style: italic;
+  font-weight: 400;
+}
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.toc-row {
+  display: grid;
+  grid-template-columns: 2.4em 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 0;
+  border-bottom: 1px dotted var(--rule);
+  color: var(--ink);
+  font-weight: 400;
+}
+.toc-no {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.toc-title {
+  font-family: var(--serif);
+  line-height: 1.35;
+  hyphens: auto;
+}
+.toc-title .ktag {
+  margin-left: 6px;
+}
+.toc-page {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.toc-read {
+  color: var(--done);
+  font-family: var(--sans);
+  font-weight: 600;
+}
+.toc-item.current .toc-row {
+  background: var(--gold-soft);
+  margin: 0 -8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 8px;
+}
+
+/* Treffer: cards with the passage around the word found. */
+.dogmatik-hits {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.hit-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  color: var(--ink);
+  font-weight: 400;
+}
+.hit-area {
+  font-family: var(--sans);
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+.hit-title {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.hit-snippet {
+  font-family: var(--serif);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+.hit-snippet mark,
+.hit-title mark {
+  background: var(--gold-soft);
+  color: inherit;
+  border-radius: 3px;
+}
+
+/* Today's reading on the card and in the Stille Zeit: one or more sections. */
+.dogmatik-portion {
+  list-style: none;
+  margin: 4px 0 8px;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.dogmatik-portion li.read a,
+.dogmatik-portion li.read .dogmatik-step-title {
+  color: var(--muted);
+}
+.dogmatik-step .dogmatik-portion li {
+  display: flex;
+  flex-direction: column;
+}
+.dogmatik-step .dogmatik-meta {
+  margin: 0;
+}
+
+/* Inhalt: each doctrine folds; the one of today stands open. */
+.dogmatik-toc .toc-part {
+  margin: 14px 0 0;
+  border-bottom: 2px solid var(--ink);
+}
+.dogmatik-toc .toc-part.is-open {
+  border-bottom: 0;
+}
+.dogmatik-toc .toc-part > .fold-head .fold-title {
+  margin: 0;
+  font-size: 1.12rem;
+}
+.dogmatik-toc .toc-part > .fold-head button {
+  min-height: 44px;
+}
+.toc-days {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* The reading day: a narrow column in the serif, its size set with A− and A+. */
+.dogmatik-day {
+  max-width: 560px;
+  margin: 0 auto;
+}
+.dogmatik-title {
+  hyphens: auto;
+}
+.dogmatik-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.dogmatik-ahead {
+  margin-top: -4px;
+}
+.dogmatik-place {
+  margin: -6px 0 12px;
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--muted);
+  hyphens: auto;
+}
+.dogmatik-unchecked {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  border-left: 2px solid var(--rule);
+}
+.dogmatik-heading {
+  margin: 1.4em 0 0.6em;
+  font-family: var(--serif);
+  font-size: 1.05em;
+  font-style: italic;
+  font-weight: 600;
+  hyphens: auto;
+}
+.dogmatik-gap {
+  font-family: var(--sans);
+  font-size: 0.8em;
+  color: var(--muted);
+}
+.dogmatik-addition {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 0 7px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  vertical-align: middle;
+}
+.dogmatik-verse {
+  margin: 0 0 14px;
+  padding: 12px 16px;
+  background: var(--gold-soft);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+}
+.dogmatik-verse p {
+  margin: 0 0 4px;
+  font-style: italic;
+}
+.dogmatik-verse footer {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.dogmatik-font {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+.dogmatik-font .btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+.dogmatik-text {
+  font-family: var(--serif);
+  font-size: var(--dogmatik-size, 1.08rem);
+  line-height: 1.65;
+  hyphens: auto;
+}
+.dogmatik-text p {
+  margin: 0 0 1em;
+}
+.fn-mark {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* A small number in the line, a tap target of 44 px around it. */
+  min-width: 26px;
+  height: 22px;
+  margin: 0 1px;
+  padding: 0 4px;
+  position: relative;
+  top: -0.45em;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.fn-mark::after {
+  content: '';
+  position: absolute;
+  inset: -11px -9px;
+}
+.fn-mark[aria-expanded='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.fn-notes {
+  margin: -0.4em 0 1em;
+  padding: 8px 12px;
+  border-left: 2px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.fn-note {
+  margin: 0 0 4px !important;
+}
+.fn-no {
+  font-weight: 600;
+  color: var(--muted);
+}
+.dogmatik-quote {
+  margin: 0 0 1em;
+  padding: 10px 14px;
+  border-left: 3px solid var(--rule);
+  background: var(--warm-soft);
+  border-radius: 0 12px 12px 0;
+}
+.dogmatik-quote > p[lang='la'] {
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.dogmatik-translate {
+  min-height: 44px;
+  padding-left: 0;
+  border: 0;
+  color: var(--link);
+}
+.dogmatik-translation {
+  margin: 0 !important;
+}
+.dogmatik-box {
+  margin: 18px 0;
+  padding: 14px 16px;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+}
+.dogmatik-box h3 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  font-family: var(--sans);
+}
+.dogmatik-box-text {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+}
+.dogmatik-core .dogmatik-box-text {
+  margin: 0;
+  font-weight: 600;
+}
+.dogmatik-box textarea {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.dogmatik-box .btn {
+  min-height: 44px;
+}
+.dogmatik-done {
+  margin: 22px 0 12px;
+  text-align: center;
+}
+.dogmatik-done .btn.primary {
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-control);
+  font-size: 1rem;
+}
+.dogmatik-done-line {
+  margin: 0 0 2px;
+  font-family: var(--sans);
+}
+.dogmatik-done-mark {
+  color: var(--done);
+  font-weight: 600;
+}
+.dogmatik-done .btn.quiet {
+  min-height: 44px;
+  border: 0;
+  color: var(--muted);
+}
+.dogmatik-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 8px 0 24px;
+}
+.dogmatik-pager .btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+}
+
+/* As a step of the Stille Zeit or a page of the Vesper. */
+.dogmatik-step-title {
+  margin: 0 0 2px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.dogmatik-step .btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink);
+}
+
+.desert-entries {
+  display: grid;
+  gap: var(--card-gap);
+}
+.desert-entries h3 {
+  margin: 8px 0 0;
+}
+.desert-entries {
+  margin-top: 12px;
+}
 /* Wort: the day's section with its tick (1.16). */
 .plan-section {
   margin: 4px 0 0;
