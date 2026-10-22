@@ -86,7 +86,11 @@ describe('Treffen am Abendbrunnen', () => {
     expect(verses[1]).toBe('Einer mag überwältigt werden, aber zwei mögen widerstehen; und eine dreifältige Schnur reißt nicht leicht entzwei.');
     expect(document.querySelector('.section-verse figcaption')!.textContent).toBe('1. Mose 24,11');
     expect(document.querySelector('.arena-note')!.textContent).toContain('Rebekka und der Knecht Abrahams (1. Mo 24)');
+    // The frame and the posture stand folded in two tiles under the steps.
+    expect(screen.queryByText(/Einmal pro Woche 20 bis 30 Minuten/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /^Rahmen/ }));
     expect(screen.getByText(/Einmal pro Woche 20 bis 30 Minuten/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /^Haltung/ }));
     expect(screen.getByText(/Zuhören vor Lösen/)).toBeTruthy();
     // Bible references are text, not links (rule 13).
     expect(document.querySelector('.arena-well a[href*="bibel"]')).toBeNull();

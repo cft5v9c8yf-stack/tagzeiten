@@ -1,5 +1,6 @@
 import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
+import { TileGroup } from '../../ui/TileGroup';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -243,39 +244,56 @@ export function WellPage() {
       ))}
       <p className="arena-note">{WELL_INTRO}</p>
 
-      <section className="well-section" aria-labelledby="well-frame">
-        <h3 id="well-frame">Rahmen</h3>
-        <p>{WELL_FRAME.intro}</p>
-        <ul className="well-list">
-          {WELL_FRAME.points.map((p) => (
-            <li key={p.label}>
-              <strong>{p.label}:</strong> {p.text}
-            </li>
-          ))}
-        </ul>
-      </section>
-
       <section className="well-section" aria-labelledby="well-steps">
         <h3 id="well-steps">Ablauf in sechs Schritten</h3>
         <Steps name={name} />
       </section>
 
-      <section className="well-section" aria-labelledby="well-posture">
-        <h3 id="well-posture">Haltung im Gespräch</h3>
-        <ul className="well-list">
-          {WELL_POSTURE.map((p) => (
-            <li key={p.label}>
-              <strong>{p.label}:</strong> {p.text}
-              {p.ref && (
-                <>
-                  {' '}
-                  <BibleRef reference={p.ref} />
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <TileGroup
+        level={4}
+        label="Anleitung"
+        items={[
+          {
+            id: 'well.frame',
+            title: 'Rahmen',
+            line: '20 bis 30 Minuten am Abend',
+            icon: 'clock',
+            content: (
+              <>
+                <p>{WELL_FRAME.intro}</p>
+                <ul className="well-list">
+                  {WELL_FRAME.points.map((p) => (
+                    <li key={p.label}>
+                      <strong>{p.label}:</strong> {p.text}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ),
+          },
+          {
+            id: 'well.posture',
+            title: 'Haltung',
+            line: 'Sechs Hinweise fürs Gespräch',
+            icon: 'heart',
+            content: (
+              <ul className="well-list">
+                {WELL_POSTURE.map((p) => (
+                  <li key={p.label}>
+                    <strong>{p.label}:</strong> {p.text}
+                    {p.ref && (
+                      <>
+                        {' '}
+                        <BibleRef reference={p.ref} />
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ),
+          },
+        ]}
+      />
 
       <section className="well-section" aria-labelledby="well-meetings">
         <h3 id="well-meetings">Treffen</h3>

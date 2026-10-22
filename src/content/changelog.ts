@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.26.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: Rahmen und Haltung als Kacheln',
+    changes: [
+      { area: 'Arena', text: 'Auf der Titelseite des Treffens am Abendbrunnen stehen nach den sechs Schritten „Rahmen“ und „Haltung“ als zwei Kacheln, die du bei Bedarf aufklappst. Die Seite ist kürzer, die Liste der Treffen rückt nach oben. Die Texte sind unverändert.' },
+    ],
+  },
+  {
     version: '1.25.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: wie die Eisenschmiede, jedes Treffen eine Seite',
