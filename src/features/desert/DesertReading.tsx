@@ -2,23 +2,19 @@ import { useEffect } from 'react';
 import { START_PLAN_ID } from '../../content/readingPlans';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
-import { desertReadingOf, habitsOf, type DesertReading } from '../../domain/desert';
-import { READING_HABIT } from '../../content/habits';
-import { WithInfo } from './DesertInfo';
+import { desertReadingOf, type DesertReading } from '../../domain/desert';
 import { getPlan, portionLabel, sectionKind, sectionOf } from '../../domain/readingPlan';
 import { isInRun, stageOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
-import { Tick } from '../../ui/Tick';
 
 /**
- * The day's section in the Wüstenzeit, ticked like the habits of the packages:
- * the same tick as "Bibel lesen" under "Heute" and under "Wort". The Word stands
- * first (rule 2). Past days show the section they had, later ones none: the plan
- * runs by progress, nothing is owed (rule 6).
+ * The day's section in the Wüstenzeit, to read only: as everything of the
+ * Wüstenzeit since 1.19, it is ticked under "Heute" ("Bibel lesen") or under
+ * "Wort". The Word stands first (rule 2). Past days show the section they had,
+ * later ones none: the plan runs by progress, nothing is owed (rule 6).
  */
 export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   const store = useStore();
-  const profile = useProfile();
   useStoreVersion();
   const today = store.today();
   const shown = run.reading !== 'none' && isInRun(run, date) && date <= today;
@@ -37,21 +33,21 @@ export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateK
     })
     .filter(Boolean);
   const section = sectionOf(plan, reading);
-  const tick = (
-    <Tick
-      checked={reading.done}
-      onToggle={() => store.setReadingDone(date, !reading.done)}
-      note={section ? `${plan.def.name} · Abschnitt ${section.section} von ${section.sections}` : plan.def.name}
-    >
-      {labels.join(' · ')}
-    </Tick>
-  );
-  // "Bibel lesen" taken into the Wüstenzeit is this tick: its "i" stands here.
-  const habit = habitsOf(run, profile).find((h) => h.id === READING_HABIT);
   return (
     <section className="panel wa-group desert-reading" aria-labelledby="desert-reading-title">
-      <h5 id="desert-reading-title">Lesung</h5>
-      {habit ? <WithInfo habit={habit}>{tick}</WithInfo> : tick}
+      <h5 id="desert-reading-title">
+        Lesung
+        {reading.done && <span className="title-state"> · gelesen</span>}
+      </h5>
+      <p className="desert-reading-ref">{labels.join(' · ')}</p>
+      <p className="small muted">
+        {section ? `${plan.def.name} · Abschnitt ${section.section} von ${section.sections}` : plan.def.name}
+      </p>
+      {date === today && (
+        <p className="small muted">
+          Abgehakt wird mit „Bibel lesen“ unter „Heute“.
+        </p>
+      )}
     </section>
   );
 }

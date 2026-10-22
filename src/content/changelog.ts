@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.22.1',
+    date: '2026-10-22',
+    title: 'Die Lesung der Wüstenzeit zum Lesen',
+    changes: [
+      { area: 'Arena', text: 'Der Abschnitt des Tages steht in der Wüstenwanderung weiter oben, aber ohne Haken. Abgehakt wird mit „Bibel lesen“ unter „Heute“, wie alles der Wüstenzeit. Ist er gelesen, steht „gelesen“ dabei.' },
+    ],
+  },
+  {
     version: '1.22.0',
     date: '2026-10-22',
     title: 'Lesepläne nach Abschnitten',

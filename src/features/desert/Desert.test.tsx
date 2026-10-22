@@ -2,7 +2,7 @@
 import 'fake-indexeddb/auto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -358,10 +358,9 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
   });
 
-  it('has no habit to tick or to choose: the habits are kept under "Heute"', async () => {
+  it('has nothing to tick or to choose: the habits are kept under "Heute"', async () => {
     await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
-    // Only the section of the day of the reading plan is ticked here (1.22), the same tick as "Bibel lesen".
-    expect(screen.queryAllByRole('checkbox').map((c) => c.closest('.desert-reading') !== null)).toEqual([true]);
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
     expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
     expect(screen.getByRole('link', { name: 'Heute' }).getAttribute('href')).toBe('/');
     expect(document.body.textContent).toContain('Die Gewohnheiten pflegst und hakst du unter Heute ab.');
@@ -467,17 +466,20 @@ describe('a Wüstenzeit in Advent', () => {
 });
 
 describe('the reading of the Wüstenzeit in the Arena (1.22)', () => {
-  it('shows the section of the day first and ticks it, the same tick as "Bibel lesen"', async () => {
+  it('shows the section of the day first, to read only: it is ticked under "Heute"', async () => {
     const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
     const panel = screen.getByRole('region', { name: 'Lesung' });
     expect(store.getProfile().plan.planId).toBe('wueste-40');
-    const reading = within(panel).getByRole('checkbox', { name: /^Matthäus 4Bewährung/ });
-    expect(reading.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
+    expect(panel.textContent).toContain('Matthäus 4');
+    expect(panel.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
+    expect(within(panel).queryByRole('checkbox')).toBeNull();
+    expect(panel.textContent).toContain('Abgehakt wird mit „Bibel lesen“ unter „Heute“.');
     // The Word first (rule 2): above the overview of the habits.
     const overview = screen.getByRole('region', { name: /Woche/ });
     expect(panel.compareDocumentPosition(overview) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    fireEvent.click(reading);
-    expect(store.getDay('2026-09-26').reading?.done).toBe(true);
+    // Ticked elsewhere ("Bibel lesen" under "Heute"), it says so here.
+    act(() => store.setReadingDone('2026-09-26', true));
+    expect(screen.getByRole('region', { name: /^Lesung/ }).textContent).toContain('Lesung · gelesen');
     expect(store.getProfile().plan.positions.wueste).toBe(1);
   });
 
@@ -490,6 +492,6 @@ describe('the reading of the Wüstenzeit in the Arena (1.22)', () => {
     expect(screen.queryByRole('region', { name: 'Lesung' })).toBeNull();
     fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Mein Leseplan' }));
     expect(store.getProfile().plan.planId).toBe('atnt-1-1');
-    expect(within(screen.getByRole('region', { name: 'Lesung' })).getByRole('checkbox', { name: /^1\. Mose 1 · Matthäus 1/ })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Lesung' }).textContent).toContain('1. Mose 1 · Matthäus 1');
   });
 });
