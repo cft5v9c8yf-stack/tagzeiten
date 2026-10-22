@@ -1,0 +1,57 @@
+{
+  "format": "tagzeiten",
+  "version": 1,
+  "exportedAt": "2026-10-20T20:00:00.000Z",
+  "profile": {
+    "house": {
+      "wife": { "name": "Maria", "concern": "Gesundheit" },
+      "children": [{ "id": "k1", "name": "Paul", "concern": "Schule", "sex": "son" }]
+    },
+    "arena": [
+      {
+        "id": "muster-1",
+        "createdAt": 1760000000000,
+        "updatedAt": 1760000000000,
+        "verses": ["Römer 8,37"],
+        "concerns": ["Geduld"],
+        "text": "Muster-Eintrag der Gebetskammer"
+      },
+      {
+        "id": "muster-2",
+        "kind": "forge",
+        "createdAt": 1760100000000,
+        "updatedAt": 1760100000000,
+        "meetingDate": "2026-10-25",
+        "verses": [""],
+        "concerns": ["Weisheit"],
+        "text": "",
+        "points": [{ "text": "Muster-Punkt der Eisenschmiede", "done": false }]
+      }
+    ],
+    "createdAt": "2026-09-01",
+    "updatedAt": 1760000000000
+  },
+  "days": [
+    {
+      "date": "2026-10-18",
+      "morning": { "form": "full", "steps": {}, "done": true, "atBed": false, "wreath": {}, "three": {}, "mainPoint": "Muster-Hauptaussage" },
+      "evening": { "vespersDone": true, "vespersForm": "full", "complineDone": false, "complineForm": "full", "thanks": ["Muster-Dank"], "marks": {}, "carry": {} },
+      "habits": { "tablePrayer": true },
+      "updatedAt": 1760000000000
+    },
+    {
+      "date": "2026-10-19",
+      "morning": { "form": "short", "steps": {}, "done": true, "atBed": false, "wreath": {}, "three": { "word": "Muster-Wort", "house": "Muster-Haus", "work": "Muster-Werk" } },
+      "evening": { "vespersDone": false, "vespersForm": "full", "complineDone": false, "complineForm": "full", "thanks": [], "marks": {}, "carry": {} },
+      "habits": {},
+      "updatedAt": 1760100000000
+    },
+    {
+      "date": "2026-10-20",
+      "morning": { "form": "full", "steps": {}, "done": false, "atBed": false, "wreath": {}, "three": {} },
+      "evening": { "vespersDone": false, "vespersForm": "full", "complineDone": false, "complineForm": "full", "thanks": ["Zweiter Muster-Dank"], "marks": {}, "carry": {} },
+      "habits": {},
+      "updatedAt": 1760200000000
+    }
+  ]
+}

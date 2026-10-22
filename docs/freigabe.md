@@ -13,7 +13,7 @@ Ein Parameter, der nicht erfüllt ist, hält die Freigabe an. Es wird nichts „
 
 Den Teil A und die Regelprüfung der Änderung führt der Prüfer aus: der Agent `freigabe-pruefer`
 (`.claude/agents/freigabe-pruefer.md`). Claude ruft ihn auf, wenn Andreas „Freigabe starten“ sagt. Er berichtet nur,
-ändert nichts und beantwortet nie die Parameter B. Erst bei „Parameter B können abgefragt werden“ stellt Claude die Fragen.
+ändert nichts und beantwortet nie die Parameter B selbst, macht aber die **Vorprüfung B** (siehe unten). Erst bei „Parameter B können abgefragt werden“ stellt Claude die Fragen.
 
 | # | Parameter | Erfüllt, wenn |
 |---|-----------|---------------|
@@ -27,6 +27,14 @@ Den Teil A und die Regelprüfung der Änderung führt der Prüfer aus: der Agent
 | A8 | Lauf der Vorschau | der letzte Lauf „Vorschau“ und „Pages“ auf GitHub für diesen Stand ist grün (Claude prüft es auf GitHub) |
 
 ## B. Von Andreas (Claude fragt als Auswahlfrage, Andreas tippt die Antwort)
+
+Vorher läuft die **Vorprüfung B** (`node scripts/vorpruefung.mjs`, vom Prüfer): Sie baut die Vorschau, startet einen Browser und
+liefert Belege. Sie antwortet **B3** (neuer Nutzer) und **B4** (Beispiel-Sicherung `scripts/fixtures/sicherung-beispiel.json` einspielen)
+selbst und prüft für **B1**, dass bei 390 und 360 px Breite nichts über den Rand läuft und die Konsole fehlerfrei bleibt. Für B1, B2, B5
+und B6 liefert sie Belege: Aufnahmen in hell und dunkel, den Eintrag im Verlauf der Versionen, die geänderten Tests. Die Fragen an Andreas
+nennen dann den Befund („Vorprüfung: erfüllt, Aufnahmen liegen vor“), und Andreas bestätigt nur noch. Was Andreas für „Ja“ braucht, bleibt sein
+Urteil: wie es aussieht, wie es klingt, wie es sich auf dem iPhone anfühlt. Was die Vorprüfung nicht sieht: das echte Safari, den Home-Bildschirm,
+die ausgelieferte Seite. B3 und B4 zählen als erfüllt, wenn die Vorprüfung sie erfüllt; fehlt der Browser, fragt Claude sie bei Andreas ab.
 
 Die Fragen kommen mit dem Werkzeug `AskUserQuestion`, nicht als Fließtext: eine Frage je Parameter, höchstens
 vier in einem Aufruf, also zwei Runden (B1 bis B4, dann B5 bis B7). Jede Frage hat die Antworten

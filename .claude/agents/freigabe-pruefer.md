@@ -1,6 +1,6 @@
 ---
 name: freigabe-pruefer
-description: Prüft vor dem Livegang einer größeren Neuerung von Henoch den Zweig `vorschau` gegen die Prüfliste in docs/freigabe.md (Teil A) und gegen die dauerhaften Regeln in CLAUDE.md. Berichtet nur; ändert, pusht und führt nichts zusammen. Aufrufen, wenn Andreas „Freigabe starten“ sagt, vor der Abfrage der Parameter B.
+description: Prüft vor dem Livegang einer größeren Neuerung von Henoch den Zweig `vorschau` gegen die Prüfliste in docs/freigabe.md (Teil A), gegen die dauerhaften Regeln in CLAUDE.md und führt die Vorprüfung der Parameter B durch (Browser, Handybreite, Sicherung einspielen). Berichtet nur; ändert, pusht und führt nichts zusammen. Aufrufen, wenn Andreas „Freigabe starten“ sagt, vor der Abfrage der Parameter B.
 tools: Read, Grep, Glob, Bash, mcp__github__actions_list, mcp__github__list_commits
 model: sonnet
 ---
@@ -21,7 +21,15 @@ Führe `node scripts/freigabe.mjs` aus und übernimm das Ergebnis A1 bis A7 unve
 A8: Prüfe auf GitHub (`mcp__github__actions_list`, `list_workflow_runs`), dass die letzten Läufe „Vorschau“ und
 „Pages“ für den Kopf von `vorschau` abgeschlossen und erfolgreich sind. Läuft einer noch, heißt das „noch nicht erfüllt“.
 
-## 3. Regelprüfung der Änderung
+## 3. Vorprüfung der Parameter B
+Führe `node scripts/vorpruefung.mjs --out <neuer leerer Ordner>` aus (baut die Vorschau, startet einen Browser, braucht Playwright
+mit Chromium). Das Skript antwortet B3 (neuer Nutzer bis „Heute“) und B4 (Sicherung aus `scripts/fixtures/` einspielen, alle
+Einträge da) selbst und prüft für B1 in 390 und 360 px Breite, dass nichts über den Rand läuft und die Konsole fehlerfrei bleibt.
+Für B1, B2, B5 und B6 liefert es Belege (Aufnahmen in hell und dunkel, Eintrag im Verlauf der Versionen, geänderte Tests).
+Übernimm die Tabelle unverändert. Betrifft die Neuerung eigene Seiten, gib sie mit `--seiten /pfad1,/pfad2` mit, damit sie
+mitgeprüft werden. Schlägt B1, B3 oder B4 an, ist das „Anhalten“. Beurteile die Aufnahmen nicht als „schön“: das ist Andreas' Urteil.
+
+## 4. Regelprüfung der Änderung
 Lies `CLAUDE.md` vollständig und `git diff origin/main...vorschau`. Prüfe nur, was die Änderung berührt, und nenne
 jeden Fund mit `Datei:Zeile`:
 - Neue oder geänderte Texte der Oberfläche: Deutsch, du, nüchtern und warm, kein Motivationsvokabular, keine Emojis,
@@ -36,12 +44,13 @@ jeden Fund mit `Datei:Zeile`:
 - Der Name der Datenbank und `BACKUP_FORMAT` sind nicht umbenannt.
 - Selbst geschriebene Gebete oder Andachten (nur Bibelworte und gemeinfreie Texte sind erlaubt; sonst Platzhalter).
 
-## 4. Bericht
+## 5. Bericht
 Antworte kurz, auf Deutsch, in dieser Form und sonst nichts:
 
 ```
 Stand: <Hash von vorschau>, Version <x.y.z>
 A1 … A8: je „erfüllt“ oder „NICHT“ mit einem Satz Grund
+Vorprüfung B: die Tabelle aus dem Skript (B1 bis B7) und der Ordner mit den Aufnahmen
 Regelprüfung: „keine Funde“ oder eine Liste „Regel – Datei:Zeile – was“
 Empfehlung: „Parameter B können abgefragt werden“ oder „Anhalten: <was zuerst behoben werden muss>“
 ```
