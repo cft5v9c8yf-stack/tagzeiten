@@ -10,9 +10,6 @@ import {
   CHAPTER_CHOICES,
   CHAPTER_VERSES,
   DESERT_SEQUENCE,
-  JOHN_REVELATION_SEQUENCE,
-  JOHN_SEQUENCE,
-  NT_SEQUENCE,
   OT_BOOKS,
   PAUL_MAX_DAYS,
   PAUL_MIN_DAYS,
@@ -214,7 +211,7 @@ function ownPlan(id: string, amounts: readonly Amount[]): Plan {
  * chapters are grouped; with more, chapters are divided by verses, where their
  * verses are known. Still by progress, not by date (rule 6).
  */
-export type SectionKind = 'beginner' | 'nt90' | 'paul' | 'john' | 'year' | 'desert';
+export type SectionKind = 'beginner' | 'paul' | 'year' | 'desert';
 
 const BOOK_BY_SLUG = new Map(ALL_BOOKS.map((b) => [b.slug, b]));
 
@@ -297,7 +294,7 @@ export function spreadSections(seq: readonly Stretch[], count: number): { books:
   return { books, portions };
 }
 
-const SECTION_RE = /^(einsteiger|einsteiger-psalm|nt90|johannes|johannes-offb|jahr|paulus-(\d+)|wueste-(\d+))$/;
+const SECTION_RE = /^(einsteiger|einsteiger-psalm|jahr|paulus-(\d+)|wueste-(\d+))$/;
 
 /** Plan id of "Mit Paulus unterwegs" over so many days. */
 export const paulPlanId = (days: number) => `paulus-${days}`;
@@ -316,9 +313,6 @@ export function sectionKind(planId: string): SectionKind | undefined {
   const kinds: Record<string, SectionKind> = {
     einsteiger: 'beginner',
     'einsteiger-psalm': 'beginner',
-    nt90: 'nt90',
-    johannes: 'john',
-    'johannes-offb': 'john',
     jahr: 'year',
   };
   return kinds[planId];
@@ -339,14 +333,7 @@ export const PSALM_TRACK = 'psalm';
 function sectionPlan(id: string, kind: SectionKind): Plan {
   const spec: Record<SectionKind, () => { seq: readonly Stretch[]; count: number; track: string; label: string }> = {
     beginner: () => ({ seq: BEGINNER_SEQUENCE, count: 59, track: 'einsteiger', label: 'Lesung' }),
-    nt90: () => ({ seq: NT_SEQUENCE, count: 90, track: 'nt90', label: 'NT' }),
     paul: () => ({ seq: PAUL_SEQUENCE, count: sectionDays(id)!, track: 'paulus', label: 'Lesung' }),
-    john: () => ({
-      seq: id === 'johannes-offb' ? JOHN_REVELATION_SEQUENCE : JOHN_SEQUENCE,
-      count: id === 'johannes-offb' ? 50 : 28,
-      track: 'johannes',
-      label: 'Lesung',
-    }),
     year: () => ({ seq: BIBLE_SEQUENCE, count: 365, track: 'jahr', label: 'Bibel' }),
     desert: () => ({ seq: DESERT_SEQUENCE, count: sectionDays(id)!, track: DESERT_TRACK, label: 'Lesung' }),
   };

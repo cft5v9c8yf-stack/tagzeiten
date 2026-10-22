@@ -368,17 +368,6 @@ function SectionPlan({ kind }: { kind: SectionKind }) {
           onChange={(v) => set(v === 'with' ? 'einsteiger-psalm' : 'einsteiger')}
         />
       )}
-      {kind === 'john' && (
-        <Segmented<'johannes' | 'johannes-offb'>
-          label="Offenbarung dazu"
-          options={[
-            { value: 'johannes', label: 'Ohne Offenbarung, 28 Tage' },
-            { value: 'johannes-offb', label: 'Mit Offenbarung, 50 Tage' },
-          ]}
-          value={planId === 'johannes-offb' ? 'johannes-offb' : 'johannes'}
-          onChange={set}
-        />
-      )}
       {kind === 'paul' && <PaulDays days={sectionDays(planId) ?? PAUL_DAYS[0]} onChange={(d) => set(paulPlanId(d))} />}
       {kind === 'desert' && (
         <p className="small muted">
@@ -402,19 +391,15 @@ type Kind = 'fixed' | 'own' | SectionKind;
 const KIND_LABEL: Record<Kind, string> = {
   fixed: 'Altes und Neues Testament',
   own: 'Eigener Plan',
-  beginner: `${SECTION_PLANS.beginner.name} (für Einsteiger)`,
-  nt90: SECTION_PLANS.nt90.name,
+  beginner: SECTION_PLANS.beginner.name,
   paul: SECTION_PLANS.paul.name,
-  john: SECTION_PLANS.john.name,
-  year: `${SECTION_PLANS.year.name} (für Fortgeschrittene)`,
+  year: SECTION_PLANS.year.name,
   desert: `${SECTION_PLANS.desert.name} (Wüstenzeit)`,
 };
 
 const SECTION_START: Record<Exclude<SectionKind, 'desert'>, string> = {
   beginner: 'einsteiger',
-  nt90: 'nt90',
   paul: paulPlanId(PAUL_DAYS[0]),
-  john: 'johannes',
   year: 'jahr',
 };
 

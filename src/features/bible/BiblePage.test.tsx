@@ -132,6 +132,8 @@ describe('Bibel', () => {
   it('offers plans by sections: the section of the day, its number, a tick; a psalm beside it', async () => {
     const store = await renderBible();
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
+    const options = Array.from((await screen.findByLabelText('Leseplan')).querySelectorAll('option')).map((o) => o.textContent);
+    expect(options).toEqual(['Altes und Neues Testament', 'Eigener Plan', 'Christus finden', 'Mit Paulus unterwegs', 'Bibel in einem Jahr']);
     fireEvent.change(await screen.findByLabelText('Leseplan'), { target: { value: 'beginner' } });
     await waitFor(() => expect(document.querySelector('.reading-refs')!.textContent).toBe('LesungJohannes 1'));
     expect(screen.getByText('Christus finden · Abschnitt 1 von 59')).toBeTruthy();

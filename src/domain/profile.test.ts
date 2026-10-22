@@ -46,8 +46,8 @@ describe('the plan before the Wüstenzeit (1.16)', () => {
     const keep = normalizeProfile({ ...base, plan: { planId: 'wueste-40', positions: {}, beforeDesert: 'paulus-60' } }, '2026-10-21');
     expect(keep.plan).toMatchObject({ planId: 'wueste-40', beforeDesert: 'paulus-60' });
     for (const before of ['wueste-90', 'paulus-500', 7]) {
-      const p = normalizeProfile({ ...base, plan: { planId: 'nt90', positions: {}, beforeDesert: before as string } }, '2026-10-21');
-      expect(p.plan.planId).toBe('nt90');
+      const p = normalizeProfile({ ...base, plan: { planId: 'jahr', positions: {}, beforeDesert: before as string } }, '2026-10-21');
+      expect(p.plan.planId).toBe('jahr');
       expect(p.plan.beforeDesert).toBeUndefined();
     }
   });

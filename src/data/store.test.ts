@@ -385,20 +385,20 @@ describe('the reading of the Wüstenzeit (1.16)', () => {
 
   it('rests the plan on the days of the Wüstenzeit only, and takes it up again where it stood', async () => {
     const { store, set } = await clockStore(new Date(2026, 8, 25, 5));
-    store.setPlan('nt90');
-    store.setPlanPositions({ nt90: 5, wueste: 12 });
+    store.setPlan('jahr');
+    store.setPlanPositions({ jahr: 5, wueste: 12 });
     // Set up for Monday: the plan goes on until then.
     store.startDesert('2026-09-28', 3, []);
-    expect(store.getProfile().plan.planId).toBe('nt90');
+    expect(store.getProfile().plan.planId).toBe('jahr');
     set(new Date(2026, 8, 27, 5));
     store.checkDayChange();
-    expect(store.getProfile().plan.planId).toBe('nt90');
+    expect(store.getProfile().plan.planId).toBe('jahr');
 
     // The first day: "Bewährung und Nachfolge" from its first section; the plan before rests.
     set(new Date(2026, 8, 28, 5));
     store.checkDayChange();
-    expect(store.getProfile().plan).toMatchObject({ planId: 'wueste-3', beforeDesert: 'nt90' });
-    expect(store.getProfile().plan.positions).toMatchObject({ wueste: 0, nt90: 5 });
+    expect(store.getProfile().plan).toMatchObject({ planId: 'wueste-3', beforeDesert: 'jahr' });
+    expect(store.getProfile().plan.positions).toMatchObject({ wueste: 0, jahr: 5 });
     store.ensureTodayReading();
     store.setReadingDone('2026-09-28', true);
     expect(store.getProfile().plan.positions.wueste).toBe(1);
@@ -406,15 +406,15 @@ describe('the reading of the Wüstenzeit (1.16)', () => {
     // The day after the last: back by itself, at the place it stood.
     set(new Date(2026, 9, 1, 5));
     store.checkDayChange();
-    expect(store.getProfile().plan.planId).toBe('nt90');
-    expect(store.getProfile().plan.positions.nt90).toBe(5);
+    expect(store.getProfile().plan.planId).toBe('jahr');
+    expect(store.getProfile().plan.positions.jahr).toBe(5);
     store.ensureTodayReading();
-    expect(store.readingFor('2026-10-01').reading.planId).toBe('nt90');
+    expect(store.readingFor('2026-10-01').reading.planId).toBe('jahr');
   });
 
   it('follows the choice of reading at any time; another plan chosen under "Wort" becomes it', async () => {
     const { store } = await clockStore(new Date(2026, 8, 25, 5));
-    store.setPlan('johannes');
+    store.setPlan('paulus-60');
     store.startDesert('2026-09-25', 40, []);
     const run = () => store.getProfile().winterArc.runs.at(-1)!;
     expect(store.getProfile().plan.planId).toBe('wueste-40');
@@ -423,14 +423,14 @@ describe('the reading of the Wüstenzeit (1.16)', () => {
 
     store.setDesertReading(run().id, 'bible');
     expect(run().reading).toBe('bible');
-    expect(store.getProfile().plan.planId).toBe('johannes');
+    expect(store.getProfile().plan.planId).toBe('paulus-60');
     // Taken up again, it goes on where it stood in this Wüstenzeit.
     store.setDesertReading(run().id, 'desert');
     expect(run().reading).toBeUndefined();
     expect(store.getProfile().plan).toMatchObject({ planId: 'wueste-40', positions: { wueste: 1 } });
     store.setDesertReading(run().id, 'none');
     expect(run().reading).toBe('none');
-    expect(store.getProfile().plan.planId).toBe('johannes');
+    expect(store.getProfile().plan.planId).toBe('paulus-60');
 
     // Under "Wort": the plan of the Wüstenzeit, or another one, which becomes its reading.
     store.setPlan('wueste-40');

@@ -226,11 +226,11 @@ describe('plans by sections (1.16)', () => {
   it('knows its ids and falls back for unknown ones', () => {
     expect(sectionKind('einsteiger')).toBe('beginner');
     expect(sectionKind('einsteiger-psalm')).toBe('beginner');
-    expect(sectionKind('nt90')).toBe('nt90');
+    expect(sectionKind('nt90')).toBeUndefined();
     expect(sectionKind('paulus-60')).toBe('paul');
     expect(sectionKind('paulus-9')).toBeUndefined();
     expect(sectionKind('paulus-116')).toBeUndefined();
-    expect(sectionKind('johannes-offb')).toBe('john');
+    expect(sectionKind('johannes')).toBeUndefined();
     expect(sectionKind('jahr')).toBe('year');
     expect(sectionKind('wueste-90')).toBe('desert');
     expect(sectionKind('wueste-366')).toBeUndefined();
@@ -242,9 +242,6 @@ describe('plans by sections (1.16)', () => {
   it('spreads the chapters evenly over the sections, in order, without gap', () => {
     const cases: [string, number, number][] = [
       ['einsteiger', 59, 59],
-      ['nt90', 90, 260],
-      ['johannes', 28, 28],
-      ['johannes-offb', 50, 50],
       ['jahr', 365, 1189],
       ['paulus-40', 40, 115],
       ['paulus-60', 60, 115],
@@ -258,7 +255,7 @@ describe('plans by sections (1.16)', () => {
       const sizes = t.portions.map((p) => [p, ...(p.more ?? [])].reduce((s, q) => s + q.to - q.from + 1, 0));
       expect(Math.max(...sizes) - Math.min(...sizes), id).toBeLessThanOrEqual(1);
     }
-    expect(chapterList('nt90')).toEqual(NT_BOOKS.flatMap((b) => Array.from({ length: b.chapters }, (_, i) => `${b.slug} ${i + 1}`)));
+    expect(chapterList('jahr')).toEqual(ALL_BOOKS.flatMap((b) => Array.from({ length: b.chapters }, (_, i) => `${b.slug} ${i + 1}`)));
   });
 
   it('weaves the letters of Paul into Acts', () => {
@@ -335,10 +332,10 @@ describe('plans by sections (1.16)', () => {
   });
 
   it('counts the section, and begins anew after the last', () => {
-    const p = getPlan('johannes');
-    const r = assignReading(p, { johannes: 27 });
-    expect(sectionOf(p, r)).toEqual({ section: 28, sections: 28 });
-    expect(markRead(p, r, { johannes: 27 }, true).positions.johannes).toBe(0);
+    const p = getPlan('paulus-40');
+    const r = assignReading(p, { paulus: 39 });
+    expect(sectionOf(p, r)).toEqual({ section: 40, sections: 40 });
+    expect(markRead(p, r, { paulus: 39 }, true).positions.paulus).toBe(0);
     expect(sectionOf(getPlan('atnt-1-1'), assignReading(getPlan('atnt-1-1'), {}))).toBeUndefined();
   });
 });

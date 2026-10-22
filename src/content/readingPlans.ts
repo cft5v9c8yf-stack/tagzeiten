@@ -180,8 +180,6 @@ export const BEGINNER_SEQUENCE: readonly Stretch[] = [
   { slug: '1.Petrus' },
 ];
 
-export const NT_SEQUENCE: readonly Stretch[] = whole(NT_BOOKS);
-
 export const BIBLE_SEQUENCE: readonly Stretch[] = whole(ALL_BOOKS);
 
 /**
@@ -210,15 +208,6 @@ export const PAUL_SEQUENCE: readonly Stretch[] = [
   { slug: 'Titus' },
   { slug: '2.Timotheus' },
 ];
-
-export const JOHN_SEQUENCE: readonly Stretch[] = [
-  { slug: 'Johannes' },
-  { slug: '1.Johannes' },
-  { slug: '2.Johannes' },
-  { slug: '3.Johannes' },
-];
-
-export const JOHN_REVELATION_SEQUENCE: readonly Stretch[] = [...JOHN_SEQUENCE, { slug: 'Offenbarung' }];
 
 /** The plan of the Wüstenzeit, "Bewährung und Nachfolge". */
 export const DESERT_SEQUENCE: readonly Stretch[] = [
@@ -256,17 +245,9 @@ export const SECTION_PLANS = {
     name: 'Christus finden',
     description: `Für den Anfang die Bücher, die Luther in seiner Vorrede auf das Neue Testament (1522) nennt: „Summa, Sankt Johannes' Evangelium und seine erste Epistel, Sankt Pauli Epistel, sonderlich die zu den Römern, Galatern und Ephesern, und Sankt Peters erste Epistel, das sind die Bücher, die dir Christum zeigen und alles lehren, das dir zu wissen nötig und selig ist, ob du schon kein ander Buch noch Lehre nimmer sähest noch hörtest.“ In dieser Reihenfolge, 59 Kapitel, eines am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
   },
-  nt90: {
-    name: 'Neues Testament in 90 Tagen',
-    description: `Das ganze Neue Testament in Luthers Buchreihenfolge, die 260 Kapitel gleichmäßig auf 90 Abschnitte verteilt, zwei bis drei Kapitel am Tag. ${BY_PROGRESS}`,
-  },
   paul: {
     name: 'Mit Paulus unterwegs',
     description: `Die Apostelgeschichte, dazwischen die Briefe des Paulus an der Stelle seines Weges, an die sie gehören: Apostelgeschichte 1–14, Galater, Apostelgeschichte 15–18, 1. und 2. Thessalonicher, Apostelgeschichte 19, 1. und 2. Korinther, Römer, Apostelgeschichte 20–28, Epheser, Philipper, Kolosser, Philemon, 1. Timotheus, Titus, 2. Timotheus. Die 115 Kapitel werden gleichmäßig auf die gewählte Dauer verteilt. ${BY_PROGRESS}`,
-  },
-  john: {
-    name: 'Johannes-Schriften',
-    description: `Das Evangelium nach Johannes und seine drei Briefe, 28 Kapitel in 28 Abschnitten. Mit der Offenbarung sind es 50. ${BY_PROGRESS}`,
   },
   year: {
     name: 'Bibel in einem Jahr',
