@@ -37,6 +37,7 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 15. Oberfläche vollständig auf **Deutsch**, Anrede **du**. Code, Bezeichner und Kommentare auf Englisch.
 16. Ton: nüchtern, warm, männlich ohne Pose. Kein Motivationsvokabular („Du schaffst das!", „Level up"), keine Emojis in der Oberfläche. Luthers Sprache darf stehen bleiben („flugs und fröhlich geschlafen").
 17. Buttons sagen, was passiert („Stille Zeit abschließen", nicht „Fertig!").
+19. **Fürwörter für Gott groß:** In eigenen Texten (App, Homepage, Artikel) werden Fürwörter groß geschrieben, wenn sie sich auf Gott, Jesus Christus oder den Heiligen Geist beziehen („Seine Güte“, „Er“, „Ihm“). Sonst nicht. Wörtliche Zitate (Lutherbibel 1912, Katechismus, Lieder, Gebete) bleiben wie in der Quelle.
 
 ## Arbeitsweise in Claude-Sitzungen
 
