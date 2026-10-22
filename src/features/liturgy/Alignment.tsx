@@ -1,7 +1,8 @@
 import type { Part } from '../../content/orders';
 import { RUBRICS } from '../../content/orders';
-import { useDay, useStore } from '../../data/hooks';
+import { useDay, useProfile, useStore } from '../../data/hooks';
 import { THREE_LABEL, suggestionsFor } from '../../domain/review';
+import { weekIntent } from '../../domain/well';
 import { Rubric } from '../../ui/PrayerText';
 import type { PartContext } from './OrderPart';
 import { PartFields } from './PartFields';
@@ -11,10 +12,19 @@ export function Alignment({ part, ctx }: { part: Part; ctx: PartContext }) {
   const store = useStore();
   const day = useDay(ctx.date);
   const suggestions = suggestionsFor(day, store.dayBefore(ctx.date));
+  // From the Treffen am Abendbrunnen, if it is switched on: the resolution and the wish of the week.
+  const intent = weekIntent(useProfile().well, ctx.date);
 
   return (
     <>
       <Rubric>{RUBRICS.alignment}</Rubric>
+      {intent && (
+        <div className="well-intent">
+          <p className="small muted">Vom letzten Treffen am Abendbrunnen</p>
+          {intent.resolution && <p>Dein Vorsatz für diese Woche: {intent.resolution}</p>}
+          {intent.wish && <p>Ihr Wunsch an dich: {intent.wish}</p>}
+        </div>
+      )}
       {suggestions.length > 0 && (
         <div className="suggestions">
           <p className="small muted">Vorschläge – antippen zum Übernehmen:</p>

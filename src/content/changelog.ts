@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.23.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: der Vorsatz der Woche in der Stillen Zeit',
+    changes: [
+      { area: 'Stille Zeit', text: 'Ist das Treffen am Abendbrunnen eingeschaltet, steht in der Ausrichtung bis zu sieben Tage nach dem Treffen dein Vorsatz für die Woche, dazu ihr Wunsch an dich. Es ist eine Erinnerung an das, was ihr euch vorgenommen habt, kein Haken und keine Zahl. Ausgeschaltet ändert sich nichts.' },
+    ],
+  },
+  {
     version: '1.22.0',
     date: '2026-10-22',
     title: 'Treffen am Abendbrunnen: der wöchentliche Ehe-Check-in',

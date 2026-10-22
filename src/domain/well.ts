@@ -94,3 +94,14 @@ export const pastMeetings = (well: Well, currentId?: string): WellMeeting[] =>
 
 /** The wife's name, trimmed; empty when none is given (the standard text then says "dir"). */
 export const wifeName = (name: string) => name.trim();
+
+/**
+ * What the last meeting set for the week, for the morning: the newest meeting of the past seven days
+ * with a resolution or a wish of hers. A reminder of the week, never of something missed (rule 7).
+ */
+export function weekIntent(well: Well, today: DateKey): { resolution: string; wish: string } | undefined {
+  if (!well.on) return undefined;
+  const from = addDays(today, -6);
+  const m = well.meetings.find((x) => x.date <= today && x.date >= from && (x.resolution.trim() || x.herWish.trim()));
+  return m ? { resolution: m.resolution.trim(), wish: m.herWish.trim() } : undefined;
+}

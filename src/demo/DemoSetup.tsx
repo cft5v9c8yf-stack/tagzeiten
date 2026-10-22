@@ -66,7 +66,7 @@ export function DemoSetup() {
           meetings: [
             {
               id: 'demo-well',
-              date: addDays(today, -7),
+              date: addDays(today, -2),
               resolution: 'Jeden Abend zehn Minuten ohne Handy zuhören',
               resolutionDone: false,
               herWish: 'Einen Abend in der Woche ohne Termine',

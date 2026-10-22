@@ -4394,3 +4394,13 @@ mark.placeholder {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.well-intent {
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 12px 12px 0;
+}
+.well-intent p {
+  margin: 0 0 4px;
+}
