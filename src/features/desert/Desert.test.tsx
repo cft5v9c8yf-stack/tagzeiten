@@ -89,8 +89,14 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(document.body.textContent).not.toMatch(/Winter Arc|Streithalle/);
 
     fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beginnen' }));
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' })).getByRole('button', { name: 'Wüstenzeit beginnen' }));
+    const dialog = within(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }));
+    // The plan of the Wüstenzeit is proposed (1.16), over its days.
+    const reading = within(dialog.getByRole('group', { name: 'Leseplan der Wüstenzeit' }));
+    expect(reading.getByRole('button', { name: 'Bewährung und Nachfolge' }).getAttribute('aria-pressed')).toBe('true');
+    expect(dialog.getByText(/gleichmäßig auf 40 Tage verteilt/)).toBeTruthy();
+    fireEvent.click(dialog.getByRole('button', { name: 'Wüstenzeit beginnen' }));
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-09-26', durationDays: 40, habits: [] });
+    expect(store.getProfile().plan.planId).toBe('wueste-40');
     // Then the choice, right there; the 90-Tage-Standard among the packages, with its guide.
     expect(screen.getByRole('heading', { name: 'Gewohnheiten wählen' })).toBeTruthy();
     const std = screen.getByRole('region', { name: 'Der 90-Tage-Standard' });
@@ -131,6 +137,14 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(within(day).getByRole('note').textContent).toContain('Beginne den Tag mit Luthers Morgensegen.');
     // The bubble hangs below its own line; another "i" closes it, so only one stands open.
     expect(within(day).getByRole('note').closest('.desert-line')!.textContent).toContain('Morgensegen');
+    // The day's section of "Bewährung und Nachfolge" stands first, ticked like the habits (1.16).
+    expect(store.getProfile().plan.planId).toBe('wueste-40');
+    const reading = within(day).getByRole('checkbox', { name: /^Matthäus 4Bewährung/ });
+    expect(reading.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
+    expect(within(day).queryByRole('checkbox', { name: /^Bibel lesen/ })).toBeNull();
+    fireEvent.click(reading);
+    expect(store.getDay('2026-09-26').reading?.done).toBe(true);
+    expect(store.getProfile().plan.positions.wueste).toBe(1);
     // The reading Henoch already has, under its name in Henoch.
     const next = within(day).getByRole('button', { name: 'Info zu Bibel lesen' });
     fireEvent.pointerDown(next);
@@ -409,5 +423,20 @@ describe('the package "Erbe" (1.3)', () => {
     expect(ids.filter((id) => id === 'wz-gewissen')).toHaveLength(1);
     expect(within(erbe).getByRole('button', { name: 'Paket übernehmen' })).toHaveProperty('disabled', true);
   });
-});
 
+  it('leaves the reading out, or takes it in again, at any time (1.16)', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    tab('Tag');
+    const day = () => document.querySelector('.wa-day') as HTMLElement;
+    expect(day().querySelector('.desert-reading')).toBeTruthy();
+    fireEvent.click(screen.getByText('Leseplan der Wüstenzeit'));
+    fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Ohne Lesung' }));
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBe('none');
+    expect(day().querySelector('.desert-reading')).toBeNull();
+    // Without the reading above, "Bibel lesen" stands in the list again.
+    expect(within(day()).getByRole('checkbox', { name: /^Bibel lesen/ })).toBeTruthy();
+    fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Mein Leseplan' }));
+    expect(store.getProfile().plan.planId).toBe('atnt-1-1');
+    expect(within(day()).getByRole('checkbox', { name: /^1\. Mose 1 · Matthäus 1/ })).toBeTruthy();
+  });
+});

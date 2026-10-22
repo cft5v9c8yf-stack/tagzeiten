@@ -155,3 +155,106 @@ export const VERSES_PER_MINUTE = 5;
 export const CHAPTER_CHOICES = [1, 2, 3, 4, 5, 6, 8, 10] as const;
 export const MINUTE_CHOICES = [5, 10, 15, 20, 30, 45, 60] as const;
 
+
+/* ---------------------------------------------------------------- plans by sections (1.16) */
+
+/** A stretch of a book in a plan read in sequence: the whole book, or chapters from–to. */
+export interface Stretch {
+  slug: string;
+  from?: number;
+  to?: number;
+}
+
+const whole = (books: readonly Book[]): Stretch[] => books.map((b) => ({ slug: b.slug }));
+
+/**
+ * "Christus finden", for beginners: the books Luther in his preface to the New
+ * Testament (1522) names as those that show Christ most plainly, in his order.
+ */
+export const BEGINNER_SEQUENCE: readonly Stretch[] = [
+  { slug: 'Johannes' },
+  { slug: '1.Johannes' },
+  { slug: 'Römer' },
+  { slug: 'Galater' },
+  { slug: 'Epheser' },
+  { slug: '1.Petrus' },
+];
+
+export const BIBLE_SEQUENCE: readonly Stretch[] = whole(ALL_BOOKS);
+
+/**
+ * Acts with Paul's letters woven in where they belong in his way: Galatians
+ * early, before the council of Acts 15; 1 Corinthians from Ephesus (Acts 19),
+ * 2 Corinthians and Romans on the way through Macedonia to Corinth (Acts 20,1–3),
+ * before the farewell at Miletus; the letters from prison in Rome after Acts 28;
+ * the pastoral letters after Acts.
+ */
+export const PAUL_SEQUENCE: readonly Stretch[] = [
+  { slug: 'Apostelgeschichte', from: 1, to: 14 },
+  { slug: 'Galater' },
+  { slug: 'Apostelgeschichte', from: 15, to: 18 },
+  { slug: '1.Thessalonicher' },
+  { slug: '2.Thessalonicher' },
+  { slug: 'Apostelgeschichte', from: 19, to: 19 },
+  { slug: '1.Korinther' },
+  { slug: '2.Korinther' },
+  { slug: 'Römer' },
+  { slug: 'Apostelgeschichte', from: 20, to: 28 },
+  { slug: 'Epheser' },
+  { slug: 'Philipper' },
+  { slug: 'Kolosser' },
+  { slug: 'Philemon' },
+  { slug: '1.Timotheus' },
+  { slug: 'Titus' },
+  { slug: '2.Timotheus' },
+];
+
+/** The plan of the Wüstenzeit, "Bewährung und Nachfolge". */
+export const DESERT_SEQUENCE: readonly Stretch[] = [
+  { slug: 'Matthäus', from: 4, to: 4 },
+  { slug: 'Matthäus', from: 5, to: 7 },
+  { slug: 'Johannes' },
+  { slug: 'Jakobus' },
+  { slug: '1.Petrus' },
+  { slug: 'Hebräer' },
+];
+
+/**
+ * Verses per chapter (Luther 1912, "xmlbible-lut1912") of the books of the
+ * Wüstenzeit: with more days than chapters, chapters are divided by verses.
+ */
+export const CHAPTER_VERSES: Readonly<Record<string, readonly number[]>> = {
+  Matthäus: [25, 23, 17, 25, 48, 34, 29, 34, 38, 42, 30, 50, 58, 36, 39, 28, 27, 35, 30, 34, 46, 46, 39, 51, 46, 75, 66, 20],
+  Johannes: [51, 25, 36, 54, 47, 71, 53, 59, 41, 42, 57, 50, 38, 31, 27, 33, 26, 40, 42, 31, 25],
+  Jakobus: [27, 26, 18, 17, 20],
+  '1.Petrus': [25, 25, 22, 19, 14],
+  Hebräer: [14, 18, 19, 16, 14, 20, 28, 13, 28, 39, 40, 29, 25],
+};
+
+/** Mit Paulus unterwegs: suggested durations, and the range of one's own. */
+export const PAUL_DAYS = [40, 60] as const;
+export const PAUL_MIN_DAYS = 10;
+/** One chapter a day at the least: the 115 chapters of the plan. */
+export const PAUL_MAX_DAYS = 115;
+
+const BY_PROGRESS = 'Der Plan läuft nach Fortschritt, nicht nach Datum: wer aussetzt, macht beim nächsten Abschnitt weiter.';
+
+/** Names and descriptions of the plans by sections, by kind. */
+export const SECTION_PLANS = {
+  beginner: {
+    name: 'Christus finden',
+    description: `Für den Anfang die Bücher, die Luther in seiner Vorrede auf das Neue Testament (1522) nennt: „Summa, Sankt Johannes' Evangelium und seine erste Epistel, Sankt Pauli Epistel, sonderlich die zu den Römern, Galatern und Ephesern, und Sankt Peters erste Epistel, das sind die Bücher, die dir Christum zeigen und alles lehren, das dir zu wissen nötig und selig ist, ob du schon kein ander Buch noch Lehre nimmer sähest noch hörtest.“ In dieser Reihenfolge, 59 Kapitel, eines am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
+  },
+  paul: {
+    name: 'Mit Paulus unterwegs',
+    description: `Die Apostelgeschichte, dazwischen die Briefe des Paulus an der Stelle seines Weges, an die sie gehören: Apostelgeschichte 1–14, Galater, Apostelgeschichte 15–18, 1. und 2. Thessalonicher, Apostelgeschichte 19, 1. und 2. Korinther, Römer, Apostelgeschichte 20–28, Epheser, Philipper, Kolosser, Philemon, 1. Timotheus, Titus, 2. Timotheus. Die 115 Kapitel werden gleichmäßig auf die gewählte Dauer verteilt. ${BY_PROGRESS}`,
+  },
+  year: {
+    name: 'Bibel in einem Jahr',
+    description: `Die ganze Bibel in Luthers Buchreihenfolge, die 1189 Kapitel gleichmäßig auf 365 Abschnitte verteilt, drei bis vier Kapitel am Tag. Für Fortgeschrittene. ${BY_PROGRESS}`,
+  },
+  desert: {
+    name: 'Bewährung und Nachfolge',
+    description: `Der Leseplan der Wüstenzeit: die Versuchung Jesu (Matthäus 4), die Bergpredigt (Matthäus 5–7), das Evangelium nach Johannes, der Jakobusbrief, der 1. Petrusbrief und der Hebräerbrief. Die Abschnitte sind gleichmäßig auf die Dauer der Wüstenzeit verteilt; bei vielen Tagen werden Kapitel geteilt. ${BY_PROGRESS}`,
+  },
+} as const;

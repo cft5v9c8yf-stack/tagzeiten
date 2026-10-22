@@ -3823,3 +3823,18 @@ header.top .search-link:focus-visible {
   font-size: 0.95rem;
   color: var(--muted);
 }
+
+/* Wort: the day's section with its tick (1.16). */
+.plan-section {
+  margin: 4px 0 0;
+}
+.bible-tick .wa-tick {
+  border-bottom: 0;
+}
+/* Wüstenwanderung: the day's reading above the habits. */
+.desert-reading .wa-tick {
+  border-bottom: 0;
+}
+.desert-reading-choice .seg {
+  margin-top: 4px;
+}

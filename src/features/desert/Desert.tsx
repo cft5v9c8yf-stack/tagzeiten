@@ -26,6 +26,7 @@ import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertJournal, RoundJournal } from './DesertJournal';
 import { DesertChoice } from './DesertChoice';
 import { DesertDay } from './DesertHabits';
+import { DesertReadingDay, DesertReadingSettings } from './DesertReading';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { WithInfo } from './DesertInfo';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
@@ -180,8 +181,9 @@ function DayView({ run, today }: { run: WinterArcRun; today: DateKey }) {
           </button>
         </p>
       )}
+      <DesertReadingDay run={run} date={date} />
       <div className="wa-group">
-        <DesertDay run={run} date={date} />
+        <DesertDay run={run} date={date} withoutReading={run.reading !== 'none'} />
       </div>
       {date <= today && <DesertJournal key={date} date={date} />}
     </section>
@@ -396,6 +398,10 @@ function Dashboard({ run }: { run: WinterArcRun }) {
           <details className="wa-settings">
             <summary>Gewohnheiten wählen</summary>
             <DesertChoice run={run} level={5} />
+          </details>
+          <details className="wa-settings">
+            <summary>Leseplan der Wüstenzeit</summary>
+            <DesertReadingSettings run={run} />
           </details>
         </>
       )}

@@ -8,7 +8,7 @@ import { emptyHouse, normalizeAnswered, normalizeHouse } from './house';
 import { emptyPrayer, normalizePrayer } from './prayer';
 import { sortDays, WEEK } from './schedule';
 import { normalizeDeclined } from './seasons';
-import { carryPositions, fixedAmounts, fixedPlanId, getPlan, initialPositions, isOwnPlan, normalizePositions } from './readingPlan';
+import { carryPositions, fixedAmounts, fixedPlanId, getPlan, initialPositions, isKnownPlan, isOwnPlan, normalizePositions, sectionKind } from './readingPlan';
 
 export function defaultProfile(today: DateKey): Profile {
   const plan = getPlan(START_PLAN_ID);
@@ -124,6 +124,9 @@ function normalizePlan(planId: string, raw: Partial<Profile['plan']> | undefined
   };
   if (typeof raw?.own === 'string' && isOwnPlan(raw.own)) out.own = raw.own;
   if (typeof raw?.fixed === 'string' && fixedAmounts(raw.fixed)) out.fixed = withoutAlternation(raw.fixed);
+  const before = raw?.beforeDesert;
+  if (typeof before === 'string' && isKnownPlan(before) && sectionKind(before) !== 'desert') out.beforeDesert = withoutAlternation(before);
+  if (typeof raw?.desertRun === 'string' && raw.desertRun) out.desertRun = raw.desertRun;
   return out;
 }
 
