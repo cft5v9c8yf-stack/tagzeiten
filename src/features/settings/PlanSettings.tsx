@@ -402,7 +402,7 @@ type Kind = 'fixed' | 'own' | SectionKind;
 const KIND_LABEL: Record<Kind, string> = {
   fixed: 'Altes und Neues Testament',
   own: 'Eigener Plan',
-  beginner: SECTION_PLANS.beginner.name,
+  beginner: `${SECTION_PLANS.beginner.name} (für Einsteiger)`,
   nt90: SECTION_PLANS.nt90.name,
   paul: SECTION_PLANS.paul.name,
   john: SECTION_PLANS.john.name,

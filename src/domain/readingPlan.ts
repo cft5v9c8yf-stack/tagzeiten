@@ -338,7 +338,7 @@ export const PSALM_TRACK = 'psalm';
 
 function sectionPlan(id: string, kind: SectionKind): Plan {
   const spec: Record<SectionKind, () => { seq: readonly Stretch[]; count: number; track: string; label: string }> = {
-    beginner: () => ({ seq: BEGINNER_SEQUENCE, count: 37, track: 'einsteiger', label: 'Evangelium' }),
+    beginner: () => ({ seq: BEGINNER_SEQUENCE, count: 43, track: 'einsteiger', label: 'Lesung' }),
     nt90: () => ({ seq: NT_SEQUENCE, count: 90, track: 'nt90', label: 'NT' }),
     paul: () => ({ seq: PAUL_SEQUENCE, count: sectionDays(id)!, track: 'paulus', label: 'Lesung' }),
     john: () => ({

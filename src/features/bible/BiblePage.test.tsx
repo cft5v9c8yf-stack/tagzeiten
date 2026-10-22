@@ -133,8 +133,8 @@ describe('Bibel', () => {
     const store = await renderBible();
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
     fireEvent.change(await screen.findByLabelText('Leseplan'), { target: { value: 'beginner' } });
-    await waitFor(() => expect(document.querySelector('.reading-refs')!.textContent).toBe('EvangeliumMarkus 1'));
-    expect(screen.getByText('Einsteiger: Markus und Johannes · Abschnitt 1 von 37')).toBeTruthy();
+    await waitFor(() => expect(document.querySelector('.reading-refs')!.textContent).toBe('LesungJohannes 1'));
+    expect(screen.getByText('Christus finden · Abschnitt 1 von 43')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Mit einem Psalm' }));
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref')).toHaveLength(2));
     expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toBe('PsalmPsalm 1');

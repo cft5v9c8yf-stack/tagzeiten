@@ -167,7 +167,18 @@ export interface Stretch {
 
 const whole = (books: readonly Book[]): Stretch[] => books.map((b) => ({ slug: b.slug }));
 
-export const BEGINNER_SEQUENCE: readonly Stretch[] = [{ slug: 'Markus' }, { slug: 'Johannes' }];
+/**
+ * "Christus finden", for beginners: the books Luther in his preface to the New
+ * Testament (1522) names as those that show Christ most plainly; of Paul's
+ * letters Galatians and Ephesians, as wished (22.10.2026).
+ */
+export const BEGINNER_SEQUENCE: readonly Stretch[] = [
+  { slug: 'Johannes' },
+  { slug: '1.Johannes' },
+  { slug: 'Galater' },
+  { slug: 'Epheser' },
+  { slug: '1.Petrus' },
+];
 
 export const NT_SEQUENCE: readonly Stretch[] = whole(NT_BOOKS);
 
@@ -242,8 +253,8 @@ const BY_PROGRESS = 'Der Plan läuft nach Fortschritt, nicht nach Datum: wer aus
 /** Names and descriptions of the plans by sections, by kind. */
 export const SECTION_PLANS = {
   beginner: {
-    name: 'Einsteiger: Markus und Johannes',
-    description: `Die Evangelien nach Markus und Johannes, 37 Kapitel, ein Kapitel am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
+    name: 'Christus finden',
+    description: `Für den Anfang: die Bücher, die nach Luthers Vorrede auf das Neue Testament (1522) Christus am deutlichsten zeigen. Das Evangelium nach Johannes und sein erster Brief, von Paulus der Galater- und der Epheserbrief, dazu der 1. Petrusbrief: 43 Kapitel, eines am Tag. Wer mag, nimmt einen Psalm dazu. ${BY_PROGRESS}`,
   },
   nt90: {
     name: 'Neues Testament in 90 Tagen',
