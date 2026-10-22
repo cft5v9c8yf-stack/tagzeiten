@@ -64,7 +64,7 @@ function ThreeThings({ day, date }: { day: Day; date: string }) {
   // With the Abendbrunnen on and a resolution of the week: the focus has a personal and a family part.
   const family = weekIntent(useProfile().well, date);
   return (
-    <Section id="today.three" title={family ? 'Mein Fokus heute' : 'Die drei Dinge'}>
+    <Section id="today.three" title={family ? 'Fokus heute' : 'Die drei Dinge'}>
       {family && <h4 className="focus-head">Persönlich</h4>}
       <div className="panel three">
         {any ? (
@@ -91,7 +91,7 @@ function ThreeThings({ day, date }: { day: Day; date: string }) {
       </div>
       {family && (
         <>
-          <h4 className="focus-head">Vorsatz für das Familienleben</h4>
+          <h4 className="focus-head">Familie</h4>
           <div className="panel three">
             {family.resolution && (
               <div className="three-row">

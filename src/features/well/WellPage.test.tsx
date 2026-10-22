@@ -118,43 +118,57 @@ describe('Treffen am Abendbrunnen', () => {
     expect(screen.getByText('Wo habe ich dich verletzt oder übersehen? (Zuerst selbst benennen.)')).toBeTruthy();
   });
 
-  it('keeps the notes of the week with their date across a reload', async () => {
+  it('lists the meetings, each on a page of its own, and keeps its notes across a reload', async () => {
     const db = `well-keep-${++n}`;
     const first = await mount('/arena?bereich=abendbrunnen', (s) => switchOn(s), db);
-    fireEvent.click(screen.getByRole('button', { name: 'Treffen dieser Woche beginnen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Treffen aufschreiben' }));
     fireEvent.change(await screen.findByLabelText('Mein Vorsatz für diese Woche'), { target: { value: 'Jeden Abend zehn Minuten zuhören' } });
     fireEvent.change(screen.getByLabelText('Gebetsanliegen von ihr'), { target: { value: 'Kraft für die Woche' } });
     fireEvent.change(screen.getByLabelText('Nächstes Treffen am Abendbrunnen'), { target: { value: '2026-10-29' } });
     await first.store.flush();
-    expect(first.store.getProfile().well.meetings[0]).toMatchObject({ date: '2026-10-22', resolution: 'Jeden Abend zehn Minuten zuhören', next: '2026-10-29' });
+    const saved = first.store.getProfile().well.meetings[0]!;
+    expect(saved).toMatchObject({ date: '2026-10-22', resolution: 'Jeden Abend zehn Minuten zuhören', next: '2026-10-29' });
+    // Back on the title page the meeting stands in the list, named by its resolution.
+    fireEvent.click(screen.getByRole('link', { name: 'Zurück: Treffen am Abendbrunnen' }));
+    expect(await screen.findByRole('link', { name: /Jeden Abend zehn Minuten zuhören/ })).toBeTruthy();
     cleanup();
-    await mount('/arena?bereich=abendbrunnen', undefined, db);
+    await mount(`/arena/treffen-${saved.id}`, undefined, db);
     expect((screen.getByLabelText('Mein Vorsatz für diese Woche') as HTMLTextAreaElement).value).toBe('Jeden Abend zehn Minuten zuhören');
     expect((screen.getByLabelText('Gebetsanliegen von ihr') as HTMLTextAreaElement).value).toBe('Kraft für die Woche');
   });
 
-  it('asks about last week\'s resolution, lets it be ticked, and lists past meetings', async () => {
+  it('asks on the new meeting\'s page about the last resolution, and lets it be ticked', async () => {
     const { store } = await mount('/arena?bereich=abendbrunnen', (s) =>
       s.updateProfile(
         (p) => ({
           ...p,
           well: {
             on: true,
-            meetings: [
-              { id: 'a', date: '2026-10-15', resolution: 'Handy weglegen', resolutionDone: false, herWish: 'Mehr Zeit zu zweit', herConcern: '', myConcern: '' },
-            ],
+            meetings: [{ id: 'a', date: '2026-10-15', resolution: 'Handy weglegen', resolutionDone: false, herWish: 'Mehr Zeit zu zweit', herConcern: '', myConcern: '' }],
           },
         }),
         { immediate: true },
       ),
     );
+    // The earlier meeting stands in the list.
+    expect(screen.getByRole('link', { name: /Handy weglegen/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Treffen aufschreiben' }));
+    await screen.findByLabelText('Mein Vorsatz für diese Woche');
     expect(document.querySelector('.well-last-text')!.textContent).toBe('Handy weglegen');
-    // Past meetings are read in a plain list.
-    expect(screen.getByText('Vergangene Treffen')).toBeTruthy();
     fireEvent.click(screen.getByLabelText('Umgesetzt?'));
-    await waitFor(() => expect(store.getProfile().well.meetings[0]!.resolutionDone).toBe(true));
-    fireEvent.click(screen.getByRole('button', { name: 'Treffen dieser Woche beginnen' }));
-    expect(store.getProfile().well.meetings).toHaveLength(2);
+    await waitFor(() => expect(store.getProfile().well.meetings.find((m) => m.id === 'a')!.resolutionDone).toBe(true));
+  });
+
+  it('deletes a meeting from its page', async () => {
+    const { store, router } = await mount('/arena/treffen-a', (s) =>
+      s.updateProfile((p) => ({ ...p, well: { on: true, meetings: [{ id: 'a', date: '2026-10-15', resolution: 'Zuhören', resolutionDone: false, herWish: '', herConcern: '', myConcern: '' }] } }), {
+        immediate: true,
+      }),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Löschen' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ja, Treffen löschen' }));
+    expect(store.getProfile().well.meetings).toEqual([]);
+    expect(router.state.location.search).toBe('?bereich=abendbrunnen');
   });
 
   it('is in the Markdown export and gone with the deletion', async () => {

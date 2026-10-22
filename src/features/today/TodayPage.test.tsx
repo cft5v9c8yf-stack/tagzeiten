@@ -37,7 +37,7 @@ async function renderToday(date: string, prepare?: (s: Store) => void, now = new
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByText(/^(Die drei Dinge|Mein Fokus heute)$/);
+  await screen.findByText(/^(Die drei Dinge|Fokus heute)$/);
   return store;
 }
 
@@ -46,7 +46,7 @@ describe('Today', () => {
     const meeting = { id: 'a', date: '2026-09-23', resolution: 'Abends zuhören', resolutionDone: false, herWish: 'Ein freier Abend', herConcern: '', myConcern: '' };
     await renderToday('2026-09-25', (s) => s.updateProfile((p) => ({ ...p, well: { on: true, meetings: [meeting] } }), { immediate: true }));
     expect(screen.getByText('Persönlich')).toBeTruthy();
-    expect(screen.getByText('Vorsatz für das Familienleben')).toBeTruthy();
+    expect(screen.getByText('Familie')).toBeTruthy();
     expect(screen.getByText('Abends zuhören')).toBeTruthy();
     expect(screen.getByText('Ein freier Abend')).toBeTruthy();
     expect(screen.queryByText('Die drei Dinge')).toBeNull();

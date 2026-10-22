@@ -4,7 +4,7 @@
  * of what is confessed is noted (rule 9): the fields hold resolutions, wishes
  * and prayer concerns only.
  */
-import { addDays, isDateKey, mondayOf, type DateKey } from './dates';
+import { addDays, isDateKey, type DateKey } from './dates';
 
 export interface WellMeeting {
   id: string;
@@ -76,21 +76,17 @@ export function normalizeWell(raw: unknown): Well {
 
 const newestFirst = (a: WellMeeting, b: WellMeeting) => (a.date === b.date ? 0 : a.date < b.date ? 1 : -1);
 
-/** The meeting of this week (Monday to Sunday), if one was begun. */
-export function meetingOfWeek(well: Well, today: DateKey): WellMeeting | undefined {
-  const monday = mondayOf(today);
-  const sunday = addDays(monday, 6);
-  return well.meetings.find((m) => m.date >= monday && m.date <= sunday);
-}
-
 /** The latest earlier meeting that set a resolution: it is asked about at the next one. */
 export function previousResolution(well: Well, current: Pick<WellMeeting, 'id' | 'date'>): WellMeeting | undefined {
   return well.meetings.find((m) => m.id !== current.id && m.date < current.date && m.resolution.trim() !== '');
 }
 
-/** The meetings before the one of this week, newest first, for reading. */
-export const pastMeetings = (well: Well, currentId?: string): WellMeeting[] =>
-  well.meetings.filter((m) => m.id !== currentId);
+/** How a meeting is named in the list: by its resolution, else by its first note. */
+export function meetingTitle(m: WellMeeting): string {
+  const line = [m.resolution, m.herWish, m.herConcern, m.myConcern].map((t) => t.trim()).find(Boolean) ?? 'Treffen';
+  const first = line.split('\n')[0]!;
+  return first.length > 80 ? `${first.slice(0, 79)}…` : first;
+}
 
 /** The wife's name, trimmed; empty when none is given (the standard text then says "dir"). */
 export const wifeName = (name: string) => name.trim();

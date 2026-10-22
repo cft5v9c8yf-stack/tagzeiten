@@ -13,11 +13,19 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.25.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: wie die Eisenschmiede, jedes Treffen eine Seite',
+    changes: [
+      { area: 'Arena', text: 'Das Treffen am Abendbrunnen ist wie die Eisenschmiede gebaut: Auf der Titelseite stehen die Verse, der Rahmen, die sechs Schritte und die Haltung im Gespräch, darunter „Treffen aufschreiben“ und die Treffen als Liste. Jedes Treffen hat eine Seite für sich, mit dem Vorsatz vom letzten zum Abhaken, dem Datum und den Notizen. Löschen kannst du ein Treffen auf seiner Seite oder über das Menü neben dem Eintrag in der Liste.' },
+    ],
+  },
+  {
     version: '1.24.0',
     date: '2026-10-22',
-    title: 'Heute: „Mein Fokus heute“ mit dem Vorsatz fürs Familienleben',
+    title: 'Heute: „Fokus heute“ mit Persönlich und Familie',
     changes: [
-      { area: 'Heute', text: 'Hat das Treffen am Abendbrunnen für die Woche einen Vorsatz oder einen Wunsch festgehalten, heißt der Abschnitt „Mein Fokus heute“. Er hat zwei Teile: „Persönlich“ mit den drei Dingen aus der Stillen Zeit und „Vorsatz für das Familienleben“ mit deinem Vorsatz und ihrem Wunsch. Sonst bleibt „Die drei Dinge“ wie bisher.' },
+      { area: 'Heute', text: 'Hat das Treffen am Abendbrunnen für die Woche einen Vorsatz oder einen Wunsch festgehalten, heißt der Abschnitt „Fokus heute“. Er hat zwei Teile: „Persönlich“ mit den drei Dingen aus der Stillen Zeit und „Familie“ mit deinem Vorsatz und ihrem Wunsch. Sonst bleibt „Die drei Dinge“ wie bisher.' },
     ],
   },
   {

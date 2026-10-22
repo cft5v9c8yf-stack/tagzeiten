@@ -4349,10 +4349,6 @@ mark.placeholder {
 .well-refs {
   margin: 4px 0 8px;
 }
-.well-date {
-  margin: 12px 0 4px;
-  font-size: 1.05rem;
-}
 .well-note textarea {
   width: 100%;
   resize: vertical;
@@ -4373,26 +4369,6 @@ mark.placeholder {
   gap: 10px;
   min-height: 44px;
   font: 1rem var(--sans);
-}
-.well-past summary {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  cursor: pointer;
-}
-.well-past dl {
-  margin: 10px 0 0;
-  display: grid;
-  gap: 10px;
-}
-.well-past dt {
-  font: 0.8rem var(--sans);
-  color: var(--muted);
-}
-.well-past dd {
-  margin: 0;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
 }
 .well-intent {
   margin: 0 0 14px;

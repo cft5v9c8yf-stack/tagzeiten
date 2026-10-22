@@ -26,7 +26,7 @@ import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
 import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
-import { WELL_SLUG, WellPage } from '../well/WellPage';
+import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -651,6 +651,7 @@ export function ArenaPage() {
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
+  if (eintrag?.startsWith(MEETING_PREFIX) && profile.well.on) return <WellMeetingPage id={eintrag.slice(MEETING_PREFIX.length)} />;
   if (eintrag) {
     const entry = entries.find((e) => e.id === eintrag);
     if (entry) return <EntryEditor entry={entry} />;
