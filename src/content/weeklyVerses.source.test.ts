@@ -18,6 +18,7 @@ import { SETTINGS_VERSES } from './settingsVerses';
 import { WELL_COMFORT, WELL_VERSES } from './well';
 import { WINTER_ARC_VERSES } from './winterArc';
 import { DESERT_VERSES } from './desert';
+import { CHAPTER_VERSES } from './readingPlans';
 import { CORRECTIONS, FEAST_VERSES, WEEKLY_VERSES } from './weeklyVerses';
 import band1 from '../../data/dogmatik/band-1.json';
 import band2 from '../../data/dogmatik/band-2.json';
@@ -183,5 +184,15 @@ describe.skipIf(!available)('other Bible texts against Luther 1912', () => {
       const variants = [e, bare].flatMap((p) => [p, p[0]!.toUpperCase() + p.slice(1), p[0]!.toLowerCase() + p.slice(1)]);
       expect(variants.some((p) => text.includes(p)), e).toBe(true);
     }
+  });
+});
+
+describe.skipIf(!available)('verses per chapter of the plan of the Wüstenzeit against Luther 1912', () => {
+  const books = available ? loadBible(dir!) : {};
+  const names: Record<string, string> = { Matthäus: 'Mt', Johannes: 'Joh', Jakobus: 'Jak', '1.Petrus': '1Petr', Hebräer: 'Hebr' };
+  it.each(Object.entries(CHAPTER_VERSES))('%s', (slug, counts) => {
+    const book = books[names[slug]!]!;
+    expect(counts.map((_, i) => Object.keys(book[String(i + 1)] ?? {}).length)).toEqual(counts);
+    expect(Object.keys(book)).toHaveLength(counts.length);
   });
 });

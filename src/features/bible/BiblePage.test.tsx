@@ -44,7 +44,7 @@ describe('Bibel', () => {
     expect(document.querySelector('progress')).toBeNull();
     expect(document.body.textContent).not.toMatch(/\d+ \/ \d+|Rückstand|nachholen\b(?!, nichts)/);
 
-    // No checkbox here: the habit "Bibel lesen" marks the reading (on Today).
+    // The habit "Bibel lesen" (on Today) and the tick here mark the same reading.
     expect(document.querySelector('input[type="checkbox"]')).toBeNull();
     const before = next.querySelector('li')!.textContent;
     const habit = store.getProfile().habits.find((h) => h.id === 'bibleReading')!;
@@ -69,7 +69,7 @@ describe('Bibel', () => {
     const store = await renderBible();
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Eigener Plan' }));
+    fireEvent.change(await screen.findByLabelText('Leseplan'), { target: { value: 'own' } });
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(1));
 
     fireEvent.change(screen.getByLabelText('Buch'), { target: { value: '42' } }); // Johannes
@@ -87,7 +87,7 @@ describe('Bibel', () => {
     expect(screen.getByRole('button', { name: 'Zeit starten' })).toBeTruthy();
 
     // Back to Old and New Testament: the view as before, the places kept.
-    fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
+    fireEvent.change(screen.getByLabelText('Leseplan'), { target: { value: 'fixed' } });
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
     expect(screen.queryByRole('timer')).toBeNull();
     expect(screen.getAllByText(/Nächste Lesung/).length).toBe(2);
@@ -104,7 +104,7 @@ describe('Bibel', () => {
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toContain('Matthäus 1–2'));
     expect(document.querySelectorAll('.reading-refs .ref')[0]!.textContent).toContain('1. Mose 1–3');
 
-    fireEvent.click(screen.getByRole('button', { name: 'Eigener Plan' }));
+    fireEvent.change(screen.getByLabelText('Leseplan'), { target: { value: 'own' } });
     fireEvent.click(await screen.findByRole('button', { name: 'Mehrere Bücher' }));
     // The second book starts with the Gospel according to Matthew.
     await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref').length).toBe(2));
@@ -124,8 +124,36 @@ describe('Bibel', () => {
     expect(screen.getByRole('timer').textContent).toBe('15:00');
 
     // Back to Old and New Testament, with the amounts left there.
-    fireEvent.click(screen.getByRole('button', { name: 'AT und NT' }));
+    fireEvent.change(screen.getByLabelText('Leseplan'), { target: { value: 'fixed' } });
     await waitFor(() => expect(store.getProfile().plan.planId).toBe('atnt-3-2'));
     expect(screen.queryByRole('timer')).toBeNull();
+  });
+
+  it('offers plans by sections: the section of the day, its number, a tick; a psalm beside it', async () => {
+    const store = await renderBible();
+    fireEvent.click(screen.getByRole('button', { name: 'Leseplan einstellen' }));
+    const options = Array.from((await screen.findByLabelText('Leseplan')).querySelectorAll('option')).map((o) => o.textContent);
+    expect(options).toEqual(['Altes und Neues Testament', 'Eigener Plan', 'Christus finden', 'Mit Paulus unterwegs', 'Bibel in einem Jahr']);
+    fireEvent.change(await screen.findByLabelText('Leseplan'), { target: { value: 'beginner' } });
+    await waitFor(() => expect(document.querySelector('.reading-refs')!.textContent).toBe('LesungJohannes 1'));
+    expect(screen.getByText('Christus finden · Abschnitt 1 von 59')).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Mit einem Psalm' }));
+    await waitFor(() => expect(document.querySelectorAll('.reading-refs .ref')).toHaveLength(2));
+    expect(document.querySelectorAll('.reading-refs .ref')[1]!.textContent).toBe('PsalmPsalm 1');
+
+    // Ticked here: read, and the plan moves on.
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gelesen' }));
+    await waitFor(() => expect(store.readingFor(store.today()).reading.done).toBe(true));
+    expect(store.getProfile().plan.positions).toMatchObject({ einsteiger: 1, psalm: 1 });
+
+    // Mit Paulus unterwegs: 40 days, or a duration of one's own; the place is chosen by section.
+    fireEvent.change(screen.getByLabelText('Leseplan'), { target: { value: 'paul' } });
+    await waitFor(() => expect(store.getProfile().plan.planId).toBe('paulus-40'));
+    fireEvent.change(screen.getByLabelText('Dauer in Tagen'), { target: { value: '75' } });
+    await waitFor(() => expect(store.getProfile().plan.planId).toBe('paulus-75'));
+    fireEvent.change(screen.getByLabelText('Weiter mit'), { target: { value: '74' } });
+    await waitFor(() => expect(store.getProfile().plan.positions.paulus).toBe(74));
+    // The plan of the Wüstenzeit is offered only while one is under way.
+    expect(within(screen.getByLabelText('Leseplan')).queryByText(/Bewährung/)).toBeNull();
   });
 });

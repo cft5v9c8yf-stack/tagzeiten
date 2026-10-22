@@ -2,7 +2,7 @@
 import 'fake-indexeddb/auto';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
@@ -90,8 +90,14 @@ describe('the Wüstenwanderung in the Arena', () => {
     expect(document.body.textContent).not.toMatch(/Winter Arc|Streithalle/);
 
     fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beginnen' }));
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' })).getByRole('button', { name: 'Wüstenzeit beginnen' }));
+    const dialog = within(screen.getByRole('dialog', { name: 'Neue Wüstenzeit' }));
+    // The plan of the Wüstenzeit is proposed (1.16), over its days.
+    const reading = within(dialog.getByRole('group', { name: 'Leseplan der Wüstenzeit' }));
+    expect(reading.getByRole('button', { name: 'Bewährung und Nachfolge' }).getAttribute('aria-pressed')).toBe('true');
+    expect(dialog.getByText(/gleichmäßig auf 40 Tage verteilt/)).toBeTruthy();
+    fireEvent.click(dialog.getByRole('button', { name: 'Wüstenzeit beginnen' }));
     expect(store.getProfile().winterArc.runs[0]).toMatchObject({ startDate: '2026-09-26', durationDays: 40, habits: [] });
+    expect(store.getProfile().plan.planId).toBe('wueste-40');
     // The habits are no longer chosen here: the Arena points to "Heute", where they are chosen and ticked.
     expect(screen.queryByRole('heading', { name: 'Gewohnheiten wählen' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Paket übernehmen' })).toBeNull();
@@ -456,5 +462,36 @@ describe('a Wüstenzeit in Advent', () => {
   it('names the Advent on the Arena tile', async () => {
     await renderArena('/arena', undefined, nov16);
     expect(screen.getByText('Im Advent, ab 29. November')).toBeTruthy();
+  });
+});
+
+describe('the reading of the Wüstenzeit in the Arena (1.22)', () => {
+  it('shows the section of the day first, to read only: it is ticked under "Heute"', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    const panel = screen.getByRole('region', { name: 'Lesung' });
+    expect(store.getProfile().plan.planId).toBe('wueste-40');
+    expect(panel.textContent).toContain('Matthäus 4');
+    expect(panel.textContent).toContain('Bewährung und Nachfolge · Abschnitt 1 von 40');
+    expect(within(panel).queryByRole('checkbox')).toBeNull();
+    expect(panel.textContent).toContain('Abgehakt wird mit „Bibel lesen“ unter „Heute“.');
+    // The Word first (rule 2): above the overview of the habits.
+    const overview = screen.getByRole('region', { name: /Woche/ });
+    expect(panel.compareDocumentPosition(overview) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Ticked elsewhere ("Bibel lesen" under "Heute"), it says so here.
+    act(() => store.setReadingDone('2026-09-26', true));
+    expect(screen.getByRole('region', { name: /^Lesung/ }).textContent).toContain('Lesung · gelesen');
+    expect(store.getProfile().plan.positions.wueste).toBe(1);
+  });
+
+  it('leaves the reading out, or takes the plan of the Bible area, at any time in the settings', async () => {
+    const store = await renderArena('/arena?bereich=wuestenwanderung', (s) => withDesert(s));
+    fireEvent.click(screen.getByRole('button', { name: /^Einstellungen der Wüstenzeit/ }));
+    const choice = await screen.findByRole('group', { name: 'Leseplan der Wüstenzeit' });
+    fireEvent.click(within(choice).getByRole('button', { name: 'Ohne Lesung' }));
+    expect(store.getProfile().winterArc.runs[0]!.reading).toBe('none');
+    expect(screen.queryByRole('region', { name: 'Lesung' })).toBeNull();
+    fireEvent.click(within(screen.getByRole('group', { name: 'Leseplan der Wüstenzeit' })).getByRole('button', { name: 'Mein Leseplan' }));
+    expect(store.getProfile().plan.planId).toBe('atnt-1-1');
+    expect(screen.getByRole('region', { name: 'Lesung' }).textContent).toContain('1. Mose 1 · Matthäus 1');
   });
 });

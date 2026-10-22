@@ -15,6 +15,9 @@ import {
   markRead,
   portionLabel,
   positionFor,
+  isKnownPlan,
+  sectionKind,
+  sectionOf,
 } from './readingPlan';
 
 const plan = getPlan('at2-nt1');
@@ -201,5 +204,138 @@ describe('Old and New Testament with other amounts', () => {
     expect(portionLabel(nt!, nt!.portions[0]!)).toBe('Matthäus 1–2');
     const [atBase] = getPlan('atnt-g-2').tracks;
     expect(atBase!.portions.slice(0, 2).map((p) => p.to - p.from + 1)).toEqual([2, 1]);
+  });
+});
+
+describe('plans by sections (1.16)', () => {
+  /** Every chapter of a track's sections in order, as "slug chapter"; parts of a chapter once. */
+  const chapterList = (id: string) => {
+    const t = getPlan(id).tracks[0]!;
+    const out: string[] = [];
+    for (const p of t.portions) {
+      for (const q of [p, ...(p.more ?? [])]) {
+        for (let c = q.from; c <= q.to; c++) {
+          const key = `${t.def.books[q.book]!.slug} ${c}`;
+          if (out[out.length - 1] !== key) out.push(key);
+        }
+      }
+    }
+    return out;
+  };
+
+  it('knows its ids and falls back for unknown ones', () => {
+    expect(sectionKind('einsteiger')).toBe('beginner');
+    expect(sectionKind('einsteiger-psalm')).toBe('beginner');
+    expect(sectionKind('nt90')).toBeUndefined();
+    expect(sectionKind('paulus-60')).toBe('paul');
+    expect(sectionKind('paulus-9')).toBeUndefined();
+    expect(sectionKind('paulus-116')).toBeUndefined();
+    expect(sectionKind('johannes')).toBeUndefined();
+    expect(sectionKind('jahr')).toBe('year');
+    expect(sectionKind('wueste-90')).toBe('desert');
+    expect(sectionKind('wueste-366')).toBeUndefined();
+    expect(isKnownPlan('wueste-7')).toBe(true);
+    expect(isKnownPlan('paulus-200')).toBe(false);
+    expect(getPlan('paulus-200').def.id).toBe('at2-nt1');
+  });
+
+  it('spreads the chapters evenly over the sections, in order, without gap', () => {
+    const cases: [string, number, number][] = [
+      ['einsteiger', 59, 59],
+      ['jahr', 365, 1189],
+      ['paulus-40', 40, 115],
+      ['paulus-60', 60, 115],
+      ['paulus-115', 115, 115],
+    ];
+    for (const [id, sections, chapters] of cases) {
+      const t = getPlan(id).tracks[0]!;
+      expect(t.portions, id).toHaveLength(sections);
+      expect(t.totalChapters, id).toBe(chapters);
+      expect(chapterList(id), id).toHaveLength(chapters);
+      const sizes = t.portions.map((p) => [p, ...(p.more ?? [])].reduce((s, q) => s + q.to - q.from + 1, 0));
+      expect(Math.max(...sizes) - Math.min(...sizes), id).toBeLessThanOrEqual(1);
+    }
+    expect(chapterList('jahr')).toEqual(ALL_BOOKS.flatMap((b) => Array.from({ length: b.chapters }, (_, i) => `${b.slug} ${i + 1}`)));
+  });
+
+  it('weaves the letters of Paul into Acts', () => {
+    const books = chapterList('paulus-115').map((c) => c.replace(/ \d+$/, ''));
+    const order = books.filter((b, i) => b !== books[i - 1]);
+    expect(order).toEqual([
+      'Apostelgeschichte', 'Galater', 'Apostelgeschichte', '1.Thessalonicher', '2.Thessalonicher', 'Apostelgeschichte',
+      '1.Korinther', '2.Korinther', 'Römer', 'Apostelgeschichte', 'Epheser', 'Philipper', 'Kolosser', 'Philemon',
+      '1.Timotheus', 'Titus', '2.Timotheus',
+    ]);
+    const list = chapterList('paulus-115');
+    expect(list.indexOf('Apostelgeschichte 14') + 1).toBe(list.indexOf('Galater 1'));
+    expect(list.indexOf('Galater 6') + 1).toBe(list.indexOf('Apostelgeschichte 15'));
+    // Corinthians and Romans between Acts 19 and 20, before the farewell at Miletus.
+    expect(list.indexOf('Apostelgeschichte 19') + 1).toBe(list.indexOf('1.Korinther 1'));
+    expect(list.indexOf('Römer 16') + 1).toBe(list.indexOf('Apostelgeschichte 20'));
+    const t = getPlan('paulus-40').tracks[0]!;
+    expect(portionLabel(t, t.portions[8]!)).toBe('Apostelgeschichte 18; 1. Thessalonicher 1');
+  });
+
+  it('Christus finden: John, 1 John, Romans, Galatians, Ephesians, 1 Peter, a chapter a day', () => {
+    const books = [...new Set(chapterList('einsteiger').map((c) => c.replace(/ \d+$/, '')))];
+    expect(books).toEqual(['Johannes', '1.Johannes', 'Römer', 'Galater', 'Epheser', '1.Petrus']);
+    const t = getPlan('einsteiger').tracks[0]!;
+    expect(t.portions.every((p) => p.from === p.to && !p.more)).toBe(true);
+    expect(getPlan('einsteiger').def.name).toBe('Christus finden');
+  });
+
+  it('adds a psalm a day to the beginners plan', () => {
+    const p = getPlan('einsteiger-psalm');
+    expect(p.tracks.map((t) => t.def.label)).toEqual(['Lesung', 'Psalm']);
+    expect(p.tracks[1]!.portions).toHaveLength(150);
+    expect(getPlan('einsteiger').tracks).toHaveLength(1);
+  });
+
+  it('Bewährung und Nachfolge: temptation, Sermon on the Mount, John, James, 1 Peter, Hebrews', () => {
+    const t = getPlan('wueste-40').tracks[0]!;
+    expect(t.portions).toHaveLength(40);
+    expect(chapterList('wueste-40')).toHaveLength(48);
+    expect(portionLabel(t, t.portions[0]!)).toBe('Matthäus 4');
+    expect(chapterList('wueste-40').slice(0, 5)).toEqual(['Matthäus 4', 'Matthäus 5', 'Matthäus 6', 'Matthäus 7', 'Johannes 1']);
+    expect(chapterList('wueste-40').at(-1)).toBe('Hebräer 13');
+    const order = [...new Set(chapterList('wueste-40').map((c) => c.replace(/ \d+$/, '')))];
+    expect(order).toEqual(['Matthäus', 'Johannes', 'Jakobus', '1.Petrus', 'Hebräer']);
+  });
+
+  it('divides chapters by verses with more days than chapters, every verse once', () => {
+    for (const days of [49, 90, 365]) {
+      const t = getPlan(`wueste-${days}`).tracks[0]!;
+      expect(t.portions).toHaveLength(days);
+      expect(chapterList(`wueste-${days}`)).toHaveLength(48);
+      // Parts of a chapter follow one another without gap or overlap.
+      let last: { chapter: string; verse: number } | undefined;
+      for (const p of t.portions) {
+        const chapter = `${p.book} ${p.from}`;
+        if (p.verses) {
+          expect(p.verses[0]).toBe(last?.chapter === chapter ? last.verse + 1 : 1);
+          expect(p.verses[1]).toBeGreaterThanOrEqual(p.verses[0]);
+          last = { chapter, verse: p.verses[1] };
+        } else last = undefined;
+      }
+    }
+    const t = getPlan('wueste-90').tracks[0]!;
+    expect(portionLabel(t, t.portions[0]!)).toBe('Matthäus 4,1–12');
+    expect(portionLabel(t, t.portions[1]!)).toBe('Matthäus 4,13–25');
+  });
+
+  it('carries the place from 40 to 90 days of the Wüstenzeit', () => {
+    const from = getPlan('wueste-40');
+    const to = getPlan('wueste-90');
+    const at = positionFor(from.tracks[0]!, 1, 3); // Johannes 3
+    const pos = carryPositions(from, to, { wueste: at });
+    expect(portionLabel(to.tracks[0]!, to.tracks[0]!.portions[pos.wueste!]!)).toBe('Johannes 3,1–18');
+  });
+
+  it('counts the section, and begins anew after the last', () => {
+    const p = getPlan('paulus-40');
+    const r = assignReading(p, { paulus: 39 });
+    expect(sectionOf(p, r)).toEqual({ section: 40, sections: 40 });
+    expect(markRead(p, r, { paulus: 39 }, true).positions.paulus).toBe(0);
+    expect(sectionOf(getPlan('atnt-1-1'), assignReading(getPlan('atnt-1-1'), {}))).toBeUndefined();
   });
 });

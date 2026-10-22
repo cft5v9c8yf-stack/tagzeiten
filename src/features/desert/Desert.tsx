@@ -20,6 +20,7 @@ import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertWeekRows } from './DesertHabits';
+import { DesertReadingDay, DesertReadingSettings } from './DesertReading';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
@@ -267,6 +268,7 @@ function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) 
   return (
     <div className="wa-dashboard">
       <Head run={run} today={today} />
+      <DesertReadingDay run={run} date={today} />
       <Overview run={run} today={today} />
       {none && <p className="wa-to-today">Du hast noch keine Gewohnheiten gewählt.</p>}
       <ToToday />
@@ -438,9 +440,14 @@ export function Desert({ journal = null }: { journal?: ReactNode }) {
   const settings: TileItem = {
     id: 'arena.desert.settings',
     title: 'Einstellungen der Wüstenzeit',
-    line: 'Beginn, Dauer, Beenden',
+    line: 'Beginn, Dauer, Leseplan, Beenden',
     icon: 'sliders',
-    content: <DesertSettings withChoice={false} />,
+    content: (
+      <>
+        <DesertSettings withChoice={false} />
+        <DesertReadingSettings run={run} />
+      </>
+    ),
   };
   const guide: TileItem = {
     id: 'arena.desert.guide',

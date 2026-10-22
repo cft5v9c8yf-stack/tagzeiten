@@ -4387,4 +4387,18 @@ mark.placeholder {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
+/* Wort: the day's section with its tick (1.16). */
+.plan-section {
+  margin: 4px 0 0;
+}
+.bible-tick .wa-tick {
+  border-bottom: 0;
+}
+/* Wüstenwanderung: the day's reading above the habits, to read only. */
+.desert-reading-ref {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+}
+.desert-reading-choice .seg {
+  margin-top: 4px;
 }

@@ -12,14 +12,31 @@ import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
 import { dogmatikToMarkdown } from '../domain/dogmatik';
 import { loadDogmatik } from '../content/dogmatik';
-import { addOwn, adopt, choose, chooseOwn, fromRound, habitFromOffer, offerOf, relink, removeOwn, startDesert } from '../domain/desert';
+import {
+  activeDesert,
+  addOwn,
+  adopt,
+  choose,
+  chooseOwn,
+  desertPlanFor,
+  desertReadingOf,
+  fromRound,
+  habitFromOffer,
+  offerOf,
+  relink,
+  removeOwn,
+  startDesert,
+  type DesertReading,
+} from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { isEmptyMeeting, newMeeting, type WellMeeting } from '../domain/well';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
+  activeRun,
   endRun,
+  isInRun,
   normalizeWinterArc,
   setReview,
   startRun,
@@ -33,7 +50,17 @@ import {
 } from '../domain/winterArc';
 import { isEmptyDay, normalizeDay } from '../domain/normalizeDay';
 import { defaultProfile, normalizeProfile } from '../domain/profile';
-import { assignReading, carryPositions, getPlan, isOwnPlan, markRead as markReadInPlan } from '../domain/readingPlan';
+import {
+  assignReading,
+  carryPositions,
+  DESERT_TRACK,
+  fixedAmounts,
+  getPlan,
+  isOwnPlan,
+  markRead as markReadInPlan,
+  sectionKind,
+} from '../domain/readingPlan';
+import { START_PLAN_ID } from '../content/readingPlans';
 import { PROFILE_KEY, TagzeitenDB, type StoredProfile } from './db';
 import { localJournal, type Journal } from './journal';
 import { WriteQueue } from './writeQueue';
@@ -152,6 +179,7 @@ export class Store {
     if (reading && !reading.done && reading.planId !== this.profile.plan.planId) this.followToday();
     this.roundToDesert();
     this.relinkDesert();
+    this.syncDesertPlan();
     this.emit();
   }
 
@@ -301,6 +329,7 @@ export class Store {
     const today = this.today();
     if (today === this.shownDay) return false;
     this.shownDay = today;
+    this.syncDesertPlan();
     this.emit();
     return true;
   }
@@ -499,8 +528,12 @@ export class Store {
     );
   }
 
-  /** Begins a Wüstenzeit with the habits chosen; a round under way is ended, nothing is deleted. */
-  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = ''): void {
+  /**
+   * Begins a Wüstenzeit with the habits chosen; a round under way is ended,
+   * nothing is deleted. Its reading (1.16): "Bewährung und Nachfolge" over its
+   * days, the plan of the Bible area, or none in its dashboard.
+   */
+  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = '', reading: DesertReading = 'desert'): void {
     const t = this.now().getTime();
     // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
     this.updateProfile(
@@ -513,6 +546,51 @@ export class Store {
       },
       { immediate: true },
     );
+    const run = activeRun(this.profile.winterArc);
+    if (run) this.setDesertReading(run.id, reading);
+  }
+
+  /**
+   * The reading of a Wüstenzeit, chosen and changed at any time: its own plan,
+   * the plan of the Bible area, or none in its dashboard.
+   */
+  setDesertReading(runId: string, reading: DesertReading): void {
+    if (!this.profile.winterArc.runs.some((r) => r.id === runId)) return;
+    const t = this.now().getTime();
+    this.updateProfile(
+      (p) => ({
+        ...p,
+        winterArc: {
+          ...p.winterArc,
+          runs: p.winterArc.runs.map((r) => {
+            if (r.id !== runId) return r;
+            const { reading: _, ...rest } = r;
+            return { ...rest, ...(reading === 'desert' ? {} : { reading }), updatedAt: t };
+          }),
+        },
+      }),
+      { immediate: true },
+    );
+    this.syncDesertPlan();
+  }
+
+  /**
+   * "Bewährung und Nachfolge" is read on the days of its Wüstenzeit only: from
+   * its first day (not when it is set up for later) to its last. Meanwhile the
+   * plan read before rests, and afterwards goes on where it stood. A new
+   * Wüstenzeit begins at the first section; one taken up again where it stood.
+   */
+  private syncDesertPlan(): void {
+    const want = desertPlanFor(this.profile.winterArc, this.today());
+    const current = this.profile.plan;
+    if (want) {
+      if (current.planId === want.planId && current.desertRun === want.runId) return;
+      const fresh = current.desertRun !== want.runId;
+      this.switchPlan(want.planId, fresh ? { [DESERT_TRACK]: 0 } : {});
+      this.updateProfile((p) => ({ ...p, plan: { ...p.plan, desertRun: want.runId } }), { immediate: true });
+    } else if (sectionKind(current.planId) === 'desert') {
+      this.switchPlan(current.beforeDesert ?? START_PLAN_ID);
+    }
   }
 
   /** "Diesmal nicht": the invitation leaves "Heute" and stays in the Arena. */
@@ -553,6 +631,7 @@ export class Store {
   endWinterArc(): void {
     const t = this.now().getTime();
     this.updateProfile((p) => ({ ...p, winterArc: endRun(p.winterArc, t) }), { immediate: true });
+    this.syncDesertPlan();
   }
 
   /** A line of the weekly review; saved as you type. */
@@ -621,17 +700,30 @@ export class Store {
    * already read.
    */
   setPlan(planId: string, starts: Record<string, number> = {}): void {
+    // During a Wüstenzeit its plan is chosen as its reading; another plan chosen then becomes its reading instead.
+    const run = activeDesert(this.profile.winterArc);
+    const during = run && isInRun(run, this.today());
+    if (sectionKind(planId) === 'desert') {
+      if (run && during) this.setDesertReading(run.id, 'desert');
+      return;
+    }
+    if (run && during && desertReadingOf(run) === 'desert') this.setDesertReading(run.id, 'bible');
+    this.switchPlan(planId, starts);
+  }
+
+  private switchPlan(planId: string, starts: Record<string, number> = {}): void {
     const to = getPlan(planId);
     const current = this.profile.plan;
     if (to.def.id === current.planId && Object.keys(starts).length === 0) return;
     // Coming back to a plan of one's own with another amount: start where the last one stood.
     const from = getPlan(isOwnPlan(current.planId) || !current.own ? current.planId : current.own);
     const positions = { ...carryPositions(from, to, current.positions), ...starts };
+    const remember = isOwnPlan(to.def.id) ? { own: to.def.id } : fixedAmounts(to.def.id) ? { fixed: to.def.id } : {};
+    // Into the Wüstenzeit's plan: the plan before it is kept, to return to.
+    const desert = sectionKind(to.def.id) === 'desert';
+    const before = desert && sectionKind(current.planId) !== 'desert' ? { beforeDesert: current.planId } : {};
     this.updateProfile(
-      (p) => ({
-        ...p,
-        plan: { ...p.plan, planId: to.def.id, positions, ...(isOwnPlan(to.def.id) ? { own: to.def.id } : { fixed: to.def.id }) },
-      }),
+      (p) => ({ ...p, plan: { ...p.plan, planId: to.def.id, positions, ...remember, ...before } }),
       { immediate: true },
     );
     this.followToday();

@@ -27,7 +27,7 @@ function noteOf(h: Habit, date: DateKey, lookup: ReturnType<typeof useDayLookup>
  * (Advent ones in Advent), weekly ones all week until ticked. Each with the "i";
  * the thanks can also be written down in the Gebetskammer, or on paper.
  */
-export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
+export function DesertDay({ run, date, withoutReading = false }: { run: WinterArcRun; date: DateKey; withoutReading?: boolean }) {
   const store = useStore();
   const profile = useProfile();
   const lookup = useDayLookup();
@@ -41,7 +41,8 @@ export function DesertDay({ run, date }: { run: WinterArcRun; date: DateKey }) {
   };
   if (!isInRun(run, date)) return <p className="small muted">An diesem Tag läuft keine Wüstenzeit.</p>;
   const habits = habitsOf(run, profile);
-  const listed = habits.filter((h) => listedOn(h, date, lookup));
+  // The reading may stand above with its passage; then "Bibel lesen" is not listed twice.
+  const listed = habits.filter((h) => listedOn(h, date, lookup) && !(withoutReading && h.id === READING_HABIT));
   if (!habits.length) return <p className="small muted">Noch keine Gewohnheit gewählt.</p>;
   if (!listed.length) return <p className="small muted">An diesem Tag steht nichts an.</p>;
   return (

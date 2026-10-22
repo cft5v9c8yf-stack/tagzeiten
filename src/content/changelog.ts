@@ -13,7 +13,7 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
-    version: '1.29.0',
+    version: '1.30.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: von der Gewohnheit unter „Heute“ direkt zum Treffen',
     changes: [
@@ -22,7 +22,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.28.0',
+    version: '1.29.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: ein Titel für jedes Treffen, der Vorsatz bricht um',
     changes: [
@@ -30,7 +30,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.27.1',
+    version: '1.28.1',
     date: '2026-10-22',
     title: 'Abendbrunnen: die Notizfelder wachsen mit dem Text',
     changes: [
@@ -38,7 +38,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.27.0',
+    version: '1.28.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: dieselben Zeichen wie überall in der Arena',
     changes: [
@@ -46,7 +46,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.26.0',
+    version: '1.27.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: Rahmen und Haltung als Kacheln',
     changes: [
@@ -54,7 +54,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.25.0',
+    version: '1.26.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: wie die Eisenschmiede, jedes Treffen eine Seite',
     changes: [
@@ -62,7 +62,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.24.0',
+    version: '1.25.0',
     date: '2026-10-22',
     title: 'Heute: „Fokus heute“ mit Persönlich und Familie',
     changes: [
@@ -70,7 +70,7 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.23.0',
+    version: '1.24.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: der Vorsatz der Woche in der Stillen Zeit',
     changes: [
@@ -78,12 +78,31 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
-    version: '1.22.0',
+    version: '1.23.0',
     date: '2026-10-22',
     title: 'Treffen am Abendbrunnen: der wöchentliche Ehe-Check-in',
     changes: [
       { area: 'Arena', text: 'Neu für Verheiratete: das „Treffen am Abendbrunnen“. Es hat zwei Bibelworte, den Rahmen, sechs Schritte für den Abend zu zweit (Dank, Befinden, Entlastung, Beziehung, Ausblick, Gebet), die Haltung im Gespräch und Notizen für jede Woche. Beim nächsten Treffen steht dein Vorsatz vom letzten oben, zum Abhaken. Ein Zuspruch folgt auf die Frage nach dem, was zwischen euch steht; was ihr einander bekennt, wird nicht notiert.' },
       { area: 'Einstellungen', text: 'Unter „Mehr“, Darstellung gibt es „Treffen am Abendbrunnen“: ein Schalter „Ich bin verheiratet – Abendbrunnen anzeigen“ und das Feld „Name meiner Frau“. Ist der Schalter aus, ist das Treffen nirgends zu sehen. Die Notizen bleiben auf dem Gerät, sind in der Sicherung und im Export und lassen sich löschen.' },
+    ],
+  },
+  {
+    version: '1.22.1',
+    date: '2026-10-22',
+    title: 'Die Lesung der Wüstenzeit zum Lesen',
+    changes: [
+      { area: 'Arena', text: 'Der Abschnitt des Tages steht in der Wüstenwanderung weiter oben, aber ohne Haken. Abgehakt wird mit „Bibel lesen“ unter „Heute“, wie alles der Wüstenzeit. Ist er gelesen, steht „gelesen“ dabei.' },
+    ],
+  },
+  {
+    version: '1.22.0',
+    date: '2026-10-22',
+    title: 'Lesepläne nach Abschnitten',
+    changes: [
+      { area: 'Wort', text: 'Unter „Leseplan einstellen“ stehen neue Pläne zur Wahl: für Einsteiger „Christus finden“ mit den Büchern, die nach Luthers Vorrede auf das Neue Testament Christus am deutlichsten zeigen (Johannes, 1. Johannes, Römer, Galater, Epheser, 1. Petrus), mit Luthers Worten dazu, auf Wunsch mit einem Psalm; „Mit Paulus unterwegs“, die Apostelgeschichte mit den Briefen an ihrem Ort, in 40, 60 oder einer eigenen Zahl von Tagen; die Bibel in einem Jahr. Die Kapitel sind gleichmäßig auf die Abschnitte verteilt.' },
+      { area: 'Wort', text: 'Unter „Heute lesen“ steht, welcher Abschnitt dran ist, und du hakst ihn dort ab, wie mit „Bibel lesen“ unter „Heute“. Jeder Plan merkt sich, wo du stehst; wer aussetzt, macht beim nächsten Abschnitt weiter.' },
+      { area: 'Arena', text: 'Zur Wüstenzeit gehört der Leseplan „Bewährung und Nachfolge“: die Versuchung Jesu, die Bergpredigt, das Evangelium nach Johannes, Jakobus, 1. Petrus und Hebräer, verteilt auf die Tage der Wüstenzeit, bei vielen Tagen in kleineren Abschnitten. Beim Beginnen ist er vorgeschlagen; du kannst deinen Plan behalten oder ohne Lesung gehen, und das jederzeit unter „Einstellungen der Wüstenzeit“ ändern.' },
+      { area: 'Arena', text: 'In der Wüstenwanderung steht der Abschnitt des Tages oben, vor der Wochenübersicht, und wird dort abgehakt, derselbe Haken wie „Bibel lesen“ unter „Heute“. „Bewährung und Nachfolge“ gilt vom ersten bis zum letzten Tag der Wüstenzeit, auch wenn du sie für später anlegst. So lange ruht dein bisheriger Plan; danach, oder wenn du sie vorzeitig beendest, geht er von selbst dort weiter, wo du aufgehört hast.' },
     ],
   },
   {

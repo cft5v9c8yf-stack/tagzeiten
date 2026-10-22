@@ -2,9 +2,10 @@ import { WordSwitch } from '../../ui/WordSwitch';
 import { useEffect } from 'react';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
-import { getPlan, ownAmounts, portionLabel } from '../../domain/readingPlan';
+import { getPlan, ownAmounts, portionLabel, sectionOf } from '../../domain/readingPlan';
 import { Section } from '../../ui/Section';
 import { SectionVerse } from '../../ui/SectionVerse';
+import { Tick } from '../../ui/Tick';
 import { Timer } from '../../ui/Timer';
 import { readingTimer } from '../../ui/timerState';
 import { MethodHelpBody, ReadingRefs } from '../liturgy/MorningReading';
@@ -49,8 +50,10 @@ export function BiblePage() {
   const { date, isToday } = useSelectedDate();
   const store = useStore();
   useStoreVersion();
-  const { reading } = store.readingFor(date);
+  const { reading, assigned } = store.readingFor(date);
   const read = reading.done;
+  const plan = getPlan(reading.planId);
+  const section = sectionOf(plan, reading);
   // Reading by time: a timer of its own for today's reading, over all books read by time.
   const minutes = (ownAmounts(reading.planId) ?? []).reduce((s, a) => s + (a.unit === 'minutes' ? a.value : 0), 0);
   useEffect(() => {
@@ -61,7 +64,7 @@ export function BiblePage() {
     <div className="bible-page">
       <WordSwitch current="bible" />
       <SectionVerse id="plan" />
-      {/* Marked as read through the habit "Bibel lesen" on Today. */}
+      {/* Marked as read here, or through the habit "Bibel lesen" on Today: the same tick. */}
       <Section
         id="bible.today"
         title={
@@ -73,6 +76,16 @@ export function BiblePage() {
         className="block block-hero"
       >
         <ReadingRefs date={date} />
+        {section && (
+          <p className="small muted plan-section">
+            {plan.def.name} · Abschnitt {section.section} von {section.sections}
+          </p>
+        )}
+        <div className="bible-tick">
+          <Tick checked={read} disabled={!isToday && !assigned} onToggle={() => store.setReadingDone(date, !read)}>
+            Gelesen
+          </Tick>
+        </div>
         {isToday && minutes > 0 && (
           <Timer timer={readingTimer} totalMinutes={minutes} hint="Lesezeit" className="timer-inline" />
         )}
