@@ -4387,6 +4387,7 @@ mark.placeholder {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--muted);
+}
 /* Wort: the day's section with its tick (1.16). */
 .plan-section {
   margin: 4px 0 0;
