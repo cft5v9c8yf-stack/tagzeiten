@@ -74,6 +74,11 @@ export function Layout() {
         />
         <main id="main" ref={mainRef} tabIndex={-1} style={{ outline: 'none' }}>
           {import.meta.env.MODE === 'demo' && <DemoBanner />}
+          {__PREVIEW__ && (
+            <p className="demo-banner">
+              Vorschau einer neuen Fassung. Deine Einträge hier sind getrennt von denen in Henoch und bleiben nur auf diesem Gerät.
+            </p>
+          )}
           <UpdateBanner />
           <Outlet />
         </main>

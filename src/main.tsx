@@ -1,3 +1,5 @@
+// First: the preview keeps its device settings apart before anything reads them.
+import './app/preview';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@fontsource/literata/latin-400.css';

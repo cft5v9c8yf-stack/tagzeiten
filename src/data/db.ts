@@ -25,7 +25,8 @@ export class TagzeitenDB extends Dexie {
   winterArcWeeks!: Table<WinterArcWeek, [string, number]>;
   winterArcMonths!: Table<WinterArcMonth, [string, string]>;
 
-  constructor(name = 'tagzeiten') {
+  // Never renamed (CLAUDE.md); the preview under /vorschau/ keeps its entries apart in a database of its own.
+  constructor(name = __PREVIEW__ ? 'tagzeiten-vorschau' : 'tagzeiten') {
     super(name);
     // v1: one profile row, one row per day. updatedAt is indexed for a later sync.
     this.version(1).stores({
