@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.1',
+    date: '2026-10-23',
+    title: '„Erhört“ in Mein Haus aufgeräumt',
+    changes: [
+      { area: 'Gebet', text: 'Unter „Mein Haus“ steht „Erhört“ bei deiner Frau und bei jedem Kind wieder sauber am rechten Rand; der Hinweis „Erst wenn ein Anliegen dasteht“ steht klein links daneben, auf einer Linie mit dem Knopf.' },
+    ],
+  },
+  {
     version: '1.35.0',
     date: '2026-10-23',
     title: 'PDF ohne Druckfenster, auch in der installierten App',

@@ -2149,8 +2149,16 @@ mark.placeholder {
 }
 .house-concern-actions {
   display: flex;
-  justify-content: flex-end;
+  /* The button at the right edge, the hint quietly to its left, on one line. */
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
   margin-top: 8px;
+}
+.house-concern-actions .small {
+  font-family: var(--sans);
+  text-align: right;
 }
 .archive-answered {
   margin: 0;
