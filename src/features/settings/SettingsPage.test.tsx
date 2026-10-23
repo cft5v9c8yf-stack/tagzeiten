@@ -776,7 +776,7 @@ describe('Rückblick', () => {
     expect(summary.hidden).toBe(true);
   });
 
-  it('keeps wife and children in "Mein Haus", and an answered concern in the Rückblick', async () => {
+  it('keeps wife and children in "Mein Haus" without "Erhört"; answered concerns kept from before stay in the Rückblick', async () => {
     const { store } = await renderAt('/mehr/haus', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Gebet/ });
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Anna' } });
@@ -790,13 +790,9 @@ describe('Rückblick', () => {
     fireEvent.click(within(screen.getByRole('group', { name: 'Marie: Sohn oder Tochter' })).getByRole('button', { name: 'Tochter' }));
     await waitFor(() => expect(screen.queryByText(/Bitte wählen: Sohn oder Tochter/)).toBeNull());
     fireEvent.change(screen.getByLabelText('Anliegen für Marie'), { target: { value: 'Freundin in der neuen Klasse' } });
-    const answered = within(screen.getByLabelText('Anliegen für Marie').closest('.house-concern')! as HTMLElement).getByRole('button', {
-      name: 'Erhört',
-    });
-    fireEvent.click(answered);
-    await waitFor(() => expect(store.getProfile().answered).toHaveLength(1));
-    expect(store.getProfile().answered[0]).toMatchObject({ date: '2026-09-25', person: 'Marie', role: 'daughter', concern: 'Freundin in der neuen Klasse' });
-    expect((screen.getByLabelText('Anliegen für Marie') as HTMLInputElement).value).toBe('');
+    // Since 1.35.2 there is no "Erhört" any more: the concern simply stands.
+    expect(screen.queryByRole('button', { name: 'Erhört' })).toBeNull();
+    await waitFor(() => expect(store.getProfile().house.children[0]!.concern).toBe('Freundin in der neuen Klasse'));
     expect(store.getProfile().house.wife.name).toBe('Anna');
     fireEvent.click(screen.getByRole('button', { name: 'Weiteres Kind hinzufügen' }));
     expect(await screen.findByLabelText('Kind 5')).toBeTruthy();
@@ -804,8 +800,16 @@ describe('Rückblick', () => {
     await waitFor(() => expect(screen.queryByLabelText('Kind 5')).toBeNull());
 
     cleanup();
+    // Without answered concerns the Rückblick has no such view; the old address shows the days.
+    await renderAt('/mehr/rueckblick?ansicht=erhoerungen', <SettingsPage />);
+    await screen.findAllByText(/mit Einträgen/);
+    expect(screen.queryByRole('button', { name: 'Gebetserhörungen' })).toBeNull();
+    cleanup();
     await renderAt('/mehr/rueckblick?ansicht=erhoerungen', <SettingsPage />, (s) =>
-      s.updateProfile((p) => ({ ...p, answered: store.getProfile().answered }), { immediate: true }),
+      s.updateProfile(
+        (p) => ({ ...p, answered: [{ id: 'a1', date: '2026-09-25', person: 'Marie', role: 'daughter', concern: 'Freundin in der neuen Klasse' }] }),
+        { immediate: true },
+      ),
     );
     expect(await screen.findByText('Freundin in der neuen Klasse')).toBeTruthy();
     expect(screen.getByText(/Marie \(Tochter\)/)).toBeTruthy();

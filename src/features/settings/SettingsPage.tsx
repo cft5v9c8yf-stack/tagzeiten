@@ -235,12 +235,12 @@ const AREAS: readonly Area[] = [
     slug: 'rueckblick',
     id: 'review',
     title: 'Rückblick',
-    line: 'Tage, Verse, Arena, Erhörungen',
+    line: 'Tage, Verse, Arena',
     icon: 'review',
     info: (
       <p>
-        Alle Tage mit Einträgen, die Verse, die du dir notiert hast, die archivierten Einträge der Arena und die
-        Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar. Ganz unten schaltest du ein, ob auch deine Gewohnheiten
+        Alle Tage mit Einträgen, die Verse, die du dir notiert hast, und die archivierten Einträge der Arena – alles
+        durchsuchbar. Ganz unten schaltest du ein, ob auch deine Gewohnheiten
         der letzten acht Wochen hier stehen.
       </p>
     ),

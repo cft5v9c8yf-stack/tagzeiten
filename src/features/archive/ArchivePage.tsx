@@ -205,7 +205,10 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const [params] = useSearchParams();
   const profile = useProfile();
   const asked = TAB_PARAM[params.get('ansicht') ?? ''] ?? 'days';
-  const [tab, setTab] = useState<Tab>(asked === 'habits' && !profile.showHabitHistory ? 'days' : asked);
+  // Views that may be empty or switched off fall back to the days.
+  const [tab, setTab] = useState<Tab>(
+    (asked === 'habits' && !profile.showHabitHistory) || (asked === 'answered' && !profile.answered.length) ? 'days' : asked,
+  );
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const searchId = useId();
@@ -282,7 +285,8 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'days', label: 'Tage' },
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
-          { value: 'answered', label: 'Gebetserhörungen' },
+          // Kept from before 1.35.2, when concerns could be marked as answered; shown only if there are any.
+          ...(profile.answered.length ? [{ value: 'answered' as const, label: 'Gebetserhörungen' }] : []),
           ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenwanderung' }] : []),
           ...(profile.showHabitHistory ? [{ value: 'habits' as const, label: 'Gewohnheiten' }] : []),
         ]}
@@ -409,7 +413,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               <p className="empty">
                 {query.trim()
                   ? 'Nichts gefunden.'
-                  : 'Noch keine. Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du dort mit „Erhört“ fest.'}
+                  : 'Noch keine.'}
               </p>
             ))}
 

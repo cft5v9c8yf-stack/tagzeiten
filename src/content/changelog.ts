@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.2',
+    date: '2026-10-23',
+    title: 'Ohne „Erhört“ in Mein Haus',
+    changes: [
+      { area: 'Gebet', text: 'Unter „Mein Haus“ gibt es den Knopf „Erhört“ nicht mehr; bei deiner Frau und jedem Kind steht nur das Anliegen. Was du früher als erhört festgehalten hast, bleibt im Rückblick unter „Gebetserhörungen“. Ist dort nichts, steht diese Ansicht nicht mehr im Rückblick.' },
+    ],
+  },
+  {
     version: '1.35.1',
     date: '2026-10-23',
     title: '„Erhört“ in Mein Haus aufgeräumt',
