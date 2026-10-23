@@ -99,20 +99,20 @@ export interface PrintOptions {
 export const APP_SUBTITLE = 'Mit Gott durch den Tag.';
 
 /**
- * The head of every page: the app's picture of sun, horizon and hill on the left,
- * title and subtitle on the right, on the dark field of the app. A band across
+ * The head of every page: the app's picture of sun, horizon and hill on the right,
+ * title and subtitle on the left, on the paper of the app. A band across
  * the whole width of the paper, 210 by 30 mm.
  */
 const BANNER = `<svg class="banner" viewBox="0 0 2100 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Henoch. ${APP_SUBTITLE}">
-<rect width="2100" height="300" fill="#141a26"/>
-<g stroke="#2d3646" stroke-width="2"><path d="M0 188H2100M0 214H2100M0 246H2100M0 282H2100"/></g>
-<g fill="none" stroke="#3a4354" stroke-width="2.5"><path d="M370 170a150 150 0 0 1 300 0M405 170a115 115 0 0 1 230 0M440 170a80 80 0 0 1 160 0"/></g>
-<path d="M468 170a52 52 0 0 1 104 0z" fill="#d4b13c"/>
-<path d="M520 172C528 215 590 250 650 300H390C450 250 512 215 520 172z" fill="#232733"/>
-<path d="M0 170H2100" stroke="#ece8df" stroke-width="3"/>
-<path d="M520 172C528 215 590 250 650 300M520 172C512 215 450 250 390 300" fill="none" stroke="#ece8df" stroke-width="3"/>
-<text x="1330" y="146" fill="#ece8df" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
-<text x="1334" y="232" fill="#ece8df" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
+<rect width="2100" height="300" fill="#f6f4ef"/>
+<g stroke="#ddd8ce" stroke-width="2"><path d="M0 188H2100M0 214H2100M0 246H2100M0 282H2100"/></g>
+<g fill="none" stroke="#cfc8b8" stroke-width="2.5"><path d="M1430 170a150 150 0 0 1 300 0M1465 170a115 115 0 0 1 230 0M1500 170a80 80 0 0 1 160 0"/></g>
+<path d="M1528 170a52 52 0 0 1 104 0z" fill="#d4b13c"/>
+<path d="M1580 172C1588 215 1650 250 1710 300H1450C1510 250 1572 215 1580 172z" fill="#e9e5db"/>
+<path d="M0 170H2100" stroke="#1d2330" stroke-width="3"/>
+<path d="M1580 172C1588 215 1650 250 1710 300M1580 172C1572 215 1510 250 1450 300" fill="none" stroke="#1d2330" stroke-width="3"/>
+<text x="196" y="146" fill="#1d2330" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
+<text x="200" y="232" fill="#4a5160" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
 </svg>`;
 
 export function entryToPrintHtml(e: ArenaEntry, { comfort = [] }: PrintOptions = {}): string {
