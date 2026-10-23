@@ -96,23 +96,22 @@ export interface PrintOptions {
   comfort?: readonly { text: string; ref: string }[];
 }
 
-export const APP_SUBTITLE = 'Mit Gott durch den Tag.';
+export const APP_SUBTITLE = 'Mit Gott unterwegs';
 
 /**
  * The head of every page: the app's picture of sun, horizon and hill on the right,
- * title and subtitle on the left, on the paper of the app. A band across
+ * title and subtitle on the left, without a ground of its own, so it stands on the white page. A band across
  * the whole width of the paper, 210 by 30 mm.
  */
 const BANNER = `<svg class="banner" viewBox="0 0 2100 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Henoch. ${APP_SUBTITLE}">
-<rect width="2100" height="300" fill="#f6f4ef"/>
-<g stroke="#ddd8ce" stroke-width="2"><path d="M0 188H2100M0 214H2100M0 246H2100M0 282H2100"/></g>
+<g stroke="#ddd8ce" stroke-width="2"><path d="M860 188H2100M860 214H2100M860 246H2100M860 282H2100"/></g>
 <g fill="none" stroke="#cfc8b8" stroke-width="2.5"><path d="M1430 170a150 150 0 0 1 300 0M1465 170a115 115 0 0 1 230 0M1500 170a80 80 0 0 1 160 0"/></g>
 <path d="M1528 170a52 52 0 0 1 104 0z" fill="#d4b13c"/>
 <path d="M1580 172C1588 215 1650 250 1710 300H1450C1510 250 1572 215 1580 172z" fill="#e9e5db"/>
-<path d="M0 170H2100" stroke="#1d2330" stroke-width="3"/>
+<path d="M860 170H2100" stroke="#1d2330" stroke-width="3"/>
 <path d="M1580 172C1588 215 1650 250 1710 300M1580 172C1572 215 1510 250 1450 300" fill="none" stroke="#1d2330" stroke-width="3"/>
-<text x="196" y="146" fill="#1d2330" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
-<text x="200" y="232" fill="#4a5160" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
+<text x="196" y="152" fill="#1d2330" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
+<text x="200" y="216" fill="#4a5160" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
 </svg>`;
 
 export function entryToPrintHtml(e: ArenaEntry, { comfort = [] }: PrintOptions = {}): string {
