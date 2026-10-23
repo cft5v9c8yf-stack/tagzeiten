@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.32.0',
+    date: '2026-10-23',
+    title: 'Ein Blatt für alle Exporte, Tab und Enter in den Feldern',
+    changes: [
+      { area: 'Arena', text: 'Alles, was du aus der Arena exportierst, hat dasselbe ruhige Blatt: schmaler Kopf mit dem Zeichen der App, rechts der Ort, darunter eine feine goldene Linie, im Fuß der Zuspruch. Das gilt für die Einträge der Gebetskammer, der Eisenschmiede und der Wüstenwanderung, jetzt auch für jedes Treffen am Abendbrunnen (im Treffen oben „Exportieren“, in der Liste im Menü) und für die Wüstenzeit nach ihrem Ende.' },
+      { area: 'Einstellungen', text: 'Unter „Mehr“, Daten gibt es neben dem Text und der Sicherung auch „Als PDF sichern“ für alle Einträge auf einmal, auf demselben Blatt.' },
+      { area: 'Arena', text: 'Mit der Tastatur springen Tab und Umschalt-Tab von Feld zu Feld; Enter im Titel und in einzeiligen Feldern geht ins nächste. In den Bibelstellen und Gebetsanliegen macht Enter eine neue Zeile darunter, in einer leeren Zeile geht es zum nächsten Feld; die Rücktaste in einer leeren Zeile nimmt sie weg. Das gilt in der Gebetskammer, der Eisenschmiede, der Wüstenwanderung und im Treffen am Abendbrunnen.' },
+    ],
+  },
+  {
     version: '1.31.1',
     date: '2026-10-23',
     title: 'Enter in den Listen der Arena',

@@ -189,7 +189,7 @@ describe('Treffen am Abendbrunnen', () => {
     const meetings = ['a', 'b', 'c', 'd'].map((id, i) => ({ id, date: `2026-10-0${i + 1}`, resolution: `Vorsatz ${id}`, resolutionDone: false, herWish: '', herConcern: '', myConcern: '' }));
     const { store, router } = await mount('/arena/treffen-a', (s) => s.updateProfile((p) => ({ ...p, well: { on: true, meetings } }), { immediate: true }));
     const bar = screen.getByRole('toolbar', { name: 'Treffen' });
-    expect([...bar.querySelectorAll('button')].map((b) => b.getAttribute('aria-label'))).toEqual(['Sichern und zurück', 'Anheften', 'Archivieren', 'Löschen']);
+    expect([...bar.querySelectorAll('button')].map((b) => b.getAttribute('aria-label'))).toEqual(['Sichern und zurück', 'Anheften', 'Archivieren', 'Exportieren', 'Löschen']);
     fireEvent.click(within(bar).getByRole('button', { name: 'Anheften' }));
     expect(store.getProfile().well.meetings.find((m) => m.id === 'a')!.pinnedAt).toBeTypeOf('number');
     // At most three stand pinned.

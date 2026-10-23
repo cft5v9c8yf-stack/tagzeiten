@@ -1,6 +1,8 @@
 import { useId, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { downloadText } from '../../app/files';
+import { printMarkdown, safeName, shortDate } from '../../domain/printDoc';
+import { runToMarkdown } from '../../domain/winterArcMarkdown';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
 import { useDayLookup, useProfile, useStore, useToday } from '../../data/hooks';
@@ -313,6 +315,16 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
   const exportMarkdown = async () => {
     downloadText(`henoch-${store.today()}.md`, await store.exportMarkdown(), 'text/markdown');
   };
+  // The round on the common page: its heading line becomes title and subtitle, the weeks follow.
+  const exportPdf = () => {
+    const [head = '', , ...rest] = runToMarkdown(run, profile.winterArc, profile.winterArcSettings);
+    const [name = '', ...facts] = head.replace(/^## /, '').split(' · ');
+    printMarkdown(
+      rest.join('\n'),
+      { place: 'Wüstenzeit', title: name, subtitle: facts.join(' · '), comfort: [{ text: WINTER_ARC_COMFORT.verse.text, ref: WINTER_ARC_COMFORT.verse.ref }] },
+      `${shortDate(run.startDate)}_${safeName(name) || 'Wüstenzeit'}`,
+    );
+  };
   return (
     <div className="wa-closing">
       <h4>Die Wüstenzeit ist zu Ende</h4>
@@ -368,6 +380,9 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
         </button>
         <button type="button" className="btn" onClick={() => void exportMarkdown()}>
           Als Markdown exportieren
+        </button>
+        <button type="button" className="btn" onClick={exportPdf}>
+          Als PDF sichern
         </button>
       </div>
       {starting && <DesertStartPanel onDone={() => setStarting(false)} />}

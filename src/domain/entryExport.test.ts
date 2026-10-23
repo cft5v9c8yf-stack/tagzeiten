@@ -23,10 +23,11 @@ describe('single-entry export', () => {
   });
 
   it('builds a print page that escapes text and carries the handwriting as SVG', () => {
-    const html = entryToPrintHtml(entry());
+    const html = entryToPrintHtml(entry(), [{ text: 'Trost', ref: 'Röm 8,37' }]);
     expect(html).toContain('Herr, &lt;hilf&gt;.');
     expect(html).toContain('<svg');
     expect(html).toContain('Gebetskammer');
+    expect(html).toContain('Trost');
   });
 
   it('names files by date as JJMMTT and the title, without forbidden characters', () => {

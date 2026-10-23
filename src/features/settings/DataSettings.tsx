@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { clearDevicePreferences, downloadText } from '../../app/files';
+import { printMarkdown } from '../../domain/printDoc';
 import { useToast } from '../../app/Toast';
 import { useStore } from '../../data/hooks';
 import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
@@ -43,6 +44,15 @@ export function DataSettings() {
   const exportMarkdown = async () => {
     downloadText(`henoch-${stamp}.md`, await store.exportMarkdown(), 'text/markdown');
     toast('Export als Markdown erstellt');
+  };
+  // The whole export on the common page: its heading and the line under it become title and date.
+  const exportPdf = async () => {
+    const [, , dateLine = '', , ...rest] = (await store.exportMarkdown()).split('\n');
+    printMarkdown(
+      rest.join('\n'),
+      { place: 'Alle Einträge', title: 'Henoch – Export', subtitle: dateLine, comfort: [{ text: 'Aber in dem allem überwinden wir weit um deswillen, der uns geliebt hat.', ref: 'Römer 8,37' }] },
+      `${stamp.slice(2).replace(/-/g, '')}_Henoch Export`,
+    );
   };
   const exportJson = async () => {
     downloadText(`henoch-${stamp}.json`, JSON.stringify(await store.exportBackup(), null, 2), 'application/json');
@@ -142,11 +152,14 @@ export function DataSettings() {
         <button type="button" className="btn" onClick={exportMarkdown}>
           Als Text exportieren (Markdown)
         </button>
+        <button type="button" className="btn" onClick={() => void exportPdf()}>
+          Als PDF sichern
+        </button>
         <button type="button" className="btn" onClick={exportJson}>
           Sicherung exportieren (JSON)
         </button>
       </div>
-      <p className="small muted">Der Text ist zum Lesen und Aufheben. Die Sicherung kannst du hier oder auf einem anderen Gerät wieder einspielen.</p>
+      <p className="small muted">Der Text und das PDF sind zum Lesen und Aufheben (beim PDF öffnet sich das Druckfenster, wähle dort „Als PDF sichern“). Die Sicherung kannst du hier oder auf einem anderen Gerät wieder einspielen.</p>
 
             </>
           ),

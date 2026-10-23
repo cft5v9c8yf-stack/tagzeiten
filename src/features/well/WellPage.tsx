@@ -2,6 +2,9 @@ import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { TileGroup } from '../../ui/TileGroup';
 import { useToast } from '../../app/Toast';
+import { downloadText } from '../../app/files';
+import { fieldKeys } from '../../ui/fieldNav';
+import { meetingFilename, meetingToMarkdown, printMeeting } from '../../domain/wellExport';
 import { useProfile, useStore } from '../../data/hooks';
 import {
   WELL_COMFORT,
@@ -80,6 +83,8 @@ function NoteField({
         ref={area}
         className="grow-field"
         rows={1}
+        data-enter={single ? 'next' : undefined}
+        enterKeyHint={single ? 'next' : undefined}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(single ? e.target.value.replace(/\n/g, ' ') : e.target.value)}
@@ -157,6 +162,15 @@ function LastResolution({ meeting }: { meeting: WellMeeting }) {
   );
 }
 
+/** The meeting as a Markdown file; the toast says so. */
+function useMarkdownExport() {
+  const toast = useToast();
+  return (m: WellMeeting) => {
+    downloadText(meetingFilename(m, 'md'), meetingToMarkdown(m), 'text/markdown');
+    toast('Treffen als Markdown erstellt');
+  };
+}
+
 /** A small round button with an icon, as in the entries of the Arena. */
 function IconButton({ icon, label, onClick, pressed }: { icon: FlowIconName; label: string; onClick: () => void; pressed?: boolean }) {
   return (
@@ -188,6 +202,8 @@ export function WellMeetingPage({ id }: { id: string }) {
   const toast = useToast();
   const pin = usePin();
   const [confirm, setConfirm] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const exportMarkdown = useMarkdownExport();
   const meeting = profile.well.meetings.find((m) => m.id === id);
   const place = `/arena?bereich=${WELL_SLUG}`;
   const archived = meeting?.archivedAt !== undefined;
@@ -217,7 +233,7 @@ export function WellMeetingPage({ id }: { id: string }) {
     navigate(place);
   };
   return (
-    <article className="arena-entry">
+    <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
       <div className="entry-bar">
         <BackLink to={home}>{archived ? 'Rückblick' : WELL_TITLE}</BackLink>
         <div className="entry-bar-icons" role="toolbar" aria-label="Treffen">
@@ -230,9 +246,21 @@ export function WellMeetingPage({ id }: { id: string }) {
           ) : (
             <IconButton icon="archive" label="Archivieren" onClick={archive} />
           )}
+          <IconButton icon="export" label="Exportieren" pressed={exporting} onClick={() => setExporting((x) => !x)} />
           <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
+      {exporting && (
+        <div className="entry-export" role="group" aria-label="Treffen exportieren">
+          <button type="button" className="btn" onClick={() => exportMarkdown(meeting)}>
+            Als Text exportieren (Markdown)
+          </button>
+          <button type="button" className="btn" onClick={() => printMeeting(meeting)}>
+            Als PDF sichern
+          </button>
+          <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
+        </div>
+      )}
       {confirm && (
         <ConfirmRow label="Treffen löschen?" showLabel confirmLabel="Ja, Treffen löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
@@ -253,6 +281,8 @@ export function WellMeetingPage({ id }: { id: string }) {
         <input
           id={titleId}
           type="text"
+          data-enter="next"
+          enterKeyHint="next"
           value={meeting.title ?? ''}
           placeholder="Wie das Treffen in der Übersicht heißen soll"
           onChange={(e) => {
@@ -298,6 +328,7 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
   const store = useStore();
   const toast = useToast();
   const pin = usePin();
+  const exportMarkdown = useMarkdownExport();
   return (
     <li className="arena-item">
       <Link className="arena-card" to={meetingPath(m.id)}>
@@ -312,6 +343,8 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
         label={`Aktionen für das Treffen am ${dateLabel(m.date)}`}
         items={[
           { label: m.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(m) },
+          { label: 'Als Text exportieren (Markdown)', onSelect: () => exportMarkdown(m) },
+          { label: 'Als PDF sichern', onSelect: () => printMeeting(m) },
           {
             label: 'Besprochen – archivieren',
             onSelect: () => {

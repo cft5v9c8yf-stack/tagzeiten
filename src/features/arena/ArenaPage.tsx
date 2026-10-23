@@ -28,6 +28,7 @@ import { ConfirmRow } from '../../ui/ConfirmRow';
 import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
 import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
 import { downloadText } from '../../app/files';
+import { fieldKeys, focusSibling } from '../../ui/fieldNav';
 import { entryToMarkdown, exportFilename, printEntry } from '../../domain/entryExport';
 
 type Kind = 'journal' | 'forge' | 'desert';
@@ -282,8 +283,9 @@ function LineList({
                 if (e.nativeEvent.isComposing) return;
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  // An empty line adds no further empty line.
+                  // An empty line adds no further empty line: Enter there goes on to the next field.
                   if (v.trim()) insertAfter(i);
+                  else focusSibling(e.currentTarget);
                 } else if (e.key === 'Backspace' && v === '' && list.length > 1) {
                   e.preventDefault();
                   removeAt(i);
@@ -398,9 +400,7 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
 }
 
 /** The word of comfort of its place for the foot of the printed page. */
-const printOptions = (e: ArenaEntry) => ({
-  comfort: PLACES[kindOf(e) === 'journal' ? 'journal' : kindOf(e)].comfort,
-});
+const printComfort = (e: ArenaEntry) => PLACES[kindOf(e)].comfort;
 
 /** Marks an entry pinned to the top of its place. */
 const PinTag = ({ entry }: { entry: ArenaEntry }) =>
@@ -473,7 +473,7 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
               toast('Eintrag als Markdown erstellt');
             },
           },
-          { label: 'Als PDF sichern', onSelect: () => printEntry(entry, printOptions(entry)) },
+          { label: 'Als PDF sichern', onSelect: () => printEntry(entry, printComfort(entry)) },
           {
             label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
             onSelect: () => {
@@ -547,7 +547,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   };
 
   return (
-    <article className="arena-entry">
+    <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
       {/* The way back, and beside it small icons for the actions, as on the iPhone. */}
       <div className="entry-bar">
         <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
@@ -582,7 +582,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           >
             Als Text exportieren (Markdown)
           </button>
-          <button type="button" className="btn" onClick={() => printEntry(entry, printOptions(entry))}>
+          <button type="button" className="btn" onClick={() => printEntry(entry, printComfort(entry))}>
             Als PDF sichern
           </button>
           <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
@@ -617,6 +617,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         <input
           id={titleId}
           type="text"
+          data-enter="next"
+          enterKeyHint="next"
           value={entry.title ?? ''}
           placeholder="Wie der Eintrag in der Übersicht heißen soll"
           onChange={(e) => {

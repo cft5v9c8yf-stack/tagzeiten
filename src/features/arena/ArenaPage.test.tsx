@@ -55,6 +55,24 @@ describe('Arena', () => {
     expect(document.querySelector('.arena-note')!.textContent).toContain('Sünde wird gebetet, nicht notiert');
   });
 
+  it('moves between the fields with Tab and Shift+Tab, and with Enter in the title and in an empty line', async () => {
+    await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const title = await screen.findByLabelText('Titel');
+    const verse = screen.getByLabelText('Bibelstelle 1');
+    const concern = screen.getByLabelText('Gebetsanliegen 1');
+    title.focus();
+    fireEvent.keyDown(title, { key: 'Enter' });
+    expect(document.activeElement).toBe(verse);
+    fireEvent.keyDown(verse, { key: 'Tab' });
+    expect(document.activeElement).toBe(concern);
+    fireEvent.keyDown(concern, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(verse);
+    // Enter in an empty line goes on to the next field.
+    fireEvent.keyDown(verse, { key: 'Enter' });
+    expect(document.activeElement).toBe(concern);
+  });
+
   it('makes a new line with Enter in the verses and concerns, and takes an empty one out with Backspace', async () => {
     const store = await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
