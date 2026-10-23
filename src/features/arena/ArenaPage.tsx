@@ -27,6 +27,8 @@ import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
 import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
 import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
+import { downloadText } from '../../app/files';
+import { entryToMarkdown, exportFilename, printEntry } from '../../domain/entryExport';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -471,6 +473,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const pin = usePin();
   // Deleting is asked right under the icons at the top.
   const [confirm, setConfirm] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -519,9 +522,28 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           ) : (
             <IconButton icon="archive" label="Archivieren" onClick={archive} />
           )}
+          <IconButton icon="export" label="Exportieren" pressed={exporting} onClick={() => setExporting((x) => !x)} />
           <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
+      {exporting && (
+        <div className="entry-export" role="group" aria-label="Eintrag exportieren">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
+              toast('Eintrag als Markdown erstellt');
+            }}
+          >
+            Als Text exportieren (Markdown)
+          </button>
+          <button type="button" className="btn" onClick={() => printEntry(entry)}>
+            Als PDF sichern
+          </button>
+          <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
+        </div>
+      )}
       {confirm && (
         <ConfirmRow label="Eintrag löschen?" showLabel confirmLabel="Ja, Eintrag löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}

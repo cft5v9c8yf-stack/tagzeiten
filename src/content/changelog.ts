@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.31.0',
+    date: '2026-10-23',
+    title: 'Einträge einzeln exportieren',
+    changes: [
+      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: oben im Eintrag das Zeichen „Exportieren“. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Alles bleibt auf dem Gerät.' },
+    ],
+  },
+  {
     version: '1.30.0',
     date: '2026-10-22',
     title: 'Abendbrunnen: von der Gewohnheit unter „Heute“ direkt zum Treffen',

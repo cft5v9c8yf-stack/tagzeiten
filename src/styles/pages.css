@@ -1550,6 +1550,17 @@ body.is-sorting * {
 .entry-bar .back-link {
   margin: 0;
 }
+.entry-export {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--card-gap);
+}
+.entry-export p {
+  flex-basis: 100%;
+  margin: 0;
+}
+
 .entry-bar-icons {
   display: flex;
   gap: 2px;
