@@ -4,7 +4,8 @@ import { TileGroup } from '../../ui/TileGroup';
 import { useToast } from '../../app/Toast';
 import { downloadText } from '../../app/files';
 import { fieldKeys } from '../../ui/fieldNav';
-import { meetingFilename, meetingToMarkdown, printMeeting } from '../../domain/wellExport';
+import { meetingFilename, meetingsBasename, meetingsToMarkdown, meetingToMarkdown, printMeeting, printMeetings } from '../../domain/wellExport';
+import { ExportAll } from '../../ui/ExportAll';
 import { useProfile, useStore } from '../../data/hooks';
 import {
   WELL_COMFORT,
@@ -373,6 +374,7 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
  */
 export function WellPage() {
   const store = useStore();
+  const toast = useToast();
   const profile = useProfile();
   const navigate = useNavigate();
   const name = wifeName(profile.house.wife.name);
@@ -452,6 +454,16 @@ export function WellPage() {
           <p className="small arena-archived">
             <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
           </p>
+        )}
+        {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
+          <ExportAll
+            label="Alle Treffen exportieren"
+            onMarkdown={() => {
+              downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
+              toast('Treffen als Markdown erstellt');
+            }}
+            onPdf={() => printMeetings(profile.well.meetings, store.today())}
+          />
         )}
       </section>
     </>

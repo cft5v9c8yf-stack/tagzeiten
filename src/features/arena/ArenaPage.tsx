@@ -29,7 +29,8 @@ import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
 import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
 import { downloadText } from '../../app/files';
 import { fieldKeys, focusSibling } from '../../ui/fieldNav';
-import { entryToMarkdown, exportFilename, printEntry } from '../../domain/entryExport';
+import { entriesBasename, entriesToMarkdown, entryToMarkdown, exportFilename, printEntries, printEntry } from '../../domain/entryExport';
+import { ExportAll } from '../../ui/ExportAll';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -402,6 +403,27 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
 /** The word of comfort of its place for the foot of the printed page. */
 const printComfort = (e: ArenaEntry) => PLACES[kindOf(e)].comfort;
 
+/** All entries of a place (also the archived) as one Markdown file or one PDF, under the list. */
+function PlaceExport({ kind }: { kind: Kind }) {
+  const store = useStore();
+  const profile = useProfile();
+  const toast = useToast();
+  const entries = profile.arena.filter((e) => kindOf(e) === kind && !isEmptyEntry(e));
+  if (entries.length === 0) return null;
+  const { title, comfort } = PLACES[kind];
+  const today = store.today();
+  return (
+    <ExportAll
+      label={`Alle Einträge der ${title} exportieren`}
+      onMarkdown={() => {
+        downloadText(`${entriesBasename(title, today)}.md`, entriesToMarkdown(entries, title, today), 'text/markdown');
+        toast('Einträge als Markdown erstellt');
+      }}
+      onPdf={() => printEntries(entries, title, today, comfort)}
+    />
+  );
+}
+
 /** Marks an entry pinned to the top of its place. */
 const PinTag = ({ entry }: { entry: ArenaEntry }) =>
   entry.pinnedAt !== undefined ? <span className="ktag">Angeheftet</span> : null;
@@ -698,6 +720,7 @@ function DesertEntries() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
+      <PlaceExport kind="desert" />
       <DaySheets />
     </section>
   );
@@ -815,6 +838,7 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
+      <PlaceExport kind={kind} />
     </div>
   );
 }

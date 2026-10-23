@@ -6,7 +6,7 @@
 import { WELL_COMFORT, WELL_NOTES, WELL_TITLE } from '../content/well';
 import { formatLong } from './dates';
 import { esc, paragraphs, printHtml, printPageHtml, safeName, shortDate, type PrintDoc } from './printDoc';
-import type { WellMeeting } from './well';
+import { isEmptyMeeting, type WellMeeting } from './well';
 
 const dateLong = (k: string) => `${formatLong(k)} ${k.slice(0, 4)}`;
 
@@ -63,3 +63,42 @@ export function meetingToPrintDoc(m: WellMeeting): PrintDoc {
 
 /** Opens the print dialog for a meeting; "Als PDF sichern" there makes the file. */
 export const printMeeting = (m: WellMeeting): void => printHtml(printPageHtml(meetingToPrintDoc(m)), meetingBasename(m));
+
+const keptMeetings = (meetings: readonly WellMeeting[]) => meetings.filter((m) => !isEmptyMeeting(m)).sort((a, b) => (a.date < b.date ? -1 : 1));
+const countLine = (n: number) => `${n} Treffen`;
+
+/** The file name without extension for all meetings: "261023_Treffen am Abendbrunnen". */
+export const meetingsBasename = (today: string) => `${shortDate(today)}_${safeName(WELL_TITLE)}`;
+
+/** All meetings in one Markdown file, oldest first. */
+export function meetingsToMarkdown(meetings: readonly WellMeeting[], today: string): string {
+  const kept = keptMeetings(meetings);
+  const out = ['---', `title: "${WELL_TITLE}"`, `date: ${today}`, `ort: ${WELL_TITLE}`, `treffen: ${kept.length}`, 'tags: [henoch, abendbrunnen]', '---', '', `# ${WELL_TITLE}`, '', `*${countLine(kept.length)}*`, ''];
+  for (const m of kept) {
+    out.push(`## ${heading(m)}`, '', ...(m.title?.trim() ? [`*Treffen am ${dateLong(m.date)}*`, ''] : []));
+    for (const f of fieldsOf(m)) out.push(`### ${f.label}`, '', f.text, '');
+  }
+  return out.join('\n');
+}
+
+/** All meetings on one printed document, each starting with its heading and day. */
+export function meetingsToPrintDoc(meetings: readonly WellMeeting[], today: string): PrintDoc {
+  const kept = keptMeetings(meetings);
+  return {
+    place: WELL_TITLE,
+    title: WELL_TITLE,
+    subtitle: `${countLine(kept.length)} · Stand ${new Date(`${today}T12:00:00`).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`,
+    body: kept
+      .map(
+        (m) =>
+          `<section class="entry"><h3 class="md">${esc(heading(m))}</h3>${m.title?.trim() ? `<p class="date">Treffen am ${esc(dateLong(m.date))}</p>` : ''}${fieldsOf(m)
+            .map((f) => `<h2>${esc(f.label)}</h2><div class="text">${paragraphs(f.text)}</div>`)
+            .join('')}</section>`,
+      )
+      .join('\n'),
+    comfort: COMFORT,
+  };
+}
+
+export const printMeetings = (meetings: readonly WellMeeting[], today: string): void =>
+  printHtml(printPageHtml(meetingsToPrintDoc(meetings, today)), meetingsBasename(today));

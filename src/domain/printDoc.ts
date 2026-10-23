@@ -118,6 +118,9 @@ h1 { font-size: 16pt; line-height: 1.22; font-weight: 600; margin: 0 0 1.5mm; hy
 h2 { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: #2e4057; margin: 8mm 0 3mm; break-after: avoid; }
 h3.md { font: 600 12pt/1.3 Literata, Georgia, serif; margin: 6mm 0 2mm; break-after: avoid; }
 h4.md { font: 600 10.5pt/1.3 'Source Sans 3', Helvetica, Arial, sans-serif; margin: 4mm 0 1.5mm; break-after: avoid; }
+section.entry { margin-top: 9mm; padding-top: 5mm; border-top: 0.2mm solid #ddd8ce; }
+section.entry:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+section.entry h3.md { margin-top: 0; font-size: 13pt; }
 h2.md { margin-top: 12mm; padding-top: 3mm; border-top: 0.2mm solid #ddd8ce; }
 blockquote { margin: 3mm 0; padding-left: 4mm; border-left: 0.5mm solid #a78100; font-style: italic; color: #4a5160; }
 code { font-size: 0.9em; }
