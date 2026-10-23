@@ -13,7 +13,7 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
-    version: '1.36.0',
+    version: '1.35.3',
     date: '2026-10-23',
     title: 'Die Versionen in Zehnergruppen',
     changes: [
