@@ -16,14 +16,16 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'devotion', 'arena', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
 /** Tiles open one at a time within their group; these are the groups. */
 const TILE_GROUPS = [
   ['display', 'data', 'install', 'airplane', 'about'],
   ['house', 'prayerlist', 'treasury'],
-  ['display.theme', 'display.habitHistory', 'display.sundayRest', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert'],
+  ['display.theme', 'display.habitHistory'],
+  ['display.atBed', 'display.compline', 'display.armor', 'display.weekReview', 'display.sundayRest'],
+  ['display.well', 'display.desert'],
   ['data.keep', 'data.export', 'data.import', 'data.delete'],
   ['about.arc', 'about.sources', 'about.privacy'],
 ].map((g) => g.map((id) => `more.${id}`));
@@ -93,7 +95,7 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Darstellung', 'Deine Daten', 'Rückblick', 'Über Henoch', 'Versionen', 'Anleitung', 'Neuigkeiten']);
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Andacht', 'Arena', 'Darstellung', 'Deine Daten', 'Rückblick', 'Über Henoch', 'Versionen', 'Anleitung', 'Neuigkeiten']);
     // The news open on the homepage, in the browser.
     const news = screen.getByRole('link', { name: /Neuigkeiten/ });
     expect(news.getAttribute('href')).toBe('https://henoch.app/neuigkeiten/');
@@ -144,18 +146,27 @@ describe('Mehr: Aufbau', () => {
     expect(inner).toEqual([
       'FarbschemaSystem',
       'Gewohnheiten im RückblickAusblenden',
-      'SonntagsruheAus',
-      'Am Bett am MorgenAnzeigen',
-      'Nachtgebet am BettAnzeigen',
-      'WochenrückblickEin',
-      'Geistliche WaffenrüstungAnzeigen',
-      'Treffen am AbendbrunnenAusblenden',
-      'WüstenzeitAus',
     ]);
   });
 
+  it('keeps what the devotion holds under "Andacht" and the places under "Arena", not under Darstellung', async () => {
+    await renderAt('/mehr/andacht', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Andacht' });
+    expect([...document.querySelectorAll('.tile-card')].map((t) => t.textContent)).toEqual([
+      'Am Bett am MorgenAnzeigen',
+      'Nachtgebet am BettAnzeigen',
+      'Geistliche WaffenrüstungAnzeigen',
+      'WochenrückblickEin',
+      'SonntagsruheAus',
+    ]);
+    cleanup();
+    await renderAt('/mehr/arena', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Arena' });
+    expect([...document.querySelectorAll('.tile-card')].map((t) => t.textContent)).toEqual(['Treffen am AbendbrunnenAusblenden', 'WüstenzeitAus']);
+  });
+
   it('switches the Wüstenzeit on with span and start, chooses its habits, and switches it off without deleting', async () => {
-    const { store, db } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.desert']);
+    const { store, db } = await renderAt('/mehr/arena', <SettingsPage />, undefined, ['more.display.desert']);
     const toggle = await screen.findByRole('group', { name: 'Wüstenzeit' });
     expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
@@ -269,7 +280,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
-    const { store } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.atBed']);
+    const { store } = await renderAt('/mehr/andacht', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
     expect(within(bed).getByRole('button', { name: 'Anzeigen' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(bed).getByRole('button', { name: 'Ausblenden' }));
@@ -283,7 +294,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('switches the Sunday rest on and off', async () => {
-    const { store } = await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.sundayRest']);
+    const { store } = await renderAt('/mehr/andacht', <SettingsPage />, undefined, ['more.display.sundayRest']);
     const rest = await screen.findByRole('group', { name: 'Sonntagsruhe' });
     expect(within(rest).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(rest).getByRole('button', { name: 'Ein' }));
@@ -907,7 +918,7 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: /Versionen/ });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.32(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.33(?![\d.])/);
     expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
     // The versions before 1.0 fold together, last.
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
@@ -915,11 +926,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.32(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.33(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.32(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.33(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

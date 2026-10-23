@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.33.0',
+    date: '2026-10-23',
+    title: 'Die Einstellungen neu geordnet',
+    changes: [
+      { area: 'Einstellungen', text: 'Unter „Darstellung“ stand vieles, was mit dem Aussehen nichts zu tun hat. Jetzt steht jedes dort, wo es hingehört: „Darstellung“ hat nur noch das Farbschema und die Gewohnheiten im Rückblick. Neu ist „Andacht“: Am Bett am Morgen, Nachtgebet am Bett, geistliche Waffenrüstung, Wochenrückblick und Sonntagsruhe. Neu ist auch „Arena“: das Treffen am Abendbrunnen und die Wüstenzeit. Alles, was du eingestellt hast, bleibt, wie es war.' },
+    ],
+  },
+  {
     version: '1.32.0',
     date: '2026-10-23',
     title: 'Ein Blatt für alle Exporte, Tab und Enter in den Feldern',

@@ -2,7 +2,7 @@ import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
 import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model';
-import { TileGroup } from '../../ui/TileGroup';
+import { TileGroup, type TileItem } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
 import { WELL_HABIT } from '../../content/habits';
@@ -240,17 +240,17 @@ function WellSettings() {
   );
 }
 
-/** "Darstellung" as tiles: each setting with what is set now; it opens beneath. */
-export function DisplaySettings() {
+/**
+ * The settings that are switches and looks, each as a tile with what is set now; it opens beneath.
+ * They are shown in three places by what they are about: how the app looks ("Darstellung"), what
+ * the devotion holds ("Andacht"), and the places of the Arena ("Arena").
+ */
+function useDisplayTiles(): Record<string, TileItem> {
   const store = useStore();
   const profile = useProfile();
   const update = (fn: (p: Profile) => Profile) => store.updateProfile(fn, { immediate: true });
   const state = (on: boolean) => (on ? 'Anzeigen' : 'Ausblenden');
-  return (
-    <TileGroup
-      level={4}
-      label="Darstellung"
-      items={[
+  const list: TileItem[] = [
         {
           id: 'more.display.theme',
           title: 'Farbschema',
@@ -390,7 +390,26 @@ export function DisplaySettings() {
           icon: 'sunrise',
           content: <DesertSettings />,
         },
-      ]}
-    />
-  );
+  ];
+  return Object.fromEntries(list.map((t) => [t.id.replace('more.display.', ''), t]));
+}
+
+const tilesOf = (all: Record<string, TileItem>, keys: readonly string[]) => keys.map((k) => all[k]!);
+
+/** "Darstellung": how the app looks. */
+export function DisplaySettings() {
+  const all = useDisplayTiles();
+  return <TileGroup level={4} label="Darstellung" items={tilesOf(all, ['theme', 'habitHistory'])} />;
+}
+
+/** "Andacht": what the devotion holds and how the week runs. */
+export function DevotionSettings() {
+  const all = useDisplayTiles();
+  return <TileGroup level={4} label="Andacht" items={tilesOf(all, ['atBed', 'compline', 'armor', 'weekReview', 'sundayRest'])} />;
+}
+
+/** "Arena": the places that are switched on or off. */
+export function ArenaSettings() {
+  const all = useDisplayTiles();
+  return <TileGroup level={4} label="Arena" items={tilesOf(all, ['well', 'desert'])} />;
 }

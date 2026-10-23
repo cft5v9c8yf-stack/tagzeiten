@@ -21,11 +21,11 @@ import { HABITS_INFO, HabitSettings } from './HabitSettings';
 import { HOUSE_INFO, HouseSettings } from './HouseSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
 import { PrayerTreasury, TREASURY_INFO } from './PrayerTreasury';
-import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
+import { ArenaSettings, DevotionSettings, DisplaySettings, ScheduleSettings } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'display' | 'data' | 'about' | 'review' | 'imprint' | 'changelog' | 'guide';
+  id: SettingsSectionId | 'display' | 'devotion' | 'arena' | 'data' | 'about' | 'review' | 'imprint' | 'changelog' | 'guide';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
@@ -119,12 +119,30 @@ const AREAS: readonly Area[] = [
     body: () => <ScheduleSettings />,
   },
   {
+    slug: 'andacht',
+    id: 'devotion',
+    title: 'Andacht',
+    line: 'Am Bett, Nachtgebet, Sonntag',
+    icon: 'candle',
+    info: <p>Welche Teile die Andacht enthält und wie die Woche läuft: Am Bett am Morgen, Nachtgebet, geistliche Waffenrüstung, Wochenrückblick und Sonntagsruhe.</p>,
+    body: () => <DevotionSettings />,
+  },
+  {
+    slug: 'arena',
+    id: 'arena',
+    title: 'Arena',
+    line: 'Abendbrunnen und Wüstenzeit',
+    icon: 'cross',
+    info: <p>Welche Orte der Arena du nutzt: das Treffen am Abendbrunnen mit deiner Frau und die Wüstenzeit.</p>,
+    body: () => <ArenaSettings />,
+  },
+  {
     slug: 'darstellung',
     id: 'display',
     title: 'Darstellung',
-    line: 'Farben und Teile der Andacht',
+    line: 'Farbschema und Rückblick',
     icon: 'sliders',
-    info: <p>Das Farbschema und welche Teile der Andacht erscheinen.</p>,
+    info: <p>Wie die App aussieht: das Farbschema, und ob unten im Rückblick deine Gewohnheiten stehen.</p>,
     body: () => <DisplaySettings />,
   },
   {

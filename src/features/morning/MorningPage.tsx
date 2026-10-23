@@ -81,7 +81,7 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
 }
 
 /**
- * "Am Bett" (unless switched off under Darstellung) and the steps of the order,
+ * "Am Bett" (unless switched off under Andacht) and the steps of the order,
  * one at a time (ui/StepFlow). `current` counts the marks of the row.
  */
 function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; form: OrderForm }) {
