@@ -25,6 +25,7 @@ import { DaySheets } from '../desert/DesertJournal';
 import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
+import { fieldKeys, focusSibling } from '../../ui/fieldNav';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -234,6 +235,22 @@ function LineList({
   const list = values.length ? values : [''];
   const set = (i: number, v: string) => onChange(list.map((x, k) => (k === i ? v : x)));
   const [focused, setFocused] = useState<number | null>(null);
+  // Enter makes a new line below and moves into it; Backspace on an empty line takes it out (as in the points list).
+  const refs = useRef<(HTMLTextAreaElement | null)[]>([]);
+  const [focusNext, setFocusNext] = useState<number | null>(null);
+  useEffect(() => {
+    if (focusNext === null) return;
+    refs.current[focusNext]?.focus();
+    setFocusNext(null);
+  }, [focusNext]);
+  const insertAfter = (i: number) => {
+    onChange([...list.slice(0, i + 1), '', ...list.slice(i + 1)]);
+    setFocusNext(i + 1);
+  };
+  const removeAt = (i: number) => {
+    onChange(list.filter((_, k) => k !== i));
+    setFocusNext(Math.max(0, i - 1));
+  };
   // Known concerns that fit what is typed, as taps instead of a list the phone hides.
   const matches = (v: string) => {
     const q = v.trim().toLocaleLowerCase('de');
@@ -250,18 +267,34 @@ function LineList({
             </label>
             <GrowField
               id={`${id}-${i}`}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              enterKeyHint="next"
               value={v}
               placeholder={placeholder}
               onFocus={() => setFocused(i)}
               onBlur={() => setFocused((f) => (f === i ? null : f))}
               onValue={(x) => set(i, x)}
+              onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing) return;
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  // An empty line adds no further empty line: Enter there goes on to the next field.
+                  if (v.trim()) insertAfter(i);
+                  else focusSibling(e.currentTarget);
+                } else if (e.key === 'Backspace' && v === '' && list.length > 1) {
+                  e.preventDefault();
+                  removeAt(i);
+                }
+              }}
             />
             {list.length > 1 && (
               <button
                 type="button"
                 className="arena-remove"
                 aria-label={`${label} ${i + 1} entfernen`}
-                onClick={() => onChange(list.filter((_, k) => k !== i))}
+                onClick={() => removeAt(i)}
               >
                 <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
@@ -499,7 +532,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   };
 
   return (
-    <article className="arena-entry">
+    <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
       {/* The way back, and beside it small icons for the actions, as on the iPhone. */}
       <div className="entry-bar">
         <BackLink to={home}>{habit ? 'Zurück zur Liste' : archived ? 'Rückblick' : place.title}</BackLink>
@@ -550,6 +583,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         <input
           id={titleId}
           type="text"
+          data-enter="next"
+          enterKeyHint="next"
           value={entry.title ?? ''}
           placeholder="Wie der Eintrag in der Übersicht heißen soll"
           onChange={(e) => {
