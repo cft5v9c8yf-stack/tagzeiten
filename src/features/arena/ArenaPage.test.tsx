@@ -55,6 +55,23 @@ describe('Arena', () => {
     expect(document.querySelector('.arena-note')!.textContent).toContain('Sünde wird gebetet, nicht notiert');
   });
 
+  it('makes a new line with Enter in the verses and concerns, and takes an empty one out with Backspace', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const first = await screen.findByLabelText('Gebetsanliegen 1');
+    // An empty line adds nothing.
+    fireEvent.keyDown(first, { key: 'Enter' });
+    expect(screen.queryByLabelText('Gebetsanliegen 2')).toBeNull();
+    fireEvent.change(first, { target: { value: 'Geduld' } });
+    fireEvent.keyDown(first, { key: 'Enter' });
+    const second = await screen.findByLabelText('Gebetsanliegen 2');
+    await waitFor(() => expect(document.activeElement).toBe(second));
+    fireEvent.keyDown(second, { key: 'Backspace' });
+    await waitFor(() => expect(screen.queryByLabelText('Gebetsanliegen 2')).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText('Gebetsanliegen 1')));
+    await waitFor(() => expect(store.getProfile().arena[0]!.concerns).toEqual(['Geduld']));
+  });
+
   it('writes an entry with several verses and concerns and a long text, under a word of comfort', async () => {
     const store = await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));

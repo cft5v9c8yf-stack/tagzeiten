@@ -13,11 +13,19 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.31.1',
+    date: '2026-10-23',
+    title: 'Enter in den Listen der Arena',
+    changes: [
+      { area: 'Arena', text: 'Mit der Tastatur: In den Bibelstellen und Gebetsanliegen macht Enter eine neue Zeile darunter und setzt den Cursor hinein, wie bei den Anliegen fürs Treffen. Die Rücktaste in einer leeren Zeile nimmt sie wieder weg.' },
+    ],
+  },
+  {
     version: '1.31.0',
     date: '2026-10-23',
     title: 'Einträge einzeln exportieren',
     changes: [
-      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: oben im Eintrag das Zeichen „Exportieren“. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Alles bleibt auf dem Gerät.' },
+      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: im Eintrag oben das Zeichen „Exportieren“, in der Liste im Menü neben dem Eintrag. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4 mit dem Zeichen der App im Kopf und dem Zuspruch des Ortes im Fuß, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Die Datei heißt wie der Eintrag: Datum als JJMMTT, dann der Titel. Alles bleibt auf dem Gerät.' },
     ],
   },
   {

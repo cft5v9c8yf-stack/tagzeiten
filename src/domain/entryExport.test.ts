@@ -29,7 +29,8 @@ describe('single-entry export', () => {
     expect(html).toContain('Gebetskammer');
   });
 
-  it('names files by date and title', () => {
-    expect(exportFilename(entry(), 'md')).toBe('henoch-2026-10-23-fuer-die-kinder.md');
+  it('names files by date as JJMMTT and the title, without forbidden characters', () => {
+    expect(exportFilename(entry({ title: 'Wer: ich/du?' }), 'pdf')).toBe('261023_Wer ich du.pdf');
+    expect(exportFilename(entry(), 'md')).toBe('261023_Für die Kinder.md');
   });
 });

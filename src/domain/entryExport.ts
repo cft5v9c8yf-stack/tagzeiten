@@ -28,19 +28,21 @@ export function exportTitle(e: ArenaEntry): string {
   return entryTitle(e) || longDate(e.createdAt);
 }
 
-/** A file name without characters a file system dislikes. */
-export function exportFilename(e: ArenaEntry, ext: 'md' | 'pdf'): string {
-  const slug = exportTitle(e)
-    .toLowerCase()
-    .replace(/ä/g, 'ae')
-    .replace(/ö/g, 'oe')
-    .replace(/ü/g, 'ue')
-    .replace(/ß/g, 'ss')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
-  return `henoch-${isoDate(e.createdAt)}${slug ? `-${slug}` : ''}.${ext}`;
+/** The date as JJMMTT, the way the files are named. */
+const shortDate = (ms: number) => isoDate(ms).slice(2).replace(/-/g, '');
+
+/** The file name without extension: "261023_Titel des Eintrags", without characters a file system dislikes. */
+export function exportBasename(e: ArenaEntry): string {
+  const title = exportTitle(e)
+    .replace(/[\\/:*?"<>|\u0000-\u001f]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 60)
+    .trim();
+  return `${shortDate(e.createdAt)}_${title || 'Eintrag'}`;
 }
+
+export const exportFilename = (e: ArenaEntry, ext: 'md' | 'pdf') => `${exportBasename(e)}.${ext}`;
 
 const filled = (list: readonly string[]) => list.map((s) => s.trim()).filter(Boolean);
 
@@ -89,7 +91,16 @@ const paragraphs = (text: string) =>
  * gold of Luther's rose as the only colour. Printed or saved as PDF from the
  * share sheet; the handwriting is drawn on white so it prints as written.
  */
-export function entryToPrintHtml(e: ArenaEntry): string {
+export interface PrintOptions {
+  /** Word of comfort for the foot of every page (Luther 1912), as the place shows it. */
+  comfort?: readonly { text: string; ref: string }[];
+  /** Address of the app's icon, shown in the head of every page. */
+  iconUrl?: string;
+}
+
+export const APP_SUBTITLE = 'Eine Ordnung für Morgen und Abend';
+
+export function entryToPrintHtml(e: ArenaEntry, { comfort = [], iconUrl }: PrintOptions = {}): string {
   const verses = filled(e.verses);
   const concerns = filled(e.concerns);
   const points = (e.points ?? []).filter((p) => p.text.trim());
@@ -111,10 +122,11 @@ export function entryToPrintHtml(e: ArenaEntry): string {
   return `<!doctype html>
 <html lang="de"><head><meta charset="utf-8"><title>${esc(title)}</title>
 <style>
-@page { size: A4; margin: 22mm 20mm 20mm; }
+/* No page margin: the system then leaves out its own line with address, date and page count. */
+@page { size: A4; margin: 0; }
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-body { margin: 0; color: #1d2330; font: 11.5pt/1.55 Literata, Georgia, 'Times New Roman', serif; }
+body { margin: 0; padding: 0 20mm; color: #1d2330; font: 11.5pt/1.55 Literata, Georgia, 'Times New Roman', serif; }
 header { text-align: center; padding-bottom: 7mm; margin-bottom: 8mm; border-bottom: 0.4mm solid #a78100; position: relative; }
 header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1.6mm; border-bottom: 0.15mm solid #a78100; }
 .place { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #7f6200; margin: 0 0 4mm; }
@@ -122,19 +134,34 @@ h1 { font-size: 21pt; line-height: 1.2; font-weight: 600; margin: 0 0 3mm; hyphe
 .date { font-style: italic; color: #636a76; margin: 0; }
 .verses { text-align: center; color: #7f6200; margin: 0 0 6mm; }
 h2 { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: #2e4057; margin: 8mm 0 3mm; break-after: avoid; }
-ul { margin: 0; padding-left: 5mm; }
+/* Spacer rows repeat on every page and keep the text clear of the running head and foot. */
+table.page { width: 100%; border-collapse: collapse; }
+table.page td { padding: 0; }
+.sp-head { height: 36mm; }
+.sp-foot { height: 34mm; }
+ul { margin: 0 0 4mm; padding-left: 5mm; }
 li { margin-bottom: 1.5mm; break-inside: avoid; }
 ul.points { list-style: none; padding: 0; }
 .box { display: inline-block; width: 3.6mm; height: 3.6mm; margin-right: 2.5mm; border: 0.3mm solid #8a8578; border-radius: 0.6mm; font-size: 8pt; line-height: 3.4mm; text-align: center; vertical-align: -0.4mm; }
 .done .box { border-color: #4f7a17; color: #4f7a17; }
 .text p { margin: 0 0 3.5mm; text-align: left; hyphens: auto; orphans: 3; widows: 3; }
 .ink { border: 0.2mm solid #ddd8ce; border-radius: 1.5mm; overflow: hidden; }
-.ink svg { display: block; width: 100%; height: auto; }
-footer { margin-top: 12mm; text-align: center; font: 8pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.12em; color: #8a8578; }
+.ink { break-inside: avoid; }
+.ink svg { display: block; width: auto; max-width: 100%; max-height: 180mm; margin: 0 auto; }
+.running-head { position: fixed; top: 0; left: 0; right: 0; height: 30mm; padding: 11mm 20mm 0; display: flex; align-items: center; gap: 3.5mm; }
+.running-head img { width: 11mm; height: 11mm; border-radius: 2.4mm; }
+.running-head b { display: block; font: 600 12pt/1.1 Literata, Georgia, serif; }
+.running-head span { display: block; font: 8pt/1.3 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; color: #636a76; }
+.running-foot { position: fixed; bottom: 0; left: 0; right: 0; padding: 0 28mm 11mm; text-align: center; font-style: italic; font-size: 9pt; line-height: 1.4; color: #4a5160; }
+.running-foot p { margin: 0 0 1.2mm; }
+.running-foot small { font: normal 600 7.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; font-style: normal; letter-spacing: 0.06em; color: #7f6200; }
 </style></head><body>
+<div class="running-head">${iconUrl ? `<img src="${esc(iconUrl)}" alt="">` : ''}<div><b>Henoch</b><span>${esc(APP_SUBTITLE)}</span></div></div>
+${comfort.length ? `<div class="running-foot">${comfort.map((c) => `<p>${esc(c.text)} <small>${esc(c.ref)}</small></p>`).join('')}</div>` : ''}
+<table class="page"><thead><tr><td><div class="sp-head"></div></td></tr></thead><tfoot><tr><td><div class="sp-foot"></div></td></tr></tfoot><tbody><tr><td>
 <header><p class="place">${esc(placeOf(e))}</p><h1>${esc(title)}</h1><p class="date">${esc(longDate(e.createdAt))}</p></header>
 ${sections.join('\n')}
-<footer>Henoch</footer>
+</td></tr></tbody></table>
 </body></html>`;
 }
 
@@ -142,18 +169,27 @@ ${sections.join('\n')}
  * Opens the system's print dialog for the page in a hidden frame; "Als PDF sichern"
  * there makes the file. No library, nothing loaded from outside.
  */
-export function printEntry(e: ArenaEntry): void {
+export function printEntry(e: ArenaEntry, options?: PrintOptions): void {
   const frame = document.createElement('iframe');
   frame.setAttribute('aria-hidden', 'true');
   frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
-  frame.srcdoc = entryToPrintHtml(e);
+  frame.srcdoc = entryToPrintHtml(e, options);
+  const pageTitle = document.title;
+  const done = () => {
+    document.title = pageTitle;
+    frame.remove();
+  };
   frame.onload = () => {
     const win = frame.contentWindow;
-    if (!win) return frame.remove();
-    win.onafterprint = () => frame.remove();
+    if (!win) return done();
+    // The system names the PDF after the title of the page, so both carry the file name.
+    const name = exportBasename(e);
+    document.title = name;
+    win.document.title = name;
+    win.onafterprint = done;
     win.focus();
     win.print();
-    setTimeout(() => frame.remove(), 120_000);
+    setTimeout(done, 120_000);
   };
   document.body.appendChild(frame);
 }

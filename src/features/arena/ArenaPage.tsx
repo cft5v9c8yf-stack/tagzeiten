@@ -237,6 +237,22 @@ function LineList({
   const list = values.length ? values : [''];
   const set = (i: number, v: string) => onChange(list.map((x, k) => (k === i ? v : x)));
   const [focused, setFocused] = useState<number | null>(null);
+  // Enter makes a new line below and moves into it; Backspace on an empty line takes it out (as in the points list).
+  const refs = useRef<(HTMLTextAreaElement | null)[]>([]);
+  const [focusNext, setFocusNext] = useState<number | null>(null);
+  useEffect(() => {
+    if (focusNext === null) return;
+    refs.current[focusNext]?.focus();
+    setFocusNext(null);
+  }, [focusNext]);
+  const insertAfter = (i: number) => {
+    onChange([...list.slice(0, i + 1), '', ...list.slice(i + 1)]);
+    setFocusNext(i + 1);
+  };
+  const removeAt = (i: number) => {
+    onChange(list.filter((_, k) => k !== i));
+    setFocusNext(Math.max(0, i - 1));
+  };
   // Known concerns that fit what is typed, as taps instead of a list the phone hides.
   const matches = (v: string) => {
     const q = v.trim().toLocaleLowerCase('de');
@@ -253,18 +269,33 @@ function LineList({
             </label>
             <GrowField
               id={`${id}-${i}`}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              enterKeyHint="next"
               value={v}
               placeholder={placeholder}
               onFocus={() => setFocused(i)}
               onBlur={() => setFocused((f) => (f === i ? null : f))}
               onValue={(x) => set(i, x)}
+              onKeyDown={(e) => {
+                if (e.nativeEvent.isComposing) return;
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  // An empty line adds no further empty line.
+                  if (v.trim()) insertAfter(i);
+                } else if (e.key === 'Backspace' && v === '' && list.length > 1) {
+                  e.preventDefault();
+                  removeAt(i);
+                }
+              }}
             />
             {list.length > 1 && (
               <button
                 type="button"
                 className="arena-remove"
                 aria-label={`${label} ${i + 1} entfernen`}
-                onClick={() => onChange(list.filter((_, k) => k !== i))}
+                onClick={() => removeAt(i)}
               >
                 <FlowIcon name="close" size={ICON_SIZE.m} plain />
               </button>
@@ -366,6 +397,12 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
   );
 }
 
+/** The word of comfort of its place for the foot of the printed page, and the app's icon for the head. */
+const printOptions = (e: ArenaEntry) => ({
+  comfort: PLACES[kindOf(e) === 'journal' ? 'journal' : kindOf(e)].comfort,
+  iconUrl: `${import.meta.env.BASE_URL}icons/icon-192.png`,
+});
+
 /** Marks an entry pinned to the top of its place. */
 const PinTag = ({ entry }: { entry: ArenaEntry }) =>
   entry.pinnedAt !== undefined ? <span className="ktag">Angeheftet</span> : null;
@@ -430,6 +467,14 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
         label={`Aktionen für „${name}“`}
         items={[
           { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
+          {
+            label: 'Als Text exportieren (Markdown)',
+            onSelect: () => {
+              downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
+              toast('Eintrag als Markdown erstellt');
+            },
+          },
+          { label: 'Als PDF sichern', onSelect: () => printEntry(entry, printOptions(entry)) },
           {
             label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
             onSelect: () => {
@@ -538,7 +583,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           >
             Als Text exportieren (Markdown)
           </button>
-          <button type="button" className="btn" onClick={() => printEntry(entry)}>
+          <button type="button" className="btn" onClick={() => printEntry(entry, printOptions(entry))}>
             Als PDF sichern
           </button>
           <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
