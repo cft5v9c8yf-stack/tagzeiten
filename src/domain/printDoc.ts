@@ -168,30 +168,33 @@ ${body}
 
 /**
  * Opens the system's print dialog for the page in a hidden frame; "Als PDF sichern"
- * there makes the file. The system names the PDF after the title of the page, so the
+ * there makes the file. The page is written into the frame at once and the dialog is
+ * opened in the same tap: Safari ignores a print that comes later (after loading), so
+ * nothing would happen. The system names the PDF after the title of the page, so the
  * page and the frame both carry the file name (without extension) while it is open.
  */
 export function printHtml(html: string, basename: string): void {
   const frame = document.createElement('iframe');
   frame.setAttribute('aria-hidden', 'true');
   frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
-  frame.srcdoc = html;
+  document.body.appendChild(frame);
+  const win = frame.contentWindow;
+  const doc = frame.contentDocument;
   const pageTitle = document.title;
   const done = () => {
     document.title = pageTitle;
     frame.remove();
   };
-  frame.onload = () => {
-    const win = frame.contentWindow;
-    if (!win) return done();
-    document.title = basename;
-    win.document.title = basename;
-    win.onafterprint = done;
-    win.focus();
-    win.print();
-    setTimeout(done, 120_000);
-  };
-  document.body.appendChild(frame);
+  if (!win || !doc) return done();
+  doc.open();
+  doc.write(html);
+  doc.close();
+  document.title = basename;
+  doc.title = basename;
+  win.onafterprint = done;
+  win.focus();
+  win.print();
+  setTimeout(done, 120_000);
 }
 
 /** A file name without characters a file system dislikes. */

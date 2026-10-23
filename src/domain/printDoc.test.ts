@@ -63,3 +63,4 @@ describe('all entries of a place', () => {
     expect(meetingsToPrintDoc([a, b], '2026-10-23').body.match(/<section class="entry">/g)).toHaveLength(2);
   });
 });
+

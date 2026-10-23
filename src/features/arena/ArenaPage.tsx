@@ -701,7 +701,10 @@ function DesertEntries() {
   const archivedCount = profile.arena.filter((e) => e.archivedAt !== undefined && kindOf(e) === 'desert').length;
   return (
     <section className="desert-entries" aria-labelledby="desert-entries-title">
-      <h3 id="desert-entries-title">Tagebuch</h3>
+      <div className="list-head">
+        <h3 id="desert-entries-title">Tagebuch</h3>
+        <PlaceExport kind="desert" />
+      </div>
       <p className="arena-note">{place.note}</p>
       <button type="button" className="btn primary arena-new" onClick={() => navigate(`/arena/${store.addArenaEntry('desert')}`)}>
         {place.add}
@@ -720,7 +723,6 @@ function DesertEntries() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
-      <PlaceExport kind="desert" />
       <DaySheets />
     </section>
   );
@@ -789,7 +791,7 @@ export function ArenaPage() {
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
     <div className="arena arena-place">
-      <PlaceHead title={place.title} />
+      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
       <SectionVerse id={place.verse} />
       <p className="arena-note">{place.note}</p>
       <button
@@ -838,13 +840,12 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
-      <PlaceExport kind={kind} />
     </div>
   );
 }
 
 /** The head of a place: the way back to the Arena, and the place's name. */
-function PlaceHead({ title, sub }: { title: string; sub?: string }) {
+function PlaceHead({ title, sub, actions }: { title: string; sub?: string; actions?: React.ReactNode }) {
   return (
     <>
       <div className="title-row">
@@ -853,6 +854,7 @@ function PlaceHead({ title, sub }: { title: string; sub?: string }) {
           {title}
           {sub && <span className="place-sub">{sub}</span>}
         </h2>
+        {actions && <div className="title-row-actions">{actions}</div>}
       </div>
     </>
   );

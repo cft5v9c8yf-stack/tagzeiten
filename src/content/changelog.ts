@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.34.1',
+    date: '2026-10-23',
+    title: 'Als PDF sichern öffnet das Druckfenster zuverlässig',
+    changes: [
+      { area: 'Arena', text: '„Als PDF sichern“ öffnet das Druckfenster jetzt auch aus dem Menü neben einem Eintrag oder Treffen und beim zweiten Mal. Vorher tat sich in Safari manchmal nichts.' },
+      { area: 'Arena', text: 'Alle Einträge eines Ortes exportierst du jetzt über das Menü neben seiner Überschrift, nicht mehr mit zwei Knöpfen unter der Liste.' },
+    ],
+  },
+  {
     version: '1.34.0',
     date: '2026-10-23',
     title: 'Mehr mit sechs Kacheln',

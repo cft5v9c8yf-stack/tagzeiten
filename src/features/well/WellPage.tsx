@@ -439,7 +439,19 @@ export function WellPage() {
       />
 
       <section className="well-section" aria-labelledby="well-meetings">
-        <h3 id="well-meetings">Treffen</h3>
+        <div className="list-head">
+          <h3 id="well-meetings">Treffen</h3>
+          {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
+            <ExportAll
+              label="Alle Treffen exportieren"
+              onMarkdown={() => {
+                downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
+                toast('Treffen als Markdown erstellt');
+              }}
+              onPdf={() => printMeetings(profile.well.meetings, store.today())}
+            />
+          )}
+        </div>
         <button type="button" className="btn primary arena-new" onClick={() => navigate(meetingPath(store.addWellMeeting()))}>
           Treffen aufschreiben
         </button>
@@ -454,16 +466,6 @@ export function WellPage() {
           <p className="small arena-archived">
             <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
           </p>
-        )}
-        {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
-          <ExportAll
-            label="Alle Treffen exportieren"
-            onMarkdown={() => {
-              downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
-              toast('Treffen als Markdown erstellt');
-            }}
-            onPdf={() => printMeetings(profile.well.meetings, store.today())}
-          />
         )}
       </section>
     </>
