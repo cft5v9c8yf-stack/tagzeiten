@@ -94,13 +94,28 @@ const paragraphs = (text: string) =>
 export interface PrintOptions {
   /** Word of comfort for the foot of every page (Luther 1912), as the place shows it. */
   comfort?: readonly { text: string; ref: string }[];
-  /** Address of the app's icon, shown in the head of every page. */
-  iconUrl?: string;
 }
 
-export const APP_SUBTITLE = 'Eine Ordnung für Morgen und Abend';
+export const APP_SUBTITLE = 'Mit Gott durch den Tag.';
 
-export function entryToPrintHtml(e: ArenaEntry, { comfort = [], iconUrl }: PrintOptions = {}): string {
+/**
+ * The head of every page: the app's picture of sun, horizon and hill on the left,
+ * title and subtitle on the right, on the dark field of the app. A band across
+ * the whole width of the paper, 210 by 30 mm.
+ */
+const BANNER = `<svg class="banner" viewBox="0 0 2100 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Henoch. ${APP_SUBTITLE}">
+<rect width="2100" height="300" fill="#141a26"/>
+<g stroke="#2d3646" stroke-width="2"><path d="M0 188H2100M0 214H2100M0 246H2100M0 282H2100"/></g>
+<g fill="none" stroke="#3a4354" stroke-width="2.5"><path d="M370 170a150 150 0 0 1 300 0M405 170a115 115 0 0 1 230 0M440 170a80 80 0 0 1 160 0"/></g>
+<path d="M468 170a52 52 0 0 1 104 0z" fill="#d4b13c"/>
+<path d="M520 172C528 215 590 250 650 300H390C450 250 512 215 520 172z" fill="#232733"/>
+<path d="M0 170H2100" stroke="#ece8df" stroke-width="3"/>
+<path d="M520 172C528 215 590 250 650 300M520 172C512 215 450 250 390 300" fill="none" stroke="#ece8df" stroke-width="3"/>
+<text x="1330" y="146" fill="#ece8df" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
+<text x="1334" y="232" fill="#ece8df" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
+</svg>`;
+
+export function entryToPrintHtml(e: ArenaEntry, { comfort = [] }: PrintOptions = {}): string {
   const verses = filled(e.verses);
   const concerns = filled(e.concerns);
   const points = (e.points ?? []).filter((p) => p.text.trim());
@@ -129,15 +144,15 @@ html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body { margin: 0; padding: 0 20mm; color: #1d2330; font: 11.5pt/1.55 Literata, Georgia, 'Times New Roman', serif; }
 header { text-align: center; padding-bottom: 7mm; margin-bottom: 8mm; border-bottom: 0.4mm solid #a78100; position: relative; }
 header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1.6mm; border-bottom: 0.15mm solid #a78100; }
-.place { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #7f6200; margin: 0 0 4mm; }
-h1 { font-size: 21pt; line-height: 1.2; font-weight: 600; margin: 0 0 3mm; hyphens: auto; }
-.date { font-style: italic; color: #636a76; margin: 0; }
+.place { font: 600 7pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #7f6200; margin: 0 0 3mm; }
+h1 { font-size: 15pt; line-height: 1.2; font-weight: 600; margin: 0 0 2mm; hyphens: auto; }
+.date { font-size: 9.5pt; font-style: italic; color: #636a76; margin: 0; }
 .verses { text-align: center; color: #7f6200; margin: 0 0 6mm; }
 h2 { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: #2e4057; margin: 8mm 0 3mm; break-after: avoid; }
 /* Spacer rows repeat on every page and keep the text clear of the running head and foot. */
 table.page { width: 100%; border-collapse: collapse; }
 table.page td { padding: 0; }
-.sp-head { height: 36mm; }
+.sp-head { height: 40mm; }
 .sp-foot { height: 34mm; }
 ul { margin: 0 0 4mm; padding-left: 5mm; }
 li { margin-bottom: 1.5mm; break-inside: avoid; }
@@ -148,15 +163,13 @@ ul.points { list-style: none; padding: 0; }
 .ink { border: 0.2mm solid #ddd8ce; border-radius: 1.5mm; overflow: hidden; }
 .ink { break-inside: avoid; }
 .ink svg { display: block; width: auto; max-width: 100%; max-height: 180mm; margin: 0 auto; }
-.running-head { position: fixed; top: 0; left: 0; right: 0; height: 30mm; padding: 11mm 20mm 0; display: flex; align-items: center; gap: 3.5mm; }
-.running-head img { width: 11mm; height: 11mm; border-radius: 2.4mm; }
-.running-head b { display: block; font: 600 12pt/1.1 Literata, Georgia, serif; }
-.running-head span { display: block; font: 8pt/1.3 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.06em; color: #636a76; }
+.running-head { position: fixed; top: 0; left: 0; right: 0; height: 30mm; overflow: hidden; }
+.banner { display: block; width: 100%; height: 100%; }
 .running-foot { position: fixed; bottom: 0; left: 0; right: 0; padding: 0 28mm 11mm; text-align: center; font-style: italic; font-size: 9pt; line-height: 1.4; color: #4a5160; }
 .running-foot p { margin: 0 0 1.2mm; }
 .running-foot small { font: normal 600 7.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; font-style: normal; letter-spacing: 0.06em; color: #7f6200; }
 </style></head><body>
-<div class="running-head">${iconUrl ? `<img src="${esc(iconUrl)}" alt="">` : ''}<div><b>Henoch</b><span>${esc(APP_SUBTITLE)}</span></div></div>
+<div class="running-head">${BANNER}</div>
 ${comfort.length ? `<div class="running-foot">${comfort.map((c) => `<p>${esc(c.text)} <small>${esc(c.ref)}</small></p>`).join('')}</div>` : ''}
 <table class="page"><thead><tr><td><div class="sp-head"></div></td></tr></thead><tfoot><tr><td><div class="sp-foot"></div></td></tr></tfoot><tbody><tr><td>
 <header><p class="place">${esc(placeOf(e))}</p><h1>${esc(title)}</h1><p class="date">${esc(longDate(e.createdAt))}</p></header>

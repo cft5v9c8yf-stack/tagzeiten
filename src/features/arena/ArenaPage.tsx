@@ -397,10 +397,9 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
   );
 }
 
-/** The word of comfort of its place for the foot of the printed page, and the app's icon for the head. */
+/** The word of comfort of its place for the foot of the printed page. */
 const printOptions = (e: ArenaEntry) => ({
   comfort: PLACES[kindOf(e) === 'journal' ? 'journal' : kindOf(e)].comfort,
-  iconUrl: `${import.meta.env.BASE_URL}icons/icon-192.png`,
 });
 
 /** Marks an entry pinned to the top of its place. */
