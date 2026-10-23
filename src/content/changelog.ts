@@ -25,7 +25,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-23',
     title: 'Einträge einzeln exportieren',
     changes: [
-      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: im Eintrag oben das Zeichen „Exportieren“, in der Liste im Menü neben dem Eintrag. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4 mit dem Bild der App im Kopf (links „Henoch“ und „Mit Gott unterwegs“, rechts Sonne, Horizont und Berg, auf weißem Grund) und dem Zuspruch des Ortes im Fuß, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Die Datei heißt wie der Eintrag: Datum als JJMMTT, dann der Titel. Alles bleibt auf dem Gerät.' },
+      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: im Eintrag oben das Zeichen „Exportieren“, in der Liste im Menü neben dem Eintrag. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4 mit schmalem Kopf (Zeichen der App, „Henoch“, „Mit Gott unterwegs“, rechts der Ort) und dem Zuspruch des Ortes im Fuß, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Die Datei heißt wie der Eintrag: Datum als JJMMTT, dann der Titel. Alles bleibt auf dem Gerät.' },
     ],
   },
   {

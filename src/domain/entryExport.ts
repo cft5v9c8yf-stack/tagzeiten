@@ -99,19 +99,14 @@ export interface PrintOptions {
 export const APP_SUBTITLE = 'Mit Gott unterwegs';
 
 /**
- * The head of every page: the app's picture of sun, horizon and hill on the right,
- * title and subtitle on the left, without a ground of its own, so it stands on the white page. A band across
- * the whole width of the paper, 210 by 30 mm.
+ * The mark of the app: sun over the horizon, arcs around it, a hill below. Drawn in lines,
+ * without a ground of its own, so it stands on the white page.
  */
-const BANNER = `<svg class="banner" viewBox="0 0 2100 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Henoch. ${APP_SUBTITLE}">
-<g stroke="#ddd8ce" stroke-width="2"><path d="M860 188H2100M860 214H2100M860 246H2100M860 282H2100"/></g>
-<g fill="none" stroke="#cfc8b8" stroke-width="2.5"><path d="M1430 170a150 150 0 0 1 300 0M1465 170a115 115 0 0 1 230 0M1500 170a80 80 0 0 1 160 0"/></g>
-<path d="M1528 170a52 52 0 0 1 104 0z" fill="#d4b13c"/>
-<path d="M1580 172C1588 215 1650 250 1710 300H1450C1510 250 1572 215 1580 172z" fill="#e9e5db"/>
-<path d="M860 170H2100" stroke="#1d2330" stroke-width="3"/>
-<path d="M1580 172C1588 215 1650 250 1710 300M1580 172C1572 215 1510 250 1450 300" fill="none" stroke="#1d2330" stroke-width="3"/>
-<text x="196" y="152" fill="#1d2330" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="92" font-weight="600">Henoch</text>
-<text x="200" y="216" fill="#4a5160" font-family="Literata, Georgia, 'Times New Roman', serif" font-size="38">${APP_SUBTITLE}</text>
+const MARK = `<svg class="mark" viewBox="0 0 60 40" aria-hidden="true">
+<g fill="none" stroke="#cfc8b8" stroke-width="1"><path d="M10 24a20 20 0 0 1 40 0M16 24a14 14 0 0 1 28 0"/></g>
+<path d="M23 24a7 7 0 0 1 14 0z" fill="#d4b13c"/>
+<path d="M30 25C31 31 38 35 44 39M30 25C29 31 22 35 16 39" fill="none" stroke="#1d2330" stroke-width="1.7"/>
+<path d="M2 24H58" stroke="#1d2330" stroke-width="1.7"/>
 </svg>`;
 
 export function entryToPrintHtml(e: ArenaEntry, { comfort = [] }: PrintOptions = {}): string {
@@ -141,18 +136,16 @@ export function entryToPrintHtml(e: ArenaEntry, { comfort = [] }: PrintOptions =
 * { box-sizing: border-box; }
 html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 body { margin: 0; padding: 0 20mm; color: #1d2330; font: 11.5pt/1.55 Literata, Georgia, 'Times New Roman', serif; }
-header { text-align: center; padding-bottom: 7mm; margin-bottom: 8mm; border-bottom: 0.4mm solid #a78100; position: relative; }
-header::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1.6mm; border-bottom: 0.15mm solid #a78100; }
-.place { font: 600 7pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #7f6200; margin: 0 0 3mm; }
-h1 { font-size: 15pt; line-height: 1.2; font-weight: 600; margin: 0 0 2mm; hyphens: auto; }
+header { margin-bottom: 7mm; }
+h1 { font-size: 16pt; line-height: 1.22; font-weight: 600; margin: 0 0 1.5mm; hyphens: auto; }
 .date { font-size: 9.5pt; font-style: italic; color: #636a76; margin: 0; }
-.verses { text-align: center; color: #7f6200; margin: 0 0 6mm; }
+.verses { color: #7f6200; font-style: italic; margin: 0 0 4mm; }
 h2 { font: 600 8.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: #2e4057; margin: 8mm 0 3mm; break-after: avoid; }
 /* Spacer rows repeat on every page and keep the text clear of the running head and foot. */
 table.page { width: 100%; border-collapse: collapse; }
 table.page td { padding: 0; }
-.sp-head { height: 40mm; }
-.sp-foot { height: 34mm; }
+.sp-head { height: 34mm; }
+.sp-foot { height: 32mm; }
 ul { margin: 0 0 4mm; padding-left: 5mm; }
 li { margin-bottom: 1.5mm; break-inside: avoid; }
 ul.points { list-style: none; padding: 0; }
@@ -162,16 +155,21 @@ ul.points { list-style: none; padding: 0; }
 .ink { border: 0.2mm solid #ddd8ce; border-radius: 1.5mm; overflow: hidden; }
 .ink { break-inside: avoid; }
 .ink svg { display: block; width: auto; max-width: 100%; max-height: 180mm; margin: 0 auto; }
-.running-head { position: fixed; top: 0; left: 0; right: 0; height: 30mm; overflow: hidden; }
-.banner { display: block; width: 100%; height: 100%; }
-.running-foot { position: fixed; bottom: 0; left: 0; right: 0; padding: 0 28mm 11mm; text-align: center; font-style: italic; font-size: 9pt; line-height: 1.4; color: #4a5160; }
+.running-head { position: fixed; top: 12mm; left: 20mm; right: 20mm; display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 3.2mm; border-bottom: 0.25mm solid #a78100; }
+.brand { display: flex; align-items: center; gap: 3.2mm; }
+.mark { width: 16mm; height: auto; display: block; }
+.brand b { display: block; font: 600 13pt/1.05 Literata, Georgia, 'Times New Roman', serif; }
+.brand span { display: block; margin-top: 1.2mm; font: 600 6.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.2em; text-transform: uppercase; color: #636a76; }
+.place { font: 600 7pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; letter-spacing: 0.22em; text-transform: uppercase; color: #7f6200; padding-bottom: 1mm; }
+.running-foot { position: fixed; bottom: 0; left: 0; right: 0; padding: 0 30mm 11mm; text-align: center; font-style: italic; font-size: 8.5pt; line-height: 1.4; color: #4a5160; }
+.running-foot::before { content: ''; display: block; width: 12mm; margin: 0 auto 3.5mm; border-top: 0.25mm solid #a78100; }
 .running-foot p { margin: 0 0 1.2mm; }
 .running-foot small { font: normal 600 7.5pt/1 'Source Sans 3', Helvetica, Arial, sans-serif; font-style: normal; letter-spacing: 0.06em; color: #7f6200; }
 </style></head><body>
-<div class="running-head">${BANNER}</div>
+<div class="running-head"><div class="brand">${MARK}<div><b>Henoch</b><span>${esc(APP_SUBTITLE)}</span></div></div><div class="place">${esc(placeOf(e))}</div></div>
 ${comfort.length ? `<div class="running-foot">${comfort.map((c) => `<p>${esc(c.text)} <small>${esc(c.ref)}</small></p>`).join('')}</div>` : ''}
 <table class="page"><thead><tr><td><div class="sp-head"></div></td></tr></thead><tfoot><tr><td><div class="sp-foot"></div></td></tr></tfoot><tbody><tr><td>
-<header><p class="place">${esc(placeOf(e))}</p><h1>${esc(title)}</h1><p class="date">${esc(longDate(e.createdAt))}</p></header>
+<header><h1>${esc(title)}</h1><p class="date">${esc(longDate(e.createdAt))}</p></header>
 ${sections.join('\n')}
 </td></tr></tbody></table>
 </body></html>`;
