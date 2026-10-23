@@ -1,12 +1,12 @@
 /**
  * Export of a single Arena entry (Gebetskammer, Eisenschmiede, Wüstenwanderung):
- * as Markdown for a notes system, and as a designed page for printing to PDF.
+ * as Markdown for a notes system, and as a designed page in a PDF file.
  * Handwriting goes along as an image. Nothing leaves the device (rule 10).
  */
 import type { ArenaEntry } from './model';
 import { entryTitle, forgeTitle, isEmptyEntry } from './arena';
 import { inkToSvg } from './ink';
-import { esc, paragraphs, printHtml, printPageHtml, safeName, shortDate, type PrintDoc } from './printDoc';
+import { paragraphs, safeName, savePdf, shortDate, type Block, type PrintDoc } from './printDoc';
 
 const longDate = (ms: number) =>
   new Date(ms).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -84,21 +84,17 @@ export function entriesToMarkdown(entries: readonly ArenaEntry[], place: string,
 }
 
 /** What the printed page of an entry is made of; `comfort` is the word of its place for the foot. */
-function entryPrintSections(e: ArenaEntry): string {
+function entryBlocks(e: ArenaEntry): Block[] {
   const concerns = filled(e.concerns);
   const points = (e.points ?? []).filter((p) => p.text.trim());
-  const sections: string[] = [];
-  if (concerns.length) sections.push(`<h2>Gebetsanliegen</h2><ul>${concerns.map((c) => `<li>${esc(c)}</li>`).join('')}</ul>`);
+  const out: Block[] = [];
+  if (concerns.length) out.push({ kind: 'label', text: 'Gebetsanliegen' }, { kind: 'list', items: concerns.map((c) => ({ runs: [{ text: c }] })) });
   if (points.length) {
-    sections.push(
-      `<h2>Zum Besprechen</h2><ul class="points">${points
-        .map((p) => `<li class="${p.done ? 'done' : ''}"><span class="box">${p.done ? '✓' : ''}</span>${esc(p.text.trim())}</li>`)
-        .join('')}</ul>`,
-    );
+    out.push({ kind: 'label', text: 'Zum Besprechen' }, { kind: 'list', items: points.map((p) => ({ runs: [{ text: p.text.trim() }], check: p.done })) });
   }
-  if (e.text.trim()) sections.push(`<div class="text">${paragraphs(e.text)}</div>`);
-  if (e.ink?.length) sections.push(`<h2>Handschrift</h2><div class="ink">${inkToSvg(e.ink).replace(/ width="[\d.]+" height="[\d.]+"/, '')}</div>`);
-  return sections.join('\n');
+  if (e.text.trim()) out.push(...paragraphs(e.text));
+  if (e.ink?.length) out.push({ kind: 'label', text: 'Handschrift' }, { kind: 'svg', svg: inkToSvg(e.ink) });
+  return out;
 }
 
 export function entryToPrintDoc(e: ArenaEntry, comfort: PrintDoc['comfort'] = []): PrintDoc {
@@ -107,24 +103,22 @@ export function entryToPrintDoc(e: ArenaEntry, comfort: PrintDoc['comfort'] = []
     title: exportTitle(e),
     subtitle: longDate(e.createdAt),
     verses: filled(e.verses).join(' · ') || undefined,
-    body: entryPrintSections(e),
+    blocks: entryBlocks(e),
     comfort,
   };
 }
 
-/** All entries of a place on one printed document, each starting with its title and date. */
+/** All entries of a place in one document, each starting with its title and date. */
 export function entriesToPrintDoc(entries: readonly ArenaEntry[], place: string, today: string, comfort: PrintDoc['comfort'] = []): PrintDoc {
   const kept = keptEntries(entries);
   return {
     place,
     title: place,
     subtitle: `${kept.length} ${kept.length === 1 ? 'Eintrag' : 'Einträge'} · Stand ${new Date(`${today}T12:00:00`).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`,
-    body: kept
-      .map((e) => {
-        const verses = filled(e.verses).join(' · ');
-        return `<section class="entry"><h3 class="md">${esc(exportTitle(e))}</h3><p class="date">${esc(longDate(e.createdAt))}</p>${verses ? `<p class="verses">${esc(verses)}</p>` : ''}${entryPrintSections(e)}</section>`;
-      })
-      .join('\n'),
+    blocks: kept.flatMap((e): Block[] => [
+      { kind: 'entry', title: exportTitle(e), date: longDate(e.createdAt), verses: filled(e.verses).join(' · ') || undefined },
+      ...entryBlocks(e),
+    ]),
     comfort,
   };
 }
@@ -132,10 +126,9 @@ export function entriesToPrintDoc(entries: readonly ArenaEntry[], place: string,
 /** The file name without extension for all entries of a place: "261023_Gebetskammer". */
 export const entriesBasename = (place: string, today: string) => `${shortDate(today)}_${safeName(place)}`;
 
-export const printEntries = (entries: readonly ArenaEntry[], place: string, today: string, comfort?: PrintDoc['comfort']): void =>
-  printHtml(printPageHtml(entriesToPrintDoc(entries, place, today, comfort)), entriesBasename(place, today));
+/** All entries of a place as one PDF, handed to the share sheet. */
+export const saveEntriesPdf = (entries: readonly ArenaEntry[], place: string, today: string, comfort?: PrintDoc['comfort']) =>
+  savePdf(entriesToPrintDoc(entries, place, today, comfort), entriesBasename(place, today));
 
-export const entryToPrintHtml = (e: ArenaEntry, comfort?: PrintDoc['comfort']) => printPageHtml(entryToPrintDoc(e, comfort));
-
-/** Opens the print dialog for an entry; "Als PDF sichern" there makes the file. */
-export const printEntry = (e: ArenaEntry, comfort?: PrintDoc['comfort']): void => printHtml(entryToPrintHtml(e, comfort), exportBasename(e));
+/** An entry as a PDF, handed to the share sheet. */
+export const saveEntryPdf = (e: ArenaEntry, comfort?: PrintDoc['comfort']) => savePdf(entryToPrintDoc(e, comfort), exportBasename(e));

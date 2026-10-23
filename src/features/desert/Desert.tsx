@@ -1,7 +1,8 @@
 import { useId, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { downloadText } from '../../app/files';
-import { printMarkdown, safeName, shortDate } from '../../domain/printDoc';
+import { saveMarkdownPdf, safeName, shortDate } from '../../domain/printDoc';
+import { usePdf } from '../../app/usePdf';
 import { runToMarkdown } from '../../domain/winterArcMarkdown';
 import { DESERT_GUIDE, type Run } from '../../content/desert';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_PHASES, WINTER_ARC_REVIEW } from '../../content/winterArc';
@@ -316,13 +317,16 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
     downloadText(`henoch-${store.today()}.md`, await store.exportMarkdown(), 'text/markdown');
   };
   // The round on the common page: its heading line becomes title and subtitle, the weeks follow.
+  const pdf = usePdf();
   const exportPdf = () => {
     const [head = '', , ...rest] = runToMarkdown(run, profile.winterArc, profile.winterArcSettings);
     const [name = '', ...facts] = head.replace(/^## /, '').split(' · ');
-    printMarkdown(
-      rest.join('\n'),
-      { place: 'Wüstenzeit', title: name, subtitle: facts.join(' · '), comfort: [{ text: WINTER_ARC_COMFORT.verse.text, ref: WINTER_ARC_COMFORT.verse.ref }] },
-      `${shortDate(run.startDate)}_${safeName(name) || 'Wüstenzeit'}`,
+    pdf(() =>
+      saveMarkdownPdf(
+        rest.join('\n'),
+        { place: 'Wüstenzeit', title: name, subtitle: facts.join(' · '), comfort: [{ text: WINTER_ARC_COMFORT.verse.text, ref: WINTER_ARC_COMFORT.verse.ref }] },
+        `${shortDate(run.startDate)}_${safeName(name) || 'Wüstenzeit'}`,
+      ),
     );
   };
   return (

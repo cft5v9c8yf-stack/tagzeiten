@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.0',
+    date: '2026-10-23',
+    title: 'PDF ohne Druckfenster, auch in der installierten App',
+    changes: [
+      { area: 'Arena', text: '„Als PDF sichern“ erstellt das Blatt jetzt direkt auf deinem Gerät und öffnet das Teilen-Menü: von dort sicherst du es in Dateien, Notizen oder deinem Notizsystem. Das geht in Safari und in der installierten App, wo es kein Druckfenster gibt. Das Blatt sieht aus wie zuvor; die Handschrift steht in einem Kasten, so hoch wie das Geschriebene.' },
+    ],
+  },
+  {
     version: '1.34.1',
     date: '2026-10-23',
     title: 'Als PDF sichern öffnet das Druckfenster zuverlässig',

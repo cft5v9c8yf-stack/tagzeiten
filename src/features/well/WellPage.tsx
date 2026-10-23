@@ -4,7 +4,8 @@ import { TileGroup } from '../../ui/TileGroup';
 import { useToast } from '../../app/Toast';
 import { downloadText } from '../../app/files';
 import { fieldKeys } from '../../ui/fieldNav';
-import { meetingFilename, meetingsBasename, meetingsToMarkdown, meetingToMarkdown, printMeeting, printMeetings } from '../../domain/wellExport';
+import { meetingFilename, meetingsBasename, meetingsToMarkdown, meetingToMarkdown, saveMeetingPdf, saveMeetingsPdf } from '../../domain/wellExport';
+import { usePdf } from '../../app/usePdf';
 import { ExportAll } from '../../ui/ExportAll';
 import { useProfile, useStore } from '../../data/hooks';
 import {
@@ -204,6 +205,7 @@ export function WellMeetingPage({ id }: { id: string }) {
   const pin = usePin();
   const [confirm, setConfirm] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const pdf = usePdf();
   const exportMarkdown = useMarkdownExport();
   const meeting = profile.well.meetings.find((m) => m.id === id);
   const place = `/arena?bereich=${WELL_SLUG}`;
@@ -256,10 +258,9 @@ export function WellMeetingPage({ id }: { id: string }) {
           <button type="button" className="btn" onClick={() => exportMarkdown(meeting)}>
             Als Text exportieren (Markdown)
           </button>
-          <button type="button" className="btn" onClick={() => printMeeting(meeting)}>
+          <button type="button" className="btn" onClick={() => pdf(() => saveMeetingPdf(meeting))}>
             Als PDF sichern
           </button>
-          <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
         </div>
       )}
       {confirm && (
@@ -330,6 +331,7 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
   const toast = useToast();
   const pin = usePin();
   const exportMarkdown = useMarkdownExport();
+  const pdf = usePdf();
   return (
     <li className="arena-item">
       <Link className="arena-card" to={meetingPath(m.id)}>
@@ -345,7 +347,7 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
         items={[
           { label: m.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(m) },
           { label: 'Als Text exportieren (Markdown)', onSelect: () => exportMarkdown(m) },
-          { label: 'Als PDF sichern', onSelect: () => printMeeting(m) },
+          { label: 'Als PDF sichern', onSelect: () => pdf(() => saveMeetingPdf(m)) },
           {
             label: 'Besprochen – archivieren',
             onSelect: () => {
@@ -375,6 +377,7 @@ function ListItem({ meeting: m }: { meeting: WellMeeting }) {
 export function WellPage() {
   const store = useStore();
   const toast = useToast();
+  const pdf = usePdf();
   const profile = useProfile();
   const navigate = useNavigate();
   const name = wifeName(profile.house.wife.name);
@@ -448,7 +451,7 @@ export function WellPage() {
                 downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
                 toast('Treffen als Markdown erstellt');
               }}
-              onPdf={() => printMeetings(profile.well.meetings, store.today())}
+              onPdf={() => pdf(() => saveMeetingsPdf(profile.well.meetings, store.today()))}
             />
           )}
         </div>

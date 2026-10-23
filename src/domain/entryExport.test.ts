@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { entryToMarkdown, entryToPrintHtml, exportFilename } from './entryExport';
+import { entryToMarkdown, entryToPrintDoc, exportFilename } from './entryExport';
+import { renderPdf } from './pdfRender';
 import { newEntry } from './arena';
 import type { ArenaEntry } from './model';
 
@@ -22,12 +23,18 @@ describe('single-entry export', () => {
     expect(md).toContain('![Handschrift](data:image/svg+xml;base64,');
   });
 
-  it('builds a print page that escapes text and carries the handwriting as SVG', () => {
-    const html = entryToPrintHtml(entry(), [{ text: 'Trost', ref: 'Röm 8,37' }]);
-    expect(html).toContain('Herr, &lt;hilf&gt;.');
-    expect(html).toContain('<svg');
-    expect(html).toContain('Gebetskammer');
-    expect(html).toContain('Trost');
+  it('describes the page: place, title, verses, concerns, text and the handwriting as a drawing', () => {
+    const doc = entryToPrintDoc(entry(), [{ text: 'Trost', ref: 'Röm 8,37' }]);
+    expect(doc.place).toBe('Gebetskammer');
+    expect(doc.verses).toBe('Römer 8,37');
+    expect(doc.blocks.map((b) => b.kind)).toEqual(['label', 'list', 'para', 'para', 'label', 'svg']);
+    expect(doc.blocks[2]).toEqual({ kind: 'para', runs: [{ text: 'Herr, <hilf>.' }] });
+  });
+
+  it('draws it as a PDF file on the device', async () => {
+    const bytes = await renderPdf(entryToPrintDoc(entry({ text: 'Mit Umlauten äöü ß, „Anführung“ – und 🙏.' }), [{ text: 'Trost', ref: 'Röm 8,37' }]));
+    expect(new TextDecoder().decode(bytes.slice(0, 5))).toBe('%PDF-');
+    expect(bytes.length).toBeGreaterThan(2000);
   });
 
   it('names files by date as JJMMTT and the title, without forbidden characters', () => {

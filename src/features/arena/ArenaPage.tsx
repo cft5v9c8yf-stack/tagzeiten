@@ -29,7 +29,8 @@ import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
 import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
 import { downloadText } from '../../app/files';
 import { fieldKeys, focusSibling } from '../../ui/fieldNav';
-import { entriesBasename, entriesToMarkdown, entryToMarkdown, exportFilename, printEntries, printEntry } from '../../domain/entryExport';
+import { entriesBasename, entriesToMarkdown, entryToMarkdown, exportFilename, saveEntriesPdf, saveEntryPdf } from '../../domain/entryExport';
+import { usePdf } from '../../app/usePdf';
 import { ExportAll } from '../../ui/ExportAll';
 
 type Kind = 'journal' | 'forge' | 'desert';
@@ -406,6 +407,7 @@ const printComfort = (e: ArenaEntry) => PLACES[kindOf(e)].comfort;
 /** All entries of a place (also the archived) as one Markdown file or one PDF, under the list. */
 function PlaceExport({ kind }: { kind: Kind }) {
   const store = useStore();
+  const pdf = usePdf();
   const profile = useProfile();
   const toast = useToast();
   const entries = profile.arena.filter((e) => kindOf(e) === kind && !isEmptyEntry(e));
@@ -419,7 +421,7 @@ function PlaceExport({ kind }: { kind: Kind }) {
         downloadText(`${entriesBasename(title, today)}.md`, entriesToMarkdown(entries, title, today), 'text/markdown');
         toast('Einträge als Markdown erstellt');
       }}
-      onPdf={() => printEntries(entries, title, today, comfort)}
+      onPdf={() => pdf(() => saveEntriesPdf(entries, title, today, comfort))}
     />
   );
 }
@@ -477,6 +479,7 @@ function usePin() {
 /** An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting. */
 function ListItem({ entry, children }: { entry: ArenaEntry; children: React.ReactNode }) {
   const store = useStore();
+  const pdf = usePdf();
   const toast = useToast();
   const pin = usePin();
   const forge = kindOf(entry) === 'forge';
@@ -495,7 +498,7 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
               toast('Eintrag als Markdown erstellt');
             },
           },
-          { label: 'Als PDF sichern', onSelect: () => printEntry(entry, printComfort(entry)) },
+          { label: 'Als PDF sichern', onSelect: () => pdf(() => saveEntryPdf(entry, printComfort(entry))) },
           {
             label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
             onSelect: () => {
@@ -540,6 +543,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   // Deleting is asked right under the icons at the top.
   const [confirm, setConfirm] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const pdf = usePdf();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -604,10 +608,9 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           >
             Als Text exportieren (Markdown)
           </button>
-          <button type="button" className="btn" onClick={() => printEntry(entry, printComfort(entry))}>
+          <button type="button" className="btn" onClick={() => pdf(() => saveEntryPdf(entry, printComfort(entry)))}>
             Als PDF sichern
           </button>
-          <p className="small muted">Bei „Als PDF sichern“ öffnet sich das Druckfenster; wähle dort „Als PDF sichern“.</p>
         </div>
       )}
       {confirm && (
