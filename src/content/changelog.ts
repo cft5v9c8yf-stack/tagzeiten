@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.3',
+    date: '2026-10-23',
+    title: 'Die Versionen in Zehnergruppen',
+    changes: [
+      { area: 'Mehr', text: 'Unter Über Henoch, „Versionen“, stehen nur noch die zehn neuesten Versionen einzeln da, die neueste aufgeklappt. Die früheren sind in Zehnergruppen zusammengefaltet (1.20 bis 1.29, 1.10 bis 1.19, 1.0 bis 1.9), darunter wie bisher der Aufbau bis Henoch 1.0. Jede Gruppe lässt sich aufklappen.' },
+    ],
+  },
+  {
     version: '1.35.2',
     date: '2026-10-23',
     title: 'Ohne „Erhört“ in Mein Haus',

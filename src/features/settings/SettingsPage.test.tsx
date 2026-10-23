@@ -933,8 +933,14 @@ describe('Rückblick', () => {
     await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
     expect(versions[0]).toMatch(/^Version 1\.35(?![\d.])/);
-    expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
-    // The versions before 1.0 fold together, last.
+    // The newest ten numbers stand one by one; earlier tens fold together, then the versions before 1.0.
+    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(6);
+    expect(versions.filter((v) => v?.startsWith('Versionen ')).map((v) => /^Versionen \S+ bis \S+/.exec(v!)![0])).toEqual([
+      'Versionen 1.20 bis 1.29',
+      'Versionen 1.10 bis 1.19',
+      'Versionen 1.0 bis 1.9',
+      'Versionen 0.1 bis 0.41',
+    ]);
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
     expect(screen.queryAllByRole('heading', { level: 4 }).filter((h) => /^Version 0\./.test(h.textContent ?? ''))).toHaveLength(0);
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
