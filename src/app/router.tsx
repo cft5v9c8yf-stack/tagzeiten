@@ -65,7 +65,7 @@ export const router = (IS_DEMO ? createHashRouter : createBrowserRouter)([
       // The reading plan is set under "Wort" (an old address led to the overview of "Mehr").
       { path: 'mehr/leseplan', element: <Navigate to="/bibel" replace /> },
       // "Einstellungen" is gone: its parts stand on "Mehr" themselves.
-      { path: 'mehr/einstellungen', element: <Navigate to="/mehr/darstellung" replace /> },
+      { path: 'mehr/einstellungen', element: <Navigate to="/mehr/app-und-daten" replace /> },
       { path: 'mehr', element: <SettingsPage /> },
       { path: 'mehr/:bereich', element: <SettingsPage /> },
       { path: 'kirchenjahr', element: <ChurchYearPage /> },

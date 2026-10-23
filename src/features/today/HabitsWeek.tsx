@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatLong, formatShort, fromKey, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
-import { canToggle, fitsHouse, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
+import { canToggle, fitsHouse, shownHabit, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
 import { READING_HABIT } from '../../content/habits';
+import { linkedHabit } from '../../domain/well';
+import { Link } from 'react-router';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun, hallModeIn, isInRun, stageOf } from '../../domain/winterArc';
 import { StarIcon } from '../../ui/Icons';
@@ -55,7 +57,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const desertIds = new Set(hallMode ? (run?.habits ?? []) : []);
   // A Wüstenzeit not yet in this week (or not begun) still has its habits chosen here.
   const careOnly = !!run && !hallMode && stageOf(run, today) !== 'after';
-  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house) && !desertIds.has(h.id));
+  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house) && shownHabit(h, profile.well.on) && !desertIds.has(h.id));
   // Sunday rest: no usual habits on Sundays; what was ticked before stays stored. The Wüstenzeit keeps its days.
   const resting = (k: DateKey) => profile.sundayRest && weekdayOf(k) === 0;
 
@@ -135,9 +137,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const monthly = keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'monthly'));
   const tick = (h: Habit) => {
     const per = isPerDay(h);
-    return (
+    const box = (
       <Tick
-        key={h.id}
         checked={per ? isDoneOn(h, lookup(sel)) : isDoneInPeriod(h, sel, lookup)}
         disabled={!canToggle(h, sel, today, lookup)}
         note={per ? noteOf(h, sel, lookup) : h.rhythm === 'weekly' ? 'diese Woche' : 'diesen Monat'}
@@ -146,6 +147,17 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         {h.name}
       </Tick>
     );
+    // The meeting at the Abendbrunnen: from the habit straight into its place in the Arena.
+    if (profile.well.on && h.id === linkedHabit(profile.well, profile.habits))
+      return (
+        <Fragment key={h.id}>
+          {box}
+          <p className="habit-link small">
+            <Link to="/arena?bereich=abendbrunnen">Zum Treffen am Abendbrunnen</Link>
+          </p>
+        </Fragment>
+      );
+    return <Fragment key={h.id}>{box}</Fragment>;
   };
   const groups: [string, Habit[]][] = [
     ['Im Blick', byHand(focus)],

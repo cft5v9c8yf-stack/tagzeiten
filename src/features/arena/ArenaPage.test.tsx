@@ -55,6 +55,41 @@ describe('Arena', () => {
     expect(document.querySelector('.arena-note')!.textContent).toContain('Sünde wird gebetet, nicht notiert');
   });
 
+  it('moves between the fields with Tab and Shift+Tab, and with Enter in the title and in an empty line', async () => {
+    await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const title = await screen.findByLabelText('Titel');
+    const verse = screen.getByLabelText('Bibelstelle 1');
+    const concern = screen.getByLabelText('Gebetsanliegen 1');
+    title.focus();
+    fireEvent.keyDown(title, { key: 'Enter' });
+    expect(document.activeElement).toBe(verse);
+    fireEvent.keyDown(verse, { key: 'Tab' });
+    expect(document.activeElement).toBe(concern);
+    fireEvent.keyDown(concern, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(verse);
+    // Enter in an empty line goes on to the next field.
+    fireEvent.keyDown(verse, { key: 'Enter' });
+    expect(document.activeElement).toBe(concern);
+  });
+
+  it('makes a new line with Enter in the verses and concerns, and takes an empty one out with Backspace', async () => {
+    const store = await renderArena();
+    fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+    const first = await screen.findByLabelText('Gebetsanliegen 1');
+    // An empty line adds nothing.
+    fireEvent.keyDown(first, { key: 'Enter' });
+    expect(screen.queryByLabelText('Gebetsanliegen 2')).toBeNull();
+    fireEvent.change(first, { target: { value: 'Geduld' } });
+    fireEvent.keyDown(first, { key: 'Enter' });
+    const second = await screen.findByLabelText('Gebetsanliegen 2');
+    await waitFor(() => expect(document.activeElement).toBe(second));
+    fireEvent.keyDown(second, { key: 'Backspace' });
+    await waitFor(() => expect(screen.queryByLabelText('Gebetsanliegen 2')).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText('Gebetsanliegen 1')));
+    await waitFor(() => expect(store.getProfile().arena[0]!.concerns).toEqual(['Geduld']));
+  });
+
   it('writes an entry with several verses and concerns and a long text, under a word of comfort', async () => {
     const store = await renderArena();
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
@@ -323,7 +358,7 @@ describe('Titles and pinned entries', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Oben' } });
     const bar = screen.getByRole('toolbar', { name: 'Eintrag' });
-    expect(bar.querySelectorAll('svg')).toHaveLength(4);
+    expect(bar.querySelectorAll('svg')).toHaveLength(5);
     expect(document.querySelector('.arena-actions')).toBeNull();
     fireEvent.click(within(bar).getByRole('button', { name: 'Anheften' }));
     await waitFor(() => expect(within(bar).getByRole('button', { name: 'Lösen' }).getAttribute('aria-pressed')).toBe('true'));

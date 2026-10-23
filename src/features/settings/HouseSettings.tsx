@@ -1,8 +1,6 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
-import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
-  answerConcern,
   emptyChild,
   type ChildSex,
   type House,
@@ -23,10 +21,7 @@ export const HOUSE_INFO = (
       steht jeden Tag im Mittelpunkt: montags deine Frau, dienstags bis freitags je ein Kind, samstags eure Ehe, sonntags
       das ganze Haus. Am Abend folgt nach Luthers Abendsegen der Segen über das Haus.
     </p>
-    <p>
-      Ein Anliegen, das Gott erhört hat, hältst du mit „Erhört“ fest. Es steht dann im Rückblick unter
-      „Gebetserhörungen“. Alles bleibt auf diesem Gerät.
-    </p>
+    <p>Alles bleibt auf diesem Gerät.</p>
   </>
 );
 
@@ -37,18 +32,8 @@ function autosize(el: HTMLTextAreaElement | null) {
   el.style.height = `${el.scrollHeight + 2}px`;
 }
 
-/** The current concern of one person, with "Erhört" to keep it as answered. */
-function ConcernField({
-  label,
-  person,
-  onChange,
-  onAnswered,
-}: {
-  label: string;
-  person: HousePerson;
-  onChange: (concern: string) => void;
-  onAnswered: () => void;
-}) {
+/** The current concern of one person. */
+function ConcernField({ label, person, onChange }: { label: string; person: HousePerson; onChange: (concern: string) => void }) {
   const id = useId();
   const ref = useRef<HTMLTextAreaElement>(null);
   useLayoutEffect(() => autosize(ref.current), [person.concern]);
@@ -63,22 +48,6 @@ function ConcernField({
         placeholder="Aktuelles Anliegen"
         onChange={(e) => onChange(e.target.value)}
       />
-      <div className="house-concern-actions">
-        <button
-          type="button"
-          className="btn"
-          disabled={!person.concern.trim()}
-          aria-describedby={person.concern.trim() ? undefined : `${id}-hint`}
-          onClick={onAnswered}
-        >
-          Erhört
-        </button>
-        {!person.concern.trim() && (
-          <span id={`${id}-hint`} className="small muted">
-            Erst wenn ein Anliegen dasteht.
-          </span>
-        )}
-      </div>
     </div>
   );
 }
@@ -92,7 +61,6 @@ function ChildRow({
   dragging,
   hintId,
   update,
-  answer,
 }: {
   child: HouseChild;
   index: number;
@@ -102,7 +70,6 @@ function ChildRow({
   dragging: boolean;
   hintId: string;
   update: (fn: (c: HouseChild) => HouseChild | null, immediate?: boolean) => void;
-  answer: () => void;
 }) {
   const nameId = useId();
   const label = child.name.trim() || `Kind ${index + 1}`;
@@ -146,7 +113,6 @@ function ChildRow({
           label={`Anliegen für ${label}`}
           person={child}
           onChange={(concern) => update((c) => ({ ...c, concern }), false)}
-          onAnswered={answer}
         />
       </div>
       {canRemove && (
@@ -171,7 +137,6 @@ const childrenLine = (h: House) => {
 /** "Mein Haus": the wife and the children, sortable, each with a current concern. */
 export function HouseSettings() {
   const store = useStore();
-  const toast = useToast();
   const house = useProfile().house;
   const wifeId = useId();
   const hintId = useId();
@@ -180,17 +145,6 @@ export function HouseSettings() {
 
   const setHouse = (fn: (h: House) => House, immediate = true) =>
     store.updateProfile((p) => ({ ...p, house: fn(p.house) }), { immediate });
-
-  const answer = (who: 'wife' | string) => {
-    store.updateProfile(
-      (p) => {
-        const r = answerConcern(p.house, p.answered, who, store.today());
-        return { ...p, house: r.house, answered: r.answered };
-      },
-      { immediate: true },
-    );
-    toast('Als erhört festgehalten – im Rückblick unter „Gebetserhörungen“');
-  };
 
   const move = (id: string, to: number) =>
     setHouse((h) => {
@@ -261,7 +215,6 @@ export function HouseSettings() {
           label={`Anliegen für ${house.wife.name.trim() || 'deine Frau'}`}
           person={house.wife}
           onChange={(concern) => setHouse((h) => ({ ...h, wife: { ...h.wife, concern } }), false)}
-          onAnswered={() => answer('wife')}
         />
             </>
           ),
@@ -287,7 +240,6 @@ export function HouseSettings() {
               style={itemStyle(c.id)}
               dragging={drag?.id === c.id}
               hintId={hintId}
-              answer={() => answer(c.id)}
               update={(fn, immediate = true) =>
                 setHouse(
                   (h) => ({

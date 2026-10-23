@@ -90,6 +90,26 @@ describe('Stille Zeit as a flow', () => {
 
 });
 
+describe('Stille Zeit and the Abendbrunnen', () => {
+  const meeting = { id: 'a', date: '2026-09-22', resolution: 'Abends zuhören', resolutionDone: false, herWish: 'Ein Abend ohne Termine', herConcern: '', myConcern: '' };
+  const alignment = async (on: boolean) => {
+    await renderMorning((s) => s.updateProfile((p) => ({ ...p, well: { on, meetings: [meeting] } }), { immediate: true }));
+    fireEvent.click(within(chain()).getAllByRole('button').at(-2)!);
+    await waitFor(() => expect(document.querySelector('.flow-step .part-alignment')).not.toBeNull());
+    return document.querySelector('.flow-step')!.textContent!;
+  };
+
+  it('shows the resolution and the wish of the week in the alignment, when the Abendbrunnen is on', async () => {
+    const text = await alignment(true);
+    expect(text).toContain('Dein Vorsatz für diese Woche: Abends zuhören');
+    expect(text).toContain('Ihr Wunsch an dich: Ein Abend ohne Termine');
+  });
+
+  it('shows nothing of it while the Abendbrunnen is off', async () => {
+    expect(await alignment(false)).not.toContain('Abendbrunnen');
+  });
+});
+
 describe('Stille Zeit and the reading habit', () => {
   it('marks the day\'s reading as read when the step "Das Wort" is left, and moves the plan on', async () => {
     const store = await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));

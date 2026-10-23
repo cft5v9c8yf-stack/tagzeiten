@@ -7,7 +7,7 @@ import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { setOpen } from '../../ui/collapseState';
-import { TileGroup } from '../../ui/TileGroup';
+import { TileGroup, type TileItem } from '../../ui/TileGroup';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
 import { About, ABOUT_INFO } from './About';
@@ -21,19 +21,17 @@ import { HABITS_INFO, HabitSettings } from './HabitSettings';
 import { HOUSE_INFO, HouseSettings } from './HouseSettings';
 import { PRAYER_INFO, PrayerSettings } from './PrayerSettings';
 import { PrayerTreasury, TREASURY_INFO } from './PrayerTreasury';
-import { DisplaySettings, ScheduleSettings } from './ScheduleSettings';
+import { HabitHistorySwitch, ScheduleSettings, tilesOf, useDisplayTiles } from './ScheduleSettings';
 
 interface Area {
   slug: string;
-  id: SettingsSectionId | 'display' | 'data' | 'about' | 'review' | 'imprint' | 'changelog' | 'guide';
+  id: SettingsSectionId | 'data' | 'about' | 'review' | 'imprint';
   title: string;
   /** One line on the tile: what can be set there. */
   line: string;
   icon: FlowIconName;
   info: ReactNode;
   body: () => ReactNode;
-  /** Across both columns of the overview, like the news. */
-  wide?: boolean;
 }
 
 /**
@@ -43,9 +41,25 @@ interface Area {
 /** The tiles under "Gebet", in order; one of them is open at a time. */
 const PRAYER_TILES = ['more.house', 'more.prayerlist', 'more.treasury'] as const;
 
-const ALIASES: Record<string, { slug: string; open: string }> = {
+/** The tiles an old address can open, by group. */
+const OPEN_GROUPS: readonly (readonly string[])[] = [
+  PRAYER_TILES,
+  ['more.times.schedule', 'more.display.atBed', 'more.display.compline', 'more.display.armor'],
+  ['more.display.theme', 'more.install', 'more.airplane'],
+  ['more.guide', 'more.changelog'],
+];
+
+const ALIASES: Record<string, { slug: string; open?: string }> = {
   haus: { slug: 'gebet', open: 'more.house' },
   gebetsschatz: { slug: 'gebet', open: 'more.treasury' },
+  // Areas of before 1.34, now parts of another.
+  zeiten: { slug: 'tag-und-woche', open: 'more.times.schedule' },
+  andacht: { slug: 'tag-und-woche' },
+  arena: { slug: 'tag-und-woche' },
+  darstellung: { slug: 'app-und-daten', open: 'more.display.theme' },
+  daten: { slug: 'app-und-daten' },
+  anleitung: { slug: 'ueber', open: 'more.guide' },
+  versionen: { slug: 'ueber', open: 'more.changelog' },
 };
 
 /** "Gebet": Mein Haus, the prayer list and the treasury of prayers as tiles. */
@@ -85,6 +99,100 @@ function PrayerTiles() {
   );
 }
 
+/** "Tag und Woche": the day, the week and the special times, each a group of tiles. */
+function DayAndWeek() {
+  const all = useDisplayTiles();
+  const times: TileItem = {
+    id: 'more.times.schedule',
+    title: 'Zeiten',
+    line: 'Aufstehen, Stille Zeit, Abend',
+    icon: 'clock',
+    info: <p>Für den Tagesbogen auf der Startseite. Nicht jeder steht um vier auf.</p>,
+    content: <ScheduleSettings />,
+  };
+  return (
+    <>
+      <p className="more-group-title">Der Tag</p>
+      <TileGroup level={4} label="Der Tag" items={[times, ...tilesOf(all, ['atBed', 'compline', 'armor'])]} />
+      <p className="more-group-title">Die Woche</p>
+      <TileGroup level={4} label="Die Woche" items={tilesOf(all, ['weekReview', 'sundayRest', 'well'])} />
+      <p className="more-group-title">Besondere Zeiten</p>
+      <TileGroup level={4} label="Besondere Zeiten" items={tilesOf(all, ['desert'])} />
+    </>
+  );
+}
+
+/** "App und Daten": how the app looks and where it lives, then your data. */
+function AppAndData() {
+  const all = useDisplayTiles();
+  return (
+    <>
+      <p className="more-group-title">Die App</p>
+      <TileGroup
+        label="Die App"
+        items={[
+          all.theme!,
+          {
+            id: 'more.install',
+            title: 'App installieren',
+            line: 'Android und iPhone',
+            icon: 'phone',
+            info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
+            content: <InstallGuide level={4} />,
+          },
+          {
+            id: 'more.airplane',
+            title: 'Flugmodus beim Beten',
+            line: 'Stille ohne Störung',
+            icon: 'airplane',
+            info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
+            content: <AirplaneGuide level={4} />,
+          },
+        ]}
+      />
+      <p className="more-group-title">Deine Daten</p>
+      <DataSettings />
+    </>
+  );
+}
+
+/** "Über Henoch": what it is and where it comes from, the guide, the versions, the news. */
+function AboutHenoch() {
+  return (
+    <>
+      <About />
+      <TileGroup
+        level={4}
+        label="Anleitung und Versionen"
+        items={[
+          {
+            id: 'more.guide',
+            title: 'Anleitung',
+            line: 'Einrichtung noch einmal ansehen',
+            icon: 'compass',
+            info: GUIDE_INFO,
+            content: <GuideArea />,
+          },
+          {
+            id: 'more.changelog',
+            title: 'Versionen',
+            line: 'Was sich geändert hat',
+            icon: 'changes',
+            info: <p>Jede Version der App mit dem, was sie Neues gebracht hat. Die neueste steht oben.</p>,
+            content: <Changelog />,
+          },
+        ]}
+      />
+      <p className="more-news">
+        <a href={NEWS_URL} target="_blank" rel="noopener noreferrer" aria-label="Neuigkeiten, Neues auf henoch.app, öffnet im Browser">
+          Neuigkeiten auf henoch.app
+          <OutArrow />
+        </a>
+      </p>
+    </>
+  );
+}
+
 const AREAS: readonly Area[] = [
   {
     slug: 'gewohnheiten',
@@ -110,104 +218,56 @@ const AREAS: readonly Area[] = [
     body: () => <PrayerTiles />,
   },
   {
-    slug: 'zeiten',
+    slug: 'tag-und-woche',
     id: 'times',
-    title: 'Zeiten',
-    line: 'Aufstehen, Stille Zeit, Abend',
+    title: 'Tag und Woche',
+    line: 'Zeiten, Andacht, Sonntag, Wüstenzeit',
     icon: 'clock',
-    info: <p>Für den Tagesbogen auf der Startseite. Nicht jeder steht um vier auf.</p>,
-    body: () => <ScheduleSettings />,
-  },
-  {
-    slug: 'darstellung',
-    id: 'display',
-    title: 'Darstellung',
-    line: 'Farben und Teile der Andacht',
-    icon: 'sliders',
-    info: <p>Das Farbschema und welche Teile der Andacht erscheinen.</p>,
-    body: () => <DisplaySettings />,
-  },
-  {
-    slug: 'daten',
-    id: 'data',
-    title: 'Deine Daten',
-    line: 'Sichern, einspielen, löschen',
-    icon: 'archive',
-    info: DATA_INFO,
-    body: () => <DataSettings />,
+    info: (
+      <p>
+        Wie dein Tag und deine Woche laufen: die Zeiten für den Tagesbogen, welche Teile die Andacht hat, der Sonntag,
+        das Treffen am Abendbrunnen und die Wüstenzeit.
+      </p>
+    ),
+    body: () => <DayAndWeek />,
   },
   {
     slug: 'rueckblick',
     id: 'review',
     title: 'Rückblick',
-    line: 'Tage, Verse, Arena, Erhörungen',
+    line: 'Tage, Verse, Arena',
     icon: 'review',
     info: (
+      <p>
+        Alle Tage mit Einträgen, die Verse, die du dir notiert hast, und die archivierten Einträge der Arena – alles
+        durchsuchbar. Ganz unten schaltest du ein, ob auch deine Gewohnheiten
+        der letzten acht Wochen hier stehen.
+      </p>
+    ),
+    body: () => (
       <>
-        <p>
-          Alle Tage mit Einträgen, die Verse, die du dir notiert hast, die archivierten Einträge der Arena und die
-          Gebetserhörungen aus „Mein Haus“ – alles durchsuchbar.
-        </p>
-        <p>
-          Darunter auf Wunsch deine Gewohnheiten der letzten acht Wochen. Ein- und ausschalten unter „Darstellung“ ›
-          „Gewohnheiten im Rückblick“.
-        </p>
+        <ArchivePage embedded />
+        <HabitHistorySwitch />
       </>
     ),
-    body: () => <ArchivePage embedded />,
+  },
+  {
+    slug: 'app-und-daten',
+    id: 'data',
+    title: 'App und Daten',
+    line: 'Farbschema, Sichern, Installation',
+    icon: 'archive',
+    info: DATA_INFO,
+    body: () => <AppAndData />,
   },
   {
     slug: 'ueber',
     id: 'about',
     title: 'Über Henoch',
-    line: 'Quellen, Installation, Flugmodus',
+    line: 'Quellen, Anleitung, Versionen',
     icon: 'info',
     info: ABOUT_INFO,
-    body: () => (
-      <>
-        <About />
-        <TileGroup
-          label="Installation und Flugmodus"
-          items={[
-            {
-              id: 'more.install',
-              title: 'App installieren',
-              line: 'Android und iPhone',
-              icon: 'phone',
-              info: <p>Wie Henoch als App auf den Startbildschirm kommt, auf Android und auf dem iPhone, ohne Store.</p>,
-              content: <InstallGuide level={4} />,
-            },
-            {
-              id: 'more.airplane',
-              title: 'Flugmodus beim Beten',
-              line: 'Stille ohne Störung',
-              icon: 'airplane',
-              info: <p>Wie du das Telefon in den Flugmodus schaltest, solange Henoch offen ist, und danach wieder zurück.</p>,
-              content: <AirplaneGuide level={4} />,
-            },
-          ]}
-        />
-      </>
-    ),
-  },
-  {
-    slug: 'versionen',
-    id: 'changelog',
-    title: 'Versionen',
-    line: 'Was sich geändert hat',
-    icon: 'changes',
-    info: <p>Jede Version der App mit dem, was sie Neues gebracht hat. Die neueste steht oben.</p>,
-    body: () => <Changelog />,
-  },
-  {
-    slug: 'anleitung',
-    id: 'guide',
-    title: 'Anleitung',
-    line: 'Einrichtung noch einmal ansehen',
-    icon: 'compass',
-    info: GUIDE_INFO,
-    body: () => <GuideArea />,
-    wide: true,
+    body: () => <AboutHenoch />,
   },
   {
     slug: 'impressum',
@@ -230,8 +290,10 @@ export function SettingsPage() {
   const alias = bereich ? ALIASES[bereich] : undefined;
   const area = AREAS.find((a) => a.slug === (alias?.slug ?? bereich));
   useLayoutEffect(() => {
-    if (!alias) return;
-    for (const id of PRAYER_TILES) setOpen(id, id === alias.open);
+    const open = alias?.open;
+    if (!open) return;
+    // The tile asked for opens; the others of its group close (one is open at a time).
+    for (const id of OPEN_GROUPS.find((g) => g.includes(open)) ?? [open]) setOpen(id, id === open);
   }, [alias]);
 
   if (!area) {
@@ -240,7 +302,7 @@ export function SettingsPage() {
         <h2 className="visually-hidden">Mehr</h2>
         <ul className="more-tiles">
           {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
-            <li key={a.slug} className={a.wide ? 'more-tile-wide' : undefined}>
+            <li key={a.slug}>
               <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
                 <FlowIcon name={a.icon} size={22} />
                 <span className="more-tile-title">{a.title}</span>
@@ -248,15 +310,6 @@ export function SettingsPage() {
               </Link>
             </li>
           ))}
-          <li className="more-tile-wide">
-            <a className="more-tile" href={NEWS_URL} target="_blank" rel="noopener noreferrer" aria-label="Neuigkeiten, Neues auf henoch.app, öffnet im Browser">
-              <FlowIcon name="scroll" size={22} />
-              <span className="more-tile-title">
-                Neuigkeiten<OutArrow />
-              </span>
-              <span className="more-tile-line">Neues auf henoch.app</span>
-            </a>
-          </li>
         </ul>
         <p className="more-imprint">
           <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>

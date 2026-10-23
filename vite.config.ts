@@ -7,6 +7,8 @@ import pkg from './package.json' with { type: 'json' };
 
 // Served from the root (mein.henoch.app); BASE_PATH=/pfad/ builds for a sub-path.
 const base = process.env.BASE_PATH ?? '/';
+// The preview under /vorschau/: own name and database, see src/app/preview.ts.
+const preview = process.env.PREVIEW === '1';
 
 export default defineConfig(({ mode }) => ({
   define: {
@@ -14,6 +16,7 @@ export default defineConfig(({ mode }) => ({
     // The Dogmatik stays out of the app until every day is read against the print; the tests and
     // the preview (npm run build:demo:dogmatik) switch it on.
     __DOGMATIK__: JSON.stringify(mode === 'test' || process.env.DOGMATIK === '1'),
+    __PREVIEW__: JSON.stringify(preview),
   },
   // Without the PWA plugin (demo), the update hook resolves to a no-op stub.
   resolve:
@@ -27,6 +30,14 @@ export default defineConfig(({ mode }) => ({
       : undefined,
   plugins: [
     react(),
+    // On the home screen the preview is called "Henoch Vorschau", so it is not mistaken for the app.
+    preview && {
+      name: 'preview-title',
+      transformIndexHtml: (html: string) =>
+        html
+          .replace('<meta name="apple-mobile-web-app-title" content="Henoch" />', '<meta name="apple-mobile-web-app-title" content="Vorschau" />')
+          .replace('<title>Henoch</title>', '<title>Henoch Vorschau</title>'),
+    },
     mode !== 'demo' && VitePWA({
       // A new version waits until the user chooses to update – never a reload mid-prayer.
       registerType: 'prompt',
@@ -34,8 +45,8 @@ export default defineConfig(({ mode }) => ({
       includeAssets: ['icons/apple-touch-icon.png', 'icons/favicon-64.png'],
       manifest: {
         id: base,
-        name: 'Henoch',
-        short_name: 'Henoch',
+        name: preview ? 'Henoch Vorschau' : 'Henoch',
+        short_name: preview ? 'Vorschau' : 'Henoch',
         description: 'Eine Ordnung für Morgen und Abend',
         lang: 'de',
         start_url: base,

@@ -491,7 +491,8 @@ describe('Mehr, Anleitung', () => {
     const { store, router } = await start('/mehr', (s) =>
       s.updateProfile((p) => ({ ...p, house: { ...p.house, wife: { name: 'Anna', concern: '' } }, schedule: { ...p.schedule, stillTime: '05:00' } })),
     );
-    fireEvent.click(await screen.findByRole('link', { name: /^Anleitung/ }));
+    fireEvent.click(await screen.findByRole('link', { name: /^Über Henoch/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /^Anleitung/ }));
     fireEvent.click(await screen.findByRole('link', { name: 'Einrichtung ansehen' }));
     expect(router.state.location.pathname).toBe(ONBOARDING_PATH);
     const before = store.getProfile();

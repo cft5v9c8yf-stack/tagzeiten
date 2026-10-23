@@ -2,9 +2,11 @@ import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
 import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model';
-import { TileGroup } from '../../ui/TileGroup';
+import type { TileItem } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
+import { WELL_HABIT } from '../../content/habits';
+import { linkedHabit } from '../../domain/well';
 import { DesertSettings, desertLine } from '../desert/DesertSettings';
 import { FlowIcon } from '../../ui/FlowIcon';
 import { ICON_SIZE } from '../../ui/iconBase';
@@ -170,17 +172,84 @@ function ShowHide({ label, on, set, note }: { label: string; on: boolean; set: (
   );
 }
 
-/** "Darstellung" as tiles: each setting with what is set now; it opens beneath. */
-export function DisplaySettings() {
+/** The Abendbrunnen: switched on by a married man; the wife's name is the one of "Mein Haus". */
+function WellSettings() {
+  const store = useStore();
+  const profile = useProfile();
+  const nameId = useId();
+  const habitId = useId();
+  // Any habit ticked by hand can lead to the Abendbrunnen, also one of one's own.
+  const habits = profile.habits.filter((h) => !h.auto && !h.desert);
+  const linked = linkedHabit(profile.well, habits);
+  return (
+    <>
+      <ShowHide
+        label="Ich bin verheiratet – Abendbrunnen anzeigen"
+        on={profile.well.on}
+        set={(on) => store.updateProfile((p) => ({ ...p, well: { ...p.well, on } }), { immediate: true })}
+        note="Der wöchentliche Ehe-Check-in erscheint dann als Kachel in der Arena. Ausgeblendet ist er nirgends zu sehen; was du notiert hast, bleibt auf dem Gerät gespeichert."
+      />
+      <div className="field">
+        <label htmlFor={nameId}>Name meiner Frau (freiwillig)</label>
+        <input
+          id={nameId}
+          type="text"
+          value={profile.house.wife.name}
+          placeholder="Name"
+          onChange={(e) => {
+            const name = e.target.value;
+            store.updateProfile((p) => ({ ...p, house: { ...p.house, wife: { ...p.house.wife, name } } }));
+          }}
+        />
+      </div>
+      <p className="small muted">
+        Ist ein Name eingetragen, steht er in den Leitfragen, die du dir selbst stellst. Es ist derselbe Name wie unter „Mein Haus“.
+      </p>
+      {profile.well.on && (
+        <>
+          <div className="field">
+            <label htmlFor={habitId}>Gewohnheit, die zum Treffen führt</label>
+            <select
+              id={habitId}
+              value={linked}
+              onChange={(e) => {
+                const v = e.target.value;
+                store.updateProfile(
+                  (p) => {
+                    const { habitId: _, ...rest } = p.well;
+                    return { ...p, well: v === WELL_HABIT ? rest : { ...rest, habitId: v } };
+                  },
+                  { immediate: true },
+                );
+              }}
+            >
+              {habits.map((h) => (
+                <option key={h.id} value={h.id}>
+                  {h.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="small muted">
+            Ist diese Gewohnheit eingeschaltet, steht unter „Heute“ bei ihr der Weg zum Treffen am Abendbrunnen. Das kann
+            auch eine eigene sein, etwa „Gespräch mit meiner Frau“.
+          </p>
+        </>
+      )}
+    </>
+  );
+}
+
+/**
+ * The settings that are switches and looks, each as a tile with what is set now; it opens beneath.
+ * "Tag und Woche" and "App und Daten" (Mehr) take them by what they are about.
+ */
+export function useDisplayTiles(): Record<string, TileItem> {
   const store = useStore();
   const profile = useProfile();
   const update = (fn: (p: Profile) => Profile) => store.updateProfile(fn, { immediate: true });
   const state = (on: boolean) => (on ? 'Anzeigen' : 'Ausblenden');
-  return (
-    <TileGroup
-      level={4}
-      label="Darstellung"
-      items={[
+  const list: TileItem[] = [
         {
           id: 'more.display.theme',
           title: 'Farbschema',
@@ -307,13 +376,37 @@ export function DisplaySettings() {
           ),
         },
         {
+          id: 'more.display.well',
+          title: 'Treffen am Abendbrunnen',
+          line: state(profile.well.on),
+          icon: 'well',
+          content: <WellSettings />,
+        },
+        {
           id: 'more.display.desert',
           title: 'Wüstenzeit',
           line: desertLine(profile, store.today()),
           icon: 'sunrise',
           content: <DesertSettings />,
         },
-      ]}
-    />
+  ];
+  return Object.fromEntries(list.map((t) => [t.id.replace('more.display.', ''), t]));
+}
+
+export const tilesOf = (all: Record<string, TileItem>, keys: readonly string[]) => keys.map((k) => all[k]!);
+
+/** Under the Rückblick, where they appear: whether the habits of the last eight weeks are shown. */
+export function HabitHistorySwitch() {
+  const store = useStore();
+  const profile = useProfile();
+  return (
+    <div className="habit-history-switch">
+      <ShowHide
+        label="Gewohnheiten im Rückblick"
+        on={profile.showHabitHistory}
+        set={(on) => store.updateProfile((p) => ({ ...p, showHabitHistory: on }), { immediate: true })}
+        note="Im Rückblick: jede Gewohnheit in den letzten acht Wochen. Nur festgehalten, nicht bewertet."
+      />
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { desertLine } from '../desert/DesertSettings';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatShort, mondayOf, MONTH_LONG } from '../../domain/dates';
 import { habitMonths, habitWeeks, HISTORY_WEEKS } from '../../domain/habitHistory';
-import { habitsOfRhythm, isPerDay, RHYTHM_ORDER, fitsHouse } from '../../domain/habits';
+import { habitsOfRhythm, isPerDay, RHYTHM_ORDER, fitsHouse, shownHabit } from '../../domain/habits';
 import type { Habit, Rhythm } from '../../domain/model';
 import { Chevron } from '../../ui/Chevron';
 import { ICON_SIZE } from '../../ui/iconBase';
@@ -101,14 +101,14 @@ const ROW: Record<Rhythm, typeof DailyRow> = { daily: DailyRow, weekly: WeeklyRo
 /**
  * How the habits were kept in the last eight weeks: counts per week, neutral
  * colours, empty weeks grey. Documented, not assessed – no percentages, no
- * trend, no streak (rules 4 and 5). Switched on under Darstellung; a view of
+ * trend, no streak (rules 4 and 5). Switched on at the bottom of the Rückblick; a view of
  * the Rückblick of its own (0.40).
  */
 export function HabitHistory() {
   const store = useStore();
   const profile = useProfile();
   const today = store.today();
-  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house));
+  const active = profile.habits.filter((h) => h.active && fitsHouse(h, profile.house) && shownHabit(h, profile.well.on));
   // The Wüstenzeit has its own overview in the Arena, under "Wüstenwanderung"; a link leads there.
   const run = activeRun(profile.winterArc);
   return (

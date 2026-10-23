@@ -24,7 +24,7 @@ import {
   type Scope,
 } from './planScope';
 import { useProfile, useStore } from '../../data/hooks';
-import { fitsHouse, habitsOfRhythm, RHYTHM_ORDER, setHabitActive } from '../../domain/habits';
+import { fitsHouse, habitsOfRhythm, RHYTHM_ORDER, setHabitActive, shownHabit } from '../../domain/habits';
 import {
   childrenOf,
   emptyChild,
@@ -289,7 +289,7 @@ const RHYTHM_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöch
 export function HabitsStep() {
   const store = useStore();
   const profile = useProfile();
-  const presets = profile.habits.filter((h) => h.preset && !h.desert);
+  const presets = profile.habits.filter((h) => h.preset && !h.desert && shownHabit(h, profile.well.on));
   const waiting = presets.some((h) => !fitsHouse(h, profile.house));
   return (
     <>
@@ -472,7 +472,7 @@ export function DoneStep() {
   const profile = useProfile();
   const house = profile.house;
   const names = [wifeOf(house)?.name.trim(), ...childrenOf(house).map((c) => c.name.trim())].filter((n): n is string => !!n);
-  const on = profile.habits.filter((h) => h.preset && !h.desert && h.active && fitsHouse(h, house));
+  const on = profile.habits.filter((h) => h.preset && !h.desert && h.active && fitsHouse(h, house) && shownHabit(h, profile.well.on));
   const plan = getPlan(profile.plan.planId);
   const reading = plan.tracks.map((t) => portionLabel(t, t.portions[profile.plan.positions[t.def.id] ?? 0] ?? t.portions[0]!));
   const s = profile.schedule;

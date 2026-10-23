@@ -31,6 +31,7 @@ import {
 import type { DesertHabit } from '../content/desert';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
+import { isEmptyMeeting, newMeeting, type WellMeeting } from '../domain/well';
 import { emptyDay, type ArenaEntry, type Day, type Habit, type Profile } from '../domain/model';
 import {
   activeRun,
@@ -416,6 +417,54 @@ export class Store {
     this.updateProfile((p) => ({ ...p, arena: p.arena.map((e) => (e.id === id ? { ...fn(e), id, updatedAt: t } : e)) }), opts);
   }
 
+  /** Begins this week's meeting at the Abendbrunnen and returns its id; meetings left empty are cleared away. */
+  addWellMeeting(): string {
+    const m = newMeeting(this.today());
+    this.updateProfile((p) => ({ ...p, well: { ...p.well, meetings: [m, ...p.well.meetings.filter((x) => !isEmptyMeeting(x))] } }), {
+      immediate: true,
+    });
+    return m.id;
+  }
+
+  updateWellMeeting(id: string, fn: (m: WellMeeting) => WellMeeting, opts: UpdateOptions = {}): void {
+    this.updateProfile(
+      (p) => ({ ...p, well: { ...p.well, meetings: p.well.meetings.map((m) => (m.id === id ? { ...fn(m), id } : m)) } }),
+      opts,
+    );
+  }
+
+  /** Puts a meeting at the Abendbrunnen into the Rückblick, or brings it back into the list. */
+  archiveWellMeeting(id: string, archived: boolean): void {
+    const t = this.now().getTime();
+    this.updateWellMeeting(
+      id,
+      (m) => {
+        const { archivedAt: _, pinnedAt: __, ...rest } = m;
+        return archived ? { ...rest, archivedAt: t } : rest;
+      },
+      { immediate: true },
+    );
+  }
+
+  /** Pins a meeting to the top of the list, or takes the pin off; false when three already stand pinned. */
+  pinWellMeeting(id: string, pinned: boolean): boolean {
+    const meetings = this.profile.well.meetings;
+    const m = meetings.find((x) => x.id === id);
+    if (!m || m.archivedAt !== undefined) return false;
+    if ((m.pinnedAt !== undefined) === pinned) return true;
+    if (pinned && meetings.filter((x) => x.pinnedAt !== undefined && x.archivedAt === undefined).length >= MAX_PINNED) return false;
+    const t = Math.max(this.now().getTime(), ...meetings.map((x) => (x.pinnedAt ?? 0) + 1));
+    this.updateWellMeeting(
+      id,
+      (x) => {
+        const { pinnedAt: _, ...rest } = x;
+        return pinned ? { ...rest, pinnedAt: t } : rest;
+      },
+      { immediate: true },
+    );
+    return true;
+  }
+
   /** Puts an entry into the Rückblick, or brings it back into the Arena. */
   archiveArenaEntry(id: string, archived: boolean): void {
     const t = this.now().getTime();
@@ -726,6 +775,7 @@ export class Store {
         ...winterArcToMarkdown(this.profile.winterArc, this.profile.winterArcSettings),
         ...(__DOGMATIK__ ? dogmatikToMarkdown(this.profile.dogmatik, await loadDogmatik()) : []),
       ],
+      this.profile.well,
     );
   }
 
