@@ -33,10 +33,31 @@ for (const g of GROUPS) {
 }
 const [CURRENT, ...EARLIER] = MAJORS;
 
+/** "1.27" → 2: the numbers of the current major fold together in tens (1.0–1.9, 1.10–1.19, …). */
+const decadeOf = (g: Group) => Math.floor(Number(g.minor.split('.')[1]) / 10);
+
+/** A folded group of numbers: earlier tens of the current major, then each earlier major. */
+interface Fold {
+  id: string;
+  title: string;
+  groups: Group[];
+}
+const DECADES: Group[][] = [];
+for (const g of CURRENT!.groups) {
+  const last = DECADES[DECADES.length - 1];
+  if (last && decadeOf(last[0]!) === decadeOf(g)) last.push(g);
+  else DECADES.push([g]);
+}
+/** The newest ten stand open, one entry per number. */
+const [OPEN = [], ...OLDER_DECADES] = DECADES;
+const FOLDS: Fold[] = [
+  ...OLDER_DECADES.map((groups) => ({ id: `changelog.d${groups.at(-1)!.minor}`, title: `${groups.length} Versionen`, groups })),
+  ...EARLIER.map((m) => ({ id: `changelog.v${m.major}`, title: m.major === '0' ? 'Der Aufbau bis Henoch 1.0' : `Henoch ${m.major}`, groups: m.groups })),
+];
+
 const idOf = (g: Group) => `changelog.${g.minor}`;
-const majorId = (major: string) => `changelog.v${major}`;
 /** The entries on top, of which one is open at a time. */
-const TOP = [...CURRENT!.groups.map(idOf), ...EARLIER.map((m) => majorId(m.major))];
+const TOP = [...OPEN.map(idOf), ...FOLDS.map((f) => f.id)];
 
 /** "September bis Oktober 2026": the months of an earlier number. */
 function span(groups: Group[]): string {
@@ -109,35 +130,36 @@ function Entry({ g, group, level, open }: { g: Group; group: readonly string[]; 
 }
 
 /**
- * The versions of the app and what each brought, newest first, grouped under their number; the newest is
- * open. The versions of an earlier number (0.1 to 0.41) stand folded together.
+ * The versions of the app and what each brought, newest first, grouped under their number. The newest
+ * ten numbers stand one by one, the newest open; earlier tens (1.20 to 1.29, …) and the versions of an
+ * earlier major (0.1 to 0.41) stand folded together.
  */
 export function Changelog() {
   return (
     <>
       <p className="changelog-current">Du nutzt Version {__APP_VERSION__}.</p>
-      {CURRENT!.groups.map((g, i) => (
+      {OPEN.map((g, i) => (
         <Entry key={g.minor} g={g} group={TOP} level={3} open={i === 0} />
       ))}
-      {EARLIER.map((m) => {
-        const inner = m.groups.map(idOf);
+      {FOLDS.map((f) => {
+        const inner = f.groups.map(idOf);
         return (
           <Section
-            key={m.major}
-            id={majorId(m.major)}
+            key={f.id}
+            id={f.id}
             group={TOP}
             defaultOpen={false}
             className="changelog-release changelog-major"
             title={
               <span className="changelog-head">
                 <span>
-                  Versionen {m.groups.at(-1)!.minor} bis {m.groups[0]!.minor} <span className="changelog-date">{span(m.groups)}</span>
+                  Versionen {f.groups.at(-1)!.minor} bis {f.groups[0]!.minor} <span className="changelog-date">{span(f.groups)}</span>
                 </span>
-                <span className="changelog-title">{m.major === '0' ? 'Der Aufbau bis Henoch 1.0' : `Henoch ${m.major}`}</span>
+                <span className="changelog-title">{f.title}</span>
               </span>
             }
           >
-            {m.groups.map((g) => (
+            {f.groups.map((g) => (
               <Entry key={g.minor} g={g} group={inner} level={4} open={false} />
             ))}
           </Section>
