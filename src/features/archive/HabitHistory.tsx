@@ -101,7 +101,7 @@ const ROW: Record<Rhythm, typeof DailyRow> = { daily: DailyRow, weekly: WeeklyRo
 /**
  * How the habits were kept in the last eight weeks: counts per week, neutral
  * colours, empty weeks grey. Documented, not assessed – no percentages, no
- * trend, no streak (rules 4 and 5). Switched on under Darstellung; a view of
+ * trend, no streak (rules 4 and 5). Switched on at the bottom of the Rückblick; a view of
  * the Rückblick of its own (0.40).
  */
 export function HabitHistory() {

@@ -16,16 +16,17 @@ import { SettingsPage } from './SettingsPage';
 
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
-  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'devotion', 'arena', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.habitHistory', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
+  for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'devotion', 'arena', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
 }
 
 /** Tiles open one at a time within their group; these are the groups. */
 const TILE_GROUPS = [
-  ['display', 'data', 'install', 'airplane', 'about'],
+  ['display.theme', 'install', 'airplane'],
+  ['guide', 'changelog'],
+  ['times.schedule', 'display.atBed', 'display.compline', 'display.armor'],
   ['house', 'prayerlist', 'treasury'],
-  ['display.theme', 'display.habitHistory'],
-  ['display.atBed', 'display.compline', 'display.armor', 'display.weekReview', 'display.sundayRest'],
-  ['display.well', 'display.desert'],
+  ['display.weekReview', 'display.sundayRest', 'display.well'],
+  ['display.desert'],
   ['data.keep', 'data.export', 'data.import', 'data.delete'],
   ['about.arc', 'about.sources', 'about.privacy'],
 ].map((g) => g.map((id) => `more.${id}`));
@@ -95,11 +96,8 @@ describe('Mehr: Aufbau', () => {
     await renderAt('/mehr', <SettingsPage />);
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Mehr');
     const tiles = [...document.querySelectorAll('.more-tile')].map((t) => t.querySelector('.more-tile-title')!.textContent);
-    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Zeiten', 'Andacht', 'Arena', 'Darstellung', 'Deine Daten', 'Rückblick', 'Über Henoch', 'Versionen', 'Anleitung', 'Neuigkeiten']);
-    // The news open on the homepage, in the browser.
-    const news = screen.getByRole('link', { name: /Neuigkeiten/ });
-    expect(news.getAttribute('href')).toBe('https://henoch.app/neuigkeiten/');
-    expect(news.getAttribute('target')).toBe('_blank');
+    // Six areas, three rows of two (1.34); the news and the guide stand under "Über Henoch".
+    expect(tiles).toEqual(['Gewohnheiten', 'Gebet', 'Tag und Woche', 'Rückblick', 'App und Daten', 'Über Henoch']);
     // The version stands at the bottom of "Mehr".
     expect(document.querySelector('.more-version')!.textContent).toBe(`Henoch ${__APP_VERSION__}`);
     expect(screen.getByRole('link', { name: 'Impressum · Anbieter und Datenschutz' })).toBeTruthy();
@@ -135,38 +133,49 @@ describe('Mehr: Aufbau', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Mein Haus' })).toBeTruthy();
   });
 
-  it('leads to Darstellung, Daten and Über directly from Mehr, and the old "Einstellungen" address to Darstellung', async () => {
+  it('gathers the app and the data under "App und Daten"; the old address of Darstellung leads there', async () => {
     await renderAt('/mehr/darstellung', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: 'Darstellung' });
+    await screen.findByRole('heading', { level: 2, name: 'App und Daten' });
     // No verse above the settings, only their explanations.
     expect(document.querySelector('.section-verse')).toBeNull();
-    expect(document.querySelector('.more-area-info')!.textContent).toContain('Farbschema');
-    // Inside: the settings as tiles with what is set now.
-    const inner = [...document.querySelectorAll('.tile-card')].map((t) => t.textContent);
-    expect(inner).toEqual([
-      'FarbschemaSystem',
-      'Gewohnheiten im RückblickAusblenden',
-    ]);
+    const inner = [...document.querySelectorAll('.tile-card')].map((t) => t.querySelector('.tile-card-title')!.textContent);
+    expect(inner).toEqual(['Farbschema', 'App installieren', 'Flugmodus beim Beten', 'Speicherung', 'Exportieren', 'Sicherung einspielen', 'Alles löschen']);
+    expect([...document.querySelectorAll('.more-group-title')].map((t) => t.textContent)).toEqual(['Die App', 'Deine Daten']);
   });
 
-  it('keeps what the devotion holds under "Andacht" and the places under "Arena", not under Darstellung', async () => {
-    await renderAt('/mehr/andacht', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: 'Andacht' });
+  it('gathers the news, the guide and the versions under "Über Henoch"', async () => {
+    await renderAt('/mehr/ueber', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
+    const news = screen.getByRole('link', { name: /Neuigkeiten/ });
+    expect(news.getAttribute('href')).toBe('https://henoch.app/neuigkeiten/');
+    expect(news.getAttribute('target')).toBe('_blank');
+    expect(screen.getByRole('button', { name: /^Anleitung/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^Versionen/ })).toBeTruthy();
+  });
+
+  it('gathers the day, the week and the special times under "Tag und Woche"; the old addresses lead there', async () => {
+    for (const old of ['/mehr/andacht', '/mehr/arena']) {
+      await renderAt(old, <SettingsPage />);
+      await screen.findByRole('heading', { level: 2, name: 'Tag und Woche' });
+      cleanup();
+    }
+    await renderAt('/mehr/tag-und-woche', <SettingsPage />);
+    await screen.findByRole('heading', { level: 2, name: 'Tag und Woche' });
+    expect([...document.querySelectorAll('.more-group-title')].map((t) => t.textContent)).toEqual(['Der Tag', 'Die Woche', 'Besondere Zeiten']);
     expect([...document.querySelectorAll('.tile-card')].map((t) => t.textContent)).toEqual([
+      'ZeitenAufstehen, Stille Zeit, Abend',
       'Am Bett am MorgenAnzeigen',
       'Nachtgebet am BettAnzeigen',
       'Geistliche WaffenrüstungAnzeigen',
       'WochenrückblickEin',
       'SonntagsruheAus',
+      'Treffen am AbendbrunnenAusblenden',
+      'WüstenzeitAus',
     ]);
-    cleanup();
-    await renderAt('/mehr/arena', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: 'Arena' });
-    expect([...document.querySelectorAll('.tile-card')].map((t) => t.textContent)).toEqual(['Treffen am AbendbrunnenAusblenden', 'WüstenzeitAus']);
   });
 
   it('switches the Wüstenzeit on with span and start, chooses its habits, and switches it off without deleting', async () => {
-    const { store, db } = await renderAt('/mehr/arena', <SettingsPage />, undefined, ['more.display.desert']);
+    const { store, db } = await renderAt('/mehr/tag-und-woche', <SettingsPage />, undefined, ['more.display.desert']);
     const toggle = await screen.findByRole('group', { name: 'Wüstenzeit' });
     expect(within(toggle).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(toggle).getByRole('button', { name: 'Ein' }));
@@ -280,7 +289,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('lets Am Bett and the Nachtgebet be hidden under Darstellung', async () => {
-    const { store } = await renderAt('/mehr/andacht', <SettingsPage />, undefined, ['more.display.atBed']);
+    const { store } = await renderAt('/mehr/tag-und-woche', <SettingsPage />, undefined, ['more.display.atBed']);
     const bed = await screen.findByRole('group', { name: 'Am Bett am Morgen' });
     expect(within(bed).getByRole('button', { name: 'Anzeigen' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(bed).getByRole('button', { name: 'Ausblenden' }));
@@ -294,7 +303,7 @@ describe('Mehr: Aufbau', () => {
   });
 
   it('switches the Sunday rest on and off', async () => {
-    const { store } = await renderAt('/mehr/andacht', <SettingsPage />, undefined, ['more.display.sundayRest']);
+    const { store } = await renderAt('/mehr/tag-und-woche', <SettingsPage />, undefined, ['more.display.sundayRest']);
     const rest = await screen.findByRole('group', { name: 'Sonntagsruhe' });
     expect(within(rest).getByRole('button', { name: 'Aus' }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(within(rest).getByRole('button', { name: 'Ein' }));
@@ -305,11 +314,11 @@ describe('Mehr: Aufbau', () => {
 
   it('shows only the arrow and the title at the top, the explanation under it, and a Bible verse', async () => {
     await renderAt('/mehr/zeiten', <SettingsPage />);
-    const heading = await screen.findByRole('heading', { level: 2, name: 'Zeiten' });
+    const heading = await screen.findByRole('heading', { level: 2, name: 'Tag und Woche' });
     const row = heading.closest('.title-row')!;
     expect(row.querySelectorAll('svg')).toHaveLength(1);
     expect(row.querySelector('button')).toBeNull();
-    expect(document.querySelector('.more-area-info')!.textContent).toContain('Nicht jeder steht um vier auf.');
+    expect(document.querySelector('.more-area-info')!.textContent).toContain('Wie dein Tag und deine Woche laufen');
     expect(document.querySelector('.section-verse blockquote')!.textContent).toBe('Meine Zeit steht in deinen Händen.');
   });
 });
@@ -810,7 +819,8 @@ describe('Rückblick', () => {
     expect(screen.queryByRole('button', { name: 'Gewohnheiten' })).toBeNull();
     cleanup();
 
-    await renderAt('/mehr/darstellung', <SettingsPage />, undefined, ['more.display.habitHistory']);
+    // The switch stands at the bottom of the Rückblick, where the habits appear.
+    await renderAt('/mehr/rueckblick', <SettingsPage />);
     const group = await screen.findByRole('group', { name: 'Gewohnheiten im Rückblick' });
     expect(within(group).getByRole('button', { name: 'Ausblenden' }).getAttribute('aria-pressed')).toBe('true');
     cleanup();
@@ -856,7 +866,7 @@ describe('Rückblick', () => {
 
   it('sets times per weekday: working days and weekend, and further days with +', async () => {
     const { store } = await renderAt('/mehr/zeiten', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Zeiten/ });
+    await screen.findByRole('heading', { level: 2, name: 'Tag und Woche' });
     expect(screen.getAllByLabelText('Aufstehen')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'Tage unterschiedlich' }));
     await waitFor(() => expect(screen.getAllByLabelText('Aufstehen')).toHaveLength(2));
@@ -916,9 +926,9 @@ describe('Rückblick', () => {
 
   it('lists the versions, newest first, and names the one in use', async () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
-    await screen.findByRole('heading', { level: 2, name: /Versionen/ });
+    await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.33(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.34(?![\d.])/);
     expect(versions).toContainEqual(expect.stringMatching(/^Version 1\.0(?![\d.])/));
     // The versions before 1.0 fold together, last.
     expect(versions.at(-1)).toMatch(/^Versionen 0\.1 bis 0\.41 September bis Oktober 2026/);
@@ -926,13 +936,13 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.33(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.34(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.33(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.34(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
-    const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent);
+    const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent).filter((v) => /^Version \d/.test(v ?? ''));
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);
     expect(earlier.at(-1)).toMatch(/^Version 0\.1(?![\d.])/);
     expect(earlier.filter((v) => /^Version 0\.30(?![\d.])/.test(v ?? ''))).toHaveLength(1);
@@ -957,7 +967,7 @@ describe('Rückblick', () => {
   });
 
   it('explains how to install the app on Android and on the iPhone', async () => {
-    await renderAt('/mehr/ueber', <SettingsPage />, undefined, ['more.install']);
+    await renderAt('/mehr/app-und-daten', <SettingsPage />, undefined, ['more.install']);
     await screen.findByRole('heading', { level: 3, name: /App installieren/ });
     for (const t of ['Android mit Chrome', 'Android mit Samsung Internet', 'iPhone mit Safari']) {
       expect(screen.getByRole('heading', { level: 4, name: t })).toBeTruthy();
@@ -967,8 +977,8 @@ describe('Rückblick', () => {
     expect(text).toContain('https://mein.henoch.app/');
   });
 
-  it('explains, under Über Henoch, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
-    await renderAt('/mehr/ueber', <SettingsPage />, undefined, ['more.airplane']);
+  it('explains, under App und Daten, how the iPhone and Android phones switch airplane mode while the app is open', async () => {
+    await renderAt('/mehr/app-und-daten', <SettingsPage />, undefined, ['more.airplane']);
     await screen.findByRole('heading', { level: 3, name: /Flugmodus beim Beten/ });
     const text = document.body.textContent!;
     expect(text).toContain('„Wird geöffnet“');

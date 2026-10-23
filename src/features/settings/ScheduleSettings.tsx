@@ -2,7 +2,7 @@ import { useId } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import { WEEKDAY_LONG, WEEKDAY_SHORT } from '../../domain/dates';
 import type { Profile, Schedule, ScheduleGroup, Theme } from '../../domain/model';
-import { TileGroup, type TileItem } from '../../ui/TileGroup';
+import type { TileItem } from '../../ui/TileGroup';
 import { daysLabel, firstGroups, freeDays, moveDay, orderIssue, removeGroup, TIME_ORDER, WEEK } from '../../domain/schedule';
 import { Segmented } from '../../ui/Choice';
 import { WELL_HABIT } from '../../content/habits';
@@ -242,10 +242,9 @@ function WellSettings() {
 
 /**
  * The settings that are switches and looks, each as a tile with what is set now; it opens beneath.
- * They are shown in three places by what they are about: how the app looks ("Darstellung"), what
- * the devotion holds ("Andacht"), and the places of the Arena ("Arena").
+ * "Tag und Woche" and "App und Daten" (Mehr) take them by what they are about.
  */
-function useDisplayTiles(): Record<string, TileItem> {
+export function useDisplayTiles(): Record<string, TileItem> {
   const store = useStore();
   const profile = useProfile();
   const update = (fn: (p: Profile) => Profile) => store.updateProfile(fn, { immediate: true });
@@ -394,22 +393,20 @@ function useDisplayTiles(): Record<string, TileItem> {
   return Object.fromEntries(list.map((t) => [t.id.replace('more.display.', ''), t]));
 }
 
-const tilesOf = (all: Record<string, TileItem>, keys: readonly string[]) => keys.map((k) => all[k]!);
+export const tilesOf = (all: Record<string, TileItem>, keys: readonly string[]) => keys.map((k) => all[k]!);
 
-/** "Darstellung": how the app looks. */
-export function DisplaySettings() {
-  const all = useDisplayTiles();
-  return <TileGroup level={4} label="Darstellung" items={tilesOf(all, ['theme', 'habitHistory'])} />;
-}
-
-/** "Andacht": what the devotion holds and how the week runs. */
-export function DevotionSettings() {
-  const all = useDisplayTiles();
-  return <TileGroup level={4} label="Andacht" items={tilesOf(all, ['atBed', 'compline', 'armor', 'weekReview', 'sundayRest'])} />;
-}
-
-/** "Arena": the places that are switched on or off. */
-export function ArenaSettings() {
-  const all = useDisplayTiles();
-  return <TileGroup level={4} label="Arena" items={tilesOf(all, ['well', 'desert'])} />;
+/** Under the Rückblick, where they appear: whether the habits of the last eight weeks are shown. */
+export function HabitHistorySwitch() {
+  const store = useStore();
+  const profile = useProfile();
+  return (
+    <div className="habit-history-switch">
+      <ShowHide
+        label="Gewohnheiten im Rückblick"
+        on={profile.showHabitHistory}
+        set={(on) => store.updateProfile((p) => ({ ...p, showHabitHistory: on }), { immediate: true })}
+        note="Im Rückblick: jede Gewohnheit in den letzten acht Wochen. Nur festgehalten, nicht bewertet."
+      />
+    </div>
+  );
 }

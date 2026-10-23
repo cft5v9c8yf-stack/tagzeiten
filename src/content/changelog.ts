@@ -13,6 +13,18 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.34.0',
+    date: '2026-10-23',
+    title: 'Mehr mit sechs Kacheln',
+    changes: [
+      { area: 'Mehr', text: 'Unter „Mehr“ stehen nur noch sechs Kacheln: Gewohnheiten, Gebet, Tag und Woche, Rückblick, App und Daten, Über Henoch.' },
+      { area: 'Mehr', text: '„Tag und Woche“ fasst zusammen, wie dein Tag und deine Woche laufen: unter „Der Tag“ die Zeiten, Am Bett am Morgen, das Nachtgebet und die geistliche Waffenrüstung; unter „Die Woche“ der Wochenrückblick, die Sonntagsruhe und das Treffen am Abendbrunnen; unter „Besondere Zeiten“ die Wüstenzeit.' },
+      { area: 'Mehr', text: '„App und Daten“ hat das Farbschema, wie du die App installierst und den Flugmodus beim Beten, darunter deine Daten: speichern, exportieren, einspielen, löschen. „Über Henoch“ hat dazu die Anleitung, die Versionen und den Weg zu den Neuigkeiten.' },
+      { area: 'Rückblick', text: 'Ob deine Gewohnheiten der letzten acht Wochen im Rückblick stehen, schaltest du jetzt unten im Rückblick selbst ein.' },
+      { area: 'Mehr', text: 'Alles, was du eingestellt hast, bleibt, wie es war. Alte Verweise führen an die neue Stelle.' },
+    ],
+  },
+  {
     version: '1.33.0',
     date: '2026-10-23',
     title: 'Die Einstellungen neu geordnet',

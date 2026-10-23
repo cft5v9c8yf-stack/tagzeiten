@@ -284,7 +284,7 @@ export function HabitSettings() {
   );
 }
 
-/** While a Wüstenzeit runs, its habits are chosen here too, as under Darstellung and in the Arena. */
+/** While a Wüstenzeit runs, its habits are chosen here too, as under Tag und Woche and in the Arena. */
 function DesertGroup() {
   const profile = useProfile();
   const store = useStore();

@@ -68,7 +68,7 @@ describe('Treffen am Abendbrunnen', () => {
 
   it('is switched on in the settings, with the wife\'s name from "Mein Haus"', async () => {
     setOpen('more.display.well', true);
-    const { store } = await mount('/mehr/arena');
+    const { store } = await mount('/mehr/tag-und-woche');
     expect(store.getProfile().well.on).toBe(false);
     const group = await screen.findByRole('group', { name: 'Ich bin verheiratet – Abendbrunnen anzeigen' });
     fireEvent.click(within(group).getByRole('button', { name: 'Anzeigen' }));

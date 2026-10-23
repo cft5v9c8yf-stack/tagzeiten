@@ -141,7 +141,7 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
 }
 
 /**
- * The Wüstenzeit under "Arena" (Mehr), beside the Waffenrüstung: switched on
+ * The Wüstenzeit under "Tag und Woche" (Mehr), beside the Waffenrüstung: switched on
  * with a span and a start, switched off after asking; nothing is ever deleted.
  * While it runs, its habits are chosen here too, unless the page shows the
  * choice on its own (the Arena does).
