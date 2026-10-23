@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.22.2',
+    date: '2026-10-23',
+    title: 'Tab und Enter in den Feldern der Arena',
+    changes: [
+      { area: 'Arena', text: 'Mit der Tastatur (etwa am iPad) springen Tab und Umschalt-Tab in einem Eintrag von Feld zu Feld; Enter im Titel geht ins nächste Feld. In den Bibelstellen und Gebetsanliegen macht Enter eine neue Zeile darunter, in einer leeren Zeile geht es zum nächsten Feld; die Rücktaste in einer leeren Zeile nimmt sie wieder weg.' },
+    ],
+  },
+  {
     version: '1.22.1',
     date: '2026-10-22',
     title: 'Die Lesung der Wüstenzeit zum Lesen',
