@@ -3,7 +3,7 @@ import { BackLink } from '../../ui/BackLink';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
-import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst } from '../../domain/arena';
+import { byMeeting, entryTitle, forgeTitle, isEmptyEntry, isReference, pinnedFirst, REVIEW_PATH } from '../../domain/arena';
 import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
@@ -25,7 +25,13 @@ import { DaySheets } from '../desert/DesertJournal';
 import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
+import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
+import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
+import { downloadText } from '../../app/files';
 import { fieldKeys, focusSibling } from '../../ui/fieldNav';
+import { entriesBasename, entriesToMarkdown, entryToMarkdown, exportFilename, saveEntriesPdf, saveEntryPdf } from '../../domain/entryExport';
+import { usePdf } from '../../app/usePdf';
+import { ExportAll } from '../../ui/ExportAll';
 
 type Kind = 'journal' | 'forge' | 'desert';
 const kindOf = (e: ArenaEntry): Kind => (e.kind === 'forge' ? 'forge' : e.kind === 'desert' ? 'desert' : 'journal');
@@ -34,7 +40,7 @@ const FORGE_SLUG = 'eisenschmiede';
 /** The Wüstenwanderung, the Arena's place of the Wüstenzeit; the addresses of 0.39.0 and of the Streithalle lead there too. */
 const HALL_SLUG = 'wuestenwanderung';
 const OLD_HALL_SLUGS = ['wuestenzeit', 'streithalle'];
-type Place = 'journal' | 'forge' | 'hall';
+type Place = 'journal' | 'forge' | 'hall' | 'well';
 
 /** The two places of the Arena: the Gebetskammer (journal), and the Eisenschmiede for the brothers. */
 const PLACES = {
@@ -172,11 +178,10 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
 }
 
 const JOURNAL_SLUG = 'gebetskammer';
-const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
+const SLUG: Record<Place | 'desert', string> = { journal: JOURNAL_SLUG, well: WELL_SLUG, forge: FORGE_SLUG, hall: HALL_SLUG, desert: HALL_SLUG };
 const arenaPath = (k: Place | 'desert') => `/arena?${FORGE_PARAM}=${SLUG[k]}`;
 
-/** Archived entries stand in the Rückblick under "Mehr". */
-export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';
+export { REVIEW_PATH };
 
 const dateOf = (ms: number) =>
   new Date(ms).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -396,6 +401,31 @@ function PointList({ values, onChange }: { values: ArenaPoint[]; onChange: (v: A
   );
 }
 
+/** The word of comfort of its place for the foot of the printed page. */
+const printComfort = (e: ArenaEntry) => PLACES[kindOf(e)].comfort;
+
+/** All entries of a place (also the archived) as one Markdown file or one PDF, under the list. */
+function PlaceExport({ kind }: { kind: Kind }) {
+  const store = useStore();
+  const pdf = usePdf();
+  const profile = useProfile();
+  const toast = useToast();
+  const entries = profile.arena.filter((e) => kindOf(e) === kind && !isEmptyEntry(e));
+  if (entries.length === 0) return null;
+  const { title, comfort } = PLACES[kind];
+  const today = store.today();
+  return (
+    <ExportAll
+      label={`Alle Einträge der ${title} exportieren`}
+      onMarkdown={() => {
+        downloadText(`${entriesBasename(title, today)}.md`, entriesToMarkdown(entries, title, today), 'text/markdown');
+        toast('Einträge als Markdown erstellt');
+      }}
+      onPdf={() => pdf(() => saveEntriesPdf(entries, title, today, comfort))}
+    />
+  );
+}
+
 /** Marks an entry pinned to the top of its place. */
 const PinTag = ({ entry }: { entry: ArenaEntry }) =>
   entry.pinnedAt !== undefined ? <span className="ktag">Angeheftet</span> : null;
@@ -449,6 +479,7 @@ function usePin() {
 /** An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting. */
 function ListItem({ entry, children }: { entry: ArenaEntry; children: React.ReactNode }) {
   const store = useStore();
+  const pdf = usePdf();
   const toast = useToast();
   const pin = usePin();
   const forge = kindOf(entry) === 'forge';
@@ -460,6 +491,14 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
         label={`Aktionen für „${name}“`}
         items={[
           { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
+          {
+            label: 'Als Text exportieren (Markdown)',
+            onSelect: () => {
+              downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
+              toast('Eintrag als Markdown erstellt');
+            },
+          },
+          { label: 'Als PDF sichern', onSelect: () => pdf(() => saveEntryPdf(entry, printComfort(entry))) },
           {
             label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
             onSelect: () => {
@@ -503,6 +542,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const pin = usePin();
   // Deleting is asked right under the icons at the top.
   const [confirm, setConfirm] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const pdf = usePdf();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
@@ -551,9 +592,27 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           ) : (
             <IconButton icon="archive" label="Archivieren" onClick={archive} />
           )}
+          <IconButton icon="export" label="Exportieren" pressed={exporting} onClick={() => setExporting((x) => !x)} />
           <IconButton icon="trash" label="Löschen" onClick={() => setConfirm(true)} />
         </div>
       </div>
+      {exporting && (
+        <div className="entry-export" role="group" aria-label="Eintrag exportieren">
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
+              toast('Eintrag als Markdown erstellt');
+            }}
+          >
+            Als Text exportieren (Markdown)
+          </button>
+          <button type="button" className="btn" onClick={() => pdf(() => saveEntryPdf(entry, printComfort(entry)))}>
+            Als PDF sichern
+          </button>
+        </div>
+      )}
       {confirm && (
         <ConfirmRow label="Eintrag löschen?" showLabel confirmLabel="Ja, Eintrag löschen" onConfirm={remove} onCancel={() => setConfirm(false)} />
       )}
@@ -645,7 +704,10 @@ function DesertEntries() {
   const archivedCount = profile.arena.filter((e) => e.archivedAt !== undefined && kindOf(e) === 'desert').length;
   return (
     <section className="desert-entries" aria-labelledby="desert-entries-title">
-      <h3 id="desert-entries-title">Tagebuch</h3>
+      <div className="list-head">
+        <h3 id="desert-entries-title">Tagebuch</h3>
+        <PlaceExport kind="desert" />
+      </div>
       <p className="arena-note">{place.note}</p>
       <button type="button" className="btn primary arena-new" onClick={() => navigate(`/arena/${store.addArenaEntry('desert')}`)}>
         {place.add}
@@ -684,6 +746,7 @@ export function ArenaPage() {
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
+  if (eintrag?.startsWith(MEETING_PREFIX) && profile.well.on) return <WellMeetingPage id={eintrag.slice(MEETING_PREFIX.length)} />;
   if (eintrag) {
     const entry = entries.find((e) => e.id === eintrag);
     if (entry) return <EntryEditor entry={entry} />;
@@ -705,8 +768,18 @@ export function ArenaPage() {
         ? 'hall'
         : param === JOURNAL_SLUG
           ? 'journal'
-          : undefined;
+          : param === WELL_SLUG && profile.well.on
+            ? 'well'
+            : undefined;
   if (!shownPlace) return <ArenaHome />;
+  if (shownPlace === 'well') {
+    return (
+      <div className="arena arena-place arena-well">
+        <PlaceHead title={WELL_TITLE} />
+        <WellPage />
+      </div>
+    );
+  }
   if (shownPlace === 'hall') {
     return (
       <div className="arena arena-place">
@@ -721,7 +794,7 @@ export function ArenaPage() {
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
   return (
     <div className="arena arena-place">
-      <PlaceHead title={place.title} />
+      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
       <SectionVerse id={place.verse} />
       <p className="arena-note">{place.note}</p>
       <button
@@ -775,7 +848,7 @@ export function ArenaPage() {
 }
 
 /** The head of a place: the way back to the Arena, and the place's name. */
-function PlaceHead({ title, sub }: { title: string; sub?: string }) {
+function PlaceHead({ title, sub, actions }: { title: string; sub?: string; actions?: React.ReactNode }) {
   return (
     <>
       <div className="title-row">
@@ -784,6 +857,7 @@ function PlaceHead({ title, sub }: { title: string; sub?: string }) {
           {title}
           {sub && <span className="place-sub">{sub}</span>}
         </h2>
+        {actions && <div className="title-row-actions">{actions}</div>}
       </div>
     </>
   );
@@ -803,6 +877,7 @@ function ArenaHome() {
   const meeting = byMeeting(forge).find((g) => g.date && g.date >= today)?.date;
   const run = activeRun(profile.winterArc);
   const offer = arenaOffer(profile, today);
+  // The order of life (rule 18): the house before the congregation, so the Abendbrunnen stands before the Eisenschmiede.
   const places: { place: Place; title: string; icon: FlowIconName; line: string }[] = [
     {
       place: 'journal',
@@ -810,6 +885,7 @@ function ArenaHome() {
       icon: 'candle',
       line: lastJournal ? `Zuletzt: ${entryTitle(lastJournal)}` : 'Was dich belastet und womit du ringst',
     },
+    ...(profile.well.on ? [{ place: 'well' as const, title: WELL_TITLE, icon: 'well' as const, line: WELL_SUBTITLE }] : []),
     {
       place: 'forge',
       title: PLACES.forge.title,

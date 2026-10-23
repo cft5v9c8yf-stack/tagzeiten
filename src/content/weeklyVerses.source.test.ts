@@ -15,6 +15,7 @@ import { ARMOR_CALL, ARMOR_EVENING, ARMOR_WEEK } from './armor';
 import * as L from './liturgy';
 import { EVENING_PSALMS, MORNING_PSALMS } from './psalms';
 import { SETTINGS_VERSES } from './settingsVerses';
+import { WELL_COMFORT, WELL_VERSES } from './well';
 import { WINTER_ARC_VERSES } from './winterArc';
 import { DESERT_VERSES } from './desert';
 import { CHAPTER_VERSES } from './readingPlans';
@@ -54,6 +55,7 @@ describe.skipIf(!available)('weekly verses against Luther 1912', () => {
   const entries = [
     ...Object.entries({ ...WEEKLY_VERSES, ...FEAST_VERSES }),
     ...Object.entries(SETTINGS_VERSES).map(([k, v]) => [`settings.${k}`, v] as const),
+    ...[...WELL_VERSES, WELL_COMFORT].map((v) => [`well.${v.ref}`, v] as const),
   ];
 
   it.each(entries)('%s is verbatim Luther 1912', (_key, verse) => {

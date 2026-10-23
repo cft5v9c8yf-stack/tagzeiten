@@ -2,6 +2,8 @@ import { Fragment, useId, useMemo, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { useAllDays, useProfile } from '../../data/hooks';
 import { entryTitle, forgeTitle, searchArena } from '../../domain/arena';
+import { meetingTitle, searchMeetings, type WellMeeting } from '../../domain/well';
+import { meetingPath } from '../well/WellPage';
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { RoundJournal } from '../desert/DesertJournal';
 import { Section } from '../../ui/Section';
@@ -129,6 +131,19 @@ function ArenaItem({ e }: { e: ArenaEntry }) {
   );
 }
 
+function WellItem({ m }: { m: WellMeeting }) {
+  return (
+    <li className="archive-item">
+      <div className="archive-date">
+        {formatLong(m.date)} · Treffen am Abendbrunnen
+      </div>
+      <Link className="archive-title" to={meetingPath(m.id)}>
+        {meetingTitle(m)}
+      </Link>
+    </li>
+  );
+}
+
 function AnsweredItem({ a }: { a: AnsweredPrayer }) {
   return (
     <li className="archive-item">
@@ -190,7 +205,10 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
   const [params] = useSearchParams();
   const profile = useProfile();
   const asked = TAB_PARAM[params.get('ansicht') ?? ''] ?? 'days';
-  const [tab, setTab] = useState<Tab>(asked === 'habits' && !profile.showHabitHistory ? 'days' : asked);
+  // Views that may be empty or switched off fall back to the days.
+  const [tab, setTab] = useState<Tab>(
+    (asked === 'habits' && !profile.showHabitHistory) || (asked === 'answered' && !profile.answered.length) ? 'days' : asked,
+  );
   const [query, setQuery] = useState('');
   const [limit, setLimit] = useState(PAGE);
   const searchId = useId();
@@ -205,6 +223,20 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
         query,
       ).sort((a, b) => b.createdAt - a.createdAt),
     [profile.arena, query],
+  );
+  // The meetings at the Abendbrunnen put away stand among the entries of the Arena, by their date.
+  const archivedAll = useMemo(
+    () =>
+      [
+        ...archived.map((e) => ({ date: toKey(new Date(e.createdAt)), key: e.id, entry: e })),
+        ...(profile.well.on
+          ? searchMeetings(
+              profile.well.meetings.filter((m) => m.archivedAt !== undefined),
+              query,
+            ).map((m) => ({ date: m.date, key: m.id, meeting: m }))
+          : []),
+      ].sort((a, b) => (a.date < b.date ? 1 : -1)),
+    [archived, profile.well, query],
   );
   const answered = useMemo(
     () => searchAnswered(answeredNewestFirst(profile.answered), query),
@@ -231,7 +263,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
       : tab === 'verses'
         ? verses.length
         : tab === 'arena'
-          ? archived.length
+          ? archivedAll.length
           : tab === 'desert'
             ? rounds.length
             : tab === 'answered'
@@ -253,7 +285,8 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
           { value: 'days', label: 'Tage' },
           { value: 'verses', label: 'Versesammlung' },
           { value: 'arena', label: 'Arena' },
-          { value: 'answered', label: 'Gebetserhörungen' },
+          // Kept from before 1.35.2, when concerns could be marked as answered; shown only if there are any.
+          ...(profile.answered.length ? [{ value: 'answered' as const, label: 'Gebetserhörungen' }] : []),
           ...(profile.winterArc.runs.length ? [{ value: 'desert' as const, label: 'Wüstenwanderung' }] : []),
           ...(profile.showHabitHistory ? [{ value: 'habits' as const, label: 'Gewohnheiten' }] : []),
         ]}
@@ -328,12 +361,12 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
             ))}
 
           {tab === 'arena' &&
-            (archived.length ? (
+            (archivedAll.length ? (
               <MonthList
-                items={archived.slice(0, limit)}
-                dateOf={(e) => toKey(new Date(e.createdAt))}
-                keyOf={(e) => e.id}
-                render={(e) => <ArenaItem e={e} />}
+                items={archivedAll.slice(0, limit)}
+                dateOf={(x) => x.date}
+                keyOf={(x) => x.key}
+                render={(x) => ('entry' in x ? <ArenaItem e={x.entry} /> : <WellItem m={x.meeting} />)}
               />
             ) : (
               <p className="empty">
@@ -380,7 +413,7 @@ export function ArchivePage({ embedded = false }: { embedded?: boolean }) {
               <p className="empty">
                 {query.trim()
                   ? 'Nichts gefunden.'
-                  : 'Noch keine. Ein Anliegen aus „Mein Haus“, das Gott erhört hat, hältst du dort mit „Erhört“ fest.'}
+                  : 'Noch keine.'}
               </p>
             ))}
 

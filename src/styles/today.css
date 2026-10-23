@@ -774,3 +774,14 @@ a.cy-week-name {
 .habits-rest {
   margin: 4px 0 2px;
 }
+/* The family rows: the name of the row stays in one line, the text beside it wraps. */
+.focus-row {
+  grid-template-columns: 5em 1fr;
+}
+.focus-row .three-key {
+  white-space: nowrap;
+}
+/* Under the habit of the Abendbrunnen: the way into its place in the Arena. */
+.habit-link {
+  margin: -2px 0 8px 40px;
+}

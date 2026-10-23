@@ -3,7 +3,7 @@
  * There is no streak, chain or score anywhere (rule 4).
  */
 import { DESERT_HABITS, type Follow } from '../content/desert';
-import { HABIT_NEEDS, HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS } from '../content/habits';
+import { HABIT_NEEDS, HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS, WELL_HABIT } from '../content/habits';
 import { houseHas, type House } from './house';
 import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
 import type { Day, Habit, Rhythm } from './model';
@@ -12,6 +12,9 @@ export type DayLookup = (date: DateKey) => Day | undefined;
 
 /** Whether a habit fits the house: those about wife or children wait until they are entered. */
 export const fitsHouse = (h: Habit, house: House): boolean => houseHas(house, h.needs ?? HABIT_NEEDS[h.id]);
+
+/** The habit of the Abendbrunnen is invisible while the Abendbrunnen is switched off. */
+export const shownHabit = (h: Habit, wellOn: boolean): boolean => h.id !== WELL_HABIT || wellOn;
 
 const fromPreset = ({ activeOnUpdate: _, ...p }: (typeof HABIT_PRESETS)[number], active: boolean): Habit => ({
   ...p,

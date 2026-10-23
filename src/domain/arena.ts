@@ -148,3 +148,6 @@ export function pinnedFirst(entries: readonly ArenaEntry[]): ArenaEntry[] {
 
 /** How an Eisenschmiede entry is named: by the meeting it is for. */
 export const forgeTitle = (e: ArenaEntry) => (e.meetingDate ? meetingLabel(e.meetingDate) : 'Treffen noch ohne Termin');
+
+/** Archived entries stand in the Rückblick under "Mehr". */
+export const REVIEW_PATH = '/mehr/rueckblick?ansicht=arena';

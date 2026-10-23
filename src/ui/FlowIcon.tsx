@@ -11,6 +11,7 @@ export type FlowIconName =
   | 'blessing'
   | 'moon'
   | 'people'
+  | 'well'
   | 'cross'
   | 'scroll'
   | 'heart'
@@ -87,6 +88,8 @@ export const FLOW_PATHS: Record<FlowIconName, JSX.Element> = {
       <path d="M15 13.6a4.5 4.5 0 0 1 6 4.4" />
     </>
   ),
+  // A well under its small roof, the bucket hanging on the rope
+  well: <path d="M4.5 9.5 12 4l7.5 5.5M6.5 9.5V20M17.5 9.5V20M4.5 20h15M12 9.5v3.5M10.5 13h3v3h-3z" />,
   cross: <path d="M12 3v18M7 8h10" />,
   // The creed, a written confession
   scroll: (

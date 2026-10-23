@@ -358,7 +358,7 @@ describe('Titles and pinned entries', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
     fireEvent.change(await screen.findByLabelText('Was dich bewegt'), { target: { value: 'Oben' } });
     const bar = screen.getByRole('toolbar', { name: 'Eintrag' });
-    expect(bar.querySelectorAll('svg')).toHaveLength(4);
+    expect(bar.querySelectorAll('svg')).toHaveLength(5);
     expect(document.querySelector('.arena-actions')).toBeNull();
     fireEvent.click(within(bar).getByRole('button', { name: 'Anheften' }));
     await waitFor(() => expect(within(bar).getByRole('button', { name: 'Lösen' }).getAttribute('aria-pressed')).toBe('true'));

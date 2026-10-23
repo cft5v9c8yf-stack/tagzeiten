@@ -17,6 +17,7 @@ import {
 } from './model';
 import { isEmptyDay } from './normalizeDay';
 import { isEmptyEntry } from './arena';
+import { isEmptyMeeting, type Well } from './well';
 import { answeredNewestFirst, ROLE_LABEL, type AnsweredPrayer } from './house';
 import { inkToSvg } from './ink';
 import { getPlan, portionLabel } from './readingPlan';
@@ -161,6 +162,23 @@ function arenaToMarkdown(entries: readonly ArenaEntry[]): string[] {
   return out;
 }
 
+function wellToMarkdown(well: Well | undefined): string[] {
+  const meetings = (well?.meetings ?? []).filter((m) => !isEmptyMeeting(m));
+  if (meetings.length === 0) return [];
+  const date = (k: string) => new Date(`${k}T12:00:00`).toLocaleDateString('de-DE');
+  const out = ['', '# Treffen am Abendbrunnen', ''];
+  for (const m of [...meetings].sort((a, b) => (a.date < b.date ? -1 : 1))) {
+    out.push(`## ${date(m.date)}`, '');
+    if (m.title?.trim()) out.push(`**Titel:** ${m.title.trim()}`, '');
+    if (m.resolution.trim()) out.push(`**Mein Vorsatz:** ${oneLine(m.resolution)}${m.resolutionDone ? ' (umgesetzt)' : ''}`, '');
+    if (m.herWish.trim()) out.push(`**Ihr Wunsch an mich:** ${oneLine(m.herWish)}`, '');
+    if (m.herConcern.trim()) out.push(`**Gebetsanliegen von ihr:** ${oneLine(m.herConcern)}`, '');
+    if (m.myConcern.trim()) out.push(`**Gebetsanliegen von mir:** ${oneLine(m.myConcern)}`, '');
+    if (m.next) out.push(`**Nächstes Treffen:** ${date(m.next)}`, '');
+  }
+  return out;
+}
+
 function answeredToMarkdown(answered: readonly AnsweredPrayer[]): string[] {
   if (!answered.length) return [];
   return [
@@ -182,6 +200,7 @@ export function toMarkdown(
   arena: readonly ArenaEntry[] = [],
   answered: readonly AnsweredPrayer[] = [],
   winterArc: string[] = [],
+  well?: Well,
 ): string {
   const kept = days.filter((d) => !isEmptyDay(d)).sort((a, b) => (a.date < b.date ? -1 : 1));
   const head = [
@@ -195,6 +214,7 @@ export function toMarkdown(
     ...kept.map((d) => dayToMarkdown(d, habits)),
     ...arenaToMarkdown(arena),
     ...answeredToMarkdown(answered),
+    ...wellToMarkdown(well),
     ...winterArc,
   ].join('\n');
 }

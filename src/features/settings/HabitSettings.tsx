@@ -21,6 +21,7 @@ import {
   setHabitTimes,
   TIMES_PER_WEEK,
   fitsHouse,
+  shownHabit,
 } from '../../domain/habits';
 import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
@@ -200,7 +201,7 @@ export function HabitSettings() {
   const toast = useToast();
   const profile = useProfile();
   // Habits taken in only for the Wüstenzeit stand here once they are taken over into everyday life.
-  const everyday = profile.habits.filter((h) => !h.desert || h.active);
+  const everyday = profile.habits.filter((h) => (!h.desert || h.active) && shownHabit(h, profile.well.on));
   const nameId = useId();
   const rhythmId = useId();
   const [name, setName] = useState('');
@@ -283,7 +284,7 @@ export function HabitSettings() {
   );
 }
 
-/** While a Wüstenzeit runs, its habits are chosen here too, as under Darstellung and in the Arena. */
+/** While a Wüstenzeit runs, its habits are chosen here too, as under Tag und Woche and in the Arena. */
 function DesertGroup() {
   const profile = useProfile();
   const store = useStore();

@@ -35,6 +35,8 @@ export const HABIT_PRESETS: readonly HabitPreset[] = [
   { id: 'fasting', name: 'Fasten', rhythm: 'weekly', auto: null, active: false },
   { id: 'brothers', name: 'Gemeinschaft mit Brüdern', rhythm: 'weekly', auto: null, active: false },
   { id: 'timeWithWife', name: 'Zeit allein mit meiner Frau', rhythm: 'weekly', auto: null, active: false },
+  // Only there while the Treffen am Abendbrunnen is switched on; on "Heute" it leads into the Arena.
+  { id: 'wellMeeting', name: 'Treffen am Abendbrunnen', rhythm: 'weekly', auto: null, active: false },
   { id: 'privateConfession', name: 'Privatbeichte', rhythm: 'monthly', auto: null, active: true },
   { id: 'lordsSupper', name: 'Abendmahl', rhythm: 'monthly', auto: null, active: true },
   { id: 'offering', name: 'Opfer und Gaben', rhythm: 'monthly', auto: null, active: false },
@@ -51,8 +53,12 @@ export const HABIT_NEEDS: Readonly<Record<string, HouseNeed>> = {
   blessChildren: 'children',
   prayWithWife: 'wife',
   timeWithWife: 'wife',
+  wellMeeting: 'wife',
   catechismChildren: 'children',
 };
+
+/** The weekly habit of the Treffen am Abendbrunnen. */
+export const WELL_HABIT = 'wellMeeting';
 
 /** Preset names that changed; a habit still carrying the old name gets the new one. */
 export const RENAMED_PRESETS: Readonly<Record<string, { from: string; to: string }>> = {

@@ -13,6 +13,160 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.2',
+    date: '2026-10-23',
+    title: 'Ohne „Erhört“ in Mein Haus',
+    changes: [
+      { area: 'Gebet', text: 'Unter „Mein Haus“ gibt es den Knopf „Erhört“ nicht mehr; bei deiner Frau und jedem Kind steht nur das Anliegen. Was du früher als erhört festgehalten hast, bleibt im Rückblick unter „Gebetserhörungen“. Ist dort nichts, steht diese Ansicht nicht mehr im Rückblick.' },
+    ],
+  },
+  {
+    version: '1.35.1',
+    date: '2026-10-23',
+    title: '„Erhört“ in Mein Haus aufgeräumt',
+    changes: [
+      { area: 'Gebet', text: 'Unter „Mein Haus“ steht „Erhört“ bei deiner Frau und bei jedem Kind wieder sauber am rechten Rand; der Hinweis „Erst wenn ein Anliegen dasteht“ steht klein links daneben, auf einer Linie mit dem Knopf.' },
+    ],
+  },
+  {
+    version: '1.35.0',
+    date: '2026-10-23',
+    title: 'PDF ohne Druckfenster, auch in der installierten App',
+    changes: [
+      { area: 'Arena', text: '„Als PDF sichern“ erstellt das Blatt jetzt direkt auf deinem Gerät und öffnet das Teilen-Menü: von dort sicherst du es in Dateien, Notizen oder deinem Notizsystem. Das geht in Safari und in der installierten App, wo es kein Druckfenster gibt. Das Blatt sieht aus wie zuvor; die Handschrift steht in einem Kasten, so hoch wie das Geschriebene.' },
+    ],
+  },
+  {
+    version: '1.34.1',
+    date: '2026-10-23',
+    title: 'Als PDF sichern öffnet das Druckfenster zuverlässig',
+    changes: [
+      { area: 'Arena', text: '„Als PDF sichern“ öffnet das Druckfenster jetzt auch aus dem Menü neben einem Eintrag oder Treffen und beim zweiten Mal. Vorher tat sich in Safari manchmal nichts.' },
+      { area: 'Arena', text: 'Alle Einträge eines Ortes exportierst du jetzt über das Menü neben seiner Überschrift, nicht mehr mit zwei Knöpfen unter der Liste.' },
+    ],
+  },
+  {
+    version: '1.34.0',
+    date: '2026-10-23',
+    title: 'Mehr mit sechs Kacheln',
+    changes: [
+      { area: 'Mehr', text: 'Unter „Mehr“ stehen nur noch sechs Kacheln: Gewohnheiten, Gebet, Tag und Woche, Rückblick, App und Daten, Über Henoch.' },
+      { area: 'Mehr', text: '„Tag und Woche“ fasst zusammen, wie dein Tag und deine Woche laufen: unter „Der Tag“ die Zeiten, Am Bett am Morgen, das Nachtgebet und die geistliche Waffenrüstung; unter „Die Woche“ der Wochenrückblick, die Sonntagsruhe und das Treffen am Abendbrunnen; unter „Besondere Zeiten“ die Wüstenzeit.' },
+      { area: 'Mehr', text: '„App und Daten“ hat das Farbschema, wie du die App installierst und den Flugmodus beim Beten, darunter deine Daten: speichern, exportieren, einspielen, löschen. „Über Henoch“ hat dazu die Anleitung, die Versionen und den Weg zu den Neuigkeiten.' },
+      { area: 'Rückblick', text: 'Ob deine Gewohnheiten der letzten acht Wochen im Rückblick stehen, schaltest du jetzt unten im Rückblick selbst ein.' },
+      { area: 'Mehr', text: 'Alles, was du eingestellt hast, bleibt, wie es war. Alte Verweise führen an die neue Stelle.' },
+    ],
+  },
+  {
+    version: '1.33.0',
+    date: '2026-10-23',
+    title: 'Die Einstellungen neu geordnet',
+    changes: [
+      { area: 'Einstellungen', text: 'Unter „Darstellung“ stand vieles, was mit dem Aussehen nichts zu tun hat. Jetzt steht jedes dort, wo es hingehört: „Darstellung“ hat nur noch das Farbschema und die Gewohnheiten im Rückblick. Neu ist „Andacht“: Am Bett am Morgen, Nachtgebet am Bett, geistliche Waffenrüstung, Wochenrückblick und Sonntagsruhe. Neu ist auch „Arena“: das Treffen am Abendbrunnen und die Wüstenzeit. Alles, was du eingestellt hast, bleibt, wie es war.' },
+    ],
+  },
+  {
+    version: '1.32.0',
+    date: '2026-10-23',
+    title: 'Ein Blatt für alle Exporte, Tab und Enter in den Feldern',
+    changes: [
+      { area: 'Arena', text: 'Alles, was du aus der Arena exportierst, hat dasselbe ruhige Blatt: schmaler Kopf mit dem Zeichen der App, rechts der Ort, darunter eine feine goldene Linie, im Fuß der Zuspruch. Das gilt für die Einträge der Gebetskammer, der Eisenschmiede und der Wüstenwanderung, jetzt auch für jedes Treffen am Abendbrunnen (im Treffen oben „Exportieren“, in der Liste im Menü) und für die Wüstenzeit nach ihrem Ende.' },
+      { area: 'Arena', text: 'Jeder Ort kann alle seine Einträge auf einmal exportieren: unter der Liste „Alle als Text exportieren (Markdown)“ und „Alle als PDF sichern“. So nimmst du das ganze Tagebuch der Wüstenwanderung, alle Treffen der Eisenschmiede, die Gebetskammer oder alle Treffen am Abendbrunnen in eine Datei, der Reihe nach, der älteste zuerst.' },
+      { area: 'Einstellungen', text: 'Unter „Mehr“, Daten gibt es neben dem Text und der Sicherung auch „Als PDF sichern“ für alles auf einmal, auf demselben Blatt.' },
+      { area: 'Arena', text: 'Mit der Tastatur springen Tab und Umschalt-Tab von Feld zu Feld; Enter im Titel und in einzeiligen Feldern geht ins nächste. In den Bibelstellen und Gebetsanliegen macht Enter eine neue Zeile darunter, in einer leeren Zeile geht es zum nächsten Feld; die Rücktaste in einer leeren Zeile nimmt sie weg. Das gilt in der Gebetskammer, der Eisenschmiede, der Wüstenwanderung und im Treffen am Abendbrunnen.' },
+    ],
+  },
+  {
+    version: '1.31.1',
+    date: '2026-10-23',
+    title: 'Enter in den Listen der Arena',
+    changes: [
+      { area: 'Arena', text: 'Mit der Tastatur: In den Bibelstellen und Gebetsanliegen macht Enter eine neue Zeile darunter und setzt den Cursor hinein, wie bei den Anliegen fürs Treffen. Die Rücktaste in einer leeren Zeile nimmt sie wieder weg.' },
+    ],
+  },
+  {
+    version: '1.31.0',
+    date: '2026-10-23',
+    title: 'Einträge einzeln exportieren',
+    changes: [
+      { area: 'Arena', text: 'Jeder Eintrag der Gebetskammer, der Eisenschmiede und der Wüstenwanderung lässt sich einzeln exportieren: im Eintrag oben das Zeichen „Exportieren“, in der Liste im Menü neben dem Eintrag. Als Text (Markdown) für dein Notizsystem, mit Kopfblock, Bibelstellen, Anliegen und Text; die Handschrift liegt als Bild bei. Oder als PDF: ein gestaltetes Blatt in A4 mit schmalem Kopf (Zeichen der App, „Henoch“, „Mit Gott unterwegs“, rechts der Ort) und dem Zuspruch des Ortes im Fuß, auf dem iPhone und iPad über das Druckfenster mit „Als PDF sichern“. Die Datei heißt wie der Eintrag: Datum als JJMMTT, dann der Titel. Alles bleibt auf dem Gerät.' },
+    ],
+  },
+  {
+    version: '1.30.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: von der Gewohnheit unter „Heute“ direkt zum Treffen',
+    changes: [
+      { area: 'Heute', text: 'Neue wöchentliche Gewohnheit „Treffen am Abendbrunnen“. Ist sie eingeschaltet, steht unter „Heute“ bei ihr der Weg zum Treffen in der Arena. Sie ist nur zu sehen, solange der Abendbrunnen eingeschaltet ist.' },
+      { area: 'Einstellungen', text: 'Unter „Treffen am Abendbrunnen“ wählst du, welche Gewohnheit zum Treffen führt. Das kann auch eine eigene sein, etwa „Gespräch mit meiner Frau“. Löschst du sie, führt wieder die Vorlage hin.' },
+    ],
+  },
+  {
+    version: '1.29.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: ein Titel für jedes Treffen, der Vorsatz bricht um',
+    changes: [
+      { area: 'Arena', text: 'Ein Treffen am Abendbrunnen hat wie die Eisenschmiede ein Feld „Titel“: So heißt es in der Übersicht, sonst nach deinem Vorsatz. Der Vorsatz bricht im Feld um und ist ganz zu lesen; Enter macht keine neue Zeile, er bleibt ein Satz. Alle Felder eines Treffens sind so hoch wie ihr Text.' },
+    ],
+  },
+  {
+    version: '1.28.1',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: die Notizfelder wachsen mit dem Text',
+    changes: [
+      { area: 'Arena', text: 'Die Felder eines Treffens am Abendbrunnen waren bei langem Text zu niedrig, der Text war halb verdeckt. Sie wachsen jetzt mit, wie in der Gebetskammer. Unter „Heute“ bricht der Vorsatz um, nur „Mein Vorsatz“ davor bleibt in einer Zeile.' },
+    ],
+  },
+  {
+    version: '1.28.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: dieselben Zeichen wie überall in der Arena',
+    changes: [
+      { area: 'Arena', text: 'Ein Treffen am Abendbrunnen hat oben dieselben Zeichen wie jeder Eintrag der Arena: Sichern und zurück, Anheften, Archivieren und Löschen. Dasselbe bietet das Menü neben dem Eintrag in der Liste. Angeheftete Treffen stehen oben (höchstens drei). Archivierte stehen im Rückblick unter „Arena“ und lassen sich zurückholen.' },
+    ],
+  },
+  {
+    version: '1.27.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: Rahmen und Haltung als Kacheln',
+    changes: [
+      { area: 'Arena', text: 'Auf der Titelseite des Treffens am Abendbrunnen stehen nach den sechs Schritten „Rahmen“ und „Haltung“ als zwei Kacheln, die du bei Bedarf aufklappst. Die Seite ist kürzer, die Liste der Treffen rückt nach oben. Die Texte sind unverändert.' },
+    ],
+  },
+  {
+    version: '1.26.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: wie die Eisenschmiede, jedes Treffen eine Seite',
+    changes: [
+      { area: 'Arena', text: 'Das Treffen am Abendbrunnen ist wie die Eisenschmiede gebaut: Auf der Titelseite stehen die Verse, der Rahmen, die sechs Schritte und die Haltung im Gespräch, darunter „Treffen aufschreiben“ und die Treffen als Liste. Jedes Treffen hat eine Seite für sich, mit dem Vorsatz vom letzten zum Abhaken, dem Datum und den Notizen. Löschen kannst du ein Treffen auf seiner Seite oder über das Menü neben dem Eintrag in der Liste.' },
+    ],
+  },
+  {
+    version: '1.25.0',
+    date: '2026-10-22',
+    title: 'Heute: „Fokus heute“ mit Persönlich und Familie',
+    changes: [
+      { area: 'Heute', text: 'Hat das Treffen am Abendbrunnen für die Woche einen Vorsatz oder einen Wunsch festgehalten, heißt der Abschnitt „Fokus heute“. Er hat zwei Teile: „Persönlich“ mit den drei Dingen aus der Stillen Zeit und „Familie“ mit deinem Vorsatz und ihrem Wunsch. Sonst bleibt „Die drei Dinge“ wie bisher.' },
+    ],
+  },
+  {
+    version: '1.24.0',
+    date: '2026-10-22',
+    title: 'Abendbrunnen: der Vorsatz der Woche in der Stillen Zeit',
+    changes: [
+      { area: 'Stille Zeit', text: 'Ist das Treffen am Abendbrunnen eingeschaltet, steht in der Ausrichtung bis zu sieben Tage nach dem Treffen dein Vorsatz für die Woche, dazu ihr Wunsch an dich. Es ist eine Erinnerung an das, was ihr euch vorgenommen habt, kein Haken und keine Zahl. Ausgeschaltet ändert sich nichts.' },
+    ],
+  },
+  {
+    version: '1.23.0',
+    date: '2026-10-22',
+    title: 'Treffen am Abendbrunnen: der wöchentliche Ehe-Check-in',
+    changes: [
+      { area: 'Arena', text: 'Neu für Verheiratete: das „Treffen am Abendbrunnen“. Es hat zwei Bibelworte, den Rahmen, sechs Schritte für den Abend zu zweit (Dank, Befinden, Entlastung, Beziehung, Ausblick, Gebet), die Haltung im Gespräch und Notizen für jede Woche. Beim nächsten Treffen steht dein Vorsatz vom letzten oben, zum Abhaken. Ein Zuspruch folgt auf die Frage nach dem, was zwischen euch steht; was ihr einander bekennt, wird nicht notiert.' },
+      { area: 'Einstellungen', text: 'Unter „Mehr“, Darstellung gibt es „Treffen am Abendbrunnen“: ein Schalter „Ich bin verheiratet – Abendbrunnen anzeigen“ und das Feld „Name meiner Frau“. Ist der Schalter aus, ist das Treffen nirgends zu sehen. Die Notizen bleiben auf dem Gerät, sind in der Sicherung und im Export und lassen sich löschen.' },
+    ],
+  },
+  {
     version: '1.22.2',
     date: '2026-10-23',
     title: 'Tab und Enter in den Feldern der Arena',
