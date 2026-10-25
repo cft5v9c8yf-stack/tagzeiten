@@ -17,6 +17,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
+import { Reflection } from './Reflection';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
@@ -91,6 +92,18 @@ const PLACES = {
 
 type Writing = 'text' | 'ink';
 const WRITING_KEY = 'tz:arena-writing';
+
+type JournalView = 'classic' | 'reflection';
+const VIEW_KEY = 'tz:arena-view';
+
+/** Which view of the Gebetskammer was last chosen, on this device: a convenience only. */
+const lastView = (): JournalView => {
+  try {
+    return localStorage.getItem(VIEW_KEY) === 'reflection' ? 'reflection' : 'classic';
+  } catch {
+    return 'classic';
+  }
+};
 
 /** How the last entry was written, on this device: a convenience only. */
 const lastWriting = (): Writing => {
@@ -743,6 +756,15 @@ export function ArenaPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const entries = profile.arena;
+  const [view, setView] = useState<JournalView>(lastView);
+  const chooseView = (v: JournalView) => {
+    setView(v);
+    try {
+      localStorage.setItem(VIEW_KEY, v);
+    } catch {
+      // Only a convenience.
+    }
+  };
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
@@ -796,15 +818,32 @@ export function ArenaPage() {
     <div className="arena arena-place">
       <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
       <SectionVerse id={place.verse} />
-      <p className="arena-note">{place.note}</p>
-      <button
-        type="button"
-        className="btn primary arena-new"
-        onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
-      >
-        {place.add}
-      </button>
-      {kind === 'journal' && shown.length > 0 && (
+      {kind === 'journal' && (
+        <Segmented<JournalView>
+          label="Ansicht"
+          value={view}
+          onChange={chooseView}
+          options={[
+            { value: 'classic', label: 'Klassisch' },
+            { value: 'reflection', label: 'Reflexion' },
+          ]}
+        />
+      )}
+      {kind === 'journal' && view === 'reflection' ? (
+        <Reflection />
+      ) : (
+        <>
+          <p className="arena-note">{place.note}</p>
+          <button
+            type="button"
+            className="btn primary arena-new"
+            onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
+          >
+            {place.add}
+          </button>
+        </>
+      )}
+      {kind === 'journal' && view === 'classic' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
             <ListItem key={e.id} entry={e}>

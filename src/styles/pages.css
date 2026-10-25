@@ -4443,3 +4443,28 @@ mark.placeholder {
 .desert-reading-choice .seg {
   margin-top: 4px;
 }
+/* Gebetskammer: the Reflexion view. */
+.arena .seg + .arena-note,
+.arena .seg + .reflection {
+  margin-top: 12px;
+}
+.reflection-card {
+  margin: 0 0 18px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--sheet);
+}
+.reflection-card h3 {
+  margin: 0 0 8px;
+}
+.reflection-card p {
+  margin: 0 0 10px;
+}
+.reflection-card .btn {
+  margin-top: 4px;
+}
+.reflection-prayed {
+  font-style: italic;
+  color: var(--muted);
+}

@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.36.0',
+    date: '2026-10-25',
+    title: 'Reflexion in der Gebetskammer',
+    changes: [
+      { area: 'Gebetskammer', text: 'Oben in der Gebetskammer steht ein Schalter: „Klassisch“ oder „Reflexion“. Die Reflexion ist eine zweite Ansicht für deine persönliche Rückschau, mit drei Fragen als Anregung: Wo hat der Feind an Boden gewonnen? Bestandsaufnahme. Zum Ende der Woche. Zur Bestandsaufnahme und zum Wochenende schreibst du in ein Textfeld; „In der Gebetskammer ablegen“ legt die Antwort als Eintrag ab, zu finden in der klassischen Ansicht. Ein nicht abgelegter Text bleibt auf dem Gerät stehen.' },
+      { area: 'Gebetskammer', text: 'Bei der Frage nach dem Boden des Feindes gibt es kein Textfeld: Sünde wird gebetet, nicht notiert. Darunter steht das Wort aus 1. Johannes 1,9.' },
+    ],
+  },
+  {
     version: '1.35.3',
     date: '2026-10-23',
     title: 'Die Versionen in Zehnergruppen',

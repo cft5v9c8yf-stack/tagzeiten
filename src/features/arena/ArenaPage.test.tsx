@@ -449,4 +449,31 @@ describe('Handwriting in the Gebetskammer', () => {
       if (width) Object.defineProperty(HTMLElement.prototype, 'clientWidth', width);
     }
   });
+
+  describe('Reflexion', () => {
+    it('is chosen with the switch, has no field for the question about sin, and ends it in the word of forgiveness (rules 1, 9)', async () => {
+      await renderArena();
+      expect(screen.queryByText('Wird gebetet, nicht notiert.')).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
+      const sin = screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!;
+      expect(sin.querySelector('textarea')).toBeNull();
+      expect(sin.textContent).toContain('Wird gebetet, nicht notiert.');
+      expect(sin.textContent).toContain('1. Johannes 1,9');
+      expect(document.querySelectorAll('.reflection textarea')).toHaveLength(2);
+      expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
+    });
+
+    it('puts a written answer into the Gebetskammer as an entry', async () => {
+      const store = await renderArena();
+      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
+      const card = screen.getByRole('heading', { name: 'Bestandsaufnahme' }).closest('section')!;
+      const save = within(card).getByRole('button', { name: 'In der Gebetskammer ablegen' });
+      expect(save).toHaveProperty('disabled', true);
+      fireEvent.change(card.querySelector('textarea')!, { target: { value: 'Die Psalmen bete ich morgens.' } });
+      fireEvent.click(save);
+      await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
+      expect(store.getProfile().arena[0]).toMatchObject({ title: 'Bestandsaufnahme', text: 'Die Psalmen bete ich morgens.' });
+      expect(card.querySelector('textarea')!.value).toBe('');
+    });
+  });
 });
