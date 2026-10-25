@@ -51,3 +51,9 @@ export const ENTRY_CHOICE_VERSE = {
   text: 'Wachet und betet, daß ihr nicht in Anfechtung fallet! Der Geist ist willig; aber das Fleisch ist schwach.',
   ref: 'Matthäus 26,41',
 } as const;
+
+/** Under "Beten": God hears prayer (Luther 1912, checked word for word). */
+export const PRAYER_HEARD_VERSE = {
+  text: 'Du erhörst Gebet; darum kommt alles Fleisch zu dir.',
+  ref: 'Psalm 65,3',
+} as const;

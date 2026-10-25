@@ -456,6 +456,8 @@ describe('Handwriting in the Gebetskammer', () => {
       expect(screen.queryByRole('button', { name: 'Wachen' })).toBeNull();
       fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
       expect(screen.getByLabelText('Titel')).toBeTruthy();
+      // Under "Beten": God hears prayer.
+      expect(screen.getByText('Du erhörst Gebet; darum kommt alles Fleisch zu dir.')).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: 'Wachen' }));
       expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
       expect(screen.queryByLabelText('Titel')).toBeNull();

@@ -18,7 +18,7 @@ import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
 import { Reflection } from './Reflection';
-import { ENTRY_CHOICE_VERSE } from '../../content/reflection';
+import { ENTRY_CHOICE_VERSE, PRAYER_HEARD_VERSE } from '../../content/reflection';
 import { lastWriting, rememberWriting, type Writing } from './writing';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
@@ -654,6 +654,14 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         <Reflection entry={entry} />
       ) : (
         <>
+          {chooseKind && (
+            <figure className="section-verse">
+              <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
+              <figcaption>
+                <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
+              </figcaption>
+            </figure>
+          )}
 
       {kind === 'forge' && (
         <div className="field arena-meeting">
