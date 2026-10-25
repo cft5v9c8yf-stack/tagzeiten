@@ -117,7 +117,7 @@ export function Reflection({ entryId }: { entryId: string }) {
         <Comfort />
         <div className="reflection-habits">
           <h4>Gewohnheiten festlegen</h4>
-          <p className="small muted">Was ich mir aus dieser Reflexion vornehme. Es kommt in deine Gewohnheiten (Mehr, Gewohnheiten).</p>
+          <p className="small muted">Was ich mir aus dieser Reflexion vornehme; es kommt in deine Gewohnheiten (Mehr, Gewohnheiten). Du kannst den Eintrag auch ohne Gewohnheit ablegen.</p>
           <form className="add-habit" onSubmit={plan}>
             <div className="field">
               <label htmlFor={nameId}>Name</label>
@@ -149,7 +149,7 @@ export function Reflection({ entryId }: { entryId: string }) {
                   </li>
                 ))}
               </ul>
-              <button type="button" className="btn primary" onClick={adopt}>
+              <button type="button" className="btn" onClick={adopt}>
                 In die Gewohnheiten übernehmen
               </button>
             </>
@@ -160,7 +160,7 @@ export function Reflection({ entryId }: { entryId: string }) {
           <button type="button" className="btn" onClick={() => setStep(last)}>
             Zurück zur letzten Frage
           </button>
-          <button type="button" className="btn primary" disabled={answered.length === 0} onClick={save}>
+          <button type="button" className="btn primary" disabled={answered.length === 0 && taken.length === 0} onClick={save}>
             In der Gebetskammer ablegen
           </button>
         </div>
