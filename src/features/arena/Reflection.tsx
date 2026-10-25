@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { useToast } from '../../app/Toast';
 import { WELL_COMFORT } from '../../content/well';
-import { REFLECTION_CARDS } from '../../content/reflection';
+import { REFLECTION_CARDS, REFLECTION_VERSE } from '../../content/reflection';
 import { RHYTHM_LABEL } from '../../content/habits';
 import { useStore } from '../../data/hooks';
 import { addHabit, newHabitId, RHYTHM_ORDER } from '../../domain/habits';
@@ -170,6 +170,14 @@ export function Reflection({ entryId }: { entryId: string }) {
 
   return (
     <section className="reflection reflection-card" aria-labelledby={`refl-${card.id}`}>
+      {step === 0 && (
+        <figure className="section-verse">
+          <blockquote>{REFLECTION_VERSE.text}</blockquote>
+          <figcaption>
+            <BibleRef reference={REFLECTION_VERSE.ref} />
+          </figcaption>
+        </figure>
+      )}
       <p className="small muted reflection-step">
         Frage {step + 1} von {REFLECTION_CARDS.length}
       </p>

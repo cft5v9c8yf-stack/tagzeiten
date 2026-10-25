@@ -460,11 +460,17 @@ describe('Handwriting in the Gebetskammer', () => {
       expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
       expect(screen.queryByLabelText('Titel')).toBeNull();
       expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
-      expect(screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!.textContent).toContain('1. Johannes 1,9');
-      fireEvent.change(document.querySelector('.reflection textarea')!, { target: { value: 'Ungeduld mit den Kindern.' } });
+      // The Word first (rule 2), then the Rückschau, the examination last and ended in the word of forgiveness.
+      expect(document.querySelector('.reflection .section-verse')!.textContent).toContain('Psalm 139,23–24');
+      expect(screen.getByRole('heading', { name: 'Zum Ende der Woche' })).toBeTruthy();
+      fireEvent.change(document.querySelector('.reflection textarea')!, { target: { value: 'Mehr Geduld mit der Familie.' } });
       fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
       expect(screen.getByText('Frage 2 von 3')).toBeTruthy();
+      expect(screen.getByRole('heading', { name: 'Bestandsaufnahme' })).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
+      const ground = screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!;
+      expect(ground.textContent).toContain('1. Johannes 1,9');
+      fireEvent.change(ground.querySelector('textarea')!, { target: { value: 'Ungeduld mit den Kindern.' } });
       fireEvent.click(screen.getByRole('button', { name: 'Weiter zur Übersicht' }));
       const overview = screen.getByRole('heading', { name: 'Übersicht' }).closest('section')!;
       expect(overview.textContent).toContain('Ungeduld mit den Kindern.');
@@ -477,7 +483,7 @@ describe('Handwriting in the Gebetskammer', () => {
       await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
       expect(store.getProfile().arena[0]).toMatchObject({
         title: 'Reflexion',
-        text: 'Wo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
+        text: 'Zum Ende der Woche\nMehr Geduld mit der Familie.\n\nWo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
       });
       // The entry now stands as written, in the classic form, without the switch.
       await waitFor(() => expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion'));
