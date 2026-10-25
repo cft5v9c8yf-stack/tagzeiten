@@ -28,8 +28,8 @@ export const REFLECTION_CARDS: readonly ReflectionCard[] = [
     id: 'stocktaking',
     title: 'Bestandsaufnahme',
     paragraphs: [
-      'Heute ist wieder Fastentag und eine gute Gelegenheit für eine ehrliche Bestandsaufnahme. Wie läuft es mit den Lesungen? Bete ich die Psalmen? Wie gelingt mir mein konkretes Fasten? Treibe ich Sport? Habe ich das eucharistische Fasten eingehalten? Diese Disziplinen sind keine Auszeichnungen. Sie sind Hilfsmittel, um den Körper zu trainieren und meine Aufmerksamkeit auf Christus zu richten.',
-      'Falls ich vom Weg abgekommen bin, korrigiere ich meinen Kurs. Ich gebe nicht gleich die ganze Disziplin auf, nur weil ich ein- oder zweimal gescheitert bin. Bis zum Michaelistag sind es noch Wochen. Ich kehre zum Plan zurück, bitte meine Brüder um Hilfe, wenn nötig, und mache weiter.',
+      'Eine ehrliche Bestandsaufnahme. Wie läuft es mit den Lesungen? Bete ich die Psalmen? Wie gelingt mir mein konkretes Fasten? Treibe ich Sport? Habe ich das eucharistische Fasten eingehalten? Diese Disziplinen sind keine Auszeichnungen. Sie sind Hilfsmittel, um den Körper zu trainieren und meine Aufmerksamkeit auf Christus zu richten.',
+      'Falls ich vom Weg abgekommen bin, korrigiere ich meinen Kurs. Ich gebe nicht gleich die ganze Disziplin auf, nur weil ich ein- oder zweimal gescheitert bin. Ich kehre zum Plan zurück, bitte meine Brüder um Hilfe, wenn nötig, und mache weiter.',
     ],
     comfort: false,
   },
