@@ -19,6 +19,8 @@ export const REFLECTION_CARDS: readonly ReflectionCard[] = [
     title: 'Wo hat der Feind an Boden gewonnen?',
     paragraphs: [
       'Ich denke in dieser Woche ernsthaft über diese Frage nach. Welche gewohnheitsmäßige Sünde kehrt immer wieder zurück? Wo haben Zorn, Begierde, Ablenkung, Groll, Ungeduld oder Verzweiflung Fuß gefasst? Wo habe ich etwas in meinem Leben einfach hingenommen, das eigentlich bekämpft werden sollte?',
+      'Ich bin nicht vage, sondern benenne die Sache. Ich bringe sie im Gebet vor Gott und, wenn angebracht, vor meine Brüder und Schwestern. Das Ziel ist, diese festgefahrenen Muster zu erkennen und sie durch gute, traditionelle christliche Gewohnheiten zu ersetzen. Ich kann kein Terrain verteidigen, dessen Verlust ich nicht anerkennen will.',
+      'Ich untersuche also weiterhin die Schwächen, die ich zuvor erkannt habe. Welche Ausreden habe ich dafür gefunden? Welche Sünden habe ich als Stress, Persönlichkeitsmerkmal, Erschöpfung oder etwas, mit dem ich einfach „zu kämpfen“ habe, umbenannt? Ich bitte Gott um Unterscheidungsvermögen. Der Feind ist besonders wirksam, wenn wir die Sünde nicht mehr beim Namen nennen.',
     ],
     comfort: true,
   },
