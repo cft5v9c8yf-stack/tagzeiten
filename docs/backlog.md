@@ -2,6 +2,20 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
+## Gewohnheiten an festen Wochentagen
+
+**Vorgemerkt am 25.10.2026** (Wunsch von Andreas). Wartet, weil auf `vorschau`
+noch die Reflexion (1.36.0) liegt; es liegt immer nur eine Neuerung dort.
+
+Gedacht: Jede Gewohnheit, eigene wie Vorlage, bekommt optional feste Wochentage
+(z. B. Long Run am Samstag, Bibelstunde am Montag). Unter „Heute“ steht sie nur
+an diesen Tagen; in der Wochenübersicht sind die anderen Tage leer wie bei der
+Sonntagsruhe, nicht grau und nicht rot (Regel 5, 6). Ohne Wochentage bleibt alles
+wie bisher. Eintragen an einem anderen Tag bleibt über die Wochenübersicht möglich.
+Feste Tage und „n-mal die Woche“ schließen sich aus. Neues Feld am Profil, also
+Backup und Import mitführen. Offen: ob die Gewohnheit an anderen Tagen ganz
+ausgeblendet wird (vorgeschlagen) oder erreichbar bleibt.
+
 ## Dogmatik (Pieper) durchsehen
 
 **Auf Eis gelegt am 17.10.2026** (Wunsch von Andreas). Aussehen:
