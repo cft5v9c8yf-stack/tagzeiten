@@ -45,3 +45,9 @@ export const REFLECTION_CARDS: readonly ReflectionCard[] = [
     comfort: true,
   },
 ];
+
+/** Over the choice of a new entry: praying and watching (Luther 1912, checked word for word). */
+export const ENTRY_CHOICE_VERSE = {
+  text: 'Wachet und betet, daß ihr nicht in Anfechtung fallet! Der Geist ist willig; aber das Fleisch ist schwach.',
+  ref: 'Matthäus 26,41',
+} as const;

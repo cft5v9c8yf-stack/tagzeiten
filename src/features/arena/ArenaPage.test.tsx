@@ -453,10 +453,10 @@ describe('Handwriting in the Gebetskammer', () => {
   describe('Reflexion', () => {
     it('is chosen in a new entry, which then builds itself; the list stays one list (rules 1, 9)', async () => {
       const store = await renderArena();
-      expect(screen.queryByRole('button', { name: 'Reflexion' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Wachen' })).toBeNull();
       fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
       expect(screen.getByLabelText('Titel')).toBeTruthy();
-      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Wachen' }));
       expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
       expect(screen.queryByLabelText('Titel')).toBeNull();
       // The Word first (rule 2), then the Rückschau, the examination last; all on one page.
@@ -483,11 +483,11 @@ describe('Handwriting in the Gebetskammer', () => {
         text: 'Zum Ende der Woche\nMehr Geduld mit der Familie.\n\nWo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
       });
       // The Reflexion stays on the page while it is written.
-      expect(screen.getByRole('button', { name: 'Reflexion' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Wachen' })).toBeTruthy();
       // Back to the form and again: the answers are read out of the entry.
-      fireEvent.click(screen.getByRole('button', { name: 'Klassisch' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Beten' }));
       expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion');
-      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Wachen' }));
       expect(screen.getByRole('textbox', { name: 'Zum Ende der Woche' })).toHaveProperty('value', 'Mehr Geduld mit der Familie.');
       expect(screen.getByText(/Übernommen: Psalm mit den Kindern \(täglich\)/)).toBeTruthy();
       // Once written, the questions start folded.

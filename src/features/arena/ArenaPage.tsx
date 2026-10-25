@@ -18,6 +18,7 @@ import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
 import { Reflection } from './Reflection';
+import { ENTRY_CHOICE_VERSE } from '../../content/reflection';
 import { lastWriting, rememberWriting, type Writing } from './writing';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
@@ -543,7 +544,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
-  // A new entry of the Gebetskammer is either written freely (klassisch) or as a Reflexion; the page follows the choice.
+  // A new entry of the Gebetskammer is either written freely (Beten) or as a Reflexion (Wachen); the page follows the choice.
   const [view, setView] = useState<JournalView>(lastView);
   const chooseView = (v: JournalView) => {
     setView(v);
@@ -631,13 +632,21 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
       {chooseKind && (
+        <figure className="section-verse">
+          <blockquote>{ENTRY_CHOICE_VERSE.text}</blockquote>
+          <figcaption>
+            <BibleRef reference={ENTRY_CHOICE_VERSE.ref} />
+          </figcaption>
+        </figure>
+      )}
+      {chooseKind && (
         <Segmented<JournalView>
           label="Art des Eintrags"
           value={view}
           onChange={chooseView}
           options={[
-            { value: 'classic', label: 'Klassisch' },
-            { value: 'reflection', label: 'Reflexion' },
+            { value: 'classic', label: 'Beten' },
+            { value: 'reflection', label: 'Wachen' },
           ]}
         />
       )}
