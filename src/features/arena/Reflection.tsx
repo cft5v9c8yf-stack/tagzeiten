@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { useToast } from '../../app/Toast';
 import { WELL_COMFORT } from '../../content/well';
-import { REFLECTION_CARDS, REFLECTION_VERSE } from '../../content/reflection';
+import { REFLECTION_CARDS, REFLECTION_VERSE, type ReflectionCard } from '../../content/reflection';
 import { RHYTHM_LABEL } from '../../content/habits';
 import { useStore } from '../../data/hooks';
 import { addHabit, newHabitId, RHYTHM_ORDER } from '../../domain/habits';
@@ -9,6 +9,7 @@ import type { Rhythm } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 
 const draftKey = (id: string) => `tz:reflexion:${id}`;
+const SEEN_KEY = 'tz:reflexion-seen';
 const ENTRY_TITLE = 'Reflexion';
 
 interface Plan {
@@ -35,59 +36,98 @@ function writeDraft(id: string, text: string) {
   }
 }
 
-function Comfort() {
+/** Whether a Reflexion was laid down on this device before: then the questions start folded. */
+function seenBefore(): boolean {
+  try {
+    return localStorage.getItem(SEEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function markSeen() {
+  try {
+    localStorage.setItem(SEEN_KEY, '1');
+  } catch {
+    // Only a convenience.
+  }
+}
+
+/** One question: its title with the "i" that unfolds the question, and the field to write in. */
+function Question({
+  card,
+  value,
+  open,
+  onToggle,
+  onChange,
+}: {
+  card: ReflectionCard;
+  value: string;
+  open: boolean;
+  onToggle: () => void;
+  onChange: (v: string) => void;
+}) {
+  const fieldId = useId();
+  const askId = useId();
   return (
-    <aside className="arena-comfort" aria-label="Zuspruch">
-      <p>
-        {WELL_COMFORT.parts.join(' ')} <BibleRef reference={WELL_COMFORT.ref} />
-      </p>
-    </aside>
+    <section className="reflection-card" aria-labelledby={`refl-${card.id}`}>
+      <div className="reflection-head">
+        <h3 id={`refl-${card.id}`}>{card.title}</h3>
+        <button
+          type="button"
+          className="reflection-i"
+          aria-expanded={open}
+          aria-controls={askId}
+          aria-label={`Frage zu „${card.title}“ ${open ? 'zuklappen' : 'aufklappen'}`}
+          onClick={onToggle}
+        >
+          i
+        </button>
+      </div>
+      {open && (
+        <div id={askId} className="reflection-ask">
+          {card.paragraphs.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
+      )}
+      <div className="field">
+        <label htmlFor={fieldId} className="visually-hidden">
+          {card.title}
+        </label>
+        <textarea id={fieldId} rows={6} value={value} placeholder="Was ich dazu vor Gott sage …" onChange={(e) => onChange(e.target.value)} />
+      </div>
+    </section>
   );
 }
 
 /**
- * The Reflexion, step by step: one question after the other, then an overview that is laid down in
- * the Gebetskammer as the entry that is open. Sin and weakness may be written here, by exception to rule 9
- * (25.10.2026); the question about sin, and the overview, end in the word of forgiveness (rule 1).
+ * The Reflexion: the Word first, then the questions one under the other (the question itself unfolds
+ * behind the "i"), the word of forgiveness, the habits, and the button that lays it down as the open
+ * entry. Sin and weakness may be written here, by exception to rule 9 (25.10.2026); the questions end
+ * in the word of forgiveness (rule 1), and the resolve stands last (rule 2).
  */
 export function Reflection({ entryId }: { entryId: string }) {
   const store = useStore();
   const toast = useToast();
-  const fieldId = useId();
   const nameId = useId();
   const rhythmId = useId();
-  const [step, setStep] = useState(0);
-  // Habits laid down at the end: planned in the list, then taken into the habits (this round).
+  const [answers, setAnswers] = useState<Record<string, string>>(() =>
+    Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, readDraft(c.id)])),
+  );
+  // The first question stands open the first time; afterwards all are folded.
+  const [open, setOpen] = useState<Record<string, boolean>>(() => ({ [REFLECTION_CARDS[0]!.id]: !seenBefore() }));
+  // Habits laid down at the end: planned in the list, then taken into the habits.
   const [plans, setPlans] = useState<Plan[]>([]);
   const [taken, setTaken] = useState<string[]>([]);
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
-  const [answers, setAnswers] = useState<Record<string, string>>(() =>
-    Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, readDraft(c.id)])),
-  );
-  const last = REFLECTION_CARDS.length - 1;
-  const overview = step > last;
-  const card = REFLECTION_CARDS[Math.min(step, last)]!;
   const answered = REFLECTION_CARDS.filter((c) => answers[c.id]!.trim());
 
   const change = (id: string, v: string) => {
     setAnswers((a) => ({ ...a, [id]: v }));
     writeDraft(id, v);
   };
-  const save = () => {
-    // The resolve stands last: the Word and the prayer first, then the orientation (rule 2).
-    const parts = answered.map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
-    if (taken.length) parts.push(`Gewohnheiten\n${taken.join('\n')}`);
-    const text = parts.join('\n\n');
-    store.updateArenaEntry(entryId, (e) => ({ ...e, title: ENTRY_TITLE, text }), { immediate: true });
-    for (const c of REFLECTION_CARDS) writeDraft(c.id, '');
-    setAnswers(Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, ''])));
-    setStep(0);
-    setTaken([]);
-    setPlans([]);
-    toast('Reflexion als Eintrag abgelegt');
-  };
-
   const plan = (e: React.FormEvent) => {
     e.preventDefault();
     const n = name.trim();
@@ -103,112 +143,85 @@ export function Reflection({ entryId }: { entryId: string }) {
     setPlans([]);
     toast(fresh.length === plans.length ? 'In die Gewohnheiten übernommen' : 'In die Gewohnheiten übernommen, schon vorhandene bleiben');
   };
-
-  if (overview) {
-    return (
-      <section className="reflection reflection-card" aria-labelledby="refl-overview">
-        <h3 id="refl-overview">Übersicht</h3>
-        {REFLECTION_CARDS.map((c) => (
-          <div key={c.id} className="reflection-answer">
-            <h4>{c.title}</h4>
-            {answers[c.id]!.trim() ? <p className="reflection-text">{answers[c.id]!.trim()}</p> : <p className="muted">Nichts aufgeschrieben.</p>}
-          </div>
-        ))}
-        <Comfort />
-        <div className="reflection-habits">
-          <h4>Gewohnheiten festlegen</h4>
-          <p className="small muted">Was ich mir aus dieser Reflexion vornehme; es kommt in deine Gewohnheiten (Mehr, Gewohnheiten). Du kannst den Eintrag auch ohne Gewohnheit ablegen.</p>
-          <form className="add-habit" onSubmit={plan}>
-            <div className="field">
-              <label htmlFor={nameId}>Name</label>
-              <input id={nameId} type="text" value={name} placeholder="z. B. Psalm mit den Kindern" onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div className="field">
-              <label htmlFor={rhythmId}>Rhythmus</label>
-              <select id={rhythmId} value={rhythm} onChange={(e) => setRhythm(e.target.value as Rhythm)}>
-                {RHYTHM_ORDER.map((r) => (
-                  <option key={r} value={r}>
-                    {RHYTHM_LABEL[r]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button type="submit" className="btn" disabled={!name.trim()}>
-              Zur Liste hinzufügen
-            </button>
-          </form>
-          {plans.length > 0 && (
-            <>
-              <ul className="reflection-plans">
-                {plans.map((x) => (
-                  <li key={x.name}>
-                    {x.name} ({RHYTHM_LABEL[x.rhythm]}){' '}
-                    <button type="button" className="btn link" aria-label={`„${x.name}“ von der Liste nehmen`} onClick={() => setPlans(plans.filter((y) => y !== x))}>
-                      Entfernen
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <button type="button" className="btn" onClick={adopt}>
-                In die Gewohnheiten übernehmen
-              </button>
-            </>
-          )}
-          {taken.length > 0 && <p className="small">Übernommen: {taken.join(', ')}</p>}
-        </div>
-        <div className="reflection-nav">
-          <button type="button" className="btn" onClick={() => setStep(last)}>
-            Zurück zur letzten Frage
-          </button>
-          <button type="button" className="btn primary" disabled={answered.length === 0 && taken.length === 0} onClick={save}>
-            In der Gebetskammer ablegen
-          </button>
-        </div>
-      </section>
-    );
-  }
+  const save = () => {
+    // The resolve stands last: the Word and the prayer first, then the orientation (rule 2).
+    const parts = answered.map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
+    if (taken.length) parts.push(`Gewohnheiten\n${taken.join('\n')}`);
+    store.updateArenaEntry(entryId, (e) => ({ ...e, title: ENTRY_TITLE, text: parts.join('\n\n') }), { immediate: true });
+    for (const c of REFLECTION_CARDS) writeDraft(c.id, '');
+    markSeen();
+    toast('Reflexion als Eintrag abgelegt');
+  };
 
   return (
-    <section className="reflection reflection-card" aria-labelledby={`refl-${card.id}`}>
-      {step === 0 && (
-        <figure className="section-verse">
-          <blockquote>{REFLECTION_VERSE.text}</blockquote>
-          <figcaption>
-            <BibleRef reference={REFLECTION_VERSE.ref} />
-          </figcaption>
-        </figure>
-      )}
-      <p className="small muted reflection-step">
-        Frage {step + 1} von {REFLECTION_CARDS.length}
-      </p>
-      <h3 id={`refl-${card.id}`}>{card.title}</h3>
-      {card.paragraphs.map((p) => (
-        <p key={p}>{p}</p>
-      ))}
-      <div className="field">
-        <label htmlFor={fieldId} className="visually-hidden">
-          {card.title}
-        </label>
-        <textarea
-          id={fieldId}
+    <div className="reflection">
+      <figure className="section-verse">
+        <blockquote>{REFLECTION_VERSE.text}</blockquote>
+        <figcaption>
+          <BibleRef reference={REFLECTION_VERSE.ref} />
+        </figcaption>
+      </figure>
+      {REFLECTION_CARDS.map((card) => (
+        <Question
           key={card.id}
-          rows={9}
-          value={answers[card.id]}
-          placeholder="Was ich dazu vor Gott sage …"
-          onChange={(e) => change(card.id, e.target.value)}
+          card={card}
+          value={answers[card.id]!}
+          open={!!open[card.id]}
+          onToggle={() => setOpen((o) => ({ ...o, [card.id]: !o[card.id] }))}
+          onChange={(v) => change(card.id, v)}
         />
-      </div>
-      {card.comfort && <Comfort />}
-      <div className="reflection-nav">
-        {step > 0 && (
-          <button type="button" className="btn" onClick={() => setStep(step - 1)}>
-            Zurück zur vorigen Frage
+      ))}
+      <aside className="arena-comfort" aria-label="Zuspruch">
+        <p>
+          {WELL_COMFORT.parts.join(' ')} <BibleRef reference={WELL_COMFORT.ref} />
+        </p>
+      </aside>
+      <section className="reflection-card reflection-habits" aria-labelledby="refl-habits">
+        <h3 id="refl-habits">Gewohnheiten festlegen</h3>
+        <p className="small muted">
+          Was ich mir aus dieser Reflexion vornehme; es kommt in deine Gewohnheiten (Mehr, Gewohnheiten). Du kannst den Eintrag auch ohne Gewohnheit ablegen.
+        </p>
+        <form className="add-habit" onSubmit={plan}>
+          <div className="field">
+            <label htmlFor={nameId}>Name</label>
+            <input id={nameId} type="text" value={name} placeholder="z. B. Psalm mit den Kindern" onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="field">
+            <label htmlFor={rhythmId}>Rhythmus</label>
+            <select id={rhythmId} value={rhythm} onChange={(e) => setRhythm(e.target.value as Rhythm)}>
+              {RHYTHM_ORDER.map((r) => (
+                <option key={r} value={r}>
+                  {RHYTHM_LABEL[r]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="btn" disabled={!name.trim()}>
+            Zur Liste hinzufügen
           </button>
+        </form>
+        {plans.length > 0 && (
+          <>
+            <ul className="reflection-plans">
+              {plans.map((x) => (
+                <li key={x.name}>
+                  {x.name} ({RHYTHM_LABEL[x.rhythm]}){' '}
+                  <button type="button" className="btn link" aria-label={`„${x.name}“ von der Liste nehmen`} onClick={() => setPlans(plans.filter((y) => y !== x))}>
+                    Entfernen
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="btn" onClick={adopt}>
+              In die Gewohnheiten übernehmen
+            </button>
+          </>
         )}
-        <button type="button" className="btn primary" onClick={() => setStep(step + 1)}>
-          {step === last ? 'Weiter zur Übersicht' : 'Weiter zur nächsten Frage'}
-        </button>
-      </div>
-    </section>
+        {taken.length > 0 && <p className="small">Übernommen: {taken.join(', ')}</p>}
+      </section>
+      <button type="button" className="btn primary" disabled={answered.length === 0 && taken.length === 0} onClick={save}>
+        In der Gebetskammer ablegen
+      </button>
+    </div>
   );
 }

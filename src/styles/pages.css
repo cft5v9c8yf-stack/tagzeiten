@@ -4464,22 +4464,45 @@ mark.placeholder {
 .reflection-card .btn {
   margin-top: 4px;
 }
-.reflection-step {
-  margin: 0 0 4px;
-}
-.reflection-nav {
+.reflection-head {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 8px;
-  margin-top: 8px;
 }
-.reflection-answer h4 {
-  margin: 12px 0 4px;
+.reflection-head h3 {
+  flex: 1;
+  margin: 0;
 }
-.reflection-text {
-  white-space: pre-wrap;
+.reflection-i {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font: italic 600 1rem var(--serif);
 }
-
+.reflection-i[aria-expanded='true'] {
+  background: var(--gold-soft);
+}
+.reflection-ask {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 12px 12px 0;
+  font: 0.92rem var(--sans);
+}
+.reflection-ask p {
+  margin: 0 0 8px;
+}
+.reflection-ask p:last-child {
+  margin-bottom: 0;
+}
+.reflection-card textarea {
+  margin-top: 10px;
+}
 .reflection-habits {
   margin: 16px 0 8px;
 }

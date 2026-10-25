@@ -459,22 +459,18 @@ describe('Handwriting in the Gebetskammer', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
       expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
       expect(screen.queryByLabelText('Titel')).toBeNull();
-      expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
-      // The Word first (rule 2), then the Rückschau, the examination last and ended in the word of forgiveness.
+      // The Word first (rule 2), then the Rückschau, the examination last; all on one page.
       expect(document.querySelector('.reflection .section-verse')!.textContent).toContain('Psalm 139,23–24');
-      expect(screen.getByRole('heading', { name: 'Zum Ende der Woche' })).toBeTruthy();
-      fireEvent.change(document.querySelector('.reflection textarea')!, { target: { value: 'Mehr Geduld mit der Familie.' } });
-      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
-      expect(screen.getByText('Frage 2 von 3')).toBeTruthy();
-      expect(screen.getByRole('heading', { name: 'Bestandsaufnahme' })).toBeTruthy();
-      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
-      const ground = screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!;
-      expect(ground.textContent).toContain('1. Johannes 1,9');
-      fireEvent.change(ground.querySelector('textarea')!, { target: { value: 'Ungeduld mit den Kindern.' } });
-      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur Übersicht' }));
-      const overview = screen.getByRole('heading', { name: 'Übersicht' }).closest('section')!;
-      expect(overview.textContent).toContain('Ungeduld mit den Kindern.');
-      expect(overview.textContent).toContain('1. Johannes 1,9');
+      expect(document.querySelectorAll('.reflection textarea')).toHaveLength(3);
+      // The first question stands open the first time, the others are folded behind the "i".
+      expect(screen.getByText(/frage ich mich, was Christus in mir bewirkt/)).toBeTruthy();
+      expect(screen.queryByText(/Eine ehrliche Bestandsaufnahme/)).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'Frage zu „Bestandsaufnahme“ aufklappen' }));
+      expect(screen.getByText(/Eine ehrliche Bestandsaufnahme/)).toBeTruthy();
+      fireEvent.change(screen.getByRole('textbox', { name: 'Zum Ende der Woche' }), { target: { value: 'Mehr Geduld mit der Familie.' } });
+      fireEvent.change(screen.getByRole('textbox', { name: 'Wo hat der Feind an Boden gewonnen?' }), { target: { value: 'Ungeduld mit den Kindern.' } });
+      expect(document.querySelector('.reflection .arena-comfort')!.textContent).toContain('1. Johannes 1,9');
+      const overview = document.querySelector('.reflection') as HTMLElement;
       fireEvent.change(within(overview).getByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
       fireEvent.click(within(overview).getByRole('button', { name: 'Zur Liste hinzufügen' }));
       fireEvent.click(within(overview).getByRole('button', { name: 'In die Gewohnheiten übernehmen' }));
@@ -488,6 +484,8 @@ describe('Handwriting in the Gebetskammer', () => {
       // The entry now stands as written, in the classic form, without the switch.
       await waitFor(() => expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion'));
       expect(screen.queryByRole('button', { name: 'Reflexion' })).toBeNull();
+      // Laid down once, the questions start folded.
+      expect(localStorage.getItem('tz:reflexion-seen')).toBe('1');
     });
   });
 });
