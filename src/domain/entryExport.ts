@@ -6,6 +6,7 @@
 import type { ArenaEntry } from './model';
 import { entryTitle, forgeTitle, isEmptyEntry } from './arena';
 import { inkToSvg } from './ink';
+import { REFLECTION_CARDS } from '../content/reflection';
 import { paragraphs, safeName, savePdf, shortDate, type Block, type PrintDoc } from './printDoc';
 
 const longDate = (ms: number) =>
@@ -48,7 +49,16 @@ function entryContentLines(e: ArenaEntry, level: number): string[] {
   if (points.length) out.push(`${h} Zum Besprechen`, '', ...points.map((p) => `- [${p.done ? 'x' : ' '}] ${p.text.trim()}`), '');
   if (e.text.trim()) out.push(`${h} Text`, '', e.text.trim(), '');
   if (e.ink?.length) out.push(`${h} Handschrift`, '', `![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(e.ink))})`, '');
+  for (const [id, strokes] of inkOfQuestions(e)) {
+    out.push(`${h} Handschrift: ${id}`, '', `![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(strokes))})`, '');
+  }
   return out;
+}
+
+/** The handwriting of the Reflexion, under the title of each question, in the order of the questions. */
+function inkOfQuestions(e: ArenaEntry) {
+  const inks = e.inks ?? {};
+  return REFLECTION_CARDS.filter((c) => inks[c.id]?.length).map((c) => [c.title, inks[c.id]!] as const);
 }
 
 export function entryToMarkdown(e: ArenaEntry): string {
@@ -94,6 +104,7 @@ function entryBlocks(e: ArenaEntry): Block[] {
   }
   if (e.text.trim()) out.push(...paragraphs(e.text));
   if (e.ink?.length) out.push({ kind: 'label', text: 'Handschrift' }, { kind: 'svg', svg: inkToSvg(e.ink) });
+  for (const [title, strokes] of inkOfQuestions(e)) out.push({ kind: 'label', text: `Handschrift: ${title}` }, { kind: 'svg', svg: inkToSvg(strokes) });
   return out;
 }
 

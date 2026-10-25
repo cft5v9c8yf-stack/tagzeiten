@@ -475,16 +475,22 @@ describe('Handwriting in the Gebetskammer', () => {
       fireEvent.click(within(overview).getByRole('button', { name: 'Zur Liste hinzufügen' }));
       fireEvent.click(within(overview).getByRole('button', { name: 'In die Gewohnheiten übernehmen' }));
       expect(store.getProfile().habits.some((h) => h.name === 'Psalm mit den Kindern' && h.rhythm === 'daily' && !h.preset)).toBe(true);
-      fireEvent.click(within(overview).getByRole('button', { name: 'In der Gebetskammer ablegen' }));
+      // There is no button to lay it down: the entry is kept as it is written.
+      expect(screen.queryByRole('button', { name: 'In der Gebetskammer ablegen' })).toBeNull();
       await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
       expect(store.getProfile().arena[0]).toMatchObject({
         title: 'Reflexion',
         text: 'Zum Ende der Woche\nMehr Geduld mit der Familie.\n\nWo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
       });
-      // The entry now stands as written, in the classic form, without the switch.
-      await waitFor(() => expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion'));
-      expect(screen.queryByRole('button', { name: 'Reflexion' })).toBeNull();
-      // Laid down once, the questions start folded.
+      // The Reflexion stays on the page while it is written.
+      expect(screen.getByRole('button', { name: 'Reflexion' })).toBeTruthy();
+      // Back to the form and again: the answers are read out of the entry.
+      fireEvent.click(screen.getByRole('button', { name: 'Klassisch' }));
+      expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion');
+      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
+      expect(screen.getByRole('textbox', { name: 'Zum Ende der Woche' })).toHaveProperty('value', 'Mehr Geduld mit der Familie.');
+      expect(screen.getByText(/Übernommen: Psalm mit den Kindern \(täglich\)/)).toBeTruthy();
+      // Once written, the questions start folded.
       expect(localStorage.getItem('tz:reflexion-seen')).toBe('1');
     });
   });

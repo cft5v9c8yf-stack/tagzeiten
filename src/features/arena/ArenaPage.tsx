@@ -18,6 +18,7 @@ import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
 import { Reflection } from './Reflection';
+import { lastWriting, rememberWriting, type Writing } from './writing';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
@@ -90,9 +91,6 @@ const PLACES = {
   },
 } as const;
 
-type Writing = 'text' | 'ink';
-const WRITING_KEY = 'tz:arena-writing';
-
 type JournalView = 'classic' | 'reflection';
 const VIEW_KEY = 'tz:arena-view';
 
@@ -102,15 +100,6 @@ const lastView = (): JournalView => {
     return localStorage.getItem(VIEW_KEY) === 'reflection' ? 'reflection' : 'classic';
   } catch {
     return 'classic';
-  }
-};
-
-/** How the last entry was written, on this device: a convenience only. */
-const lastWriting = (): Writing => {
-  try {
-    return localStorage.getItem(WRITING_KEY) === 'ink' ? 'ink' : 'text';
-  } catch {
-    return 'text';
   }
 };
 
@@ -139,11 +128,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   }, [entry.text, writing]);
   const choose = (w: Writing) => {
     setWriting(w);
-    try {
-      localStorage.setItem(WRITING_KEY, w);
-    } catch {
-      // Only a convenience.
-    }
+    rememberWriting(w);
   };
   return (
     <fieldset className="arena-lines arena-text">
@@ -572,7 +557,9 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const kind = kindOf(entry);
   const place = PLACES[kind];
   const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
-  const chooseKind = kind === 'journal' && !habit && !archived && isEmptyEntry(entry);
+  // Offered while a new entry is begun, and stays so while it is being written (the Reflexion keeps the entry as it goes).
+  const [fresh] = useState(() => isEmptyEntry(entry));
+  const chooseKind = kind === 'journal' && !habit && !archived && fresh;
   const finish = () => {
     if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
     navigate(home);
@@ -655,7 +642,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         />
       )}
       {chooseKind && view === 'reflection' ? (
-        <Reflection entryId={entry.id} />
+        <Reflection entry={entry} />
       ) : (
         <>
 

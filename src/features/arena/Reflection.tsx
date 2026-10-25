@@ -5,10 +5,13 @@ import { REFLECTION_CARDS, REFLECTION_VERSE, type ReflectionCard } from '../../c
 import { RHYTHM_LABEL } from '../../content/habits';
 import { useStore } from '../../data/hooks';
 import { addHabit, newHabitId, RHYTHM_ORDER } from '../../domain/habits';
-import type { Rhythm } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
+import { Segmented } from '../../ui/Choice';
+import type { InkStroke } from '../../domain/ink';
+import { InkPad } from './InkPad';
+import { lastWriting, rememberWriting, type Writing } from './writing';
+import type { ArenaEntry, Rhythm } from '../../domain/model';
 
-const draftKey = (id: string) => `tz:reflexion:${id}`;
 const SEEN_KEY = 'tz:reflexion-seen';
 const ENTRY_TITLE = 'Reflexion';
 
@@ -18,22 +21,28 @@ interface Plan {
 }
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
 
-/** An unsent text, kept on the device only (a convenience; it goes with "tz:" when everything is deleted). */
-function readDraft(id: string): string {
-  try {
-    return localStorage.getItem(draftKey(id)) ?? '';
-  } catch {
-    return '';
-  }
+const HABITS_TITLE = 'Gewohnheiten';
+
+/** The text of the entry: each answered question under its title, the habits taken in last (rule 2). */
+export function composeReflection(answers: Record<string, string>, taken: readonly string[]): string {
+  const parts = REFLECTION_CARDS.filter((c) => answers[c.id]?.trim()).map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
+  if (taken.length) parts.push(`${HABITS_TITLE}\n${taken.join('\n')}`);
+  return parts.join('\n\n');
 }
 
-function writeDraft(id: string, text: string) {
-  try {
-    if (text) localStorage.setItem(draftKey(id), text);
-    else localStorage.removeItem(draftKey(id));
-  } catch {
-    // Only a convenience.
-  }
+/** The way back: the answers and the habits out of the text of an entry written by composeReflection. */
+export function parseReflection(text: string): { answers: Record<string, string>; taken: string[] } {
+  const answers: Record<string, string> = Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, '']));
+  let taken: string[] = [];
+  const titles = [...REFLECTION_CARDS.map((c) => c.title), HABITS_TITLE];
+  const heading = new RegExp(`(?:^|\\n\\n)(${titles.map((t) => t.replace(/[?.]/g, '\\$&')).join('|')})\\n`, 'g');
+  const marks = [...text.matchAll(heading)];
+  marks.forEach((m, i) => {
+    const body = text.slice(m.index! + m[0].length, marks[i + 1]?.index ?? text.length);
+    if (m[1] === HABITS_TITLE) taken = body.split('\n').filter(Boolean);
+    else answers[REFLECTION_CARDS.find((c) => c.title === m[1])!.id] = body;
+  });
+  return { answers, taken };
 }
 
 /** Whether a Reflexion was laid down on this device before: then the questions start folded. */
@@ -53,22 +62,33 @@ function markSeen() {
   }
 }
 
-/** One question: its title with the "i" that unfolds the question, and the field to write in. */
+/** One question: its title with the "i" that unfolds the question, and the field to write in, typed or with the pencil. */
 function Question({
   card,
   value,
+  ink,
   open,
   onToggle,
   onChange,
+  onInk,
 }: {
   card: ReflectionCard;
   value: string;
+  ink: InkStroke[];
   open: boolean;
   onToggle: () => void;
   onChange: (v: string) => void;
+  onInk: (s: InkStroke[]) => void;
 }) {
   const fieldId = useId();
   const askId = useId();
+  const hasText = !!value.trim();
+  const hasInk = ink.length > 0;
+  const [writing, setWriting] = useState<Writing>(() => (hasInk && !hasText ? 'ink' : hasText && !hasInk ? 'text' : lastWriting()));
+  const choose = (w: Writing) => {
+    setWriting(w);
+    rememberWriting(w);
+  };
   return (
     <section className="reflection-card" aria-labelledby={`refl-${card.id}`}>
       <div className="reflection-head">
@@ -91,42 +111,77 @@ function Question({
           ))}
         </div>
       )}
-      <div className="field">
-        <label htmlFor={fieldId} className="visually-hidden">
-          {card.title}
-        </label>
-        <textarea id={fieldId} rows={6} value={value} placeholder="Was ich dazu vor Gott sage …" onChange={(e) => onChange(e.target.value)} />
-      </div>
+      <Segmented<Writing>
+        label={`Schreiben mit, ${card.title}`}
+        value={writing}
+        onChange={choose}
+        options={[
+          { value: 'text', label: 'Tastatur' },
+          { value: 'ink', label: 'Handschrift' },
+        ]}
+      />
+      {writing === 'text' ? (
+        <div className="field">
+          <label htmlFor={fieldId} className="visually-hidden">
+            {card.title}
+          </label>
+          <textarea id={fieldId} rows={6} value={value} placeholder="Was ich dazu vor Gott sage …" onChange={(e) => onChange(e.target.value)} />
+          {hasInk && <p className="small muted">Dazu gibt es auch Handgeschriebenes.</p>}
+        </div>
+      ) : (
+        <>
+          <InkPad strokes={ink} onChange={onInk} />
+          {hasText && <p className="small muted">Dazu gibt es auch Getipptes.</p>}
+        </>
+      )}
     </section>
   );
 }
 
 /**
  * The Reflexion: the Word first, then the questions one under the other (the question itself unfolds
- * behind the "i"), the word of forgiveness, the habits, and the button that lays it down as the open
- * entry. Sin and weakness may be written here, by exception to rule 9 (25.10.2026); the questions end
+ * behind the "i"), the word of forgiveness, and the habits. What is written is kept in the open entry
+ * at once. Sin and weakness may be written here, by exception to rule 9 (25.10.2026); the questions end
  * in the word of forgiveness (rule 1), and the resolve stands last (rule 2).
  */
-export function Reflection({ entryId }: { entryId: string }) {
+export function Reflection({ entry }: { entry: ArenaEntry }) {
+  const entryId = entry.id;
   const store = useStore();
   const toast = useToast();
   const nameId = useId();
   const rhythmId = useId();
-  const [answers, setAnswers] = useState<Record<string, string>>(() =>
-    Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, readDraft(c.id)])),
-  );
+  const [start] = useState(() => parseReflection(entry.text));
+  const [answers, setAnswers] = useState<Record<string, string>>(start.answers);
   // The first question stands open the first time; afterwards all are folded.
   const [open, setOpen] = useState<Record<string, boolean>>(() => ({ [REFLECTION_CARDS[0]!.id]: !seenBefore() }));
   // Habits laid down at the end: planned in the list, then taken into the habits.
   const [plans, setPlans] = useState<Plan[]>([]);
-  const [taken, setTaken] = useState<string[]>([]);
+  const [taken, setTaken] = useState<string[]>(start.taken);
+  const [inks, setInks] = useState<Record<string, InkStroke[]>>(entry.inks ?? {});
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
-  const answered = REFLECTION_CARDS.filter((c) => answers[c.id]!.trim());
 
+  // The entry is kept as it is written, like every entry; one left empty is cleared away.
+  const keep = (a: Record<string, string>, t: readonly string[], i: Record<string, InkStroke[]>) => {
+    const text = composeReflection(a, t);
+    const written = !!text || Object.values(i).some((x) => x.length > 0);
+    store.updateArenaEntry(entryId, (e) => {
+      const { title: _, inks: __, ...rest } = e;
+      const kept = Object.fromEntries(Object.entries(i).filter(([, x]) => x.length > 0));
+      const withInks = Object.keys(kept).length ? { ...rest, inks: kept } : rest;
+      return written ? { ...withInks, title: ENTRY_TITLE, text } : { ...withInks, text: '' };
+    });
+    if (written) markSeen();
+  };
   const change = (id: string, v: string) => {
-    setAnswers((a) => ({ ...a, [id]: v }));
-    writeDraft(id, v);
+    const next = { ...answers, [id]: v };
+    setAnswers(next);
+    keep(next, taken, inks);
+  };
+  const draw = (id: string, strokes: InkStroke[]) => {
+    const next = { ...inks, [id]: strokes };
+    setInks(next);
+    keep(answers, taken, next);
   };
   const plan = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,20 +194,12 @@ export function Reflection({ entryId }: { entryId: string }) {
     const known = store.getProfile().habits.map((h) => h.name);
     const fresh = plans.filter((x) => !known.some((k) => same(k, x.name)));
     store.updateProfile((p) => ({ ...p, habits: fresh.reduce((hs, x) => addHabit(hs, x.name, x.rhythm, newHabitId()), p.habits) }), { immediate: true });
-    setTaken([...taken, ...plans.map((x) => `${x.name} (${RHYTHM_LABEL[x.rhythm]})`)]);
+    const nextTaken = [...taken, ...plans.map((x) => `${x.name} (${RHYTHM_LABEL[x.rhythm]})`)];
+    setTaken(nextTaken);
+    keep(answers, nextTaken, inks);
     setPlans([]);
     toast(fresh.length === plans.length ? 'In die Gewohnheiten übernommen' : 'In die Gewohnheiten übernommen, schon vorhandene bleiben');
   };
-  const save = () => {
-    // The resolve stands last: the Word and the prayer first, then the orientation (rule 2).
-    const parts = answered.map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
-    if (taken.length) parts.push(`Gewohnheiten\n${taken.join('\n')}`);
-    store.updateArenaEntry(entryId, (e) => ({ ...e, title: ENTRY_TITLE, text: parts.join('\n\n') }), { immediate: true });
-    for (const c of REFLECTION_CARDS) writeDraft(c.id, '');
-    markSeen();
-    toast('Reflexion als Eintrag abgelegt');
-  };
-
   return (
     <div className="reflection">
       <figure className="section-verse">
@@ -166,6 +213,8 @@ export function Reflection({ entryId }: { entryId: string }) {
           key={card.id}
           card={card}
           value={answers[card.id]!}
+          ink={inks[card.id] ?? []}
+          onInk={(strokes) => draw(card.id, strokes)}
           open={!!open[card.id]}
           onToggle={() => setOpen((o) => ({ ...o, [card.id]: !o[card.id] }))}
           onChange={(v) => change(card.id, v)}
@@ -219,9 +268,6 @@ export function Reflection({ entryId }: { entryId: string }) {
         )}
         {taken.length > 0 && <p className="small">Übernommen: {taken.join(', ')}</p>}
       </section>
-      <button type="button" className="btn primary" disabled={answered.length === 0 && taken.length === 0} onClick={save}>
-        In der Gebetskammer ablegen
-      </button>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { entryTitle, normalizeArena, searchArena } from './arena';
+import { entryTitle, isEmptyEntry, normalizeArena, searchArena } from './arena';
 
 const base = { createdAt: 1, updatedAt: 1, verses: [], concerns: [] };
 
@@ -46,5 +46,17 @@ describe('Handwriting', () => {
 
   it('drops strokes with a broken point list, and the entry when nothing else is left', () => {
     expect(normalizeArena([{ id: 'a', createdAt: 1, verses: [], concerns: [], text: '', ink: [{ tool: 'pen', color: 'ink', points: [1, 'x', 3] }] }])).toEqual([]);
+  });
+});
+
+describe('Reflexion handwriting', () => {
+  const stroke = { tool: 'pen', color: 'ink', points: [1, 2, 0.5] } as const;
+  it('keeps handwriting under a question, drops what is empty or broken, and counts as written', () => {
+    const [e] = normalizeArena([
+      { id: 'a', createdAt: 1, updatedAt: 1, verses: [''], concerns: [''], text: '', inks: { weekend: [stroke], ground: [], bad: [{ tool: 'x' }] } },
+    ]);
+    expect(e!.inks).toEqual({ weekend: [stroke] });
+    expect(isEmptyEntry(e!)).toBe(false);
+    expect(isEmptyEntry({ ...e!, inks: undefined })).toBe(true);
   });
 });
