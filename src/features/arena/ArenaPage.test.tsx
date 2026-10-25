@@ -451,29 +451,34 @@ describe('Handwriting in the Gebetskammer', () => {
   });
 
   describe('Reflexion', () => {
-    it('is chosen with the switch, has no field for the question about sin, and ends it in the word of forgiveness (rules 1, 9)', async () => {
-      await renderArena();
-      expect(screen.queryByText('Wird gebetet, nicht notiert.')).toBeNull();
-      fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
-      const sin = screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!;
-      expect(sin.querySelector('textarea')).toBeNull();
-      expect(sin.textContent).toContain('Wird gebetet, nicht notiert.');
-      expect(sin.textContent).toContain('1. Johannes 1,9');
-      expect(document.querySelectorAll('.reflection textarea')).toHaveLength(2);
-      expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
-    });
-
-    it('puts a written answer into the Gebetskammer as an entry', async () => {
+    it('goes step by step to an overview, keeps the list, and ends the question about sin in the word of forgiveness (rules 1, 9)', async () => {
       const store = await renderArena();
+      const id = store.addArenaEntry();
+      store.updateArenaEntry(id, (e) => ({ ...e, title: 'Ein Anliegen' }), { immediate: true });
       fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
-      const card = screen.getByRole('heading', { name: 'Bestandsaufnahme' }).closest('section')!;
-      const save = within(card).getByRole('button', { name: 'In der Gebetskammer ablegen' });
-      expect(save).toHaveProperty('disabled', true);
-      fireEvent.change(card.querySelector('textarea')!, { target: { value: 'Die Psalmen bete ich morgens.' } });
-      fireEvent.click(save);
-      await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
-      expect(store.getProfile().arena[0]).toMatchObject({ title: 'Bestandsaufnahme', text: 'Die Psalmen bete ich morgens.' });
-      expect(card.querySelector('textarea')!.value).toBe('');
+      expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
+      expect(await screen.findByText('Ein Anliegen')).toBeTruthy();
+      expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
+      expect(screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!.textContent).toContain('1. Johannes 1,9');
+      fireEvent.change(document.querySelector('.reflection textarea')!, { target: { value: 'Ungeduld mit den Kindern.' } });
+      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
+      expect(screen.getByText('Frage 2 von 3')).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur nächsten Frage' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Weiter zur Übersicht' }));
+      const overview = screen.getByRole('heading', { name: 'Übersicht' }).closest('section')!;
+      expect(overview.textContent).toContain('Ungeduld mit den Kindern.');
+      expect(overview.textContent).toContain('1. Johannes 1,9');
+      fireEvent.change(within(overview).getByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
+      fireEvent.click(within(overview).getByRole('button', { name: 'Zur Liste hinzufügen' }));
+      fireEvent.click(within(overview).getByRole('button', { name: 'In die Gewohnheiten übernehmen' }));
+      expect(store.getProfile().habits.some((h) => h.name === 'Psalm mit den Kindern' && h.rhythm === 'daily' && !h.preset)).toBe(true);
+      fireEvent.click(within(overview).getByRole('button', { name: 'In der Gebetskammer ablegen' }));
+      await waitFor(() => expect(store.getProfile().arena).toHaveLength(2));
+      expect(store.getProfile().arena[0]).toMatchObject({
+        title: 'Reflexion',
+        text: 'Wo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
+      });
+      expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
     });
   });
 });

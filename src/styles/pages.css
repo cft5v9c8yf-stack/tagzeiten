@@ -4464,7 +4464,29 @@ mark.placeholder {
 .reflection-card .btn {
   margin-top: 4px;
 }
-.reflection-prayed {
-  font-style: italic;
-  color: var(--muted);
+.reflection-step {
+  margin: 0 0 4px;
+}
+.reflection-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.reflection-answer h4 {
+  margin: 12px 0 4px;
+}
+.reflection-text {
+  white-space: pre-wrap;
+}
+
+.reflection-habits {
+  margin: 16px 0 8px;
+}
+.reflection-habits h4 {
+  margin: 0 0 4px;
+}
+.reflection-plans {
+  margin: 8px 0;
+  padding-left: 20px;
 }

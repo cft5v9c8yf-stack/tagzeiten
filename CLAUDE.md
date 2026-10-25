@@ -22,7 +22,7 @@ Diese Regeln gelten für jede Zeile Code und jeden Text in der App. Wenn eine An
 
 ## Privatsphäre
 
-9. **Sünden werden nie gespeichert.** Es gibt kein Eingabefeld für Sündenbekenntnis, weder in der Abendprüfung noch im vierfachen Kranz. Die Oberfläche sagt an dieser Stelle: „Wird gebetet, nicht notiert."
+9. **Sünden werden nie gespeichert.** Es gibt kein Eingabefeld für Sündenbekenntnis, weder in der Abendprüfung noch im vierfachen Kranz. Die Oberfläche sagt an dieser Stelle: „Wird gebetet, nicht notiert." *Ausnahme auf ausdrücklichen Wunsch (25.10.2026):* die Reflexion in der Gebetskammer. Nur dort darf Sünde und Schwäche aufgeschrieben werden, um zu erkennen, wie der Heilige Geist verändert; die Frage nach dem Boden des Feindes endet mit 1. Joh 1,9 (Regel 1). Die Einträge liegen nur auf dem Gerät (Regel 10). Überall sonst gilt die Regel unverändert.
 10. **Lokal zuerst.** Alle Einträge liegen standardmäßig nur auf dem Gerät (IndexedDB). Eine spätere Synchronisierung ist opt-in und Ende-zu-Ende verschlüsselt. Keine Analytik, keine Tracker, keine Drittanbieter-Skripte außer Schriften. *Ausnahme auf ausdrücklichen Wunsch (23.10.2026):* die Bibliothek `pdf-lib`, in die App eingebaut (nichts wird von außen geladen), für den PDF-Export.
 11. **Export gehört dem Nutzer.** Jederzeit vollständiger Export als Markdown und JSON, und vollständiges Löschen.
 

@@ -843,7 +843,7 @@ export function ArenaPage() {
           </button>
         </>
       )}
-      {kind === 'journal' && view === 'classic' && shown.length > 0 && (
+      {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
             <ListItem key={e.id} entry={e}>

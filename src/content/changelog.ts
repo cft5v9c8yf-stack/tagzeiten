@@ -17,8 +17,8 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-25',
     title: 'Reflexion in der Gebetskammer',
     changes: [
-      { area: 'Gebetskammer', text: 'Oben in der Gebetskammer steht ein Schalter: „Klassisch“ oder „Reflexion“. Die Reflexion ist eine zweite Ansicht für deine persönliche Rückschau, mit drei Fragen als Anregung: Wo hat der Feind an Boden gewonnen? Bestandsaufnahme. Zum Ende der Woche. Zur Bestandsaufnahme und zum Wochenende schreibst du in ein Textfeld; „In der Gebetskammer ablegen“ legt die Antwort als Eintrag ab, zu finden in der klassischen Ansicht. Ein nicht abgelegter Text bleibt auf dem Gerät stehen.' },
-      { area: 'Gebetskammer', text: 'Bei der Frage nach dem Boden des Feindes gibt es kein Textfeld: Sünde wird gebetet, nicht notiert. Darunter steht das Wort aus 1. Johannes 1,9.' },
+      { area: 'Gebetskammer', text: 'Oben in der Gebetskammer steht ein Schalter: „Klassisch“ oder „Reflexion“. Die Reflexion ist eine zweite Ansicht für deine persönliche Rückschau, mit drei Fragen als Anregung: Wo hat der Feind an Boden gewonnen? Bestandsaufnahme. Zum Ende der Woche. Die Fragen kommen Schritt für Schritt: Du schreibst zu einer Frage in ein Textfeld, gehst mit „Weiter“ zur nächsten und siehst am Ende eine Übersicht aller Antworten. „In der Gebetskammer ablegen“ legt sie als einen Eintrag „Reflexion“ ab. In der Übersicht kannst du zuletzt Gewohnheiten festlegen und mit „In die Gewohnheiten übernehmen“ in deine Gewohnheitsliste aufnehmen; sie stehen dann auch im Eintrag. Die Liste der Einträge steht in beiden Ansichten darunter, der Schalter filtert nichts. Ein nicht abgelegter Text bleibt auf dem Gerät stehen.' },
+      { area: 'Gebetskammer', text: 'Nur in der Reflexion darfst du auch Sünde und Schwäche aufschreiben, um zu sehen, wie der Heilige Geist verändert. Unter der Frage nach dem Boden des Feindes steht das Wort aus 1. Johannes 1,9. Die Einträge bleiben auf dem Gerät.' },
     ],
   },
   {
