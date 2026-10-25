@@ -47,10 +47,10 @@ function Comfort() {
 
 /**
  * The Reflexion, step by step: one question after the other, then an overview that is laid down in
- * the Gebetskammer as one entry. Sin and weakness may be written here, by exception to rule 9
+ * the Gebetskammer as the entry that is open. Sin and weakness may be written here, by exception to rule 9
  * (25.10.2026); the question about sin, and the overview, end in the word of forgiveness (rule 1).
  */
-export function Reflection() {
+export function Reflection({ entryId }: { entryId: string }) {
   const store = useStore();
   const toast = useToast();
   const fieldId = useId();
@@ -79,14 +79,13 @@ export function Reflection() {
     const parts = answered.map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
     if (taken.length) parts.push(`Gewohnheiten\n${taken.join('\n')}`);
     const text = parts.join('\n\n');
-    const id = store.addArenaEntry();
-    store.updateArenaEntry(id, (e) => ({ ...e, title: ENTRY_TITLE, text }), { immediate: true });
+    store.updateArenaEntry(entryId, (e) => ({ ...e, title: ENTRY_TITLE, text }), { immediate: true });
     for (const c of REFLECTION_CARDS) writeDraft(c.id, '');
     setAnswers(Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, ''])));
     setStep(0);
     setTaken([]);
     setPlans([]);
-    toast('Reflexion in der Gebetskammer abgelegt');
+    toast('Reflexion als Eintrag abgelegt');
   };
 
   const plan = (e: React.FormEvent) => {

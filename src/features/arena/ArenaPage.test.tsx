@@ -451,13 +451,14 @@ describe('Handwriting in the Gebetskammer', () => {
   });
 
   describe('Reflexion', () => {
-    it('goes step by step to an overview, keeps the list, and ends the question about sin in the word of forgiveness (rules 1, 9)', async () => {
+    it('is chosen in a new entry, which then builds itself; the list stays one list (rules 1, 9)', async () => {
       const store = await renderArena();
-      const id = store.addArenaEntry();
-      store.updateArenaEntry(id, (e) => ({ ...e, title: 'Ein Anliegen' }), { immediate: true });
+      expect(screen.queryByRole('button', { name: 'Reflexion' })).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+      expect(screen.getByLabelText('Titel')).toBeTruthy();
       fireEvent.click(screen.getByRole('button', { name: 'Reflexion' }));
       expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
-      expect(await screen.findByText('Ein Anliegen')).toBeTruthy();
+      expect(screen.queryByLabelText('Titel')).toBeNull();
       expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
       expect(screen.getByRole('heading', { name: 'Wo hat der Feind an Boden gewonnen?' }).closest('section')!.textContent).toContain('1. Johannes 1,9');
       fireEvent.change(document.querySelector('.reflection textarea')!, { target: { value: 'Ungeduld mit den Kindern.' } });
@@ -473,12 +474,14 @@ describe('Handwriting in the Gebetskammer', () => {
       fireEvent.click(within(overview).getByRole('button', { name: 'In die Gewohnheiten übernehmen' }));
       expect(store.getProfile().habits.some((h) => h.name === 'Psalm mit den Kindern' && h.rhythm === 'daily' && !h.preset)).toBe(true);
       fireEvent.click(within(overview).getByRole('button', { name: 'In der Gebetskammer ablegen' }));
-      await waitFor(() => expect(store.getProfile().arena).toHaveLength(2));
+      await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
       expect(store.getProfile().arena[0]).toMatchObject({
         title: 'Reflexion',
         text: 'Wo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
       });
-      expect(screen.getByText('Frage 1 von 3')).toBeTruthy();
+      // The entry now stands as written, in the classic form, without the switch.
+      await waitFor(() => expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion'));
+      expect(screen.queryByRole('button', { name: 'Reflexion' })).toBeNull();
     });
   });
 });

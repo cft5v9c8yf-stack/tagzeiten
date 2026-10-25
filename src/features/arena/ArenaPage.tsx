@@ -558,10 +558,21 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
+  // A new entry of the Gebetskammer is either written freely (klassisch) or as a Reflexion; the page follows the choice.
+  const [view, setView] = useState<JournalView>(lastView);
+  const chooseView = (v: JournalView) => {
+    setView(v);
+    try {
+      localStorage.setItem(VIEW_KEY, v);
+    } catch {
+      // Only a convenience.
+    }
+  };
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
   const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
+  const chooseKind = kind === 'journal' && !habit && !archived && isEmptyEntry(entry);
   const finish = () => {
     if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
     navigate(home);
@@ -632,6 +643,22 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
+      {chooseKind && (
+        <Segmented<JournalView>
+          label="Art des Eintrags"
+          value={view}
+          onChange={chooseView}
+          options={[
+            { value: 'classic', label: 'Klassisch' },
+            { value: 'reflection', label: 'Reflexion' },
+          ]}
+        />
+      )}
+      {chooseKind && view === 'reflection' ? (
+        <Reflection entryId={entry.id} />
+      ) : (
+        <>
+
       {kind === 'forge' && (
         <div className="field arena-meeting">
           <label htmlFor={dateId}>Für das Treffen am</label>
@@ -699,6 +726,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           </p>
         ))}
       </aside>
+        </>
+      )}
     </article>
   );
 }
@@ -756,15 +785,6 @@ export function ArenaPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const entries = profile.arena;
-  const [view, setView] = useState<JournalView>(lastView);
-  const chooseView = (v: JournalView) => {
-    setView(v);
-    try {
-      localStorage.setItem(VIEW_KEY, v);
-    } catch {
-      // Only a convenience.
-    }
-  };
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
@@ -818,31 +838,14 @@ export function ArenaPage() {
     <div className="arena arena-place">
       <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
       <SectionVerse id={place.verse} />
-      {kind === 'journal' && (
-        <Segmented<JournalView>
-          label="Ansicht"
-          value={view}
-          onChange={chooseView}
-          options={[
-            { value: 'classic', label: 'Klassisch' },
-            { value: 'reflection', label: 'Reflexion' },
-          ]}
-        />
-      )}
-      {kind === 'journal' && view === 'reflection' ? (
-        <Reflection />
-      ) : (
-        <>
-          <p className="arena-note">{place.note}</p>
-          <button
-            type="button"
-            className="btn primary arena-new"
-            onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
-          >
-            {place.add}
-          </button>
-        </>
-      )}
+      <p className="arena-note">{place.note}</p>
+      <button
+        type="button"
+        className="btn primary arena-new"
+        onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
+      >
+        {place.add}
+      </button>
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
