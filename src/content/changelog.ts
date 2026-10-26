@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.35.4',
+    date: '2026-10-26',
+    title: 'Treffen am Abendbrunnen: der Weg dorthin in der Zeile',
+    changes: [
+      { area: 'Heute', text: 'Unter „Heute“ steht der Weg „Zum Treffen am Abendbrunnen“ jetzt kleiner in der Zeile der Gewohnheit, neben „diese Woche“, und nicht mehr als eigene Zeile darunter.' },
+    ],
+  },
+  {
     version: '1.35.3',
     date: '2026-10-23',
     title: 'Die Versionen in Zehnergruppen',
