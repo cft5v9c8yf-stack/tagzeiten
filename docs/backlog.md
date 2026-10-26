@@ -32,8 +32,17 @@ Stand:
 - **Durchgesehen** (`"geprueft": true`): Band 1, Tag 1–5 (Claude, 16.10.2026,
   Seite 1–10 gegen den Scan; Berichtigungen in
   `reference/pieper/durchsicht/band-1.json`) und Tag 47–53 mit Bibelwort,
-  Kernsatz und Frage von Andreas. Alle anderen Tage tragen in der App den
-  Vermerk „Noch nicht durchgesehen“.
+  Kernsatz und Frage von Andreas; Tag 6–46 (26.10.2026, S. 10–90) Wort für
+  Wort gegen den Scan von einem Agenten, gegengeprüft von einem zweiten.
+  Alle anderen Tage tragen in der App den Vermerk „Noch nicht durchgesehen“.
+- **Maßstab (Andreas, 26.10.2026):** Wort für Wort; der Sinn darf nie
+  verfälscht werden. Der Druck bleibt unverändert, auch bei Druckfehlern
+  Piepers, ohne Vermerk; berichtigt wird nur, wo die Abschrift vom Druck
+  abweicht. Griechisches und Hebräisches bleibt stehen und bekommt eine
+  deutsche Übersetzung in Klammern; gesammelt in
+  `reference/pieper/durchsicht/uebersetzungen-band-N.json` (Quelle Pieper,
+  Luther 1912 oder eigene), in der App noch nicht angezeigt. Ablauf je Block
+  von etwa 40 Tagen: ein Agent liest gegen den Scan, ein zweiter prüft gegen.
 - **Befund der ersten zehn Seiten:** Das Deutsche ist sehr sauber (etwa ein
   Fehler auf zwei Seiten: „uwd“, „bezeichnet“ statt „bezeichnete“, Großschreibung).
   Häufiger: Stellenangaben in Fußnoten („1,1289“ statt „I, 1289“, „Ies.“),

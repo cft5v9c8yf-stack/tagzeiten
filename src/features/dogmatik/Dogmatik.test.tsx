@@ -52,13 +52,13 @@ describe('Dogmatik', { timeout: 20000 }, () => {
     expect(within(card).getByRole('link', { name: /Die Verständigung über den Standpunkt/ })).toBeTruthy();
     fireEvent.click(within(card).getByRole('link', { name: 'Heute lesen' }));
     expect(router.state.location.pathname).toBe('/katechismus/dogmatik/1-1');
-    // Day 1 is read against the print; day 6 not yet, and says so.
+    // Day 1 is read against the print; day 54 not yet, and says so.
     await screen.findByRole('heading', { level: 2, name: 'Die Verständigung über den Standpunkt (1 von 3)' });
     expect(screen.queryByText(/Noch nicht durchgesehen/)).toBeNull();
   });
 
   it('says of a day not yet read against the print that it may hold slips', async () => {
-    await renderAt('/katechismus/dogmatik/1-6');
+    await renderAt('/katechismus/dogmatik/1-54');
     expect(await screen.findByText(/Noch nicht durchgesehen/, {}, { timeout: 8000 })).toBeTruthy();
   });
 
