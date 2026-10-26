@@ -1,89 +1,2632 @@
 {
  "1": {
   "text": [
-   ["modernen Protestantischen Theologen", "modernen protestantischen Theologen"],
-   ["neuere Protestantische Theologie", "neuere protestantische Theologie"]
+   [
+    "modernen Protestantischen Theologen",
+    "modernen protestantischen Theologen"
+   ],
+   [
+    "neuere Protestantische Theologie",
+    "neuere protestantische Theologie"
+   ]
   ],
   "fussnoten": {
-   "2": [["Dogmatik 3, 1912", "Dogmatik³, 1912"]],
-   "4": [["St. L. III. 21.", "St. L. III, 21."]],
-   "5": [["St. L. 1,1289 f.", "St. L. I, 1289 f."]]
+   "2": [
+    [
+     "Dogmatik 3, 1912",
+     "Dogmatik³, 1912"
+    ]
+   ],
+   "4": [
+    [
+     "St. L. III. 21.",
+     "St. L. III, 21."
+    ]
+   ],
+   "5": [
+    [
+     "St. L. 1,1289 f.",
+     "St. L. I, 1289 f."
+    ]
+   ]
   }
  },
  "2": {
   "text": [
-   ["iv τω λόγω τφ Ιμφ . . . γνώσεσϋ·ε τήν άλή&ειαν", "ἐν τῷ λόγῳ τῷ ἐμῷ . . . γνώσεσθε τὴν ἀλήθειαν"],
-   ["(διά λόγον αυτών)", "(διὰ λόγου αὐτῶν)"],
-   ["freimachen“, ΠΧαφεη“, ή άλήϋ·εια έλενθερώσει νμας.", "freimachen“, ἡ ἀλήθεια ἐλευθερώσει ὑμᾶς."],
-   ["eigene uwd aller", "eigene und aller"]
+   [
+    "iv τω λόγω τφ Ιμφ . . . γνώσεσϋ·ε τήν άλή&ειαν",
+    "ἐν τῷ λόγῳ τῷ ἐμῷ . . . γνώσεσθε τὴν ἀλήθειαν"
+   ],
+   [
+    "(διά λόγον αυτών)",
+    "(διὰ λόγου αὐτῶν)"
+   ],
+   [
+    "freimachen“, ΠΧαφεη“, ή άλήϋ·εια έλενθερώσει νμας.",
+    "freimachen“, ἡ ἀλήθεια ἐλευθερώσει ὑμᾶς."
+   ],
+   [
+    "eigene uwd aller",
+    "eigene und aller"
+   ]
   ]
  },
  "3": {
   "text": [
-   ["auf die Ich-basis zu stellen", "auf die Ichbasis zu stellen"],
-   ["der ‘Propheten Kinder’", "der ‚Propheten Kinder‘"]
+   [
+    "auf die Ich-basis zu stellen",
+    "auf die Ichbasis zu stellen"
+   ],
+   [
+    "der ‘Propheten Kinder’",
+    "der ‚Propheten Kinder‘"
+   ]
   ],
   "fussnoten": {
-   "7": [["Matth. 20,28 usw.", "Matth. 20, 28 usw."]]
+   "7": [
+    [
+     "Matth. 20,28 usw.",
+     "Matth. 20, 28 usw."
+    ]
+   ]
   }
  },
  "4": {
   "text": [
-   ["bestimmt wird.[[13]] Aber auch der Sprachgebrauch", "bestimmt wird.[[13]]\n\nAber auch der Sprachgebrauch"],
-   ["entgegengesetzte heraus. Weil die Heiden", "entgegengesetzte heraus.\n\nWeil die Heiden"],
-   ["(είδότες)", "(εἰδότες)"]
+   [
+    "bestimmt wird.[[13]] Aber auch der Sprachgebrauch",
+    "bestimmt wird.[[13]]\n\nAber auch der Sprachgebrauch"
+   ],
+   [
+    "entgegengesetzte heraus. Weil die Heiden",
+    "entgegengesetzte heraus.\n\nWeil die Heiden"
+   ],
+   [
+    "(είδότες)",
+    "(εἰδότες)"
+   ]
   ],
   "fussnoten": {
    "12": [
-    ["Inst. vlv. 4, 28", "Inst. Div. 4, 28"],
-    ["Baier-Walther 1,14.", "Baier-Walther I, 14."],
-    ["Nachlesen kann", "nachlesen kann"]
+    [
+     "Inst. vlv. 4, 28",
+     "Inst. Div. 4, 28"
+    ],
+    [
+     "Baier-Walther 1,14.",
+     "Baier-Walther I, 14."
+    ],
+    [
+     "Nachlesen kann",
+     "nachlesen kann"
+    ]
    ],
    "13": [
-    ["grammatice (dazu rechnet Luther auch die etymologische Betrachtung eines Wortes),", "grammatice [dazu rechnet Luther auch die etymologische Betrachtung eines Wortes],"],
-    ["phrasium (Sprachgebrauch)", "phrasium [Sprachgebrauch]"],
-    ["In Latin lingua", "In Latina lingua"]
+    [
+     "grammatice (dazu rechnet Luther auch die etymologische Betrachtung eines Wortes),",
+     "grammatice [dazu rechnet Luther auch die etymologische Betrachtung eines Wortes],"
+    ],
+    [
+     "phrasium (Sprachgebrauch)",
+     "phrasium [Sprachgebrauch]"
+    ],
+    [
+     "In Latin lingua",
+     "In Latina lingua"
+    ]
    ],
-   "14": [["έπι καρδίαν άνθρώπον ονκ άνέβη.", "ἐπὶ καρδίαν ἀνθρώπου οὐκ ἀνέβη."]],
+   "14": [
+    [
+     "έπι καρδίαν άνθρώπον ονκ άνέβη.",
+     "ἐπὶ καρδίαν ἀνθρώπου οὐκ ἀνέβη."
+    ]
+   ],
    "15": [
-    ["Röm. 1, 32:τό δικαίωμα τον θεοϋ επιγνόντες; Röm. 2, 15: ενδείκνννται τδ εργον τον νόμον γραπτόν εν ταΐς καρδίαις αντών.", "Röm. 1, 32: τὸ δικαίωμα τοῦ θεοῦ ἐπιγνόντες; Röm. 2, 15: ἐνδείκνυνται τὸ ἔργον τοῦ νόμου γραπτὸν ἐν ταῖς καρδίαις αὐτῶν."]
+    [
+     "Röm. 1, 32:τό δικαίωμα τον θεοϋ επιγνόντες; Röm. 2, 15: ενδείκνννται τδ εργον τον νόμον γραπτόν εν ταΐς καρδίαις αντών.",
+     "Röm. 1, 32: τὸ δικαίωμα τοῦ θεοῦ ἐπιγνόντες; Röm. 2, 15: ἐνδείκνυνται τὸ ἔργον τοῦ νόμου γραπτὸν ἐν ταῖς καρδίαις αὐτῶν."
+    ]
    ],
    "18": [
-    ["Κατηργήθητε από τον Χρίστον", "Κατηργήθητε ἀπὸ τοῦ Χριστοῦ"],
-    ["sub καταργεΤν", "sub καταργεῖν"],
-    ["οΐτινες εν νόμφ δικαιονσ&ε", "οἵτινες ἐν νόμῳ δικαιοῦσθε"],
-    ["της χάριτος εξεπέσατε.", "τῆς χάριτος ἐξεπέσατε."]
+    [
+     "Κατηργήθητε από τον Χρίστον",
+     "Κατηργήθητε ἀπὸ τοῦ Χριστοῦ"
+    ],
+    [
+     "sub καταργεΤν",
+     "sub καταργεῖν"
+    ],
+    [
+     "οΐτινες εν νόμφ δικαιονσ&ε",
+     "οἵτινες ἐν νόμῳ δικαιοῦσθε"
+    ],
+    [
+     "της χάριτος εξεπέσατε.",
+     "τῆς χάριτος ἐξεπέσατε."
+    ]
    ]
   }
  },
  "5": {
   "text": [
-   ["(χωρίς έργων νόμον)", "(χωρὶς ἔργων νόμου)"],
-   ["Μαθητεύσατε πάντα τά ε'θνη,", "Μαθητεύσατε πάντα τὰ ἔθνη,"],
-   ["christlichen Praktisch wertlos", "christlichen praktisch wertlos"],
-   ["daß sie (Juden und Heiden) sich", "daß sie [Juden und Heiden] sich"],
-   ["(πίστει τῃ εις εμέ, scil, είς Χριστόν)", "(πίστει τῇ εἰς ἐμέ, scil. εἰς Χριστόν)"],
-   ["Χριστόν).[[22]] Um diesen", "Χριστόν).[[22]]\n\nUm diesen"],
-   ["die bezeichnet Sache", "die bezeichnete Sache"],
-   ["übersehen wird.[[23]].", "übersehen wird.[[23]]"]
+   [
+    "(χωρίς έργων νόμον)",
+    "(χωρὶς ἔργων νόμου)"
+   ],
+   [
+    "Μαθητεύσατε πάντα τά ε'θνη,",
+    "Μαθητεύσατε πάντα τὰ ἔθνη,"
+   ],
+   [
+    "christlichen Praktisch wertlos",
+    "christlichen praktisch wertlos"
+   ],
+   [
+    "daß sie (Juden und Heiden) sich",
+    "daß sie [Juden und Heiden] sich"
+   ],
+   [
+    "(πίστει τῃ εις εμέ, scil, είς Χριστόν)",
+    "(πίστει τῇ εἰς ἐμέ, scil. εἰς Χριστόν)"
+   ],
+   [
+    "Χριστόν).[[22]] Um diesen",
+    "Χριστόν).[[22]]\n\nUm diesen"
+   ],
+   [
+    "die bezeichnet Sache",
+    "die bezeichnete Sache"
+   ],
+   [
+    "übersehen wird.[[23]].",
+    "übersehen wird.[[23]]"
+   ]
   ],
   "fussnoten": {
-   "19": [["Konversationslexikon 6, XVI", "Konversationslexikon⁶, XVI"]],
-   "21": [["Ies. 49, 6", "Jes. 49, 6"]],
-   "22": [
-    ["Ies. 9,2 f.", "Jes. 9, 2 f."],
-    ["Finsternis belasten.", "Finsternis belassen."],
-    ["of his (des Apostels Paulus) mission", "of his [des Apostels Paulus] mission"],
-    ["to Gentiles.“", "to Gentiles.”"],
-    ["Είς ονς ist nicht bloß auf τών εθνών zu beziehen, sondern aus τον λαον και τών εθνών zusammen", "Εἰς οὓς ist nicht bloß auf τῶν ἐθνῶν zu beziehen, sondern auf τοῦ λαοῦ καὶ τῶν ἐθνῶν zusammen"],
-    ["gleicherweise aus die Heiden", "gleicherweise auf die Heiden"],
-    ["in bezug aus die Bekehrung", "in bezug auf die Bekehrung"],
-    ["welche ΐοείφε άθεοι εν τφ κόσμφ, Eph. 2, 12,", "welche ἄθεοι ἐν τῷ κόσμῳ, Eph. 2, 12,"],
-    ["des αρχών τον κόσμον τούτον, Eph. 2, 2“", "des ἄρχων τοῦ κόσμου τούτου, Eph. 2, 2“"],
-    ["Eph. 2,1. 2 von", "Eph. 2, 1. 2 von"]
+   "19": [
+    [
+     "Konversationslexikon 6, XVI",
+     "Konversationslexikon⁶, XVI"
+    ]
    ],
-   "23": [["Hutterus redivivus 10, S. 11.", "Hutterus redivivus¹⁰, S. 11."]]
+   "21": [
+    [
+     "Ies. 49, 6",
+     "Jes. 49, 6"
+    ]
+   ],
+   "22": [
+    [
+     "Ies. 9,2 f.",
+     "Jes. 9, 2 f."
+    ],
+    [
+     "Finsternis belasten.",
+     "Finsternis belassen."
+    ],
+    [
+     "of his (des Apostels Paulus) mission",
+     "of his [des Apostels Paulus] mission"
+    ],
+    [
+     "to Gentiles.“",
+     "to Gentiles.”"
+    ],
+    [
+     "Είς ονς ist nicht bloß auf τών εθνών zu beziehen, sondern aus τον λαον και τών εθνών zusammen",
+     "Εἰς οὓς ist nicht bloß auf τῶν ἐθνῶν zu beziehen, sondern auf τοῦ λαοῦ καὶ τῶν ἐθνῶν zusammen"
+    ],
+    [
+     "gleicherweise aus die Heiden",
+     "gleicherweise auf die Heiden"
+    ],
+    [
+     "in bezug aus die Bekehrung",
+     "in bezug auf die Bekehrung"
+    ],
+    [
+     "welche ΐοείφε άθεοι εν τφ κόσμφ, Eph. 2, 12,",
+     "welche ἄθεοι ἐν τῷ κόσμῳ, Eph. 2, 12,"
+    ],
+    [
+     "des αρχών τον κόσμον τούτον, Eph. 2, 2“",
+     "des ἄρχων τοῦ κόσμου τούτου, Eph. 2, 2“"
+    ],
+    [
+     "Eph. 2,1. 2 von",
+     "Eph. 2, 1. 2 von"
+    ]
+   ],
+   "23": [
+    [
+     "Hutterus redivivus 10, S. 11.",
+     "Hutterus redivivus¹⁰, S. 11."
+    ]
+   ]
   },
   "seite": "8–10"
+ },
+ "6": {
+  "text": [
+   [
+    "der. Religionen nicht hinaus",
+    "der Religionen nicht hinaus"
+   ],
+   [
+    "Macpherson: The common",
+    "Macpherson: “The common"
+   ],
+   [
+    "men and God.“[[24]]",
+    "men and God.”[[24]]"
+   ],
+   [
+    "aus die Empfindung",
+    "auf die Empfindung"
+   ],
+   [
+    "Eph. 2,12 nicht",
+    "Eph. 2, 12 nicht"
+   ],
+   [
+    "waren, keine Hoffnung hatten und ohne Gott in der Welt waren, έλπίδα μη εχοντες καί άθεοι έν τω κόσμφ.",
+    "waren, ἐλπίδα μὴ ἔχοντες καὶ ἄθεοι ἐν τῷ κόσμῳ."
+   ],
+   [
+    "„Persönliches Verhältnis zu Gott“",
+    "„persönliches Verhältnis zu Gott“"
+   ],
+   [
+    "a θύει τά έ’θνη, δαιμονίοις θύει καί ον θεφ,[[27]] Das",
+    "ἃ θύει τὰ ἔθνη, δαιμονίοις θύει καὶ οὐ θεῷ.[[27]] Das"
+   ],
+   [
+    "(οι έξ έργων νόμον)",
+    "(οἱ ἐξ ἔργων νόμου)"
+   ],
+   [
+    "Gal. 3,10.",
+    "Gal. 3, 10."
+   ]
+  ],
+  "fussnoten": {
+   "24": [
+    [
+     "Christum Dogmatics",
+     "Christian Dogmatics"
+    ]
+   ],
+   "28": [
+    [
+     "Gal. 3,10.",
+     "Gal. 3, 10."
+    ]
+   ],
+   "29": [
+    [
+     "Röm. 5,1. 2.11.",
+     "Röm. 5, 1. 2. 11."
+    ]
+   ],
+   "31": [
+    [
+     "Röm. 12,1.",
+     "Röm. 12, 1."
+    ]
+   ]
+  },
+  "seite": "10–12"
+ },
+ "7": {
+  "text": [
+   [
+    "zu sichern. Paßt nur",
+    "zu sichern, paßt nur"
+   ],
+   [
+    "Jes. 44,17",
+    "Jes. 44, 17"
+   ],
+   [
+    "Mark. 5,26",
+    "Mark. 5, 26"
+   ],
+   [
+    "Frieden’ Röm. 6,1.",
+    "Frieden‘, Röm. 5, 1."
+   ]
+  ],
+  "fussnoten": {
+   "32": [
+    [
+     "Grundriß 3,",
+     "Grundriß³,"
+    ]
+   ],
+   "34": [
+    [
+     "2,14.",
+     "2, 14."
+    ]
+   ],
+   "37": [
+    [
+     "RE.2 XVII",
+     "RE.² XVII"
+    ]
+   ]
+  },
+  "seite": "12–14"
+ },
+ "8": {
+  "text": [
+   [
+    "Psychologische Stadien",
+    "psychologische Stadien"
+   ],
+   [
+    "sonstwie Verkehren",
+    "sonstwie verkehren"
+   ],
+   [
+    "πίοτει, ουκ έξ έργων",
+    "πίστει, οὐκ ἐξ ἔργων"
+   ],
+   [
+    "zusammenfaßt:[[48]] „In the discharge",
+    "zusammenfaßt:[[48]] “In the discharge"
+   ],
+   [
+    "Buddhists,– the one refrain through all – salvation",
+    "Buddhists,— the one refrain through all — salvation"
+   ],
+   [
+    "grateful heart – they",
+    "grateful heart — they"
+   ],
+   [
+    "Christians – that Christ",
+    "Christians — that Christ"
+   ],
+   [
+    "to save sinners.“",
+    "to save sinners.”"
+   ]
+  ],
+  "fussnoten": {
+   "38": [
+    [
+     "Grundriß 3,",
+     "Grundriß³,"
+    ]
+   ],
+   "39": [
+    [
+     "Eph. 2,12;",
+     "Eph. 2, 12;"
+    ]
+   ],
+   "40": [
+    [
+     "Ειρήνην εχομεν προς τον θεόν διά τον κνρίον ημών Ίησον Χρίστον.",
+     "Εἰρήνην ἔχομεν πρὸς τὸν θεὸν διὰ τοῦ κυρίου ἡμῶν Ἰησοῦ Χριστοῦ."
+    ]
+   ],
+   "41": [
+    [
+     "Δί οϋ (Χρίστον) και την προσαγωγήν εσχήκαμεν τη πίστει εις τήν χάριν ταντην.",
+     "Δι’ οὗ (Χριστοῦ) καὶ τὴν προσαγωγὴν ἐσχήκαμεν τῇ πίστει εἰς τὴν χάριν ταύτην."
+    ]
+   ],
+   "42": [
+    [
+     "Τίον σον, θάνατε, τό κέντρον;",
+     "Ποῦ σου, θάνατε, τὸ κέντρον;"
+    ],
+    [
+     "ΈπιθνμΙαν εχων είς τό άναλνσαι καί σνν Χριστφ είναι..",
+     "Ἐπιθυμίαν ἔχων εἰς τὸ ἀναλῦσαι καὶ σὺν Χριστῷ εἶναι."
+    ]
+   ],
+   "43": [
+    [
+     "Κανχώμεθα έπ ελπίδι τής δόξης τον θεον.",
+     "Καυχώμεθα ἐπ’ ἐλπίδι τῆς δόξης τοῦ θεοῦ."
+    ]
+   ],
+   "45": [
+    [
+     "1 Kor. 3,16;",
+     "1 Kor. 3, 16;"
+    ]
+   ],
+   "46": [
+    [
+     "(οιδατε)",
+     "(οἴδατε)"
+    ],
+    [
+     "Περιεπατήοατε .. . κατά τον άρχοντα τής εξουσίας τον άέρος, τον πνεύματος τον ννν ενεργονντος εν τοΐς νίοϊς τής απείθειας.",
+     "Περιεπατήσατε ... κατὰ τὸν ἄρχοντα τῆς ἐξουσίας τοῦ ἀέρος, τοῦ πνεύματος τοῦ νῦν ἐνεργοῦντος ἐν τοῖς υἱοῖς τῆς ἀπειθείας."
+    ]
+   ]
+  },
+  "seite": "14–16"
+ },
+ "9": {
+  "text": [
+   [
+    "Beiseite setzung",
+    "Beiseitesetzung"
+   ],
+   [
+    "„salvation by works“, wie",
+    "“salvation by works”, wie"
+   ],
+   [
+    "επί καρδίαν ανθρώπου ούκ άνέβη.",
+    "ἐπὶ καρδίαν ἀνθρώπου οὐκ ἀνέβη."
+   ],
+   [
+    "Erkenntnis (des Gesetzes)",
+    "Erkenntnis [des Gesetzes]"
+   ],
+   [
+    "-Israel hat",
+    "‚Israel hat"
+   ],
+   [
+    "überkommen.’",
+    "überkommen.‘"
+   ]
+  ],
+  "fussnoten": {
+   "50": [
+    [
+     "Röm. 2,15.",
+     "Röm. 2, 15."
+    ]
+   ],
+   "51": [
+    [
+     "RE.3 XVI, 613 f.52) St. L. I, 621.",
+     "RE.³ XVI, 613 f."
+    ]
+   ],
+   "52": [
+    [
+     "[Der Text dieser Fußnote fehlt in der Abschrift.]",
+     "St. L. I, 621."
+    ]
+   ]
+  },
+  "seite": "16–18"
+ },
+ "10": {
+  "text": [
+   [
+    "Hinweisen sollten",
+    "hinweisen sollten"
+   ],
+   [
+    "die Ausgabe, vom",
+    "die Aufgabe, vom"
+   ],
+   [
+    "oder – was dasselbe ist – die",
+    "oder — was dasselbe ist — die"
+   ],
+   [
+    "(τετνφωται, μη Ιπιστάμενος)",
+    "(τετύφωται, μὴ ἐπιστάμενος)"
+   ],
+   [
+    "wieder ausgenommen werden",
+    "wieder aufgenommen werden"
+   ]
+  ],
+  "fussnoten": {
+   "55": [
+    [
+     "Dogmatik 10,",
+     "Dogmatik¹⁰,"
+    ]
+   ],
+   "56": [
+    [
+     "6, 3ff.",
+     "6, 3 ff."
+    ]
+   ]
+  },
+  "seite": "18 f."
+ },
+ "11": {
+  "text": [
+   [
+    "τό δικαίωμα του θεοϋ έπιγνόντες.[[62]]",
+    "τὸ δικαίωμα τοῦ θεοῦ ἐπιγνόντες.[[62]]"
+   ],
+   [
+    "νόμον μη έχοντες εαυτοις είσιν νόμος, οιτινες ενδείκνυνται τό έργον του νόμου γραπτόν έν ταΐς καρδίαις αυτών,[[63]]",
+    "νόμον μὴ ἔχοντες ἑαυτοῖς εἰσιν νόμος, οἵτινες ἐνδείκνυνται τὸ ἔργον τοῦ νόμου γραπτὸν ἐν ταῖς καρδίαις αὐτῶν.[[63]]"
+   ],
+   [
+    "tun“ – nämlich die vorher genannten heidnischen Sünden –, „des",
+    "tun“ — nämlich die vorher genannten heidnischen Sünden —, „des"
+   ],
+   [
+    "τὸ δικαίωμα τοῦ Θεοῦ ἐπιγνόντες ὅτι",
+    "τὸ δικαίωμα τοῦ θεοῦ ἐπιγνόντες ὅτι"
+   ],
+   [
+    "άγνώστφ θεφ.[[65]]",
+    "ἀγνώστῳ θεῷ.[[65]]"
+   ],
+   [
+    "Haec opinio legis (daß man durch Werke Gnade erlangen könne) haeret",
+    "Haec opinio legis [daß man durch Werke Gnade erlangen könne] haeret"
+   ],
+   [
+    "docemur, gerner: Sic",
+    "docemur. Ferner: Sic"
+   ],
+   [
+    "(πνεύματί)",
+    "(πνεύματι)"
+   ],
+   [
+    "hier,Geist’ und ‘Fleisch' einander",
+    "hier ‚Geist‘ und ‚Fleisch‘ einander"
+   ],
+   [
+    "‘Fleisch’ nicht die Wollust",
+    "‚Fleisch‘ nicht die Wollust"
+   ],
+   [
+    "ist (hier) Fleisch",
+    "ist [hier] Fleisch"
+   ],
+   [
+    "kurz, “man-made“.",
+    "kurz, “man-made”."
+   ]
+  ],
+  "fussnoten": {
+   "62": [
+    [
+     "Röm. 1,32.",
+     "Röm. 1, 32."
+    ],
+    [
+     "z. St. [Ed. – Römerbrief, p. 66 f.; Schade/Stalke p. 73 f.] . Auch",
+     "z. St. Auch"
+    ]
+   ],
+   "63": [
+    [
+     "Röm. 2,15.",
+     "Röm. 2, 15."
+    ]
+   ],
+   "66": [
+    [
+     "M. 134,144;",
+     "M. 134, 144;"
+    ]
+   ],
+   "68": [
+    [
+     "St. L. IX. 288 s. Erl. Gal. I. 313.",
+     "St. L. IX, 288 f. Erl. Gal. I, 313."
+    ]
+   ]
+  },
+  "seite": "19–21"
+ },
+ "12": {
+  "text": [
+   [
+    "(χωρίς έργων νόμου)",
+    "(χωρὶς ἔργων νόμου)"
+   ],
+   [
+    "selig werden – diese",
+    "selig werden — diese"
+   ],
+   [
+    "Menschenherzen,έπϊ καρδίαν ανθρώπου ούκ άνέβη, sondern",
+    "Menschenherzen, ἐπὶ καρδίαν ἀνθρώπου οὐκ ἀνέβη, sondern"
+   ],
+   [
+    "σοφία θεοϋ.",
+    "σοφία θεοῦ."
+   ],
+   [
+    "Gottes Wort Offenbarung",
+    "Gottes Wortoffenbarung"
+   ],
+   [
+    "unanimitor",
+    "unanimiter"
+   ],
+   [
+    "„Von diesem (JEsu) zeugen",
+    "„Von diesem [JEsu] zeugen"
+   ],
+   [
+    "die χωρίς νόμου durch",
+    "die χωρὶς νόμου durch"
+   ],
+   [
+    "μαρτνρονμένη υπό τον νόμου και τών προφητών",
+    "μαρτυρουμένη ὑπὸ τοῦ νόμου καὶ τῶν προφητῶν"
+   ]
+  ],
+  "seite": "21 f."
+ },
+ "13": {
+  "text": [
+   [
+    "Christi Wort.[[75]] das er",
+    "Christi Wort,[[75]] das er"
+   ],
+   [
+    "gegeben hat?[[76]]",
+    "gegeben hat.[[76]]"
+   ],
+   [
+    "(επιγινωσκέτω, erkenne an)",
+    "[ἐπιγινωσκέτω, erkenne an]"
+   ]
+  ],
+  "fussnoten": {
+   "75": [
+    [
+     "Joh. 8, 31. 32: So ihr bleiben werdet an meiner Rede (τφ λόγω τφ έμφ)",
+     "Joh. 8, 31. 32: „So ihr bleiben werdet an meiner Rede (ἐν τῷ λόγῳ τῷ ἐμῷ)"
+    ]
+   ],
+   "76": [
+    [
+     "Διά τον λόγον αντών",
+     "Διὰ τοῦ λόγου αὐτῶν"
+    ],
+    [
+     "έποικοδομηθέντες επι τφ θεμελίφ τών αποστόλων και προφητών",
+     "ἐποικοδομηθέντες ἐπὶ τῷ θεμελίῳ τῶν ἀποστόλων καὶ προφητῶν."
+    ]
+   ],
+   "77": [
+    [
+     "Ον δικαιωθήαεται εξ έργων νόμον πάσα σάρξ.",
+     "Οὐ δικαιωθήσεται ἐξ ἔργων νόμου πᾶσα σάρξ."
+    ],
+    [
+     "Gal. 3, 10 :Όσοι εξ έργων νόμον είαίν, νπό κατάραν είσΐν.",
+     "Gal. 3, 10: Ὅσοι ἐξ ἔργων νόμου εἰσίν, ὑπὸ κατάραν εἰσίν."
+    ]
+   ],
+   "78": [
+    [
+     "Λογιζόμεθα ονν πίστει δικαιονσθαι άνθρωπον χωρίς έργων νόμον.",
+     "Λογιζόμεθα οὖν πίστει δικαιοῦσθαι ἄνθρωπον χωρὶς ἔργων νόμου."
+    ],
+    [
+     "ΕΙδότες άτι ον δικαιούται άνθρωπος εξ έργων νόμον εάν μή διά πίστεως 7ησον Χρίστον.",
+     "Εἰδότες ὅτι οὐ δικαιοῦται ἄνθρωπος ἐξ ἔργων νόμου ἐὰν μὴ διὰ πίστεως Ἰησοῦ Χριστοῦ."
+    ]
+   ],
+   "79": [
+    [
+     "Δικαιωθεντες ονν εκ πίστεως, ειρήνην έχομεν προς τον θεόν διά τον κνρίον ήμών Ίηαον Χρίστον.",
+     "Δικαιωθέντες οὖν ἐκ πίστεως, εἰρήνην ἔχομεν πρὸς τὸν θεὸν διὰ τοῦ κυρίου ἡμῶν Ἰησοῦ Χριστοῦ."
+    ],
+    [
+     "Έατέ έν αν τφ [in Christo] πεπληρωμένοι.",
+     "Ἐστὲ ἐν αὐτῷ [in Christo] πεπληρωμένοι."
+    ]
+   ],
+   "80": [
+    [
+     "μή ή έν νμϊν σχίσματα.",
+     "μὴ ᾖ ἐν ὑμῖν σχίσματα."
+    ]
+   ],
+   "81": [
+    [
+     "Hutterus-Redivivus 10,",
+     "Hutterus Redivivus¹⁰,"
+    ]
+   ],
+   "82": [
+    [
+     "Röm. 16,17.",
+     "Röm. 16, 17."
+    ]
+   ],
+   "84": [
+    [
+     "5,12.",
+     "5, 12."
+    ]
+   ]
+  },
+  "seite": "22–24"
+ },
+ "14": {
+  "text": [
+   [
+    "“Irenic Theology“ usw.",
+    "“Irenic Theology” usw."
+   ],
+   [
+    "sancta mater ecclesia das ist, des Papstes, setzt.",
+    "sancta mater ecclesia, das ist, des Papstes, setzt."
+   ]
+  ],
+  "fussnoten": {
+   "86": [
+    [
+     "Sess.VI,",
+     "Sess. VI,"
+    ]
+   ],
+   "87": [
+    [
+     "cogmtio",
+     "cognitio"
+    ]
+   ],
+   "89": [
+    [
+     "Kuhper",
+     "Kuyper"
+    ]
+   ],
+   "90": [
+    [
+     "Dogmatik 11,",
+     "Dogmatik¹¹,"
+    ]
+   ]
+  },
+  "seite": "24–26"
+ },
+ "15": {
+  "text": [
+   [
+    "im „Fleisch“ – darunter wurde Luthers Festhalten an den Gnadenmitteln verstanden – stecken",
+    "im „Fleisch“ — darunter wurde Luthers Festhalten an den Gnadenmitteln verstanden — stecken"
+   ]
+  ],
+  "fussnoten": {
+   "92": [
+    [
+     "„Efficacious grace acts immediately.“",
+     "“Efficacious grace acts immediately.”"
+    ]
+   ],
+   "93": [
+    [
+     "„Ich (Zwingli) will dir (Luther) vor",
+     "„Ich [Zwingli] will dir [Luther] vor"
+    ]
+   ]
+  },
+  "seite": "26–28"
+ },
+ "16": {
+  "text": [
+   [
+    "Auch in den Joh. 20,19 erwähnten",
+    "Auch in den Joh. 20, 19 erwähnten"
+   ],
+   [
+    "Luk. 24,31 sei",
+    "Luk. 24, 31 sei"
+   ],
+   [
+    "sei (gratia particularis) oder partikular",
+    "sei (gratia universalis) oder partikular"
+   ],
+   [
+    "sollen. We must assume that the result is the interpretation of the purposes of God.“[[100]]",
+    "sollen. “We must assume that the result is the interpretation of the purposes of God.”[[100]]"
+   ],
+   [
+    "(Matth. 23,37; Luk. 19,41 ff.)",
+    "(Matth. 23, 37; Luk. 19, 41 ff.)"
+   ],
+   [
+    "(Jes. 65,2; Röm. 10,21)",
+    "(Jes. 65, 2; Röm. 10, 21)"
+   ]
+  ],
+  "fussnoten": {
+   "96": [
+    [
+     "Inst. IV, 17,19 besteht",
+     "Inst. IV, 17, 19 besteht"
+    ],
+    [
+     "distrahat – vel",
+     "distrahat — vel"
+    ]
+   ],
+   "100": [
+    [
+     "dirigamus.– Experientia",
+     "dirigamus. —Experientia"
+    ]
+   ],
+   "101": [
+    [
+     "quaeeunque",
+     "quaecunque"
+    ],
+    [
+     "„It cannot he supposed",
+     "“It cannot be supposed"
+    ],
+    [
+     "accomplished – that He",
+     "accomplished — that He"
+    ],
+    [
+     "it he said",
+     "it be said"
+    ],
+    [
+     "infinite.“ Übrigens",
+     "infinite.” Übrigens"
+    ]
+   ]
+  },
+  "seite": "28–30"
+ },
+ "17": {
+  "text": [
+   [
+    "χωρίς νόμον, ονκ έξ έργων, mitten",
+    "χωρὶς νόμου, οὐκ ἐξ ἔργων, mitten"
+   ],
+   [
+    "gefahren.“![[106]]",
+    "gefahren.“[[106]]"
+   ],
+   [
+    "Christus selbst sagt.“[[110]]",
+    "Christus selbst sagt.[[110]]"
+   ],
+   [
+    "ist -– wir führten die Worte schon früher an – „verbunden",
+    "ist — wir führten die Worte schon früher an — „verbunden"
+   ],
+   [
+    "verursacht wird“[[113]]",
+    "verursacht wird“.[[113]]"
+   ],
+   [
+    "(ονκ εξ έργων) abgelehnt",
+    "(οὐκ ἐξ ἔργων) abgelehnt"
+   ],
+   [
+    "Joh. 10, 36;",
+    "Joh. 10, 35;"
+   ],
+   [
+    "Joh. 3,16;",
+    "Joh. 3, 16;"
+   ],
+   [
+    "Christr glaubt",
+    "Christi glaubt"
+   ],
+   [
+    "(απολύτρωοις, Loskaufung)",
+    "(ἀπολύτρωσις, Loskaufung)"
+   ]
+  ],
+  "fussnoten": {
+   "104": [
+    [
+     "Remonstr., P. 162",
+     "Remonstr., p. 162"
+    ]
+   ],
+   "111": [
+    [
+     "I Tim. 6, 3ff.",
+     "1 Tim. 6, 3 ff."
+    ]
+   ],
+   "114": [
+    [
+     "RE.3 XXI",
+     "RE.³ XXI"
+    ]
+   ]
+  },
+  "seite": "30–33"
+ },
+ "18": {
+  "text": [
+   [
+    "una sanota",
+    "una sancta"
+   ],
+   [
+    "verfochten.“ – Hier",
+    "verfochten.“ — Hier"
+   ]
+  ],
+  "fussnoten": {
+   "116": [
+    [
+     "28. 29 ; 557",
+     "28. 29; 557"
+    ],
+    [
+     "universalis). – F. C.",
+     "universalis). — F. C."
+    ]
+   ]
+  },
+  "seite": "33 f."
+ },
+ "19": {
+  "text": [
+   [
+    "Novatian wäre Wohl nicht",
+    "Novatian wäre wohl nicht"
+   ],
+   [
+    "neben und Wider Luther",
+    "neben und wider Luther"
+   ]
+  ],
+  "fussnoten": {
+   "117": [
+    [
+     "Röm. 16,17.",
+     "Röm. 16, 17."
+    ]
+   ],
+   "118": [
+    [
+     "Röm. 16,18.",
+     "Röm. 16, 18."
+    ]
+   ],
+   "121": [
+    [
+     "Gal. 6,12.",
+     "Gal. 6, 12."
+    ]
+   ],
+   "122": [
+    [
+     "Matth. 27,18.",
+     "Matth. 27, 18."
+    ]
+   ],
+   "123": [
+    [
+     "1 Tim. 6,3; Joh. 16, 3; 1 Tim. 1,13.",
+     "1 Tim. 6, 3; Joh. 16, 3; 1 Tim. 1, 13."
+    ]
+   ],
+   "126": [
+    [
+     "Apol. 128,121.",
+     "Apol. 128, 121."
+    ]
+   ]
+  },
+  "seite": "34–36"
+ },
+ "20": {
+  "text": [
+   [
+    "άρτι γινώοκω έκ μέρους.[[129]]",
+    "ἄρτι γινώσκω ἐκ μέρους.[[129]]"
+   ],
+   [
+    "erworben wurdet und die nun",
+    "erworben wurde[[134]] und die nun"
+   ],
+   [
+    "Werk,χωρίς έργων νόμου – vor Gott",
+    "Werk, χωρὶς ἔργων νόμου — vor Gott"
+   ],
+   [
+    "diesen Glauben – ohne",
+    "diesen Glauben — ohne"
+   ],
+   [
+    "(ασεβής)",
+    "(ἀσεβής)"
+   ],
+   [
+    "Gesetzesreligionen Herabdrücken",
+    "Gesetzesreligionen herabdrücken"
+   ],
+   [
+    "ineertituäinis",
+    "incertitudinis"
+   ],
+   [
+    "Röm. 3,28 und 5, 1 ff.",
+    "Röm. 3, 28 und 5, 1 ff."
+   ],
+   [
+    "bezeichnen.“[[143]][[134]]",
+    "bezeichnen.[[143]]"
+   ]
+  ],
+  "fussnoten": {
+   "129": [
+    [
+     "1 Kor. 13,12.",
+     "1 Kor. 13, 12."
+    ]
+   ],
+   "132": [
+    [
+     "der (ethischen) Kantischen",
+     "der [ethischen] Kantischen"
+    ]
+   ],
+   "133": [
+    [
+     "5, 18.19.",
+     "5, 18. 19."
+    ]
+   ],
+   "134": [
+    [
+     "3,13.",
+     "3, 13."
+    ]
+   ],
+   "136": [
+    [
+     "2, 4.5.",
+     "2, 4. 5."
+    ]
+   ],
+   "137": [
+    [
+     "Λογιζόμεθα ονν πίστει δικαιονσθαι άνθρωπον χωρίς έργων νόμον.",
+     "Λογιζόμεθα οὖν πίστει δικαιοῦσθαι ἄνθρωπον χωρὶς ἔργων νόμου."
+    ],
+    [
+     "Δικαιωθέντες ονν έκ πίστεως κτλ.",
+     "Δικαιωθέντες οὖν ἐκ πίστεως κτλ."
+    ]
+   ],
+   "138": [
+    [
+     "έστε έν αντφ πεπληρωμένοι..",
+     "ἐστὲ ἐν αὐτῷ πεπληρωμένοι."
+    ],
+    [
+     "κενή απάτη",
+     "κενὴ ἀπάτη"
+    ],
+    [
+     "(κβτά τήν παράδοσιν τών ανθρώπων)",
+     "(κατὰ τὴν παράδοσιν τῶν ἀνθρώπων)"
+    ],
+    [
+     "(κατά τα στοιχεία τοϋ κόσμον)",
+     "(κατὰ τὰ στοιχεῖα τοῦ κόσμου)"
+    ],
+    [
+     "sub στοιχεϊον",
+     "sub στοιχεῖον"
+    ],
+    [
+     "(κατά Χρίστον)",
+     "(κατὰ Χριστόν)"
+    ],
+    [
+     "Uber die Engelwelt",
+     "über die Engelwelt"
+    ],
+    [
+     "Irrrlehrer",
+     "Irrlehrer"
+    ],
+    [
+     "satüs-kactio vioaria",
+     "satisfactio vicaria"
+    ],
+    [
+     "σοφίαν δε λαλονμεν έν τοΐς τελείοις",
+     "σοφίαν δὲ λαλοῦμεν ἐν τοῖς τελείοις"
+    ],
+    [
+     "Hineinspielen",
+     "hineinspielen"
+    ]
+   ],
+   "140": [
+    [
+     "1 Joh. 2,1. 2: Ob jemand sündiget, παράκλητον έχομεν προς τον πατέρα, Ίησονν Χριστόν δίκαιον.",
+     "1 Joh. 2, 1. 2: Ob jemand sündiget, παράκλητον ἔχομεν πρὸς τὸν πατέρα, Ἰησοῦν Χριστὸν δίκαιον."
+    ]
+   ],
+   "141": [
+    [
+     "8ess. VI",
+     "Sess. VI"
+    ]
+   ],
+   "142": [
+    [
+     "Grundriß 3,",
+     "Grundriß³,"
+    ]
+   ]
+  },
+  "seite": "36–39"
+ },
+ "21": {
+  "text": [
+   [
+    "auszuscheiden vermochten.[[145]]",
+    "auszuscheiden vermochten.“[[145]]"
+   ],
+   [
+    "täuschen sich, selbst, wenn",
+    "täuschen sich selbst, wenn"
+   ]
+  ],
+  "fussnoten": {
+   "145": [
+    [
+     "Christentums 3, S. 35",
+     "Christentums³, S. 35."
+    ]
+   ]
+  },
+  "seite": "39 f."
+ },
+ "22": {
+  "text": [
+   [
+    "relativen, wicht absoluten",
+    "relativen, nicht absoluten"
+   ],
+   [
+    "ihn (Christus) als Geber",
+    "ihn [Christus] als Geber"
+   ],
+   [
+    "(παλαιοϋσθαι)",
+    "(παλαιοῦσθαι)"
+   ],
+   [
+    "Tod.151 Das Christentum",
+    "Tod.[[151]] Das Christentum"
+   ],
+   [
+    "Befriedigung.[[152]][[151]]",
+    "Befriedigung.[[152]]"
+   ],
+   [
+    "Weise χωρίς νόμον sei",
+    "Weise χωρὶς νόμου sei"
+   ],
+   [
+    "histrische Auffassung",
+    "historische Auffassung"
+   ]
+  ],
+  "fussnoten": {
+   "148": [
+    [
+     "Gal. 3,17 ff.",
+     "Gal. 3, 17 ff."
+    ]
+   ],
+   "149": [
+    [
+     "νυν δε φως εν κνρίω..",
+     "νῦν δὲ φῶς ἐν κυρίῳ."
+    ],
+    [
+     "Jes. 9,2 ff.",
+     "Jes. 9, 2 ff."
+    ]
+   ],
+   "150": [
+    [
+     "1 Kor. 10,20; Apost. 26,18.",
+     "1 Kor. 10, 20; Apost. 26, 18."
+    ]
+   ],
+   "151": [
+    [
+     "Eph. 2,1–5.",
+     "Eph. 2, 1–5."
+    ]
+   ],
+   "152": [
+    [
+     "Röm. 5,1 ff.",
+     "Röm. 5, 1 ff."
+    ]
+   ],
+   "156": [
+    [
+     "Römerbriefs,",
+     "Römerbriefs."
+    ]
+   ]
+  },
+  "seite": "40–42"
+ },
+ "23": {
+  "text": [
+   [
+    "In welchem Sinne – und in welchem Sinne nicht – die",
+    "In welchem Sinne — und in welchem Sinne nicht — die"
+   ]
+  ],
+  "fussnoten": {
+   "157": [
+    [
+     "διδακτοί τον θεοϋ",
+     "διδακτοὶ τοῦ θεοῦ"
+    ]
+   ],
+   "158": [
+    [
+     "Frage I Kor. 12, 29: Μή πάντες διδάσκαλοι;",
+     "Frage 1 Kor. 12, 29: Μὴ πάντες διδάσκαλοι;"
+    ],
+    [
+     "Auch ITim. 3, 2",
+     "Auch 1 Tim. 3, 2"
+    ],
+    [
+     "οΐτινες ικανοί έ'σονται καί ετέρους διδάξαι.",
+     "οἵτινες ἱκανοὶ ἔσονται καὶ ἑτέρους διδάξαι."
+    ]
+   ],
+   "160": [
+    [
+     "(γνώσεσθε τήν αλήθειαν)",
+     "(γνώσεσθε τὴν ἀλήθειαν)"
+    ]
+   ],
+   "161": [
+    [
+     "RE.2 VII",
+     "RE.² VII"
+    ]
+   ]
+  },
+  "seite": "42–44"
+ },
+ "24": {
+  "text": [
+   [
+    "λόγος περί τον θεόν und",
+    "λόγος περὶ τοῦ θεοῦ und"
+   ],
+   [
+    "Nomen θεοϋ in compositione",
+    "Nomen θεοῦ in compositione"
+   ],
+   [
+    "vox non έγγραφος, sed άγραφος, quamvis non άντίγραφος.",
+    "vox non ἔγγραφος, sed ἄγραφος, quamvis non ἀντίγραφος."
+   ],
+   [
+    "St. Johannis: 3Ιωάννου τον θεολόγον bemerkt",
+    "St. Johannis: Ἀποκάλυψις Ἰωάννου τοῦ θεολόγου bemerkt"
+   ],
+   [
+    "(1 Tim. 3,2), beschreibt die besondere Lehrtüchtigkeit eines επίσκοπος",
+    "(1 Tim. 3, 2), beschreibt die besondere Lehrtüchtigkeit eines ἐπίσκοπος"
+   ],
+   [
+    "2 Tim. 2,2 aufgetragen",
+    "2 Tim. 2, 2 aufgetragen"
+   ],
+   [
+    "(παράθον)",
+    "(παράθου)"
+   ],
+   [
+    "Joh. 3,16 („Also",
+    "Joh. 3, 16 („Also"
+   ]
+  ],
+  "fussnoten": {
+   "162": [
+    [
+     "VIII, 1 : Verbo",
+     "VIII, 1: Verbo"
+    ]
+   ],
+   "163": [
+    [
+     "Systema 1,1.",
+     "Systema I, 1."
+    ]
+   ],
+   "167": [
+    [
+     "Titel θεολογία, worin er περί τών ουρανίων καί θείων philosophierte",
+     "Titel θεολογία, worin er περὶ τῶν οὐρανίων καὶ θείων philosophierte"
+    ],
+    [
+     "De Civ. Dei VI, 6)",
+     "De Civ. Dei VI, 5)"
+    ],
+    [
+     "Gl.2 I, 104 s.",
+     "Gl.² I, 104 f."
+    ],
+    [
+     "1741, sqq. 48 sqq.",
+     "1741, p. 48 sqq."
+    ]
+   ],
+   "168": [
+    [
+     "Isagoge 2 I, 8.",
+     "Isagoge² I, 8."
+    ]
+   ],
+   "170": [
+    [
+     "κατ’ εξοχήν",
+     "κατ’ ἐξοχήν"
+    ]
+   ],
+   "171": [
+    [
+     "ihr Urteil (soll) gelten",
+     "ihr Urteil [soll] gelten"
+    ]
+   ]
+  },
+  "seite": "44–46"
+ },
+ "25": {
+  "text": [
+   [
+    "das πρώτον ψευδός der",
+    "das πρῶτον ψεῦδος der"
+   ],
+   [
+    "Tüchtigkeit (Ικανότης, habitus)",
+    "Tüchtigkeit (ἱκανότης, habitus)"
+   ],
+   [
+    "die Mündlich oder",
+    "die mündlich oder"
+   ],
+   [
+    "Ή Ικανότης ημών έκ τον θεον, ος και ικάνωσεν ημάς διακόνους καινής διαθήκης.",
+    "Ἡ ἱκανότης ἡμῶν ἐκ τοῦ θεοῦ, ὃς καὶ ἱκάνωσεν ἡμᾶς διακόνους καινῆς διαθήκης."
+   ],
+   [
+    "Ύποτύπωσιν έχε νγιαινόντων λόγων ών παρ εμοϋ ήκουσας,[[176]] Auch",
+    "Ὑποτύπωσιν ἔχε ὑγιαινόντων λόγων ὧν παρ’ ἐμοῦ ἤκουσας.[[176]] Auch"
+   ],
+   [
+    "als Tüchtigkeit (Ικανότης) gefaßt",
+    "als Tüchtigkeit (ἱκανότης) gefaßt"
+   ],
+   [
+    "dargestellt werden kann.[[177]]",
+    "dargestellt werden kann“.[[177]]"
+   ]
+  ],
+  "fussnoten": {
+   "172": [
+    [
+     "δ θεολόγος",
+     "ὁ θεολόγος"
+    ],
+    [
+     "Ü φηβι καί ό θεολόγος άνήρ· έν αρχή ήν ό λόγος.",
+     "ἣ φησι καὶ ὁ θεολόγος ἀνήρ· ἐν ἀρχῇ ἦν ὁ λόγος."
+    ],
+    [
+     "(οικονομία, dispensatio)",
+     "(οἰκονομία, dispensatio)"
+    ],
+    [
+     "Αλλος έστί λόγος τής θεολογίας ή τής φνσεως, άλλος τής οικονομίας.",
+     "Ἄλλος ἐστὶ λόγος τῆς θεολογίας ἢ τῆς φύσεως, ἄλλος τῆς οἰκονομίας."
+    ],
+    [
+     "Πώς γάρ δννη θεολογήσαι τό πνεύμα, ό μή θέλων είπεϊν την αυτήν ουσίαν και 5ο£αν καί βουλήν καί δύναμιν πατρός και υΐοϋ;",
+     "Πῶς γὰρ δύνῃ θεολογῆσαι τὸ πνεῦμα, ὁ μὴ θέλων εἰπεῖν τὴν αὐτὴν οὐσίαν καὶ δόξαν καὶ βουλὴν καὶ δύναμιν πατρὸς καὶ υἱοῦ;"
+    ],
+    [
+     "2. u, A3, 1868, S. 8.)",
+     "L. u. W. 1868, S. 8.)"
+    ]
+   ],
+   "175": [
+    [
+     "Quenstedt, 1,16:",
+     "Quenstedt, I, 16:"
+    ]
+   ],
+   "176": [
+    [
+     "Aus 2 Tim. 1,13 ist",
+     "Aus 2 Tim. 1, 13 ist"
+    ],
+    [
+     "Paulus νγιαίνοντες λόγοι, das ist",
+     "Paulus ὑγιαίνοντες λόγοι, das ist"
+    ],
+    [
+     "2. daß der Apostel die dem Timotheus",
+     "2. daß der Apostel die ὑγιαίνοντες λόγοι dem Timotheus"
+    ],
+    [
+     "als νποτνπωσις, Abbild",
+     "als ὑποτύπωσις, Abbild"
+    ],
+    [
+     "das έχε, „Halte!“",
+     "das ἔχε, „Halte!“"
+    ],
+    [
+     "„νποτνπωσις, wie 1 Tim. 1,16",
+     "„ὑποτύπωσις, wie 1 Tim. 1, 16"
+    ],
+    [
+     "u.a. νποτνπωσις geradezu durch ‘Vorbild', so",
+     "u. a. ὑποτύπωσις geradezu durch ‚Vorbild‘, so"
+    ]
+   ],
+   "177": [
+    [
+     "Komp.10,",
+     "Komp.¹⁰,"
+    ]
+   ]
+  },
+  "seite": "47–49"
+ },
+ "26": {
+  "text": [
+   [
+    "Christi satlskaetio vioaria willen",
+    "Christi satisfactio vicaria willen"
+   ],
+   [
+    "Geist ausgenommen Haben und",
+    "Geist aufgenommen haben und"
+   ],
+   [
+    "2 Kor. 3,6: Nicht daß wir tüchtig sind von uns selber, sondern ή Ικανότης ημών εκ τον θεον, ος και ΐκάνωσεν ημάς κτλ.",
+    "2 Kor. 3, 5: Nicht daß wir tüchtig sind von uns selber, sondern ἡ ἱκανότης ἡμῶν ἐκ τοῦ θεοῦ, ὃς καὶ ἱκάνωσεν ἡμᾶς κτλ."
+   ],
+   [
+    "eines επίσκοπος, 1 Tim.",
+    "eines ἐπίσκοπος, 1 Tim."
+   ],
+   [
+    "Gottes Wort gelernt haben und vortragen. Menschen",
+    "Gottes Wort gelernt haben und vortragen, Menschen"
+   ],
+   [
+    "supernaturdlem",
+    "supernaturalem"
+   ],
+   [
+    "Joh. 6, 45: ‘Sie müssen alle von Gott selber gelehret sein.'“",
+    "Joh. 6, 45: ‚Sie müssen alle von Gott selber gelehret sein.‘“"
+   ]
+  ],
+  "seite": "50 f."
+ },
+ "27": {
+  "text": [
+   [
+    "τετύφωται, μηδέν επιστάμενος.",
+    "τετύφωται, μηδὲν ἐπιστάμενος."
+   ],
+   [
+    "(V. 16): ‘So spricht",
+    "(V. 16): ‚So spricht"
+   ],
+   [
+    "Mund Gottes.' Siehe da",
+    "Mund Gottes.‘ Siehe da"
+   ],
+   [
+    "nichts Verhalten, daß",
+    "nichts verhalten, daß"
+   ],
+   [
+    "πάσαν την βουλήν τον θεοϋ.[[185]]",
+    "πᾶσαν τὴν βουλὴν τοῦ θεοῦ.[[185]]"
+   ]
+  ],
+  "seite": "52 f."
+ },
+ "28": {
+  "text": [
+   [
+    "die Irrrlehrer zu widerlegen",
+    "die Irrlehrer zu widerlegen"
+   ],
+   [
+    "δυνατός . . . τους αντιλέγοντας ελέγχειν . . . ονς δεϊ έπιστομίζειν.",
+    "δυνατὸς . . . τοὺς ἀντιλέγοντας ἐλέγχειν . . . οὓς δεῖ ἐπιστομίζειν."
+   ],
+   [
+    "ist also Wider die Schrift. Verboten",
+    "ist also wider die Schrift. Verboten"
+   ],
+   [
+    "z.B. um die Geschlechtsregister",
+    "z. B. um die Geschlechtsregister"
+   ],
+   [
+    "'Ev σαρκΐ περιπατούντες ον κατά σάρκα στρατενό μεθα.",
+    "Ἐν σαρκὶ περιπατοῦντες οὐ κατὰ σάρκα στρατευόμεθα."
+   ],
+   [
+    "Auch ist Wohl zu beachten",
+    "Auch ist wohl zu beachten"
+   ],
+   [
+    "dem δυνατός τους αντιλέγοντας ελέγχειν das δυνατός παρακαλεϊν έν τη διδασκαλία τή νγιαινονση vorangeht",
+    "dem δυνατὸς τοὺς ἀντιλέγοντας ἐλέγχειν das δυνατὸς παρακαλεῖν ἐν τῇ διδασκαλίᾳ τῇ ὑγιαινούσῃ vorangeht"
+   ],
+   [
+    "zu wollen, ist Wider die Schrift. Sie",
+    "zu wollen, ist wider die Schrift. Sie"
+   ],
+   [
+    "Namens der Irrrgeister",
+    "Namens der Irrgeister"
+   ],
+   [
+    "vom Apostewort abweichen",
+    "vom Apostelwort abweichen"
+   ],
+   [
+    "μέχρι δεσμών.[[194]]",
+    "μέχρι δεσμῶν.[[194]]"
+   ],
+   [
+    "Ίουδαίοις μεν οκάνδαλον, 'Έλλησι δε μωρία ist",
+    "Ἰουδαίοις μὲν σκάνδαλον, Ἕλλησι δὲ μωρία ist"
+   ],
+   [
+    "Έσεσθε μισούμενοι νπδ πάντων των εθνών διά τδ δνομά μον.[[196]]",
+    "Ἔσεσθε μισούμενοι ὑπὸ πάντων τῶν ἐθνῶν διὰ τὸ ὄνομά μου.[[196]]"
+   ]
+  ],
+  "fussnoten": {
+   "188": [
+    [
+     "amittitur..",
+     "amittitur."
+    ]
+   ],
+   "190": [
+    [
+     "οκοπεΐν τονς τάς διχοστασίας και τά σκάνδαλα παρά την διδαχήν ήν νμεΐς έμάθετε, ποιονντας.",
+     "σκοπεῖν τοὺς τὰς διχοστασίας καὶ τὰ σκάνδαλα παρὰ τὴν διδαχὴν ἣν ὑμεῖς ἐμάθετε, ποιοῦντας."
+    ]
+   ],
+   "191": [
+    [
+     "έλέγχειν, επιστομίζειν.",
+     "ἐλέγχειν, ἐπιστομίζειν."
+    ]
+   ],
+   "192": [
+    [
+     "έκκλίνατε απ αντών.",
+     "ἐκκλίνατε ἀπ’ αὐτῶν."
+    ],
+    [
+     "χαίρειν αντφ (dem falschen Lehrer) μη λέγετε.",
+     "χαίρειν αὐτῷ (dem falschen Lehrer) μὴ λέγετε."
+    ]
+   ],
+   "196": [
+    [
+     "Matth. 24. 9.",
+     "Matth. 24, 9."
+    ]
+   ],
+   "197": [
+    [
+     "Apost. 9, 16: “Ich will ihm (Paulus) zeigen",
+     "Apost. 9, 16: „Ich will ihm [Paulus] zeigen"
+    ],
+    [
+     "(επειρώντο)",
+     "(ἐπειρῶντο)"
+    ]
+   ],
+   "198": [
+    [
+     "El άρνονμεθα κάκεΤνος άρνήσεται ημάς.",
+     "Εἰ ἀρνούμεθα κἀκεῖνος ἀρνήσεται ἡμᾶς."
+    ]
+   ],
+   "199": [
+    [
+     "2 Tim. 2,1. 8.",
+     "2 Tim. 2, 1. 8."
+    ]
+   ]
+  },
+  "seite": "53–55"
+ },
+ "29": {
+  "text": [
+   [
+    "die Tüchtigkeit (ίκανότης) ist",
+    "die Tüchtigkeit (ἱκανότης) ist"
+   ],
+   [
+    "nicht κατά την παράδοσιν των ανθρώπων, das ist",
+    "nicht κατὰ τὴν παράδοσιν τῶν ἀνθρώπων, das ist"
+   ],
+   [
+    "ή διδασκαλία τον σωτήρος ημών θεον (Tit. 2, 10)",
+    "ἡ διδασκαλία τοῦ σωτῆρος ἡμῶν θεοῦ (Tit. 2, 10)"
+   ]
+  ],
+  "fussnoten": {
+   "200": [
+    [
+     "1 Petr. 4,11: Et τις λαλεΐ, ώς λόγια θεον. Die in der Kirche geltende Leyre ist ή διδασκαλία τον αωτήρος ήμών θεον, Tit. 2, 10.",
+     "1 Petr. 4, 11: Εἴ τις λαλεῖ, ὡς λόγια θεοῦ. Die in der Kirche geltende Lehre ist ἡ διδασκαλία τοῦ σωτῆρος ἡμῶν θεοῦ, Tit. 2, 10."
+    ]
+   ],
+   "201": [
+    [
+     "(ταθτα)",
+     "(ταῦτα)"
+    ],
+    [
+     "1 Joh. 1, 3.4.",
+     "1 Joh. 1, 3. 4."
+    ]
+   ],
+   "202": [
+    [
+     "Thesaurus hermeneut., p. 6,",
+     "Thesaurus hermeneut., p. 5,"
+    ]
+   ],
+   "203": [
+    [
+     "2 Sam. 23,1 ff.",
+     "2 Sam. 23, 1 ff."
+    ]
+   ]
+  },
+  "seite": "56 f."
+ },
+ "30": {
+  "text": [
+   [
+    "(τα μεγαλεία τον θεοϋ)",
+    "(τὰ μεγαλεῖα τοῦ θεοῦ)"
+   ],
+   [
+    "(επι καρδίαν ανθρώπου οϋκ άνέβη),[[205]] sondern Von der",
+    "(ἐπὶ καρδίαν ἀνθρώπου οὐκ ἀνέβη),[[205]] sondern von der"
+   ],
+   [
+    "(διά τε γραφών προφητικών κατ επιταγήν του αιωνίου θεοθ)",
+    "(διά τε γραφῶν προφητικῶν κατ’ ἐπιταγὴν τοῦ αἰωνίου θεοῦ)"
+   ],
+   [
+    "(χωρίς νόμου, χωρίς έργων νόμου)",
+    "(χωρὶς νόμου, χωρὶς ἔργων νόμου)"
+   ]
+  ],
+  "fussnoten": {
+   "205": [
+    [
+     "1 Kor.2, 9; Joh. 1,18.",
+     "1 Kor. 2, 9; Joh. 1, 18."
+    ]
+   ]
+  },
+  "seite": "57–59"
+ },
+ "31": {
+  "text": [
+   [
+    "ihre' eigene Anschauung",
+    "ihre eigene Anschauung"
+   ],
+   [
+    "(λόγια θεός)",
+    "(λόγια θεοῦ)"
+   ],
+   [
+    "(έτεροδιδασκαλεΐ)",
+    "(ἑτεροδιδασκαλεῖ)"
+   ],
+   [
+    "τετύφωτat, nichts weiß, μη επιοτάμενος,",
+    "τετύφωται, nichts weiß, μὴ ἐπιστάμενος,"
+   ],
+   [
+    "(νοσών περί ζητήσεις καί λογομαχίας)[[213]] Daher",
+    "(νοσῶν περὶ ζητήσεις καὶ λογομαχίας).[[213]] Daher"
+   ],
+   [
+    "(την διδαχήν του Χρίστου)",
+    "(τὴν διδαχὴν τοῦ Χριστοῦ)"
+   ],
+   [
+    "(τ διχοστασίας και τά σκάνδαλα ηοιοθντες), die Christen um die Güter ihres Christenstandes bringen (τοΐς έ'ργοις τοΐς πονηροΐς),",
+    "(τὰς διχοστασίας καὶ τὰ σκάνδαλα ποιοῦντες), die Christen um die Güter ihres Christenstandes bringen (μὴ ἀπολέσητε ἃ ἠργασάμεθα),"
+   ],
+   [
+    "bösen Werken (τοΐς έ'ργοις τοΐς πονηροΐς)",
+    "bösen Werken (τοῖς ἔργοις τοῖς πονηροῖς)"
+   ]
+  ],
+  "fussnoten": {
+   "209": [
+    [
+     "Hesek.13, 2 ff.",
+     "Hesek. 13, 2 ff."
+    ]
+   ],
+   "210": [
+    [
+     "1 Tim. 3,15.",
+     "1 Tim. 3, 15."
+    ]
+   ],
+   "211": [
+    [
+     "1 Petr. 4,11.",
+     "1 Petr. 4, 11."
+    ]
+   ]
+  },
+  "seite": "59 f."
+ },
+ "32": {
+  "text": [
+   [
+    "Uber Luther lag",
+    "Aber Luther lag"
+   ],
+   [
+    "derwegen,Kirche, Kirche!' schreien",
+    "derwegen ‚Kirche, Kirche!‘ schreien"
+   ],
+   [
+    "nichts.“[[219]] – Und dies",
+    "nichts.“[[219]] — Und dies"
+   ],
+   [
+    "Theologen κατ εξοχήν, nennt",
+    "Theologen κατ’ ἐξοχήν, nennt"
+   ],
+   [
+    "Einfälle Hab' ich in der Schrift gehabt, die ich Hab' müssen",
+    "Einfälle hab’ ich in der Schrift gehabt, die ich hab’ müssen"
+   ],
+   [
+    "gelernt“ haben?[[222]]",
+    "gelernt“ haben.[[222]]"
+   ]
+  ],
+  "fussnoten": {
+   "217": [
+    [
+     "XVII, 1343 s.",
+     "XVII, 1343 f."
+    ]
+   ],
+   "220": [
+    [
+     "gegen L.Hengstenöerg“",
+     "gegen D. Hengstenberg“"
+    ],
+    [
+     "v. Hengstenberg und v. Münkel",
+     "D. Hengstenberg und D. Münkel"
+    ],
+    [
+     "daß ?. Münkel, der sich",
+     "daß P. Münkel, der sich"
+    ],
+    [
+     "schreibt. ... Er also",
+     "schreibt. . . . Er also"
+    ],
+    [
+     "Wenn ?. Münkel die",
+     "Wenn P. Münkel die"
+    ]
+   ]
+  },
+  "seite": "60–63"
+ },
+ "33": {
+  "text": [
+   [
+    "vorliegend Nachweisen lasse",
+    "vorliegend nachweisen lasse"
+   ],
+   [
+    "theologia έκτυπος, abbildliche",
+    "theologia ἔκτυπος, abbildliche"
+   ],
+   [
+    "theologia αρχέτυπος, der urbildlichen",
+    "theologia ἀρχέτυπος, der urbildlichen"
+   ],
+   [
+    "[in αρχέτυπος und έκτυπος]",
+    "[in ἀρχέτυπος und ἔκτυπος]"
+   ],
+   [
+    "11, 27: ‘Niemand kennet",
+    "11, 27: ‚Niemand kennet"
+   ],
+   [
+    "offenbaren.'“[[225]]",
+    "offenbaren.‘“[[225]]"
+   ],
+   [
+    "Schxiftgrund",
+    "Schriftgrund"
+   ],
+   [
+    "Theologia αρχέτυπος est ipsius Dei de se ipso cognitio, Nattü. 11, 27; 1 Cor. 2,10 sq.",
+    "Theologia ἀρχέτυπος est ipsius Dei de se ipso cognitio, Matth. 11, 27; 1 Cor. 2, 10 sq."
+   ],
+   [
+    "Matth. 11, 27–1 Tim. 6, 16",
+    "Matth. 11, 27 — 1 Tim. 6, 16"
+   ],
+   [
+    "2,14.15; Apost. 14, 17; 17,26.27)",
+    "2, 14. 15; Apost. 14, 17; 17, 26. 27)"
+   ],
+   [
+    "8,31.32: Eph. 2. 20)",
+    "8, 31. 32; Eph. 2, 20)"
+   ],
+   [
+    "Daher ist m der Christenheit nur die Theologie existenzberechtigt die έκτυπος, da ist, lediglich Wiedergabe der in der in der Heiligen",
+    "Daher ist in der Christenheit nur die Theologie existenzberechtigt, die ἔκτυπος, das ist, lediglich Wiedergabe der in der Heiligen"
+   ],
+   [
+    "Theologia έκτυπος ist sachlich",
+    "Theologia ἔκτυπος ist sachlich"
+   ],
+   [
+    "Und wenn z.B. Scherzer",
+    "Und wenn z. B. Scherzer"
+   ],
+   [
+    "(theologin entspricht",
+    "(theologia ἀρχέτυπος) entspricht"
+   ],
+   [
+    "„Plaudern:“ bezeichnet",
+    "„Plaudern“ bezeichnet"
+   ]
+  ],
+  "fussnoten": {
+   "224": [
+    [
+     "Begriffes S. 68.",
+     "Begriffe³, S. 68."
+    ]
+   ],
+   "227": [
+    [
+     "L. de de Natura",
+     "L. de Natura"
+    ],
+    [
+     "theologiam αρχέτυπον καί έκτνπον: 'Αρχέτυπος seu πρωτότυπος",
+     "theologiam ἀρχέτυπον καὶ ἔκτυπον: Ἀρχέτυπος seu πρωτότυπος"
+    ],
+    [
+     "immutabili. . . . ’Έκτυπος theologia",
+     "immutabili. . . . Ἔκτυπος theologia"
+    ],
+    [
+     "alloqnitur",
+     "alloquitur"
+    ]
+   ],
+   "228": [
+    [
+     "illud αρχέτυπον in Verbo",
+     "illud ἀρχέτυπον in Verbo"
+    ]
+   ]
+  },
+  "seite": "63–65"
+ },
+ "34": {
+  "text": [
+   [
+    "menschlichen Gedanken: und Anschauungen",
+    "menschlichen Gedanken und Anschauungen"
+   ],
+   [
+    "zur Heiliger: Schrift. Wem: Luther es den: christlicher: Theologen",
+    "zur Heiligen Schrift. Wenn Luther es dem christlichen Theologen"
+   ],
+   [
+    "theologia έκτυπος, lediglich",
+    "theologia ἔκτυπος, lediglich"
+   ],
+   [
+    "sie – Luther sowohl als die Dogmatiker – die",
+    "sie — Luther sowohl als die Dogmatiker — die"
+   ],
+   [
+    "sich aus „das fromme",
+    "sich auf „das fromme"
+   ],
+   [
+    "anstatt aus die objektive",
+    "anstatt auf die objektive"
+   ],
+   [
+    "bekannter: Worten",
+    "bekannten Worten"
+   ],
+   [
+    "Christum: oder sein",
+    "Christum oder sein"
+   ]
+  ],
+  "fussnoten": {
+   "229": [
+    [
+     "“In der Gegenwart hat die orthodoxe Imspirationslehre",
+     "„In der Gegenwart hat die orthodoxe Inspirationslehre"
+    ],
+    [
+     ",„Heute ist",
+     "„Heute ist"
+    ],
+    [
+     "Theologie ausgegeben;",
+     "Theologie aufgegeben;"
+    ]
+   ],
+   "230": [
+    [
+     "“Niemand gründet",
+     "„Niemand gründet"
+    ],
+    [
+     "altprotestantischcr",
+     "altprotestantischer"
+    ]
+   ],
+   "232": [
+    [
+     "Dogmatik 3, S. 16",
+     "Dogmatik³, S. 16"
+    ]
+   ],
+   "233": [
+    [
+     "αντό λέγειν . . , εν τω αντφ νοΐ και εν tfj avrfj γνώμτ)",
+     "τὸ αὐτὸ λέγειν . . . ἐν τῷ αὐτῷ νοΐ καὶ ἐν τῇ αὐτῇ γνώμῃ,"
+    ],
+    [
+     "2 Tim. 1, 13 νγιαίνοντες λόγοι.",
+     "2 Tim. 1, 13 ὑγιαίνοντες λόγοι."
+    ],
+    [
+     "η διδασκαλία ή νγιαίνονοα, Tit. 1, 9; 1 Tim. 6, 3; 2 Tim. 1,13; 4, 3; 1 Tim. 1,10,",
+     "ἡ διδασκαλία ἡ ὑγιαίνουσα, Tit. 1, 9; 1 Tim. 6, 3; 2 Tim. 1, 13; 4, 3; 1 Tim. 1, 10,"
+    ]
+   ]
+  },
+  "seite": "65 f."
+ },
+ "35": {
+  "text": [
+   [
+    "auch nicht, an jener oder",
+    "auch nicht an jener oder"
+   ],
+   [
+    "aut – aut stehen",
+    "aut — aut stehen"
+   ],
+   [
+    "christlichen Lehre,' ist, nicht voneinander",
+    "christlichen Lehre; ist, nicht voneinander"
+   ]
+  ],
+  "fussnoten": {
+   "234": [
+    [
+     "1922. S. 395.",
+     "1922, S. 395."
+    ]
+   ],
+   "235": [
+    [
+     "Schriftbeweis 2 1.11.",
+     "Schriftbeweis² I, 11."
+    ]
+   ]
+  },
+  "seite": "66–68"
+ },
+ "36": {
+  "text": [
+   [
+    "(z.B. durch die Behauptung",
+    "(z. B. durch die Behauptung"
+   ],
+   [
+    "das ggnze Vokabular",
+    "das ganze Vokabular"
+   ],
+   [
+    "so war das Interesse – bewußt oder unbewußt – tatsächlich",
+    "so war das Interesse — bewußt oder unbewußt — tatsächlich"
+   ],
+   [
+    "so ist das Interesse – bewußt oder unbewußt oder halbbewußt – kein",
+    "so ist das Interesse — bewußt oder unbewußt oder halbbewußt — kein"
+   ],
+   [
+    "‘Das ist mein Leib' müsse",
+    "‚Das ist mein Leib‘ müsse"
+   ],
+   [
+    "gleichwie der. Münzer",
+    "gleichwie der Münzer"
+   ],
+   [
+    "die als Positiv geltenden",
+    "die als positiv geltenden"
+   ]
+  ],
+  "fussnoten": {
+   "240": [
+    [
+     "(die Abendmahlsworte sind gemeint)",
+     "[die Abendmahlsworte sind gemeint]"
+    ]
+   ],
+   "241": [
+    [
+     "Zentralfragen 2, S. 56 ff.",
+     "Zentralfragen², S. 56 ff."
+    ]
+   ]
+  },
+  "seite": "68–71"
+ },
+ "37": {
+  "text": [
+   [
+    "die (göttliche) Offenbarung sogleich",
+    "die [göttliche] Offenbarung sogleich"
+   ],
+   [
+    "(bei dem μαρτνριον τον θεον)",
+    "(bei dem μαρτύριον τοῦ θεοῦ)"
+   ],
+   [
+    "des Heiligen Geistes ‘Wahrheit', das ist",
+    "des Heiligen Geistes ‚Wahrheit‘, das ist"
+   ],
+   [
+    "ins Licht. ' Er berichtet",
+    "ins Licht. Er berichtet"
+   ],
+   [
+    "des „Psychologischen Anknüpfungspunktes“",
+    "des „psychologischen Anknüpfungspunktes“"
+   ],
+   [
+    "(εv πειθοϊς σοφίας λόγοις)",
+    "(ἐν πειθοῖς σοφίας λόγοις)"
+   ],
+   [
+    "Und – so müssen wir hinzusetzen – eine",
+    "Und — so müssen wir hinzusetzen — eine"
+   ]
+  ],
+  "seite": "71–73"
+ },
+ "38": {
+  "text": [
+   [
+    "(αφεσιν αμαρτιών).[[247]]",
+    "(ἄφεσιν ἁμαρτιῶν).[[247]]"
+   ],
+   [
+    "erhaltenem Aufträge gemäß",
+    "erhaltenem Auftrage gemäß"
+   ],
+   [
+    "(μετανοεϊν καί επιοτρέφειν έπι τον θεόν)",
+    "(μετανοεῖν καὶ ἐπιστρέφειν ἐπὶ τὸν θεόν)"
+   ],
+   [
+    "die Läss an den gekreuzigten",
+    "die fides an den gekreuzigten"
+   ],
+   [
+    "hie ist niemand fromm“[[251]]",
+    "hie ist niemand fromm“.[[251]]"
+   ],
+   [
+    "το εναγγέλιον τον θεοθ",
+    "τὸ εὐαγγέλιον τοῦ θεοῦ"
+   ],
+   [
+    "lassen will.25st Wenn",
+    "lassen will.[[254]] Wenn"
+   ],
+   [
+    "Wort Gottes.[[258]][[254]]",
+    "Wort Gottes.[[258]]"
+   ]
+  ],
+  "fussnoten": {
+   "249": [
+    [
+     "Schriftbeweis 2 I, 562.",
+     "Schriftbeweis² I, 562."
+    ]
+   ],
+   "252": [
+    [
+     "Röm. 1,1.",
+     "Röm. 1, 1."
+    ]
+   ]
+  },
+  "seite": "73–75"
+ },
+ "39": {
+  "text": [
+   [
+    "επίστενοα, διό καί έλάλησα.[[260]]",
+    "ἐπίστευσα, διὸ καὶ ἐλάλησα.[[260]]"
+   ]
+  ],
+  "fussnoten": {
+   "259": [
+    [
+     "immer nur,auf eine scharfe",
+     "immer nur ‚auf eine scharfe"
+    ],
+    [
+     "unmittelbar gewiß ist'. (Zentralfragen",
+     "unmittelbar gewiß ist‘. (Zentralfragen"
+    ]
+   ],
+   "260": [
+    [
+     "2 Kor. 4,13; Ps. 116,10.",
+     "2 Kor. 4, 13; Ps. 116, 10."
+    ]
+   ],
+   "261": [
+    [
+     "Exeg. opp Lat.. Erl.",
+     "Exeg. opp. Lat. Erl."
+    ]
+   ],
+   "265": [
+    [
+     "Könit auf",
+     "König auf"
+    ]
+   ]
+  },
+  "seite": "76–78"
+ },
+ "40": {
+  "text": [
+   [
+    "εις την ήμετέ-ραν διδασκαλίαν, προς διδασκαλίαν,",
+    "εἰς τὴν ἡμετέραν διδασκαλίαν, πρὸς διδασκαλίαν,"
+   ],
+   [
+    "(κατ’ οϊκονς)",
+    "(κατ’ οἴκους)"
+   ],
+   [
+    "προς διδασκαλίαν(2 Tim. 3,16)",
+    "πρὸς διδασκαλίαν (2 Tim. 3, 16)"
+   ],
+   [
+    "nach dem alten Menschen' ohne Schrift",
+    "nach dem alten Menschen ohne Schrift"
+   ]
+  ],
+  "seite": "78–80"
+ },
+ "41": {
+  "text": [
+   [
+    "auf die Worte (gewöhnlich sagt man: auf den „Buchstaben“) der Schrift ankomme als aus ihren",
+    "auf die Worte (gewöhnlich sagt man: auf den „Buchstaben“) der Schrift ankomme als auf ihren"
+   ],
+   [
+    "Können wir uns aus die Worte",
+    "Können wir uns auf die Worte"
+   ],
+   [
+    "verweist uns ausdrücklich aus seine Worte",
+    "verweist uns ausdrücklich auf seine Worte"
+   ],
+   [
+    "(διά λόγον μυτών)",
+    "(διὰ λόγου αὐτῶν)"
+   ],
+   [
+    "„Nicht auf die Worte, sondern aus den Inhalt",
+    "„Nicht auf die Worte, sondern auf den Inhalt"
+   ],
+   [
+    "Vom Gesetz Gottes getroffene. Gewissen",
+    "Vom Gesetz Gottes getroffene Gewissen"
+   ],
+   [
+    "nämlich aus das Wort der Apostel",
+    "nämlich auf das Wort der Apostel"
+   ],
+   [
+    "Joh. 17,20. Lessings",
+    "Joh. 17, 20. Lessings"
+   ],
+   [
+    "nicht um die Wahrheit, sondern um den Zweifel zu, tun war",
+    "nicht um die Wahrheit, sondern um den Zweifel zu tun war"
+   ],
+   [
+    "Eph. 2,20, das",
+    "Eph. 2, 20, das"
+   ],
+   [
+    "Joh. 17,20 die Belehrung",
+    "Joh. 17, 20 die Belehrung"
+   ],
+   [
+    "eine übernatürliche Offenbarung (das Schriftwort) wertlos",
+    "eine übernatürliche Offenbarung [das Schriftwort] wertlos"
+   ]
+  ],
+  "fussnoten": {
+   "267": [
+    [
+     "sub “Lessing“.",
+     "sub “Lessing”."
+    ]
+   ],
+   "268": [
+    [
+     "RE.2 VIII",
+     "RE.² VIII"
+    ]
+   ]
+  },
+  "seite": "80 f."
+ },
+ "42": {
+  "text": [
+   [
+    "Berufung aus die „geschichtliche Art“",
+    "Berufung auf die „geschichtliche Art“"
+   ],
+   [
+    "Geringste andern kann noch soll",
+    "Geringste ändern kann noch soll"
+   ],
+   [
+    "als einzige Duelle und Norm",
+    "als einzige Quelle und Norm"
+   ],
+   [
+    "Geschichte, des Christentums.",
+    "Geschichte des Christentums."
+   ],
+   [
+    "(εις 6 διδάσκαλος)",
+    "(εἷς ὁ διδάσκαλος)"
+   ]
+  ],
+  "fussnoten": {
+   "271": [
+    [
+     "28,19. 20;",
+     "28, 19. 20;"
+    ]
+   ]
+  },
+  "seite": "81 f."
+ },
+ "43": {
+  "text": [
+   [
+    "aus dem Ich anderer. Menschen",
+    "aus dem Ich anderer Menschen"
+   ],
+   [
+    "(ύγιαίνονσα διδασκαλία)",
+    "(ὑγιαίνουσα διδασκαλία)"
+   ],
+   [
+    "(Jer. 23,28)",
+    "(Jer. 23, 28)"
+   ],
+   [
+    "„alttheologischen“ Lager Zu-Weist, „ein",
+    "„alttheologischen“ Lager zuweist, „ein"
+   ],
+   [
+    "Er sagt. „Auf das Ganze",
+    "Er sagt: „Auf das Ganze"
+   ],
+   [
+    "Eph. 2,20, und was",
+    "Eph. 2, 20, und was"
+   ],
+   [
+    "richtig einzuschützen und. zu klassifizieren",
+    "richtig einzuschätzen und zu klassifizieren"
+   ],
+   [
+    "exemplifiziert Wird.",
+    "exemplifiziert wird."
+   ],
+   [
+    "Dei,[[276]] unb: Deus",
+    "Dei,[[276]] und: Deus"
+   ]
+  ],
+  "fussnoten": {
+   "273": [
+    [
+     "Joh. 17,12;",
+     "Joh. 17, 12;"
+    ],
+    [
+     "2 Tim. 3,15.16; 2 Thess. 2,15.",
+     "2 Tim. 3, 15. 16; 2 Thess. 2, 15."
+    ]
+   ],
+   "274": [
+    [
+     "νποτύπωαιν εχε νγιαινόντων λόγων, ών παρ' εμον ηκονσας; Tit. 1, 9: δυνατός . . . παρακαλεΐν εν τῃ διδαακαλία τῃ υγιαινοθαῃ.",
+     "ὑποτύπωσιν ἔχε ὑγιαινόντων λόγων, ὧν παρ’ ἐμοῦ ἤκουσας; Tit. 1, 9: δυνατὸς . . . παρακαλεῖν ἐν τῇ διδασκαλίᾳ τῇ ὑγιαινούσῃ."
+    ]
+   ],
+   "276": [
+    [
+     "Lrl., Dat.. XXII",
+     "Erl., Lat., XXII"
+    ]
+   ]
+  },
+  "seite": "82–84"
+ },
+ "44": {
+  "text": [
+   [
+    "Lehre Vom Gesetz und Evangelium",
+    "Lehre vom Gesetz und Evangelium"
+   ],
+   [
+    "„Unter dem Titel Wort Gottes' die Teilung",
+    "„Unter dem Titel ‚Wort Gottes‘ die Teilung"
+   ],
+   [
+    "urteilt mit Reckst:",
+    "urteilt mit Recht:"
+   ],
+   [
+    "Gesetzes Werke“ – „durch den Glauben",
+    "Gesetzes Werke“ — „durch den Glauben"
+   ],
+   [
+    "(χωρίς νόμου, χωρίς έργων νόμον – διά πίστεως, πίστει, διά τον ευαγγελίου).[[284]]",
+    "(χωρὶς νόμου, χωρὶς ἔργων νόμου — διὰ πίστεως, πίστει, διὰ τοῦ εὐαγγελίου).[[284]]"
+   ]
+  ],
+  "fussnoten": {
+   "282": [
+    [
+     "RE.3 XX, 574. Ebenso Ev. Dogmatik 3,",
+     "RE.³ XX, 574. Ebenso Ev. Dogmatik³,"
+    ]
+   ],
+   "283": [
+    [
+     "A. a. D.,",
+     "A. a. O.,"
+    ]
+   ],
+   "284": [
+    [
+     "Gal. 2,16;",
+     "Gal. 2, 16;"
+    ]
+   ],
+   "285": [
+    [
+     "Gal. 3,10.",
+     "Gal. 3, 10."
+    ]
+   ],
+   "287": [
+    [
+     "Röm. 6,14.",
+     "Röm. 6, 14."
+    ]
+   ]
+  },
+  "seite": "84–86"
+ },
+ "45": {
+  "text": [
+   [
+    "(ιώτα εν η μία κεραία)",
+    "(ἰῶτα ἓν ἢ μία κεραία)"
+   ],
+   [
+    "διά γάρ νόμον επίγνωσις αμαρτίας[[295]]",
+    "διὰ γὰρ νόμου ἐπίγνωσις ἁμαρτίας[[295]]"
+   ],
+   [
+    "λογιζόμεθα ovv πίστει δικαιονσθάι άνθρωπον χωρίς έργων νόμον.[[296]]",
+    "λογιζόμεθα οὖν πίστει δικαιοῦσθαι ἄνθρωπον χωρὶς ἔργων νόμου.[[296]]"
+   ],
+   [
+    "κατηργήθητε άπό Χρίστον οΐτινες εν νόμω δικαιούσθε, τής χάριτος εξεπέσατε.[[297]]",
+    "κατηργήθητε ἀπὸ Χριστοῦ οἵτινες ἐν νόμῳ δικαιοῦσθε, τῆς χάριτος ἐξεπέσατε.[[297]]"
+   ],
+   [
+    "zu der Klaffe von Lehrern",
+    "zu der Klasse von Lehrern"
+   ],
+   [
+    "Schäd-lichkeit wegen",
+    "Schädlichkeit wegen"
+   ],
+   [
+    "Όφελον και άποκόψονται oi αναστατοϋντες νμας.[[298]]",
+    "Ὄφελον καὶ ἀποκόψονται οἱ ἀναστατοῦντες ὑμᾶς.[[298]]"
+   ],
+   [
+    "ΐνα παν στόμα φραγή και νπόδικος γένηται πας δ κόσμος τφ θεω.[[299]]",
+    "ἵνα πᾶν στόμα φραγῇ καὶ ὑπόδικος γένηται πᾶς ὁ κόσμος τῷ θεῷ.[[299]]"
+   ],
+   [
+    "πτωχοί εναγγελίζονται,[[300]] εναγγελίζεσθαι πτωχοϊς.30l)[[301]]",
+    "πτωχοὶ εὐαγγελίζονται,[[300]] εὐαγγελίζεσθαι πτωχοῖς.[[301]]"
+   ],
+   [
+    "nach guten Werkelt aus",
+    "nach guten Werken aus"
+   ],
+   [
+    "den παλαιός ανθρωπος an sich",
+    "den παλαιὸς ἄνθρωπος an sich"
+   ],
+   [
+    "διά των οικτιρμών τον θεον, daß",
+    "διὰ τῶν οἰκτιρμῶν τοῦ θεοῦ, daß"
+   ],
+   [
+    "Οτε ημεν εν τη οαρκί [das ist, υπό τον νόμον, τα παθήματα των άμαρτιών τά διά τον νόμον ίνηργεΐτο έν τοΐς μέλεοιν ημών εις το καρποφορηοαι τφ βανάτω.[[307]]",
+    "Ὅτε ἦμεν ἐν τῇ σαρκί [das ist, ὑπὸ τὸν νόμον], τὰ παθήματα τῶν ἁμαρτιῶν τὰ διὰ τοῦ νόμου ἐνηργεῖτο ἐν τοῖς μέλεσιν ἡμῶν εἰς τὸ καρποφορῆσαι τῷ θανάτῳ.[[307]]"
+   ],
+   [
+    "Κατηργήθεμεν από τον νόμον, άποθανόντες εν φ κατειχόμεδα, ώοτε δονλενειν ημάς εν καινότητι πνεύματος.[[308]]",
+    "Κατηργήθεμεν ἀπὸ τοῦ νόμου, ἀποθανόντες ἐν ᾧ κατειχόμεδα, ὥστε δουλεύειν ἡμᾶς ἐν καινότητι πνεύματος.[[308]]"
+   ]
+  ],
+  "fussnoten": {
+   "290": [
+    [
+     "Matth. 5,17–19.",
+     "Matth. 5, 17–19."
+    ]
+   ],
+   "293": [
+    [
+     "Gal. 3,10; Röm. 3, 9–19; auch 2 Kor. 3,9: ή διακονία τής κατακρίοεως.",
+     "Gal. 3, 10; Röm. 3, 9–19; auch 2 Kor. 3, 9: ἡ διακονία τῆς κατακρίσεως."
+    ]
+   ],
+   "294": [
+    [
+     "μη λογιζόμενος αντοΐς τα παραπτώματα αυτών. Apost. 20, 24: τδ εναγγελιον τής χάριτος τον θεον. Auch 2 Kor. 2, 9: ή διακονία τής: δικαιοσύνης.",
+     "μὴ λογιζόμενος αὐτοῖς τὰ παραπτώματα αὐτῶν. Apost. 20, 24: τὸ εὐαγγέλιον τῆς χάριτος τοῦ θεοῦ. Auch 2 Kor. 2, 9: ἡ διακονία τῆς δικαιοσύνης."
+    ]
+   ],
+   "298": [
+    [
+     "Gal. 5,12.",
+     "Gal. 5, 12."
+    ]
+   ],
+   "302": [
+    [
+     "Matth. 15,1 ff.; 22, 35 ff.; 19,16 ff.",
+     "Matth. 15, 1 ff.; 22, 35 ff.; 19, 16 ff."
+    ]
+   ],
+   "303": [
+    [
+     "Kol. 2,16–23; 1 Tim. 4,1 ff.",
+     "Kol. 2, 16–23; 1 Tim. 4, 1 ff."
+    ]
+   ],
+   "304": [
+    [
+     "Röm. 12,1.",
+     "Röm. 12, 1."
+    ]
+   ]
+  },
+  "seite": "86–88"
+ },
+ "46": {
+  "text": [
+   [
+    "διδάσκοντες αντονς τηρεΐν πάντα δσα ένετειλάμην νμΐν.[[310]]",
+    "διδάσκοντες αὐτοὺς τηρεῖν πάντα ὅσα ἐνετειλάμην ὑμῖν.[[310]]"
+   ],
+   [
+    "denn δσα προεγράφη, εις την ήμετεραν διδασκαλίαν εγράφη.[[312]]",
+    "denn ὅσα προεγράφη, εἰς τὴν ἡμετέραν διδασκαλίαν ἐγράφη.[[312]]"
+   ],
+   [
+    "wenn wir z.B. die Lehren",
+    "wenn wir z. B. die Lehren"
+   ],
+   [
+    "διά της πίστεως h Χριστώ Ίησον.“",
+    "διὰ τῆς πίστεως ἐν Χριστῷ Ἰησοῦ.“"
+   ]
+  ],
+  "fussnoten": {
+   "311": [
+    [
+     "Jos. 1,8; 5 Mos. 17,19.",
+     "Jos. 1, 8; 5 Mos. 17, 19."
+    ]
+   ]
+  },
+  "seite": "89 f."
  }
 }
