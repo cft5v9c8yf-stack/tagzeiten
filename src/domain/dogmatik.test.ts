@@ -61,7 +61,9 @@ describe('the files (data/dogmatik/band-1.json … band-3.json)', () => {
   it('keep no notes of the transcription and no broken Hebrew', () => {
     for (const d of lib.tage) {
       const all = [...d.absaetze, ...Object.values(d.fussnoten)].join(' ');
-      expect(all, `${d.band}-${d.tag}`).not.toMatch(/\[English|HEBREW|BookOfConcord|[֐-׿]|­|\s\^(\s|$)/);
+      expect(all, `${d.band}-${d.tag}`).not.toMatch(/\[English|HEBREW|BookOfConcord|­|\s\^(\s|$)/);
+      // Hebrew is set from the print only on days read by hand.
+      if (!d.geprueft) expect(all, `${d.band}-${d.tag}`).not.toMatch(/[֐-׿]/);
     }
   });
 });
