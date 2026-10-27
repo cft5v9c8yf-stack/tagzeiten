@@ -43,6 +43,17 @@ Stand:
   `reference/pieper/durchsicht/uebersetzungen-band-N.json` (Quelle Pieper,
   Luther 1912 oder eigene), in der App noch nicht angezeigt. Ablauf je Block
   von etwa 40 Tagen: ein Agent liest gegen den Scan, ein zweiter prüft gegen.
+- **Stand 27.10.2026 (Pause):** Band 1, Tag 54–95 (S. 97–169) hat den ersten
+  Durchgang hinter sich (Einträge in `reference/pieper/durchsicht/band-1.json`
+  und `uebersetzungen-band-1.json`, Hebräisch an Tag 75 eingesetzt), noch
+  nicht gegengeprüft und nicht markiert. Die Gegenprüfung brach zweimal am
+  Nutzungslimit ab und ist neu zu beginnen. Offen ist auch das Hebräisch für
+  Tag 16 (חָפֵץ) und Tag 31 (חֲזוֹן לִבָּם): vom ersten Prüfer gelesen, vom
+  Gegenprüfer noch zu bestätigen, dann von Hand in `data/dogmatik/band-1.json`
+  eintragen (die Tage sind schon markiert). Lehre aus dem Abbruch: Der
+  Gegenprüfer hat bei sehr vielen Bildern ältere Bilder aus dem Gedächtnis
+  verloren („media removed“); Blöcke darum kleiner (etwa 20 Tage) und jeden
+  Befund sofort ins Log schreiben, solange das Bild sichtbar ist.
 - **Befund der ersten zehn Seiten:** Das Deutsche ist sehr sauber (etwa ein
   Fehler auf zwei Seiten: „uwd“, „bezeichnet“ statt „bezeichnete“, Großschreibung).
   Häufiger: Stellenangaben in Fußnoten („1,1289“ statt „I, 1289“, „Ies.“),
