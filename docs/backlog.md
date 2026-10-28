@@ -2,6 +2,29 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
+## Freie Ordnung als Alternative zu Morgengebet und Vesper
+
+Gewünscht (28.10.2026): eine Alternative zu Stille Zeit und Vesper, „eine freie
+Ordnung, wo einfach nur die Anliegen des Tages stehen“. Wartet, weil auf
+`vorschau` noch die Reflexion (1.36.0) liegt und dort nur eine Neuerung
+liegen darf; sie ist eine eigene Neuerung, keine Korrektur daran.
+
+Beim Anfangen mit Andreas zu klären:
+
+- **Eine Ordnung oder zwei?** Eine freie Ordnung, die man morgens oder abends
+  wählt, oder je eine Alternative für Morgen und Abend.
+- **Was darin steht.** Die Anliegen des Tages: Haus (Frau, Kinder), Gemeinde,
+  Menschen des Tages, eigene Last; dazu das, was schon in der App liegt
+  (Fürbitte für das Haus, `evening.intercession`, `morning.peopleToday`).
+- **Regeln, die gelten bleiben:** Wort vor Gebet (Regel 2), also mindestens
+  ein Bibelwort oder Psalm vorn, dann die Anliegen; Reihenfolge Haus,
+  Gemeinde, Arbeit, ich (Regel 18); keine Sünden notieren (Regel 9); wird
+  die Prüfung angeboten, folgt der Zuspruch (Regel 1); die freie Ordnung
+  zählt als vollwertig, nicht als „teilweise“ (Regel 8).
+- **Technik (Skizze):** neue `OrderId` in `src/content/orders.ts` mit eigenen
+  Schritten; Wahl der Form in den Einstellungen und auf „Heute“
+  (`TodayPage.tsx`, `ScheduleSettings.tsx`); Anzeige in `OrderPart.tsx`.
+
 ## Dogmatik (Pieper) durchsehen
 
 **Auf Eis gelegt am 17.10.2026** (Wunsch von Andreas). Aussehen:
