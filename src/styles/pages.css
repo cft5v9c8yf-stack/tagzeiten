@@ -2489,6 +2489,30 @@ mark.placeholder {
   background-position: right 6px center;
   background-size: 10px;
 }
+/* The weekdays of a habit: seven chips of one size, four to a row. */
+.day-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 52px);
+  gap: 6px;
+  margin: 8px 0 2px;
+}
+.day-chip {
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.day-chip[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
 .habit-kind {
   display: inline-block;
   padding: 1px 8px;

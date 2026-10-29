@@ -146,9 +146,11 @@ function cleanHabit(h: Habit): Habit {
     active: h.active !== false,
     preset: h.preset === true,
     focus: h.focus === true,
-    ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) ? { timesPerWeek: h.timesPerWeek } : {}),
+    ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) && !(Array.isArray(h.days) && h.days.length > 0) ? { timesPerWeek: h.timesPerWeek } : {}),
     ...(typeof h.note === 'string' && h.note.trim() ? { note: h.note.trim().slice(0, NOTE_MAX) } : {}),
-    ...(h.rhythm === 'daily' && Array.isArray(h.days) ? { days: WEEK.filter((d) => h.days!.includes(d)) } : {}),
+    ...(h.rhythm !== 'monthly' && auto === null && Array.isArray(h.days) && keptDays(h.days).length > 0 && keptDays(h.days).length < 7
+      ? { days: keptDays(h.days) }
+      : {}),
     ...(h.advent === true ? { advent: true as const } : {}),
     ...(h.needs === 'wife' || h.needs === 'children' || h.needs === 'family' ? { needs: h.needs } : {}),
     ...(typeof h.desert === 'string' && /^[a-z]{2,20}$/.test(h.desert) ? { desert: h.desert } : {}),
@@ -156,6 +158,8 @@ function cleanHabit(h: Habit): Habit {
 }
 
 const NOTE_MAX = 300;
+
+const keptDays = (days: readonly Weekday[]): Weekday[] => WEEK.filter((d) => days.includes(d));
 
 function isHabit(h: unknown): h is Habit {
   if (!h || typeof h !== 'object') return false;

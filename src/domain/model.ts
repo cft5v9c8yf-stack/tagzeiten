@@ -160,7 +160,10 @@ export interface Habit {
   timesPerWeek?: number;
   /** A short description, shown on request (the "i"): the user's own, for habits of their own. */
   note?: string;
-  /** Daily habits only: the weekdays it is meant for ("nur freitags"); absent means every day. */
+  /**
+   * The weekdays a daily or weekly habit is meant for ("nur freitags", "Long Run am Samstag"), recorded
+   * day by day; absent means every day (daily) or free in the week (weekly). Excludes timesPerWeek.
+   */
   days?: Weekday[];
   /** Only in Advent, from the first Sunday of Advent to 24 December. */
   advent?: true;

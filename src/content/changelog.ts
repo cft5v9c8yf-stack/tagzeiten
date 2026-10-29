@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.37.0',
+    date: '2026-10-29',
+    title: 'Gewohnheiten an festen Wochentagen',
+    changes: [
+      { area: 'Heute', text: 'Eine Gewohnheit kannst du an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am Montag. Unter „Heute“ steht sie dann nur an diesen Tagen, mit dem Hinweis „am Samstag“; an den anderen Tagen ist sie nicht fällig, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer die Gewohnheit einmal verschiebt, trägt sie dort am anderen Tag ein. Gewohnheiten mit festen Tagen stehen unter „Wöchentlich“ oder „Täglich“, wie du sie angelegt hast.' },
+      { area: 'Mehr', text: 'Unter Gewohnheiten wählst du bei jeder Gewohnheit, auch bei den Vorlagen, „an bestimmten Tagen“ und tippst dann die Tage an. Bei wöchentlichen steht das neben „einmal die Woche“ und „n-mal die Woche“; feste Tage und „n-mal“ schließen sich aus. Das gilt auch beim Anlegen einer eigenen Gewohnheit. Ohne Tage bleibt alles wie bisher.' },
+    ],
+  },
+  {
     version: '1.36.0',
     date: '2026-10-25',
     title: 'Reflexion in der Gebetskammer',

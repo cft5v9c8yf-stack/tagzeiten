@@ -5,7 +5,7 @@
 import { DESERT_HABITS, type Follow } from '../content/desert';
 import { HABIT_NEEDS, HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS, WELL_HABIT } from '../content/habits';
 import { houseHas, type House } from './house';
-import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
+import { addDays, fromKey, mondayOf, toKey, WEEKDAY_LONG, WEEKDAY_SHORT, type DateKey, type Weekday } from './dates';
 import type { Day, Habit, Rhythm } from './model';
 
 export type DayLookup = (date: DateKey) => Day | undefined;
@@ -59,7 +59,21 @@ export function isTimesPerWeek(n: unknown): n is number {
  * for several days of the week ("3-mal in der Woche").
  */
 export function isPerDay(habit: Habit): boolean {
-  return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && isTimesPerWeek(habit.timesPerWeek));
+  return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && (isTimesPerWeek(habit.timesPerWeek) || hasDays(habit)));
+}
+
+/** Monday first, as the week is shown. */
+export const WEEKDAY_ORDER: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0];
+
+/** Whether a daily or weekly habit is meant for fixed weekdays only (all seven count as none). */
+export function hasDays(habit: Habit): boolean {
+  return habit.rhythm !== 'monthly' && !habit.auto && Array.isArray(habit.days) && habit.days.length > 0 && habit.days.length < 7;
+}
+
+/** The weekdays as a quiet note: "am Samstag" for one, "Mo, Do" for several. */
+export function daysLabel(days: readonly Weekday[]): string {
+  const ordered = WEEKDAY_ORDER.filter((d) => days.includes(d));
+  return ordered.length === 1 ? `am ${WEEKDAY_LONG[ordered[0]!]}` : ordered.map((d) => WEEKDAY_SHORT[d]).join(', ');
 }
 
 /** Days of the week containing `date` on which the habit was recorded. */
@@ -156,11 +170,18 @@ export function toggleHabit(day: Day, habit: Habit): Day {
   return { ...day, habits: { ...day.habits, [habit.id]: !day.habits[habit.id] } };
 }
 
-export function addHabit(habits: readonly Habit[], name: string, rhythm: Rhythm, id: string, timesPerWeek = 1): Habit[] {
+export function addHabit(
+  habits: readonly Habit[],
+  name: string,
+  rhythm: Rhythm,
+  id: string,
+  timesPerWeek = 1,
+  days: readonly Weekday[] = [],
+): Habit[] {
   const trimmed = name.trim();
   if (!trimmed) return [...habits];
   const habit: Habit = { id, name: trimmed, rhythm, auto: null, active: true, preset: false, focus: false };
-  return [...habits, withTimesPerWeek(habit, timesPerWeek)];
+  return [...habits, days.length > 0 ? withDays(habit, days) : withTimesPerWeek(habit, timesPerWeek)];
 }
 
 function withTimesPerWeek(habit: Habit, times: number): Habit {
@@ -168,9 +189,27 @@ function withTimesPerWeek(habit: Habit, times: number): Habit {
   return habit.rhythm === 'weekly' && !habit.auto && isTimesPerWeek(times) ? { ...rest, timesPerWeek: times } : rest;
 }
 
+/** Fixed weekdays and "n times a week" exclude each other: setting one clears the other. */
+function withDays(habit: Habit, days: readonly Weekday[]): Habit {
+  const { days: _, ...rest } = habit;
+  const chosen = WEEKDAY_ORDER.filter((d) => days.includes(d));
+  if (habit.auto || habit.rhythm === 'monthly' || chosen.length === 0 || chosen.length === 7) return rest;
+  const { timesPerWeek: __, ...plain } = rest;
+  return { ...plain, days: chosen };
+}
+
+/** The weekdays a habit is meant for; none (or all seven) sets it back to every day or free in the week. */
+export function setHabitDays(habits: readonly Habit[], id: string, days: readonly Weekday[]): Habit[] {
+  return habits.map((h) => (h.id === id ? withDays(h, days) : h));
+}
+
 /** How many days a week a weekly habit is meant for; 1 sets it back to once a week. */
 export function setHabitTimes(habits: readonly Habit[], id: string, times: number): Habit[] {
-  return habits.map((h) => (h.id === id ? withTimesPerWeek(h, times) : h));
+  return habits.map((h) => {
+    if (h.id !== id) return h;
+    const { days: _, ...rest } = h;
+    return withTimesPerWeek(rest, times);
+  });
 }
 
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {

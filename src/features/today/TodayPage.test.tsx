@@ -82,6 +82,23 @@ describe('Today', () => {
     expect(link.closest('p')!.previousElementSibling!.textContent).toContain('Gespräch mit meiner Frau');
   });
 
+  it('lists a habit with fixed weekdays only on those days, and says which', async () => {
+    const own = (days: number[]) => (s: Store) =>
+      s.updateProfile(
+        (p) => ({
+          ...p,
+          habits: [...p.habits, { id: 'own-run', name: 'Long Run', rhythm: 'weekly', auto: null, active: true, preset: false, focus: false, days } as never],
+        }),
+        { immediate: true },
+      );
+    // 2026-09-25 is a Friday.
+    await renderToday('2026-09-26', own([6]), new Date(2026, 8, 26, 9, 0));
+    expect(screen.getByRole('checkbox', { name: /Long Run/ }).textContent).toContain('am Samstag');
+    cleanup();
+    await renderToday('2026-09-25', own([6]));
+    expect(screen.queryByRole('checkbox', { name: /Long Run/ })).toBeNull();
+  });
+
   it('keeps "Die drei Dinge" as it was while the Abendbrunnen is off', async () => {
     await renderToday('2026-09-25');
     expect(screen.getByText('Die drei Dinge')).toBeTruthy();

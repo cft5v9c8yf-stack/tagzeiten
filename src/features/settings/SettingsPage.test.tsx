@@ -431,6 +431,29 @@ describe('Mehr: Gewohnheiten', () => {
     await waitFor(() => expect(sport().timesPerWeek).toBeUndefined());
   });
 
+  it('binds a habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Long Run' } });
+    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
+    fireEvent.change(screen.getByLabelText('Wie oft in der Woche'), { target: { value: '0' } });
+    // The weekday of today is taken to start with; Samstag is added.
+    fireEvent.click(screen.getAllByRole('button', { name: 'Samstag' })[0]!);
+    fireEvent.click(screen.getByText('Gewohnheit anlegen'));
+    const run = () => store.getProfile().habits.find((h) => h.name === 'Long Run')!;
+    expect(run().rhythm).toBe('weekly');
+    expect(run().days).toContain(6);
+    expect(run().timesPerWeek).toBeUndefined();
+    const select = await screen.findByLabelText('Wie oft in der Woche: Long Run');
+    expect((select as HTMLSelectElement).value).toBe('0');
+    // Back to "n times a week": the weekdays go.
+    fireEvent.change(select, { target: { value: '3' } });
+    await waitFor(() => expect(run()).toMatchObject({ timesPerWeek: 3 }));
+    expect(run().days).toBeUndefined();
+    // A habit of the templates can be bound as well.
+    fireEvent.change(await screen.findByLabelText('Wie oft: Bibel lesen'), { target: { value: '0' } });
+    await waitFor(() => expect(store.getProfile().habits.find((h) => h.name === 'Bibel lesen')!.days).toHaveLength(1));
+  });
+
   it('adds, switches and deletes an own habit', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
@@ -932,9 +955,9 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.36(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.37(?![\d.])/);
     // The newest ten numbers stand one by one; earlier tens fold together, then the versions before 1.0.
-    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(7);
+    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(8);
     expect(versions.filter((v) => v?.startsWith('Versionen ')).map((v) => /^Versionen \S+ bis \S+/.exec(v!)![0])).toEqual([
       'Versionen 1.20 bis 1.29',
       'Versionen 1.10 bis 1.19',
@@ -946,11 +969,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.36(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.37(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.36(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.37(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent).filter((v) => /^Version \d/.test(v ?? ''));
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

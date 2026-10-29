@@ -17,12 +17,16 @@ import {
   renameHabit,
   RHYTHM_ORDER,
   setHabitActive,
+  setHabitDays,
   setHabitFocus,
   setHabitTimes,
   TIMES_PER_WEEK,
+  WEEKDAY_ORDER,
   fitsHouse,
+  hasDays,
   shownHabit,
 } from '../../domain/habits';
+import { WEEKDAY_LONG, WEEKDAY_SHORT, weekdayOf, type Weekday } from '../../domain/dates';
 import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
@@ -34,7 +38,7 @@ const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöche
 
 const timesLabel = (n: number) => (n === 1 ? 'einmal die Woche' : `${n}-mal die Woche`);
 
-/** How many days a week a weekly habit is meant for. */
+/** How many days a week a weekly habit is meant for, or 0 for fixed weekdays. */
 function TimesSelect({ value, onChange, label, id }: { value: number; onChange: (n: number) => void; label?: string; id?: string }) {
   return (
     <select id={id} className="habit-times" aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))}>
@@ -43,7 +47,38 @@ function TimesSelect({ value, onChange, label, id }: { value: number; onChange: 
           {timesLabel(n)}
         </option>
       ))}
+      <option value={0}>an bestimmten Tagen</option>
     </select>
+  );
+}
+
+/** A daily habit: every day, or fixed weekdays (0 stands for fixed weekdays). */
+function EveryDaySelect({ byDays, onChange, label, id }: { byDays: boolean; onChange: (byDays: boolean) => void; label?: string; id?: string }) {
+  return (
+    <select id={id} className="habit-times" aria-label={label} value={byDays ? 0 : 1} onChange={(e) => onChange(e.target.value === '0')}>
+      <option value={1}>jeden Tag</option>
+      <option value={0}>an bestimmten Tagen</option>
+    </select>
+  );
+}
+
+/** The seven weekdays to tick, all of one size. The last one cannot be taken off: then it is every day again. */
+function DayChips({ value, onChange, label }: { value: readonly Weekday[]; onChange: (days: Weekday[]) => void; label: string }) {
+  return (
+    <div className="day-chips" role="group" aria-label={label}>
+      {WEEKDAY_ORDER.map((d) => (
+        <button
+          key={d}
+          type="button"
+          className="day-chip"
+          aria-pressed={value.includes(d)}
+          aria-label={WEEKDAY_LONG[d]}
+          onClick={() => onChange(value.includes(d) ? value.filter((x) => x !== d) : [...value, d])}
+        >
+          {WEEKDAY_SHORT[d]}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -112,11 +147,20 @@ function HabitRow({
           {habit.active && !fitsHouse(habit, profile.house) && (
             <span className="habit-kind habit-waits">{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</span>
           )}
+          {habit.rhythm === 'daily' && !habit.auto && (
+            <EveryDaySelect
+              label={`Wie oft: ${habit.name}`}
+              byDays={hasDays(habit)}
+              onChange={(byDays) => update((hs) => setHabitDays(hs, habit.id, byDays ? [weekdayOf(store.today())] : []))}
+            />
+          )}
           {habit.rhythm === 'weekly' && !habit.auto && (
             <TimesSelect
               label={`Wie oft in der Woche: ${habit.name}`}
-              value={habit.timesPerWeek ?? 1}
-              onChange={(n) => update((hs) => setHabitTimes(hs, habit.id, n))}
+              value={hasDays(habit) ? 0 : (habit.timesPerWeek ?? 1)}
+              onChange={(n) =>
+                update((hs) => (n === 0 ? setHabitDays(hs, habit.id, [weekdayOf(store.today())]) : setHabitTimes(hs, habit.id, n)))
+              }
             />
           )}
           {!habit.preset &&
@@ -133,6 +177,13 @@ function HabitRow({
               </ConfirmTrigger>
             ))}
         </span>
+        {hasDays(habit) && (
+          <DayChips
+            label={`Tage: ${habit.name}`}
+            value={habit.days!}
+            onChange={(days) => update((hs) => setHabitDays(hs, habit.id, days))}
+          />
+        )}
       </div>
       <button
         type="button"
@@ -207,6 +258,8 @@ export function HabitSettings() {
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
   const [times, setTimes] = useState(1);
+  const [byDays, setByDays] = useState(false);
+  const [days, setDays] = useState<Weekday[]>([]);
   const timesId = useId();
   const [announcement, setAnnouncement] = useState('');
   const [refocus, setRefocus] = useState<string | null>(null);
@@ -227,12 +280,21 @@ export function HabitSettings() {
     if (viaKeyboard) setRefocus(id);
   };
 
+  // Choosing fixed weekdays starts with today's weekday, so there is always one.
+  const chooseDays = (on: boolean) => {
+    setByDays(on);
+    setDays(on ? [weekdayOf(store.today())] : []);
+  };
+
   const add = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    store.updateProfile((p) => ({ ...p, habits: addHabit(p.habits, name, rhythm, newHabitId(), times) }), { immediate: true });
+    const chosen = rhythm !== 'monthly' && byDays ? days : [];
+    store.updateProfile((p) => ({ ...p, habits: addHabit(p.habits, name, rhythm, newHabitId(), times, chosen) }), { immediate: true });
     setName('');
     setTimes(1);
+    setByDays(false);
+    setDays([]);
     toast('Gewohnheit angelegt');
   };
 
@@ -256,7 +318,14 @@ export function HabitSettings() {
         </div>
         <div className="field">
           <label htmlFor={rhythmId}>Rhythmus</label>
-          <select id={rhythmId} value={rhythm} onChange={(e) => setRhythm(e.target.value as Rhythm)}>
+          <select
+            id={rhythmId}
+            value={rhythm}
+            onChange={(e) => {
+              setRhythm(e.target.value as Rhythm);
+              chooseDays(false);
+            }}
+          >
             {RHYTHMS.map((r) => (
               <option key={r} value={r}>
                 {RHYTHM_LABEL[r]}
@@ -267,7 +336,19 @@ export function HabitSettings() {
         {rhythm === 'weekly' && (
           <div className="field">
             <label htmlFor={timesId}>Wie oft in der Woche</label>
-            <TimesSelect id={timesId} value={times} onChange={setTimes} />
+            <TimesSelect id={timesId} value={byDays ? 0 : times} onChange={(n) => (n === 0 ? chooseDays(true) : (chooseDays(false), setTimes(n)))} />
+          </div>
+        )}
+        {rhythm === 'daily' && (
+          <div className="field">
+            <label htmlFor={timesId}>Wie oft</label>
+            <EveryDaySelect id={timesId} byDays={byDays} onChange={chooseDays} />
+          </div>
+        )}
+        {byDays && (
+          <div className="field">
+            <span id={`${timesId}-days`}>Tage</span>
+            <DayChips label="Tage" value={days} onChange={(d) => (d.length > 0 ? setDays(d) : chooseDays(false))} />
           </div>
         )}
         <button type="submit" className="btn primary" disabled={!name.trim()} aria-describedby={name.trim() ? undefined : `${timesId}-hint`}>
@@ -311,6 +392,11 @@ export const HABITS_INFO = (
     <p>
       Bei wöchentlichen Gewohnheiten legst du fest, wie oft in der Woche, etwa Sport dreimal. Dann trägst du sie Tag für
       Tag ein, und unter „Heute“ steht, wie oft sie diese Woche eingetragen ist. Eine Woche mit weniger ist kein Versäumnis.
+    </p>
+    <p>
+      Eine Gewohnheit kannst du auch an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am
+      Montag. Unter „Heute“ steht sie dann nur an diesen Tagen. An den anderen Tagen ist sie nicht fällig, das ist kein
+      Versäumnis; wer sie einmal verschiebt, trägt sie in der Wochenübersicht am anderen Tag ein.
     </p>
   </>
 );

@@ -250,6 +250,10 @@ progress::-moz-progress-bar {
   border-radius: 50%;
   background: var(--sheet);
 }
+/* A day the habit is not meant for: quiet, still to be ticked if it was moved. Never red (rule 5). */
+.cell.off-day:not([aria-pressed='true']) {
+  opacity: 0.4;
+}
 .cell.today {
   border-color: var(--accent);
 }

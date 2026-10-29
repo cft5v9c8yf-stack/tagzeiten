@@ -18,6 +18,19 @@ describe('profile', () => {
     expect(normalizeProfile({ plan: { planId: 'atnt-g-3', positions: { at: 0, nt: 0 } } }, '2026-10-06').plan.planId).toBe('atnt-1-3');
   });
 
+  it('keeps the weekdays of a habit only where they make sense', () => {
+    const own = (over: object) => ({ id: 'o', name: 'Eigenes', auto: null, active: true, preset: false, focus: false, ...over }) as never;
+    const days = (over: object) => normalizeProfile({ habits: [own(over)] }, '2026-09-25').habits.find((h) => h.id === 'o')!.days;
+    expect(days({ rhythm: 'weekly', days: [0, 6, 6, 9] })).toEqual([6, 0]);
+    expect(days({ rhythm: 'daily', days: [5] })).toEqual([5]);
+    expect(days({ rhythm: 'monthly', days: [5] })).toBeUndefined();
+    expect(days({ rhythm: 'weekly', days: [] })).toBeUndefined();
+    expect(days({ rhythm: 'weekly', days: [0, 1, 2, 3, 4, 5, 6] })).toBeUndefined();
+    // Weekdays and "n times a week" exclude each other: the weekdays win.
+    const both = normalizeProfile({ habits: [own({ rhythm: 'weekly', days: [6], timesPerWeek: 3 })] }, '2026-09-25').habits.find((h) => h.id === 'o')!;
+    expect(both.timesPerWeek).toBeUndefined();
+  });
+
   it('repairs incomplete or broken data', () => {
     const p = normalizeProfile(
       {

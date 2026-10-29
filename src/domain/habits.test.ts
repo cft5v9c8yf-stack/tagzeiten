@@ -13,6 +13,9 @@ import {
   doneDateInPeriod,
   isPerDay,
   setHabitTimes,
+  setHabitDays,
+  daysLabel,
+  hasDays,
   habitsFromPresets,
   isDoneInPeriod,
   isDoneOn,
@@ -288,5 +291,36 @@ describe('Vesper and Familienandacht', () => {
     // A name of one's own stays.
     const own = mergePresets(old.map((h) => (h.id === 'vespers' ? { ...h, name: 'Abendgebet' } : h)));
     expect(own.find((h) => h.id === 'vespers')!.name).toBe('Abendgebet');
+  });
+});
+
+describe('habits meant for fixed weekdays', () => {
+  const run = addHabit([], 'Long Run', 'weekly', 'own-run', 1, [6])[0]!;
+
+  it('keeps the weekdays in the order of the week, for daily and weekly habits', () => {
+    expect(run.days).toEqual([6]);
+    expect(setHabitDays([run], 'own-run', [0, 1, 6])[0]!.days).toEqual([1, 6, 0]);
+    expect(addHabit([], 'Fasten', 'daily', 'own-fast', 1, [5])[0]!.days).toEqual([5]);
+    // A month has no weekdays; a habit of the orders is not bound to any.
+    expect(addHabit([], 'Beichte', 'monthly', 'own-conf', 1, [5])[0]!.days).toBeUndefined();
+    expect(hasDays(setHabitDays([byId('worship')], 'worship', [0])[0]!)).toBe(true);
+  });
+
+  it('is recorded day by day, and none or all seven mean no weekdays', () => {
+    expect(isPerDay(run)).toBe(true);
+    expect(hasDays(setHabitDays([run], 'own-run', [])[0]!)).toBe(false);
+    expect(hasDays(setHabitDays([run], 'own-run', [0, 1, 2, 3, 4, 5, 6])[0]!)).toBe(false);
+  });
+
+  it('excludes "n times a week": one clears the other', () => {
+    expect(setHabitDays([{ ...run, days: undefined, timesPerWeek: 3 }], 'own-run', [6])[0]).toMatchObject({ days: [6] });
+    expect(setHabitDays([{ ...run, days: undefined, timesPerWeek: 3 }], 'own-run', [6])[0]!.timesPerWeek).toBeUndefined();
+    expect(setHabitTimes([run], 'own-run', 3)[0]!.days).toBeUndefined();
+    expect(setHabitTimes([run], 'own-run', 3)[0]!.timesPerWeek).toBe(3);
+  });
+
+  it('is named quietly: one day as "am Samstag", several by their short names', () => {
+    expect(daysLabel([6])).toBe('am Samstag');
+    expect(daysLabel([0, 1])).toBe('Mo, So');
   });
 });
