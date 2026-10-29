@@ -4443,3 +4443,73 @@ mark.placeholder {
 .desert-reading-choice .seg {
   margin-top: 4px;
 }
+/* Gebetskammer: the Reflexion view. */
+.arena .seg + .arena-note,
+.arena .seg + .reflection {
+  margin-top: 12px;
+}
+.reflection-card {
+  margin: 0 0 18px;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--sheet);
+}
+.reflection-card h3 {
+  margin: 0 0 8px;
+}
+.reflection-card p {
+  margin: 0 0 10px;
+}
+.reflection-card .btn {
+  margin-top: 4px;
+}
+.reflection-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.reflection-head h3 {
+  flex: 1;
+  margin: 0;
+}
+.reflection-i {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font: italic 600 1rem var(--serif);
+}
+.reflection-i[aria-expanded='true'] {
+  background: var(--gold-soft);
+}
+.reflection-ask {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--gold);
+  background: var(--gold-soft);
+  border-radius: 0 12px 12px 0;
+  font: 0.92rem var(--sans);
+}
+.reflection-ask p {
+  margin: 0 0 8px;
+}
+.reflection-ask p:last-child {
+  margin-bottom: 0;
+}
+.reflection-card textarea {
+  margin-top: 10px;
+}
+.reflection-habits {
+  margin: 16px 0 8px;
+}
+.reflection-habits h4 {
+  margin: 0 0 4px;
+}
+.reflection-plans {
+  margin: 8px 0;
+  padding-left: 20px;
+}

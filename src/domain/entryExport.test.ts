@@ -41,4 +41,23 @@ describe('single-entry export', () => {
     expect(exportFilename(entry({ title: 'Wer: ich/du?' }), 'pdf')).toBe('261023_Wer ich du.pdf');
     expect(exportFilename(entry(), 'md')).toBe('261023_Für die Kinder.md');
   });
+
+  it('sets a Reflexion with "Was dich bewegt" over its questions and the habits as sub-headings', () => {
+    const text = 'Zum Ende der Woche\nEine schwere Woche.\n\nBestandsaufnahme\nDie Lesungen klappen.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)';
+    const e = entry({ title: 'Reflexion', text, concerns: [''], ink: undefined, inks: { ground: [{ tool: 'pen', color: 'ink', points: [1, 2, 3] }] } });
+    const md = entryToMarkdown(e);
+    expect(md).toContain('## Was dich bewegt\n\n### Zum Ende der Woche\n\nEine schwere Woche.\n\n### Bestandsaufnahme\n\nDie Lesungen klappen.');
+    expect(md).toContain('### Wo hat der Feind an Boden gewonnen?\n\n![Handschrift]');
+    expect(md).toContain('### Gewohnheiten\n\n- Psalm mit den Kindern (täglich)');
+    expect(md).not.toContain('## Text');
+    const blocks = entryToPrintDoc(e).blocks;
+    expect(blocks.filter((b) => b.kind === 'heading').map((b) => (b as { text: string }).text)).toEqual([
+      'Zum Ende der Woche',
+      'Bestandsaufnahme',
+      'Wo hat der Feind an Boden gewonnen?',
+      'Gewohnheiten',
+    ]);
+    expect(blocks.find((b) => b.kind === 'label')).toMatchObject({ text: 'Was dich bewegt' });
+    expect(blocks.some((b) => b.kind === 'svg')).toBe(true);
+  });
 });

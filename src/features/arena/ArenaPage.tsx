@@ -17,6 +17,9 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
+import { Reflection } from './Reflection';
+import { ENTRY_CHOICE_VERSE, PRAYER_HEARD_VERSE } from '../../content/reflection';
+import { lastWriting, rememberWriting, type Writing } from './writing';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { Desert } from '../desert/Desert';
 import { DesertExamen, EXAMEN_SLUG } from '../desert/DesertExamen';
@@ -89,15 +92,15 @@ const PLACES = {
   },
 } as const;
 
-type Writing = 'text' | 'ink';
-const WRITING_KEY = 'tz:arena-writing';
+type JournalView = 'classic' | 'reflection';
+const VIEW_KEY = 'tz:arena-view';
 
-/** How the last entry was written, on this device: a convenience only. */
-const lastWriting = (): Writing => {
+/** Which view of the Gebetskammer was last chosen, on this device: a convenience only. */
+const lastView = (): JournalView => {
   try {
-    return localStorage.getItem(WRITING_KEY) === 'ink' ? 'ink' : 'text';
+    return localStorage.getItem(VIEW_KEY) === 'reflection' ? 'reflection' : 'classic';
   } catch {
-    return 'text';
+    return 'classic';
   }
 };
 
@@ -126,11 +129,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
   }, [entry.text, writing]);
   const choose = (w: Writing) => {
     setWriting(w);
-    try {
-      localStorage.setItem(WRITING_KEY, w);
-    } catch {
-      // Only a convenience.
-    }
+    rememberWriting(w);
   };
   return (
     <fieldset className="arena-lines arena-text">
@@ -545,10 +544,23 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
+  // A new entry of the Gebetskammer is either written freely (Beten) or as a Reflexion (Wachen); the page follows the choice.
+  const [view, setView] = useState<JournalView>(lastView);
+  const chooseView = (v: JournalView) => {
+    setView(v);
+    try {
+      localStorage.setItem(VIEW_KEY, v);
+    } catch {
+      // Only a convenience.
+    }
+  };
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
   const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
+  // Offered while a new entry is begun, and stays so while it is being written (the Reflexion keeps the entry as it goes).
+  const [fresh] = useState(() => isEmptyEntry(entry));
+  const chooseKind = kind === 'journal' && !habit && !archived && fresh;
   const finish = () => {
     if (habit && !isEmptyEntry(entry) && !isDoneOn(habit, store.getDay(day!))) store.toggleHabit(day!, habit);
     navigate(home);
@@ -619,6 +631,38 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
 
+      {chooseKind && (
+        <figure className="section-verse">
+          <blockquote>{ENTRY_CHOICE_VERSE.text}</blockquote>
+          <figcaption>
+            <BibleRef reference={ENTRY_CHOICE_VERSE.ref} />
+          </figcaption>
+        </figure>
+      )}
+      {chooseKind && (
+        <Segmented<JournalView>
+          label="Art des Eintrags"
+          value={view}
+          onChange={chooseView}
+          options={[
+            { value: 'classic', label: 'Beten' },
+            { value: 'reflection', label: 'Wachen' },
+          ]}
+        />
+      )}
+      {chooseKind && view === 'reflection' ? (
+        <Reflection entry={entry} />
+      ) : (
+        <>
+          {chooseKind && (
+            <figure className="section-verse">
+              <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
+              <figcaption>
+                <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
+              </figcaption>
+            </figure>
+          )}
+
       {kind === 'forge' && (
         <div className="field arena-meeting">
           <label htmlFor={dateId}>Für das Treffen am</label>
@@ -686,6 +730,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           </p>
         ))}
       </aside>
+        </>
+      )}
     </article>
   );
 }

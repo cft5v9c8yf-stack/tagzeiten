@@ -449,4 +449,51 @@ describe('Handwriting in the Gebetskammer', () => {
       if (width) Object.defineProperty(HTMLElement.prototype, 'clientWidth', width);
     }
   });
+
+  describe('Reflexion', () => {
+    it('is chosen in a new entry, which then builds itself; the list stays one list (rules 1, 9)', async () => {
+      const store = await renderArena();
+      expect(screen.queryByRole('button', { name: 'Wachen' })).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'Neuen Eintrag schreiben' }));
+      expect(screen.getByLabelText('Titel')).toBeTruthy();
+      // Under "Beten": God hears prayer.
+      expect(screen.getByText('Du erhörst Gebet; darum kommt alles Fleisch zu dir.')).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: 'Wachen' }));
+      expect(localStorage.getItem('tz:arena-view')).toBe('reflection');
+      expect(screen.queryByLabelText('Titel')).toBeNull();
+      // The Word first (rule 2), then the Rückschau, the examination last; all on one page.
+      expect(document.querySelector('.reflection .section-verse')!.textContent).toContain('Psalm 139,23–24');
+      expect(document.querySelectorAll('.reflection textarea')).toHaveLength(3);
+      // The first question stands open the first time, the others are folded behind the "i".
+      expect(screen.getByText(/frage ich mich, was Christus in mir bewirkt/)).toBeTruthy();
+      expect(screen.queryByText(/Eine ehrliche Bestandsaufnahme/)).toBeNull();
+      fireEvent.click(screen.getByRole('button', { name: 'Frage zu „Bestandsaufnahme“ aufklappen' }));
+      expect(screen.getByText(/Eine ehrliche Bestandsaufnahme/)).toBeTruthy();
+      fireEvent.change(screen.getByRole('textbox', { name: 'Zum Ende der Woche' }), { target: { value: 'Mehr Geduld mit der Familie.' } });
+      fireEvent.change(screen.getByRole('textbox', { name: 'Wo hat der Feind an Boden gewonnen?' }), { target: { value: 'Ungeduld mit den Kindern.' } });
+      expect(document.querySelector('.reflection .arena-comfort')!.textContent).toContain('1. Johannes 1,9');
+      const overview = document.querySelector('.reflection') as HTMLElement;
+      fireEvent.change(within(overview).getByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
+      fireEvent.click(within(overview).getByRole('button', { name: 'Zur Liste hinzufügen' }));
+      fireEvent.click(within(overview).getByRole('button', { name: 'In die Gewohnheiten übernehmen' }));
+      expect(store.getProfile().habits.some((h) => h.name === 'Psalm mit den Kindern' && h.rhythm === 'daily' && !h.preset)).toBe(true);
+      // There is no button to lay it down: the entry is kept as it is written.
+      expect(screen.queryByRole('button', { name: 'In der Gebetskammer ablegen' })).toBeNull();
+      await waitFor(() => expect(store.getProfile().arena).toHaveLength(1));
+      expect(store.getProfile().arena[0]).toMatchObject({
+        title: 'Reflexion',
+        text: 'Zum Ende der Woche\nMehr Geduld mit der Familie.\n\nWo hat der Feind an Boden gewonnen?\nUngeduld mit den Kindern.\n\nGewohnheiten\nPsalm mit den Kindern (täglich)',
+      });
+      // The Reflexion stays on the page while it is written.
+      expect(screen.getByRole('button', { name: 'Wachen' })).toBeTruthy();
+      // Back to the form and again: the answers are read out of the entry.
+      fireEvent.click(screen.getByRole('button', { name: 'Beten' }));
+      expect(screen.getByLabelText('Titel')).toHaveProperty('value', 'Reflexion');
+      fireEvent.click(screen.getByRole('button', { name: 'Wachen' }));
+      expect(screen.getByRole('textbox', { name: 'Zum Ende der Woche' })).toHaveProperty('value', 'Mehr Geduld mit der Familie.');
+      expect(screen.getByText(/Übernommen: Psalm mit den Kindern \(täglich\)/)).toBeTruthy();
+      // Once written, the questions start folded.
+      expect(localStorage.getItem('tz:reflexion-seen')).toBe('1');
+    });
+  });
 });

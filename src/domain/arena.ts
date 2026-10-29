@@ -4,7 +4,7 @@
  * (rule 9); it is prayed in the confession of the night prayer.
  */
 import { formatLong, isDateKey, type DateKey } from './dates';
-import { normalizeInk } from './ink';
+import { normalizeInk, type InkStroke } from './ink';
 import type { ArenaEntry, ArenaPoint } from './model';
 
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
@@ -21,6 +21,9 @@ export function newEntry(
   return e;
 }
 
+/** The Reflexion holds handwriting under at least one question. */
+export const hasInks = (e: ArenaEntry) => Object.values(e.inks ?? {}).some((s) => s.length > 0);
+
 /** Nothing written yet: such entries are not kept. */
 export const isEmptyEntry = (e: ArenaEntry) =>
   !e.title?.trim() &&
@@ -28,7 +31,8 @@ export const isEmptyEntry = (e: ArenaEntry) =>
   e.verses.every((v) => !v.trim()) &&
   e.concerns.every((c) => !c.trim()) &&
   (e.points ?? []).every((p) => !p.text.trim()) &&
-  !e.ink?.length;
+  !e.ink?.length &&
+  !hasInks(e);
 
 function points(v: unknown): ArenaPoint[] {
   if (!Array.isArray(v)) return [];
@@ -62,6 +66,14 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
     if (x.kind === 'forge' || x.kind === 'desert') e.kind = x.kind;
     const ink = e.kind === 'forge' ? [] : normalizeInk(x.ink);
     if (ink.length) e.ink = ink;
+    if (e.kind !== 'forge' && x.inks && typeof x.inks === 'object' && !Array.isArray(x.inks)) {
+      const inks: Record<string, InkStroke[]> = {};
+      for (const [k, v] of Object.entries(x.inks as Record<string, unknown>)) {
+        const strokes = normalizeInk(v);
+        if (strokes.length && k.length <= 40) inks[k] = strokes;
+      }
+      if (Object.keys(inks).length) e.inks = inks;
+    }
     if (e.kind === 'forge' && isDateKey(x.meetingDate)) e.meetingDate = x.meetingDate;
     if (e.kind === 'forge') {
       e.points = points(x.points);
@@ -96,7 +108,7 @@ export function entryTitle(e: ArenaEntry): string {
   if (title) return title;
   const line = (e.text.split('\n').find((l) => l.trim()) ?? e.points?.find((p) => p.text.trim())?.text)?.trim();
   if (line) return line.length > 80 ? `${line.slice(0, 79)}…` : line;
-  return e.concerns.find((c) => c.trim()) ?? e.verses.find((v) => v.trim()) ?? (e.ink?.length ? 'Handschrift' : '');
+  return e.concerns.find((c) => c.trim()) ?? e.verses.find((v) => v.trim()) ?? (e.ink?.length || hasInks(e) ? 'Handschrift' : '');
 }
 
 /** Looks like a Bible reference ("Römer 8,37", "1. Korinther 10,13"), so it can be linked. */

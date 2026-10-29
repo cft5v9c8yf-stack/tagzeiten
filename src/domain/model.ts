@@ -214,6 +214,8 @@ export interface ArenaEntry {
   text: string;
   /** Gebetskammer: handwriting, as drawn with the pencil. */
   ink?: InkStroke[];
+  /** Gebetskammer, Reflexion: handwriting per question (the id of the question), as drawn with the pencil. */
+  inks?: Record<string, InkStroke[]>;
   /** Eisenschmiede: what to bring to the meeting, one point each, ticked off when spoken of. */
   points?: ArenaPoint[];
   /**
