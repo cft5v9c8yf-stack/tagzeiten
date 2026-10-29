@@ -2,38 +2,61 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
-## Freie Ordnung als Alternative zu Morgengebet und Vesper
+## „Bitte und Fürbitte“: dritte Form für Stille Zeit und Vesper
 
 Gewünscht (28.10.2026): eine Alternative zu Stille Zeit und Vesper, „eine freie
-Ordnung, wo einfach nur die Anliegen des Tages stehen“. Wartet, weil auf
-`vorschau` noch die Reflexion (1.36.0) liegt und dort nur eine Neuerung
-liegen darf; sie ist eine eigene Neuerung, keine Korrektur daran.
+Ordnung, wo einfach nur die Anliegen des Tages stehen“. Name entschieden am
+29.10.2026: **Bitte und Fürbitte** (nach 1. Tim 2,1; „Frei“ und „Freies Gebet“
+scheiden aus, „Freies Gebet“ ist schon ein Schritt der Stillen Zeit).
 
-Beim Anfangen mit Andreas zu klären:
+**Wartet,** weil auf `vorschau` noch die Reflexion (1.36.0) liegt und dort nur
+eine Neuerung liegen darf. Anfangen, wenn sie freigegeben (PR `vorschau` →
+`main` gemergt) oder verworfen ist. Bilder der Entwürfe: in der Sitzung vom
+29.10.2026, nicht im Repository.
 
-- **Eine Ordnung oder zwei?** Eine freie Ordnung, die man morgens oder abends
-  wählt, oder je eine Alternative für Morgen und Abend.
-- **Was darin steht.** Die Anliegen des Tages: Haus (Frau, Kinder), Gemeinde,
-  Menschen des Tages, eigene Last; dazu das, was schon in der App liegt
-  (Fürbitte für das Haus, `evening.intercession`, `morning.peopleToday`).
-- **Regeln, die gelten bleiben:** Wort vor Gebet (Regel 2), also mindestens
-  ein Bibelwort oder Psalm vorn, dann die Anliegen; Reihenfolge Haus,
-  Gemeinde, Arbeit, ich (Regel 18); keine Sünden notieren (Regel 9); wird
-  die Prüfung angeboten, folgt der Zuspruch (Regel 1); die freie Ordnung
-  zählt als vollwertig, nicht als „teilweise“ (Regel 8).
-- **Entschieden (29.10.2026):** Beide Wege: „Heute“-Karten (Haus, Gemeinde,
-  Arbeit, ich selbst, Menschen des Tages) und darüber die Liste „Was ich
-  trage“; je Anliegen „Weitertragen“ oder „Loslassen“, abends auch für die
-  Anliegen des Morgens. Die Liste zeigt kein Datum, kein Alter, keinen Zähler
-  und ordnet nach Haus, Gemeinde, Arbeit, ich (Regeln 4, 6, 18); sie gehört in
-  Export und Löschen (Regel 11), `BACKUP_FORMAT` bleibt. In zwei Portionen
-  freigeben: erst Regler und Seite, dann „Was ich trage“.
-- **Die Seite „Heute“ bleibt unberührt** (Wunsch von Andreas): keine neue
-  Kachel, kein neuer Abschnitt dort. Der Regler und „Was ich trage“ stehen nur
-  auf der Gebetsseite.
-- **Technik (Skizze):** neue `OrderId` in `src/content/orders.ts` mit eigenen
-  Schritten; Wahl der Form in den Einstellungen und auf „Heute“
-  (`TodayPage.tsx`, `ScheduleSettings.tsx`); Anzeige in `OrderPart.tsx`.
+**Beschlossen**
+
+- **Form:** Neben „Ordnung“ gibt es „Bitte und Fürbitte“. Sie hat **kein
+  Zeitlimit**: keine Minutenangabe auf Kachel, Seite oder Ablaufband.
+- **Ablauf:** Wort → Bitte und Fürbitte → Segen (Regel 2, Wort steht vorn).
+  Abends dasselbe, danach wie bisher Rückschau, Prüfung, Zuspruch (Regeln 1, 3).
+  Die Seite zeigt in einem Schritt: Mein Haus (nur lesen), „Was ich trage“,
+  „Heute“ (Anliegen des Wochentages). Reihenfolge Haus, Gemeinde, Arbeit, ich
+  (Regel 18).
+- **Wo gewählt wird:** in den **Einstellungen**, je Tageszeit (Morgen, Abend):
+  „Ordnung“ oder „Bitte und Fürbitte“. Auf der Andachtsseite steht bei „Bitte
+  und Fürbitte“ **kein Regler**, nur Ablaufband und Listen. Bei „Ordnung“
+  bleibt „Ganze Ordnung · Kurzform“ wie heute (gilt je Tag, Regel 8).
+  Vorschlag, noch offen: ein kleiner Link am Seitenende „Heute die Ordnung
+  beten“, der die Einstellung nur für diesen Tag überschreibt.
+- **„Heute“ (Tab) bleibt unberührt:** keine neue Kachel, kein neuer Abschnitt.
+- **Pflege unter Mehr → Gebet:** die vorhandene Gebetsübersicht wird zu **„Was
+  ich trage“** (gleicher Datenbestand, `src/domain/prayer.ts`). Ruhige Liste mit
+  Umschalter Alle · Täglich · Heute; je Anliegen Text, **Bereich** und **Wann**
+  (Täglich oder Wochentag, runde Tageskreise wie bei den Gewohnheiten). Ein
+  Anliegen von Montag auf Täglich umstellen: antippen, „Täglich“ wählen.
+- **Bereiche:** „Persönlich“ fest, weitere frei definierbar (Einstellung
+  „Bereiche verwalten“, Ort noch offen).
+- **Keine Doppelung:** Frau und Kinder bleiben allein unter „Mein Haus“ (ein
+  Mensch, ein Ort). „Was ich trage“ nimmt nur auf, was dort nicht steht; die
+  Seite zeigt Haus-Anliegen nur lesend, mit Weg nach „Mein Haus“.
+- **Zurückgestellt:** „Weitertragen“ / „Loslassen“ (erst einmal weglassen).
+- **Regeln:** keine Sünden notieren, Hinweis „Anliegen, nicht Sünden. Wird
+  gebetet, nicht notiert.“ (Regel 9); kein Datum, Alter, Zähler an Anliegen
+  (Regeln 4, 6); Liste in Export und Löschen (Regel 11); `BACKUP_FORMAT` und
+  Datenbankname bleiben.
+
+**Noch zu klären:** darf ein Anliegen an mehreren Wochentagen stehen? Wo steht
+„Bereiche verwalten“? Soll es den Link „Heute die Ordnung beten“ geben?
+Eigenes Symbol für den Schritt. Kurzform dieser Form (Wort und ein Anliegen)?
+
+**Technik (Skizze):** neue Form neben `full`/`short` (`OrderForm` in
+`src/domain/model.ts`) mit eigenen Schritten in `src/content/orders.ts`; Wahl je
+Tageszeit im Profil (`ScheduleSettings.tsx`); `MorningPage.tsx` und
+`EveningPage.tsx` zeigen den Formwähler nur bei „Ordnung“; Anliegen als
+Erweiterung von `src/domain/prayer.ts` (Bereich) mit Umzug alter Daten;
+`PrayerSettings.tsx` wird „Was ich trage“. Zwei Portionen bei der Freigabe: erst
+Form und Seite, dann Pflege unter Mehr.
 
 ## Dogmatik (Pieper) durchsehen
 
