@@ -2489,6 +2489,13 @@ mark.placeholder {
   background-position: right 6px center;
   background-size: 10px;
 }
+/* Above the lists of habits: show only those switched on. */
+.habit-filter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+}
 /* The weekdays of a habit: seven chips of one size, four to a row. */
 .day-chips {
   display: grid;

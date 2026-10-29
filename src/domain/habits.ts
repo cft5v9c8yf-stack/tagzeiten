@@ -59,15 +59,15 @@ export function isTimesPerWeek(n: unknown): n is number {
  * for several days of the week ("3-mal in der Woche").
  */
 export function isPerDay(habit: Habit): boolean {
-  return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && (isTimesPerWeek(habit.timesPerWeek) || hasDays(habit)));
+  return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && isTimesPerWeek(habit.timesPerWeek));
 }
 
 /** Monday first, as the week is shown. */
 export const WEEKDAY_ORDER: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0];
 
-/** Whether a daily or weekly habit is meant for fixed weekdays only (all seven count as none). */
+/** Whether a daily habit is meant for fixed weekdays only (all seven count as none). */
 export function hasDays(habit: Habit): boolean {
-  return habit.rhythm !== 'monthly' && !habit.auto && Array.isArray(habit.days) && habit.days.length > 0 && habit.days.length < 7;
+  return habit.rhythm === 'daily' && !habit.auto && Array.isArray(habit.days) && habit.days.length > 0 && habit.days.length < 7;
 }
 
 /** The weekdays as a quiet note: "am Samstag" for one, "Mo, Do" for several. */
@@ -189,27 +189,22 @@ function withTimesPerWeek(habit: Habit, times: number): Habit {
   return habit.rhythm === 'weekly' && !habit.auto && isTimesPerWeek(times) ? { ...rest, timesPerWeek: times } : rest;
 }
 
-/** Fixed weekdays and "n times a week" exclude each other: setting one clears the other. */
+/** Only daily habits are bound to weekdays; weekly ones are once or n times in the week, on any day. */
 function withDays(habit: Habit, days: readonly Weekday[]): Habit {
   const { days: _, ...rest } = habit;
   const chosen = WEEKDAY_ORDER.filter((d) => days.includes(d));
-  if (habit.auto || habit.rhythm === 'monthly' || chosen.length === 0 || chosen.length === 7) return rest;
-  const { timesPerWeek: __, ...plain } = rest;
-  return { ...plain, days: chosen };
+  if (habit.auto || habit.rhythm !== 'daily' || chosen.length === 0 || chosen.length === 7) return rest;
+  return { ...rest, days: chosen };
 }
 
-/** The weekdays a habit is meant for; none (or all seven) sets it back to every day or free in the week. */
+/** The weekdays a daily habit is meant for; none (or all seven) sets it back to every day. */
 export function setHabitDays(habits: readonly Habit[], id: string, days: readonly Weekday[]): Habit[] {
   return habits.map((h) => (h.id === id ? withDays(h, days) : h));
 }
 
 /** How many days a week a weekly habit is meant for; 1 sets it back to once a week. */
 export function setHabitTimes(habits: readonly Habit[], id: string, times: number): Habit[] {
-  return habits.map((h) => {
-    if (h.id !== id) return h;
-    const { days: _, ...rest } = h;
-    return withTimesPerWeek(rest, times);
-  });
+  return habits.map((h) => (h.id === id ? withTimesPerWeek(h, times) : h));
 }
 
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {

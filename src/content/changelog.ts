@@ -17,8 +17,8 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-29',
     title: 'Gewohnheiten an festen Wochentagen',
     changes: [
-      { area: 'Heute', text: 'Eine Gewohnheit kannst du an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am Montag. Unter „Heute“ steht sie dann nur an diesen Tagen, mit dem Hinweis „am Samstag“; an den anderen Tagen ist sie nicht fällig, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer die Gewohnheit einmal verschiebt, trägt sie dort am anderen Tag ein. Gewohnheiten mit festen Tagen stehen unter „Wöchentlich“ oder „Täglich“, wie du sie angelegt hast.' },
-      { area: 'Mehr', text: 'Unter Gewohnheiten wählst du bei jeder Gewohnheit, auch bei den Vorlagen, „an bestimmten Tagen“ und tippst dann die Tage an. Bei wöchentlichen steht das neben „einmal die Woche“ und „n-mal die Woche“; feste Tage und „n-mal“ schließen sich aus. Das gilt auch beim Anlegen einer eigenen Gewohnheit. Ohne Tage bleibt alles wie bisher.' },
+      { area: 'Heute', text: 'Eine tägliche Gewohnheit kannst du an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am Montag. Unter „Heute“ steht sie dann in der Gruppe „An festen Tagen“, nur an diesen Tagen, mit dem Hinweis „am Samstag“; an den anderen Tagen ruht sie, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer die Gewohnheit einmal verschiebt, trägt sie dort am anderen Tag ein. Wöchentliche Gewohnheiten bleiben „einmal“ oder „n-mal die Woche“, an beliebigen Tagen, und stehen unter „Wöchentlich“.' },
+      { area: 'Mehr', text: 'Unter Gewohnheiten wählst du bei jeder täglichen Gewohnheit, auch bei den Vorlagen, „jeden Tag“ oder „an bestimmten Tagen“ und tippst dann die Tage an; beim Anlegen einer eigenen Gewohnheit ebenso. Ohne Tage bleibt alles wie bisher. Dazu gibt es oben den Schalter „Nur eingeschaltete zeigen“, damit die Liste kurz bleibt; eine Gewohnheit, die du gerade ausschaltest, bleibt bis zum Verlassen der Seite sichtbar, damit du sie wieder einschalten kannst. Die Zählung „6 von 11 eingeschaltet“ über den Listen entfällt.' },
     ],
   },
   {

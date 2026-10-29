@@ -160,10 +160,7 @@ export interface Habit {
   timesPerWeek?: number;
   /** A short description, shown on request (the "i"): the user's own, for habits of their own. */
   note?: string;
-  /**
-   * The weekdays a daily or weekly habit is meant for ("nur freitags", "Long Run am Samstag"), recorded
-   * day by day; absent means every day (daily) or free in the week (weekly). Excludes timesPerWeek.
-   */
+  /** Daily habits only: the weekdays it is meant for ("nur freitags", "Long Run am Samstag"); absent means every day. */
   days?: Weekday[];
   /** Only in Advent, from the first Sunday of Advent to 24 December. */
   advent?: true;
@@ -275,6 +272,8 @@ export interface Profile {
   well: Well;
   /** The overview of the habits in the Rückblick; off unless switched on. */
   showHabitHistory: boolean;
+  /** Mehr → Gewohnheiten lists only the switched-on habits, so the list stays short. */
+  onlyActiveHabits: boolean;
   /**
    * Sunday rest: on Sundays the habits are hidden and not counted in the
    * Rückblick; "Heute" shows the Sunday instead. Ticks already made are kept.

@@ -26,6 +26,7 @@ export function defaultProfile(today: DateKey): Profile {
     armor: true,
     well: emptyWell(),
     showHabitHistory: false,
+    onlyActiveHabits: false,
     sundayRest: false,
     weekReview: true,
     showAtBed: true,
@@ -71,6 +72,7 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     armor: raw.armor !== false,
     well: normalizeWell(raw.well),
     showHabitHistory: raw.showHabitHistory === true,
+    onlyActiveHabits: raw.onlyActiveHabits === true,
     sundayRest: raw.sundayRest === true,
     weekReview: raw.weekReview !== false,
     showAtBed: raw.showAtBed !== false,
@@ -146,9 +148,9 @@ function cleanHabit(h: Habit): Habit {
     active: h.active !== false,
     preset: h.preset === true,
     focus: h.focus === true,
-    ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) && !(Array.isArray(h.days) && h.days.length > 0) ? { timesPerWeek: h.timesPerWeek } : {}),
+    ...(h.rhythm === 'weekly' && isTimesPerWeek(h.timesPerWeek) ? { timesPerWeek: h.timesPerWeek } : {}),
     ...(typeof h.note === 'string' && h.note.trim() ? { note: h.note.trim().slice(0, NOTE_MAX) } : {}),
-    ...(h.rhythm !== 'monthly' && auto === null && Array.isArray(h.days) && keptDays(h.days).length > 0 && keptDays(h.days).length < 7
+    ...(h.rhythm === 'daily' && auto === null && Array.isArray(h.days) && keptDays(h.days).length > 0 && keptDays(h.days).length < 7
       ? { days: keptDays(h.days) }
       : {}),
     ...(h.advent === true ? { advent: true as const } : {}),

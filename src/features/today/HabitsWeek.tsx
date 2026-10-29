@@ -136,7 +136,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
     ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
   ];
-  const perDay = listed.filter((h) => h.rhythm === 'daily');
+  const perDay = listed.filter((h) => h.rhythm === 'daily' && !hasDays(h));
+  const fixedDays = listed.filter(hasDays);
   const weekly = [
     ...listed.filter((h) => h.rhythm === 'weekly' && isPerDay(h)),
     ...keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'weekly')),
@@ -169,6 +170,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const groups: [string, Habit[]][] = [
     ['Im Blick', byHand(focus)],
     ['Täglich', perDay],
+    ['An festen Tagen', fixedDays],
     ['Wöchentlich', weekly],
     ['Monatlich', monthly],
   ];

@@ -431,27 +431,45 @@ describe('Mehr: Gewohnheiten', () => {
     await waitFor(() => expect(sport().timesPerWeek).toBeUndefined());
   });
 
-  it('binds a habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
+  it('binds a daily habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Long Run' } });
+    // Weekly habits have no weekdays: once or n times a week, on any day.
     fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
-    fireEvent.change(screen.getByLabelText('Wie oft in der Woche'), { target: { value: '0' } });
+    expect(document.querySelector('.add-habit')!.textContent).not.toContain('an bestimmten Tagen');
+    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'daily' } });
+    fireEvent.change(screen.getByLabelText('Wie oft'), { target: { value: '0' } });
     // The weekday of today is taken to start with; Samstag is added.
     fireEvent.click(screen.getAllByRole('button', { name: 'Samstag' })[0]!);
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const run = () => store.getProfile().habits.find((h) => h.name === 'Long Run')!;
-    expect(run().rhythm).toBe('weekly');
+    expect(run().rhythm).toBe('daily');
     expect(run().days).toContain(6);
-    expect(run().timesPerWeek).toBeUndefined();
-    const select = await screen.findByLabelText('Wie oft in der Woche: Long Run');
+    const select = await screen.findByLabelText('Wie oft: Long Run');
     expect((select as HTMLSelectElement).value).toBe('0');
-    // Back to "n times a week": the weekdays go.
-    fireEvent.change(select, { target: { value: '3' } });
-    await waitFor(() => expect(run()).toMatchObject({ timesPerWeek: 3 }));
-    expect(run().days).toBeUndefined();
+    fireEvent.change(select, { target: { value: '1' } });
+    await waitFor(() => expect(run().days).toBeUndefined());
     // A habit of the templates can be bound as well.
     fireEvent.change(await screen.findByLabelText('Wie oft: Bibel lesen'), { target: { value: '0' } });
     await waitFor(() => expect(store.getProfile().habits.find((h) => h.name === 'Bibel lesen')!.days).toHaveLength(1));
+  });
+
+  it('lists only the switched-on habits when asked, and keeps one just switched off to switch on again', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    const filter = await screen.findByRole('switch', { name: 'Nur eingeschaltete zeigen' });
+    const names = () => document.querySelectorAll('li.habit-edit').length;
+    const all = names();
+    expect(all).toBeGreaterThan(0);
+    fireEvent.click(filter);
+    await waitFor(() => expect(store.getProfile().onlyActiveHabits).toBe(true));
+    const on = store.getProfile().habits.filter((h) => h.active && !h.desert).length;
+    await waitFor(() => expect(names()).toBeLessThan(all));
+    expect(names()).toBeLessThanOrEqual(on);
+    // Switched off now, it stays in the list until the visit ends.
+    const first = document.querySelector('li.habit-edit input[role="switch"]') as HTMLInputElement;
+    fireEvent.click(first);
+    await waitFor(() => expect(first.checked).toBe(false));
+    expect(first.isConnected).toBe(true);
   });
 
   it('adds, switches and deletes an own habit', async () => {

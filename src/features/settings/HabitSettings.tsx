@@ -10,7 +10,6 @@ import { useProfile, useStore } from '../../data/hooks';
 import {
   addHabit,
   habitsOfRhythm,
-  moveHabit,
   moveHabitTo,
   newHabitId,
   removeHabit,
@@ -38,7 +37,7 @@ const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöche
 
 const timesLabel = (n: number) => (n === 1 ? 'einmal die Woche' : `${n}-mal die Woche`);
 
-/** How many days a week a weekly habit is meant for, or 0 for fixed weekdays. */
+/** How many days a week a weekly habit is meant for. */
 function TimesSelect({ value, onChange, label, id }: { value: number; onChange: (n: number) => void; label?: string; id?: string }) {
   return (
     <select id={id} className="habit-times" aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))}>
@@ -47,12 +46,11 @@ function TimesSelect({ value, onChange, label, id }: { value: number; onChange: 
           {timesLabel(n)}
         </option>
       ))}
-      <option value={0}>an bestimmten Tagen</option>
     </select>
   );
 }
 
-/** A daily habit: every day, or fixed weekdays (0 stands for fixed weekdays). */
+/** A daily habit: every day, or fixed weekdays. */
 function EveryDaySelect({ byDays, onChange, label, id }: { byDays: boolean; onChange: (byDays: boolean) => void; label?: string; id?: string }) {
   return (
     <select id={id} className="habit-times" aria-label={label} value={byDays ? 0 : 1} onChange={(e) => onChange(e.target.value === '0')}>
@@ -157,10 +155,8 @@ function HabitRow({
           {habit.rhythm === 'weekly' && !habit.auto && (
             <TimesSelect
               label={`Wie oft in der Woche: ${habit.name}`}
-              value={hasDays(habit) ? 0 : (habit.timesPerWeek ?? 1)}
-              onChange={(n) =>
-                update((hs) => (n === 0 ? setHabitDays(hs, habit.id, [weekdayOf(store.today())]) : setHabitTimes(hs, habit.id, n)))
-              }
+              value={habit.timesPerWeek ?? 1}
+              onChange={(n) => update((hs) => setHabitTimes(hs, habit.id, n))}
             />
           )}
           {!habit.preset &&
@@ -206,20 +202,33 @@ function HabitGroup({
   onMoved,
 }: {
   rhythm: Rhythm;
+  /** The habits listed: all of the group, or only the switched-on ones. */
   habits: Habit[];
   hintId: string;
   onMoved: (id: string, viaKeyboard: boolean) => void;
 }) {
   const store = useStore();
   const ids = habits.map((h) => h.id);
+  // The place is meant among the habits listed; unlisted ones keep theirs around it.
+  const place = (id: string, index: number) =>
+    store.updateProfile(
+      (p) => {
+        const anchor = habits.filter((x) => x.id !== id)[index];
+        const all = habitsOfRhythm(p.habits, rhythm).filter((x) => x.id !== id);
+        const at = anchor ? all.findIndex((x) => x.id === anchor.id) : all.length;
+        return { ...p, habits: moveHabitTo(p.habits, id, at) };
+      },
+      { immediate: true },
+    );
   const { listRef, drag, handleProps, itemStyle } = useSortable({
     ids,
     onDrop: (id, index) => {
-      store.updateProfile((p) => ({ ...p, habits: moveHabitTo(p.habits, id, index) }), { immediate: true });
+      place(id, index);
       onMoved(id, false);
     },
     onKeyMove: (id, direction) => {
-      store.updateProfile((p) => ({ ...p, habits: moveHabit(p.habits, id, direction) }), { immediate: true });
+      const to = ids.indexOf(id) + (direction === 'up' ? -1 : 1);
+      if (to >= 0 && to < ids.length) place(id, to);
       onMoved(id, true);
     },
   });
@@ -229,7 +238,6 @@ function HabitGroup({
       title={GROUP_TITLE[rhythm]}
       level={3}
       className="habit-card"
-      aside={`${habits.filter((h) => h.active).length} von ${habits.length} eingeschaltet`}
     >
       <ul className={`habit-list${drag ? ' sorting' : ''}`} ref={(el) => (listRef.current = el)}>
         {habits.map((h) => (
@@ -253,6 +261,10 @@ export function HabitSettings() {
   const profile = useProfile();
   // Habits taken in only for the Wüstenzeit stand here once they are taken over into everyday life.
   const everyday = profile.habits.filter((h) => (!h.desert || h.active) && shownHabit(h, profile.well.on));
+  // With "only switched on", a habit switched off in this visit stays listed, so it can be switched on again.
+  const [kept, setKept] = useState(() => new Set(everyday.filter((h) => h.active).map((h) => h.id)));
+  const onlyOn = profile.onlyActiveHabits;
+  const listed = onlyOn ? everyday.filter((h) => h.active || kept.has(h.id)) : everyday;
   const nameId = useId();
   const rhythmId = useId();
   const [name, setName] = useState('');
@@ -264,6 +276,7 @@ export function HabitSettings() {
   const [announcement, setAnnouncement] = useState('');
   const [refocus, setRefocus] = useState<string | null>(null);
   const hintId = useId();
+  const filterId = useId();
 
   // After moving by keyboard, keep the focus on the handle so it can be moved again.
   useEffect(() => {
@@ -289,7 +302,7 @@ export function HabitSettings() {
   const add = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    const chosen = rhythm !== 'monthly' && byDays ? days : [];
+    const chosen = rhythm === 'daily' && byDays ? days : [];
     store.updateProfile((p) => ({ ...p, habits: addHabit(p.habits, name, rhythm, newHabitId(), times, chosen) }), { immediate: true });
     setName('');
     setTimes(1);
@@ -306,8 +319,22 @@ export function HabitSettings() {
       <p id={hintId} className="visually-hidden">
         Zum Verschieben ziehen oder mit den Pfeiltasten nach oben und unten bewegen.
       </p>
+      <div className="habit-filter">
+        <input
+          id={filterId}
+          type="checkbox"
+          role="switch"
+          className="switch"
+          checked={onlyOn}
+          onChange={(e) => {
+            setKept(new Set(everyday.filter((h) => h.active).map((h) => h.id)));
+            store.updateProfile((p) => ({ ...p, onlyActiveHabits: e.target.checked }), { immediate: true });
+          }}
+        />
+        <label htmlFor={filterId}>Nur eingeschaltete zeigen</label>
+      </div>
       {RHYTHMS.map((r) => (
-        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(everyday, r)} hintId={hintId} onMoved={moved} />
+        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(listed, r)} hintId={hintId} onMoved={moved} />
       ))}
       <DesertGroup />
       <Section id="more.habits.add" title="Eigene anlegen" level={3} className="habit-card">
@@ -336,7 +363,7 @@ export function HabitSettings() {
         {rhythm === 'weekly' && (
           <div className="field">
             <label htmlFor={timesId}>Wie oft in der Woche</label>
-            <TimesSelect id={timesId} value={byDays ? 0 : times} onChange={(n) => (n === 0 ? chooseDays(true) : (chooseDays(false), setTimes(n)))} />
+            <TimesSelect id={timesId} value={times} onChange={setTimes} />
           </div>
         )}
         {rhythm === 'daily' && (
@@ -386,17 +413,19 @@ export const HABITS_INFO = (
   <>
     <p>{NO_SCORE_NOTE}</p>
     <p>
-      Eingeschaltete Gewohnheiten erscheinen auf der Startseite, in der Reihenfolge von hier. Zum Sortieren am Griff
-      ziehen. Mit dem Stern markierst du, worauf du gerade achten willst.
+      Was eingeschaltet ist, erscheint auf der Startseite, in der Reihenfolge dieser Liste. Zum Sortieren ziehst du am
+      Griff. Mit dem Stern markierst du, worauf du gerade besonders achten willst. Mit „Nur eingeschaltete zeigen“ bleibt
+      die Liste kurz.
     </p>
     <p>
-      Bei wöchentlichen Gewohnheiten legst du fest, wie oft in der Woche, etwa Sport dreimal. Dann trägst du sie Tag für
-      Tag ein, und unter „Heute“ steht, wie oft sie diese Woche eingetragen ist. Eine Woche mit weniger ist kein Versäumnis.
+      Bei einer wöchentlichen Gewohnheit legst du fest, wie oft sie in der Woche vorkommen soll, zum Beispiel Sport
+      dreimal. Du trägst sie an den Tagen ein, an denen du sie getan hast, und unter „Heute“ siehst du, wie oft sie diese
+      Woche schon eingetragen ist. Eine Woche mit weniger ist kein Versäumnis.
     </p>
     <p>
-      Eine Gewohnheit kannst du auch an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am
-      Montag. Unter „Heute“ steht sie dann nur an diesen Tagen. An den anderen Tagen ist sie nicht fällig, das ist kein
-      Versäumnis; wer sie einmal verschiebt, trägt sie in der Wochenübersicht am anderen Tag ein.
+      Tägliche Gewohnheiten kannst du an feste Wochentage binden, etwa den Long Run an den Samstag oder die Bibelstunde
+      an den Montag. Unter „Heute“ erscheinen sie dann nur an diesen Tagen. An den anderen Tagen ruhen sie, das ist kein
+      Versäumnis. Hast du eine Gewohnheit einmal verschoben, trägst du sie in der Wochenübersicht am anderen Tag ein.
     </p>
   </>
 );

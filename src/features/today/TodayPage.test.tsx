@@ -87,16 +87,18 @@ describe('Today', () => {
       s.updateProfile(
         (p) => ({
           ...p,
-          habits: [...p.habits, { id: 'own-run', name: 'Long Run', rhythm: 'weekly', auto: null, active: true, preset: false, focus: false, days } as never],
+          habits: [...p.habits, { id: 'own-run', name: 'Long Run', rhythm: 'daily', auto: null, active: true, preset: false, focus: false, days } as never],
         }),
         { immediate: true },
       );
     // 2026-09-25 is a Friday.
     await renderToday('2026-09-26', own([6]), new Date(2026, 8, 26, 9, 0));
     expect(screen.getByRole('checkbox', { name: /Long Run/ }).textContent).toContain('am Samstag');
+    expect(screen.getByRole('heading', { level: 5, name: 'An festen Tagen' })).toBeTruthy();
     cleanup();
     await renderToday('2026-09-25', own([6]));
     expect(screen.queryByRole('checkbox', { name: /Long Run/ })).toBeNull();
+    expect(screen.queryByRole('heading', { level: 5, name: 'An festen Tagen' })).toBeNull();
   });
 
   it('keeps "Die drei Dinge" as it was while the Abendbrunnen is off', async () => {

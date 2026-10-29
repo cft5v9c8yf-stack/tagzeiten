@@ -21,14 +21,18 @@ describe('profile', () => {
   it('keeps the weekdays of a habit only where they make sense', () => {
     const own = (over: object) => ({ id: 'o', name: 'Eigenes', auto: null, active: true, preset: false, focus: false, ...over }) as never;
     const days = (over: object) => normalizeProfile({ habits: [own(over)] }, '2026-09-25').habits.find((h) => h.id === 'o')!.days;
-    expect(days({ rhythm: 'weekly', days: [0, 6, 6, 9] })).toEqual([6, 0]);
+    expect(days({ rhythm: 'daily', days: [0, 6, 6, 9] })).toEqual([6, 0]);
     expect(days({ rhythm: 'daily', days: [5] })).toEqual([5]);
+    expect(days({ rhythm: 'weekly', days: [5] })).toBeUndefined();
     expect(days({ rhythm: 'monthly', days: [5] })).toBeUndefined();
-    expect(days({ rhythm: 'weekly', days: [] })).toBeUndefined();
-    expect(days({ rhythm: 'weekly', days: [0, 1, 2, 3, 4, 5, 6] })).toBeUndefined();
-    // Weekdays and "n times a week" exclude each other: the weekdays win.
-    const both = normalizeProfile({ habits: [own({ rhythm: 'weekly', days: [6], timesPerWeek: 3 })] }, '2026-09-25').habits.find((h) => h.id === 'o')!;
-    expect(both.timesPerWeek).toBeUndefined();
+    expect(days({ rhythm: 'daily', days: [] })).toBeUndefined();
+    expect(days({ rhythm: 'daily', days: [0, 1, 2, 3, 4, 5, 6] })).toBeUndefined();
+  });
+
+  it('lists only the switched-on habits in the settings if asked to, and by default all', () => {
+    expect(normalizeProfile({}, '2026-09-25').onlyActiveHabits).toBe(false);
+    expect(normalizeProfile({ onlyActiveHabits: true } as never, '2026-09-25').onlyActiveHabits).toBe(true);
+    expect(normalizeProfile({ onlyActiveHabits: 'yes' } as never, '2026-09-25').onlyActiveHabits).toBe(false);
   });
 
   it('repairs incomplete or broken data', () => {
