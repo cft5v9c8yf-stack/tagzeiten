@@ -3,6 +3,7 @@ import { useToast } from '../../app/Toast';
 import { WELL_COMFORT } from '../../content/well';
 import { REFLECTION_CARDS, REFLECTION_VERSE, type ReflectionCard } from '../../content/reflection';
 import { RHYTHM_LABEL } from '../../content/habits';
+import { composeReflection, parseReflection } from '../../domain/reflection';
 import { useStore } from '../../data/hooks';
 import { addHabit, newHabitId, RHYTHM_ORDER } from '../../domain/habits';
 import { BibleRef } from '../../ui/BibleRef';
@@ -20,30 +21,6 @@ interface Plan {
   rhythm: Rhythm;
 }
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
-
-const HABITS_TITLE = 'Gewohnheiten';
-
-/** The text of the entry: each answered question under its title, the habits taken in last (rule 2). */
-export function composeReflection(answers: Record<string, string>, taken: readonly string[]): string {
-  const parts = REFLECTION_CARDS.filter((c) => answers[c.id]?.trim()).map((c) => `${c.title}\n${answers[c.id]!.trim()}`);
-  if (taken.length) parts.push(`${HABITS_TITLE}\n${taken.join('\n')}`);
-  return parts.join('\n\n');
-}
-
-/** The way back: the answers and the habits out of the text of an entry written by composeReflection. */
-export function parseReflection(text: string): { answers: Record<string, string>; taken: string[] } {
-  const answers: Record<string, string> = Object.fromEntries(REFLECTION_CARDS.map((c) => [c.id, '']));
-  let taken: string[] = [];
-  const titles = [...REFLECTION_CARDS.map((c) => c.title), HABITS_TITLE];
-  const heading = new RegExp(`(?:^|\\n\\n)(${titles.map((t) => t.replace(/[?.]/g, '\\$&')).join('|')})\\n`, 'g');
-  const marks = [...text.matchAll(heading)];
-  marks.forEach((m, i) => {
-    const body = text.slice(m.index! + m[0].length, marks[i + 1]?.index ?? text.length);
-    if (m[1] === HABITS_TITLE) taken = body.split('\n').filter(Boolean);
-    else answers[REFLECTION_CARDS.find((c) => c.title === m[1])!.id] = body;
-  });
-  return { answers, taken };
-}
 
 /** Whether a Reflexion was laid down on this device before: then the questions start folded. */
 function seenBefore(): boolean {

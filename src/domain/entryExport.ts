@@ -7,6 +7,8 @@ import type { ArenaEntry } from './model';
 import { entryTitle, forgeTitle, isEmptyEntry } from './arena';
 import { inkToSvg } from './ink';
 import { REFLECTION_CARDS } from '../content/reflection';
+import { HABITS_TITLE, isReflectionText, parseReflection } from './reflection';
+import type { InkStroke } from './ink';
 import { paragraphs, safeName, savePdf, shortDate, type Block, type PrintDoc } from './printDoc';
 
 const longDate = (ms: number) =>
@@ -47,19 +49,48 @@ function entryContentLines(e: ArenaEntry, level: number): string[] {
   if (verses.length) out.push(`**Bibelstellen:** ${verses.join(' · ')}`, '');
   if (concerns.length) out.push(`${h} Gebetsanliegen`, '', ...concerns.map((c) => `- ${c}`), '');
   if (points.length) out.push(`${h} Zum Besprechen`, '', ...points.map((p) => `- [${p.done ? 'x' : ' '}] ${p.text.trim()}`), '');
-  if (e.text.trim()) out.push(`${h} Text`, '', e.text.trim(), '');
-  if (e.ink?.length) out.push(`${h} Handschrift`, '', `![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(e.ink))})`, '');
-  for (const [id, strokes] of inkOfQuestions(e)) {
-    out.push(`${h} Handschrift: ${id}`, '', `![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(strokes))})`, '');
-  }
+  const image = (strokes: InkStroke[]) => `![Handschrift](data:image/svg+xml;base64,${btoa(inkToSvg(strokes))})`;
+  const parts = reflectionParts(e);
+  if (parts) {
+    // The Reflexion: "Was dich bewegt", and under it each question and the habits as sub-headings.
+    out.push(`${h} ${WRITTEN}`, '');
+    for (const p of parts) {
+      out.push(`${h}# ${p.title}`, '');
+      if (p.text) out.push(p.text, '');
+      if (p.ink.length) out.push(image(p.ink), '');
+      if (p.habits.length) out.push(...p.habits.map((x) => `- ${x}`), '');
+    }
+  } else if (e.text.trim()) out.push(`${h} Text`, '', e.text.trim(), '');
+  if (e.ink?.length) out.push(`${h} Handschrift`, '', image(e.ink), '');
   return out;
 }
 
-/** The handwriting of the Reflexion, under the title of each question, in the order of the questions. */
-function inkOfQuestions(e: ArenaEntry) {
-  const inks = e.inks ?? {};
-  return REFLECTION_CARDS.filter((c) => inks[c.id]?.length).map((c) => [c.title, inks[c.id]!] as const);
+/** A part of a Reflexion entry: a question with the answer and the handwriting, or the habits. */
+interface ReflectionPart {
+  title: string;
+  text: string;
+  ink: InkStroke[];
+  habits: string[];
 }
+
+/** The Reflexion as parts in the order of the questions, the habits last; null for any other entry. */
+function reflectionParts(e: ArenaEntry): ReflectionPart[] | null {
+  const inks = e.inks ?? {};
+  const hasInks = REFLECTION_CARDS.some((c) => inks[c.id]?.length);
+  if (!isReflectionText(e.text) && !(hasInks && !e.text.trim())) return null;
+  const { answers, taken } = parseReflection(e.text);
+  const parts: ReflectionPart[] = REFLECTION_CARDS.filter((c) => answers[c.id]?.trim() || inks[c.id]?.length).map((c) => ({
+    title: c.title,
+    text: answers[c.id]!.trim(),
+    ink: inks[c.id] ?? [],
+    habits: [],
+  }));
+  if (taken.length) parts.push({ title: HABITS_TITLE, text: '', ink: [], habits: taken });
+  return parts;
+}
+
+/** The title over the written part of an entry, as in the form. */
+const WRITTEN = 'Was dich bewegt';
 
 export function entryToMarkdown(e: ArenaEntry): string {
   const verses = filled(e.verses);
@@ -102,9 +133,18 @@ function entryBlocks(e: ArenaEntry): Block[] {
   if (points.length) {
     out.push({ kind: 'label', text: 'Zum Besprechen' }, { kind: 'list', items: points.map((p) => ({ runs: [{ text: p.text.trim() }], check: p.done })) });
   }
-  if (e.text.trim()) out.push(...paragraphs(e.text));
+  const parts = reflectionParts(e);
+  if (parts) {
+    // The Reflexion: "Was dich bewegt", and under it each question and the habits as sub-headings.
+    out.push({ kind: 'label', text: WRITTEN });
+    for (const p of parts) {
+      out.push({ kind: 'heading', level: 2, text: p.title, runs: [{ text: p.title, bold: true }] });
+      if (p.text) out.push(...paragraphs(p.text));
+      if (p.ink.length) out.push({ kind: 'svg', svg: inkToSvg(p.ink) });
+      if (p.habits.length) out.push({ kind: 'list', items: p.habits.map((x) => ({ runs: [{ text: x }] })) });
+    }
+  } else if (e.text.trim()) out.push(...paragraphs(e.text));
   if (e.ink?.length) out.push({ kind: 'label', text: 'Handschrift' }, { kind: 'svg', svg: inkToSvg(e.ink) });
-  for (const [title, strokes] of inkOfQuestions(e)) out.push({ kind: 'label', text: `Handschrift: ${title}` }, { kind: 'svg', svg: inkToSvg(strokes) });
   return out;
 }
 
