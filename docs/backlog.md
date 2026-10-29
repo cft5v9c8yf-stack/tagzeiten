@@ -21,6 +21,16 @@ Beim Anfangen mit Andreas zu klären:
   Gemeinde, Arbeit, ich (Regel 18); keine Sünden notieren (Regel 9); wird
   die Prüfung angeboten, folgt der Zuspruch (Regel 1); die freie Ordnung
   zählt als vollwertig, nicht als „teilweise“ (Regel 8).
+- **Entschieden (29.10.2026):** Beide Wege: „Heute“-Karten (Haus, Gemeinde,
+  Arbeit, ich selbst, Menschen des Tages) und darüber die Liste „Was ich
+  trage“; je Anliegen „Weitertragen“ oder „Loslassen“, abends auch für die
+  Anliegen des Morgens. Die Liste zeigt kein Datum, kein Alter, keinen Zähler
+  und ordnet nach Haus, Gemeinde, Arbeit, ich (Regeln 4, 6, 18); sie gehört in
+  Export und Löschen (Regel 11), `BACKUP_FORMAT` bleibt. In zwei Portionen
+  freigeben: erst Regler und Seite, dann „Was ich trage“.
+- **Die Seite „Heute“ bleibt unberührt** (Wunsch von Andreas): keine neue
+  Kachel, kein neuer Abschnitt dort. Der Regler und „Was ich trage“ stehen nur
+  auf der Gebetsseite.
 - **Technik (Skizze):** neue `OrderId` in `src/content/orders.ts` mit eigenen
   Schritten; Wahl der Form in den Einstellungen und auf „Heute“
   (`TodayPage.tsx`, `ScheduleSettings.tsx`); Anzeige in `OrderPart.tsx`.
