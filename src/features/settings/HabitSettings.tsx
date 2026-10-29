@@ -413,19 +413,13 @@ export const HABITS_INFO = (
   <>
     <p>{NO_SCORE_NOTE}</p>
     <p>
-      Was eingeschaltet ist, erscheint auf der Startseite, in der Reihenfolge dieser Liste. Zum Sortieren ziehst du am
-      Griff. Mit dem Stern markierst du, worauf du gerade besonders achten willst. Mit „Nur eingeschaltete zeigen“ bleibt
-      die Liste kurz.
+      Eingeschaltete Gewohnheiten stehen auf der Startseite, in der Reihenfolge dieser Liste. Zum Sortieren ziehst du am
+      Griff, der Stern markiert, worauf du gerade achtest.
     </p>
+    <p>Wöchentliche Gewohnheiten legst du auf eine Zahl fest, etwa Sport dreimal. Eine Woche mit weniger ist kein Versäumnis.</p>
     <p>
-      Bei einer wöchentlichen Gewohnheit legst du fest, wie oft sie in der Woche vorkommen soll, zum Beispiel Sport
-      dreimal. Du trägst sie an den Tagen ein, an denen du sie getan hast, und unter „Heute“ siehst du, wie oft sie diese
-      Woche schon eingetragen ist. Eine Woche mit weniger ist kein Versäumnis.
-    </p>
-    <p>
-      Tägliche Gewohnheiten kannst du an feste Wochentage binden, etwa den Long Run an den Samstag oder die Bibelstunde
-      an den Montag. Unter „Heute“ erscheinen sie dann nur an diesen Tagen. An den anderen Tagen ruhen sie, das ist kein
-      Versäumnis. Hast du eine Gewohnheit einmal verschoben, trägst du sie in der Wochenübersicht am anderen Tag ein.
+      Tägliche Gewohnheiten kannst du an Wochentage binden, etwa den Long Run an den Samstag. Sie stehen dann nur an diesen
+      Tagen unter „Heute“, an den anderen ruhen sie. Hast du eine verschoben, trägst du sie in der Wochenübersicht ein.
     </p>
   </>
 );
