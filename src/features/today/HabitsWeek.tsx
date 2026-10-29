@@ -12,7 +12,7 @@ import { StarIcon } from '../../ui/Icons';
 import { DesertCare, DesertDay, DesertWeekRows } from '../desert/DesertHabits';
 import { Tick } from '../../ui/Tick';
 
-const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
+const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Tag für Tag', weekly: 'In dieser Woche', monthly: 'In diesem Monat' };
 
 function HabitName({ habit, note }: { habit: Habit; note?: string }) {
   return (
@@ -136,8 +136,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
     ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
   ];
-  const perDay = listed.filter((h) => h.rhythm === 'daily' && !hasDays(h));
-  const fixedDays = listed.filter(hasDays);
+  const perDay = listed.filter((h) => h.rhythm === 'daily');
   const weekly = [
     ...listed.filter((h) => h.rhythm === 'weekly' && isPerDay(h)),
     ...keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'weekly')),
@@ -169,10 +168,9 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   };
   const groups: [string, Habit[]][] = [
     ['Im Blick', byHand(focus)],
-    ['Täglich', perDay],
-    ['An festen Tagen', fixedDays],
-    ['Wöchentlich', weekly],
-    ['Monatlich', monthly],
+    [sel === today ? 'Heute' : 'An diesem Tag', perDay],
+    ['In dieser Woche', weekly],
+    ['In diesem Monat', monthly],
   ];
 
   return (

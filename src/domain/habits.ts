@@ -207,6 +207,42 @@ export function setHabitTimes(habits: readonly Habit[], id: string, times: numbe
   return habits.map((h) => (h.id === id ? withTimesPerWeek(h, times) : h));
 }
 
+/**
+ * When a habit is meant, in one answer: every day, fixed weekdays, once or several times a week (on any
+ * day), once a month. The rhythm of the habit follows from it; the entries are kept as they were.
+ */
+export type When = 'daily' | 'days' | 'month' | `week-${number}`;
+
+export const whenOf = (h: Habit): When =>
+  h.rhythm === 'monthly' ? 'month' : h.rhythm === 'weekly' ? `week-${isTimesPerWeek(h.timesPerWeek) ? h.timesPerWeek : 1}` : hasDays(h) ? 'days' : 'daily';
+
+export function whenParts(when: When): { rhythm: Rhythm; timesPerWeek: number; byDays: boolean } {
+  if (when === 'month') return { rhythm: 'monthly', timesPerWeek: 1, byDays: false };
+  if (when === 'daily' || when === 'days') return { rhythm: 'daily', timesPerWeek: 1, byDays: when === 'days' };
+  return { rhythm: 'weekly', timesPerWeek: Number(when.slice(5)), byDays: false };
+}
+
+/** Sets when a habit is meant. "days" keeps the weekdays it had, or takes the ones given. Habits of the orders keep theirs. */
+export function setHabitWhen(habits: readonly Habit[], id: string, when: When, days: readonly Weekday[] = []): Habit[] {
+  const { rhythm, timesPerWeek, byDays } = whenParts(when);
+  return habits.map((h) => {
+    if (h.id !== id || h.auto) return h;
+    const { days: kept, timesPerWeek: _, ...rest } = h;
+    const base: Habit = { ...rest, rhythm };
+    return byDays ? withDays(base, days.length > 0 ? days : (kept ?? [])) : withTimesPerWeek(base, timesPerWeek);
+  });
+}
+
+/** Puts a habit before another one, or at the end when there is none. */
+export function placeHabit(habits: readonly Habit[], id: string, beforeId: string | null): Habit[] {
+  const h = habits.find((x) => x.id === id);
+  if (!h) return [...habits];
+  const rest = habits.filter((x) => x.id !== id);
+  const at = beforeId ? rest.findIndex((x) => x.id === beforeId) : -1;
+  rest.splice(at < 0 ? rest.length : at, 0, h);
+  return rest;
+}
+
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {
   const trimmed = name.trim();
   if (!trimmed) return [...habits];

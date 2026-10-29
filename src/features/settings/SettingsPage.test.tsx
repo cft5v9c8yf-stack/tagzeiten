@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
 import { TagzeitenDB } from '../../data/db';
+import { shownHabit } from '../../domain/habits';
 import { scheduleFor } from '../../domain/schedule';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
@@ -252,12 +253,12 @@ describe('Mehr: Aufbau', () => {
         s.startDesert('2026-09-21', 40);
         s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, [DESERT_HABITS.find((h) => h.id === 'wz-psalm')!], true);
       },
-      ['more.habits.desert', 'more.habits.daily'],
+      ['more.habits.desert', 'more.habits.list'],
     );
     const group = (await screen.findByRole('button', { name: /^Wüstenzeit/ })).closest('section') as HTMLElement;
     expect((within(group).getByLabelText('Psalm des Tages') as HTMLInputElement).checked).toBe(true);
     // Not among the everyday habits until taken over.
-    const daily = screen.getByRole('button', { name: /^Täglich/ }).closest('section') as HTMLElement;
+    const daily = screen.getByRole('button', { name: /^Meine Gewohnheiten/ }).closest('section') as HTMLElement;
     expect(daily.textContent).not.toContain('Psalm des Tages');
   });
 
@@ -416,42 +417,43 @@ describe('Mehr: Daten', () => {
 });
 
 describe('Mehr: Gewohnheiten', () => {
-  it('sets how often in the week a weekly habit is meant, when adding and afterwards', async () => {
+  it('sets when a habit is meant, when adding and afterwards: every day, weekdays, in the week, in the month', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Sport' } });
-    expect(screen.queryByLabelText('Wie oft in der Woche')).toBeNull();
-    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
-    fireEvent.change(screen.getByLabelText('Wie oft in der Woche'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Wann'), { target: { value: 'week-3' } });
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const sport = () => store.getProfile().habits.find((h) => h.name === 'Sport')!;
     expect(sport()).toMatchObject({ rhythm: 'weekly', timesPerWeek: 3 });
-    const select = await screen.findByLabelText('Wie oft in der Woche: Sport');
-    expect((select as HTMLSelectElement).value).toBe('3');
-    fireEvent.change(select, { target: { value: '1' } });
+    const select = await screen.findByLabelText('Wann: Sport');
+    expect((select as HTMLSelectElement).value).toBe('week-3');
+    fireEvent.change(select, { target: { value: 'week-1' } });
     await waitFor(() => expect(sport().timesPerWeek).toBeUndefined());
+    expect(sport().rhythm).toBe('weekly');
+    fireEvent.change(select, { target: { value: 'month' } });
+    await waitFor(() => expect(sport().rhythm).toBe('monthly'));
+    fireEvent.change(select, { target: { value: 'daily' } });
+    await waitFor(() => expect(sport().rhythm).toBe('daily'));
   });
 
-  it('binds a daily habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
+  it('binds a habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Long Run' } });
-    // Weekly habits have no weekdays: once or n times a week, on any day.
-    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
-    expect(document.querySelector('.add-habit')!.textContent).not.toContain('an bestimmten Tagen');
-    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'daily' } });
-    fireEvent.change(screen.getByLabelText('Wie oft'), { target: { value: '0' } });
+    fireEvent.change(screen.getByLabelText('Wann'), { target: { value: 'days' } });
     // The weekday of today is taken to start with; Samstag is added.
     fireEvent.click(screen.getAllByRole('button', { name: 'Samstag' })[0]!);
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const run = () => store.getProfile().habits.find((h) => h.name === 'Long Run')!;
     expect(run().rhythm).toBe('daily');
     expect(run().days).toContain(6);
-    const select = await screen.findByLabelText('Wie oft: Long Run');
-    expect((select as HTMLSelectElement).value).toBe('0');
-    fireEvent.change(select, { target: { value: '1' } });
+    const select = await screen.findByLabelText('Wann: Long Run');
+    expect((select as HTMLSelectElement).value).toBe('days');
+    fireEvent.change(select, { target: { value: 'daily' } });
     await waitFor(() => expect(run().days).toBeUndefined());
-    // A habit of the templates can be bound as well.
-    fireEvent.change(await screen.findByLabelText('Wie oft: Bibel lesen'), { target: { value: '0' } });
+    // A habit of the templates can be bound as well; reading follows the plan and offers days only.
+    fireEvent.change(await screen.findByLabelText('Wann: Bibel lesen'), { target: { value: 'days' } });
     await waitFor(() => expect(store.getProfile().habits.find((h) => h.name === 'Bibel lesen')!.days).toHaveLength(1));
+    expect(within(screen.getByLabelText('Wann: Bibel lesen')).queryByRole('option', { name: 'einmal im Monat' })).toBeNull();
+    expect(within(screen.getByLabelText('Wann: Long Run')).queryByRole('option', { name: 'einmal im Monat' })).not.toBeNull();
   });
 
   it('lists only the switched-on habits when asked, and keeps one just switched off to switch on again', async () => {
@@ -494,7 +496,11 @@ describe('Mehr: Gewohnheiten', () => {
 });
 
 describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
-  const dailyIds = (s: Store) => s.getProfile().habits.filter((h) => h.rhythm === 'daily').map((h) => h.id);
+  /** The habits in the list, in the order stored. */
+  const dailyIds = (s: Store) => {
+    const p = s.getProfile();
+    return p.habits.filter((h) => (!h.desert || h.active) && shownHabit(h, p.well.on)).map((h) => h.id);
+  };
 
   /** jsdom has no layout: give every row of a list a 60px slot. */
   function fakeLayout() {

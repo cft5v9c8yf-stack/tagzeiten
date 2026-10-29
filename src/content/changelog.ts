@@ -15,10 +15,10 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '1.37.0',
     date: '2026-10-29',
-    title: 'Gewohnheiten an festen Wochentagen',
+    title: 'Gewohnheiten: wann sie dran sind',
     changes: [
-      { area: 'Heute', text: 'Eine tägliche Gewohnheit kannst du an feste Wochentage binden, etwa den Long Run am Samstag oder die Bibelstunde am Montag. Unter „Heute“ steht sie dann in der Gruppe „An festen Tagen“, nur an diesen Tagen, mit dem Hinweis „am Samstag“; an den anderen Tagen ruht sie, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer die Gewohnheit einmal verschiebt, trägt sie dort am anderen Tag ein. Wöchentliche Gewohnheiten bleiben „einmal“ oder „n-mal die Woche“, an beliebigen Tagen, und stehen unter „Wöchentlich“.' },
-      { area: 'Mehr', text: 'Unter Gewohnheiten wählst du bei jeder täglichen Gewohnheit, auch bei den Vorlagen, „jeden Tag“ oder „an bestimmten Tagen“ und tippst dann die Tage an; beim Anlegen einer eigenen Gewohnheit ebenso. Ohne Tage bleibt alles wie bisher. Dazu gibt es oben den Schalter „Nur eingeschaltete zeigen“, damit die Liste kurz bleibt; eine Gewohnheit, die du gerade ausschaltest, bleibt bis zum Verlassen der Seite sichtbar, damit du sie wieder einschalten kannst. Die Zählung „6 von 11 eingeschaltet“ über den Listen entfällt.' },
+      { area: 'Mehr', text: 'Unter Gewohnheiten wählst du bei jeder Gewohnheit, auch bei den Vorlagen, in einer einzigen Auswahl „Wann“: jeden Tag, an bestimmten Tagen, einmal oder mehrmals in der Woche, einmal im Monat. Bei „an bestimmten Tagen“ tippst du die Tage an, etwa den Long Run am Samstag oder die Bibelstunde am Montag. Beim Anlegen einer eigenen Gewohnheit ist es dieselbe Auswahl. Die Gewohnheiten stehen in einer Liste, in deiner Reihenfolge; der Schalter „Nur eingeschaltete zeigen“ hält sie kurz. Eine Gewohnheit, die du gerade ausschaltest, bleibt bis zum Verlassen der Seite sichtbar, damit du sie wieder einschalten kannst. Die Zählung „6 von 11 eingeschaltet“ entfällt.' },
+      { area: 'Heute', text: 'Die Gruppen unter „Heute“ heißen jetzt „Heute“ (oder der Tag, den du gewählt hast), „In dieser Woche“ und „In diesem Monat“. Was an bestimmten Tagen dran ist, steht nur an diesen Tagen da, mit dem Hinweis „am Samstag“; an den anderen Tagen ruht es, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer etwas einmal verschiebt, trägt es dort am anderen Tag ein. Bisher eingetragene Haken bleiben, wie sie waren.' },
     ],
   },
   {

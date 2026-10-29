@@ -14,6 +14,10 @@ import {
   isPerDay,
   setHabitTimes,
   setHabitDays,
+  setHabitWhen,
+  whenOf,
+  whenParts,
+  placeHabit,
   daysLabel,
   hasDays,
   habitsFromPresets,
@@ -316,5 +320,39 @@ describe('habits meant for fixed weekdays', () => {
   it('is named quietly: one day as "am Samstag", several by their short names', () => {
     expect(daysLabel([6])).toBe('am Samstag');
     expect(daysLabel([0, 1])).toBe('Mo, So');
+  });
+});
+
+describe('when a habit is meant', () => {
+  const own = (rhythm: 'daily' | 'weekly' | 'monthly') => addHabit([], 'Etwas', rhythm, 'own-x')[0]!;
+
+  it('reads the answer from the habit and splits it again', () => {
+    expect(whenOf(own('daily'))).toBe('daily');
+    expect(whenOf(own('monthly'))).toBe('month');
+    expect(whenOf(own('weekly'))).toBe('week-1');
+    expect(whenOf(addHabit([], 'Sport', 'weekly', 'own-s', 3)[0]!)).toBe('week-3');
+    expect(whenOf(addHabit([], 'Run', 'daily', 'own-r', 1, [6])[0]!)).toBe('days');
+    expect(whenParts('week-4')).toEqual({ rhythm: 'weekly', timesPerWeek: 4, byDays: false });
+    expect(whenParts('days')).toEqual({ rhythm: 'daily', timesPerWeek: 1, byDays: true });
+  });
+
+  it('changes the rhythm with it and drops what no longer applies, but not for the orders', () => {
+    const run = addHabit([], 'Run', 'daily', 'own-r', 1, [6]);
+    expect(setHabitWhen(run, 'own-r', 'week-3')[0]).toMatchObject({ rhythm: 'weekly', timesPerWeek: 3 });
+    expect(setHabitWhen(run, 'own-r', 'week-3')[0]!.days).toBeUndefined();
+    expect(setHabitWhen(run, 'own-r', 'month')[0]).toMatchObject({ rhythm: 'monthly' });
+    expect(setHabitWhen(run, 'own-r', 'daily')[0]!.days).toBeUndefined();
+    // Weekdays: the ones it had stay; without any, the ones given are taken.
+    expect(setHabitWhen(run, 'own-r', 'days')[0]!.days).toEqual([6]);
+    expect(setHabitWhen([own('daily')], 'own-x', 'days', [1])[0]!.days).toEqual([1]);
+    expect(setHabitWhen(habitsFromPresets(), 'stillTime', 'month').find((h) => h.id === 'stillTime')).toEqual(byId('stillTime'));
+  });
+
+  it('places a habit before another one, or at the end', () => {
+    const ids = (hs: Habit[]) => hs.map((h) => h.id);
+    const hs = ['a', 'b', 'c', 'd'].map((id) => addHabit([], id, 'daily', id)[0]!);
+    expect(ids(placeHabit(hs, 'd', 'b'))).toEqual(['a', 'd', 'b', 'c']);
+    expect(ids(placeHabit(hs, 'a', null))).toEqual(['b', 'c', 'd', 'a']);
+    expect(ids(placeHabit(hs, 'x', 'b'))).toEqual(['a', 'b', 'c', 'd']);
   });
 });

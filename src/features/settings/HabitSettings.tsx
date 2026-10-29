@@ -1,6 +1,6 @@
 import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
-import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
+import { HABIT_NEEDS, READING_HABIT } from '../../content/habits';
 import { NEED_NOTE } from '../../domain/house';
 import { stageOf } from '../../domain/winterArc';
 import { activeDesert } from '../../domain/desert';
@@ -9,53 +9,60 @@ import { useToast } from '../../app/Toast';
 import { useProfile, useStore } from '../../data/hooks';
 import {
   addHabit,
-  habitsOfRhythm,
-  moveHabitTo,
   newHabitId,
+  placeHabit,
   removeHabit,
   renameHabit,
-  RHYTHM_ORDER,
   setHabitActive,
   setHabitDays,
   setHabitFocus,
-  setHabitTimes,
+  setHabitWhen,
   TIMES_PER_WEEK,
   WEEKDAY_ORDER,
   fitsHouse,
   hasDays,
   shownHabit,
+  whenOf,
+  whenParts,
+  type When,
 } from '../../domain/habits';
 import { WEEKDAY_LONG, WEEKDAY_SHORT, weekdayOf, type Weekday } from '../../domain/dates';
 import { GripIcon, StarIcon } from '../../ui/Icons';
 import { Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
-import type { Habit, Rhythm } from '../../domain/model';
+import type { Habit } from '../../domain/model';
 import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
-
-const RHYTHMS = RHYTHM_ORDER;
-const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
 
 const timesLabel = (n: number) => (n === 1 ? 'einmal die Woche' : `${n}-mal die Woche`);
 
-/** How many days a week a weekly habit is meant for. */
-function TimesSelect({ value, onChange, label, id }: { value: number; onChange: (n: number) => void; label?: string; id?: string }) {
+/** When a habit is meant: one answer instead of rhythm and how often. Reading follows the plan, so it is a matter of days only. */
+function WhenSelect({
+  value,
+  onChange,
+  label,
+  id,
+  daysOnly = false,
+}: {
+  value: When;
+  onChange: (when: When) => void;
+  label?: string;
+  id?: string;
+  daysOnly?: boolean;
+}) {
   return (
-    <select id={id} className="habit-times" aria-label={label} value={value} onChange={(e) => onChange(Number(e.target.value))}>
-      {TIMES_PER_WEEK.map((n) => (
-        <option key={n} value={n}>
-          {timesLabel(n)}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-/** A daily habit: every day, or fixed weekdays. */
-function EveryDaySelect({ byDays, onChange, label, id }: { byDays: boolean; onChange: (byDays: boolean) => void; label?: string; id?: string }) {
-  return (
-    <select id={id} className="habit-times" aria-label={label} value={byDays ? 0 : 1} onChange={(e) => onChange(e.target.value === '0')}>
-      <option value={1}>jeden Tag</option>
-      <option value={0}>an bestimmten Tagen</option>
+    <select id={id} className="habit-times" aria-label={label} value={value} onChange={(e) => onChange(e.target.value as When)}>
+      <option value="daily">jeden Tag</option>
+      <option value="days">an bestimmten Tagen</option>
+      {!daysOnly && (
+        <>
+          {TIMES_PER_WEEK.map((n) => (
+            <option key={n} value={`week-${n}`}>
+              {timesLabel(n)}
+            </option>
+          ))}
+          <option value="month">einmal im Monat</option>
+        </>
+      )}
     </select>
   );
 }
@@ -145,18 +152,12 @@ function HabitRow({
           {habit.active && !fitsHouse(habit, profile.house) && (
             <span className="habit-kind habit-waits">{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</span>
           )}
-          {habit.rhythm === 'daily' && !habit.auto && (
-            <EveryDaySelect
-              label={`Wie oft: ${habit.name}`}
-              byDays={hasDays(habit)}
-              onChange={(byDays) => update((hs) => setHabitDays(hs, habit.id, byDays ? [weekdayOf(store.today())] : []))}
-            />
-          )}
-          {habit.rhythm === 'weekly' && !habit.auto && (
-            <TimesSelect
-              label={`Wie oft in der Woche: ${habit.name}`}
-              value={habit.timesPerWeek ?? 1}
-              onChange={(n) => update((hs) => setHabitTimes(hs, habit.id, n))}
+          {!habit.auto && (
+            <WhenSelect
+              label={`Wann: ${habit.name}`}
+              value={whenOf(habit)}
+              daysOnly={habit.id === READING_HABIT}
+              onChange={(when) => update((hs) => setHabitWhen(hs, habit.id, when, [weekdayOf(store.today())]))}
             />
           )}
           {!habit.preset &&
@@ -195,14 +196,12 @@ function HabitRow({
   );
 }
 
-function HabitGroup({
-  rhythm,
+function HabitList({
   habits,
   hintId,
   onMoved,
 }: {
-  rhythm: Rhythm;
-  /** The habits listed: all of the group, or only the switched-on ones. */
+  /** The habits listed: all, or only the switched-on ones. */
   habits: Habit[];
   hintId: string;
   onMoved: (id: string, viaKeyboard: boolean) => void;
@@ -212,12 +211,7 @@ function HabitGroup({
   // The place is meant among the habits listed; unlisted ones keep theirs around it.
   const place = (id: string, index: number) =>
     store.updateProfile(
-      (p) => {
-        const anchor = habits.filter((x) => x.id !== id)[index];
-        const all = habitsOfRhythm(p.habits, rhythm).filter((x) => x.id !== id);
-        const at = anchor ? all.findIndex((x) => x.id === anchor.id) : all.length;
-        return { ...p, habits: moveHabitTo(p.habits, id, at) };
-      },
+      (p) => ({ ...p, habits: placeHabit(p.habits, id, habits.filter((x) => x.id !== id)[index]?.id ?? null) }),
       { immediate: true },
     );
   const { listRef, drag, handleProps, itemStyle } = useSortable({
@@ -233,12 +227,7 @@ function HabitGroup({
     },
   });
   return (
-    <Section
-      id={`more.habits.${rhythm}`}
-      title={GROUP_TITLE[rhythm]}
-      level={3}
-      className="habit-card"
-    >
+    <Section id="more.habits.list" title="Meine Gewohnheiten" level={3} className="habit-card">
       <ul className={`habit-list${drag ? ' sorting' : ''}`} ref={(el) => (listRef.current = el)}>
         {habits.map((h) => (
           <HabitRow
@@ -260,19 +249,18 @@ export function HabitSettings() {
   const toast = useToast();
   const profile = useProfile();
   // Habits taken in only for the Wüstenzeit stand here once they are taken over into everyday life.
-  const everyday = profile.habits.filter((h) => (!h.desert || h.active) && shownHabit(h, profile.well.on));
+  const everydayOf = (p: typeof profile) => p.habits.filter((h) => (!h.desert || h.active) && shownHabit(h, p.well.on));
+  const everyday = everydayOf(profile);
   // With "only switched on", a habit switched off in this visit stays listed, so it can be switched on again.
   const [kept, setKept] = useState(() => new Set(everyday.filter((h) => h.active).map((h) => h.id)));
   const onlyOn = profile.onlyActiveHabits;
-  const listed = onlyOn ? everyday.filter((h) => h.active || kept.has(h.id)) : everyday;
+  const listedOf = (p: typeof profile) => (p.onlyActiveHabits ? everydayOf(p).filter((h) => h.active || kept.has(h.id)) : everydayOf(p));
+  const listed = listedOf(profile);
   const nameId = useId();
-  const rhythmId = useId();
+  const whenId = useId();
   const [name, setName] = useState('');
-  const [rhythm, setRhythm] = useState<Rhythm>('daily');
-  const [times, setTimes] = useState(1);
-  const [byDays, setByDays] = useState(false);
+  const [when, setWhen] = useState<When>('daily');
   const [days, setDays] = useState<Weekday[]>([]);
-  const timesId = useId();
   const [announcement, setAnnouncement] = useState('');
   const [refocus, setRefocus] = useState<string | null>(null);
   const hintId = useId();
@@ -286,28 +274,25 @@ export function HabitSettings() {
   }, [refocus]);
 
   const moved = (id: string, viaKeyboard: boolean) => {
-    const habits = store.getProfile().habits;
-    const h = habits.find((x) => x.id === id)!;
-    const group = habitsOfRhythm(habits, h.rhythm);
-    setAnnouncement(`${h.name}: Platz ${group.findIndex((x) => x.id === id) + 1} von ${group.length}`);
+    const now = listedOf(store.getProfile());
+    const h = now.find((x) => x.id === id)!;
+    setAnnouncement(`${h.name}: Platz ${now.findIndex((x) => x.id === id) + 1} von ${now.length}`);
     if (viaKeyboard) setRefocus(id);
   };
 
   // Choosing fixed weekdays starts with today's weekday, so there is always one.
-  const chooseDays = (on: boolean) => {
-    setByDays(on);
-    setDays(on ? [weekdayOf(store.today())] : []);
+  const choose = (w: When) => {
+    setWhen(w);
+    setDays(w === 'days' ? [weekdayOf(store.today())] : []);
   };
 
   const add = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    const chosen = rhythm === 'daily' && byDays ? days : [];
-    store.updateProfile((p) => ({ ...p, habits: addHabit(p.habits, name, rhythm, newHabitId(), times, chosen) }), { immediate: true });
+    const { rhythm, timesPerWeek, byDays } = whenParts(when);
+    store.updateProfile((p) => ({ ...p, habits: addHabit(p.habits, name, rhythm, newHabitId(), timesPerWeek, byDays ? days : []) }), { immediate: true });
     setName('');
-    setTimes(1);
-    setByDays(false);
-    setDays([]);
+    choose('daily');
     toast('Gewohnheit angelegt');
   };
 
@@ -333,9 +318,7 @@ export function HabitSettings() {
         />
         <label htmlFor={filterId}>Nur eingeschaltete zeigen</label>
       </div>
-      {RHYTHMS.map((r) => (
-        <HabitGroup key={r} rhythm={r} habits={habitsOfRhythm(listed, r)} hintId={hintId} onMoved={moved} />
-      ))}
+      <HabitList habits={listed} hintId={hintId} onMoved={moved} />
       <DesertGroup />
       <Section id="more.habits.add" title="Eigene anlegen" level={3} className="habit-card">
       <form className="add-habit" onSubmit={add}>
@@ -344,45 +327,20 @@ export function HabitSettings() {
           <input id={nameId} type="text" value={name} placeholder="z. B. Psalm mit den Kindern" onChange={(e) => setName(e.target.value)} />
         </div>
         <div className="field">
-          <label htmlFor={rhythmId}>Rhythmus</label>
-          <select
-            id={rhythmId}
-            value={rhythm}
-            onChange={(e) => {
-              setRhythm(e.target.value as Rhythm);
-              chooseDays(false);
-            }}
-          >
-            {RHYTHMS.map((r) => (
-              <option key={r} value={r}>
-                {RHYTHM_LABEL[r]}
-              </option>
-            ))}
-          </select>
+          <label htmlFor={whenId}>Wann</label>
+          <WhenSelect id={whenId} value={when} onChange={choose} />
         </div>
-        {rhythm === 'weekly' && (
+        {when === 'days' && (
           <div className="field">
-            <label htmlFor={timesId}>Wie oft in der Woche</label>
-            <TimesSelect id={timesId} value={times} onChange={setTimes} />
+            <span>Tage</span>
+            <DayChips label="Tage" value={days} onChange={(d) => (d.length > 0 ? setDays(d) : choose('daily'))} />
           </div>
         )}
-        {rhythm === 'daily' && (
-          <div className="field">
-            <label htmlFor={timesId}>Wie oft</label>
-            <EveryDaySelect id={timesId} byDays={byDays} onChange={chooseDays} />
-          </div>
-        )}
-        {byDays && (
-          <div className="field">
-            <span id={`${timesId}-days`}>Tage</span>
-            <DayChips label="Tage" value={days} onChange={(d) => (d.length > 0 ? setDays(d) : chooseDays(false))} />
-          </div>
-        )}
-        <button type="submit" className="btn primary" disabled={!name.trim()} aria-describedby={name.trim() ? undefined : `${timesId}-hint`}>
+        <button type="submit" className="btn primary" disabled={!name.trim()} aria-describedby={name.trim() ? undefined : `${whenId}-hint`}>
           Gewohnheit anlegen
         </button>
         {!name.trim() && (
-          <p id={`${timesId}-hint`} className="small muted">
+          <p id={`${whenId}-hint`} className="small muted">
             Gib der Gewohnheit zuerst einen Namen.
           </p>
         )}
@@ -416,10 +374,11 @@ export const HABITS_INFO = (
       Eingeschaltete Gewohnheiten stehen auf der Startseite, in der Reihenfolge dieser Liste. Zum Sortieren ziehst du am
       Griff, der Stern markiert, worauf du gerade achtest.
     </p>
-    <p>Wöchentliche Gewohnheiten legst du auf eine Zahl fest, etwa Sport dreimal. Eine Woche mit weniger ist kein Versäumnis.</p>
     <p>
-      Tägliche Gewohnheiten kannst du an Wochentage binden, etwa den Long Run an den Samstag. Sie stehen dann nur an diesen
-      Tagen unter „Heute“, an den anderen ruhen sie. Hast du eine verschoben, trägst du sie in der Wochenübersicht ein.
+      Bei jeder Gewohnheit wählst du, wann sie dran ist: jeden Tag, an bestimmten Tagen, einmal oder mehrmals in der
+      Woche, einmal im Monat. Was an bestimmten Tagen dran ist, steht nur an diesen Tagen unter „Heute“, an den anderen
+      ruht es. Hast du etwas verschoben, trägst du es in der Wochenübersicht ein. Eine Woche mit weniger ist kein
+      Versäumnis.
     </p>
   </>
 );
