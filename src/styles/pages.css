@@ -4663,3 +4663,37 @@ mark.placeholder {
 .hb-catalog .add-habit .btn {
   width: 100%;
 }
+
+/* Swiping a row to the left shows its button behind it: delete, or switch off. Dark, never red (rule 5). */
+.hb-swipe {
+  position: relative;
+  overflow-x: clip;
+}
+.hb-reveal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 104px;
+  display: grid;
+}
+.hb-reveal-btn {
+  appearance: none;
+  border: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font: 0.9rem var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+}
+.hb-swipe .hb-line {
+  background: var(--sheet);
+  touch-action: pan-y;
+  transition: transform 0.18s ease;
+}
+.hb-swipe .hb-line.is-swiping {
+  transition: none;
+}
+.hb-swipe .hb-line .drag-handle {
+  touch-action: none;
+}

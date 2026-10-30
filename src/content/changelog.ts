@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.37.1',
+    date: '2026-10-30',
+    title: 'Gewohnheiten: Wischen zum Löschen',
+    changes: [
+      { area: 'Mehr', text: 'Unter Gewohnheiten kannst du eine Zeile nach links wischen. Bei einer eigenen Gewohnheit erscheint „Löschen“, mit der Rückfrage wie bisher; bei allen anderen „Ausschalten“, dann liegt sie wieder unter „Gewohnheit hinzufügen“. Ein Tipp auf die Zeile schließt den Knopf wieder. Das Aufklappen mit „löschen …“ und dem Schalter bleibt, wie es war.' },
+    ],
+  },
+  {
     version: '1.37.0',
     date: '2026-10-29',
     title: 'Gewohnheiten: wann sie dran sind',
