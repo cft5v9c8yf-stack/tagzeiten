@@ -216,6 +216,18 @@ export type When = 'daily' | 'days' | 'month' | `week-${number}`;
 export const whenOf = (h: Habit): When =>
   h.rhythm === 'monthly' ? 'month' : h.rhythm === 'weekly' ? `week-${isTimesPerWeek(h.timesPerWeek) ? h.timesPerWeek : 1}` : hasDays(h) ? 'days' : 'daily';
 
+export const timesLabel = (n: number) => (n === 1 ? 'einmal die Woche' : `${n}-mal die Woche`);
+
+/** When a habit is meant, as a short line under its name. */
+export function whenLabel(h: Habit): string {
+  if (h.auto) return 'aus dem Ablauf';
+  const w = whenOf(h);
+  if (w === 'daily') return 'jeden Tag';
+  if (w === 'days') return daysLabel(h.days!);
+  if (w === 'month') return 'einmal im Monat';
+  return timesLabel(Number(w.slice(5)));
+}
+
 export function whenParts(when: When): { rhythm: Rhythm; timesPerWeek: number; byDays: boolean } {
   if (when === 'month') return { rhythm: 'monthly', timesPerWeek: 1, byDays: false };
   if (when === 'daily' || when === 'days') return { rhythm: 'daily', timesPerWeek: 1, byDays: when === 'days' };

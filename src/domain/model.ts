@@ -272,8 +272,6 @@ export interface Profile {
   well: Well;
   /** The overview of the habits in the Rückblick; off unless switched on. */
   showHabitHistory: boolean;
-  /** Mehr → Gewohnheiten lists only the switched-on habits, so the list stays short. */
-  onlyActiveHabits: boolean;
   /**
    * Sunday rest: on Sundays the habits are hidden and not counted in the
    * Rückblick; "Heute" shows the Sunday instead. Ticks already made are kept.

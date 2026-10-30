@@ -29,12 +29,6 @@ describe('profile', () => {
     expect(days({ rhythm: 'daily', days: [0, 1, 2, 3, 4, 5, 6] })).toBeUndefined();
   });
 
-  it('lists only the switched-on habits in the settings if asked to, and by default all', () => {
-    expect(normalizeProfile({}, '2026-09-25').onlyActiveHabits).toBe(false);
-    expect(normalizeProfile({ onlyActiveHabits: true } as never, '2026-09-25').onlyActiveHabits).toBe(true);
-    expect(normalizeProfile({ onlyActiveHabits: 'yes' } as never, '2026-09-25').onlyActiveHabits).toBe(false);
-  });
-
   it('repairs incomplete or broken data', () => {
     const p = normalizeProfile(
       {
