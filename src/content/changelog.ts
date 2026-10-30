@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-30',
     title: 'Bitte und Fürbitte',
     changes: [
-      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: „Bitte und Fürbitte“. Sie hat drei Schritte: das Wort (Psalm und Lesung), dann der Reihe nach das Haus und die Anliegen des Tages, zuletzt Vaterunser und Segen. Sie hat keine Uhr und keine Kurzform und gilt genauso wie die Ordnung. Gewählt wird sie unter Mehr, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich; auf der Andachtsseite steht dann kein Umschalter. Die Anliegen kommen aus der Gebetsübersicht (täglich und für den Wochentag), Frau und Kinder aus „Mein Haus“.' },
+      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: „Bitte und Fürbitte“. Sie hat drei Schritte: das Wort (Psalm und Lesung), dann der Reihe nach das Haus und die Anliegen des Tages, zuletzt Vaterunser und Segen. Sie hat keine Uhr und keine Kurzform und gilt genauso wie die Ordnung. Gewählt wird sie unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich; auf der Andachtsseite steht dann kein Umschalter. Die Anliegen kommen aus der Gebetsübersicht (täglich und für den Wochentag), Frau und Kinder aus „Mein Haus“.' },
     ],
   },
   {

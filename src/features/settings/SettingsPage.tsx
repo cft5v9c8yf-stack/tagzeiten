@@ -44,7 +44,7 @@ const PRAYER_TILES = ['more.house', 'more.prayerlist', 'more.treasury'] as const
 /** The tiles an old address can open, by group. */
 const OPEN_GROUPS: readonly (readonly string[])[] = [
   PRAYER_TILES,
-  ['more.times.schedule', 'more.display.atBed', 'more.display.compline', 'more.display.armor'],
+  ['more.times.schedule', 'more.display.petition', 'more.display.atBed', 'more.display.compline', 'more.display.armor'],
   ['more.display.theme', 'more.install', 'more.airplane'],
   ['more.guide', 'more.changelog'],
 ];
@@ -113,7 +113,7 @@ function DayAndWeek() {
   return (
     <>
       <p className="more-group-title">Der Tag</p>
-      <TileGroup level={4} label="Der Tag" items={[times, ...tilesOf(all, ['atBed', 'compline', 'armor'])]} />
+      <TileGroup level={4} label="Der Tag" items={[times, ...tilesOf(all, ['petition', 'atBed', 'compline', 'armor'])]} />
       <p className="more-group-title">Die Woche</p>
       <TileGroup level={4} label="Die Woche" items={tilesOf(all, ['weekReview', 'sundayRest', 'well'])} />
       <p className="more-group-title">Besondere Zeiten</p>

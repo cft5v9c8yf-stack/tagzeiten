@@ -165,6 +165,7 @@ describe('Mehr: Aufbau', () => {
     expect([...document.querySelectorAll('.more-group-title')].map((t) => t.textContent)).toEqual(['Der Tag', 'Die Woche', 'Besondere Zeiten']);
     expect([...document.querySelectorAll('.tile-card')].map((t) => t.textContent)).toEqual([
       'ZeitenAufstehen, Stille Zeit, Abend',
+      'Art des GebetsOrdnung',
       'Am Bett am MorgenAnzeigen',
       'Nachtgebet am BettAnzeigen',
       'Geistliche WaffenrüstungAnzeigen',
