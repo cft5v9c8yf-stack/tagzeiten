@@ -921,6 +921,98 @@ body.is-sorting * {
   gap: 8px;
 }
 
+/* ------------------------------------------------- Bitte und Fürbitte */
+/* One quiet sheet, taken in at a glance: small labels, the Word large, the concerns in two columns. */
+.petition-sheet,
+.flow-step.step-petition {
+  padding-top: var(--card-pad);
+}
+/* In the Vesper the sheet stands in the row of the evening; its title is for screen readers only. */
+.flow-step.step-petition .flow-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.ps p {
+  margin: 0;
+}
+.ps-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 14px 0;
+}
+.ps-label {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.ps-line {
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+.ps-psalm {
+  margin-top: 6px;
+  font-size: 1.35rem;
+}
+.ps-antiphon,
+.ps-question {
+  margin-top: 2px;
+  font-style: italic;
+  color: var(--muted);
+}
+.ps .ps-question {
+  margin-top: 6px;
+}
+.ps .ps-reading {
+  margin-top: 12px;
+  font-size: 1.35rem;
+}
+.ps-rows {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 10px;
+  margin: 8px 0 0;
+  align-items: baseline;
+}
+.ps-rows dt {
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+.ps-rows dd {
+  margin: 0;
+  line-height: 1.35;
+  hyphens: auto;
+}
+.ps-sub {
+  color: var(--muted);
+}
+.ps-texts summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  cursor: pointer;
+  list-style: none;
+}
+.ps-texts summary::-webkit-details-marker {
+  display: none;
+}
+.ps-more {
+  font-family: var(--sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--link);
+}
+.ps-texts[open] .ps-more {
+  color: var(--muted);
+}
+
 /* ---------------------------------------------------------------- Sunday */
 /* Head: the Sunday in the middle, the Sundays before and after on either side */
 .sunday-head {

@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-30',
     title: 'Bitte und Fürbitte',
     changes: [
-      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: „Bitte und Fürbitte“. Sie hat drei Schritte: das Wort (Leseplan des Tages, Psalm und Lesung), dann der Reihe nach das Haus und die Anliegen des Tages, zuletzt Vaterunser und Segen. Sie hat keine Uhr und keine Kurzform und gilt genauso wie die Ordnung. Gewählt wird sie unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich; auf der Andachtsseite steht dann kein Umschalter. Die Anliegen kommen aus der Gebetsübersicht (täglich und für den Wochentag), Frau und Kinder aus „Mein Haus“.' },
+      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: „Bitte und Fürbitte“. Sie ist ein einziges ruhiges Blatt, das du auf einen Blick erfasst und dann betest, ohne ständig aufs iPhone zu schauen: „Im Namen Gottes des Vaters, des Sohnes und des Heiligen Geistes. Amen.“, das Wort (der Psalm, darunter der Leseplan des Tages), Bitte und Fürbitte (Mein Haus, was du täglich trägst, die Anliegen des Wochentages), Dank, Vaterunser und Segen (die Texte zum Aufklappen) und zum Schluss „Das walte Gott Vater, Sohn und Heiliger Geist. Amen.“ Es gibt nichts auszufüllen, keine Uhr, keine Kurzform und kein „Am Bett“; sie gilt genauso wie die Ordnung. Am Abend folgt danach wie bisher das Nachtgebet. Gewählt wird sie unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich. Die Anliegen kommen aus der Gebetsübersicht, Frau und Kinder aus „Mein Haus“.' },
     ],
   },
   {

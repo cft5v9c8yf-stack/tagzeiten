@@ -217,14 +217,15 @@ describe('Evening without the Nachtgebet', () => {
 });
 
 describe('Vesper as "Bitte und Fürbitte"', () => {
-  it('has Wort, Bitte und Fürbitte and Segen, with no form switch and no minutes', async () => {
+  it('is one sheet before the Nachtgebet, with no form switch and no minutes', async () => {
     await renderEvening('2026-09-25', (st) =>
       st.updateProfile((p) => ({ ...p, petition: { morning: false, evening: true } })),
     );
     const names = within(chainOf('Vesper'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label') ?? b.textContent);
-    expect(names.join(' ')).toMatch(/Wort.*Bitte und Fürbitte.*Segen/);
+    expect(names.join(' ')).toMatch(/^Bitte und Fürbitte.*Nachtgebet/);
+    expect(document.querySelector('.ps')!.textContent).toMatch(/^Im Namen Gottes.*Das Wort.*Bitte und Fürbitte.*Dank.*Das walte Gott/);
     expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
     expect(document.body.textContent).not.toMatch(/Min\./);
   });

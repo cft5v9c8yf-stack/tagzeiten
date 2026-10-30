@@ -44,7 +44,7 @@ const SHORT: Record<string, string> = {
   word: 'Wort',
   prayer: 'Gebet',
   vespers: 'Vesper',
-  petition: 'Bitte',
+  petition: 'Vesper',
   sign: 'Glaube',
   review: 'Rückschau',
   examination: 'Prüfung',
@@ -150,7 +150,7 @@ function VespersView({
         title="Vesper"
         rubric={
           petition
-            ? RUBRICS.petition
+            ? undefined
             : withCompline
             ? form === 'full'
               ? RUBRICS.vespers

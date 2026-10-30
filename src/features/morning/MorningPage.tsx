@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { morningIcon } from '../../content/flowIcons';
-import { getOrder, morningOrder, ORDER_MINUTES, PETITION_MORNING, RUBRICS } from '../../content/orders';
+import { getOrder, morningOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
@@ -11,6 +11,7 @@ import { StepFlow, type FlowStep } from '../../ui/StepFlow';
 import { Timer, TimerStart } from '../../ui/Timer';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
+import { PetitionSheet } from '../liturgy/PetitionSheet';
 
 const FORMS: { value: OrderForm; label: string }[] = [
   { value: 'full', label: `Ganze Ordnung · ${ORDER_MINUTES.morning.full} Min.` },
@@ -23,13 +24,6 @@ function useDogmatikInMorning(): boolean {
   return __DOGMATIK__ && d.on && d.stilleZeit;
 }
 
-/** The Stille Zeit: the fixed order, or "Bitte und Fürbitte" when chosen under Mehr (no form, no minutes). */
-function useMorningOrder(form: OrderForm) {
-  const petition = useProfile().petition.morning;
-  const dogmatik = useDogmatikInMorning();
-  return { petition, order: petition ? PETITION_MORNING : morningOrder(form, dogmatik) };
-}
-
 /** The names under the marks (short: the long titles would not fit under seven marks). */
 const MORNING_SHORT: Record<string, string> = {
   opening: 'Eröffnung',
@@ -38,7 +32,6 @@ const MORNING_SHORT: Record<string, string> = {
   response: 'Antwort',
   lordsPrayer: 'Vaterunser',
   alignment: 'Ausrichtung',
-  petition: 'Bitte',
   blessing: 'Segen',
 };
 
@@ -51,10 +44,59 @@ export function MorningPage() {
 }
 
 function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
+  // "Bitte und Fürbitte" (chosen under Mehr): one sheet instead of the steps.
+  return useProfile().petition.morning ? (
+    <PetitionMorning date={date} isToday={isToday} />
+  ) : (
+    <MorningSteps date={date} isToday={isToday} />
+  );
+}
+
+/**
+ * "Bitte und Fürbitte": the whole Stille Zeit on one sheet, read at a glance,
+ * then prayed with the phone laid aside. No bedside prayer, no fields, no
+ * minutes; closing it fulfils the Stille Zeit as fully as the order (rule 8).
+ */
+function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) {
+  const store = useStore();
+  const toast = useToast();
+  const day = useDay(date);
+  const done = day.morning.done;
+  const setDone = (value: boolean) => {
+    // The sheet names the day's portion: closing it keeps the reading, as the Word does in the order.
+    if (value && (isToday || day.reading)) store.setReadingDone(date, true);
+    store.updateDay(date, (d) => ({ ...d, morning: { ...d.morning, steps: { ...d.morning.steps, sheet: value }, done: value } }), {
+      immediate: true,
+    });
+    if (value) toast('Stille Zeit abgeschlossen');
+  };
+  return (
+    <>
+      <OrderHead title="Stille Zeit" />
+      <section className="flow-step petition-sheet" aria-label="Bitte und Fürbitte">
+        <PetitionSheet date={date} order="morning" />
+        {!done && (
+          <div className="flow-footer">
+            <button type="button" className="btn primary" onClick={() => setDone(true)}>
+              Stille Zeit abschließen
+            </button>
+          </div>
+        )}
+      </section>
+      {done && (
+        <DonePanel note="Stille Zeit abgeschlossen." onReopen={() => setDone(false)}>
+          {RUBRICS.sendOff}
+        </DonePanel>
+      )}
+    </>
+  );
+}
+
+function MorningSteps({ date, isToday }: { date: string; isToday: boolean }) {
   const store = useStore();
   const day = useDay(date);
   const form = day.morning.form;
-  const { petition, order } = useMorningOrder(form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const firstOpen = order.steps.find((s) => !day.morning.steps[s.id]);
 
   const setForm = (f: OrderForm) =>
@@ -67,29 +109,23 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
     : atBedOpen
       ? 'Jetzt: Am Bett'
       : firstOpen
-        ? petition
-          ? `Jetzt: ${firstOpen.title}`
-          : `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
+        ? `Jetzt: ${firstOpen.title}, ${firstOpen.minutes} Min.`
         : '';
 
   return (
     <>
-      {isToday && !petition && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} quietUntilStarted />}
+      {isToday && <Timer totalMinutes={ORDER_MINUTES.morning[form]} hint={hint} quietUntilStarted />}
 
-      {petition ? (
-        <OrderHead title="Stille Zeit" rubric={RUBRICS.petition} />
-      ) : (
-        <OrderHead
-          title="Stille Zeit"
-          rubric={form === 'short' ? RUBRICS.morningShort : undefined}
-          aside={isToday ? <TimerStart totalMinutes={ORDER_MINUTES.morning[form]} /> : undefined}
-        >
-          <Segmented label="Form der Stillen Zeit" options={FORMS} value={form} onChange={setForm} />
-        </OrderHead>
-      )}
-      {!petition && form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
+      <OrderHead
+        title="Stille Zeit"
+        rubric={form === 'short' ? RUBRICS.morningShort : undefined}
+        aside={isToday ? <TimerStart totalMinutes={ORDER_MINUTES.morning[form]} /> : undefined}
+      >
+        <Segmented label="Form der Stillen Zeit" options={FORMS} value={form} onChange={setForm} />
+      </OrderHead>
+      {form === 'short' && <p className="small muted">{RUBRICS.morningShortDrops}</p>}
       {/* The other form has other steps: it starts afresh. */}
-      <MorningFlow key={petition ? 'petition' : form} date={date} isToday={isToday} form={form} />
+      <MorningFlow key={form} date={date} isToday={isToday} form={form} />
     </>
   );
 }
@@ -102,7 +138,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
   const store = useStore();
   const toast = useToast();
   const day = useDay(date);
-  const { petition, order } = useMorningOrder(form);
+  const order = morningOrder(form, useDogmatikInMorning());
   const atBed = getOrder('atBed', 'full');
   // One mark before the steps of the order when "Am Bett" is prayed.
   const bed = useProfile().showAtBed ? 1 : 0;
@@ -114,7 +150,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
       title: s.title,
       short: MORNING_SHORT[s.id] ?? s.title,
       mark: i + 1,
-      icon: morningIcon(s.id, petition ? 'full' : form),
+      icon: morningIcon(s.id, form),
       done: !!day.morning.steps[s.id],
     })),
   ];
@@ -184,7 +220,7 @@ function MorningFlow({ date, isToday, form }: { date: string; isToday: boolean; 
     const next = order.steps[i + 1];
     const single = step.parts.length === 1 && step.parts[0]!.title === step.title;
     content = step.parts.map((p) => (
-      <OrderPart key={p.kind} part={p} ctx={{ order: 'morning', form: petition ? 'full' : form, date }} showTitle={!single} />
+      <OrderPart key={p.kind} part={p} ctx={{ order: 'morning', form, date }} showTitle={!single} />
     ));
     footer =
       day.morning.done && !next ? null : (

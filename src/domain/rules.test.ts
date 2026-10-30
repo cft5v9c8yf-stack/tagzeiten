@@ -235,10 +235,10 @@ describe('texts Andreas writes himself (CLAUDE.md, Arbeitsweise)', () => {
 describe('"Bitte und Fürbitte"', () => {
   const both = [PETITION_MORNING, PETITION_VESPERS];
 
-  it('begins with the Word, then the concerns, then Lord\'s Prayer and blessing (rule 2)', () => {
+  it('is one sheet, with no examination and nothing that comes before the Word (rule 2)', () => {
     for (const o of both) {
-      expect(o.steps.map((s) => s.id)).toEqual(['word', 'petition', 'blessing']);
-      expect(['psalm', 'reading-plan']).toContain(partsOf(o)[0]!.kind);
+      expect(o.steps).toHaveLength(1);
+      expect(partsOf(o).map((p) => p.kind)).toEqual(['petition-sheet']);
       expect(late(o)).toEqual([]);
     }
   });

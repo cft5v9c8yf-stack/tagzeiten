@@ -48,21 +48,6 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
   );
 }
 
-/** The portions of the reading plan for the day, on their own: in the Word of the evening's "Bitte und Fürbitte". */
-export function ReadingPlan({ date }: { date: DateKey }) {
-  const store = useStore();
-  // Today receives its portion when the reading is first shown.
-  useEffect(() => {
-    if (date === store.today()) store.ensureTodayReading();
-  }, [store, date]);
-  return (
-    <>
-      <ReadingRefs date={date} />
-      <p className="small muted">{READING_RUBRICS.paper}</p>
-    </>
-  );
-}
-
 function QuestionSelect({ date }: { date: DateKey }) {
   const store = useStore();
   const day = useDay(date);

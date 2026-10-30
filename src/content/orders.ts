@@ -19,7 +19,7 @@ export type PartKind =
   | 'psalm'
   | 'prayer-before-reading'
   | 'reading'
-  | 'reading-plan'
+  | 'petition-sheet'
   | 'prayer-after-reading'
   | 'catechism'
   | 'wreath-instruction'
@@ -394,75 +394,31 @@ const COMPLINE_SHORT: Order = {
 /* ------------------------------------------------------- Bitte und Fürbitte */
 
 /**
- * "Bitte und Fürbitte" (1 Tim 2,1): the Stille Zeit and the Vesper as the Word, the
- * concerns of the day, the Lord's Prayer and blessing. Not in ORDERS: it has no
- * minutes and no short form, it is chosen under Mehr (profile.petition). Word first (rule 2).
+ * "Bitte und Fürbitte" (1 Tim 2,1): the Stille Zeit and the Vesper as one sheet,
+ * read at a glance and then prayed – in the name of the Triune God, the psalm
+ * and the day's reading, the concerns of the house and the day, thanks, Lord's
+ * Prayer and blessing (features/liturgy/PetitionSheet). Word first (rule 2).
+ * Not in ORDERS: it has no minutes and no short form, it is chosen under Mehr.
  */
+const petitionStep = (id: string): Step => ({
+  id,
+  title: 'Bitte und Fürbitte',
+  minutes: 0,
+  parts: [p('petition-sheet', 'Bitte und Fürbitte')],
+});
+
 export const PETITION_MORNING: Order = {
   id: 'morning',
   form: 'full',
   title: 'Stille Zeit – Bitte und Fürbitte',
-  steps: [
-    {
-      id: 'word',
-      title: 'Das Wort',
-      minutes: 0,
-      parts: [
-        p('psalm', 'Psalm des Tages'),
-        p('reading', 'Lesung', {
-          fields: ['morning.verseRef', 'morning.verse', 'morning.aboutGod', 'morning.aboutMan'],
-        }),
-      ],
-    },
-    {
-      id: 'petition',
-      title: 'Bitte und Fürbitte',
-      minutes: 0,
-      parts: [
-        p('house-intercession', 'Fürbitte für das Haus'),
-        p('intercession', 'Anliegen des Tages', { fields: ['morning.peopleToday'] }),
-      ],
-    },
-    {
-      id: 'blessing',
-      title: 'Der Segen',
-      minutes: 0,
-      parts: [p('lords-prayer', 'Vaterunser'), p('blessing', 'Beschluß und Segen')],
-    },
-  ],
+  steps: [petitionStep('sheet')],
 };
 
 export const PETITION_VESPERS: Order = {
   id: 'vespers',
   form: 'full',
   title: 'Vesper – Bitte und Fürbitte',
-  steps: [
-    {
-      id: 'word',
-      title: 'Wort',
-      minutes: 0,
-      parts: [
-        p('reading-plan', 'Leseplan'),
-        p('psalm', 'Psalm'),
-        p('reading', 'Lesung', { fields: ['evening.reading'] }),
-      ],
-    },
-    {
-      id: 'petition',
-      title: 'Bitte und Fürbitte',
-      minutes: 0,
-      parts: [
-        p('house-intercession', 'Fürbitte für das Haus'),
-        p('intercession', 'Anliegen des Tages', { fields: ['evening.intercession'] }),
-      ],
-    },
-    {
-      id: 'blessing',
-      title: 'Segen',
-      minutes: 0,
-      parts: [p('lords-prayer', 'Vaterunser'), p('blessing', 'Segen')],
-    },
-  ],
+  steps: [petitionStep('petition')],
 };
 
 export const ORDERS: readonly Order[] = [
@@ -516,8 +472,6 @@ export const ORDER_MINUTES: Record<OrderId, Record<OrderForm, number>> = {
 /* ---------------------------------------------------------------- rubrics */
 
 export const RUBRICS = {
-  petition:
-    'Das Wort zuerst, dann der Reihe nach, wofür heute gebetet wird: das Haus, die Anliegen des Tages. Ohne Vorlage, ohne Uhr.',
   atBed: 'Gleich nach dem Aufstehen, noch bevor der Tag anfängt. Es bringt dich auf die Füße; die Stille Zeit beginnt danach, am Tisch.',
   morningShort: 'Nicht Ausnahme, sondern eingebaute Möglichkeit. Wer sie betet, hat die Ordnung gebetet.',
   morningShortDrops:

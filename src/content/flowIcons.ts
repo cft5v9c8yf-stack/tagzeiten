@@ -9,7 +9,6 @@ export const MORNING_ICONS: Record<string, FlowIconName> = {
   atBed: 'bed',
   opening: 'openHands',
   word: 'bible',
-  petition: 'foldedHands',
   prayer: 'foldedHands',
   response: 'candle',
   lordsPrayer: 'foldedHands',
@@ -37,8 +36,7 @@ export const COMPLINE_ICONS: Record<string, FlowIconName> = {
 export const VESPERS_ICONS: Record<string, FlowIconName> = {
   praise: 'lyre',
   word: 'bible',
-  petition: 'foldedHands',
   prayer: 'foldedHands',
-  blessing: 'blessing',
   vespers: 'sunset',
+  petition: 'sunset',
 };

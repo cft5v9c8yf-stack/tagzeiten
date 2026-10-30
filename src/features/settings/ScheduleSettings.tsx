@@ -357,9 +357,10 @@ export function useDisplayTiles(): Record<string, TileItem> {
                 />
               </div>
               <p className="small muted">
-                „Bitte und Fürbitte“ ist eine freie Form: das Wort, dann der Reihe nach das Haus und die Anliegen des
-                Tages, zuletzt Vaterunser und Segen. Ohne Uhr und ohne Kurzform; sie gilt genauso wie die Ordnung. Die
-                Anliegen trägst du unter Mehr → Gebet → Gebetsübersicht ein.
+                „Bitte und Fürbitte“ ist ein einziges Blatt: das Wort, dann dein Haus und deine Anliegen, Dank,
+                Vaterunser und Segen. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
+                Uhr, ohne Kurzform und ohne „Am Bett“; es gilt genauso wie die Ordnung. Die Anliegen trägst du unter
+                Mehr → Gebet → Gebetsübersicht ein.
               </p>
             </>
           ),

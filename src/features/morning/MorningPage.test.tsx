@@ -164,17 +164,29 @@ describe('Stille Zeit without the bed', () => {
 });
 
 describe('Stille Zeit as "Bitte und Fürbitte"', () => {
-  it('has the Word, the concerns and the blessing, with no form switch and no minutes', async () => {
+  it('is one sheet: in the name of God, the Word, the concerns, thanks, blessing – no steps, no fields, no minutes', async () => {
     const store = await renderMorning((st) =>
-      st.updateProfile((p) => ({ ...p, showAtBed: false, petition: { morning: true, evening: false } })),
+      st.updateProfile((p) => ({
+        ...p,
+        petition: { morning: true, evening: false },
+        house: { ...p.house, wife: { ...p.house.wife, name: 'Maria', concern: 'Kraft für die Woche' } },
+        prayer: { concerns: ['Die Kranken'], daily: ['Die Kranken'], weekly: {} },
+      })),
     );
-    expect(title()).toBe('Das Wort');
+    const sheet = document.querySelector('.ps')!.textContent!;
+    const at = (t: string) => sheet.indexOf(t);
+    expect(at('Im Namen Gottes')).toBe(0);
+    expect(at('Psalm')).toBeGreaterThan(at('Das Wort'));
+    expect(at('Mein Haus')).toBeGreaterThan(at('Psalm'));
+    expect(at('Maria – Kraft für die Woche')).toBeGreaterThan(0);
+    expect(at('Ich trage')).toBeGreaterThan(at('Mein Haus'));
+    expect(at('Dank')).toBeGreaterThan(at('Ich trage'));
+    expect(sheet.trim().endsWith('Das walte Gott Vater, Sohn und Heiliger Geist. Amen.')).toBe(true);
+    expect(screen.queryByRole('navigation', { name: 'Ablauf: Stille Zeit' })).toBeNull();
     expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
-    expect(document.body.textContent).not.toMatch(/Min\./);
-    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Bitte und Fürbitte' }));
-    await waitFor(() => expect(title()).toBe('Bitte und Fürbitte'));
-    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Der Segen' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Stille Zeit abschließen' }));
+    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(0);
+    expect(document.body.textContent).not.toMatch(/Min\.|Am Bett/);
+    fireEvent.click(screen.getByRole('button', { name: 'Stille Zeit abschließen' }));
     await waitFor(() => expect(store.getDay(store.today()).morning.done).toBe(true));
   });
 });
