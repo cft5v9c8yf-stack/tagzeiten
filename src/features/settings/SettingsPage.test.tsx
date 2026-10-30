@@ -424,6 +424,7 @@ describe('Mehr: Gewohnheiten', () => {
     fireEvent.click(main!);
   };
   const names = () => [...document.querySelectorAll('.hb-main .hb-name')].map((e) => e.textContent);
+  const rowOf = (name: string) => [...document.querySelectorAll('.hb-row')].find((r) => r.querySelector('.hb-name')!.textContent === name)!;
   const openCatalog = async () => fireEvent.click(await screen.findByRole('button', { name: '+ Gewohnheit hinzufügen' }));
 
   it('lists what is held with when it is meant, and offers the rest under "hinzufügen"', async () => {
@@ -449,7 +450,7 @@ describe('Mehr: Gewohnheiten', () => {
     const sport = () => store.getProfile().habits.find((h) => h.name === 'Sport')!;
     expect(sport()).toMatchObject({ rhythm: 'weekly', timesPerWeek: 3 });
     await waitFor(() => expect(names()).toContain('Sport'));
-    expect([...document.querySelectorAll('.hb-row')].find((r) => r.textContent!.startsWith('Sport'))!.querySelector('.hb-sub')!.textContent).toBe('3-mal die Woche');
+    expect(rowOf('Sport').querySelector('.hb-sub')!.textContent).toBe('3-mal die Woche');
     openRow('Sport');
     const select = await screen.findByLabelText('Wann: Sport');
     expect((select as HTMLSelectElement).value).toBe('week-3');
@@ -475,7 +476,7 @@ describe('Mehr: Gewohnheiten', () => {
     expect(run().days).toContain(6);
     await waitFor(() => expect(names()).toContain('Long Run'));
     // In the list the week stands as dots: only the days it is meant for are filled.
-    const dots = [...document.querySelectorAll('.hb-row')].find((r) => r.textContent!.startsWith('Long Run'))!.querySelector('.hb-dots')!;
+    const dots = rowOf('Long Run').querySelector('.hb-dots')!;
     expect(dots.getAttribute('aria-label')).toMatch(/Sa/);
     expect(dots.querySelectorAll('.is-on').length).toBe(run().days!.length);
     openRow('Long Run');
@@ -523,8 +524,63 @@ describe('Mehr: Gewohnheiten', () => {
 
     openRow('Psalm mit den Kindern');
     fireEvent.click(screen.getByRole('button', { name: 'Psalm mit den Kindern löschen' }));
-    fireEvent.click(screen.getByText('Löschen'));
+    fireEvent.click(screen.getByText('Löschen', { selector: '.confirm-row button' }));
     expect(store.getProfile().habits.some((h) => h.id === own.id)).toBe(false);
+  });
+
+  /** A swipe to the left on the row of a habit, as a finger would do it. */
+  const swipeLeft = (name: string, by = 100) => {
+    const main = [...document.querySelectorAll<HTMLButtonElement>('.hb-main')].find((b) => b.querySelector('.hb-name')!.textContent === name)!;
+    fireEvent.pointerDown(main, { pointerId: 7, pointerType: 'touch', clientX: 300, clientY: 20 });
+    fireEvent.pointerMove(main, { pointerId: 7, pointerType: 'touch', clientX: 300 - by / 2, clientY: 22 });
+    fireEvent.pointerMove(main, { pointerId: 7, pointerType: 'touch', clientX: 300 - by, clientY: 22 });
+    fireEvent.pointerUp(main, { pointerId: 7, pointerType: 'touch', clientX: 300 - by, clientY: 22 });
+    return main;
+  };
+
+  it('swipes a row to the left: a preset is switched off, one of one\'s own is deleted after asking', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    // Nothing shows before the swipe; the tap that follows the swipe does not open the row.
+    expect(screen.queryByRole('button', { name: 'Tischgebet mit der Familie: Ausschalten' })).toBeNull();
+    const main = swipeLeft('Tischgebet mit der Familie');
+    fireEvent.click(main);
+    expect(main.getAttribute('aria-expanded')).toBe('false');
+    fireEvent.click(screen.getByRole('button', { name: 'Tischgebet mit der Familie: Ausschalten' }));
+    expect(store.getProfile().habits.find((h) => h.id === 'tablePrayer')!.active).toBe(false);
+    await waitFor(() => expect(names()).not.toContain('Tischgebet mit der Familie'));
+
+    await openCatalog();
+    fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Psalm lesen' } });
+    fireEvent.click(screen.getByText('Gewohnheit anlegen'));
+    await waitFor(() => expect(names()).toContain('Psalm lesen'));
+    swipeLeft('Psalm lesen');
+    fireEvent.click(screen.getByRole('button', { name: 'Psalm lesen: Löschen' }));
+    // Asked once more, as always; "Behalten" leaves it.
+    fireEvent.click(await screen.findByText('Behalten'));
+    expect(store.getProfile().habits.some((h) => h.name === 'Psalm lesen')).toBe(true);
+    swipeLeft('Psalm lesen');
+    fireEvent.click(screen.getByRole('button', { name: 'Psalm lesen: Löschen' }));
+    fireEvent.click(await screen.findByText('Löschen', { selector: '.confirm-row button' }));
+    expect(store.getProfile().habits.some((h) => h.name === 'Psalm lesen')).toBe(false);
+  });
+
+  it('does not take a mostly vertical move for a swipe, and a tap on an opened row closes it again', async () => {
+    await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    const main = [...document.querySelectorAll<HTMLButtonElement>('.hb-main')].find((b) => b.querySelector('.hb-name')!.textContent === 'Bibel lesen')!;
+    fireEvent.pointerDown(main, { pointerId: 3, pointerType: 'touch', clientX: 300, clientY: 20 });
+    fireEvent.pointerMove(main, { pointerId: 3, pointerType: 'touch', clientX: 290, clientY: 90 });
+    fireEvent.pointerUp(main, { pointerId: 3, pointerType: 'touch', clientX: 290, clientY: 90 });
+    expect(screen.queryByRole('button', { name: 'Bibel lesen: Ausschalten' })).toBeNull();
+    swipeLeft('Bibel lesen');
+    expect(screen.getByRole('button', { name: 'Bibel lesen: Ausschalten' })).toBeTruthy();
+    // The tap a finger leaves after the swipe is swallowed; the next one closes the row.
+    fireEvent.click(main);
+    expect(screen.getByRole('button', { name: 'Bibel lesen: Ausschalten' })).toBeTruthy();
+    fireEvent.click(main);
+    expect(screen.queryByRole('button', { name: 'Bibel lesen: Ausschalten' })).toBeNull();
+    expect(main.getAttribute('aria-expanded')).toBe('false');
   });
 
   it('offers no way to delete a preset, only to switch it off', async () => {

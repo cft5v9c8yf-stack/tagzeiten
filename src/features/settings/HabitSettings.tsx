@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type CSSProperties, type HTMLAttributes } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type HTMLAttributes, type PointerEvent as ReactPointerEvent } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { HABIT_NEEDS, READING_HABIT } from '../../content/habits';
 import { NEED_NOTE } from '../../domain/house';
@@ -87,10 +87,77 @@ function DayChips({ value, onChange, label }: { value: readonly Weekday[]; onCha
   );
 }
 
+/** How far a row slides to show its button. */
+const REVEAL_WIDTH = 104;
+
+/**
+ * Swiping a row to the left shows a button behind it (delete, or switch off). Only a sideways move counts, so
+ * the page still scrolls; the handle keeps its own gesture (sorting). After a swipe the tap that follows is
+ * swallowed, and a tap on a row that shows its button closes it.
+ */
+function useSwipeReveal(revealed: boolean, onReveal: (on: boolean) => void) {
+  const [live, setLive] = useState<number | null>(null);
+  const liveRef = useRef<number | null>(null);
+  const start = useRef<{ x: number; y: number; base: number; id: number; active: boolean } | null>(null);
+  const swiped = useRef(false);
+  const rest = revealed ? -REVEAL_WIDTH : 0;
+  const set = (v: number | null) => {
+    liveRef.current = v;
+    setLive(v);
+  };
+  const handlers = {
+    onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+      if ((e.target as Element).closest('.drag-handle') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      start.current = { x: e.clientX, y: e.clientY, base: rest, id: e.pointerId, active: false };
+      swiped.current = false;
+    },
+    onPointerMove: (e: ReactPointerEvent<HTMLElement>) => {
+      const s = start.current;
+      if (!s || e.pointerId !== s.id) return;
+      const dx = e.clientX - s.x;
+      if (!s.active) {
+        if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(e.clientY - s.y) * 1.5) return;
+        s.active = true;
+        e.currentTarget.setPointerCapture?.(e.pointerId);
+      }
+      swiped.current = true;
+      set(Math.max(-REVEAL_WIDTH, Math.min(0, s.base + dx)));
+    },
+    onPointerUp: () => {
+      const s = start.current;
+      start.current = null;
+      if (!s?.active) return;
+      onReveal((liveRef.current ?? s.base) < -REVEAL_WIDTH / 2);
+      set(null);
+    },
+    onPointerCancel: () => {
+      start.current = null;
+      set(null);
+    },
+    onClickCapture: (e: React.MouseEvent) => {
+      if (swiped.current) {
+        swiped.current = false;
+        e.preventDefault();
+        e.stopPropagation();
+      } else if (revealed) {
+        e.preventDefault();
+        e.stopPropagation();
+        onReveal(false);
+      }
+    },
+  };
+  return { offset: live ?? rest, dragging: live !== null, handlers };
+}
+
 /** What can be changed about a habit; it opens under its row. */
-function HabitPanel({ habit, id }: { habit: Habit; id: string }) {
+function HabitPanel({ habit, id, asking, onAsked }: { habit: Habit; id: string; asking: boolean; onAsked: () => void }) {
   const store = useStore();
-  const [confirming, setConfirming] = useState(false);
+  // Coming from the swipe, the question "really?" stands there at once.
+  const [confirming, setConfirming] = useState(asking);
+  // Asked again while the panel stands open (swiped a second time): the question comes back.
+  useEffect(() => {
+    if (asking) setConfirming(true);
+  }, [asking]);
   const update = (fn: (hs: Habit[]) => Habit[]) => store.updateProfile((p) => ({ ...p, habits: fn(p.habits) }), { immediate: true });
   return (
     <div id={id} className="hb-panel">
@@ -142,7 +209,10 @@ function HabitPanel({ habit, id }: { habit: Habit; id: string }) {
               label={`${habit.name} löschen?`}
               confirmLabel="Löschen"
               onConfirm={() => update((hs) => removeHabit(hs, habit.id))}
-              onCancel={() => setConfirming(false)}
+              onCancel={() => {
+                setConfirming(false);
+                onAsked();
+              }}
             />
           ) : (
             <ConfirmTrigger label={`${habit.name} löschen`} onClick={() => setConfirming(true)}>
@@ -176,6 +246,10 @@ function HabitRow({
   hintId,
   open,
   onToggle,
+  revealed,
+  onReveal,
+  asking,
+  onAsk,
 }: {
   habit: Habit;
   handle: HTMLAttributes<HTMLButtonElement>;
@@ -184,33 +258,54 @@ function HabitRow({
   hintId: string;
   open: boolean;
   onToggle: () => void;
+  revealed: boolean;
+  onReveal: (on: boolean) => void;
+  /** The deletion was asked for by swiping: the panel opens with the question. */
+  asking: boolean;
+  onAsk: (on: boolean) => void;
 }) {
+  const store = useStore();
   const profile = useProfile();
   const panelId = useId();
+  const swipe = useSwipeReveal(revealed, onReveal);
+  // One's own habits can be deleted, the others only switched off.
+  const deletable = !habit.preset && !habit.auto;
+  const act = () => {
+    onReveal(false);
+    if (deletable) onAsk(true);
+    else store.updateProfile((p) => ({ ...p, habits: setHabitActive(p.habits, habit.id, false) }), { immediate: true });
+  };
   return (
     <li className={`hb-row${habit.focus ? ' is-focus' : ''}${dragging ? ' is-dragging' : ''}${open ? ' is-open' : ''}`} data-sort-id={habit.id} style={style}>
-      <div className="hb-line">
-        <button
-          type="button"
-          id={`sort-${habit.id}`}
-          className="icon-btn drag-handle"
-          aria-label={`${habit.name} verschieben`}
-          aria-describedby={hintId}
-          {...handle}
-        >
-          <GripIcon />
-        </button>
-        <button type="button" className="hb-main" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
-          <span className="hb-name">{habit.name}</span>
-          {habit.rhythm === 'daily' && !habit.auto ? <WeekDots habit={habit} /> : <span className="hb-sub">{whenLabel(habit)}</span>}
-        </button>
-        {/* Why it does not show yet: behind the "i", so the row stays short. */}
-        {habit.active && !fitsHouse(habit, profile.house) && <InfoToggle title={habit.name}>{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</InfoToggle>}
-        <button type="button" className="hb-chev" tabIndex={-1} aria-hidden="true" onClick={onToggle}>
-          ›
-        </button>
+      <div className="hb-swipe">
+        <div className="hb-reveal" aria-hidden={!revealed}>
+          <button type="button" className="hb-reveal-btn" tabIndex={revealed ? 0 : -1} onClick={act} aria-label={`${habit.name}: ${deletable ? 'Löschen' : 'Ausschalten'}`}>
+            {deletable ? 'Löschen' : 'Ausschalten'}
+          </button>
+        </div>
+        <div className={`hb-line${swipe.dragging ? ' is-swiping' : ''}`} style={{ transform: `translateX(${swipe.offset}px)` }} {...swipe.handlers}>
+          <button
+            type="button"
+            id={`sort-${habit.id}`}
+            className="icon-btn drag-handle"
+            aria-label={`${habit.name} verschieben`}
+            aria-describedby={hintId}
+            {...handle}
+          >
+            <GripIcon />
+          </button>
+          <button type="button" className="hb-main" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
+            <span className="hb-name">{habit.name}</span>
+            {habit.rhythm === 'daily' && !habit.auto ? <WeekDots habit={habit} /> : <span className="hb-sub">{whenLabel(habit)}</span>}
+          </button>
+          {/* Why it does not show yet: behind the "i", so the row stays short. */}
+          {habit.active && !fitsHouse(habit, profile.house) && <InfoToggle title={habit.name}>{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</InfoToggle>}
+          <button type="button" className="hb-chev" tabIndex={-1} aria-hidden="true" onClick={onToggle}>
+            ›
+          </button>
+        </div>
       </div>
-      {open && <HabitPanel habit={habit} id={panelId} />}
+      {open && <HabitPanel habit={habit} id={panelId} asking={asking} onAsked={() => onAsk(false)} />}
     </li>
   );
 }
@@ -232,6 +327,9 @@ function HabitList({
   children: React.ReactNode;
 }) {
   const store = useStore();
+  // The row that shows its button after a swipe (one at a time), and the one whose deletion is being asked.
+  const [revealId, setRevealId] = useState<string | null>(null);
+  const [askId, setAskId] = useState<string | null>(null);
   const ids = habits.map((h) => h.id);
   // The place is meant among the habits listed; unlisted ones keep theirs around it.
   const place = (id: string, index: number) =>
@@ -264,6 +362,13 @@ function HabitList({
             hintId={hintId}
             open={openId === h.id}
             onToggle={() => setOpenId(openId === h.id ? null : h.id)}
+            revealed={revealId === h.id}
+            onReveal={(on) => setRevealId(on ? h.id : revealId === h.id ? null : revealId)}
+            asking={askId === h.id}
+            onAsk={(on) => {
+              setAskId(on ? h.id : null);
+              if (on) setOpenId(h.id);
+            }}
           />
         ))}
       </ul>
