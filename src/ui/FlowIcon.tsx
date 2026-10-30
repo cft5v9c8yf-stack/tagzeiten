@@ -41,6 +41,7 @@ export type FlowIconName =
   | 'chevronLeft'
   | 'chevronRight'
   | 'chevronDown'
+  | 'arrowRight'
   | 'out'
   | 'grip'
   | 'import'
@@ -160,6 +161,8 @@ export const FLOW_PATHS: Record<FlowIconName, JSX.Element> = {
   chevronLeft: <path d="m14.5 6-6 6 6 6" />,
   chevronRight: <path d="m9.5 6 6 6-6 6" />,
   chevronDown: <path d="m6 9.5 6 6 6-6" />,
+  // A way on: shaft and head
+  arrowRight: <path d="M5 12h14M13.5 6.5 19 12l-5.5 5.5" />,
   // An arrow that points out of the app
   out: <path d="M7 17 17 7M9 7h8v8" />,
   // A drag handle: two columns of dots
@@ -202,7 +205,20 @@ export const FLOW_PATHS: Record<FlowIconName, JSX.Element> = {
 };
 
 /** `plain` draws in the colour of the text (buttons, chevrons); otherwise in the gold of the rose. */
-export function FlowIcon({ name, size = 16, plain, filled }: { name: FlowIconName; size?: number; plain?: boolean; filled?: boolean }) {
+export function FlowIcon({
+  name,
+  size = 16,
+  plain,
+  filled,
+  stroke = ICON_STROKE,
+}: {
+  name: FlowIconName;
+  size?: number;
+  plain?: boolean;
+  filled?: boolean;
+  /** A heavier line for a mark that must stand out; the others keep the common stroke. */
+  stroke?: number;
+}) {
   return (
     <svg
       className={plain ? 'flow-icon is-plain' : 'flow-icon'}
@@ -211,7 +227,7 @@ export function FlowIcon({ name, size = 16, plain, filled }: { name: FlowIconNam
       height={size}
       fill={filled ? 'currentColor' : 'none'}
       stroke="currentColor"
-      strokeWidth={ICON_STROKE}
+      strokeWidth={stroke}
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"

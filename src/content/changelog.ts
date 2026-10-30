@@ -13,6 +13,23 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.37.0',
+    date: '2026-10-29',
+    title: 'Gewohnheiten: wann sie dran sind',
+    changes: [
+      { area: 'Mehr', text: 'Die Liste unter Gewohnheiten ist kurz: Sie zeigt nur, was du hältst, mit dem Namen und darunter, wann es dran ist: bei täglichen Gewohnheiten als Woche in sieben Kreisen (gefüllt an jedem Tag, an dem sie dran ist), sonst in Worten („einmal die Woche“, „einmal im Monat“). Zum Sortieren ziehst du am Griff. Tippst du eine Gewohnheit an, öffnet sich, was du ändern kannst: wann sie dran ist, den Stern „Im Blick“, ausschalten und bei eigenen das Löschen. Bei „Wann“ wählst du jeden Tag, an bestimmten Tagen (dann tippst du die Tage an, etwa den Long Run am Samstag), einmal bis sechsmal die Woche oder einmal im Monat. Alle Vorlagen und „Eigene anlegen“ stehen unter „+ Gewohnheit hinzufügen“. Der Hinweis, dass eine Gewohnheit erst erscheint, wenn Frau oder Kind unter „Mein Haus“ eingetragen sind, steht hinter einem „i“. Die Zählung „6 von 11 eingeschaltet“ entfällt.' },
+      { area: 'Heute', text: 'Die Gruppen unter „Heute“ heißen jetzt „Heute“ (oder der Tag, den du gewählt hast), „In dieser Woche“ und „In diesem Monat“. Was an bestimmten Tagen dran ist, steht nur an diesen Tagen da, mit dem Hinweis „am Samstag“; an den anderen Tagen ruht es, das ist kein Versäumnis. In der Wochenübersicht sind die anderen Tage blass; wer etwas einmal verschiebt, trägt es dort am anderen Tag ein. Bisher eingetragene Haken bleiben, wie sie waren.' },
+    ],
+  },
+  {
+    version: '1.36.1',
+    date: '2026-10-30',
+    title: 'Treffen am Abendbrunnen: der Weg dorthin in der Zeile',
+    changes: [
+      { area: 'Heute', text: 'Unter „Heute“ führt bei der Gewohnheit „Treffen am Abendbrunnen“ ein goldener Pfeil in einem Ring am Zeilenende zum Treffen, wie der Ring zum Abhaken auf der anderen Seite. Er ersetzt die eigene Zeile „Zum Treffen am Abendbrunnen“ darunter.' },
+    ],
+  },
+  {
     version: '1.36.0',
     date: '2026-10-25',
     title: 'Reflexion in der Gebetskammer',

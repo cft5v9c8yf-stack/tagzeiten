@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ToastProvider } from '../../app/Toast';
 import { TagzeitenDB } from '../../data/db';
+import { shownHabit } from '../../domain/habits';
 import { scheduleFor } from '../../domain/schedule';
 import { memoryJournal } from '../../data/journal';
 import { Store } from '../../data/store';
@@ -101,11 +102,11 @@ describe('Mehr: Aufbau', () => {
     // The version stands at the bottom of "Mehr".
     expect(document.querySelector('.more-version')!.textContent).toBe(`Henoch ${__APP_VERSION__}`);
     expect(screen.getByRole('link', { name: 'Impressum · Anbieter und Datenschutz' })).toBeTruthy();
-    expect(screen.queryByRole('switch', { name: 'Fasten' })).toBeNull();
+    expect(screen.queryByRole('heading', { name: 'Meine Gewohnheiten' })).toBeNull();
 
     fireEvent.click(screen.getByRole('link', { name: /^Gewohnheiten/ }));
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Gewohnheiten');
-    expect(screen.getByRole('switch', { name: 'Fasten' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Meine Gewohnheiten' })).toBeTruthy();
 
     fireEvent.click(screen.getByRole('link', { name: 'Zurück: Mehr' }));
     await waitFor(() => expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Mehr'));
@@ -252,12 +253,12 @@ describe('Mehr: Aufbau', () => {
         s.startDesert('2026-09-21', 40);
         s.chooseDesert(s.getProfile().winterArc.runs[0]!.id, [DESERT_HABITS.find((h) => h.id === 'wz-psalm')!], true);
       },
-      ['more.habits.desert', 'more.habits.daily'],
+      ['more.habits.desert', 'more.habits.list'],
     );
     const group = (await screen.findByRole('button', { name: /^Wüstenzeit/ })).closest('section') as HTMLElement;
     expect((within(group).getByLabelText('Psalm des Tages') as HTMLInputElement).checked).toBe(true);
     // Not among the everyday habits until taken over.
-    const daily = screen.getByRole('button', { name: /^Täglich/ }).closest('section') as HTMLElement;
+    const daily = screen.getByRole('button', { name: /^Meine Gewohnheiten/ }).closest('section') as HTMLElement;
     expect(daily.textContent).not.toContain('Psalm des Tages');
   });
 
@@ -416,28 +417,111 @@ describe('Mehr: Daten', () => {
 });
 
 describe('Mehr: Gewohnheiten', () => {
-  it('sets how often in the week a weekly habit is meant, when adding and afterwards', async () => {
+  /** The row of a habit opens what can be changed about it. */
+  const openRow = (name: string) => {
+    const main = [...document.querySelectorAll<HTMLButtonElement>('.hb-main')].find((b) => b.querySelector('.hb-name')!.textContent === name);
+    expect(main, `row ${name}`).toBeTruthy();
+    fireEvent.click(main!);
+  };
+  const names = () => [...document.querySelectorAll('.hb-main .hb-name')].map((e) => e.textContent);
+  const openCatalog = async () => fireEvent.click(await screen.findByRole('button', { name: '+ Gewohnheit hinzufügen' }));
+
+  it('lists what is held with when it is meant, and offers the rest under "hinzufügen"', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    // Switched on: in the list with a line beneath; switched off: not there.
+    expect(names()).toContain('Bibel lesen');
+    expect(document.querySelector('.hb-row .hb-sub')!.textContent).toBe('aus dem Ablauf');
+    expect(names()).not.toContain('Fasten');
+    await openCatalog();
+    fireEvent.click(screen.getByRole('button', { name: 'Fasten hinzufügen' }));
+    expect(store.getProfile().habits.find((h) => h.id === 'fasting')!.active).toBe(true);
+    await waitFor(() => expect(names()).toContain('Fasten'));
+    expect(screen.queryByRole('button', { name: 'Fasten hinzufügen' })).toBeNull();
+  });
+
+  it('sets when a habit is meant, when adding and afterwards: every day, weekdays, in the week, in the month', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await openCatalog();
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Sport' } });
-    expect(screen.queryByLabelText('Wie oft in der Woche')).toBeNull();
-    fireEvent.change(screen.getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
-    fireEvent.change(screen.getByLabelText('Wie oft in der Woche'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Wann'), { target: { value: 'week-3' } });
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const sport = () => store.getProfile().habits.find((h) => h.name === 'Sport')!;
     expect(sport()).toMatchObject({ rhythm: 'weekly', timesPerWeek: 3 });
-    const select = await screen.findByLabelText('Wie oft in der Woche: Sport');
-    expect((select as HTMLSelectElement).value).toBe('3');
-    fireEvent.change(select, { target: { value: '1' } });
+    await waitFor(() => expect(names()).toContain('Sport'));
+    expect([...document.querySelectorAll('.hb-row')].find((r) => r.textContent!.startsWith('Sport'))!.querySelector('.hb-sub')!.textContent).toBe('3-mal die Woche');
+    openRow('Sport');
+    const select = await screen.findByLabelText('Wann: Sport');
+    expect((select as HTMLSelectElement).value).toBe('week-3');
+    fireEvent.change(select, { target: { value: 'week-1' } });
     await waitFor(() => expect(sport().timesPerWeek).toBeUndefined());
+    expect(sport().rhythm).toBe('weekly');
+    fireEvent.change(select, { target: { value: 'month' } });
+    await waitFor(() => expect(sport().rhythm).toBe('monthly'));
+    fireEvent.change(select, { target: { value: 'daily' } });
+    await waitFor(() => expect(sport().rhythm).toBe('daily'));
+  });
+
+  it('binds a habit to fixed weekdays, when adding and afterwards, and back to every day', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await openCatalog();
+    fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Long Run' } });
+    fireEvent.change(screen.getByLabelText('Wann'), { target: { value: 'days' } });
+    // The weekday of today is taken to start with; Samstag is added.
+    fireEvent.click(screen.getAllByRole('button', { name: 'Samstag' })[0]!);
+    fireEvent.click(screen.getByText('Gewohnheit anlegen'));
+    const run = () => store.getProfile().habits.find((h) => h.name === 'Long Run')!;
+    expect(run().rhythm).toBe('daily');
+    expect(run().days).toContain(6);
+    await waitFor(() => expect(names()).toContain('Long Run'));
+    // In the list the week stands as dots: only the days it is meant for are filled.
+    const dots = [...document.querySelectorAll('.hb-row')].find((r) => r.textContent!.startsWith('Long Run'))!.querySelector('.hb-dots')!;
+    expect(dots.getAttribute('aria-label')).toMatch(/Sa/);
+    expect(dots.querySelectorAll('.is-on').length).toBe(run().days!.length);
+    openRow('Long Run');
+    const select = await screen.findByLabelText('Wann: Long Run');
+    expect((select as HTMLSelectElement).value).toBe('days');
+    fireEvent.change(select, { target: { value: 'daily' } });
+    await waitFor(() => expect(run().days).toBeUndefined());
+    expect(within(select).queryByRole('option', { name: 'einmal im Monat' })).not.toBeNull();
+    // A habit of the templates can be bound as well; reading follows the plan and offers days only.
+    openRow('Bibel lesen');
+    fireEvent.change(await screen.findByLabelText('Wann: Bibel lesen'), { target: { value: 'days' } });
+    await waitFor(() => expect(store.getProfile().habits.find((h) => h.name === 'Bibel lesen')!.days).toHaveLength(1));
+    expect(within(screen.getByLabelText('Wann: Bibel lesen')).queryByRole('option', { name: 'einmal im Monat' })).toBeNull();
+  });
+
+  it('keeps the row short: why a habit of the house does not show yet stands behind an "i"', async () => {
+    await renderAt('/mehr/gewohnheiten', <SettingsPage />, (s) =>
+      s.updateProfile((p) => ({ ...p, habits: p.habits.map((h) => (h.id === 'familyDevotion' ? { ...h, active: true } : h)) }), { immediate: true }),
+    );
+    const info = await screen.findByRole('button', { name: 'Info zu Familienandacht' });
+    fireEvent.click(info);
+    expect(screen.getByRole('note').textContent).toContain('erscheint, sobald unter „Mein Haus“');
+  });
+
+  it('switches a habit off in its panel and keeps it there until it is closed, so it can be switched on again', async () => {
+    const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    openRow('Tischgebet mit der Familie');
+    fireEvent.click(screen.getByRole('switch', { name: 'Tischgebet mit der Familie eingeschaltet' }));
+    expect(store.getProfile().habits.find((h) => h.id === 'tablePrayer')!.active).toBe(false);
+    expect(names()).toContain('Tischgebet mit der Familie');
+    // Closed: it goes to the offered ones.
+    openRow('Tischgebet mit der Familie');
+    await waitFor(() => expect(names()).not.toContain('Tischgebet mit der Familie'));
   });
 
   it('adds, switches and deletes an own habit', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await openCatalog();
     fireEvent.change(await screen.findByLabelText('Name'), { target: { value: 'Psalm mit den Kindern' } });
     fireEvent.click(screen.getByText('Gewohnheit anlegen'));
     const own = store.getProfile().habits.find((h) => h.name === 'Psalm mit den Kindern')!;
     expect(own).toMatchObject({ rhythm: 'daily', active: true, preset: false });
+    await waitFor(() => expect(names()).toContain('Psalm mit den Kindern'));
 
+    openRow('Psalm mit den Kindern');
     fireEvent.click(screen.getByRole('button', { name: 'Psalm mit den Kindern löschen' }));
     fireEvent.click(screen.getByText('Löschen'));
     expect(store.getProfile().habits.some((h) => h.id === own.id)).toBe(false);
@@ -445,15 +529,20 @@ describe('Mehr: Gewohnheiten', () => {
 
   it('offers no way to delete a preset, only to switch it off', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
-    const sw = await screen.findByRole('switch', { name: 'Fasten' });
-    expect(screen.queryByRole('button', { name: 'Fasten löschen' })).toBeNull();
-    fireEvent.click(sw);
-    expect(store.getProfile().habits.find((h) => h.id === 'fasting')!.active).toBe(true);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    openRow('Bibel lesen');
+    expect(screen.queryByRole('button', { name: 'Bibel lesen löschen' })).toBeNull();
+    fireEvent.click(screen.getByRole('switch', { name: 'Bibel lesen eingeschaltet' }));
+    expect(store.getProfile().habits.find((h) => h.name === 'Bibel lesen')!.active).toBe(false);
   });
 });
 
 describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
-  const dailyIds = (s: Store) => s.getProfile().habits.filter((h) => h.rhythm === 'daily').map((h) => h.id);
+  /** The habits in the list (those switched on), in the order stored. */
+  const dailyIds = (s: Store) => {
+    const p = s.getProfile();
+    return p.habits.filter((h) => h.active && (!h.desert || h.active) && shownHabit(h, p.well.on)).map((h) => h.id);
+  };
 
   /** jsdom has no layout: give every row of a list a 60px slot. */
   function fakeLayout() {
@@ -513,6 +602,9 @@ describe('Mehr: Reihenfolge per Ziehen und Fokus', () => {
 
   it('marks a habit as focus with a star', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
+    await screen.findByRole('heading', { name: 'Meine Gewohnheiten' });
+    const main = [...document.querySelectorAll<HTMLButtonElement>('.hb-main')].find((b) => b.querySelector('.hb-name')!.textContent === 'Die Kinder segnen')!;
+    fireEvent.click(main);
     const star = await screen.findByRole('button', { name: 'Fokus: Die Kinder segnen' });
     expect(star.getAttribute('aria-pressed')).toBe('false');
     fireEvent.click(star);
@@ -932,9 +1024,9 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.36(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.37(?![\d.])/);
     // The newest ten numbers stand one by one; earlier tens fold together, then the versions before 1.0.
-    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(7);
+    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(8);
     expect(versions.filter((v) => v?.startsWith('Versionen ')).map((v) => /^Versionen \S+ bis \S+/.exec(v!)![0])).toEqual([
       'Versionen 1.20 bis 1.29',
       'Versionen 1.10 bis 1.19',
@@ -946,11 +1038,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.36(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.37(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.36(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.37(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent).filter((v) => /^Version \d/.test(v ?? ''));
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

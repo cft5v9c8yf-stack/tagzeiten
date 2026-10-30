@@ -1,17 +1,19 @@
 import { Fragment, useState } from 'react';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { addDays, formatLong, formatShort, fromKey, mondayOf, WEEKDAY_SHORT, weekdayOf, type DateKey } from '../../domain/dates';
-import { canToggle, fitsHouse, shownHabit, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
+import { canToggle, daysLabel, fitsHouse, hasDays, shownHabit, daysDoneInWeek, habitsOfRhythm, isDoneInPeriod, isDoneOn, isPerDay, RHYTHM_ORDER } from '../../domain/habits';
+import { meantFor } from '../../domain/desert';
 import { READING_HABIT } from '../../content/habits';
 import { linkedHabit } from '../../domain/well';
 import { Link } from 'react-router';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun, hallModeIn, isInRun, stageOf } from '../../domain/winterArc';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { StarIcon } from '../../ui/Icons';
 import { DesertCare, DesertDay, DesertWeekRows } from '../desert/DesertHabits';
 import { Tick } from '../../ui/Tick';
 
-const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Täglich', weekly: 'Wöchentlich', monthly: 'Monatlich' };
+const GROUP_TITLE: Record<Rhythm, string> = { daily: 'Tag für Tag', weekly: 'In dieser Woche', monthly: 'In diesem Monat' };
 
 function HabitName({ habit, note }: { habit: Habit; note?: string }) {
   return (
@@ -34,6 +36,8 @@ function HabitName({ habit, note }: { habit: Habit; note?: string }) {
 function noteOf(h: Habit, date: DateKey, lookup: ReturnType<typeof useDayLookup>): string | undefined {
   if (h.auto) return 'aus dem Ablauf';
   if (h.id === READING_HABIT) return 'nach dem Leseplan';
+  // Fixed weekdays: where it stands, nothing more. A day it is not meant for is not a miss (rule 5).
+  if (hasDays(h)) return daysLabel(h.days!);
   // Documented, not rated: how many days are entered, never what is "missing" (rules 3–5).
   if (h.rhythm === 'weekly' && h.timesPerWeek) return `${h.timesPerWeek}-mal die Woche · ${daysDoneInWeek(h, date, lookup)}\u00a0eingetragen`;
   return undefined;
@@ -81,7 +85,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
               <td key={k}>
                 <button
                   type="button"
-                  className={`cell${k === today ? ' today' : ''}${k > today ? ' future' : ''}`}
+                  className={`cell${k === today ? ' today' : ''}${k > today ? ' future' : ''}${meantFor(h, k) ? '' : ' off-day'}`}
                   aria-pressed={on}
                   disabled={!enabled}
                   aria-label={`${h.name}, ${formatShort(k)}`}
@@ -126,14 +130,18 @@ export function HabitsWeek({ date }: { date: DateKey }) {
   const dayTitle = sel === today ? 'Heute' : formatLong(sel);
   // Those from the orders (Stille Zeit, Vesper, Nachtgebet) stand above as tiles, and in the
   // grid of the week; here only what is ticked by hand (0.40). Weekly and monthly ones already kept move to the end.
-  const byHand = (list: Habit[]) => list.filter((h) => !h.auto);
+  // A habit bound to weekdays stands only on those days, or where it was ticked after all.
+  const byHand = (list: Habit[]) => list.filter((h) => !h.auto && (meantFor(h, sel) || isDoneOn(h, lookup(sel))));
   const listed = byHand(rest);
   const keptLast = (list: Habit[]) => [
     ...list.filter((h) => !isDoneInPeriod(h, sel, lookup)),
     ...list.filter((h) => isDoneInPeriod(h, sel, lookup)),
   ];
-  const perDay = listed.filter(isPerDay);
-  const weekly = keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'weekly'));
+  const perDay = listed.filter((h) => h.rhythm === 'daily');
+  const weekly = [
+    ...listed.filter((h) => h.rhythm === 'weekly' && isPerDay(h)),
+    ...keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'weekly')),
+  ];
   const monthly = keptLast(listed.filter((h) => !isPerDay(h) && h.rhythm === 'monthly'));
   const tick = (h: Habit) => {
     const per = isPerDay(h);
@@ -150,20 +158,22 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     // The meeting at the Abendbrunnen: from the habit straight into its place in the Arena.
     if (profile.well.on && h.id === linkedHabit(profile.well, profile.habits))
       return (
-        <Fragment key={h.id}>
+        <div key={h.id} className="habit-linked">
           {box}
-          <p className="habit-link small">
-            <Link to="/arena?bereich=abendbrunnen">Zum Treffen am Abendbrunnen</Link>
-          </p>
-        </Fragment>
+          <Link className="habit-link" to="/arena?bereich=abendbrunnen" aria-label="Zum Treffen am Abendbrunnen" title="Zum Treffen am Abendbrunnen">
+            <span className="habit-link-ring">
+              <FlowIcon name="arrowRight" size={16} stroke={2.4} />
+            </span>
+          </Link>
+        </div>
       );
     return <Fragment key={h.id}>{box}</Fragment>;
   };
   const groups: [string, Habit[]][] = [
     ['Im Blick', byHand(focus)],
-    ['Täglich', perDay],
-    ['Wöchentlich', weekly],
-    ['Monatlich', monthly],
+    [sel === today ? 'Heute' : 'An diesem Tag', perDay],
+    ['In dieser Woche', weekly],
+    ['In diesem Monat', monthly],
   ];
 
   return (
@@ -205,7 +215,7 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         </div>
       )}
       {careOnly && run && <DesertCare run={run} />}
-      {byHand(active).length === 0 ? (
+      {active.every((h) => h.auto) ? (
         !hallMode && <p className="small muted">Die Gebetszeiten stehen oben. Weitere Gewohnheiten wählst du unter „Mehr“.</p>
       ) : resting(sel) ? (
         <p className="small muted habits-rest">

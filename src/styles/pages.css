@@ -446,27 +446,6 @@ body.no-scroll {
   padding: 0;
   margin: 0;
 }
-.habit-edit {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: center;
-  border-top: 1px solid var(--rule);
-  padding: 10px 0;
-}
-.habit-edit-main {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-.habit-edit-main input[type='text'] {
-  padding: 5px 8px;
-}
-.habit-meta {
-  font-family: var(--sans);
-  font-size: 0.78rem;
-  color: var(--muted);
-}
 /* The one confirmation row for deleting (ui/ConfirmRow). */
 .confirm-row {
   display: flex;
@@ -576,12 +555,6 @@ body.no-scroll {
 }
 
 /* Habit settings: star and ordering */
-.habit-edit {
-  grid-template-columns: auto auto 1fr auto;
-  gap: 8px;
-  position: relative;
-  background: var(--paper);
-}
 .star-btn[aria-pressed='true'] {
   color: var(--accent);
 }
@@ -595,34 +568,11 @@ body.no-scroll {
   user-select: none;
   -webkit-touch-callout: none;
 }
-.habit-list.sorting .habit-edit {
-  transition: transform 0.15s ease;
-}
-.habit-list.sorting .habit-edit.is-dragging {
-  transition: none;
-  z-index: 3;
-  background: var(--sheet);
-  border-radius: var(--radius-s);
-  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
-}
-.habit-edit.is-dragging + .habit-edit {
-  border-top-color: transparent;
-}
 body.is-sorting,
 body.is-sorting * {
   cursor: grabbing !important;
   -webkit-user-select: none;
   user-select: none;
-}
-.habit-edit.is-focus .habit-edit-main > label,
-.habit-edit.is-focus .habit-edit-main > input {
-  font-weight: 600;
-}
-.habit-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 10px;
 }
 .link-btn {
   appearance: none;
@@ -2469,34 +2419,32 @@ mark.placeholder {
 .habit-card .fold-aside {
   font-size: 0.78rem;
 }
-.habit-card .habit-edit {
-  background: var(--sheet);
-  padding: 12px 0;
-}
-.habit-card .habit-list .habit-edit:first-child {
-  border-top: 0;
-}
 .habit-card .add-habit {
   padding-bottom: 12px;
 }
-/* How often a weekly habit is meant: a small select beside the kind label. */
-.habit-meta select.habit-times {
-  width: auto;
-  min-height: 0;
-  padding: 1px 22px 1px 8px;
-  border-radius: 999px;
-  font: 0.72rem/1.5 var(--sans);
-  background-position: right 6px center;
-  background-size: 10px;
+/* The weekdays of a habit: seven chips of one size, four to a row. */
+.day-chips {
+  display: grid;
+  grid-template-columns: repeat(4, 52px);
+  gap: 6px;
+  margin: 8px 0 2px;
 }
-.habit-kind {
-  display: inline-block;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--paper);
+.day-chip {
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0;
   border: 1px solid var(--rule);
-  font-size: 0.75rem;
-  line-height: 1.5;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.day-chip[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
 }
 .switch:checked {
   background: var(--icon-gold);
@@ -4512,4 +4460,206 @@ mark.placeholder {
 .reflection-plans {
   margin: 8px 0;
   padding-left: 20px;
+}
+
+/* ---------------------------------------------------------------- Gewohnheiten: a short list */
+/* Only what is held: name and, beneath it, when. Tapping a row opens what can be changed. */
+.hb-row {
+  position: relative;
+  border-top: 1px solid var(--rule);
+  background: var(--sheet);
+}
+.habit-list > .hb-row:first-child {
+  border-top: 0;
+}
+.hb-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.hb-line .drag-handle {
+  margin-left: -8px;
+  flex: none;
+}
+.hb-main {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding: 12px 4px 12px 2px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.hb-name {
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+.hb-row.is-focus .hb-name {
+  font-weight: 600;
+}
+.hb-sub {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.hb-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.hb-dot {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-style: normal;
+  line-height: 1;
+  color: var(--muted);
+}
+.hb-dot.is-on {
+  border-color: var(--icon-gold);
+  background: var(--icon-gold);
+  color: var(--on-accent);
+}
+.hb-chev {
+  appearance: none;
+  flex: none;
+  width: 28px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+.hb-row.is-open .hb-chev {
+  transform: rotate(90deg);
+}
+.hb-line .info-btn {
+  --ibtn: 18px;
+  border-width: 1px;
+  font-size: 0.7rem;
+}
+.hb-panel {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 0 0 14px 34px;
+}
+.hb-rename {
+  width: 100%;
+}
+.hb-panel select.habit-times {
+  width: auto;
+  max-width: 100%;
+}
+.hb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+}
+.hb-star,
+.hb-switch {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.hb-star[aria-pressed='true'] {
+  color: var(--icon-gold);
+}
+.hb-add {
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  background: none;
+  color: var(--link);
+  font: inherit;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+.hb-catalog {
+  padding: 0 0 8px;
+}
+.hb-offered {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+}
+.hb-offered li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--rule);
+}
+.hb-offered-name {
+  min-width: 0;
+}
+.hb-take {
+  appearance: none;
+  flex: none;
+  padding: 4px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: none;
+  color: var(--link);
+  font: 0.85rem var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+}
+.habit-times {
+  max-width: 100%;
+}
+.habit-list.sorting .hb-row {
+  transition: transform 0.15s ease;
+}
+.habit-list.sorting .hb-row.is-dragging {
+  transition: none;
+  z-index: 3;
+  border-radius: var(--radius-s);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+}
+.hb-row.is-dragging + .hb-row {
+  border-top-color: transparent;
+}
+.hb-catalog .add-habit {
+  display: block;
+}
+.hb-catalog .add-habit h4 {
+  margin: 14px 0 6px;
+}
+.hb-catalog .add-habit .field {
+  margin-bottom: 10px;
+}
+.hb-catalog .add-habit select {
+  width: auto;
+  max-width: 100%;
+}
+.hb-catalog .add-habit .btn {
+  width: 100%;
 }

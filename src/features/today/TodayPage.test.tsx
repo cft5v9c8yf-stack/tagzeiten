@@ -78,8 +78,26 @@ describe('Today', () => {
       );
     });
     const link = screen.getByRole('link', { name: 'Zum Treffen am Abendbrunnen' });
-    // The way in stands right under the habit it belongs to.
-    expect(link.closest('p')!.previousElementSibling!.textContent).toContain('Gespräch mit meiner Frau');
+    // The way in stands in the row of the habit it belongs to.
+    expect(link.closest('.habit-linked')!.textContent).toContain('Gespräch mit meiner Frau');
+  });
+
+  it('lists a habit with fixed weekdays only on those days, and says which', async () => {
+    const own = (days: number[]) => (s: Store) =>
+      s.updateProfile(
+        (p) => ({
+          ...p,
+          habits: [...p.habits, { id: 'own-run', name: 'Long Run', rhythm: 'daily', auto: null, active: true, preset: false, focus: false, days } as never],
+        }),
+        { immediate: true },
+      );
+    // 2026-09-25 is a Friday.
+    await renderToday('2026-09-26', own([6]), new Date(2026, 8, 26, 9, 0));
+    expect(screen.getByRole('checkbox', { name: /Long Run/ }).textContent).toContain('am Samstag');
+    expect(screen.getByRole('heading', { level: 5, name: 'Heute' })).toBeTruthy();
+    cleanup();
+    await renderToday('2026-09-25', own([6]));
+    expect(screen.queryByRole('checkbox', { name: /Long Run/ })).toBeNull();
   });
 
   it('keeps "Die drei Dinge" as it was while the Abendbrunnen is off', async () => {
@@ -255,7 +273,7 @@ describe('Today', () => {
       }),
     );
     const groups = [...document.querySelectorAll('.habits .group-row th')].map((t) => t.textContent!.trim());
-    expect(groups).toEqual(['Im Blick', 'Täglich', 'Wöchentlich', 'Monatlich']);
+    expect(groups).toEqual(['Im Blick', 'Tag für Tag', 'In dieser Woche', 'In diesem Monat']);
     const focus = [...document.querySelectorAll('.habit-group-focus th[scope=row]')].map((t) => t.textContent);
     expect(focus).toEqual(['Fokus: Die Kinder segnen']);
     const daily = [...document.querySelectorAll('.habit-group-daily th[scope=row]')].map((t) => t.textContent!);
@@ -290,7 +308,7 @@ describe('Today', () => {
     });
     expect(document.querySelector('#today\\.habits, .fold-aside')!.textContent).toContain('Wüstenzeit · 23.9.–1.11.2026');
     const day = screen.getByRole('region', { name: /^Gewohnheiten, (Heute|Freitag)/ });
-    expect([...day.querySelectorAll('.wa-group h5')].map((h) => h.textContent)).toEqual(['Wüstenzeit', 'Täglich', 'Wöchentlich', 'Monatlich']);
+    expect([...day.querySelectorAll('.wa-group h5')].map((h) => h.textContent)).toEqual(['Wüstenzeit', 'Heute', 'In dieser Woche', 'In diesem Monat']);
     const desert = within(day.querySelector('.desert-group') as HTMLElement);
     expect(desert.getAllByRole('checkbox').map((c) => c.textContent)).toEqual([
       'Psalm des Tages',
