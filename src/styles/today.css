@@ -250,6 +250,10 @@ progress::-moz-progress-bar {
   border-radius: 50%;
   background: var(--sheet);
 }
+/* A day the habit is not meant for: quiet, still to be ticked if it was moved. Never red (rule 5). */
+.cell.off-day:not([aria-pressed='true']) {
+  opacity: 0.4;
+}
 .cell.today {
   border-color: var(--accent);
 }
@@ -781,7 +785,29 @@ a.cy-week-name {
 .focus-row .three-key {
   white-space: nowrap;
 }
-/* Under the habit of the Abendbrunnen: the way into its place in the Arena. */
+/* At the end of the row of the Abendbrunnen habit: a gold arrow, the way into its place in the Arena. */
+.habit-linked {
+  position: relative;
+}
 .habit-link {
-  margin: -2px 0 8px 40px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 1px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 14px;
+}
+/* The ring of the tick, mirrored on the other side: a gold ring with a heavy arrow. */
+.habit-link-ring {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--icon-gold);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.habit-link:active .habit-link-ring {
+  background: var(--paper);
 }

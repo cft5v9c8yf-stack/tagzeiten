@@ -10,7 +10,7 @@ import { DESERT_HABITS, DESERT_PACKS, DESERT_VERSE, RELINKED, type DesertHabit, 
 import { HABIT_PRESETS, READING_HABIT } from '../content/habits';
 import { firstAdvent } from './churchYear';
 import { addDays, mondayOf, weekdayOf, type DateKey } from './dates';
-import { fitsHouse, followOf, isDoneOn, isPerDay, periodDates, type DayLookup } from './habits';
+import { fitsHouse, followOf, hasDays, isDoneOn, isPerDay, periodDates, type DayLookup } from './habits';
 import type { Day, Habit, Profile, Rhythm } from './model';
 import { activeRun, endDateOf, isInRun, lastDayOfWeek, startRun, type WinterArcData, type WinterArcRun } from './winterArc';
 import { pointsOf } from './winterArcPoints';
@@ -219,7 +219,7 @@ export function inAdvent(date: DateKey): boolean {
 /** Whether a habit is meant for a date at all: by its weekdays, and Advent ones only in Advent. */
 export function meantFor(h: Habit, date: DateKey): boolean {
   if (h.advent && !inAdvent(date)) return false;
-  return !(h.rhythm === 'daily' && h.days) || h.days.includes(weekdayOf(date));
+  return !hasDays(h) || h.days!.includes(weekdayOf(date));
 }
 
 /**

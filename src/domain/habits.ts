@@ -5,7 +5,7 @@
 import { DESERT_HABITS, type Follow } from '../content/desert';
 import { HABIT_NEEDS, HABIT_PRESETS, READING_HABIT, RENAMED_PRESETS, WELL_HABIT } from '../content/habits';
 import { houseHas, type House } from './house';
-import { addDays, fromKey, mondayOf, toKey, type DateKey } from './dates';
+import { addDays, fromKey, mondayOf, toKey, WEEKDAY_LONG, WEEKDAY_SHORT, type DateKey, type Weekday } from './dates';
 import type { Day, Habit, Rhythm } from './model';
 
 export type DayLookup = (date: DateKey) => Day | undefined;
@@ -60,6 +60,20 @@ export function isTimesPerWeek(n: unknown): n is number {
  */
 export function isPerDay(habit: Habit): boolean {
   return habit.rhythm === 'daily' || (habit.rhythm === 'weekly' && isTimesPerWeek(habit.timesPerWeek));
+}
+
+/** Monday first, as the week is shown. */
+export const WEEKDAY_ORDER: readonly Weekday[] = [1, 2, 3, 4, 5, 6, 0];
+
+/** Whether a daily habit is meant for fixed weekdays only (all seven count as none). */
+export function hasDays(habit: Habit): boolean {
+  return habit.rhythm === 'daily' && !habit.auto && Array.isArray(habit.days) && habit.days.length > 0 && habit.days.length < 7;
+}
+
+/** The weekdays as a quiet note: "am Samstag" for one, "Mo, Do" for several. */
+export function daysLabel(days: readonly Weekday[]): string {
+  const ordered = WEEKDAY_ORDER.filter((d) => days.includes(d));
+  return ordered.length === 1 ? `am ${WEEKDAY_LONG[ordered[0]!]}` : ordered.map((d) => WEEKDAY_SHORT[d]).join(', ');
 }
 
 /** Days of the week containing `date` on which the habit was recorded. */
@@ -156,11 +170,18 @@ export function toggleHabit(day: Day, habit: Habit): Day {
   return { ...day, habits: { ...day.habits, [habit.id]: !day.habits[habit.id] } };
 }
 
-export function addHabit(habits: readonly Habit[], name: string, rhythm: Rhythm, id: string, timesPerWeek = 1): Habit[] {
+export function addHabit(
+  habits: readonly Habit[],
+  name: string,
+  rhythm: Rhythm,
+  id: string,
+  timesPerWeek = 1,
+  days: readonly Weekday[] = [],
+): Habit[] {
   const trimmed = name.trim();
   if (!trimmed) return [...habits];
   const habit: Habit = { id, name: trimmed, rhythm, auto: null, active: true, preset: false, focus: false };
-  return [...habits, withTimesPerWeek(habit, timesPerWeek)];
+  return [...habits, days.length > 0 ? withDays(habit, days) : withTimesPerWeek(habit, timesPerWeek)];
 }
 
 function withTimesPerWeek(habit: Habit, times: number): Habit {
@@ -168,9 +189,70 @@ function withTimesPerWeek(habit: Habit, times: number): Habit {
   return habit.rhythm === 'weekly' && !habit.auto && isTimesPerWeek(times) ? { ...rest, timesPerWeek: times } : rest;
 }
 
+/** Only daily habits are bound to weekdays; weekly ones are once or n times in the week, on any day. */
+function withDays(habit: Habit, days: readonly Weekday[]): Habit {
+  const { days: _, ...rest } = habit;
+  const chosen = WEEKDAY_ORDER.filter((d) => days.includes(d));
+  if (habit.auto || habit.rhythm !== 'daily' || chosen.length === 0 || chosen.length === 7) return rest;
+  return { ...rest, days: chosen };
+}
+
+/** The weekdays a daily habit is meant for; none (or all seven) sets it back to every day. */
+export function setHabitDays(habits: readonly Habit[], id: string, days: readonly Weekday[]): Habit[] {
+  return habits.map((h) => (h.id === id ? withDays(h, days) : h));
+}
+
 /** How many days a week a weekly habit is meant for; 1 sets it back to once a week. */
 export function setHabitTimes(habits: readonly Habit[], id: string, times: number): Habit[] {
   return habits.map((h) => (h.id === id ? withTimesPerWeek(h, times) : h));
+}
+
+/**
+ * When a habit is meant, in one answer: every day, fixed weekdays, once or several times a week (on any
+ * day), once a month. The rhythm of the habit follows from it; the entries are kept as they were.
+ */
+export type When = 'daily' | 'days' | 'month' | `week-${number}`;
+
+export const whenOf = (h: Habit): When =>
+  h.rhythm === 'monthly' ? 'month' : h.rhythm === 'weekly' ? `week-${isTimesPerWeek(h.timesPerWeek) ? h.timesPerWeek : 1}` : hasDays(h) ? 'days' : 'daily';
+
+export const timesLabel = (n: number) => (n === 1 ? 'einmal die Woche' : `${n}-mal die Woche`);
+
+/** When a habit is meant, as a short line under its name. */
+export function whenLabel(h: Habit): string {
+  if (h.auto) return 'aus dem Ablauf';
+  const w = whenOf(h);
+  if (w === 'daily') return 'jeden Tag';
+  if (w === 'days') return daysLabel(h.days!);
+  if (w === 'month') return 'einmal im Monat';
+  return timesLabel(Number(w.slice(5)));
+}
+
+export function whenParts(when: When): { rhythm: Rhythm; timesPerWeek: number; byDays: boolean } {
+  if (when === 'month') return { rhythm: 'monthly', timesPerWeek: 1, byDays: false };
+  if (when === 'daily' || when === 'days') return { rhythm: 'daily', timesPerWeek: 1, byDays: when === 'days' };
+  return { rhythm: 'weekly', timesPerWeek: Number(when.slice(5)), byDays: false };
+}
+
+/** Sets when a habit is meant. "days" keeps the weekdays it had, or takes the ones given. Habits of the orders keep theirs. */
+export function setHabitWhen(habits: readonly Habit[], id: string, when: When, days: readonly Weekday[] = []): Habit[] {
+  const { rhythm, timesPerWeek, byDays } = whenParts(when);
+  return habits.map((h) => {
+    if (h.id !== id || h.auto) return h;
+    const { days: kept, timesPerWeek: _, ...rest } = h;
+    const base: Habit = { ...rest, rhythm };
+    return byDays ? withDays(base, days.length > 0 ? days : (kept ?? [])) : withTimesPerWeek(base, timesPerWeek);
+  });
+}
+
+/** Puts a habit before another one, or at the end when there is none. */
+export function placeHabit(habits: readonly Habit[], id: string, beforeId: string | null): Habit[] {
+  const h = habits.find((x) => x.id === id);
+  if (!h) return [...habits];
+  const rest = habits.filter((x) => x.id !== id);
+  const at = beforeId ? rest.findIndex((x) => x.id === beforeId) : -1;
+  rest.splice(at < 0 ? rest.length : at, 0, h);
+  return rest;
 }
 
 export function renameHabit(habits: readonly Habit[], id: string, name: string): Habit[] {
