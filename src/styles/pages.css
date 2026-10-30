@@ -4529,7 +4529,7 @@ mark.placeholder {
 .hb-dot.is-on {
   border-color: var(--icon-gold);
   background: var(--icon-gold);
-  color: var(--on-accent, #fff);
+  color: var(--on-accent);
 }
 .hb-chev {
   appearance: none;
