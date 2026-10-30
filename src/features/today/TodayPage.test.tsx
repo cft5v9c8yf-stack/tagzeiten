@@ -78,8 +78,8 @@ describe('Today', () => {
       );
     });
     const link = screen.getByRole('link', { name: 'Zum Treffen am Abendbrunnen' });
-    // The way in stands right under the habit it belongs to.
-    expect(link.closest('p')!.previousElementSibling!.textContent).toContain('Gespräch mit meiner Frau');
+    // The way in stands in the row of the habit it belongs to.
+    expect(link.closest('.habit-linked')!.textContent).toContain('Gespräch mit meiner Frau');
   });
 
   it('lists a habit with fixed weekdays only on those days, and says which', async () => {

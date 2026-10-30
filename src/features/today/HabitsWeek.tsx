@@ -157,12 +157,12 @@ export function HabitsWeek({ date }: { date: DateKey }) {
     // The meeting at the Abendbrunnen: from the habit straight into its place in the Arena.
     if (profile.well.on && h.id === linkedHabit(profile.well, profile.habits))
       return (
-        <Fragment key={h.id}>
+        <div key={h.id} className="habit-linked">
           {box}
-          <p className="habit-link small">
-            <Link to="/arena?bereich=abendbrunnen">Zum Treffen am Abendbrunnen</Link>
-          </p>
-        </Fragment>
+          <Link className="habit-link" to="/arena?bereich=abendbrunnen">
+            Zum Treffen am Abendbrunnen
+          </Link>
+        </div>
       );
     return <Fragment key={h.id}>{box}</Fragment>;
   };

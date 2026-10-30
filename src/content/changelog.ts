@@ -22,6 +22,14 @@ export const CHANGELOG: readonly Release[] = [
     ],
   },
   {
+    version: '1.36.1',
+    date: '2026-10-30',
+    title: 'Treffen am Abendbrunnen: der Weg dorthin in der Zeile',
+    changes: [
+      { area: 'Heute', text: 'Unter „Heute“ steht der Weg „Zum Treffen am Abendbrunnen“ jetzt kleiner in der Zeile der Gewohnheit, neben „diese Woche“, und nicht mehr als eigene Zeile darunter.' },
+    ],
+  },
+  {
     version: '1.36.0',
     date: '2026-10-25',
     title: 'Reflexion in der Gebetskammer',
