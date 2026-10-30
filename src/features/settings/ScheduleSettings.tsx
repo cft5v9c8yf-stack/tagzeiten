@@ -324,6 +324,39 @@ export function useDisplayTiles(): Record<string, TileItem> {
           ),
         },
         {
+          id: 'more.display.petition',
+          title: 'Art des Gebets',
+          line: profile.petition.morning || profile.petition.evening ? 'Bitte und Fürbitte' : 'Ordnung',
+          icon: 'foldedHands',
+          content: (
+            <>
+              <Segmented
+                label="Stille Zeit"
+                value={profile.petition.morning ? 'petition' : 'order'}
+                onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, morning: v === 'petition' } }))}
+                options={[
+                  { value: 'order', label: 'Stille Zeit: Ordnung' },
+                  { value: 'petition', label: 'Stille Zeit: Bitte und Fürbitte' },
+                ]}
+              />
+              <Segmented
+                label="Vesper"
+                value={profile.petition.evening ? 'petition' : 'order'}
+                onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, evening: v === 'petition' } }))}
+                options={[
+                  { value: 'order', label: 'Vesper: Ordnung' },
+                  { value: 'petition', label: 'Vesper: Bitte und Fürbitte' },
+                ]}
+              />
+              <p className="small muted">
+                „Bitte und Fürbitte“ ist eine freie Form: das Wort, dann der Reihe nach das Haus und die Anliegen des
+                Tages, zuletzt Vaterunser und Segen. Ohne Uhr und ohne Kurzform; sie gilt genauso wie die Ordnung. Die
+                Anliegen trägst du unter Mehr → Gebet → Gebetsübersicht ein.
+              </p>
+            </>
+          ),
+        },
+        {
           id: 'more.display.compline',
           title: 'Nachtgebet am Bett',
           line: state(profile.showCompline),

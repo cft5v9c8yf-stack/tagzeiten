@@ -9,10 +9,13 @@ Ordnung, wo einfach nur die Anliegen des Tages stehen“. Name entschieden am
 29.10.2026: **Bitte und Fürbitte** (nach 1. Tim 2,1; „Frei“ und „Freies Gebet“
 scheiden aus, „Freies Gebet“ ist schon ein Schritt der Stillen Zeit).
 
-**Wartet,** weil auf `vorschau` noch die Reflexion (1.36.0) liegt und dort nur
-eine Neuerung liegen darf. Anfangen, wenn sie freigegeben (PR `vorschau` →
-`main` gemergt) oder verworfen ist. Bilder der Entwürfe: in der Sitzung vom
-29.10.2026, nicht im Repository.
+**Stand 30.10.2026:** Die Reflexion ist freigegeben (PR #18), `vorschau` war
+leer. **Portion 1 (1.38.0) liegt auf `vorschau`:** Form „Bitte und Fürbitte“ für
+Stille Zeit und Vesper, gewählt unter Mehr → „Art des Gebets“ (Profil
+`petition`), ohne Umschalter auf der Andachtsseite. **Portion 2 fehlt noch:**
+Gebetsübersicht zu „Was ich trage“ mit Bereichen und „Wann“, „Bereiche
+verwalten“. Bilder der Entwürfe: in der Sitzung vom 29.10.2026, nicht im
+Repository.
 
 **Beschlossen**
 

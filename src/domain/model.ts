@@ -286,6 +286,11 @@ export interface Profile {
   /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */
   showAtBed: boolean;
   /**
+   * "Bitte und Fürbitte": the Stille Zeit and the Vesper as Word, the concerns of the
+   * day, blessing – instead of the fixed order. No minutes, no short form.
+   */
+  petition: { morning: boolean; evening: boolean };
+  /**
    * The Nachtgebet at the bed is part of the evening. When off, the Vesper takes
    * its review, examination, confession and absolution (rules 1 and 3).
    */

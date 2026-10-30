@@ -215,3 +215,17 @@ describe('Evening without the Nachtgebet', () => {
     expect(screen.getByLabelText('Lesung – wenige Verse, ohne Auslegung')).toBeTruthy();
   });
 });
+
+describe('Vesper as "Bitte und Fürbitte"', () => {
+  it('has Wort, Bitte und Fürbitte and Segen, with no form switch and no minutes', async () => {
+    await renderEvening('2026-09-25', (st) =>
+      st.updateProfile((p) => ({ ...p, petition: { morning: false, evening: true } })),
+    );
+    const names = within(chainOf('Vesper'))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent);
+    expect(names.join(' ')).toMatch(/Wort.*Bitte und Fürbitte.*Segen/);
+    expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/Min\./);
+  });
+});

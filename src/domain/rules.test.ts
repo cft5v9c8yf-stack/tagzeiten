@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { ORDERS, orderMinutes, ORDER_MINUTES, type Order, type PartKind } from '../content/orders';
+import { ORDERS, orderMinutes, ORDER_MINUTES, PETITION_MORNING, PETITION_VESPERS, type Order, type PartKind } from '../content/orders';
 import {
   emptyDay,
   EVENING_TEXT_FIELDS,
@@ -229,3 +229,36 @@ describe('texts Andreas writes himself (CLAUDE.md, Arbeitsweise)', () => {
     for (const ph of placeholders) expect(list, ph).toContain(ph);
   });
 });
+
+/* ------------------------------------------------------------ Bitte und Fürbitte */
+
+describe('"Bitte und Fürbitte"', () => {
+  const both = [PETITION_MORNING, PETITION_VESPERS];
+
+  it('begins with the Word, then the concerns, then Lord\'s Prayer and blessing (rule 2)', () => {
+    for (const o of both) {
+      expect(o.steps.map((s) => s.id)).toEqual(['word', 'petition', 'blessing']);
+      expect(partsOf(o)[0]!.kind).toBe('psalm');
+      expect(late(o)).toEqual([]);
+    }
+  });
+
+  it('has no minutes and no field for sins (rules 8 and 9)', () => {
+    for (const o of both) {
+      expect(orderMinutes(o)).toBe(0);
+      for (const p of partsOf(o)) {
+        for (const f of p.fields ?? []) expect(f).not.toMatch(FORBIDDEN_KEY);
+      }
+    }
+  });
+
+  it('keeps its own steps out of the fixed orders', () => {
+    for (const o of both) expect(ORDERS).not.toContain(o);
+  });
+});
+
+function late(o: Order): PartKind[] {
+  return partsOf(o)
+    .map((p) => p.kind)
+    .filter((k) => ['alignment', 'review', 'examination', 'confession'].includes(k));
+}

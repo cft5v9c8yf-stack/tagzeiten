@@ -162,3 +162,19 @@ describe('Stille Zeit without the bed', () => {
     timer.reset(45 * 60);
   });
 });
+
+describe('Stille Zeit as "Bitte und Fürbitte"', () => {
+  it('has the Word, the concerns and the blessing, with no form switch and no minutes', async () => {
+    const store = await renderMorning((st) =>
+      st.updateProfile((p) => ({ ...p, showAtBed: false, petition: { morning: true, evening: false } })),
+    );
+    expect(title()).toBe('Das Wort');
+    expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/Min\./);
+    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Bitte und Fürbitte' }));
+    await waitFor(() => expect(title()).toBe('Bitte und Fürbitte'));
+    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Der Segen' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Stille Zeit abschließen' }));
+    await waitFor(() => expect(store.getDay(store.today()).morning.done).toBe(true));
+  });
+});

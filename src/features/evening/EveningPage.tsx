@@ -1,7 +1,7 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, PETITION_VESPERS, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore } from '../../data/hooks';
@@ -44,6 +44,7 @@ const SHORT: Record<string, string> = {
   word: 'Wort',
   prayer: 'Gebet',
   vespers: 'Vesper',
+  petition: 'Bitte',
   sign: 'Glaube',
   review: 'Rückschau',
   examination: 'Prüfung',
@@ -72,8 +73,9 @@ const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
  * the review before the examination, never mixed (rule 3), the examination
  * always on one page with the word of forgiveness (rule 1).
  */
-function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean): EveningPage[] {
-  const pages = getOrder('vespers', form).steps.map((st) => pageOf(st, 'vespers'));
+function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean, petition = false): EveningPage[] {
+  const steps = petition ? PETITION_VESPERS.steps : getOrder('vespers', form).steps;
+  const pages = steps.map((st) => pageOf(st, 'vespers'));
   if (withCompline) return pages;
   if (form === 'short') {
     const review = getOrder('compline', 'short').steps[0]!.parts.find((p) => p.kind === 'review')!;
@@ -103,8 +105,10 @@ function VespersView({
   const day = useDay(date);
   const profile = useProfile();
   const withCompline = profile.showCompline;
-  const form = day.evening.vespersForm;
-  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview));
+  const petition = profile.petition.evening;
+  // "Bitte und Fürbitte" has no short form: it is prayed as the whole.
+  const form = petition ? 'full' : day.evening.vespersForm;
+  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview), petition);
   const setForm = useFormSetter(date, 'vespersForm');
   const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;
@@ -145,7 +149,9 @@ function VespersView({
       <OrderHead
         title="Vesper"
         rubric={
-          withCompline
+          petition
+            ? RUBRICS.petition
+            : withCompline
             ? form === 'full'
               ? RUBRICS.vespers
               : RUBRICS.vespersShort
@@ -154,18 +160,20 @@ function VespersView({
               : RUBRICS.vespersShortClosing
         }
       >
-        <Segmented
-          label="Form der Vesper"
-          value={form}
-          onChange={(f) => {
-            setForm(f);
-            setCurrent(0);
-          }}
-          options={[
-            { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
-            { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
-          ]}
-        />
+        {!petition && (
+          <Segmented
+            label="Form der Vesper"
+            value={form}
+            onChange={(f) => {
+              setForm(f);
+              setCurrent(0);
+            }}
+            options={[
+              { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
+              { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
+            ]}
+          />
+        )}
       </OrderHead>
       <StepFlow
         label="Vesper"
