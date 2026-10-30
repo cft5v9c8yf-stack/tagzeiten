@@ -224,7 +224,7 @@ describe('Vesper as "Bitte und Fürbitte"', () => {
     const names = within(chainOf('Vesper'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label') ?? b.textContent);
-    expect(names.join(' ')).toMatch(/^Bitte und Fürbitte.*Nachtgebet/);
+    expect(names.join(' ')).toMatch(/^Freies Gebet.*Nachtgebet/);
     expect(document.querySelector('.ps')!.textContent).toMatch(/^Im Namen Gottes.*Das Wort.*Bitte und Fürbitte.*Dank.*Das walte Gott/);
     expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
     expect(document.body.textContent).not.toMatch(/Min\./);

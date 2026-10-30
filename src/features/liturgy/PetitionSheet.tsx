@@ -1,5 +1,5 @@
 /**
- * "Bitte und Fürbitte": the whole prayer on one sheet, to be taken in at a
+ * "Freies Gebet": the whole prayer on one sheet, to be taken in at a
  * glance and then prayed with the phone laid aside. Word first (rule 2), then
  * the house, the concerns carried every day and those of the weekday, in that
  * order (rule 18), thanks, Lord's Prayer and blessing. Nothing to fill in.

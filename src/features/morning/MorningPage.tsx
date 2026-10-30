@@ -44,7 +44,7 @@ export function MorningPage() {
 }
 
 function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
-  // "Bitte und Fürbitte" (chosen under Mehr): one sheet instead of the steps.
+  // "Freies Gebet" (chosen under Mehr): one sheet instead of the steps.
   return useProfile().petition.morning ? (
     <PetitionMorning date={date} isToday={isToday} />
   ) : (
@@ -53,7 +53,7 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
 }
 
 /**
- * "Bitte und Fürbitte": the whole Stille Zeit on one sheet, read at a glance,
+ * "Freies Gebet": the whole Stille Zeit on one sheet, read at a glance,
  * then prayed with the phone laid aside. No bedside prayer, no fields, no
  * minutes; closing it fulfils the Stille Zeit as fully as the order (rule 8).
  */
@@ -73,7 +73,7 @@ function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) 
   return (
     <>
       <OrderHead title="Stille Zeit" />
-      <section className="flow-step petition-sheet" aria-label="Bitte und Fürbitte">
+      <section className="flow-step petition-sheet" aria-label="Freies Gebet">
         <PetitionSheet date={date} order="morning" />
         {!done && (
           <div className="flow-footer">

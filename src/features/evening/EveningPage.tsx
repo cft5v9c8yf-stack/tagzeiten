@@ -106,7 +106,7 @@ function VespersView({
   const profile = useProfile();
   const withCompline = profile.showCompline;
   const petition = profile.petition.evening;
-  // "Bitte und Fürbitte" has no short form: it is prayed as the whole.
+  // The free prayer ("Freies Gebet") has no short form: it is prayed as the whole.
   const form = petition ? 'full' : day.evening.vespersForm;
   const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview), petition);
   const setForm = useFormSetter(date, 'vespersForm');

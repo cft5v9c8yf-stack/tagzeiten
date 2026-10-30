@@ -391,10 +391,10 @@ const COMPLINE_SHORT: Order = {
   ],
 };
 
-/* ------------------------------------------------------- Bitte und Fürbitte */
+/* ------------------------------------------------------- Freies Gebet */
 
 /**
- * "Bitte und Fürbitte" (1 Tim 2,1): the Stille Zeit and the Vesper as one sheet,
+ * "Freies Gebet", with "Bitte und Fürbitte" (1 Tim 2,1) at its heart: the Stille Zeit and the Vesper as one sheet,
  * read at a glance and then prayed – in the name of the Triune God, the psalm
  * and the day's reading, the concerns of the house and the day, thanks, Lord's
  * Prayer and blessing (features/liturgy/PetitionSheet). Word first (rule 2).
@@ -402,22 +402,22 @@ const COMPLINE_SHORT: Order = {
  */
 const petitionStep = (id: string): Step => ({
   id,
-  title: 'Bitte und Fürbitte',
+  title: 'Freies Gebet',
   minutes: 0,
-  parts: [p('petition-sheet', 'Bitte und Fürbitte')],
+  parts: [p('petition-sheet', 'Freies Gebet')],
 });
 
 export const PETITION_MORNING: Order = {
   id: 'morning',
   form: 'full',
-  title: 'Stille Zeit – Bitte und Fürbitte',
+  title: 'Stille Zeit – Freies Gebet',
   steps: [petitionStep('sheet')],
 };
 
 export const PETITION_VESPERS: Order = {
   id: 'vespers',
   form: 'full',
-  title: 'Vesper – Bitte und Fürbitte',
+  title: 'Vesper – Freies Gebet',
   steps: [petitionStep('petition')],
 };
 

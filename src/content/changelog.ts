@@ -15,9 +15,9 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '1.38.0',
     date: '2026-10-30',
-    title: 'Bitte und Fürbitte',
+    title: 'Freies Gebet',
     changes: [
-      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: „Bitte und Fürbitte“. Sie ist ein einziges ruhiges Blatt, das du auf einen Blick erfasst und dann betest, ohne ständig aufs iPhone zu schauen: „Im Namen Gottes des Vaters, des Sohnes und des Heiligen Geistes. Amen.“, das Wort (der Psalm, darunter der Leseplan des Tages), Bitte und Fürbitte (Mein Haus, was du täglich trägst, die Anliegen des Wochentages), Dank, Vaterunser und Segen (die Texte zum Aufklappen) und zum Schluss „Das walte Gott Vater, Sohn und Heiliger Geist. Amen.“ Es gibt nichts auszufüllen, keine Uhr, keine Kurzform und kein „Am Bett“; sie gilt genauso wie die Ordnung. Am Abend folgt danach wie bisher das Nachtgebet. Gewählt wird sie unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich. Die Anliegen kommen aus der Gebetsübersicht, Frau und Kinder aus „Mein Haus“.' },
+      { area: 'Andacht', text: 'Neben der Ordnung gibt es für die Stille Zeit und für die Vesper eine zweite Form: das freie Gebet. Es ist ein einziges ruhiges Blatt, das du auf einen Blick erfasst und dann betest, ohne ständig aufs iPhone zu schauen: „Im Namen Gottes des Vaters, des Sohnes und des Heiligen Geistes. Amen.“, das Wort (der Psalm, darunter der Leseplan des Tages), Bitte und Fürbitte (Mein Haus, was du täglich trägst, die Anliegen des Wochentages), Dank, Vaterunser und Segen (die Texte zum Aufklappen) und zum Schluss „Das walte Gott Vater, Sohn und Heiliger Geist. Amen.“ Es gibt nichts auszufüllen, keine Uhr, keine Kurzform und kein „Am Bett“; es gilt genauso wie die Gebetsordnung. Am Abend folgt danach wie bisher das Nachtgebet. Du wählst zwischen Gebetsordnung und freiem Gebet schon in der Einrichtung („Wie du betest“) und jederzeit unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für die Stille Zeit und die Vesper je für sich. Die Anliegen kommen aus der Gebetsübersicht, Frau und Kinder aus „Mein Haus“.' },
     ],
   },
   {

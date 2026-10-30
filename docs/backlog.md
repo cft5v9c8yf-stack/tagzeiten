@@ -12,7 +12,7 @@ scheiden aus, „Freies Gebet“ ist schon ein Schritt der Stillen Zeit).
 **Stand 30.10.2026:** Die Reflexion ist freigegeben (PR #18), `vorschau` war
 leer. **Portion 1 (1.38.0) liegt auf `vorschau`:** Form „Bitte und Fürbitte“ für
 Stille Zeit und Vesper, gewählt unter Mehr → „Art des Gebets“ (Profil
-`petition`), ohne Umschalter auf der Andachtsseite. **Umgebaut am 30.10.2026 (Wunsch von Andreas):** „Bitte und Fürbitte“ ist ein einziges Blatt zum
+`petition`), ohne Umschalter auf der Andachtsseite. **Umbenannt am 30.10.2026:** Die Form heißt jetzt **„Freies Gebet“** (gegenüber „Gebetsordnung“); „Bitte und Fürbitte“ ist nur noch der Abschnitt der Anliegen. Wählbar auch in der Einrichtung („Wie du betest“). **Umgebaut am 30.10.2026 (Wunsch von Andreas):** Das freie Gebet ist ein einziges Blatt zum
 Überblicken, ohne Schritte, Felder, Uhr und „Am Bett“ (`PetitionSheet.tsx`): Im Namen Gottes …, Psalm,
 Leseplan, Mein Haus / Ich trage / Wochentag, Dank, Vaterunser · Segen (Texte aufklappbar), Das walte Gott …
 Abends danach das Nachtgebet. **Portion 2 fehlt noch:**

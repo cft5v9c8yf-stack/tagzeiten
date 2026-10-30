@@ -69,10 +69,11 @@ const heading = () => screen.getByRole('heading', { level: 2 }).textContent;
 const click = (name: string | RegExp) => fireEvent.click(screen.getByRole('button', { name }));
 const next = () => click('Weiter');
 
-/** To the page "Mein Haus" on the way "Alltag". */
+/** To the page "Mein Haus" on the way "Alltag", past "Wie du betest" as it stands. */
 function toHouse() {
   next();
   fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
+  next();
   next();
 }
 
@@ -171,6 +172,13 @@ describe('Einrichtung: der Weg Alltag', () => {
     expect(heading()).toBe('Wofür möchtest du Henoch nutzen?');
     expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
+    next();
+
+    // How the Stille Zeit and the Vesper are prayed: the order unless chosen otherwise.
+    expect(heading()).toBe('Wie du betest');
+    expect(screen.getByRole('button', { name: /^Gebetsordnung/ }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: /^Freies Gebet/ }));
+    await waitFor(() => expect(store.getProfile().petition).toEqual({ morning: true, evening: true }));
     next();
 
     // Mein Haus: a wife and two children.
@@ -352,14 +360,17 @@ describe('Einrichtung: der Weg Wüstenwanderung', () => {
     fireEvent.click(screen.getByRole('switch', { name: /Ich habe eine Frau/ }));
     fireEvent.change(screen.getByLabelText('Name deiner Frau'), { target: { value: 'Anna' } });
     click('Zurück');
+    click('Zurück');
     fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
     next();
     fireEvent.click(screen.getByRole('button', { name: '90 Tage' }));
     click('Zurück');
     fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
     next();
+    next();
     expect((screen.getByLabelText('Name deiner Frau') as HTMLInputElement).value).toBe('Anna');
     expect(store.getProfile().winterArc.runs).toHaveLength(0);
+    click('Zurück');
     click('Zurück');
     fireEvent.click(screen.getByRole('button', { name: /^Wüstenwanderung/ }));
     next();
@@ -499,6 +510,7 @@ describe('Mehr, Anleitung', () => {
     next();
     fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
     next();
+    next(); // Wie du betest
     // What was entered is there, and clicking through leaves it.
     expect((screen.getByLabelText('Name deiner Frau') as HTMLInputElement).value).toBe('Anna');
     next();

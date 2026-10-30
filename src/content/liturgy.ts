@@ -6,7 +6,7 @@
 import { text, type Text, type Versicle } from './types';
 
 export const SIGN_OF_THE_CROSS = text(['Das walte Gott Vater, Sohn und Heiliger Geist. Amen.']);
-/** The opening of "Bitte und Fürbitte", in the name of the Triune God (Matthew 28,19). */
+/** The opening of the free prayer ("Freies Gebet"), in the name of the Triune God (Matthew 28,19). */
 export const IN_THE_NAME = 'Im Namen Gottes des Vaters, des Sohnes und des Heiligen Geistes. Amen.';
 
 export const GLORIA = text([
