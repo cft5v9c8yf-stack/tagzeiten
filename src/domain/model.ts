@@ -26,7 +26,7 @@ export const MORNING_TEXT_FIELDS = [
   'unclear', // ? Unklar
   'challenge', // ! Fordert mich heraus
   'application', // → Umsetzung
-  'onMyHeart', // Was mich bewegt (freies Gebet)
+  'onMyHeart', // Was mich bewegt (eigenes Gebet)
   'forMyself', // Bitte für mich
   'peopleToday', // Menschen, denen ich heute begegne
 ] as const;

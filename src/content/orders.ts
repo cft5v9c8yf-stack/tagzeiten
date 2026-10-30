@@ -167,7 +167,7 @@ const MORNING_FULL: Order = {
         p('confession', 'Beichte'),
         p('absolution', 'Zuspruch'),
         p('wreath-petition', 'Bitte', { fields: ['morning.wreath.petition'] }),
-        p('free-prayer', 'Freies Gebet', { fields: ['morning.onMyHeart', 'morning.forMyself'] }),
+        p('free-prayer', 'Eigenes Gebet', { fields: ['morning.onMyHeart', 'morning.forMyself'] }),
         p('silence', 'Stille'),
       ],
     },
@@ -226,9 +226,9 @@ const MORNING_SHORT: Order = {
     },
     {
       id: 'prayer',
-      title: 'Freies Gebet über den Vers',
+      title: 'Eigenes Gebet über den Vers',
       minutes: 3,
-      parts: [p('free-prayer', 'Freies Gebet', { fields: ['morning.onMyHeart'] })],
+      parts: [p('free-prayer', 'Eigenes Gebet', { fields: ['morning.onMyHeart'] })],
     },
     {
       id: 'lordsPrayer',
