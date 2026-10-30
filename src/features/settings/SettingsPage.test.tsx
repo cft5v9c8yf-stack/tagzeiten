@@ -474,6 +474,10 @@ describe('Mehr: Gewohnheiten', () => {
     expect(run().rhythm).toBe('daily');
     expect(run().days).toContain(6);
     await waitFor(() => expect(names()).toContain('Long Run'));
+    // In the list the week stands as dots: only the days it is meant for are filled.
+    const dots = [...document.querySelectorAll('.hb-row')].find((r) => r.textContent!.startsWith('Long Run'))!.querySelector('.hb-dots')!;
+    expect(dots.getAttribute('aria-label')).toMatch(/Sa/);
+    expect(dots.querySelectorAll('.is-on').length).toBe(run().days!.length);
     openRow('Long Run');
     const select = await screen.findByLabelText('Wann: Long Run');
     expect((select as HTMLSelectElement).value).toBe('days');

@@ -4508,6 +4508,29 @@ mark.placeholder {
   font-size: 0.82rem;
   color: var(--muted);
 }
+.hb-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+.hb-dot {
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  font-family: var(--sans);
+  font-size: 0.62rem;
+  font-style: normal;
+  line-height: 1;
+  color: var(--muted);
+}
+.hb-dot.is-on {
+  border-color: var(--icon-gold);
+  background: var(--icon-gold);
+  color: var(--on-accent, #fff);
+}
 .hb-chev {
   appearance: none;
   flex: none;

@@ -154,6 +154,20 @@ function HabitPanel({ habit, id }: { habit: Habit; id: string }) {
   );
 }
 
+/** The week at a glance: a dot for every weekday the habit is meant for. */
+function WeekDots({ habit }: { habit: Habit }) {
+  const meant = (d: Weekday) => !hasDays(habit) || habit.days!.includes(d);
+  return (
+    <span className="hb-dots" role="img" aria-label={whenLabel(habit)}>
+      {WEEKDAY_ORDER.map((d) => (
+        <i key={d} className={`hb-dot${meant(d) ? ' is-on' : ''}`} aria-hidden="true">
+          {WEEKDAY_SHORT[d]!.slice(0, 1)}
+        </i>
+      ))}
+    </span>
+  );
+}
+
 function HabitRow({
   habit,
   handle,
@@ -188,7 +202,7 @@ function HabitRow({
         </button>
         <button type="button" className="hb-main" aria-expanded={open} aria-controls={panelId} onClick={onToggle}>
           <span className="hb-name">{habit.name}</span>
-          <span className="hb-sub">{whenLabel(habit)}</span>
+          {habit.rhythm === 'daily' && !habit.auto ? <WeekDots habit={habit} /> : <span className="hb-sub">{whenLabel(habit)}</span>}
         </button>
         {/* Why it does not show yet: behind the "i", so the row stays short. */}
         {habit.active && !fitsHouse(habit, profile.house) && <InfoToggle title={habit.name}>{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</InfoToggle>}
