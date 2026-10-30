@@ -8,6 +8,7 @@ import { linkedHabit } from '../../domain/well';
 import { Link } from 'react-router';
 import type { Habit, Rhythm } from '../../domain/model';
 import { activeRun, hallModeIn, isInRun, stageOf } from '../../domain/winterArc';
+import { FlowIcon } from '../../ui/FlowIcon';
 import { StarIcon } from '../../ui/Icons';
 import { DesertCare, DesertDay, DesertWeekRows } from '../desert/DesertHabits';
 import { Tick } from '../../ui/Tick';
@@ -160,7 +161,9 @@ export function HabitsWeek({ date }: { date: DateKey }) {
         <div key={h.id} className="habit-linked">
           {box}
           <Link className="habit-link" to="/arena?bereich=abendbrunnen" aria-label="Zum Treffen am Abendbrunnen" title="Zum Treffen am Abendbrunnen">
-            →
+            <span className="habit-link-ring">
+              <FlowIcon name="arrowRight" size={16} stroke={2.4} />
+            </span>
           </Link>
         </div>
       );

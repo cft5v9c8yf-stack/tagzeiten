@@ -26,7 +26,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-10-30',
     title: 'Treffen am Abendbrunnen: der Weg dorthin in der Zeile',
     changes: [
-      { area: 'Heute', text: 'Unter „Heute“ führt bei der Gewohnheit „Treffen am Abendbrunnen“ ein goldener Pfeil am Zeilenende zum Treffen. Er ersetzt die eigene Zeile „Zum Treffen am Abendbrunnen“ darunter.' },
+      { area: 'Heute', text: 'Unter „Heute“ führt bei der Gewohnheit „Treffen am Abendbrunnen“ ein goldener Pfeil in einem Ring am Zeilenende zum Treffen, wie der Ring zum Abhaken auf der anderen Seite. Er ersetzt die eigene Zeile „Zum Treffen am Abendbrunnen“ darunter.' },
     ],
   },
   {

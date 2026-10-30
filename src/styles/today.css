@@ -796,10 +796,18 @@ a.cy-week-name {
   bottom: 1px;
   display: flex;
   align-items: center;
-  padding: 0 14px;
-  color: var(--icon-gold);
-  font-family: var(--sans);
-  font-size: 1.6rem;
-  font-weight: 600;
-  line-height: 1;
+  padding: 0 4px 0 14px;
+}
+/* The ring of the tick, mirrored on the other side: a gold ring with a heavy arrow. */
+.habit-link-ring {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--icon-gold);
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.habit-link:active .habit-link-ring {
+  background: var(--paper);
 }
