@@ -330,24 +330,32 @@ export function useDisplayTiles(): Record<string, TileItem> {
           icon: 'foldedHands',
           content: (
             <>
-              <Segmented
-                label="Stille Zeit"
-                value={profile.petition.morning ? 'petition' : 'order'}
-                onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, morning: v === 'petition' } }))}
-                options={[
-                  { value: 'order', label: 'Stille Zeit: Ordnung' },
-                  { value: 'petition', label: 'Stille Zeit: Bitte und Fürbitte' },
-                ]}
-              />
-              <Segmented
-                label="Vesper"
-                value={profile.petition.evening ? 'petition' : 'order'}
-                onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, evening: v === 'petition' } }))}
-                options={[
-                  { value: 'order', label: 'Vesper: Ordnung' },
-                  { value: 'petition', label: 'Vesper: Bitte und Fürbitte' },
-                ]}
-              />
+              <div className="field-like">
+                <span className="field-label">Stille Zeit</span>
+                <Segmented
+                  grid
+                  label="Stille Zeit"
+                  value={profile.petition.morning ? 'petition' : 'order'}
+                  onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, morning: v === 'petition' } }))}
+                  options={[
+                    { value: 'order', label: 'Ordnung' },
+                    { value: 'petition', label: 'Bitte und Fürbitte' },
+                  ]}
+                />
+              </div>
+              <div className="field-like">
+                <span className="field-label">Vesper</span>
+                <Segmented
+                  grid
+                  label="Vesper"
+                  value={profile.petition.evening ? 'petition' : 'order'}
+                  onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, evening: v === 'petition' } }))}
+                  options={[
+                    { value: 'order', label: 'Ordnung' },
+                    { value: 'petition', label: 'Bitte und Fürbitte' },
+                  ]}
+                />
+              </div>
               <p className="small muted">
                 „Bitte und Fürbitte“ ist eine freie Form: das Wort, dann der Reihe nach das Haus und die Anliegen des
                 Tages, zuletzt Vaterunser und Segen. Ohne Uhr und ohne Kurzform; sie gilt genauso wie die Ordnung. Die

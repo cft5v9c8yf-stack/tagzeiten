@@ -19,6 +19,7 @@ export type PartKind =
   | 'psalm'
   | 'prayer-before-reading'
   | 'reading'
+  | 'reading-plan'
   | 'prayer-after-reading'
   | 'catechism'
   | 'wreath-instruction'
@@ -440,7 +441,11 @@ export const PETITION_VESPERS: Order = {
       id: 'word',
       title: 'Wort',
       minutes: 0,
-      parts: [p('psalm', 'Psalm'), p('reading', 'Lesung', { fields: ['evening.reading'] })],
+      parts: [
+        p('reading-plan', 'Leseplan'),
+        p('psalm', 'Psalm'),
+        p('reading', 'Lesung', { fields: ['evening.reading'] }),
+      ],
     },
     {
       id: 'petition',

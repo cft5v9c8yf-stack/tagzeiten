@@ -238,7 +238,7 @@ describe('"Bitte und Fürbitte"', () => {
   it('begins with the Word, then the concerns, then Lord\'s Prayer and blessing (rule 2)', () => {
     for (const o of both) {
       expect(o.steps.map((s) => s.id)).toEqual(['word', 'petition', 'blessing']);
-      expect(partsOf(o)[0]!.kind).toBe('psalm');
+      expect(['psalm', 'reading-plan']).toContain(partsOf(o)[0]!.kind);
       expect(late(o)).toEqual([]);
     }
   });
