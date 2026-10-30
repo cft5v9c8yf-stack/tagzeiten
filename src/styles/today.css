@@ -785,15 +785,21 @@ a.cy-week-name {
 .focus-row .three-key {
   white-space: nowrap;
 }
-/* Beside the note of the Abendbrunnen habit: the way into its place in the Arena. */
+/* At the end of the row of the Abendbrunnen habit: a gold arrow, the way into its place in the Arena. */
 .habit-linked {
   position: relative;
 }
 .habit-link {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  padding: 8px 0;
+  top: 0;
+  right: 0;
+  bottom: 1px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  color: var(--icon-gold);
   font-family: var(--sans);
-  font-size: 0.75rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
 }

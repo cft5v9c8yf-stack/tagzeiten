@@ -159,8 +159,8 @@ export function HabitsWeek({ date }: { date: DateKey }) {
       return (
         <div key={h.id} className="habit-linked">
           {box}
-          <Link className="habit-link" to="/arena?bereich=abendbrunnen">
-            Zum Treffen am Abendbrunnen
+          <Link className="habit-link" to="/arena?bereich=abendbrunnen" aria-label="Zum Treffen am Abendbrunnen" title="Zum Treffen am Abendbrunnen">
+            →
           </Link>
         </div>
       );
