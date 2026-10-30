@@ -459,6 +459,21 @@ body.no-scroll {
   gap: 2px;
   min-width: 0;
 }
+/* The name with its "i": the bubble hangs from this row and reaches under the star. */
+.habit-name-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.habit-name-row .info-bubble {
+  right: -52px;
+}
+.habit-name-row input[type='text'] {
+  flex: 1;
+  min-width: 0;
+}
 .habit-edit-main input[type='text'] {
   padding: 5px 8px;
 }
@@ -614,8 +629,8 @@ body.is-sorting * {
   -webkit-user-select: none;
   user-select: none;
 }
-.habit-edit.is-focus .habit-edit-main > label,
-.habit-edit.is-focus .habit-edit-main > input {
+.habit-edit.is-focus .habit-name-row > label,
+.habit-edit.is-focus .habit-name-row > input {
   font-weight: 600;
 }
 .habit-meta {

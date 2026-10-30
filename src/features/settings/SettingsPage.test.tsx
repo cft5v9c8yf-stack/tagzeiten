@@ -456,6 +456,16 @@ describe('Mehr: Gewohnheiten', () => {
     expect(within(screen.getByLabelText('Wann: Long Run')).queryByRole('option', { name: 'einmal im Monat' })).not.toBeNull();
   });
 
+  it('keeps the row short: why a habit of the house does not show yet stands behind an "i"', async () => {
+    await renderAt('/mehr/gewohnheiten', <SettingsPage />, (s) =>
+      s.updateProfile((p) => ({ ...p, habits: p.habits.map((h) => (h.id === 'familyDevotion' ? { ...h, active: true } : h)) }), { immediate: true }),
+    );
+    const info = await screen.findByRole('button', { name: 'Info zu Familienandacht' });
+    fireEvent.click(info);
+    expect(screen.getByRole('note').textContent).toContain('erscheint, sobald unter „Mein Haus“');
+    expect(document.querySelector('.habit-waits')).toBeNull();
+  });
+
   it('lists only the switched-on habits when asked, and keeps one just switched off to switch on again', async () => {
     const { store } = await renderAt('/mehr/gewohnheiten', <SettingsPage />);
     const filter = await screen.findByRole('switch', { name: 'Nur eingeschaltete zeigen' });

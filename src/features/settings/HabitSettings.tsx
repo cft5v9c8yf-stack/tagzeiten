@@ -28,7 +28,7 @@ import {
 } from '../../domain/habits';
 import { WEEKDAY_LONG, WEEKDAY_SHORT, weekdayOf, type Weekday } from '../../domain/dates';
 import { GripIcon, StarIcon } from '../../ui/Icons';
-import { Section } from '../../ui/Section';
+import { InfoToggle, Section } from '../../ui/Section';
 import { useSortable } from '../../ui/useSortable';
 import type { Habit } from '../../domain/model';
 import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
@@ -132,26 +132,29 @@ function HabitRow({
         onChange={(e) => update((hs) => setHabitActive(hs, habit.id, e.target.checked))}
       />
       <div className="habit-edit-main">
-        {habit.preset ? (
-          <label htmlFor={id}>{habit.name}</label>
-        ) : (
-          <>
-            <label htmlFor={id} className="visually-hidden">
-              {habit.name}
-            </label>
-            <input
-              type="text"
-              aria-label={`Name der Gewohnheit ${habit.name}`}
-              defaultValue={habit.name}
-              onBlur={(e) => update((hs) => renameHabit(hs, habit.id, e.target.value))}
-            />
-          </>
-        )}
+        <div className="habit-name-row">
+          {habit.preset ? (
+            <label htmlFor={id}>{habit.name}</label>
+          ) : (
+            <>
+              <label htmlFor={id} className="visually-hidden">
+                {habit.name}
+              </label>
+              <input
+                type="text"
+                aria-label={`Name der Gewohnheit ${habit.name}`}
+                defaultValue={habit.name}
+                onBlur={(e) => update((hs) => renameHabit(hs, habit.id, e.target.value))}
+              />
+            </>
+          )}
+          {/* Why it does not show yet: behind the "i", so the row stays short. */}
+          {habit.active && !fitsHouse(habit, profile.house) && (
+            <InfoToggle title={habit.name}>{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</InfoToggle>
+          )}
+        </div>
         <span className="habit-meta">
           <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : habit.desert ? 'aus der Wüstenzeit' : 'eigene'}</span>
-          {habit.active && !fitsHouse(habit, profile.house) && (
-            <span className="habit-kind habit-waits">{NEED_NOTE[HABIT_NEEDS[habit.id]!]}</span>
-          )}
           {!habit.auto && (
             <WhenSelect
               label={`Wann: ${habit.name}`}
