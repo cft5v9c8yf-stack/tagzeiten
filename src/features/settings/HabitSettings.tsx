@@ -154,7 +154,7 @@ function HabitRow({
           )}
         </div>
         <span className="habit-meta">
-          <span className="habit-kind">{habit.auto ? 'aus dem Ablauf' : habit.preset ? 'Vorlage' : habit.desert ? 'aus der Wüstenzeit' : 'eigene'}</span>
+          {(habit.auto || habit.desert) && <span className="habit-origin">{habit.auto ? 'aus dem Ablauf' : 'aus der Wüstenzeit'}</span>}
           {!habit.auto && (
             <WhenSelect
               label={`Wann: ${habit.name}`}

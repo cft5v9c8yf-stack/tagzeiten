@@ -464,15 +464,32 @@ body.no-scroll {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 .habit-name-row .info-bubble {
   right: -52px;
 }
-.habit-name-row input[type='text'] {
+.habit-name-row > label {
+  min-width: 0;
+  line-height: 1.25;
+}
+/* A name of one's own reads like the others; the frame shows while editing. */
+.habit-edit-main .habit-name-row input[type='text'] {
   flex: 1;
   min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border-color: transparent;
+  background: transparent;
+  font-size: inherit;
+  line-height: 1.25;
+}
+.habit-edit-main .habit-name-row input[type='text']:focus {
+  border-color: var(--muted);
+}
+.habit-meta > * {
+  white-space: nowrap;
 }
 .habit-edit-main input[type='text'] {
   padding: 5px 8px;
@@ -2494,15 +2511,33 @@ mark.placeholder {
 .habit-card .add-habit {
   padding-bottom: 12px;
 }
-/* How often a weekly habit is meant: a small select beside the kind label. */
+/* Two lines to a habit: the name, and when it is meant (with "löschen" for one's own). */
+.habit-meta {
+  flex-wrap: nowrap;
+}
+/* When a habit is meant: quiet text with a small arrow, no frame. */
 .habit-meta select.habit-times {
   width: auto;
   min-height: 0;
-  padding: 1px 22px 1px 8px;
-  border-radius: 999px;
-  font: 0.72rem/1.5 var(--sans);
-  background-position: right 6px center;
+  padding: 0 16px 0 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--muted);
+  font: 0.82rem/1.5 var(--sans);
+  background-position: right 0 center;
   background-size: 10px;
+  field-sizing: content;
+}
+/* The "i" beside a name: small and light. */
+.habit-name-row .info-btn {
+  --ibtn: 18px;
+  border-width: 1px;
+  font-size: 0.7rem;
+}
+/* Where the row comes from, when it is not the plain template: plain text, no pill. */
+.habit-origin {
+  font-size: 0.78rem;
 }
 /* Above the lists of habits: show only those switched on. */
 .habit-filter {
