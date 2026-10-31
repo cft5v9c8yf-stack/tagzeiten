@@ -254,9 +254,3 @@ describe('"Bitte und Fürbitte"', () => {
     for (const o of both) expect(ORDERS).not.toContain(o);
   });
 });
-
-function late(o: Order): PartKind[] {
-  return partsOf(o)
-    .map((p) => p.kind)
-    .filter((k) => ['alignment', 'review', 'examination', 'confession'].includes(k));
-}
