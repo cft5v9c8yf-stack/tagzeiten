@@ -336,10 +336,10 @@ export function useDisplayTiles(): Record<string, TileItem> {
           content: (
             <>
               <div className="field-like">
-                <span className="field-label">Stille Zeit</span>
+                <span className="field-label">Am Morgen</span>
                 <Segmented
                   grid
-                  label="Stille Zeit"
+                  label="Am Morgen"
                   value={profile.petition.morning ? 'petition' : 'order'}
                   onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, morning: v === 'petition' } }))}
                   options={[
@@ -349,10 +349,10 @@ export function useDisplayTiles(): Record<string, TileItem> {
                 />
               </div>
               <div className="field-like">
-                <span className="field-label">Vesper</span>
+                <span className="field-label">Am Abend</span>
                 <Segmented
                   grid
-                  label="Vesper"
+                  label="Am Abend"
                   value={profile.petition.evening ? 'petition' : 'order'}
                   onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, evening: v === 'petition' } }))}
                   options={[
@@ -362,8 +362,8 @@ export function useDisplayTiles(): Record<string, TileItem> {
                 />
               </div>
               <p className="small muted">
-                Das freie Gebet ist ein einziges Blatt: das Wort, dann dein Haus und deine Anliegen (Bitte und Fürbitte),
-                Dank, am Morgen die drei Dinge, Vaterunser und Segen. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
+                Das freie Gebet (Morgengebet, Abendgebet) ist ein einziges Blatt: das Wort, dann dein Haus und deine
+                Anliegen (Bitte und Fürbitte), Dank, Vaterunser und Segen; am Morgen danach die drei Dinge. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
                 Uhr, ohne Kurzform und ohne „Am Bett“; es gilt genauso wie die Gebetsordnung. Die Anliegen trägst du unter
                 Mehr → Gebet → Gebetsübersicht ein.
               </p>

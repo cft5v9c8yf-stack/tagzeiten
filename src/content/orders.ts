@@ -411,7 +411,16 @@ export const PETITION_MORNING: Order = {
   id: 'morning',
   form: 'full',
   title: 'Stille Zeit – Freies Gebet',
-  steps: [petitionStep('sheet', 'Freies Gebet')],
+  steps: [
+    petitionStep('sheet', 'Morgengebet'),
+    // After the prayer the day is looked at (rule 2): the counterpart of the evening's review.
+    {
+      id: 'alignment',
+      title: 'Die drei Dinge',
+      minutes: 0,
+      parts: [p('alignment', 'Die drei Dinge', { fields: ['morning.three.word', 'morning.three.house', 'morning.three.work'] })],
+    },
+  ],
 };
 
 export const PETITION_VESPERS: Order = {

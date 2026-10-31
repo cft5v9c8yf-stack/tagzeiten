@@ -35,7 +35,7 @@ async function renderMorning(prepare?: (s: Store) => void) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { name: 'Stille Zeit', level: 2 });
+  await screen.findByRole('heading', { name: /^(Stille Zeit|Morgengebet)$/, level: 2 });
   return store;
 }
 
@@ -163,8 +163,8 @@ describe('Stille Zeit without the bed', () => {
   });
 });
 
-describe('Stille Zeit as "Bitte und Fürbitte"', () => {
-  it('is one sheet: in the name of God, the Word, the concerns, thanks, the three things, blessing – no steps, no minutes', async () => {
+describe('Morgengebet (free prayer)', () => {
+  it('is the sheet, then the three things – no bedside prayer, no form switch, no minutes', async () => {
     const store = await renderMorning((st) =>
       st.updateProfile((p) => ({
         ...p,
@@ -173,6 +173,11 @@ describe('Stille Zeit as "Bitte und Fürbitte"', () => {
         prayer: { concerns: ['Die Kranken'], daily: ['Die Kranken'], weekly: {} },
       })),
     );
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Morgengebet');
+    const marks = within(screen.getByRole('navigation', { name: 'Ablauf: Morgengebet' }))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label'));
+    expect(marks).toEqual(['Morgengebet', 'Die drei Dinge']);
     const sheet = document.querySelector('.ps')!.textContent!;
     const at = (t: string) => sheet.indexOf(t);
     expect(at('Im Namen Gottes')).toBe(0);
@@ -181,15 +186,14 @@ describe('Stille Zeit as "Bitte und Fürbitte"', () => {
     expect(at('Maria – Kraft für die Woche')).toBeGreaterThan(0);
     expect(at('Ich trage')).toBeGreaterThan(at('Mein Haus'));
     expect(at('Dank')).toBeGreaterThan(at('Ich trage'));
-    // After the prayer, the three things for the day (rule 2), then Lord's Prayer and blessing.
-    expect(at('Die drei Dinge')).toBeGreaterThan(at('Dank'));
-    expect(at('Vaterunser')).toBeGreaterThan(at('Die drei Dinge'));
     expect(sheet.trim().endsWith('Das walte Gott Vater, Sohn und Heiliger Geist. Amen.')).toBe(true);
-    expect(screen.queryByRole('navigation', { name: 'Ablauf: Stille Zeit' })).toBeNull();
+    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(0);
     expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
-    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(3);
     expect(document.body.textContent).not.toMatch(/Min\.|Am Bett/);
-    fireEvent.click(screen.getByRole('button', { name: 'Stille Zeit abschließen' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Die drei Dinge' }));
+    await waitFor(() => expect(document.querySelectorAll('.flow-step input, .flow-step textarea')).toHaveLength(3));
+    fireEvent.click(screen.getByRole('button', { name: 'Morgengebet abschließen' }));
     await waitFor(() => expect(store.getDay(store.today()).morning.done).toBe(true));
   });
 });

@@ -235,12 +235,10 @@ describe('texts Andreas writes himself (CLAUDE.md, Arbeitsweise)', () => {
 describe('"Bitte und Fürbitte"', () => {
   const both = [PETITION_MORNING, PETITION_VESPERS];
 
-  it('is one sheet, with no examination and nothing that comes before the Word (rule 2)', () => {
-    for (const o of both) {
-      expect(o.steps).toHaveLength(1);
-      expect(partsOf(o).map((p) => p.kind)).toEqual(['petition-sheet']);
-      expect(late(o)).toEqual([]);
-    }
+  it('begins with the sheet (Word first); in the morning the three things come last (rule 2)', () => {
+    expect(partsOf(PETITION_VESPERS).map((p) => p.kind)).toEqual(['petition-sheet']);
+    expect(partsOf(PETITION_MORNING).map((p) => p.kind)).toEqual(['petition-sheet', 'alignment']);
+    for (const o of both) expect(['review', 'examination', 'confession']).not.toContain(partsOf(o)[0]!.kind);
   });
 
   it('has no minutes and no field for sins (rules 8 and 9)', () => {

@@ -163,13 +163,13 @@ export function PrayerWayStep() {
   );
   return (
     <>
-      <p className="ob-lead">Für die Stille Zeit am Morgen und die Vesper am Abend.</p>
+      <p className="ob-lead">Für dein Gebet am Morgen und am Abend.</p>
       <div className="ob-choices" role="group" aria-label="Wie du betest">
-        {card('order', 'Gebetsordnung', 'Die feste Ordnung der Kirche, Schritt für Schritt, mit Kurzform für knappe Tage.')}
+        {card('order', 'Gebetsordnung', 'Stille Zeit und Vesper in der festen Ordnung der Kirche, Schritt für Schritt, mit Kurzform für knappe Tage.')}
         {card(
           'petition',
           'Freies Gebet',
-          'Ein Blatt auf einen Blick: das Wort, dein Haus und deine Anliegen, Dank und Segen. Ohne Uhr.',
+          'Morgen- und Abendgebet auf einem Blatt: das Wort, dein Haus und deine Anliegen, Dank und Segen. Ohne Uhr.',
         )}
       </div>
       <p className="ob-text">

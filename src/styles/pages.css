@@ -923,11 +923,12 @@ body.is-sorting * {
 
 /* ------------------------------------------------- Bitte und Fürbitte */
 /* One quiet sheet, taken in at a glance: small labels, the Word large, the concerns in two columns. */
-.petition-sheet,
+.flow-step.step-sheet,
 .flow-step.step-petition {
   padding-top: var(--card-pad);
 }
-/* In the Vesper the sheet stands in the row of the evening; its title is for screen readers only. */
+/* The sheet stands in the row of the morning or the evening; its title is for screen readers only. */
+.flow-step.step-sheet .flow-title,
 .flow-step.step-petition .flow-title {
   position: absolute;
   width: 1px;

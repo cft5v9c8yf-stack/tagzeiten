@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { morningIcon } from '../../content/flowIcons';
-import { getOrder, morningOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
+import { getOrder, morningOrder, ORDER_MINUTES, PETITION_MORNING, RUBRICS, type Step as OrderStepDef } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
@@ -53,8 +53,9 @@ function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
 }
 
 /**
- * "Freies Gebet": the whole Stille Zeit on one sheet, read at a glance,
- * then prayed with the phone laid aside. No bedside prayer, no fields, no
+ * "Freies Gebet" in the morning, the Morgengebet: the whole prayer on one sheet,
+ * read at a glance and prayed with the phone laid aside, then the three things
+ * for the day – the counterpart of the evening's review. No bedside prayer, no
  * minutes; closing it fulfils the Stille Zeit as fully as the order (rule 8).
  */
 function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) {
@@ -62,29 +63,55 @@ function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) 
   const toast = useToast();
   const day = useDay(date);
   const done = day.morning.done;
-  const setDone = (value: boolean) => {
-    // The sheet names the day's portion: closing it keeps the reading, as the Word does in the order.
-    if (value && (isToday || day.reading)) store.setReadingDone(date, true);
-    store.updateDay(date, (d) => ({ ...d, morning: { ...d.morning, steps: { ...d.morning.steps, sheet: value }, done: value } }), {
-      immediate: true,
-    });
-    if (value) toast('Stille Zeit abgeschlossen');
+  const [sheet, three] = PETITION_MORNING.steps as [OrderStepDef, OrderStepDef];
+  const [current, setCurrent] = useState<number | null>(() => (done ? null : day.morning.steps[sheet.id] ? 1 : 0));
+  const update = (fn: (m: MorningEntry) => MorningEntry) =>
+    store.updateDay(date, (d) => ({ ...d, morning: fn(d.morning) }), { immediate: true });
+
+  const leaveSheet = () => {
+    // The sheet names the day's portion: it keeps the reading, as the Word does in the order.
+    if (isToday || day.reading) store.setReadingDone(date, true);
+    update((m) => ({ ...m, steps: { ...m.steps, [sheet.id]: true } }));
+    setCurrent(1);
   };
+  const close = () => {
+    update((m) => ({ ...m, steps: { ...m.steps, [sheet.id]: true, [three.id]: true }, done: true }));
+    setCurrent(null);
+    toast('Morgengebet abgeschlossen');
+  };
+  const reopen = () => {
+    update((m) => {
+      const steps = { ...m.steps };
+      delete steps[three.id];
+      return { ...m, steps, done: false };
+    });
+    setCurrent(1);
+  };
+
+  const flow: FlowStep[] = [
+    { id: sheet.id, title: sheet.title, short: sheet.title, icon: 'sunrise', done: !!day.morning.steps[sheet.id] },
+    { id: three.id, title: three.title, short: three.title, icon: 'compass', done: !!day.morning.steps[three.id] },
+  ];
+  const footer =
+    current === 0 ? (
+      <button type="button" className="btn primary" onClick={leaveSheet}>
+        Weiter zu: {three.title}
+      </button>
+    ) : current === 1 && !done ? (
+      <button type="button" className="btn primary" onClick={close}>
+        Morgengebet abschließen
+      </button>
+    ) : null;
+
   return (
     <>
-      <OrderHead title="Stille Zeit" />
-      <section className="flow-step petition-sheet" aria-label="Freies Gebet">
-        <PetitionSheet date={date} order="morning" />
-        {!done && (
-          <div className="flow-footer">
-            <button type="button" className="btn primary" onClick={() => setDone(true)}>
-              Stille Zeit abschließen
-            </button>
-          </div>
-        )}
-      </section>
-      {done && (
-        <DonePanel note="Stille Zeit abgeschlossen." onReopen={() => setDone(false)}>
+      <OrderHead title="Morgengebet" />
+      <StepFlow label="Morgengebet" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
+        {current === 0 && <PetitionSheet date={date} order="morning" />}
+        {current === 1 && <OrderPart part={three.parts[0]!} ctx={{ order: 'morning', form: 'full', date }} showTitle={false} />}
+      </StepFlow>
+      {done && current === null && (
+        <DonePanel note="Morgengebet gebetet." onReopen={reopen}>
           {RUBRICS.sendOff}
         </DonePanel>
       )}
