@@ -224,7 +224,7 @@ describe('Vesper as "Bitte und Fürbitte"', () => {
     const names = within(chainOf('Abendgebet'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label') ?? b.textContent);
-    expect(names.join(' ')).toMatch(/^Freies Gebet.*Nachtgebet/);
+    expect(names.join(' ')).toMatch(/^Abendgebet.*Nachtgebet/);
     expect(document.querySelector('.ps')!.textContent).toMatch(/^Im Namen Gottes.*Das Wort.*Bitte und Fürbitte.*Dank.*Das walte Gott/);
     // The three things belong to the morning; the evening looks back on them in the Nachtgebet.
     expect(document.querySelector('.ps')!.textContent).not.toContain('Die drei Dinge');
@@ -242,7 +242,7 @@ describe('Abendgebet (free prayer) without the Nachtgebet', () => {
     const names = within(chainOf('Abendgebet'))
       .getAllByRole('button')
       .map((b) => b.getAttribute('aria-label'));
-    expect(names).toEqual(['Freies Gebet', 'Rückschau', 'Prüfung und Zuspruch']);
+    expect(names).toEqual(['Abendgebet', 'Rückschau', 'Prüfung und Zuspruch']);
     fireEvent.click(within(chainOf('Abendgebet')).getByRole('button', { name: 'Rückschau' }));
     await screen.findByRole('heading', { name: 'Rückschau', level: 3 });
     expect(document.querySelector('.part-thanks')).toBeNull();

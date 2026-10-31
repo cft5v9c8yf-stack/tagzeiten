@@ -400,9 +400,9 @@ const COMPLINE_SHORT: Order = {
  * Prayer and blessing (features/liturgy/PetitionSheet). Word first (rule 2).
  * Not in ORDERS: it has no minutes and no short form, it is chosen under Mehr.
  */
-const petitionStep = (id: string): Step => ({
+const petitionStep = (id: string, title: string): Step => ({
   id,
-  title: 'Freies Gebet',
+  title,
   minutes: 0,
   parts: [p('petition-sheet', 'Freies Gebet')],
 });
@@ -411,14 +411,14 @@ export const PETITION_MORNING: Order = {
   id: 'morning',
   form: 'full',
   title: 'Stille Zeit – Freies Gebet',
-  steps: [petitionStep('sheet')],
+  steps: [petitionStep('sheet', 'Freies Gebet')],
 };
 
 export const PETITION_VESPERS: Order = {
   id: 'vespers',
   form: 'full',
   title: 'Vesper – Freies Gebet',
-  steps: [petitionStep('petition')],
+  steps: [petitionStep('petition', 'Abendgebet')],
 };
 
 export const ORDERS: readonly Order[] = [
