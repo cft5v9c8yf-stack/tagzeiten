@@ -274,6 +274,19 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
   mit einem Satz zu Walthers Zeitschrift); der Bereich selbst heißt weiter „Lehre“. Noch nicht entschieden.
 - Zur Schrift der App siehe oben: erst vor dem Druck der Visitenkarten.
 
+## Feste des Kirchenjahres: Reformationstag und Erntedankfest
+
+Aufgenommen am 31.10.2026. Am Gedenktag der Reformation (31.10.) zeigt Henoch nur den Namen in der
+Kopfzeile von „Heute“, keine Lesungen und keine Texte; beim Erntedankfest (erster Sonntag im Oktober)
+ist es ebenso. Beide Feste sollen mit eigenen Lesungen (Epistel und Evangelium, als Bibelstellen mit
+Zusammenfassung in den Worten der App) und, soweit vorhanden, mit der Andacht aus Dieffenbachs
+Haus-Agende erscheinen, wie bisher der 2. Christtag und Neujahr (`FEAST_EPISTLE_LECTIONS` in
+`src/content/lections.ts`, angezeigt in `SundayPage.tsx`). Offen: Welche Stellen gelten (Andreas
+liefert sie oder die Seite aus Dieffenbach; im Repository liegt von der Haus-Agende nur der Advent),
+und Erntedank fällt auf einen Sonntag, braucht also eine Lösung neben der Sonntagslesung. Prüfen,
+ob weitere Feste (Michaelis, Allerheiligen, Buß- und Bettag) gleich mitkommen. Geistliche Texte
+schreibt Claude nicht selbst; bis zur Lieferung steht ein Platzhalter `[TEXT VON ANDREAS: …]`.
+
 ## Mögliche Neuerungen (Ideen, nicht beschlossen)
 
 - **Gerätewechsel iPhone/iPad:** Heute hat jedes Gerät seinen eigenen Bestand (Regel 10); Sichern und
