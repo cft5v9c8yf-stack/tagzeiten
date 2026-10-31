@@ -2,7 +2,8 @@
  * "Freies Gebet": the whole prayer on one sheet, to be taken in at a
  * glance and then prayed with the phone laid aside. Word first (rule 2), then
  * the house, the concerns carried every day and those of the weekday, in that
- * order (rule 18), thanks, Lord's Prayer and blessing. Nothing to fill in.
+ * order (rule 18), thanks, in the morning the three things, Lord's Prayer and
+ * blessing. Nothing else to fill in.
  */
 import { useEffect } from 'react';
 import { BENEDICAMUS, BLESSING, IN_THE_NAME, LORDS_PRAYER_LUTHER, SIGN_OF_THE_CROSS } from '../../content/liturgy';
@@ -14,6 +15,15 @@ import { childrenOf, wifeOf } from '../../domain/house';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText, VersicleView } from '../../ui/PrayerText';
+import type { Part } from '../../content/orders';
+import { Alignment } from './Alignment';
+
+/** In the morning, after the prayer: the three things for the day (rule 2), as in the order. */
+const THREE: Part = {
+  kind: 'alignment',
+  title: 'Die drei Dinge',
+  fields: ['morning.three.word', 'morning.three.house', 'morning.three.work'],
+};
 
 /** The day's portions of the reading plan, "1. Mose 1 · Matthäus 1". */
 function useReadingLine(date: DateKey): string {
@@ -113,6 +123,14 @@ export function PetitionSheet({ date, order }: { date: DateKey; order: 'morning'
       <p className="ps-label">Dank</p>
       <p className="ps-question">Wofür dankst du heute?</p>
       <hr className="ps-rule" />
+
+      {order === 'morning' && (
+        <>
+          <p className="ps-label">Die drei Dinge</p>
+          <Alignment part={THREE} ctx={{ order: 'morning', form: 'full', date }} />
+          <hr className="ps-rule" />
+        </>
+      )}
 
       <details className="ps-texts">
         <summary>

@@ -363,7 +363,7 @@ export function useDisplayTiles(): Record<string, TileItem> {
               </div>
               <p className="small muted">
                 Das freie Gebet ist ein einziges Blatt: das Wort, dann dein Haus und deine Anliegen (Bitte und Fürbitte),
-                Dank, Vaterunser und Segen. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
+                Dank, am Morgen die drei Dinge, Vaterunser und Segen. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
                 Uhr, ohne Kurzform und ohne „Am Bett“; es gilt genauso wie die Gebetsordnung. Die Anliegen trägst du unter
                 Mehr → Gebet → Gebetsübersicht ein.
               </p>

@@ -164,7 +164,7 @@ describe('Stille Zeit without the bed', () => {
 });
 
 describe('Stille Zeit as "Bitte und Fürbitte"', () => {
-  it('is one sheet: in the name of God, the Word, the concerns, thanks, blessing – no steps, no fields, no minutes', async () => {
+  it('is one sheet: in the name of God, the Word, the concerns, thanks, the three things, blessing – no steps, no minutes', async () => {
     const store = await renderMorning((st) =>
       st.updateProfile((p) => ({
         ...p,
@@ -181,10 +181,13 @@ describe('Stille Zeit as "Bitte und Fürbitte"', () => {
     expect(at('Maria – Kraft für die Woche')).toBeGreaterThan(0);
     expect(at('Ich trage')).toBeGreaterThan(at('Mein Haus'));
     expect(at('Dank')).toBeGreaterThan(at('Ich trage'));
+    // After the prayer, the three things for the day (rule 2), then Lord's Prayer and blessing.
+    expect(at('Die drei Dinge')).toBeGreaterThan(at('Dank'));
+    expect(at('Vaterunser')).toBeGreaterThan(at('Die drei Dinge'));
     expect(sheet.trim().endsWith('Das walte Gott Vater, Sohn und Heiliger Geist. Amen.')).toBe(true);
     expect(screen.queryByRole('navigation', { name: 'Ablauf: Stille Zeit' })).toBeNull();
     expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
-    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(0);
+    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(3);
     expect(document.body.textContent).not.toMatch(/Min\.|Am Bett/);
     fireEvent.click(screen.getByRole('button', { name: 'Stille Zeit abschließen' }));
     await waitFor(() => expect(store.getDay(store.today()).morning.done).toBe(true));
