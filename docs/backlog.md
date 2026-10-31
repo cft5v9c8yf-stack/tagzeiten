@@ -64,6 +64,17 @@ Erweiterung von `src/domain/prayer.ts` (Bereich) mit Umzug alter Daten;
 `PrayerSettings.tsx` wird „Was ich trage“. Zwei Portionen bei der Freigabe: erst
 Form und Seite, dann Pflege unter Mehr.
 
+## Einrichtung: alle Lesepläne zur Wahl
+
+Gewünscht (31.10.2026): In der Einrichtung, Seite „Dein Leseplan“, gibt es nur
+„Altes und Neues Testament“, „Nur Altes Testament“ und „Nur Neues Testament“
+(`PlanStep` in `src/features/onboarding/OnboardingSteps.tsx`). Unter „Wort“
+(`src/features/settings/PlanSettings.tsx`) stehen außerdem „Christus finden“,
+„Mit Paulus unterwegs“, „Bibel in einem Jahr“ und der eigene Plan. Diese sollen
+schon in der Einrichtung wählbar sein, ruhig und übersichtlich wie die Karten
+dort. „Bewährung und Nachfolge“ gehört zur Wüstenzeit und bleibt dort.
+Eigene Neuerung; wartet, bis „Freies Gebet“ (1.38.0) freigegeben ist.
+
 ## Dogmatik (Pieper) durchsehen
 
 **Auf Eis gelegt am 17.10.2026** (Wunsch von Andreas). Aussehen:
