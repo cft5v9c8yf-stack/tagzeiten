@@ -840,3 +840,8 @@ header.top .search-link:hover,
   vertical-align: -3px;
   margin-left: 6px;
 }
+
+/* A reference of the reading plan breaks only between references (ui/RefLabel). */
+.ref-piece {
+  white-space: nowrap;
+}
