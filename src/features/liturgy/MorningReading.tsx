@@ -18,6 +18,7 @@ import type { Day } from '../../domain/model';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { DayField } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
+import { RefLabel } from '../../ui/RefLabel';
 import type { PartContext } from './OrderPart';
 
 /** Today's portions with links. Shared with the Today page. */
@@ -35,7 +36,9 @@ export function ReadingRefs({ date, large = true }: { date: DateKey; large?: boo
         return p ? (
           <div key={t.def.id} className="ref">
             <span className="track">{t.def.label}</span>
-            <span className="ref-text">{portionLabel(t, p)}</span>
+            <span className="ref-text">
+              <RefLabel text={portionLabel(t, p)} />
+            </span>
           </div>
         ) : (
           <div key={t.def.id} className="ref">
