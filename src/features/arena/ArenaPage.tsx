@@ -539,6 +539,8 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
         <div
           className={`arena-swipe-line${swipe.dragging ? ' is-swiping' : ''}`}
           style={{ transform: `translateX(${swipe.offset}px)` }}
+          // A link would otherwise be dragged away with a mouse instead of swiped.
+          onDragStart={(e) => e.preventDefault()}
           {...swipe.handlers}
         >
           {children}
