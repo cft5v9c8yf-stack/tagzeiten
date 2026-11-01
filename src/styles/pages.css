@@ -1618,6 +1618,75 @@ body.is-sorting * {
 .arena-item .arena-card {
   padding-right: 52px;
 }
+/* Swiping an entry, as with the habits: archive and delete behind it on the right, pinning on the left.
+   Clipped only while it moves, so the menu of the three dots can open below the card. */
+.arena-swipe {
+  position: relative;
+  border-radius: var(--radius-card);
+}
+.arena-swipe.is-moving {
+  overflow: clip;
+}
+.arena-swipe-line {
+  position: relative;
+  touch-action: pan-y;
+  transition: transform 0.18s ease;
+}
+.arena-swipe-line.is-swiping {
+  transition: none;
+}
+.arena-swipe-pin,
+.arena-swipe-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: none;
+}
+.arena-swipe-pin {
+  left: 0;
+  right: 0;
+  align-items: center;
+  gap: 8px;
+  padding-left: 20px;
+  background: var(--gold-soft);
+  color: var(--ink);
+  font: 600 0.84rem var(--sans);
+}
+.arena-swipe-pin svg {
+  color: var(--gold);
+}
+.arena-swipe.is-moving:not(.is-left) .arena-swipe-pin {
+  display: flex;
+}
+.arena-swipe-actions {
+  right: 0;
+  width: 132px;
+  grid-template-columns: 1fr 1fr;
+}
+.arena-swipe.is-left .arena-swipe-actions {
+  display: grid;
+}
+.arena-swipe-btn {
+  appearance: none;
+  border: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  padding: 0 4px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 600 0.74rem var(--sans);
+  cursor: pointer;
+}
+.arena-swipe-btn.is-delete {
+  background: var(--ink);
+  color: var(--paper);
+}
+.arena-swipe-btn.is-asking {
+  font-size: 0.78rem;
+  line-height: 1.2;
+}
 .arena-item .entry-menu {
   position: absolute;
   top: 6px;
