@@ -11,7 +11,7 @@ import { TRACTATUS, TRACTATUS_SOURCE } from '../../content/tractatus';
 import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
-import { BAPTISMAL_COVENANT, PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
+import { BAPTISM_REMEMBRANCE, PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { catechismFor, offsetForChiefPart, pieceId } from '../../domain/catechismDay';
@@ -299,18 +299,9 @@ function Appendix({ slug, back }: { slug: (typeof APPENDICES)[number]['slug']; b
         )}
         {slug === 'taufbund' && (
           <>
-            {BAPTISMAL_COVENANT.parts.map((part) => (
-              <div key={part.rubric} className="covenant">
-                <Rubric>{part.rubric}</Rubric>
-                {part.questions.map((q) => (
-                  <div key={q} className="covenant-q">
-                    <p>{q}</p>
-                    <p className="covenant-a">{BAPTISMAL_COVENANT.answer}</p>
-                  </div>
-                ))}
-              </div>
-            ))}
-            <p className="small muted">{BAPTISMAL_COVENANT.source}</p>
+            {/* The same words as at the bed in the morning and in the Nachtgebet. */}
+            <PrayerText text={BAPTISM_REMEMBRANCE} />
+            <p className="small muted">So betest du es auch morgens am Bett und abends im Nachtgebet.</p>
           </>
         )}
         {slug === 'privatbeichte' && (
