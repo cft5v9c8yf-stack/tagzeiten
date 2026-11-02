@@ -108,6 +108,7 @@ export function contentDocs(today: DateKey): SearchDoc[] {
     [...L.PRIVATE_CONFESSION.intro, lines(L.PRIVATE_CONFESSION.request), lines(L.PRIVATE_CONFESSION.confession), lines(L.PRIVATE_CONFESSION.absolution)].join(' '),
     '/katechismus/privatbeichte',
   );
+  add('Lehre · Erneuerung des Taufbundes', 'Erneuerung des Taufbundes', lines(L.BAPTISMAL_COVENANT), '/katechismus/taufbund');
   for (const part of CHURCH_YEAR_INTRO) add('Lehre · Das Kirchenjahr', part.heading, part.paragraphs.join(' '), '/katechismus/kirchenjahr');
 
   // Sonntag

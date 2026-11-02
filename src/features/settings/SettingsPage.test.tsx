@@ -854,7 +854,7 @@ describe('Katechismus', () => {
     await renderAt('/katechismus', <CatechismPage />);
     await screen.findByRole('heading', { name: 'Hauptstücke' });
     const tiles = [...document.querySelectorAll('#cat-parts ~ .overview-list .overview-row, .cat-overview .overview-row')];
-    expect(document.querySelectorAll('.overview-row')).toHaveLength(12); // the Book of Concord, 6 chief parts, 5 appendices
+    expect(document.querySelectorAll('.overview-row')).toHaveLength(13); // the Book of Concord, 6 chief parts, 6 appendices
     expect(tiles[0]!.textContent).toContain('0 von 11 Stücken auswendig');
     expect(document.querySelector('.overview-row.current')!.textContent).toContain('diese Woche');
     // Orientation, no tracker: no dates, no streaks.

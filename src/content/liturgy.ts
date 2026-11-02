@@ -311,6 +311,15 @@ export const TABLE_PRAYER_AFTER = {
 
 /* ------------------------------------------------ private confession (appendix) */
 
+/**
+ * The renewal of the baptismal covenant, word for word as given by Andreas
+ * (2 November 2026), under Lehre: renouncing the devil, giving oneself to the
+ * Triune God.
+ */
+export const BAPTISMAL_COVENANT = text([
+  'Ich entsage dem Teufel und all seinem Werk und Wesen und übergebe mich dir, o dreieiniger Gott, Vater, Sohn und Heiliger Geist, im Glauben, Gehorsam und ernstlichen Vorsatz: Dir treu zu sein bis an mein Ende. Amen.',
+]);
+
 export const PRIVATE_CONFESSION = {
   intro: [
     'Eigener Termin, monatlich.',

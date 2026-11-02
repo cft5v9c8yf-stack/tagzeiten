@@ -15,9 +15,10 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '1.37.2',
     date: '2026-10-31',
-    title: 'Bibelstellen brechen sauber um',
+    title: 'Bibelstellen brechen sauber um, Erneuerung des Taufbundes',
     changes: [
       { area: 'Wort', text: 'Reicht eine Zeile nicht, bricht eine Lesung jetzt zwischen zwei Bibelstellen um, nicht mitten in einer: „Apostelgeschichte 18;“ und „1. Thessalonicher 1“ stehen dann je in einer Zeile, statt dass die Kapitelzahl allein in die nächste rutscht. Das gilt unter „Wort“ (Heute lesen, Danach, Leseplan einstellen), unter „Heute“, in der Stillen Zeit und in der Wüstenzeit.' },
+      { area: 'Lehre', text: 'Unter „Lesen“ steht jetzt „Erneuerung des Taufbundes“: „Ich entsage dem Teufel und all seinem Werk und Wesen und übergebe mich dir, o dreieiniger Gott, Vater, Sohn und Heiliger Geist …“ Auch die Suche findet den Text.' },
     ],
   },
   {

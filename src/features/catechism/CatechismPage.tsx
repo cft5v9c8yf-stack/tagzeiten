@@ -11,7 +11,7 @@ import { TRACTATUS, TRACTATUS_SOURCE } from '../../content/tractatus';
 import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
-import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
+import { BAPTISMAL_COVENANT, PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { catechismFor, offsetForChiefPart, pieceId } from '../../domain/catechismDay';
@@ -297,6 +297,7 @@ function Appendix({ slug, back }: { slug: (typeof APPENDICES)[number]['slug']; b
             </ul>
           </>
         )}
+        {slug === 'taufbund' && <PrayerText text={BAPTISMAL_COVENANT} />}
         {slug === 'privatbeichte' && (
           <>
             {PRIVATE_CONFESSION.intro.map((t) => (
