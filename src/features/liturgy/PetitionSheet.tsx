@@ -16,9 +16,10 @@ import { childrenOf, wifeOf } from '../../domain/house';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { BibleRef } from '../../ui/BibleRef';
 import { PrayerText, VersicleView } from '../../ui/PrayerText';
+import { RefLabel } from '../../ui/RefLabel';
 
-/** The day's portions of the reading plan, "1. Mose 1 · Matthäus 1". */
-function useReadingLine(date: DateKey): string {
+/** The day's portions of the reading plan, one per track ("1. Mose 1", "Matthäus 1"). */
+function useReadingLine(date: DateKey): string[] {
   const store = useStore();
   useStoreVersion();
   // Today receives its portion when the reading is first shown.
@@ -33,8 +34,7 @@ function useReadingLine(date: DateKey): string {
       const p = i === undefined ? undefined : t.portions[i];
       return p ? portionLabel(t, p) : '';
     })
-    .filter(Boolean)
-    .join(' · ');
+    .filter(Boolean);
 }
 
 function Concern({ name, concern }: { name: string; concern?: string }) {
@@ -69,7 +69,16 @@ export function PetitionSheet({ date, order }: { date: DateKey; order: 'morning'
         <BibleRef reference={psalmRef(ps.psalm)} />
       </p>
       <p className="ps-antiphon">{ps.antiphon}</p>
-      {reading && <p className="ps-reading">{reading}</p>}
+      {reading.length > 0 && (
+        <p className="ps-reading">
+          {reading.map((r, i) => (
+            <span key={i}>
+              {i > 0 && ' · '}
+              <RefLabel text={r} />
+            </span>
+          ))}
+        </p>
+      )}
       <hr className="ps-rule" />
 
       <p className="ps-label">Bitte und Fürbitte</p>

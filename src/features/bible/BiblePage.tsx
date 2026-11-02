@@ -9,6 +9,7 @@ import { Tick } from '../../ui/Tick';
 import { Timer } from '../../ui/Timer';
 import { readingTimer } from '../../ui/timerState';
 import { MethodHelpBody, ReadingRefs } from '../liturgy/MorningReading';
+import { RefLabel } from '../../ui/RefLabel';
 import { PlanInfo, PlanSettings } from '../settings/PlanSettings';
 
 const AHEAD = 5;
@@ -35,7 +36,7 @@ function NextPortions({ date }: { date: string }) {
             <ol className="next-list">
               {next.map((p, i) => (
                 <li key={i}>
-                  {portionLabel(t, p)}
+                  <RefLabel text={portionLabel(t, p)} />
                 </li>
               ))}
             </ol>

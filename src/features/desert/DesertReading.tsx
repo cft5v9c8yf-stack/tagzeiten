@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { RefLabel } from '../../ui/RefLabel';
 import { START_PLAN_ID } from '../../content/readingPlans';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
@@ -39,7 +40,14 @@ export function DesertReadingDay({ run, date }: { run: WinterArcRun; date: DateK
         Lesung
         {reading.done && <span className="title-state"> · gelesen</span>}
       </h5>
-      <p className="desert-reading-ref">{labels.join(' · ')}</p>
+      <p className="desert-reading-ref">
+        {labels.map((l, i) => (
+          <span key={i}>
+            {i > 0 && ' · '}
+            <RefLabel text={l} />
+          </span>
+        ))}
+      </p>
       <p className="small muted">
         {section ? `${plan.def.name} · Abschnitt ${section.section} von ${section.sections}` : plan.def.name}
       </p>

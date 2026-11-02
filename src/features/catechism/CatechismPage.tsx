@@ -11,7 +11,7 @@ import { TRACTATUS, TRACTATUS_SOURCE } from '../../content/tractatus';
 import { CONCORDIA_CONTENTS, CONCORDIA_INTRO, CONCORDIA_NOTE } from '../../content/concordia';
 import { CREEDS } from '../../content/creeds';
 import { CATECHISM_WITH_CHILDREN_HABIT } from '../../content/habits';
-import { PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
+import { BED_PRAYERS, PRIVATE_CONFESSION, TABLE_PRAYER_AFTER, TABLE_PRAYER_BEFORE } from '../../content/liturgy';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDayLookup, useProfile, useStore } from '../../data/hooks';
 import { catechismFor, offsetForChiefPart, pieceId } from '../../domain/catechismDay';
@@ -295,6 +295,28 @@ function Appendix({ slug, back }: { slug: (typeof APPENDICES)[number]['slug']; b
                 </li>
               ))}
             </ul>
+          </>
+        )}
+        {slug === 'taufbund' && (
+          <>
+            <p className="cat-sub">{BED_PRAYERS.title}</p>
+            <p className="small">{BED_PRAYERS.after}</p>
+            <p className="small muted">{BED_PRAYERS.note}</p>
+            {(
+              [
+                ['Morgensegen', BED_PRAYERS.morning],
+                ['Abendsegen', BED_PRAYERS.evening],
+              ] as const
+            ).map(([title, paragraphs]) => (
+              <section key={title}>
+                <h3 className="cat-sub">{title}</h3>
+                <div className="pray">
+                  {paragraphs.map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+                </div>
+              </section>
+            ))}
           </>
         )}
         {slug === 'privatbeichte' && (

@@ -313,6 +313,38 @@ export const TABLE_PRAYER_AFTER = {
 
 /* ------------------------------------------------ private confession (appendix) */
 
+/**
+ * "Gebete – Morgens & Abends, nach Dr. Martin Luther": morning and evening
+ * blessing with the renewal of the baptismal covenant, word for word as given
+ * by Andreas (2 November 2026), under Lehre, "Erneuerung des Taufbundes".
+ * One paragraph per entry.
+ */
+export const BED_PRAYERS = {
+  title: 'Gebete – Morgens & Abends',
+  after: 'Nach Dr. Martin Luther',
+  note: 'Luthers Gebetszusatz wurde sprachlich angepasst, aber inhaltlich nicht verändert',
+  morning: [
+    'Das walte Gott Vater, Sohn und Heiliger Geist!',
+    'Amen!',
+    'Ich glaube an Gott den Vater, den Allmächtigen, Schöpfer Himmels und der Erde.',
+    'Ich glaube an Jesus Christus, Gottes eingebornen Sohn, unsern Herrn, der empfangen ist vom heiligen Geist, geboren von der Jungfrau Maria, gelitten unter Pontius Pilatus, gekreuzigt, gestorben und begraben, niedergefahren zur Hölle, am dritten Tage auferstanden von den Toten, aufgefahren gen Himmel, sitzend zur Rechten Gottes, des allmächtigen Vaters, von dannen er kommen wird, zu richten die Lebendigen und die Toten.',
+    'Ich glaube an den heiligen Geist, eine heilige christliche Kirche, die Gemeinde der Heiligen, Vergebung der Sünde, Auferstehung des Fleisches und ein ewiges Lebens.',
+    'In diesem seligmachenden Glauben stärke mich auch jetzt der dreieinige Gott, dass ich nach meinem Taufbund auf’s Neue absage dem Teufel und all seinem Werk und Wesen, der Pracht und Eitelkeit der gottlosen Welt und allen sündlichen Lüsten des Fleisches und übergebe mich dir, o dreieiniger Gott Vater, Sohn und Heiliger Geist im Glauben, Gehorsam und ernstlichem Vorsatz: Dir treu zu sein bis an mein seliges Ende.',
+    'Amen',
+    'Vater unser, der du bist im Himmel. Geheiligt werde dein Name. Dein Reich komme. Dein Wille geschehe, wie im Himmel, also auch auf Erden. Unser täglich Brot gib uns heute und vergib uns unsere Schuld, wie auch wir vergeben unseren Schuldigern. Führe uns nicht in Versuchung, sondern erlöse uns von dem Übel, denn dein ist das Reich und die Kraft und die Herrlichkeit in Ewigkeit. Amen',
+    'Ich danke dir, himmlischer Vater, durch Jesus Christus, deinen lieben Sohn, dass du uns diese Nacht vor allem Schaden und Gefahr behütet hast und ich bitte dich, behüte uns auch heute vor Sünde und allem Übel, dass wir dir wohlgefällig leben, denn wir befehlen uns, unseren Leib, unsere Seele und alles in deine Hände! Dein Heiliger Engel sei mit uns, dass der böse Feind keine Macht an uns finde. Amen',
+  ],
+  evening: [
+    'Das walte Gott Vater, Sohn und Heiliger Geist!',
+    'Amen!',
+    'Ich glaube an Gott den Vater, den Allmächtigen, Schöpfer Himmels und der Erde.',
+    'Ich glaube an Jesus Christus, Gottes eingebornen Sohn, unsern Herrn, der empfangen ist vom heiligen Geist, geboren von der Jungfrau Maria, gelitten unter Pontius Pilatus, gekreuzigt, gestorben und begraben, niedergefahren zur Hölle, am dritten Tage auferstanden von den Toten, aufgefahren gen Himmel, sitzend zur Rechten Gottes, des allmächtigen Vaters, von dannen er kommen wird, zu richten die Lebendigen und die Toten.',
+    'Ich glaube an den heiligen Geist, eine heilige christliche Kirche, die Gemeinde der Heiligen, Vergebung der Sünde, Auferstehung des Fleisches und ein ewiges Lebens. Amen',
+    'Vater unser, der du bist im Himmel. Geheiligt werde dein Name. Dein Reich komme. Dein Wille geschehe, wie im Himmel, also auch auf Erden. Unser täglich Brot gib uns heute und vergib uns unsere Schuld, wie auch wir vergeben unseren Schuldigern. Führe uns nicht in Versuchung, sondern erlöse uns von dem Übel, denn dein ist das Reich und die Kraft und die Herrlichkeit in Ewigkeit. Amen',
+    'Ich danke dir, himmlischer Vater, durch Jesus Christus, deinen lieben Sohn, dass du uns diesen Tag aus lauter Gnade behütet hast und ich bitte dich, vergib uns alle Sünden, wo wir Unrecht getan haben und behüte uns aus lauter Gnade in dieser Nacht, denn wir befehlen uns, unseren Leib, unsere Seele und alles in deine Hände! Dein Heiliger Engel sei mit uns, dass der böse Feind keine Macht an uns finde. Amen',
+  ],
+} as const;
+
 export const PRIVATE_CONFESSION = {
   intro: [
     'Eigener Termin, monatlich.',
