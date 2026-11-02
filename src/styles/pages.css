@@ -4697,3 +4697,20 @@ mark.placeholder {
 .hb-swipe .hb-line .drag-handle {
   touch-action: none;
 }
+
+/* Erneuerung des Taufbundes: question, then the answer set in a little. */
+.covenant-q p {
+  margin: 0;
+}
+.covenant-q {
+  margin: 10px 0 0;
+}
+.covenant .covenant-a {
+  margin: 2px 0 0 1.2em;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+}
+.covenant + .covenant {
+  margin-top: 22px;
+}

@@ -297,7 +297,22 @@ function Appendix({ slug, back }: { slug: (typeof APPENDICES)[number]['slug']; b
             </ul>
           </>
         )}
-        {slug === 'taufbund' && <PrayerText text={BAPTISMAL_COVENANT} />}
+        {slug === 'taufbund' && (
+          <>
+            {BAPTISMAL_COVENANT.parts.map((part) => (
+              <div key={part.rubric} className="covenant">
+                <Rubric>{part.rubric}</Rubric>
+                {part.questions.map((q) => (
+                  <div key={q} className="covenant-q">
+                    <p>{q}</p>
+                    <p className="covenant-a">{BAPTISMAL_COVENANT.answer}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
+            <p className="small muted">{BAPTISMAL_COVENANT.source}</p>
+          </>
+        )}
         {slug === 'privatbeichte' && (
           <>
             {PRIVATE_CONFESSION.intro.map((t) => (

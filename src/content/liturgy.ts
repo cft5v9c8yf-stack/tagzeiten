@@ -312,13 +312,30 @@ export const TABLE_PRAYER_AFTER = {
 /* ------------------------------------------------ private confession (appendix) */
 
 /**
- * The renewal of the baptismal covenant, word for word as given by Andreas
- * (2 November 2026), under Lehre: renouncing the devil, giving oneself to the
- * Triune God.
+ * The renewal of the baptismal covenant, under Lehre: the renunciation and the
+ * questions of faith from Luther's Taufbüchlein (1526), word for word after
+ * J. T. Müller, Die symbolischen Bücher (1890), pp. 771 f., read against the
+ * page image (as chosen by Andreas, 2 November 2026).
  */
-export const BAPTISMAL_COVENANT = text([
-  'Ich entsage dem Teufel und all seinem Werk und Wesen und übergebe mich dir, o dreieiniger Gott, Vater, Sohn und Heiliger Geist, im Glauben, Gehorsam und ernstlichen Vorsatz: Dir treu zu sein bis an mein Ende. Amen.',
-]);
+export const BAPTISMAL_COVENANT = {
+  source: 'Martin Luther, Das Taufbüchlein verdeutscht (1526); nach J. T. Müller, Die symbolischen Bücher der evangelisch-lutherischen Kirche, 1890, S. 771 f.',
+  answer: 'Antwort: — Ja.',
+  parts: [
+    {
+      rubric: 'Darnach laße der Priester das Kind durch seine Pathen dem Teufel absagen und spreche:',
+      questions: ['Entsagst du dem Teufel?', 'Und allen seinen Werken?', 'Und allem seinem Wesen?'],
+    },
+    {
+      rubric: 'Darnach frage er:',
+      questions: [
+        'Gläubest du an Gott den Vater allmächtigen, Schöpfer Himmels und der Erden?',
+        'Gläubest du an Jesum Christum, seinen einigen Sohn, unsern Herrn, geboren von Maria der Jungfrauen, gekreuziget, gestorben und begraben, auferstanden von den Todten, sitzend zur Rechten Gottes, zukünftig zu richten die Lebendigen und die Todten?',
+        'Gläubest du an den heiligen Geist, Eine heilige christliche Kirche, Gemeine der Heiligen, Vergebung der Sünden, Auferstehung des Fleisches, und nach dem Tod ein ewigs Leben?',
+        'Willt du getauft sein?',
+      ],
+    },
+  ],
+} as const;
 
 export const PRIVATE_CONFESSION = {
   intro: [

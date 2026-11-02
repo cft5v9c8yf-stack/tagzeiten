@@ -10,7 +10,7 @@ export const APPENDICES = [
   { slug: 'haustafel', title: 'Die Haustafel', line: 'Für jeden Stand ein Wort' },
   { slug: 'tischgebete', title: 'Tischgebete', line: 'Vor und nach dem Essen' },
   { slug: 'privatbeichte', title: 'Privatbeichte', line: 'Bitte, Bekenntnis, Zuspruch' },
-  { slug: 'taufbund', title: 'Erneuerung des Taufbundes', line: 'Absage an den Teufel, Hingabe an den dreieinigen Gott' },
+  { slug: 'taufbund', title: 'Erneuerung des Taufbundes', line: 'Absage und Glaubensfragen aus Luthers Taufbüchlein, 1526' },
   { slug: 'loehe', title: 'Fragen und Antworten zum Katechismus', line: 'Wilhelm Löhe, 1845: zu jedem Stück der Hauptstücke und der Beichte, zum Verstehen' },
   { slug: 'bekenntnisse', title: 'Die drei Bekenntnisse', line: 'Apostolikum, Nizänum, Athanasianum', book: true },
   { slug: 'augsburgische-konfession', title: 'Die Augsburgische Konfession', line: 'Das Bekenntnis von 1530', book: true },
