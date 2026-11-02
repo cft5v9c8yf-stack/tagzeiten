@@ -18,7 +18,7 @@ export const CHANGELOG: readonly Release[] = [
     title: 'Bibelstellen brechen sauber um, Erneuerung des Taufbundes',
     changes: [
       { area: 'Wort', text: 'Reicht eine Zeile nicht, bricht eine Lesung jetzt zwischen zwei Bibelstellen um, nicht mitten in einer: „Apostelgeschichte 18;“ und „1. Thessalonicher 1“ stehen dann je in einer Zeile, statt dass die Kapitelzahl allein in die nächste rutscht. Das gilt unter „Wort“ (Heute lesen, Danach, Leseplan einstellen), unter „Heute“, in der Stillen Zeit und in der Wüstenzeit.' },
-      { area: 'Lehre', text: 'Unter „Lesen“ steht jetzt „Erneuerung des Taufbundes“, mit denselben Worten wie morgens am Bett und abends im Nachtgebet: „Ich bin getauft auf den Namen des Vaters und des Sohnes und des Heiligen Geistes …“ Auch die Suche findet den Text.' },
+      { area: 'Lehre', text: 'Unter „Lesen“ steht jetzt „Erneuerung des Taufbundes“: Gebete morgens und abends nach Dr. Martin Luther, Morgensegen und Abendsegen mit Glaubensbekenntnis, Vaterunser und Luthers Gebet; am Morgen mit der Erneuerung des Taufbundes („… dass ich nach meinem Taufbund auf’s Neue absage dem Teufel und all seinem Werk und Wesen …“). Luthers Gebetszusatz ist sprachlich angepasst, inhaltlich nicht verändert. Auch die Suche findet die Texte.' },
     ],
   },
   {
