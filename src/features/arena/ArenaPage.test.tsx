@@ -26,9 +26,10 @@ function goTo(place: string) {
   fireEvent.click(screen.getByRole('link', { name: 'Zurück: Arena' }));
   fireEvent.click(screen.getByRole('link', { name: new RegExp(`^${place}`) }));
 }
-async function renderArena() {
+async function renderArena(prepare?: (s: Store) => void) {
   const store = new Store({ db: new TagzeitenDB(`arena-${++n}`), journal: memoryJournal(), now: () => new Date(2026, 8, 26, 7) });
   await store.load();
+  prepare?.(store);
   const router = createMemoryRouter(
     [
       { path: '/arena', element: <ArenaPage /> },
@@ -495,5 +496,45 @@ describe('Handwriting in the Gebetskammer', () => {
       // Once written, the questions start folded.
       expect(localStorage.getItem('tz:reflexion-seen')).toBe('1');
     });
+  });
+});
+
+describe('Arena: swiping an entry, as with the habits', () => {
+  /** A sideways swipe on the card of an entry, as a finger would do it. */
+  const swipe = (card: Element, by: number) => {
+    fireEvent.pointerDown(card, { pointerId: 5, pointerType: 'touch', clientX: 200, clientY: 20 });
+    fireEvent.pointerMove(card, { pointerId: 5, pointerType: 'touch', clientX: 200 + by / 2, clientY: 22 });
+    fireEvent.pointerMove(card, { pointerId: 5, pointerType: 'touch', clientX: 200 + by, clientY: 22 });
+    fireEvent.pointerUp(card, { pointerId: 5, pointerType: 'touch', clientX: 200 + by, clientY: 22 });
+  };
+  const withEntry = (s: Store) => {
+    const id = s.addArenaEntry();
+    s.updateArenaEntry(id, (e) => ({ ...e, title: 'Geduld' }));
+  };
+
+  it('to the right pins the entry, a second time takes the pin off', async () => {
+    const store = await renderArena(withEntry);
+    const card = document.querySelector('.arena-swipe-line')!;
+    swipe(card, 120);
+    await waitFor(() => expect(store.getProfile().arena[0]!.pinnedAt).toBeDefined());
+    swipe(document.querySelector('.arena-swipe-line')!, 120);
+    await waitFor(() => expect(store.getProfile().arena[0]!.pinnedAt).toBeUndefined());
+  });
+
+  it('to the left shows archive and delete; deleting asks once more', async () => {
+    const store = await renderArena(withEntry);
+    expect(screen.queryByRole('button', { name: '„Geduld“ löschen' })).toBeNull();
+    swipe(document.querySelector('.arena-swipe-line')!, -140);
+    fireEvent.click(await screen.findByRole('button', { name: '„Geduld“ löschen' }));
+    expect(store.getProfile().arena).toHaveLength(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Ja, „Geduld“ löschen' }));
+    await waitFor(() => expect(store.getProfile().arena).toHaveLength(0));
+  });
+
+  it('archives from behind the card', async () => {
+    const store = await renderArena(withEntry);
+    swipe(document.querySelector('.arena-swipe-line')!, -140);
+    fireEvent.click(await screen.findByRole('button', { name: '„Geduld“ archivieren' }));
+    await waitFor(() => expect(store.getProfile().arena[0]!.archivedAt).toBeDefined());
   });
 });

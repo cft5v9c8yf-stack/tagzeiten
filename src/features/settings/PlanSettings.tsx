@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from 'react';
+import { RefLabel } from '../../ui/RefLabel';
 import { useToast } from '../../app/Toast';
 import {
   CHAPTER_CHOICES,
@@ -73,7 +74,10 @@ function TrackPosition({
   return (
     <fieldset className="plan-track">
       <legend>
-        {legend}: <b>{portionLabel(track, current)}</b>
+        {legend}:{' '}
+        <b>
+          <RefLabel text={portionLabel(track, current)} />
+        </b>
       </legend>
       <div className="grid2">
         <div className="field">
@@ -272,7 +276,10 @@ function SectionPosition({ track, position }: { track: Track; position: number }
   return (
     <fieldset className="plan-track">
       <legend>
-        Nächster Abschnitt: <b>{portionLabel(track, track.portions[i]!)}</b>
+        Nächster Abschnitt:{' '}
+        <b>
+          <RefLabel text={portionLabel(track, track.portions[i]!)} />
+        </b>
       </legend>
       <div className="field">
         <label htmlFor={id}>Weiter mit</label>
@@ -286,7 +293,7 @@ function SectionPosition({ track, position }: { track: Track; position: number }
         >
           {track.portions.map((p, k) => (
             <option key={k} value={k}>
-              Abschnitt {k + 1}: {portionLabel(track, p)}
+              Abschnitt {k + 1}: <RefLabel text={portionLabel(track, p)} />
             </option>
           ))}
         </select>

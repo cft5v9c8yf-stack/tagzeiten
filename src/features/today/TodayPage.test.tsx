@@ -495,3 +495,18 @@ describe('a Wüstenzeit in Advent on "Heute"', () => {
   });
 });
 
+
+describe('Heute with the free prayer', () => {
+  it('names the tiles Morgengebet and Abendgebet, without minutes, only when the free prayer is chosen', async () => {
+    await renderToday('2026-09-25', (s) => s.updateProfile((p) => ({ ...p, petition: { morning: true, evening: true } })));
+    const names = [...document.querySelectorAll('.tile-name')].map((t) => t.textContent);
+    expect(names).toEqual(['Morgengebet', 'Abendgebet und Nachtgebet']);
+    expect(document.querySelector('.tile-time')!.textContent).not.toContain('Min.');
+  });
+
+  it('keeps Stille Zeit and Vesper with the order', async () => {
+    await renderToday('2026-09-25');
+    const names = [...document.querySelectorAll('.tile-name')].map((t) => t.textContent);
+    expect(names).toEqual(['Stille Zeit', 'Vesper und Nachtgebet']);
+  });
+});

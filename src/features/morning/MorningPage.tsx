@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { morningIcon } from '../../content/flowIcons';
-import { getOrder, morningOrder, ORDER_MINUTES, RUBRICS } from '../../content/orders';
+import { getOrder, morningOrder, ORDER_MINUTES, PETITION_MORNING, RUBRICS, type Step as OrderStepDef } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useToday } from '../../data/hooks';
@@ -11,6 +11,7 @@ import { StepFlow, type FlowStep } from '../../ui/StepFlow';
 import { Timer, TimerStart } from '../../ui/Timer';
 import { DonePanel, OrderHead } from '../liturgy/OrderHead';
 import { OrderPart } from '../liturgy/OrderPart';
+import { PetitionSheet } from '../liturgy/PetitionSheet';
 
 const FORMS: { value: OrderForm; label: string }[] = [
   { value: 'full', label: `Ganze Ordnung · ${ORDER_MINUTES.morning.full} Min.` },
@@ -43,6 +44,82 @@ export function MorningPage() {
 }
 
 function MorningOrder({ date, isToday }: { date: string; isToday: boolean }) {
+  // "Freies Gebet" (chosen under Mehr): one sheet instead of the steps.
+  return useProfile().petition.morning ? (
+    <PetitionMorning date={date} isToday={isToday} />
+  ) : (
+    <MorningSteps date={date} isToday={isToday} />
+  );
+}
+
+/**
+ * "Freies Gebet" in the morning, the Morgengebet: the whole prayer on one sheet,
+ * read at a glance and prayed with the phone laid aside, then the three things
+ * for the day – the counterpart of the evening's review. No bedside prayer, no
+ * minutes; closing it fulfils the Stille Zeit as fully as the order (rule 8).
+ */
+function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) {
+  const store = useStore();
+  const toast = useToast();
+  const day = useDay(date);
+  const done = day.morning.done;
+  const [sheet, three] = PETITION_MORNING.steps as [OrderStepDef, OrderStepDef];
+  const [current, setCurrent] = useState<number | null>(() => (done ? null : day.morning.steps[sheet.id] ? 1 : 0));
+  const update = (fn: (m: MorningEntry) => MorningEntry) =>
+    store.updateDay(date, (d) => ({ ...d, morning: fn(d.morning) }), { immediate: true });
+
+  const leaveSheet = () => {
+    // The sheet names the day's portion: it keeps the reading, as the Word does in the order.
+    if (isToday || day.reading) store.setReadingDone(date, true);
+    update((m) => ({ ...m, steps: { ...m.steps, [sheet.id]: true } }));
+    setCurrent(1);
+  };
+  const close = () => {
+    update((m) => ({ ...m, steps: { ...m.steps, [sheet.id]: true, [three.id]: true }, done: true }));
+    setCurrent(null);
+    toast('Morgengebet abgeschlossen');
+  };
+  const reopen = () => {
+    update((m) => {
+      const steps = { ...m.steps };
+      delete steps[three.id];
+      return { ...m, steps, done: false };
+    });
+    setCurrent(1);
+  };
+
+  const flow: FlowStep[] = [
+    { id: sheet.id, title: sheet.title, short: sheet.title, icon: 'sunrise', done: !!day.morning.steps[sheet.id] },
+    { id: three.id, title: three.title, short: three.title, icon: 'compass', done: !!day.morning.steps[three.id] },
+  ];
+  const footer =
+    current === 0 ? (
+      <button type="button" className="btn primary" onClick={leaveSheet}>
+        Weiter zu: {three.title}
+      </button>
+    ) : current === 1 && !done ? (
+      <button type="button" className="btn primary" onClick={close}>
+        Morgengebet abschließen
+      </button>
+    ) : null;
+
+  return (
+    <>
+      <OrderHead title="Morgengebet" />
+      <StepFlow label="Morgengebet" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
+        {current === 0 && <PetitionSheet date={date} order="morning" />}
+        {current === 1 && <OrderPart part={three.parts[0]!} ctx={{ order: 'morning', form: 'full', date }} showTitle={false} />}
+      </StepFlow>
+      {done && current === null && (
+        <DonePanel note="Morgengebet gebetet." onReopen={reopen}>
+          {RUBRICS.sendOff}
+        </DonePanel>
+      )}
+    </>
+  );
+}
+
+function MorningSteps({ date, isToday }: { date: string; isToday: boolean }) {
   const store = useStore();
   const day = useDay(date);
   const form = day.morning.form;

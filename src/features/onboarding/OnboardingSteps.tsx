@@ -142,6 +142,44 @@ export function WayStep({ way, onChoose }: { way: Way | null; onChoose: (w: Way)
   );
 }
 
+/* ------------------------------------------------------------ 2a */
+
+/**
+ * How the Stille Zeit and the Vesper are prayed: the order of the church, or
+ * the free prayer ("Freies Gebet"), one sheet at a glance. Writes into the profile at once;
+ * under Mehr it can be set for morning and evening each.
+ */
+export function PrayerWayStep() {
+  const store = useStore();
+  const petition = useProfile().petition;
+  const chosen = petition.morning || petition.evening ? 'petition' : 'order';
+  const choose = (c: 'order' | 'petition') =>
+    store.updateProfile((p) => ({ ...p, petition: { morning: c === 'petition', evening: c === 'petition' } }), { immediate: true });
+  const card = (c: 'order' | 'petition', title: string, line: string) => (
+    <button type="button" className="ob-choice" aria-pressed={chosen === c} onClick={() => choose(c)}>
+      <b>{title}</b>
+      <span>{line}</span>
+    </button>
+  );
+  return (
+    <>
+      <p className="ob-lead">Für dein Gebet am Morgen und am Abend.</p>
+      <div className="ob-choices" role="group" aria-label="Wie du betest">
+        {card('order', 'Gebetsordnung', 'Stille Zeit und Vesper in der festen Ordnung der Kirche, Schritt für Schritt, mit Kurzform für knappe Tage.')}
+        {card(
+          'petition',
+          'Freies Gebet',
+          'Morgen- und Abendgebet auf einem Blatt: das Wort, dein Haus und deine Anliegen, Dank und Segen. Ohne Uhr.',
+        )}
+      </div>
+      <p className="ob-text">
+        Beides gilt gleich. Unter Mehr → Tag und Woche → „Art des Gebets“ änderst du es jederzeit, auch für Morgen und
+        Abend getrennt.
+      </p>
+    </>
+  );
+}
+
 /* ------------------------------------------------------------ 3 */
 
 export function HouseStep() {

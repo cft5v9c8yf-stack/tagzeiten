@@ -55,6 +55,7 @@ import { CatechismOfDay } from './CatechismOfDay';
 import { Examination } from './Examination';
 import { HouseBlessing, HouseIntercession } from './HouseParts';
 import { MorningReading } from './MorningReading';
+import { PetitionSheet } from './PetitionSheet';
 import { PartFields } from './PartFields';
 import { DayField } from '../../ui/DayField';
 import { Segmented } from '../../ui/Choice';
@@ -236,6 +237,9 @@ function PartBody({ part, ctx }: { part: Part; ctx: PartContext }) {
     case 'reading':
       if (ctx.order === 'morning') return <MorningReading part={part} ctx={ctx} />;
       return <VespersReading part={part} ctx={ctx} />;
+
+    case 'petition-sheet':
+      return <PetitionSheet date={ctx.date} order={morning ? 'morning' : 'vespers'} />;
 
     case 'prayer-after-reading':
       return <PrayerText text={PRAYER_AFTER_READING} />;

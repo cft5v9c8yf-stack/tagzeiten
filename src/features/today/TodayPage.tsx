@@ -1,7 +1,7 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
-import { morningOrder } from '../../content/orders';
+import { morningOrder, PETITION_MORNING } from '../../content/orders';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore, useStoreVersion, useToday } from '../../data/hooks';
 import { THREE_KEYS, type Day } from '../../domain/model';
@@ -24,17 +24,17 @@ import { todayOffer } from '../../domain/seasons';
 import { TodaySeason } from '../desert/SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
 
-function morningStatus(day: Day, dogmatik: boolean): string {
+function morningStatus(day: Day, dogmatik: boolean, petition: boolean): string {
   if (day.morning.done) return 'abgeschlossen';
-  const order = morningOrder(day.morning.form, dogmatik);
+  const order = petition ? PETITION_MORNING : morningOrder(day.morning.form, dogmatik);
   const n = order.steps.filter((s) => day.morning.steps[s.id]).length;
   return n === 0 ? 'offen' : `${n} von ${order.steps.length} Schritten`;
 }
 
-function eveningStatus(day: Day, withCompline: boolean): string {
+function eveningStatus(day: Day, withCompline: boolean, name: string): string {
   if (!withCompline) return day.evening.vespersDone ? 'abgeschlossen' : 'offen';
   if (day.evening.complineDone) return day.evening.vespersDone ? 'abgeschlossen' : 'Nachtgebet gebetet';
-  return day.evening.vespersDone ? 'Vesper gebetet' : 'offen';
+  return day.evening.vespersDone ? `${name} gebetet` : 'offen';
 }
 
 function ReadingPanel({ date, isToday }: { date: string; isToday: boolean }) {
@@ -140,6 +140,7 @@ export function TodayPage() {
   const { date, isToday } = useSelectedDate();
   const day = useDay(date);
   const profile = useProfile();
+  const evening = profile.petition.evening ? 'Abendgebet' : 'Vesper';
   const s = scheduleFor(profile, date);
   const hallMode = hallModeIn(profile.winterArc, date);
   const church = churchDay(date);
@@ -158,11 +159,14 @@ export function TodayPage() {
       <DayArc schedule={s} day={day} isToday={isToday} />
       <div className="tiles">
         <Link to={withDate('/andacht/morgen', date, isToday)} className={`tile${day.morning.done ? ' is-done' : ''}`}>
+          {/* The free prayer has no minutes and is called Morgengebet; the order keeps its name. */}
           <span className="tile-time">
-            {s.stillTime} · {day.morning.form === 'short' ? '20' : '45'} Min.
+            {profile.petition.morning ? s.stillTime : `${s.stillTime} · ${day.morning.form === 'short' ? '20' : '45'} Min.`}
           </span>
-          <span className="tile-name">Stille Zeit</span>
-          <span className="tile-state">{morningStatus(day, __DOGMATIK__ && profile.dogmatik.on && profile.dogmatik.stilleZeit)}</span>
+          <span className="tile-name">{profile.petition.morning ? 'Morgengebet' : 'Stille Zeit'}</span>
+          <span className="tile-state">
+            {morningStatus(day, __DOGMATIK__ && profile.dogmatik.on && profile.dogmatik.stilleZeit, profile.petition.morning)}
+          </span>
         </Link>
         <Link
           to={withDate('/andacht/abend', date, isToday)}
@@ -171,8 +175,8 @@ export function TodayPage() {
           <span className="tile-time">
             {profile.showCompline ? `${s.vespers} · ${s.compline}` : s.vespers}
           </span>
-          <span className="tile-name">{profile.showCompline ? 'Vesper und Nachtgebet' : 'Vesper'}</span>
-          <span className="tile-state">{eveningStatus(day, profile.showCompline)}</span>
+          <span className="tile-name">{profile.showCompline ? `${evening} und Nachtgebet` : evening}</span>
+          <span className="tile-state">{eveningStatus(day, profile.showCompline, evening)}</span>
         </Link>
       </div>
 

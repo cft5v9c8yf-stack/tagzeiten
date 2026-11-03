@@ -19,6 +19,7 @@ export type PartKind =
   | 'psalm'
   | 'prayer-before-reading'
   | 'reading'
+  | 'petition-sheet'
   | 'prayer-after-reading'
   | 'catechism'
   | 'wreath-instruction'
@@ -166,7 +167,7 @@ const MORNING_FULL: Order = {
         p('confession', 'Beichte'),
         p('absolution', 'Zuspruch'),
         p('wreath-petition', 'Bitte', { fields: ['morning.wreath.petition'] }),
-        p('free-prayer', 'Freies Gebet', { fields: ['morning.onMyHeart', 'morning.forMyself'] }),
+        p('free-prayer', 'Eigenes Gebet', { fields: ['morning.onMyHeart', 'morning.forMyself'] }),
         p('silence', 'Stille'),
       ],
     },
@@ -225,9 +226,9 @@ const MORNING_SHORT: Order = {
     },
     {
       id: 'prayer',
-      title: 'Freies Gebet über den Vers',
+      title: 'Eigenes Gebet über den Vers',
       minutes: 3,
-      parts: [p('free-prayer', 'Freies Gebet', { fields: ['morning.onMyHeart'] })],
+      parts: [p('free-prayer', 'Eigenes Gebet', { fields: ['morning.onMyHeart'] })],
     },
     {
       id: 'lordsPrayer',
@@ -388,6 +389,45 @@ const COMPLINE_SHORT: Order = {
       ],
     },
   ],
+};
+
+/* ------------------------------------------------------- Freies Gebet */
+
+/**
+ * "Freies Gebet", with "Bitte und Fürbitte" (1 Tim 2,1) at its heart: the Stille Zeit and the Vesper as one sheet,
+ * read at a glance and then prayed – in the name of the Triune God, the psalm
+ * and the day's reading, the concerns of the house and the day, thanks, Lord's
+ * Prayer and blessing (features/liturgy/PetitionSheet). Word first (rule 2).
+ * Not in ORDERS: it has no minutes and no short form, it is chosen under Mehr.
+ */
+const petitionStep = (id: string, title: string): Step => ({
+  id,
+  title,
+  minutes: 0,
+  parts: [p('petition-sheet', 'Freies Gebet')],
+});
+
+export const PETITION_MORNING: Order = {
+  id: 'morning',
+  form: 'full',
+  title: 'Stille Zeit – Freies Gebet',
+  steps: [
+    petitionStep('sheet', 'Morgengebet'),
+    // After the prayer the day is looked at (rule 2): the counterpart of the evening's review.
+    {
+      id: 'alignment',
+      title: 'Die drei Dinge',
+      minutes: 0,
+      parts: [p('alignment', 'Die drei Dinge', { fields: ['morning.three.word', 'morning.three.house', 'morning.three.work'] })],
+    },
+  ],
+};
+
+export const PETITION_VESPERS: Order = {
+  id: 'vespers',
+  form: 'full',
+  title: 'Vesper – Freies Gebet',
+  steps: [petitionStep('petition', 'Abendgebet')],
 };
 
 export const ORDERS: readonly Order[] = [

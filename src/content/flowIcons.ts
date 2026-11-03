@@ -38,4 +38,5 @@ export const VESPERS_ICONS: Record<string, FlowIconName> = {
   word: 'bible',
   prayer: 'foldedHands',
   vespers: 'sunset',
+  petition: 'sunset',
 };

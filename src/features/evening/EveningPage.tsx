@@ -1,7 +1,7 @@
 import { scheduleFor } from '../../domain/schedule';
 import { useState } from 'react';
 import { COMPLINE_ICONS, VESPERS_ICONS } from '../../content/flowIcons';
-import { getOrder, ORDER_MINUTES, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
+import { getOrder, ORDER_MINUTES, PETITION_VESPERS, RUBRICS, WEEK_REVIEW_STEP, type OrderId, type Part, type Step as OrderStep } from '../../content/orders';
 import { useToast } from '../../app/Toast';
 import { useSelectedDate } from '../../app/useSelectedDate';
 import { useDay, useProfile, useStore } from '../../data/hooks';
@@ -44,6 +44,7 @@ const SHORT: Record<string, string> = {
   word: 'Wort',
   prayer: 'Gebet',
   vespers: 'Vesper',
+  petition: 'Abendgebet',
   sign: 'Glaube',
   review: 'Rückschau',
   examination: 'Prüfung',
@@ -72,16 +73,18 @@ const pageOf = (st: OrderStep, order: OrderId): EveningPage => ({
  * the review before the examination, never mixed (rule 3), the examination
  * always on one page with the word of forgiveness (rule 1).
  */
-function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean): EveningPage[] {
-  const pages = getOrder('vespers', form).steps.map((st) => pageOf(st, 'vespers'));
+function vespersPages(form: OrderForm, withCompline: boolean, weekly: boolean, petition = false): EveningPage[] {
+  const steps = petition ? PETITION_VESPERS.steps : getOrder('vespers', form).steps;
+  const pages = steps.map((st) => pageOf(st, 'vespers'));
   if (withCompline) return pages;
   if (form === 'short') {
     const review = getOrder('compline', 'short').steps[0]!.parts.find((p) => p.kind === 'review')!;
     return [...pages, pageOf({ id: 'review', title: 'Rückschau', minutes: 0, parts: [review] }, 'compline')];
   }
-  const taken = withWeekReview(getOrder('compline', 'full').steps, weekly).filter(
-    (st) => st.id === 'review' || st.id === 'examination',
-  );
+  const taken = withWeekReview(getOrder('compline', 'full').steps, weekly)
+    .filter((st) => st.id === 'review' || st.id === 'examination')
+    // The free prayer has prayed its thanks already on the sheet: the page after it is the review alone.
+    .map((st) => (petition && st.id === 'review' && st !== WEEK_REVIEW_STEP ? { ...st, title: 'Rückschau', parts: st.parts.filter((p) => p.kind !== 'thanks') } : st));
   return [...pages, ...taken.map((st) => pageOf(st, 'compline'))];
 }
 
@@ -103,10 +106,14 @@ function VespersView({
   const day = useDay(date);
   const profile = useProfile();
   const withCompline = profile.showCompline;
-  const form = day.evening.vespersForm;
-  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview));
+  const petition = profile.petition.evening;
+  // The free prayer ("Freies Gebet") has no short form: it is prayed as the whole.
+  const form = petition ? 'full' : day.evening.vespersForm;
+  const pages = vespersPages(form, withCompline, isWeekReview(date, form, profile.weekReview), petition);
   const setForm = useFormSetter(date, 'vespersForm');
-  const complete = useCompletion(date, 'vespersDone', withCompline ? 'Vesper gebetet' : 'Tag abgeschlossen');
+  // The free prayer is no Vesper: in the evening it is the Abendgebet.
+  const name = petition ? 'Abendgebet' : 'Vesper';
+  const complete = useCompletion(date, 'vespersDone', withCompline ? `${name} gebetet` : 'Tag abgeschlossen');
   const done = day.evening.vespersDone;
   const steps: FlowStep[] = [
     ...pages.map((p) => ({ id: p.id, title: p.title, short: p.short, icon: p.icon, done })),
@@ -136,16 +143,18 @@ function VespersView({
         setCurrent(null);
       }}
     >
-      {withCompline ? 'Vesper abschließen' : 'Tag abschließen'}
+      {withCompline ? `${name} abschließen` : 'Tag abschließen'}
     </button>
   );
 
   return (
     <div className="order vespers">
       <OrderHead
-        title="Vesper"
+        title={name}
         rubric={
-          withCompline
+          petition
+            ? undefined
+            : withCompline
             ? form === 'full'
               ? RUBRICS.vespers
               : RUBRICS.vespersShort
@@ -154,21 +163,23 @@ function VespersView({
               : RUBRICS.vespersShortClosing
         }
       >
-        <Segmented
-          label="Form der Vesper"
-          value={form}
-          onChange={(f) => {
-            setForm(f);
-            setCurrent(0);
-          }}
-          options={[
-            { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
-            { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
-          ]}
-        />
+        {!petition && (
+          <Segmented
+            label="Form der Vesper"
+            value={form}
+            onChange={(f) => {
+              setForm(f);
+              setCurrent(0);
+            }}
+            options={[
+              { value: 'full', label: `Vesper · ${ORDER_MINUTES.vespers.full} Min.` },
+              { value: 'short', label: `Kurzform · ${ORDER_MINUTES.vespers.short} Min.` },
+            ]}
+          />
+        )}
       </OrderHead>
       <StepFlow
-        label="Vesper"
+        label={name}
         steps={steps}
         current={current}
         onSelect={(i) => (i === pages.length ? onOpenCompline() : setCurrent(i))}
@@ -191,7 +202,7 @@ function VespersView({
       </StepFlow>
       {done && current === null && (
         <DonePanel
-          note={withCompline ? 'Vesper gebetet.' : 'Tag abgeschlossen.'}
+          note={withCompline ? `${name} gebetet.` : 'Tag abgeschlossen.'}
           next={withCompline ? { label: 'Weiter zum Nachtgebet', onClick: onOpenCompline } : undefined}
           onReopen={() => {
             complete(false);
@@ -226,7 +237,13 @@ function ComplineView({
   const done = day.evening.complineDone;
 
   const steps: FlowStep[] = [
-    { id: 'vespers', title: 'Vesper', short: 'Vesper', icon: 'sunset', done: day.evening.vespersDone },
+    {
+      id: 'vespers',
+      title: profile.petition.evening ? 'Abendgebet' : 'Vesper',
+      short: profile.petition.evening ? 'Abendgebet' : 'Vesper',
+      icon: 'sunset',
+      done: day.evening.vespersDone,
+    },
     ...pages.map((p) => ({ id: p.id, title: p.title, short: p.short, icon: p.icon, done })),
   ];
   const page = current === null ? undefined : pages[current];

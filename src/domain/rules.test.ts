@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { ORDERS, orderMinutes, ORDER_MINUTES, type Order, type PartKind } from '../content/orders';
+import { ORDERS, orderMinutes, ORDER_MINUTES, PETITION_MORNING, PETITION_VESPERS, type Order, type PartKind } from '../content/orders';
 import {
   emptyDay,
   EVENING_TEXT_FIELDS,
@@ -227,5 +227,30 @@ describe('texts Andreas writes himself (CLAUDE.md, Arbeitsweise)', () => {
     const list = readFileSync(fileURLToPath(new URL('../content/TEXTE-OFFEN.md', import.meta.url)), 'utf8');
     const placeholders = sourceFiles(root).flatMap((f) => readFileSync(f, 'utf8').match(/\[TEXT VON ANDREAS: [^\]]+\]/g) ?? []);
     for (const ph of placeholders) expect(list, ph).toContain(ph);
+  });
+});
+
+/* ------------------------------------------------------------ Bitte und Fürbitte */
+
+describe('"Bitte und Fürbitte"', () => {
+  const both = [PETITION_MORNING, PETITION_VESPERS];
+
+  it('begins with the sheet (Word first); in the morning the three things come last (rule 2)', () => {
+    expect(partsOf(PETITION_VESPERS).map((p) => p.kind)).toEqual(['petition-sheet']);
+    expect(partsOf(PETITION_MORNING).map((p) => p.kind)).toEqual(['petition-sheet', 'alignment']);
+    for (const o of both) expect(['review', 'examination', 'confession']).not.toContain(partsOf(o)[0]!.kind);
+  });
+
+  it('has no minutes and no field for sins (rules 8 and 9)', () => {
+    for (const o of both) {
+      expect(orderMinutes(o)).toBe(0);
+      for (const p of partsOf(o)) {
+        for (const f of p.fields ?? []) expect(f).not.toMatch(FORBIDDEN_KEY);
+      }
+    }
+  });
+
+  it('keeps its own steps out of the fixed orders', () => {
+    for (const o of both) expect(ORDERS).not.toContain(o);
   });
 });

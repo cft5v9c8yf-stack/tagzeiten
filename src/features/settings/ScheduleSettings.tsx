@@ -324,6 +324,53 @@ export function useDisplayTiles(): Record<string, TileItem> {
           ),
         },
         {
+          id: 'more.display.petition',
+          title: 'Art des Gebets',
+          line:
+            profile.petition.morning && profile.petition.evening
+              ? 'Freies Gebet'
+              : profile.petition.morning || profile.petition.evening
+                ? 'Gebetsordnung und freies Gebet'
+                : 'Gebetsordnung',
+          icon: 'foldedHands',
+          content: (
+            <>
+              <div className="field-like">
+                <span className="field-label">Am Morgen</span>
+                <Segmented
+                  grid
+                  label="Am Morgen"
+                  value={profile.petition.morning ? 'petition' : 'order'}
+                  onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, morning: v === 'petition' } }))}
+                  options={[
+                    { value: 'order', label: 'Gebetsordnung' },
+                    { value: 'petition', label: 'Freies Gebet' },
+                  ]}
+                />
+              </div>
+              <div className="field-like">
+                <span className="field-label">Am Abend</span>
+                <Segmented
+                  grid
+                  label="Am Abend"
+                  value={profile.petition.evening ? 'petition' : 'order'}
+                  onChange={(v) => update((p) => ({ ...p, petition: { ...p.petition, evening: v === 'petition' } }))}
+                  options={[
+                    { value: 'order', label: 'Gebetsordnung' },
+                    { value: 'petition', label: 'Freies Gebet' },
+                  ]}
+                />
+              </div>
+              <p className="small muted">
+                Das freie Gebet (Morgengebet, Abendgebet) ist ein einziges Blatt: das Wort, dann dein Haus und deine
+                Anliegen (Bitte und Fürbitte), Dank, Vaterunser und Segen; am Morgen danach die drei Dinge. Du erfasst es auf einen Blick und betest dann, ohne aufs iPhone zu schauen. Ohne
+                Uhr, ohne Kurzform und ohne „Am Bett“; es gilt genauso wie die Gebetsordnung. Die Anliegen trägst du unter
+                Mehr → Gebet → Gebetsübersicht ein.
+              </p>
+            </>
+          ),
+        },
+        {
           id: 'more.display.compline',
           title: 'Nachtgebet am Bett',
           line: state(profile.showCompline),

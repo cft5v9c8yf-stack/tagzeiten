@@ -8,6 +8,7 @@ import type { ArenaEntry, ArenaPoint } from '../../domain/model';
 import { BibleRef } from '../../ui/BibleRef';
 import { Segmented } from '../../ui/Choice';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
+import { useSwipeActions } from '../../ui/useSwipeActions';
 import { formatLong, isDateKey } from '../../domain/dates';
 import { isDoneOn } from '../../domain/habits';
 import { desertLine } from '../desert/DesertSettings';
@@ -475,7 +476,14 @@ function usePin() {
   };
 }
 
-/** An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting. */
+/** How far an entry slides to the left to show archiving and deleting. */
+const SWIPE_ACTIONS_WIDTH = 132;
+
+/**
+ * An entry in the list: its card, and beside it the three dots for pinning, archiving and deleting.
+ * The same by swiping, as with the habits: to the left archive and delete stand behind the card
+ * (deleting asks once more), to the right the entry is pinned or the pin taken off.
+ */
 function ListItem({ entry, children }: { entry: ArenaEntry; children: React.ReactNode }) {
   const store = useStore();
   const pdf = usePdf();
@@ -483,42 +491,87 @@ function ListItem({ entry, children }: { entry: ArenaEntry; children: React.Reac
   const pin = usePin();
   const forge = kindOf(entry) === 'forge';
   const name = forge ? entry.title?.trim() || forgeTitle(entry) : entryTitle(entry);
+  const [revealed, setRevealed] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const reveal = (on: boolean) => {
+    setRevealed(on);
+    if (!on) setConfirming(false);
+  };
+  const swipe = useSwipeActions({ revealed, onReveal: reveal, onSwipeRight: () => pin(entry), width: SWIPE_ACTIONS_WIDTH });
+  const archive = () => {
+    store.archiveArenaEntry(entry.id, true);
+    toast(forge ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick' : 'Eintrag archiviert – zu finden unter Mehr, Rückblick');
+  };
+  const pinned = entry.pinnedAt !== undefined;
   return (
     <li className="arena-item">
-      {children}
-      <EntryMenu
-        label={`Aktionen für „${name}“`}
-        items={[
-          { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
-          {
-            label: 'Als Text exportieren (Markdown)',
-            onSelect: () => {
-              downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
-              toast('Eintrag als Markdown erstellt');
-            },
-          },
-          { label: 'Als PDF sichern', onSelect: () => pdf(() => saveEntryPdf(entry, printComfort(entry))) },
-          {
-            label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
-            onSelect: () => {
-              store.archiveArenaEntry(entry.id, true);
-              toast(
-                forge
-                  ? 'Besprochen und archiviert – zu finden unter Mehr, Rückblick'
-                  : 'Eintrag archiviert – zu finden unter Mehr, Rückblick',
-              );
-            },
-          },
-          {
-            label: 'Eintrag löschen',
-            confirm: 'Ja, Eintrag löschen',
-            onSelect: () => {
+      <div className={`arena-swipe${swipe.offset !== 0 ? ' is-moving' : ''}${swipe.offset < 0 ? ' is-left' : ''}`}>
+        <div className="arena-swipe-pin" aria-hidden="true">
+          <FlowIcon name="pin" size={20} />
+          <span>{pinned ? 'Lösen' : 'Anheften'}</span>
+        </div>
+        <div className="arena-swipe-actions" aria-hidden={!revealed}>
+          <button type="button" className="arena-swipe-btn" tabIndex={revealed ? 0 : -1} aria-label={`„${name}“ archivieren`} onClick={archive}>
+            <FlowIcon name="archive" size={20} />
+            <span>Archiv</span>
+          </button>
+          <button
+            type="button"
+            className={`arena-swipe-btn is-delete${confirming ? ' is-asking' : ''}`}
+            tabIndex={revealed ? 0 : -1}
+            aria-label={confirming ? `Ja, „${name}“ löschen` : `„${name}“ löschen`}
+            onClick={() => {
+              if (!confirming) return setConfirming(true);
               store.deleteArenaEntry(entry.id);
               toast('Eintrag gelöscht');
-            },
-          },
-        ]}
-      />
+            }}
+          >
+            {confirming ? (
+              <span>Ja, löschen</span>
+            ) : (
+              <>
+                <FlowIcon name="trash" size={20} />
+                <span>Löschen</span>
+              </>
+            )}
+          </button>
+        </div>
+        <div
+          className={`arena-swipe-line${swipe.dragging ? ' is-swiping' : ''}`}
+          style={{ transform: `translateX(${swipe.offset}px)` }}
+          // A link would otherwise be dragged away with a mouse instead of swiped.
+          onDragStart={(e) => e.preventDefault()}
+          {...swipe.handlers}
+        >
+          {children}
+          <EntryMenu
+            label={`Aktionen für „${name}“`}
+            items={[
+              { label: entry.pinnedAt === undefined ? 'Oben anheften' : 'Nicht mehr anheften', onSelect: () => pin(entry) },
+              {
+                label: 'Als Text exportieren (Markdown)',
+                onSelect: () => {
+                  downloadText(exportFilename(entry, 'md'), entryToMarkdown(entry), 'text/markdown');
+                  toast('Eintrag als Markdown erstellt');
+                },
+              },
+              { label: 'Als PDF sichern', onSelect: () => pdf(() => saveEntryPdf(entry, printComfort(entry))) },
+              {
+                label: forge ? 'Besprochen – archivieren' : 'Eintrag archivieren',
+                onSelect: archive,
+              },
+              {
+                label: 'Eintrag löschen',
+                confirm: 'Ja, Eintrag löschen',
+                onSelect: () => {
+                  store.deleteArenaEntry(entry.id);
+                  toast('Eintrag gelöscht');
+                },
+              },
+            ]}
+          />
+        </div>
+      </div>
     </li>
   );
 }

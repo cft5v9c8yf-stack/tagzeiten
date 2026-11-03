@@ -13,6 +13,25 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.38.0',
+    date: '2026-10-30',
+    title: 'Freies Gebet',
+    changes: [
+      { area: 'Andacht', text: 'Neben der Gebetsordnung gibt es für Morgen und Abend eine zweite Form: das freie Gebet. Es heißt am Morgen Morgengebet und am Abend Abendgebet, und beide sehen gleich aus. Oben steht die Reihe der Schritte, darunter ein einziges ruhiges Blatt, das du auf einen Blick erfasst und dann betest, ohne ständig aufs iPhone zu schauen: „Im Namen Gottes des Vaters, des Sohnes und des Heiligen Geistes. Amen.“, das Wort (der Psalm, darunter der Leseplan des Tages), Bitte und Fürbitte (Mein Haus, was du täglich trägst, die Anliegen des Wochentages), Dank, Vaterunser und Segen (die Texte zum Aufklappen) und zum Schluss „Das walte Gott Vater, Sohn und Heiliger Geist. Amen.“ Am Morgen folgen danach die drei Dinge für den Tag. Am Abend folgt das Nachtgebet; ist es ausgeblendet, folgen Rückschau (auf die drei Dinge vom Morgen, ohne zweiten Dank) und Prüfung mit Zuspruch. Es gibt keine Uhr, keine Kurzform und kein „Am Bett“; das freie Gebet gilt genauso wie die Gebetsordnung. Unter „Heute“ heißen die Kacheln dann ebenfalls Morgengebet und Abendgebet, ohne Minutenangabe; mit der Gebetsordnung bleibt es bei Stille Zeit und Vesper. Du wählst es schon in der Einrichtung („Wie du betest“) und jederzeit unter Mehr → Tag und Woche → Der Tag, „Art des Gebets“, für Morgen und Abend je für sich. Die Anliegen kommen aus der Gebetsübersicht, Frau und Kinder aus „Mein Haus“.' },
+      { area: 'Andacht', text: 'In der Gebetsordnung heißt der Teil der Stillen Zeit, in dem du betest, was dich selbst bewegt, jetzt „Eigenes Gebet“ (vorher „Freies Gebet“), damit er nicht mit dem freien Gebet als eigener Form verwechselt wird.' },
+      { area: 'Arena', text: 'Einträge der Arena lassen sich jetzt wischen, wie die Gewohnheiten: Nach links erscheinen hinter dem Eintrag „Archiv“ und „Löschen“; Löschen fragt noch einmal nach. Nach rechts heftest du den Eintrag oben an, ein zweites Mal löst du ihn wieder. Das Menü oben rechts am Eintrag bleibt.' },
+    ],
+  },
+  {
+    version: '1.37.2',
+    date: '2026-10-31',
+    title: 'Bibelstellen brechen sauber um, Erneuerung des Taufbundes',
+    changes: [
+      { area: 'Wort', text: 'Reicht eine Zeile nicht, bricht eine Lesung jetzt zwischen zwei Bibelstellen um, nicht mitten in einer: „Apostelgeschichte 18;“ und „1. Thessalonicher 1“ stehen dann je in einer Zeile, statt dass die Kapitelzahl allein in die nächste rutscht. Das gilt unter „Wort“ (Heute lesen, Danach, Leseplan einstellen), unter „Heute“, in der Stillen Zeit und in der Wüstenzeit.' },
+      { area: 'Lehre', text: 'Unter „Lesen“ steht jetzt „Erneuerung des Taufbundes“: Gebete morgens und abends nach Dr. Martin Luther, Morgensegen und Abendsegen mit Glaubensbekenntnis, Vaterunser und Luthers Gebet; am Morgen mit der Erneuerung des Taufbundes („… dass ich nach meinem Taufbund auf’s Neue absage dem Teufel und all seinem Werk und Wesen …“). Luthers Gebetszusatz ist sprachlich angepasst, inhaltlich nicht verändert. Auch die Suche findet die Texte.' },
+    ],
+  },
+  {
     version: '1.37.1',
     date: '2026-10-30',
     title: 'Gewohnheiten: Wischen zum Löschen',

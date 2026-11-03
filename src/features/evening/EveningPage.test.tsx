@@ -35,7 +35,7 @@ async function renderEvening(date: string, prepare?: (s: Store) => void) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { level: 2, name: /^(Vesper|Nachtgebet)$/ });
+  await screen.findByRole('heading', { level: 2, name: /^(Vesper|Abendgebet|Nachtgebet)$/ });
   return store;
 }
 
@@ -213,5 +213,38 @@ describe('Evening without the Nachtgebet', () => {
     // The reading of Scripture stays one tap away.
     fireEvent.click(choice.getByRole('button', { name: 'Lesung' }));
     expect(screen.getByLabelText('Lesung – wenige Verse, ohne Auslegung')).toBeTruthy();
+  });
+});
+
+describe('Vesper as "Bitte und Fürbitte"', () => {
+  it('is one sheet before the Nachtgebet, with no form switch and no minutes', async () => {
+    await renderEvening('2026-09-25', (st) =>
+      st.updateProfile((p) => ({ ...p, petition: { morning: false, evening: true } })),
+    );
+    const names = within(chainOf('Abendgebet'))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label') ?? b.textContent);
+    expect(names.join(' ')).toMatch(/^Abendgebet.*Nachtgebet/);
+    expect(document.querySelector('.ps')!.textContent).toMatch(/^Im Namen Gottes.*Das Wort.*Bitte und Fürbitte.*Dank.*Das walte Gott/);
+    // The three things belong to the morning; the evening looks back on them in the Nachtgebet.
+    expect(document.querySelector('.ps')!.textContent).not.toContain('Die drei Dinge');
+    expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/Min\./);
+  });
+});
+
+describe('Abendgebet (free prayer) without the Nachtgebet', () => {
+  it('is called Abendgebet and is followed by review and examination, the thanks prayed on the sheet', async () => {
+    await renderEvening('2026-09-25', (st) =>
+      st.updateProfile((p) => ({ ...p, showCompline: false, petition: { morning: false, evening: true } })),
+    );
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Abendgebet');
+    const names = within(chainOf('Abendgebet'))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label'));
+    expect(names).toEqual(['Abendgebet', 'Rückschau', 'Prüfung und Zuspruch']);
+    fireEvent.click(within(chainOf('Abendgebet')).getByRole('button', { name: 'Rückschau' }));
+    await screen.findByRole('heading', { name: 'Rückschau', level: 3 });
+    expect(document.querySelector('.part-thanks')).toBeNull();
   });
 });

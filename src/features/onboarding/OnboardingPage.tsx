@@ -12,6 +12,7 @@ import {
   HouseStep,
   OrderStep,
   PlanStep,
+  PrayerWayStep,
   PrivacyStep,
   TimesStep,
   WayStep,
@@ -27,7 +28,7 @@ import {
   writeOnboardingWay,
 } from './onboardingState';
 
-type StepId = 'order' | 'way' | 'house' | 'times' | 'habits' | 'plan' | 'privacy' | 'done' | 'dstart' | 'dhabits' | 'ddone';
+type StepId = 'order' | 'way' | 'prayer' | 'house' | 'times' | 'habits' | 'plan' | 'privacy' | 'done' | 'dstart' | 'dhabits' | 'ddone';
 
 interface Step {
   id: StepId;
@@ -39,6 +40,7 @@ interface Step {
 const STEP_LIST: Record<StepId, Step> = {
   order: { id: 'order', title: 'So beginnt der Tag', skippable: false },
   way: { id: 'way', title: 'Wofür möchtest du Henoch nutzen?', skippable: false },
+  prayer: { id: 'prayer', title: 'Wie du betest', skippable: true },
   house: { id: 'house', title: 'Mein Haus', skippable: true },
   times: { id: 'times', title: 'Deine Zeiten', skippable: true },
   habits: { id: 'habits', title: 'Deine Gewohnheiten', skippable: true },
@@ -53,7 +55,7 @@ const STEP_LIST: Record<StepId, Step> = {
 /** The two pages every way begins with, then the pages of the way chosen. */
 const BASE: readonly StepId[] = ['order', 'way'];
 const WAYS: Record<Way, readonly StepId[]> = {
-  everyday: ['house', 'times', 'habits', 'plan', 'privacy', 'done'],
+  everyday: ['prayer', 'house', 'times', 'habits', 'plan', 'privacy', 'done'],
   desert: ['dstart', 'dhabits', 'times', 'privacy', 'ddone'],
 };
 const stepsOf = (way: Way | null): readonly Step[] => [...BASE, ...(way ? WAYS[way] : [])].map((id) => STEP_LIST[id]);
@@ -118,6 +120,7 @@ export function OnboardingPage() {
   const body: Record<StepId, ReactNode> = {
     order: <OrderStep />,
     way: <WayStep way={way} onChoose={setWay} />,
+    prayer: <PrayerWayStep />,
     house: <HouseStep />,
     times: <TimesStep />,
     habits: <HabitsStep />,

@@ -35,7 +35,7 @@ async function renderMorning(prepare?: (s: Store) => void) {
       </StoreProvider>
     </ToastProvider>,
   );
-  await screen.findByRole('heading', { name: 'Stille Zeit', level: 2 });
+  await screen.findByRole('heading', { name: /^(Stille Zeit|Morgengebet)$/, level: 2 });
   return store;
 }
 
@@ -160,5 +160,40 @@ describe('Stille Zeit without the bed', () => {
     // Every mark carries its name; the one in view stands first.
     expect(chain().querySelector('.flow-short')!.textContent).toBe('Am Bett');
     timer.reset(45 * 60);
+  });
+});
+
+describe('Morgengebet (free prayer)', () => {
+  it('is the sheet, then the three things – no bedside prayer, no form switch, no minutes', async () => {
+    const store = await renderMorning((st) =>
+      st.updateProfile((p) => ({
+        ...p,
+        petition: { morning: true, evening: false },
+        house: { ...p.house, wife: { ...p.house.wife, name: 'Maria', concern: 'Kraft für die Woche' } },
+        prayer: { concerns: ['Die Kranken'], daily: ['Die Kranken'], weekly: {} },
+      })),
+    );
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toBe('Morgengebet');
+    const marks = within(screen.getByRole('navigation', { name: 'Ablauf: Morgengebet' }))
+      .getAllByRole('button')
+      .map((b) => b.getAttribute('aria-label'));
+    expect(marks).toEqual(['Morgengebet', 'Die drei Dinge']);
+    const sheet = document.querySelector('.ps')!.textContent!;
+    const at = (t: string) => sheet.indexOf(t);
+    expect(at('Im Namen Gottes')).toBe(0);
+    expect(at('Psalm')).toBeGreaterThan(at('Das Wort'));
+    expect(at('Mein Haus')).toBeGreaterThan(at('Psalm'));
+    expect(at('Maria – Kraft für die Woche')).toBeGreaterThan(0);
+    expect(at('Ich trage')).toBeGreaterThan(at('Mein Haus'));
+    expect(at('Dank')).toBeGreaterThan(at('Ich trage'));
+    expect(sheet.trim().endsWith('Das walte Gott Vater, Sohn und Heiliger Geist. Amen.')).toBe(true);
+    expect(document.querySelectorAll('.ps input, .ps textarea')).toHaveLength(0);
+    expect(screen.queryByRole('button', { name: /^Kurzform/ })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/Min\.|Am Bett/);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Weiter zu: Die drei Dinge' }));
+    await waitFor(() => expect(document.querySelectorAll('.flow-step input, .flow-step textarea')).toHaveLength(3));
+    fireEvent.click(screen.getByRole('button', { name: 'Morgengebet abschließen' }));
+    await waitFor(() => expect(store.getDay(store.today()).morning.done).toBe(true));
   });
 });
