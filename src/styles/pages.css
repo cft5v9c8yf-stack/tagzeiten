@@ -902,6 +902,10 @@ body.is-sorting * {
   justify-content: space-between;
   gap: 12px;
 }
+/* Without a visible title the control still stands at the end of the row. */
+.order-head-row > .visually-hidden + * {
+  margin-left: auto;
+}
 .order-head .rubric {
   margin: 0 0 6px;
 }

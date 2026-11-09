@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.39.1',
+    date: '2026-11-09',
+    title: 'Ohne Überschrift unter Morgen und Abend',
+    changes: [
+      { area: 'Andacht', text: 'Unter „Morgen“ und „Abend“ steht keine eigene Überschrift mehr (Morgengebet, Abendgebet, Stille Zeit, Vesper); oben steht ja schon, wo du bist. Die Reihe der Schritte rückt damit näher heran.' },
+    ],
+  },
+  {
     version: '1.39.0',
     date: '2026-11-09',
     title: 'Leiste aus Glas',
