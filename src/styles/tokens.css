@@ -63,7 +63,17 @@
   --radius-m: 10px;
   --content-width: 640px;
   --gutter: 18px;
-  --tabbar-height: 70px;
+  --tabbar-height: 84px;
+
+  /* The glass of the tab bar: a light, see-through capsule. */
+  --glass-top: rgba(255, 255, 255, 0.38);
+  --glass-bottom: rgba(255, 255, 255, 0.14);
+  --glass-shine: rgba(255, 255, 255, 0.7);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-shadow: rgba(40, 30, 10, 0.18);
+  --lens-top: rgba(255, 255, 255, 0.62);
+  --lens-bottom: rgba(255, 255, 255, 0.22);
+  --lens-edge: #ffffff;
 
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -98,6 +108,14 @@
     --icon-gold: #d9ae00;
     --gold-soft: #2e2a1c;
     --warm-soft: #242832;
+    --glass-top: rgba(60, 64, 74, 0.55);
+    --glass-bottom: rgba(27, 36, 50, 0.4);
+    --glass-shine: rgba(255, 255, 255, 0.18);
+    --glass-edge: rgba(255, 255, 255, 0.25);
+    --glass-shadow: rgba(0, 0, 0, 0.5);
+    --lens-top: rgba(255, 255, 255, 0.18);
+    --lens-bottom: rgba(255, 255, 255, 0.06);
+    --lens-edge: rgba(255, 255, 255, 0.3);
     color-scheme: dark;
   }
 }
@@ -125,5 +143,13 @@
   --icon-gold: #d9ae00;
   --gold-soft: #2e2a1c;
   --warm-soft: #242832;
+  --glass-top: rgba(60, 64, 74, 0.55);
+  --glass-bottom: rgba(27, 36, 50, 0.4);
+  --glass-shine: rgba(255, 255, 255, 0.18);
+  --glass-edge: rgba(255, 255, 255, 0.25);
+  --glass-shadow: rgba(0, 0, 0, 0.5);
+  --lens-top: rgba(255, 255, 255, 0.18);
+  --lens-bottom: rgba(255, 255, 255, 0.06);
+  --lens-edge: rgba(255, 255, 255, 0.3);
   color-scheme: dark;
 }

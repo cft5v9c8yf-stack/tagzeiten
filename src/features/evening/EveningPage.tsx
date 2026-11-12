@@ -151,6 +151,7 @@ function VespersView({
     <div className="order vespers">
       <OrderHead
         title={name}
+        hideTitle
         rubric={
           petition
             ? undefined

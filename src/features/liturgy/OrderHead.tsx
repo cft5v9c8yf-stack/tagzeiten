@@ -6,25 +6,29 @@ import { Rubric } from '../../ui/PrayerText';
 /** Title of an order, its rubric, and its options (form) in one quiet row. */
 export function OrderHead({
   title,
+  hideTitle,
   rubric,
   aside,
   children,
 }: {
   title: string;
+  /** The title stays for screen readers but is not shown (the tabs above already say Morgen or Abend). */
+  hideTitle?: boolean;
   rubric?: ReactNode;
   /** Small control at the end of the title row (e.g. the button that starts the time). */
   aside?: ReactNode;
   children?: ReactNode;
 }) {
+  const heading = <h2 className={hideTitle ? 'visually-hidden' : undefined}>{title}</h2>;
   return (
     <header className="order-head">
       {aside ? (
         <div className="order-head-row">
-          <h2>{title}</h2>
+          {heading}
           {aside}
         </div>
       ) : (
-        <h2>{title}</h2>
+        heading
       )}
       {rubric && <Rubric>{rubric}</Rubric>}
       {children && <div className="order-options">{children}</div>}

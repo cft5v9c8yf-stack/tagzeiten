@@ -13,6 +13,22 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.39.1',
+    date: '2026-11-09',
+    title: 'Ohne Überschrift unter Morgen und Abend',
+    changes: [
+      { area: 'Andacht', text: 'Unter „Morgen“ und „Abend“ steht keine eigene Überschrift mehr (Morgengebet, Abendgebet, Stille Zeit, Vesper); oben steht ja schon, wo du bist. Die Reihe der Schritte rückt damit näher heran.' },
+    ],
+  },
+  {
+    version: '1.39.0',
+    date: '2026-11-09',
+    title: 'Leiste aus Glas',
+    changes: [
+      { area: 'Henoch', text: 'Die Leiste unten mit Wort, Andacht, Heute, Arena und Mehr ist jetzt eine schwebende Glasleiste: Sie reicht nicht mehr bis an den Rand, ist rundum abgerundet, und die Seite scheint unscharf durch sie hindurch. Der Bereich, in dem du gerade bist, liegt in einer hellen Glaslinse mit feinem Goldrand; alle Zeichen sind gleich groß, keines ragt mehr über die Leiste hinaus. Im Dunklen ist das Glas dunkel getönt.' },
+    ],
+  },
+  {
     version: '1.38.0',
     date: '2026-10-30',
     title: 'Freies Gebet',

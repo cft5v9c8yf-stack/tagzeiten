@@ -105,7 +105,7 @@ function PetitionMorning({ date, isToday }: { date: string; isToday: boolean }) 
 
   return (
     <>
-      <OrderHead title="Morgengebet" />
+      <OrderHead title="Morgengebet" hideTitle />
       <StepFlow label="Morgengebet" steps={flow} current={current} onSelect={setCurrent} footer={footer}>
         {current === 0 && <PetitionSheet date={date} order="morning" />}
         {current === 1 && <OrderPart part={three.parts[0]!} ctx={{ order: 'morning', form: 'full', date }} showTitle={false} />}
@@ -145,6 +145,7 @@ function MorningSteps({ date, isToday }: { date: string; isToday: boolean }) {
 
       <OrderHead
         title="Stille Zeit"
+        hideTitle
         rubric={form === 'short' ? RUBRICS.morningShort : undefined}
         aside={isToday ? <TimerStart totalMinutes={ORDER_MINUTES.morning[form]} /> : undefined}
       >
