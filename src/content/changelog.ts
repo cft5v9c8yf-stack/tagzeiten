@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.40.0',
+    date: '2026-11-12',
+    title: 'Willkommen bei Henoch',
+    changes: [
+      { area: 'Einrichtung', text: 'Die Einrichtung beim ersten Start ist neu gestaltet. Die erste Seite begrüßt dich: „Willkommen bei Henoch“, darunter Matthäus 6,33, der Tag mit Wort, Gebet und Ausrichtung auf einer Linie, und eine Vorschau auf das, was du gleich einrichtest. Die Angabe zur Dauer der Stillen Zeit ist weggefallen.' },
+      { area: 'Einrichtung', text: 'Jede Seite ist gleich aufgebaut: oben links „Zurück“, rechts „Überspringen“, darunter die Überschrift mit einer kurzen Zeile, unten fest der eine Knopf, der weiterführt. Was zusammengehört, steht als Liste auf einer Fläche; die gewählte Möglichkeit trägt einen goldenen Haken. „Später ansehen“ heißt jetzt „Später einrichten“.' },
+      { area: 'Einrichtung', text: 'Beim Leseplan wählst du jetzt auch „Christus finden“, „Mit Paulus unterwegs“ und „Bibel in einem Jahr“. Beginn und Menge passt du darunter an, wenn du willst. Die Zusammenfassung am Ende nennt auch die Art des Gebets.' },
+    ],
+  },
+  {
     version: '1.39.1',
     date: '2026-11-09',
     title: 'Ohne Überschrift unter Morgen und Abend',

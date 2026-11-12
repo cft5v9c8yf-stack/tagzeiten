@@ -350,7 +350,7 @@ function PaulDays({ days, onChange }: { days: number; onChange: (d: number) => v
 }
 
 /** A plan by sections: what can be chosen for it, and where it goes on. */
-function SectionPlan({ kind }: { kind: SectionKind }) {
+export function SectionPlan({ kind }: { kind: SectionKind }) {
   const store = useStore();
   const toast = useToast();
   const profile = useProfile();

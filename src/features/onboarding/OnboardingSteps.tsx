@@ -9,9 +9,11 @@ import { formatFullDate } from '../desert/DesertSettings';
 import { draftDays, draftStart, type DesertDraft } from './desertDraft';
 import { ABSOLUTION_EVENING } from '../../content/liturgy';
 import { BibleRef } from '../../ui/BibleRef';
+import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { PrayerText } from '../../ui/PrayerText';
 import { Segmented } from '../../ui/Choice';
-import { fixedAmounts, getPlan, ownPlanId, portionLabel, positionFor } from '../../domain/readingPlan';
+import { fixedAmounts, getPlan, ownPlanId, paulPlanId, portionLabel, positionFor, sectionKind } from '../../domain/readingPlan';
+import { PAUL_DAYS, SECTION_PLANS, START_PLAN_ID } from '../../content/readingPlans';
 import { useToast } from '../../app/Toast';
 import {
   changeScope,
@@ -36,7 +38,7 @@ import {
   type House,
 } from '../../domain/house';
 import type { Rhythm } from '../../domain/model';
-import { FixedPlan } from '../settings/PlanSettings';
+import { FixedPlan, SectionPlan } from '../settings/PlanSettings';
 import { TimesGrid } from '../settings/ScheduleSettings';
 
 export type Way = 'everyday' | 'desert';
@@ -67,11 +69,38 @@ function SwitchRow({
   );
 }
 
+/** A choice among a few: a card with a sign, a name, a line, and the mark of the chosen one. */
+function ChoiceCard({
+  icon,
+  title,
+  line,
+  pressed,
+  onClick,
+}: {
+  icon?: FlowIconName;
+  title: string;
+  line?: string;
+  pressed: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button type="button" className={icon ? 'ob-choice' : 'ob-choice ob-pick'} aria-pressed={pressed} onClick={onClick}>
+      {icon && <FlowIcon name={icon} size={24} />}
+      <span className="ob-choice-text">
+        <b>{title}</b>
+        {line && <span>{line}</span>}
+      </span>
+      <span className="ob-choice-mark" aria-hidden="true" />
+    </button>
+  );
+}
+
 /* ------------------------------------------------------------ 1 */
 
 export function OrderStep() {
   return (
     <>
+      <p className="ob-tagline">Mit Gott durch den Tag.</p>
       <blockquote className="ob-verse">
         <p>
           „Trachtet am ersten nach dem Reich Gottes und nach seiner Gerechtigkeit, so wird euch solches alles zufallen.“
@@ -80,26 +109,49 @@ export function OrderStep() {
           <BibleRef reference="Matthäus 6,33" />
         </cite>
       </blockquote>
-      <ol className="ob-order">
-        <li>
-          <span className="ob-order-tag">Zuerst</span>
-          <b>Das Wort</b>
-          <span>Du liest, bevor du planst.</span>
-        </li>
-        <li>
-          <span className="ob-order-tag">Dann</span>
-          <b>Das Gebet</b>
-          <span>Du betest, was du gelesen hast.</span>
-        </li>
-        <li>
-          <span className="ob-order-tag">Zuletzt</span>
-          <b>Die Ausrichtung</b>
-          <span>Du legst den Tag vor Gott hin.</span>
-        </li>
-      </ol>
-      <p className="ob-text">
-        Die Stille Zeit dauert etwa 45 Minuten. Hast du weniger Zeit, betest du die Kurzform. Sie gilt genauso.
-      </p>
+      <section className="ob-day" aria-labelledby="ob-day-title">
+        <h3 id="ob-day-title">So beginnt dein Tag</h3>
+        <ol className="ob-order">
+          <li>
+            <b>Wort</b>
+            <span>Du liest, bevor du planst.</span>
+          </li>
+          <li>
+            <b>Gebet</b>
+            <span>Du betest, was du gelesen hast.</span>
+          </li>
+          <li>
+            <b>Ausrichtung</b>
+            <span>Du legst den Tag vor Gott hin.</span>
+          </li>
+        </ol>
+      </section>
+    </>
+  );
+}
+
+/** What the setup asks for, shown on its first page above the button. Not buttons: a look ahead. */
+const AHEAD: readonly { icon: FlowIconName; label: string }[] = [
+  { icon: 'compass', label: 'Dein Weg' },
+  { icon: 'foldedHands', label: 'Gebet' },
+  { icon: 'house', label: 'Haus' },
+  { icon: 'clock', label: 'Zeiten' },
+  { icon: 'habits', label: 'Gewohnheiten' },
+  { icon: 'bible', label: 'Leseplan' },
+];
+
+export function AheadList() {
+  return (
+    <>
+      <h3 className="ob-ahead-title">Das richtest du gleich ein</h3>
+      <ul className="ob-ahead">
+        {AHEAD.map((a) => (
+          <li key={a.label}>
+            <FlowIcon name={a.icon} size={22} />
+            <span>{a.label}</span>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
@@ -107,37 +159,25 @@ export function OrderStep() {
 /* ------------------------------------------------------------ 2 */
 
 export function WayStep({ way, onChoose }: { way: Way | null; onChoose: (w: Way) => void }) {
-  // The explanation comes after the choice, right under the chosen card.
-  const card = (w: Way, title: string, line: string, info: string) => (
-    <>
-      <button type="button" className="ob-choice" aria-pressed={way === w} onClick={() => onChoose(w)}>
-        <b>{title}</b>
-        <span>{line}</span>
-      </button>
-      {way === w && (
-        <p className="ob-text" role="status">
-          {info}
-        </p>
-      )}
-    </>
-  );
   return (
     <>
-      <p className="ob-lead">Du kannst das später ändern. Die andere Möglichkeit bleibt in der App erhalten.</p>
-      <div className="ob-choices" role="group" aria-label="Wofür möchtest du Henoch nutzen?">
-        {card(
-          'everyday',
-          'Alltag',
-          'Stille Zeit, Bibel lesen, Vesper und Nachtgebet, dazu dein Haus.',
-          'Der Alltag ist der tägliche Rhythmus, den du danach beibehältst oder in dem du von Anfang an lebst.',
-        )}
-        {card(
-          'desert',
-          'Wüstenwanderung',
-          'Weniger Ablenkung. Mehr Raum für Gott.',
-          'Die Wüstenwanderung ist eine begrenzte Zeit, in der du Ablenkungen beiseitelegst und Gottes Wort mehr Raum gibst.',
-        )}
+      <div className="ob-choices" role="group" aria-label="Wofür nutzt du Henoch?">
+        <ChoiceCard
+          icon="sunrise"
+          title="Alltag"
+          line="Stille Zeit, Bibellese, Vesper und Nachtgebet, dazu dein Haus. Der tägliche Rhythmus."
+          pressed={way === 'everyday'}
+          onClick={() => onChoose('everyday')}
+        />
+        <ChoiceCard
+          icon="drop"
+          title="Wüstenwanderung"
+          line="Eine begrenzte Zeit: weniger Ablenkung, mehr Raum für Gottes Wort."
+          pressed={way === 'desert'}
+          onClick={() => onChoose('desert')}
+        />
       </div>
+      <p className="ob-hint">Die andere Möglichkeit bleibt in der App erhalten.</p>
     </>
   );
 }
@@ -155,24 +195,25 @@ export function PrayerWayStep() {
   const chosen = petition.morning || petition.evening ? 'petition' : 'order';
   const choose = (c: 'order' | 'petition') =>
     store.updateProfile((p) => ({ ...p, petition: { morning: c === 'petition', evening: c === 'petition' } }), { immediate: true });
-  const card = (c: 'order' | 'petition', title: string, line: string) => (
-    <button type="button" className="ob-choice" aria-pressed={chosen === c} onClick={() => choose(c)}>
-      <b>{title}</b>
-      <span>{line}</span>
-    </button>
-  );
   return (
     <>
-      <p className="ob-lead">Für dein Gebet am Morgen und am Abend.</p>
-      <div className="ob-choices" role="group" aria-label="Wie du betest">
-        {card('order', 'Gebetsordnung', 'Stille Zeit und Vesper in der festen Ordnung der Kirche, Schritt für Schritt, mit Kurzform für knappe Tage.')}
-        {card(
-          'petition',
-          'Freies Gebet',
-          'Morgen- und Abendgebet auf einem Blatt: das Wort, dein Haus und deine Anliegen, Dank und Segen. Ohne Uhr.',
-        )}
+      <div className="ob-choices" role="group" aria-label="Wie betest du?">
+        <ChoiceCard
+          icon="scroll"
+          title="Gebetsordnung"
+          line="Stille Zeit und Vesper in der Ordnung der Kirche, Schritt für Schritt. Mit Kurzform für knappe Tage."
+          pressed={chosen === 'order'}
+          onClick={() => choose('order')}
+        />
+        <ChoiceCard
+          icon="foldedHands"
+          title="Freies Gebet"
+          line="Morgen- und Abendgebet auf einem Blatt: das Wort, dein Haus, deine Anliegen, Dank und Segen. Ohne Uhr."
+          pressed={chosen === 'petition'}
+          onClick={() => choose('petition')}
+        />
       </div>
-      <p className="ob-text">
+      <p className="ob-hint">
         Beides gilt gleich. Unter Mehr → Tag und Woche → „Art des Gebets“ änderst du es jederzeit, auch für Morgen und
         Abend getrennt.
       </p>
@@ -215,42 +256,46 @@ export function HouseStep() {
 
   return (
     <>
-      <p className="ob-lead">Davon hängen die Gewohnheiten für Frau und Kinder ab. Die Namen sind freiwillig.</p>
-      <SwitchRow label="Ich habe eine Frau" line="Gewohnheiten wie „Mit meiner Frau beten“ erscheinen" checked={wife} onChange={toggleWife} />
-      {wife && (
-        <div className="field">
-          <label htmlFor={wifeId}>Name deiner Frau</label>
-          <input
-            id={wifeId}
-            type="text"
-            autoComplete="off"
-            value={house.wife.name}
-            onChange={(e) => setHouse((h) => ({ ...h, wife: { ...h.wife, name: e.target.value } }), false)}
-          />
-        </div>
-      )}
-      <SwitchRow label="Ich habe Kinder" line="Gewohnheiten wie „Die Kinder segnen“ erscheinen" checked={kids} onChange={toggleKids} />
-      {kids && (
-        <>
-          {children.map((c, i) => (
-            <ChildFields
-              key={c.id}
-              index={i}
-              several={shown > 1}
-              child={c}
-              autoFocus={focusIndex === i}
-              onName={(name) => updateChild(i, (x) => ({ ...x, name }))}
-              onSex={(sex) => updateChild(i, (x) => ({ ...x, sex }), true)}
+      <div className="ob-list">
+        <SwitchRow label="Ich habe eine Frau" checked={wife} onChange={toggleWife} />
+        {wife && (
+          <div className="field">
+            <label htmlFor={wifeId}>Name deiner Frau</label>
+            <input
+              id={wifeId}
+              type="text"
+              autoComplete="off"
+              value={house.wife.name}
+              onChange={(e) => setHouse((h) => ({ ...h, wife: { ...h.wife, name: e.target.value } }), false)}
             />
-          ))}
-          <button type="button" className="btn ob-add" onClick={addChild}>
-            Weiteres Kind hinzufügen
-          </button>
-        </>
-      )}
+          </div>
+        )}
+      </div>
+      <div className="ob-list">
+        <SwitchRow label="Ich habe Kinder" checked={kids} onChange={toggleKids} />
+        {kids && (
+          <>
+            {children.map((c, i) => (
+              <ChildFields
+                key={c.id}
+                index={i}
+                several={shown > 1}
+                child={c}
+                autoFocus={focusIndex === i}
+                onName={(name) => updateChild(i, (x) => ({ ...x, name }))}
+                onSex={(sex) => updateChild(i, (x) => ({ ...x, sex }), true)}
+              />
+            ))}
+            <button type="button" className="ob-add" onClick={addChild}>
+              <FlowIcon name="plus" size={18} />
+              Weiteres Kind hinzufügen
+            </button>
+          </>
+        )}
+      </div>
       <p className="ob-hint">
-        Gebetsanliegen für deine Familie trägst du später unter „Mehr, Gebet, Gebetsübersicht“ ein. Hier brauchst du nur die
-        Namen.
+        Davon hängen die Gewohnheiten für Frau und Kinder ab. Die Namen sind freiwillig. Gebetsanliegen trägst du später
+        unter „Mehr, Gebet, Gebetsübersicht“ ein.
       </p>
     </>
   );
@@ -305,17 +350,18 @@ export function TimesStep() {
   const profile = useProfile();
   return (
     <>
-      <p className="ob-lead">Das sind Vorschläge, keine Vorgabe. Du kannst sie jederzeit ändern.</p>
       {profile.scheduleDays?.on ? (
         <p className="ob-hint">Für jeden Wochentag gelten eigene Zeiten. Du änderst sie unter „Mehr, Zeiten“.</p>
       ) : (
-        <TimesGrid
-          keys={['stillTime', 'vespers', 'compline']}
-          times={profile.schedule}
-          onChange={(k, v) => store.updateProfile((p) => ({ ...p, schedule: { ...p.schedule, [k]: v } }))}
-        />
+        <div className="ob-list ob-times">
+          <TimesGrid
+            keys={['stillTime', 'vespers', 'compline']}
+            times={profile.schedule}
+            onChange={(k, v) => store.updateProfile((p) => ({ ...p, schedule: { ...p.schedule, [k]: v } }))}
+          />
+        </div>
       )}
-      <p className="ob-text">Die Zeit erinnert dich an die Stunde. Verpasst du sie, fragt dich die App nicht danach.</p>
+      <p className="ob-hint">Die Zeit erinnert dich an die Stunde. Verpasst du sie, fragt dich die App nicht danach.</p>
     </>
   );
 }
@@ -331,22 +377,23 @@ export function HabitsStep() {
   const waiting = presets.some((h) => !fitsHouse(h, profile.house));
   return (
     <>
-      <p className="ob-lead">Vorlagen für den Hausvater. Schalte aus, was du nicht willst, und lege später eigene an.</p>
       {RHYTHM_ORDER.map((r) => {
         const list = habitsOfRhythm(presets, r).filter((h) => fitsHouse(h, profile.house));
         if (!list.length) return null;
         return (
           <section key={r} className="ob-group" aria-labelledby={`ob-habits-${r}`}>
             <h3 id={`ob-habits-${r}`}>{RHYTHM_TITLE[r]}</h3>
-            {list.map((h) => (
-              <SwitchRow
-                key={h.id}
-                label={h.name}
-                line={h.auto ? 'aus dem Ablauf' : h.id === 'bibleReading' ? 'rückt den Leseplan weiter' : undefined}
-                checked={h.active}
-                onChange={(on) => store.updateProfile((p) => ({ ...p, habits: setHabitActive(p.habits, h.id, on) }), { immediate: true })}
-              />
-            ))}
+            <div className="ob-list">
+              {list.map((h) => (
+                <SwitchRow
+                  key={h.id}
+                  label={h.name}
+                  line={h.auto ? 'aus dem Ablauf' : h.id === 'bibleReading' ? 'rückt den Leseplan weiter' : undefined}
+                  checked={h.active}
+                  onChange={(on) => store.updateProfile((p) => ({ ...p, habits: setHabitActive(p.habits, h.id, on) }), { immediate: true })}
+                />
+              ))}
+            </div>
           </section>
         );
       })}
@@ -365,11 +412,19 @@ export function HabitsStep() {
 
 /* ------------------------------------------------------------ 6 */
 
-const SCOPE_CARDS: readonly [Scope, string][] = [
-  ['both', 'Altes und Neues Testament'],
-  ['nt', 'Nur das Neue Testament'],
-  ['at', 'Nur das Alte Testament'],
+/** What the setup offers to read: both Testaments, one alone, or a plan by sections. */
+type PlanChoice = Scope | 'beginner' | 'paul' | 'year';
+
+const PLAN_CARDS: readonly [PlanChoice, string, string][] = [
+  ['both', 'Altes und Neues Testament', 'Aus beiden jeden Tag ein Abschnitt.'],
+  ['nt', 'Nur das Neue Testament', 'Fortlaufend, Kapitel für Kapitel.'],
+  ['at', 'Nur das Alte Testament', 'Fortlaufend, Kapitel für Kapitel.'],
+  ['beginner', SECTION_PLANS.beginner.name, 'Für den Anfang: 59 Kapitel, eines am Tag.'],
+  ['paul', SECTION_PLANS.paul.name, 'Apostelgeschichte und Paulusbriefe in 40 oder 60 Tagen.'],
+  ['year', SECTION_PLANS.year.name, 'Die ganze Bibel in 365 Abschnitten.'],
 ];
+
+const SECTION_START = { beginner: 'einsteiger', paul: paulPlanId(PAUL_DAYS[0]), year: 'jahr' } as const;
 
 /** One Testament alone: where to begin (book and chapter) and how many chapters a day. */
 function SingleTestament({ scope }: { scope: 'at' | 'nt' }) {
@@ -440,28 +495,45 @@ export function PlanStep() {
   const profile = useProfile();
   const amounts = fixedAmounts(profile.plan.planId);
   const scope = scopeOf(profile);
-  const choose = (to: Scope) => {
-    if (!scope || to === scope) return;
-    const { planId, starts } = changeScope(profile, scope, to);
-    store.setPlan(planId, starts);
+  const section = sectionKind(profile.plan.planId);
+  const chosen: PlanChoice | undefined = section && section !== 'desert' ? section : scope;
+  const choose = (to: PlanChoice) => {
+    if (!chosen || to === chosen) return;
+    if (to === 'beginner' || to === 'paul' || to === 'year') store.setPlan(SECTION_START[to]);
+    else if (scope) {
+      const { planId, starts } = changeScope(profile, scope, to);
+      store.setPlan(planId, starts);
+    } else if (to === 'both') store.setPlan(profile.plan.fixed ?? START_PLAN_ID);
+    else {
+      // From a plan by sections to one Testament: its place in the plan of both is found again.
+      const { planId, starts } = changeScope(profile, to === 'nt' ? 'at' : 'nt', to);
+      store.setPlan(planId, starts);
+    }
     toast('Leseplan angepasst');
   };
   return (
     <>
-      <p className="ob-lead">Du liest auf Papier. Die App merkt sich nur, wo du stehst.</p>
-      {scope ? (
+      {chosen ? (
         <>
-          <p id="ob-scope" className="ob-label">
-            Was liest du?
-          </p>
-          <div className="ob-choices" role="group" aria-labelledby="ob-scope">
-            {SCOPE_CARDS.map(([value, label]) => (
-              <button key={value} type="button" className="ob-choice ob-choice-short" aria-pressed={scope === value} onClick={() => choose(value)}>
-                <b>{label}</b>
-              </button>
+          <div className="ob-list" role="group" aria-label="Leseplan">
+            {PLAN_CARDS.map(([value, label, line]) => (
+              <ChoiceCard key={value} title={label} line={line} pressed={chosen === value} onClick={() => choose(value)} />
             ))}
           </div>
-          {scope === 'both' && amounts ? <FixedPlan amounts={amounts} /> : <SingleTestament scope={scope as 'at' | 'nt'} />}
+          <details className="ob-fold">
+            <summary>
+              <span>Beginn und Menge anpassen</span>
+            </summary>
+            <div className="ob-fold-body">
+              {chosen === 'both' && amounts ? (
+                <FixedPlan amounts={amounts} />
+              ) : chosen === 'nt' || chosen === 'at' ? (
+                <SingleTestament scope={chosen} />
+              ) : section ? (
+                <SectionPlan key={profile.plan.planId} kind={section} />
+              ) : null}
+            </div>
+          </details>
         </>
       ) : (
         <p className="ob-hint">Du liest nach einem eigenen Plan. Den änderst du unter „Wort“.</p>
@@ -479,14 +551,20 @@ export function PlanStep() {
 export function PrivacyStep() {
   return (
     <>
-      <ul className="ob-facts">
+      <ul className="ob-list ob-facts">
         <li>
-          <b>Alles bleibt bei dir.</b>
-          <span>Einträge liegen nur auf diesem Gerät. Du kannst sie jederzeit exportieren oder löschen.</span>
+          <FlowIcon name="phone" size={22} />
+          <div>
+            <b>Alles bleibt bei dir.</b>
+            <span>Einträge liegen nur auf diesem Gerät. Du kannst sie jederzeit exportieren oder löschen.</span>
+          </div>
         </li>
         <li>
-          <b>Wird gebetet, nicht notiert.</b>
-          <span>Für Schuld gibt es kein Eingabefeld. Sie wird vor Gott ausgesprochen.</span>
+          <FlowIcon name="foldedHands" size={22} />
+          <div>
+            <b>Wird gebetet, nicht notiert.</b>
+            <span>Für Schuld gibt es kein Eingabefeld. Sie wird vor Gott ausgesprochen.</span>
+          </div>
         </li>
       </ul>
       <PrayerText text={ABSOLUTION_EVENING} className="absolution" />
@@ -496,9 +574,10 @@ export function PrivacyStep() {
 
 /* ------------------------------------------------------------ 8 */
 
-function Fact({ name, children }: { name: string; children: ReactNode }) {
+function Fact({ icon, name, children }: { icon: FlowIconName; name: string; children: ReactNode }) {
   return (
     <div>
+      <FlowIcon name={icon} size={22} />
       <dt>{name}</dt>
       <dd>{children}</dd>
     </div>
@@ -516,14 +595,23 @@ export function DoneStep() {
   const s = profile.schedule;
   return (
     <>
-      <dl className="ob-sum">
-        <Fact name="Weg">Alltag</Fact>
-        <Fact name="Haus">{names.length ? joinNames(names) : 'noch leer'}</Fact>
-        <Fact name="Zeiten">
+      <dl className="ob-list ob-sum">
+        <Fact icon="compass" name="Weg">
+          Alltag
+        </Fact>
+        <Fact icon="foldedHands" name="Gebet">
+          {profile.petition.morning && profile.petition.evening
+            ? 'Freies Gebet'
+            : profile.petition.morning || profile.petition.evening
+              ? 'Gebetsordnung und freies Gebet'
+              : 'Gebetsordnung'}
+        </Fact>
+        <Fact icon="house" name="Haus">{names.length ? joinNames(names) : 'noch leer'}</Fact>
+        <Fact icon="clock" name="Zeiten">
           {profile.scheduleDays?.on ? 'je Wochentag' : `Stille Zeit ${s.stillTime} · Vesper ${s.vespers} · Nachtgebet ${s.compline}`}
         </Fact>
-        <Fact name="Gewohnheiten">{on.length ? on.map((h) => h.name).join(', ') : 'keine eingeschaltet'}</Fact>
-        <Fact name="Nächste Lesung">{reading.join(' · ')}</Fact>
+        <Fact icon="habits" name="Gewohnheiten">{on.length ? on.map((h) => h.name).join(', ') : 'keine eingeschaltet'}</Fact>
+        <Fact icon="bible" name="Nächste Lesung">{reading.join(' · ')}</Fact>
       </dl>
       <p className="ob-hint">Alles lässt sich unter „Mehr“ ändern. Diese Anleitung bleibt unter „Mehr, Anleitung“.</p>
     </>
@@ -634,7 +722,6 @@ export function DesertHabitsStep({ draft, set }: { draft: DesertDraft; set: SetD
   const own = profile.habits.filter((h) => h.desert === 'own');
   return (
     <>
-      <p className="ob-lead">Diese Gewohnheiten gelten nur für die Wüstenzeit. Danach kannst du sie in den Alltag mitnehmen.</p>
       {groups.map((g) => {
         const n = g.list.filter((o) => chosen.has(o.id)).length;
         return (
@@ -650,10 +737,12 @@ export function DesertHabitsStep({ draft, set }: { draft: DesertDraft; set: SetD
             }}
           >
             <summary>
-              <span>{g.title}</span>
+              <span className="ob-fold-name">
+                <b>{g.title}</b>
+                {g.line && <span>{g.line}</span>}
+              </span>
               <span className="ob-fold-count">{n > 0 ? `${n} gewählt` : ''}</span>
             </summary>
-            {g.line && <p className="ob-hint">{g.line}</p>}
             {g.list.map((o) => (
               <SwitchRow key={o.id} label={o.name} line={waits(o)} checked={chosen.has(o.id)} onChange={(on) => toggle(o.id, on)} />
             ))}
@@ -663,12 +752,16 @@ export function DesertHabitsStep({ draft, set }: { draft: DesertDraft; set: SetD
       {own.length > 0 && (
         <section className="ob-group" aria-labelledby="ob-dh-own">
           <h3 id="ob-dh-own">Eigene</h3>
-          {own.map((h) => (
-            <SwitchRow key={h.id} label={h.name} checked={chosen.has(h.id)} onChange={(on) => toggle(h.id, on)} />
-          ))}
+          <div className="ob-list">
+            {own.map((h) => (
+              <SwitchRow key={h.id} label={h.name} checked={chosen.has(h.id)} onChange={(on) => toggle(h.id, on)} />
+            ))}
+          </div>
         </section>
       )}
-      <p className="ob-hint">Eigene Gewohnheiten legst du später in der Arena an.</p>
+      <p className="ob-hint">
+        Sie gelten nur für die Wüstenzeit; danach kannst du sie in den Alltag mitnehmen. Eigene Gewohnheiten legst du später in der Arena an.
+      </p>
     </>
   );
 }
@@ -682,13 +775,15 @@ export function DesertDoneStep({ draft }: { draft: DesertDraft }) {
   const s = profile.schedule;
   return (
     <>
-      <dl className="ob-sum">
-        <Fact name="Weg">Wüstenwanderung</Fact>
-        <Fact name="Dauer und Beginn">
+      <dl className="ob-list ob-sum">
+        <Fact icon="compass" name="Weg">
+          Wüstenwanderung
+        </Fact>
+        <Fact icon="sunrise" name="Dauer und Beginn">
           {days && start ? `${days} Tage, von ${formatFullDate(start)} bis ${formatFullDate(endDateOf(start, days))}` : 'noch offen'}
         </Fact>
-        <Fact name="Gewohnheiten">{names.length ? names.join(', ') : 'keine gewählt'}</Fact>
-        <Fact name="Zeiten">
+        <Fact icon="habits" name="Gewohnheiten">{names.length ? names.join(', ') : 'keine gewählt'}</Fact>
+        <Fact icon="clock" name="Zeiten">
           {profile.scheduleDays?.on ? 'je Wochentag' : `Stille Zeit ${s.stillTime} · Vesper ${s.vespers} · Nachtgebet ${s.compline}`}
         </Fact>
       </dl>
