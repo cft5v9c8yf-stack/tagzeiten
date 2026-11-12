@@ -736,3 +736,17 @@
   grid-column: 2;
   font-family: var(--sans);
 }
+
+/* Birthday and wedding day: side by side under the name; a child's birthday under its name. */
+.ob-list > .ob-days {
+  padding: 10px var(--card-pad) 12px;
+}
+.ob-child .house-day {
+  grid-column: 1 / -1;
+}
+.ob .house-day input[type='date'] {
+  min-width: 0;
+}
+.ob-days {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

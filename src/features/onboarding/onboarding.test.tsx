@@ -193,12 +193,19 @@ describe('Einrichtung: der Weg Alltag', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Sohn' }));
     click('Weiteres Kind hinzufügen');
     fireEvent.change(screen.getByLabelText('2. Kind'), { target: { value: 'Marie' } });
+    // Birthdays and the wedding day: asked for here, kept with the house.
+    fireEvent.change(screen.getByLabelText('Ihr Geburtstag'), { target: { value: '1990-03-14' } });
+    fireEvent.change(screen.getByLabelText('Hochzeitstag'), { target: { value: '2015-06-20' } });
+    fireEvent.change(screen.getByLabelText('Geburtstag von Paul'), { target: { value: '2018-11-02' } });
     expect(screen.getByText(/Gebetsübersicht/)).toBeTruthy();
     next();
     const house = store.getProfile().house;
     expect(house.wife.name).toBe('Anna');
     expect(house.children.map((c) => c.name).slice(0, 2)).toEqual(['Paul', 'Marie']);
     expect(house.children[0]!.sex).toBe('son');
+    expect(house.wife.birthday).toBe('1990-03-14');
+    expect(house.wedding).toBe('2015-06-20');
+    expect(house.children[0]!.birthday).toBe('2018-11-02');
 
     // Deine Zeiten: three of them.
     expect(heading()).toBe('Deine Zeiten');

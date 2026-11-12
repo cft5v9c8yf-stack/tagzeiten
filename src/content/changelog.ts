@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.40.1',
+    date: '2026-11-12',
+    title: 'Geburtstage und Hochzeitstag',
+    changes: [
+      { area: 'Mein Haus', text: 'Du kannst den Geburtstag deiner Frau, euren Hochzeitstag und die Geburtstage deiner Kinder hinterlegen, in der Einrichtung und unter Mehr → „Mein Haus“. Am Tag selbst steht auf „Heute“ unter dem Datum eine Zeile, zum Beispiel „Geburtstag von Anna“. Die Angaben sind freiwillig und bleiben auf dem Gerät.' },
+    ],
+  },
+  {
     version: '1.40.0',
     date: '2026-11-12',
     title: 'Willkommen bei Henoch',

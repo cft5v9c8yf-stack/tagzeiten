@@ -39,6 +39,7 @@ import {
 } from '../../domain/house';
 import type { Rhythm } from '../../domain/model';
 import { FixedPlan, SectionPlan } from '../settings/PlanSettings';
+import { HouseDateField } from '../settings/HouseSettings';
 import { TimesGrid } from '../settings/ScheduleSettings';
 
 export type Way = 'everyday' | 'desert';
@@ -270,6 +271,16 @@ export function HouseStep() {
             />
           </div>
         )}
+        {wife && (
+          <div className="grid2 ob-days">
+            <HouseDateField
+              label="Ihr Geburtstag"
+              value={house.wife.birthday}
+              onChange={(birthday) => setHouse((h) => ({ ...h, wife: { ...h.wife, birthday } }))}
+            />
+            <HouseDateField label="Hochzeitstag" value={house.wedding} onChange={(wedding) => setHouse((h) => ({ ...h, wedding }))} />
+          </div>
+        )}
       </div>
       <div className="ob-list">
         <SwitchRow label="Ich habe Kinder" checked={kids} onChange={toggleKids} />
@@ -284,6 +295,7 @@ export function HouseStep() {
                 autoFocus={focusIndex === i}
                 onName={(name) => updateChild(i, (x) => ({ ...x, name }))}
                 onSex={(sex) => updateChild(i, (x) => ({ ...x, sex }), true)}
+                onBirthday={(birthday) => updateChild(i, (x) => ({ ...x, birthday }), true)}
               />
             ))}
             <button type="button" className="ob-add" onClick={addChild}>
@@ -294,8 +306,8 @@ export function HouseStep() {
         )}
       </div>
       <p className="ob-hint">
-        Davon hängen die Gewohnheiten für Frau und Kinder ab. Die Namen sind freiwillig. Gebetsanliegen trägst du später
-        unter „Mehr, Gebet, Gebetsübersicht“ ein.
+        Davon hängen die Gewohnheiten für Frau und Kinder ab. Namen und Tage sind freiwillig; an einem Geburtstag oder
+        eurem Hochzeitstag steht es auf „Heute“. Gebetsanliegen trägst du später unter „Mehr, Gebet, Gebetsübersicht“ ein.
       </p>
     </>
   );
@@ -308,6 +320,7 @@ function ChildFields({
   autoFocus,
   onName,
   onSex,
+  onBirthday,
 }: {
   index: number;
   several: boolean;
@@ -315,6 +328,7 @@ function ChildFields({
   autoFocus: boolean;
   onName: (name: string) => void;
   onSex: (sex: ChildSex) => void;
+  onBirthday: (day: string | undefined) => void;
 }) {
   const id = useId();
   const label = several ? `${index + 1}. Kind` : 'Name des Kindes';
@@ -337,6 +351,7 @@ function ChildFields({
             ]}
           />
           {!child.sex && <p className="ob-hint">Bitte wählen. Davon hängt das Gebet an seinem Tag ab.</p>}
+          <HouseDateField label={`Geburtstag von ${child.name.trim()}`} value={child.birthday} onChange={onBirthday} />
         </>
       )}
     </div>
