@@ -40,6 +40,22 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
+/* A birthday, the wedding day: Safari on the iPhone gives date fields their own width; the cell decides. */
+.house-day {
+  min-width: 0;
+}
+.house-day input[type='date'] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+}
+.house-day input[type='date']::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.45em;
+}
 body.no-scroll {
   overflow: hidden;
 }

@@ -13,6 +13,48 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.41.0',
+    date: '2026-11-13',
+    title: 'Lesung: im Notizbuch oder in der App',
+    changes: [
+      { area: 'Stille Zeit', text: 'In der Lesung wählst du jetzt, wo du deine Gedanken aufschreibst: „Im Notizbuch“ (auf Papier oder in GoodNotes) oder „In der App“. Im Notizbuch bleibt nur der Vers, den du mitnimmst, im Blick; die übrigen Felder treten zurück, und was du dort schon notiert hast, bleibt erhalten. Henoch merkt sich deine letzte Wahl für den nächsten Morgen. Die Stille Zeit gilt so oder so ganz.' },
+    ],
+  },
+  {
+    version: '1.40.3',
+    date: '2026-11-13',
+    title: 'Erste Seite der Einrichtung: in der Mitte',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf einem hohen Bildschirm stehen Matthäus 6,33 und „So beginnt dein Tag“ jetzt in der Mitte zwischen Kopf und unterer Fläche statt oben mit einer Lücke darunter. Die Überschrift „So beginnt dein Tag“ ist mittig gesetzt.' },
+    ],
+  },
+  {
+    version: '1.40.2',
+    date: '2026-11-13',
+    title: 'Das Zeichen von Henoch auf der ersten Seite',
+    changes: [
+      { area: 'Einrichtung', text: 'Die erste Seite der Einrichtung trägt jetzt das Zeichen von Henoch, die Sonne über dem Horizont mit dem Weg, der zu ihr führt, und darunter Titelzeile und Untertitel wie auf der Homepage: „Mit Gott durch den Tag.“ und „Gebet am Morgen und am Abend, Gottes Wort und der Katechismus – geordnet, dort, wo Gott dich hingestellt hat.“ Die Vorschau auf das, was du einrichtest, steht dafür in zwei kurzen Zeilen.' },
+    ],
+  },
+  {
+    version: '1.40.1',
+    date: '2026-11-12',
+    title: 'Geburtstage und Hochzeitstag',
+    changes: [
+      { area: 'Mein Haus', text: 'Du kannst den Geburtstag deiner Frau, euren Hochzeitstag und die Geburtstage deiner Kinder hinterlegen, in der Einrichtung und unter Mehr → „Mein Haus“. Am Tag selbst steht auf „Heute“ unter dem Datum eine Zeile, zum Beispiel „Geburtstag von Anna“. Die Angaben sind freiwillig und bleiben auf dem Gerät.' },
+    ],
+  },
+  {
+    version: '1.40.0',
+    date: '2026-11-12',
+    title: 'Willkommen bei Henoch',
+    changes: [
+      { area: 'Einrichtung', text: 'Die Einrichtung beim ersten Start ist neu gestaltet. Die erste Seite begrüßt dich: „Willkommen bei Henoch“, darunter Matthäus 6,33, der Tag mit Wort, Gebet und Ausrichtung auf einer Linie, und eine Vorschau auf das, was du gleich einrichtest. Die Angabe zur Dauer der Stillen Zeit ist weggefallen.' },
+      { area: 'Einrichtung', text: 'Jede Seite ist gleich aufgebaut: oben links „Zurück“, rechts „Überspringen“, darunter die Überschrift mit einer kurzen Zeile, unten fest der eine Knopf, der weiterführt. Was zusammengehört, steht als Liste auf einer Fläche; die gewählte Möglichkeit trägt einen goldenen Haken. „Später ansehen“ heißt jetzt „Später einrichten“.' },
+      { area: 'Einrichtung', text: 'Beim Leseplan wählst du jetzt auch „Christus finden“, „Mit Paulus unterwegs“ und „Bibel in einem Jahr“. Beginn und Menge passt du darunter an, wenn du willst. Die Zusammenfassung am Ende nennt auch die Art des Gebets.' },
+    ],
+  },
+  {
     version: '1.39.1',
     date: '2026-11-09',
     title: 'Ohne Überschrift unter Morgen und Abend',

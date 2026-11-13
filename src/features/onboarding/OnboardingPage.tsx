@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
-import { PageHeader } from '../../ui/PageHeader';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { HenochLogo } from '../../ui/HenochLogo';
 import { useStore } from '../../data/hooks';
 import { draftDays, draftStart, useDesertDraft } from './desertDraft';
 import {
+  AheadList,
   DesertDoneStep,
   DesertHabitsStep,
   DesertStartStep,
@@ -33,22 +35,24 @@ type StepId = 'order' | 'way' | 'prayer' | 'house' | 'times' | 'habits' | 'plan'
 interface Step {
   id: StepId;
   title: string;
+  /** One short line under the title. */
+  lead?: string;
   /** Steps that can be put aside; the settings stay as they are. */
   skippable: boolean;
 }
 
 const STEP_LIST: Record<StepId, Step> = {
-  order: { id: 'order', title: 'So beginnt der Tag', skippable: false },
-  way: { id: 'way', title: 'Wofür möchtest du Henoch nutzen?', skippable: false },
-  prayer: { id: 'prayer', title: 'Wie du betest', skippable: true },
-  house: { id: 'house', title: 'Mein Haus', skippable: true },
-  times: { id: 'times', title: 'Deine Zeiten', skippable: true },
-  habits: { id: 'habits', title: 'Deine Gewohnheiten', skippable: true },
-  plan: { id: 'plan', title: 'Dein Leseplan', skippable: true },
+  order: { id: 'order', title: 'Willkommen bei Henoch', skippable: false },
+  way: { id: 'way', title: 'Wofür nutzt du Henoch?', lead: 'Du kannst das jederzeit ändern.', skippable: false },
+  prayer: { id: 'prayer', title: 'Wie betest du?', lead: 'Für dein Gebet am Morgen und am Abend.', skippable: true },
+  house: { id: 'house', title: 'Dein Haus', lead: 'Wer zu deinem Haus gehört.', skippable: true },
+  times: { id: 'times', title: 'Deine Zeiten', lead: 'Vorschläge, keine Vorgabe.', skippable: true },
+  habits: { id: 'habits', title: 'Deine Gewohnheiten', lead: 'Schalte aus, was du nicht willst.', skippable: true },
+  plan: { id: 'plan', title: 'Dein Leseplan', lead: 'Du liest auf Papier. Henoch merkt sich die Stelle.', skippable: true },
   privacy: { id: 'privacy', title: 'Was auf deinem Gerät bleibt', skippable: false },
   done: { id: 'done', title: 'Das ist eingerichtet', skippable: false },
-  dstart: { id: 'dstart', title: 'Wüstenwanderung beginnen', skippable: false },
-  dhabits: { id: 'dhabits', title: 'Gewohnheiten für diese Zeit', skippable: true },
+  dstart: { id: 'dstart', title: 'Wüstenwanderung beginnen', lead: 'Eine begrenzte Zeit mit Gott.', skippable: false },
+  dhabits: { id: 'dhabits', title: 'Gewohnheiten für diese Zeit', lead: 'Wähle aus den Paketen, was du dir vornimmst.', skippable: true },
   ddone: { id: 'ddone', title: 'Das ist eingerichtet', skippable: false },
 };
 
@@ -133,44 +137,77 @@ export function OnboardingPage() {
   };
   const blocked = (step.id === 'way' && !way) || ((step.id === 'dstart' || step.id === 'ddone') && !(days && start));
   const nextLabel = last ? (way === 'desert' ? 'Zur Wüstenwanderung' : 'Zu Heute') : 'Weiter';
+  const leaveLabel = reopened ? 'Schließen' : 'Später einrichten';
+  // The first page welcomes: no head row, and the look ahead with the button in a sheet at the foot.
+  const welcome = step.id === 'order';
 
   return (
     <>
       <a className="skip-link" href="#main">
         Zum Inhalt
       </a>
-      <div className="wrap ob-wrap" data-path={ONBOARDING_PATH}>
-        <PageHeader
-          title="Einrichtung"
-          backRef={() => {}}
-          action={
-            !last && (
-              <button type="button" className="btn quiet ob-leave" onClick={leave}>
-                {reopened ? 'Schließen' : 'Später ansehen'}
+      <div className={welcome ? 'wrap ob-wrap is-welcome' : 'wrap ob-wrap'} data-path={ONBOARDING_PATH}>
+        {welcome ? (
+          <header className="ob-welcome-head">
+            <h1 className="visually-hidden">Einrichtung</h1>
+            <HenochLogo size={62} />
+          </header>
+        ) : (
+          // Back on the left, putting aside on the right; the one button that leads on stands at the foot.
+          <header className="ob-nav">
+            <h1 className="visually-hidden">Einrichtung</h1>
+            <button type="button" className="ob-nav-back" onClick={() => setIndex(index - 1)}>
+              <FlowIcon name="chevronLeft" size={22} plain />
+              Zurück
+            </button>
+            {reopened ? (
+              <button type="button" className="ob-nav-side" onClick={leave}>
+                Schließen
               </button>
-            )
-          }
-        />
-        <main id="main" className="ob">
+            ) : step.skippable ? (
+              <button type="button" className="ob-nav-side" onClick={next}>
+                Überspringen
+              </button>
+            ) : (
+              !last && (
+                <button type="button" className="ob-nav-side" onClick={leave}>
+                  {leaveLabel}
+                </button>
+              )
+            )}
+          </header>
+        )}
+        <main id="main" className={welcome ? 'ob ob-welcome' : `ob ob-${step.id}`}>
+          {(step.id === 'done' || step.id === 'ddone') && (
+            <div className="ob-hero" aria-hidden="true">
+              <FlowIcon name="check" size={44} />
+            </div>
+          )}
           <h2 ref={titleRef} tabIndex={-1} className="ob-title">
             {step.title}
           </h2>
+          {step.lead && <p className="ob-lead">{step.lead}</p>}
           {body[step.id]}
-          <div className="ob-foot">
-            <button type="button" className="btn primary" disabled={blocked} onClick={last ? (way === 'desert' ? beginDesert : finish) : next}>
-              {nextLabel}
-            </button>
-            {index > 0 && (
-              <button type="button" className="btn quiet" onClick={() => setIndex(index - 1)}>
-                Zurück
+          {welcome ? (
+            <div className="ob-sheet">
+              <AheadList />
+              <button type="button" className="btn primary" onClick={next}>
+                Einrichtung beginnen
               </button>
-            )}
-            {step.skippable && (
-              <button type="button" className="btn quiet" onClick={() => setIndex(index + 1)}>
-                Überspringen
+              <div className="ob-sheet-row">
+                <span>Alles lässt sich später ändern.</span>
+                <button type="button" className="btn quiet" onClick={leave}>
+                  {leaveLabel}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="ob-foot">
+              <button type="button" className="btn primary" disabled={blocked} onClick={last ? (way === 'desert' ? beginDesert : finish) : next}>
+                {nextLabel}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </main>
       </div>
     </>

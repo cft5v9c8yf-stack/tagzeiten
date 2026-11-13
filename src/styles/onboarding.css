@@ -50,8 +50,7 @@
   font-style: normal;
 }
 
-/* Word, prayer, alignment: in this order (rule 2). */
-.ob-order,
+/* Word, prayer, alignment: in this order (rule 2), side by side on a line. */
 .ob-facts,
 .ob-sum {
   display: grid;
@@ -60,7 +59,6 @@
   padding: 0;
   list-style: none;
 }
-.ob-order li,
 .ob-facts li {
   display: grid;
   gap: 2px;
@@ -69,24 +67,131 @@
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
 }
-.ob-order li {
-  grid-template-columns: 5.2rem 1fr;
-  column-gap: 10px;
-  align-items: baseline;
+.ob-day h3 {
+  margin: 4px 0 12px;
+  font-size: 1.2rem;
 }
-.ob-order li > span:last-child {
-  grid-column: 2;
+.ob-order {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+.ob-order li {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+/* The mark of each step, and the line that leads on to the next. */
+.ob-order li::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  margin-bottom: 6px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+}
+.ob-order li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: calc(50% + 14px);
+  width: calc(100% - 20px);
+  height: 1.5px;
+  background: var(--rule);
+}
+.ob-order b {
+  font-weight: 600;
+  hyphens: auto;
+}
+.ob-order span {
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 0.92rem;
+  font-size: 0.85rem;
+  line-height: 1.3;
 }
-.ob-order-tag {
+
+/* The first page: a welcome, and the look ahead with the button in a sheet at the foot. */
+.ob-wrap.is-welcome {
+  min-height: 100dvh;
+  padding-bottom: 0;
+}
+.ob-welcome-head {
+  padding: 14px 0 0;
+}
+.ob-kicker {
+  margin: 0;
   font-family: var(--sans);
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
+}
+.ob-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ob-welcome .ob-title {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.15;
+}
+.ob-tagline {
+  margin: -10px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+}
+.ob-sheet {
+  margin: auto calc(-1 * (var(--gutter) + var(--safe-right))) 0 calc(-1 * (var(--gutter) + var(--safe-left)));
+  padding: 16px calc(var(--gutter) + var(--safe-right)) calc(var(--safe-bottom) + 12px) calc(var(--gutter) + var(--safe-left));
+  background: var(--sheet);
+  border-top: 1px solid var(--rule);
+  border-radius: 22px 22px 0 0;
+}
+.ob-ahead-title {
+  margin: 0 0 12px;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.ob-ahead {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 6px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.ob-ahead li {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--ink);
+}
+.ob-sheet .btn.primary {
+  width: 100%;
+  min-height: 48px;
+}
+.ob-sheet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 .ob-facts span {
   color: var(--muted);
@@ -279,4 +384,443 @@
   font-family: var(--sans);
   font-size: 0.9rem;
   font-weight: 600;
+}
+
+/*
+ * The frame of every page after the welcome: back and putting aside in a row at
+ * the head, title and one line, the content in lists on one sheet each, and the
+ * one button that leads on, held at the foot of the screen.
+ */
+.ob-wrap {
+  min-height: 100dvh;
+  padding-bottom: 0;
+}
+.ob {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.ob-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin: 6px -6px 0;
+}
+.ob-nav button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 44px;
+  padding: 0 6px;
+  background: none;
+  border: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  cursor: pointer;
+}
+.ob-nav-back {
+  color: var(--link);
+}
+.ob-nav-side {
+  color: var(--muted);
+}
+.ob-title {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.15;
+}
+.ob-lead {
+  margin: -8px 0 2px;
+  font-family: var(--sans);
+  font-style: normal;
+}
+.ob-foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: auto calc(-1 * var(--gutter)) 0;
+  padding: 28px var(--gutter) calc(var(--safe-bottom) + 18px);
+  background: linear-gradient(transparent, var(--paper) 26px);
+}
+.ob-foot .btn.primary {
+  width: 100%;
+  min-height: 50px;
+}
+.ob-hero {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 4px auto 0;
+  border-radius: 50%;
+  background: var(--gold-soft);
+}
+.ob-done .ob-title,
+.ob-ddone .ob-title {
+  text-align: center;
+}
+
+/* A list on one sheet: rows with a fine line between them. */
+.ob-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.ob-list > * + * {
+  border-top: 1px solid var(--rule);
+}
+.ob-list .ob-row {
+  min-height: 50px;
+  background: none;
+  border-width: 0;
+  border-radius: 0;
+}
+.ob-list > .ob-row + *,
+.ob-list > * + .ob-row {
+  border-top: 1px solid var(--rule);
+}
+.ob-list > .field,
+.ob-list > .ob-child {
+  padding: 10px var(--card-pad) 12px;
+}
+.ob-list .field input[type='text'] {
+  width: 100%;
+}
+.ob-child {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 4px 10px;
+}
+.ob-child .seg.seg-grid {
+  width: auto;
+  margin: 0;
+}
+.ob-child .ob-hint {
+  grid-column: 1 / -1;
+}
+.ob-add {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 var(--card-pad);
+  background: none;
+  border: 0;
+  color: var(--link);
+  font-family: var(--sans);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+.ob-group h3 {
+  margin: 4px 0 0 var(--card-pad);
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* The times: one row each, the name on the left, the hour on the right. */
+.ob-times .times-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.ob-times .times-grid > .field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px var(--card-pad);
+}
+.ob-times .times-grid > .field + .field {
+  border-top: 1px solid var(--rule);
+}
+.ob-times .times-grid label {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.ob-times .times-grid input[type='time'] {
+  width: 7.5rem;
+  text-align: center;
+}
+.ob-times .time-order {
+  margin: 0;
+  padding: 10px var(--card-pad);
+}
+
+/* A choice: the sign, name and line, and the mark of the chosen one. */
+.ob-choices {
+  gap: 12px;
+}
+.ob-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px var(--card-pad);
+  border-color: var(--rule);
+  border-radius: 16px;
+  color: inherit;
+}
+.ob-choice > .flow-icon {
+  flex: none;
+  margin-top: 2px;
+}
+.ob-choice-text {
+  flex: 1;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.ob-choice .ob-choice-text b {
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.ob-choice .ob-choice-text span {
+  font-size: 0.92rem;
+}
+.ob-choice-mark {
+  flex: none;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+  border: 1.5px solid var(--control-line);
+  border-radius: 50%;
+}
+.ob-choice[aria-pressed='true'] .ob-choice-mark {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.ob-choice[aria-pressed='true'] .ob-choice-mark::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--paper);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+/* The same as a row of a list: the reading plans. */
+.ob-list > .ob-pick {
+  align-items: center;
+  min-height: 56px;
+  padding: 9px var(--card-pad);
+  background: none;
+  border-width: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.ob-list > .ob-pick + .ob-pick {
+  border-top: 1px solid var(--rule);
+}
+.ob-pick .ob-choice-text b {
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+.ob-pick .ob-choice-text span {
+  font-size: 0.85rem;
+}
+.ob-pick .ob-choice-mark {
+  margin: 0;
+}
+
+/* What folds: one sheet, the name in its head, the rows below. */
+.ob-fold {
+  display: block;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.ob-fold > summary {
+  min-height: 52px;
+  padding: 8px var(--card-pad);
+  background: none;
+  border: 0;
+  border-radius: 0;
+  list-style: none;
+}
+.ob-fold > summary::-webkit-details-marker {
+  display: none;
+}
+.ob-fold > summary::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin: 0 4px 0 2px;
+  border: solid var(--muted);
+  border-width: 0 1.7px 1.7px 0;
+  transform: rotate(-45deg);
+}
+.ob-fold[open] > summary::after {
+  transform: rotate(45deg);
+}
+.ob-fold-name {
+  flex: 1;
+  display: grid;
+  gap: 1px;
+}
+.ob-fold-name span {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+.ob-fold > .ob-row {
+  min-height: 48px;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  border-radius: 0;
+}
+.ob-fold-body {
+  padding: 4px var(--card-pad) 14px;
+  border-top: 1px solid var(--rule);
+}
+.ob-fold-body .plan-track:first-child {
+  margin-top: 8px;
+}
+
+/* What stays on the device, and what is set: rows with their sign. */
+.ob-list.ob-facts li,
+.ob-list.ob-sum > div {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 2px 12px;
+  align-items: start;
+  padding: 11px var(--card-pad);
+  background: none;
+  border-width: 0;
+  border-radius: 0;
+}
+.ob-list.ob-facts li + li,
+.ob-list.ob-sum > div + div {
+  border-top: 1px solid var(--rule);
+}
+.ob-list.ob-facts li > div {
+  display: grid;
+  gap: 2px;
+}
+.ob-list.ob-facts b {
+  font-family: var(--sans);
+}
+.ob-list.ob-sum {
+  gap: 0;
+}
+.ob-list.ob-sum .flow-icon {
+  grid-row: span 2;
+  margin-top: 2px;
+}
+.ob-list.ob-sum dt {
+  grid-column: 2;
+}
+.ob-list.ob-sum dd {
+  grid-column: 2;
+  font-family: var(--sans);
+}
+
+/* Birthday and wedding day: side by side under the name; a child's birthday under its name. */
+.ob-list > .ob-days {
+  padding: 10px var(--card-pad) 12px;
+}
+.ob-child .house-day {
+  grid-column: 1 / -1;
+}
+.ob .house-day input[type='date'] {
+  min-width: 0;
+}
+.ob-days {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* The welcome carries the sign of Henoch, its line and the subtitle of the homepage. */
+.ob-welcome-head {
+  display: grid;
+  justify-items: center;
+  padding: 10px 0 0;
+}
+.ob-welcome {
+  gap: 12px;
+}
+.ob-welcome .ob-title,
+.ob-tagline,
+.ob-sub {
+  text-align: center;
+}
+.ob-tagline {
+  margin: -8px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.ob-sub {
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+/* Tight enough for one screen: the look ahead as two short rows, each sign beside its name. */
+.ob-welcome-head {
+  padding-top: 8px;
+}
+.ob-welcome .ob-title {
+  font-size: 1.6rem;
+}
+.ob-welcome .ob-verse p {
+  font-size: 0.98rem;
+}
+.ob-day h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+.ob-ahead {
+  gap: 10px 6px;
+  margin-bottom: 14px;
+}
+.ob-ahead li {
+  grid-auto-flow: column;
+  justify-content: start;
+  align-items: center;
+  gap: 6px;
+}
+.ob-ahead-title {
+  margin-bottom: 10px;
+}
+.ob-sheet {
+  padding-top: 14px;
+}
+.ob-welcome {
+  gap: 10px;
+}
+.ob-welcome-head {
+  padding-top: 6px;
+}
+/* On a tall screen the room left over is shared above the verse and above the sheet,
+   so verse and day stand in the middle between the head and the sheet. */
+.ob-welcome .ob-verse {
+  margin-top: auto;
+}
+.ob-day h3 {
+  text-align: center;
 }

@@ -2,7 +2,7 @@
  * "Mein Haus": wife and children, prayed for by name in the morning, with one
  * of them in the centre each day, and blessed at night.
  */
-import { fromKey, weekdayOf, type DateKey } from './dates';
+import { fromKey, isDateKey, weekdayOf, type DateKey } from './dates';
 
 export type ChildSex = 'son' | 'daughter';
 
@@ -10,6 +10,8 @@ export interface HousePerson {
   name: string;
   /** What is on the heart for this person now; one line, changed at any time. */
   concern: string;
+  /** The birthday with its year, if entered. */
+  birthday?: DateKey;
 }
 
 export interface HouseChild extends HousePerson {
@@ -21,6 +23,8 @@ export interface HouseChild extends HousePerson {
 export interface House {
   wife: HousePerson;
   children: HouseChild[];
+  /** The wedding day with its year, if entered. */
+  wedding?: DateKey;
 }
 
 export type HouseRole = 'wife' | ChildSex | 'child';
@@ -63,10 +67,34 @@ export function normalizeHouse(raw: unknown): House {
     seen.add(id);
     const child: HouseChild = { id, name: str(c.name), concern: str(c.concern) };
     if (c.sex === 'son' || c.sex === 'daughter') child.sex = c.sex;
+    if (isDateKey(c.birthday)) child.birthday = c.birthday;
     children.push(child);
   }
-  return { wife: { name: str(wife.name), concern: str(wife.concern) }, children };
+  const house: House = { wife: { name: str(wife.name), concern: str(wife.concern) }, children };
+  if (isDateKey(wife.birthday)) house.wife.birthday = wife.birthday;
+  if (isDateKey(r.wedding)) house.wedding = r.wedding;
+  return house;
 }
+
+/** A day of the year comes again on its date; the 29th of February on the 28th in a year without it. */
+function returnsOn(day: DateKey | undefined, date: DateKey): boolean {
+  if (!day || day > date) return false;
+  if (day.slice(5) === date.slice(5)) return true;
+  return day.slice(5) === '02-29' && date.slice(5) === '02-28' && !isDateKey(`${date.slice(0, 4)}-02-29`);
+}
+
+/** The days of the house that fall on a date: the birthdays of those with a name, and the wedding day. */
+export function houseDays(h: House, date: DateKey): string[] {
+  const wife = wifeOf(h);
+  const days: string[] = [];
+  if (wife && returnsOn(wife.birthday, date)) days.push(`Geburtstag von ${wife.name.trim()}`);
+  for (const c of childrenOf(h)) if (returnsOn(c.birthday, date)) days.push(`Geburtstag von ${c.name.trim()}`);
+  if (wife && returnsOn(h.wedding, date)) days.push('Euer Hochzeitstag');
+  return days;
+}
+
+/** What a date field gives: a real date, or nothing. */
+export const dayOrNone = (v: string): DateKey | undefined => (isDateKey(v) ? v : undefined);
 
 export function normalizeAnswered(raw: unknown): AnsweredPrayer[] {
   if (!Array.isArray(raw)) return [];

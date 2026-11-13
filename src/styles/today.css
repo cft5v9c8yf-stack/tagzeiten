@@ -482,6 +482,13 @@ span.pill {
   font-style: italic;
   margin-top: 2px !important;
 }
+/* A birthday in the house, the wedding day: a quiet line under the date. */
+.cy-house {
+  margin-top: 2px !important;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--gold);
+}
 .cy-circles {
   list-style: none;
   margin: 14px 0 4px;

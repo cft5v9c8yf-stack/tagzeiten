@@ -10,7 +10,7 @@ import { Store } from '../../data/store';
 import { StoreProvider } from '../../data/StoreContext';
 import { resetOpenState } from '../../ui/collapseState';
 import { clearDevicePreferences } from '../../app/files';
-import { getPlan } from '../../domain/readingPlan';
+import { fixedAmounts, getPlan } from '../../domain/readingPlan';
 import { SettingsPage } from '../settings/SettingsPage';
 import { FirstStartGate } from './FirstStartGate';
 import { OnboardingPage } from './OnboardingPage';
@@ -67,7 +67,7 @@ async function start(path: string, prepare?: (s: Store) => void, dbName = `ob-${
 
 const heading = () => screen.getByRole('heading', { level: 2 }).textContent;
 const click = (name: string | RegExp) => fireEvent.click(screen.getByRole('button', { name }));
-const next = () => click('Weiter');
+const next = () => click(/^(Weiter|Einrichtung beginnen)$/);
 
 /** To the page "Mein Haus" on the way "Alltag", past "Wie du betest" as it stands. */
 function toHouse() {
@@ -81,7 +81,7 @@ describe('Einrichtung: wann sie erscheint', () => {
   it('opens on the first start, on an empty device', async () => {
     const { router } = await start('/');
     await waitFor(() => expect(router.state.location.pathname).toBe(ONBOARDING_PATH));
-    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('So beginnt der Tag');
+    expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Willkommen bei Henoch');
   });
 
   it('never opens by itself for an existing user', async () => {
@@ -131,10 +131,10 @@ describe('Einrichtung: Wiederaufnahme', () => {
 });
 
 describe('Einrichtung: Überspringen', () => {
-  it('"Später ansehen" puts it aside, remembers that, and leads to Heute', async () => {
+  it('"Später einrichten" puts it aside, remembers that, and leads to Heute', async () => {
     const { router, store } = await start('/');
-    await screen.findByText('So beginnt der Tag');
-    click('Später ansehen');
+    await screen.findByText('Willkommen bei Henoch');
+    click('Später einrichten');
     expect(await screen.findByText('Heute-Seite')).toBeTruthy();
     expect(router.state.location.pathname).toBe('/');
     expect(localStorage.getItem(ONBOARDING_KEY)).toBe('skipped');
@@ -148,7 +148,7 @@ describe('Einrichtung: Überspringen', () => {
   it('skips a page without changing what it sets', async () => {
     const { store } = await start(ONBOARDING_PATH);
     toHouse();
-    expect(heading()).toBe('Mein Haus');
+    expect(heading()).toBe('Dein Haus');
     click('Überspringen');
     expect(heading()).toBe('Deine Zeiten');
     click('Überspringen');
@@ -160,29 +160,38 @@ describe('Einrichtung: Überspringen', () => {
 describe('Einrichtung: der Weg Alltag', () => {
   it('writes names, times, habits and plan into the app’s own settings', async () => {
     const { store, router } = await start(ONBOARDING_PATH);
-    expect(heading()).toBe('So beginnt der Tag');
+    expect(heading()).toBe('Willkommen bei Henoch');
     // Matthäus 6,33 in the text of Luther 1912, word for word.
     expect(document.body.textContent).toContain(
       '„Trachtet am ersten nach dem Reich Gottes und nach seiner Gerechtigkeit, so wird euch solches alles zufallen.“',
     );
-    expect(document.body.textContent).toContain('Die Stille Zeit dauert etwa 45 Minuten.');
+    // The sign of Henoch, and title line and subtitle as on the homepage.
+    expect(document.querySelector('.ob-welcome-head .henoch-logo')).not.toBeNull();
+    expect(document.querySelector('.ob-tagline')!.textContent).toBe('Mit Gott durch den Tag.');
+    expect(document.querySelector('.ob-sub')!.textContent).toBe(
+      'Gebet am Morgen und am Abend, Gottes Wort und der Katechismus – geordnet, dort, wo Gott dich hingestellt hat.',
+    );
+    // Word, prayer, alignment in this order (rule 2), and no length of the Stille Zeit.
+    expect([...document.querySelectorAll('.ob-order b')].map((b) => b.textContent)).toEqual(['Wort', 'Gebet', 'Ausrichtung']);
+    expect(document.body.textContent).not.toContain('45 Minuten');
+    expect(screen.queryByRole('button', { name: 'Zurück' })).toBeNull();
 
     // The way must be chosen before it goes on.
     next();
-    expect(heading()).toBe('Wofür möchtest du Henoch nutzen?');
+    expect(heading()).toBe('Wofür nutzt du Henoch?');
     expect((screen.getByRole('button', { name: 'Weiter' }) as HTMLButtonElement).disabled).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: /^Alltag/ }));
     next();
 
     // How the Stille Zeit and the Vesper are prayed: the order unless chosen otherwise.
-    expect(heading()).toBe('Wie du betest');
+    expect(heading()).toBe('Wie betest du?');
     expect(screen.getByRole('button', { name: /^Gebetsordnung/ }).getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(screen.getByRole('button', { name: /^Freies Gebet/ }));
     await waitFor(() => expect(store.getProfile().petition).toEqual({ morning: true, evening: true }));
     next();
 
     // Mein Haus: a wife and two children.
-    expect(heading()).toBe('Mein Haus');
+    expect(heading()).toBe('Dein Haus');
     fireEvent.click(screen.getByRole('switch', { name: /Ich habe eine Frau/ }));
     fireEvent.change(screen.getByLabelText('Name deiner Frau'), { target: { value: 'Anna' } });
     fireEvent.click(screen.getByRole('switch', { name: /Ich habe Kinder/ }));
@@ -190,12 +199,19 @@ describe('Einrichtung: der Weg Alltag', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Sohn' }));
     click('Weiteres Kind hinzufügen');
     fireEvent.change(screen.getByLabelText('2. Kind'), { target: { value: 'Marie' } });
+    // Birthdays and the wedding day: asked for here, kept with the house.
+    fireEvent.change(screen.getByLabelText('Ihr Geburtstag'), { target: { value: '1990-03-14' } });
+    fireEvent.change(screen.getByLabelText('Hochzeitstag'), { target: { value: '2015-06-20' } });
+    fireEvent.change(screen.getByLabelText('Geburtstag von Paul'), { target: { value: '2018-11-02' } });
     expect(screen.getByText(/Gebetsübersicht/)).toBeTruthy();
     next();
     const house = store.getProfile().house;
     expect(house.wife.name).toBe('Anna');
     expect(house.children.map((c) => c.name).slice(0, 2)).toEqual(['Paul', 'Marie']);
     expect(house.children[0]!.sex).toBe('son');
+    expect(house.wife.birthday).toBe('1990-03-14');
+    expect(house.wedding).toBe('2015-06-20');
+    expect(house.children[0]!.birthday).toBe('2018-11-02');
 
     // Deine Zeiten: three of them.
     expect(heading()).toBe('Deine Zeiten');
@@ -263,7 +279,7 @@ describe('Einrichtung: der Weg Alltag', () => {
     fireEvent.change(screen.getByLabelText('Name deiner Frau'), { target: { value: 'Anna' } });
     next();
     click('Zurück');
-    expect(heading()).toBe('Mein Haus');
+    expect(heading()).toBe('Dein Haus');
     expect((screen.getByLabelText('Name deiner Frau') as HTMLInputElement).value).toBe('Anna');
     expect(store.getProfile().house.wife.name).toBe('Anna');
   });
@@ -387,7 +403,7 @@ function toPlan() {
   click('Überspringen');
   expect(heading()).toBe('Dein Leseplan');
 }
-const scope = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
+const scope = (name: string) => fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${name}`) }));
 const select = (label: string, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
 
 describe('Einrichtung: Leseplan mit einem Testament', () => {
@@ -459,14 +475,36 @@ describe('Einrichtung: Leseplan mit einem Testament', () => {
     cleanup();
     await start('/', undefined, 'ob-plan-resume');
     expect((await screen.findByRole('heading', { level: 2 })).textContent).toBe('Dein Leseplan');
-    expect(screen.getByRole('button', { name: 'Nur das Neue Testament' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('button', { name: /^Nur das Neue Testament/ }).getAttribute('aria-pressed')).toBe('true');
     expect((screen.getByLabelText('Anfangen bei') as HTMLSelectElement).value).toBe('43');
+  });
+
+  it('offers the plans by sections too, and finds the way back to the Testaments', async () => {
+    const { store } = await start(ONBOARDING_PATH);
+    toPlan();
+    scope('Christus finden');
+    expect(store.getProfile().plan.planId).toBe('einsteiger');
+    expect(screen.getByRole('button', { name: /^Christus finden/ }).getAttribute('aria-pressed')).toBe('true');
+    // What can be set for it stands below: with a psalm or without.
+    fireEvent.click(screen.getByRole('button', { name: 'Mit einem Psalm' }));
+    expect(store.getProfile().plan.planId).toBe('einsteiger-psalm');
+    scope('Mit Paulus unterwegs');
+    expect(store.getProfile().plan.planId).toBe('paulus-40');
+    scope('Bibel in einem Jahr');
+    expect(store.getProfile().plan.planId).toBe('jahr');
+    scope('Nur das Neue Testament');
+    expect(store.getProfile().plan.planId).toBe('eigen-k1');
+    expect((screen.getByLabelText('Anfangen bei') as HTMLSelectElement).options[0]!.textContent).toBe('Matthäus');
+    scope('Bibel in einem Jahr');
+    scope('Altes und Neues Testament');
+    expect(fixedAmounts(store.getProfile().plan.planId)).toBeDefined();
+    expect(screen.queryByRole('button', { name: /^Eigener Plan/ })).toBeNull();
   });
 
   it('leaves a plan of several books as it is', async () => {
     await start(ONBOARDING_PATH, (s) => s.setPlan('eigen-k2.k1'));
     toPlan();
-    expect(screen.queryByRole('button', { name: 'Nur das Neue Testament' })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Nur das Neue Testament/ })).toBeNull();
     expect(document.body.textContent).toContain('Du liest nach einem eigenen Plan.');
   });
 });
@@ -486,13 +524,17 @@ describe('Einrichtung: Aufbau', () => {
     await start(ONBOARDING_PATH);
     expect(document.activeElement).toBe(screen.getByRole('heading', { level: 2 }));
     next();
-    expect(document.activeElement).toBe(screen.getByRole('heading', { level: 2, name: 'Wofür möchtest du Henoch nutzen?' }));
+    expect(document.activeElement).toBe(screen.getByRole('heading', { level: 2, name: 'Wofür nutzt du Henoch?' }));
   });
 
-  it('heads the page like the rest of the app', async () => {
+  it('heads every page with its name, the way back and one button', async () => {
     await start(ONBOARDING_PATH);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Einrichtung');
-    expect(document.querySelector('header.top')).not.toBeNull();
+    // After the welcome: back on the left, and the one button that leads on at the foot.
+    next();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Einrichtung');
+    expect(document.querySelector('.ob-nav')!.textContent).toContain('Zurück');
+    expect(document.querySelectorAll('.ob-foot button')).toHaveLength(1);
   });
 });
 

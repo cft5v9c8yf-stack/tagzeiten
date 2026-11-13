@@ -143,6 +143,29 @@ describe('Stille Zeit without the bed', () => {
     expect(open.hasAttribute('open')).toBe(true);
   });
 
+  it('keeps only the verse in view on a notebook day, remembers the choice and keeps what was written (1.41)', async () => {
+    const store = await renderMorning();
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    const where = screen.getByRole('group', { name: 'Wo du deine Gedanken aufschreibst' });
+    expect(within(where).getByRole('button', { name: 'In der App' }).getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(within(where).getByRole('button', { name: 'Im Notizbuch' }));
+    await waitFor(() => expect(store.getDay(store.today()).morning.paper).toBe(true));
+    expect(store.getProfile().readingOnPaper).toBe(true);
+    const labels = [...document.querySelectorAll('.flow-step label')].map((l) => l.textContent);
+    expect(labels).toEqual(['Stelle des Verses', 'Vers, den ich mitnehme']);
+    expect(screen.queryByText('Mehr notieren')).toBeNull();
+    cleanup();
+    // A new day starts with the last choice; a day with thoughts written in the app stands in the app.
+    await renderMorning((s) => {
+      s.updateProfile((p) => ({ ...p, readingOnPaper: true }), { immediate: true });
+      s.updateDay(s.today(), (d) => ({ ...d, morning: { ...d.morning, aboutGod: 'Er ist treu.' } }), { immediate: true });
+    });
+    fireEvent.click(within(chain()).getByRole('button', { name: /^Das Wort/ }));
+    await waitFor(() => expect(title()).toBe('Das Wort'));
+    expect(screen.getByLabelText('Was lerne ich über Gott?')).toBeTruthy();
+  });
+
   it('begins with the opening when Am Bett is hidden', async () => {
     await renderMorning((s) => s.updateProfile((p) => ({ ...p, showAtBed: false }), { immediate: true }));
     expect(title()).toBe('Eröffnung');

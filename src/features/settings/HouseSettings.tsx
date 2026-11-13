@@ -1,6 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type HTMLAttributes } from 'react';
 import { useProfile, useStore } from '../../data/hooks';
 import {
+  dayOrNone,
   emptyChild,
   type ChildSex,
   type House,
@@ -20,6 +21,9 @@ export const HOUSE_INFO = (
       Deine Frau und deine Kinder, mit Namen. In der Stillen Zeit betest du im Schritt „Die Antwort“ täglich für alle; einer
       steht jeden Tag im Mittelpunkt: montags deine Frau, dienstags bis freitags je ein Kind, samstags eure Ehe, sonntags
       das ganze Haus. Am Abend folgt nach Luthers Abendsegen der Segen über das Haus.
+    </p>
+    <p>
+      Geburtstage und euer Hochzeitstag sind freiwillig. Am Tag selbst steht auf „Heute“ unter dem Datum eine Zeile dazu.
     </p>
     <p>Alles bleibt auf diesem Gerät.</p>
   </>
@@ -48,6 +52,17 @@ function ConcernField({ label, person, onChange }: { label: string; person: Hous
         placeholder="Aktuelles Anliegen"
         onChange={(e) => onChange(e.target.value)}
       />
+    </div>
+  );
+}
+
+/** A day of the house with its year: a birthday or the wedding day. Emptied, it is no longer kept. */
+export function HouseDateField({ label, value, onChange }: { label: string; value: string | undefined; onChange: (day: string | undefined) => void }) {
+  const id = useId();
+  return (
+    <div className="field house-day">
+      <label htmlFor={id}>{label}</label>
+      <input id={id} type="date" value={value ?? ''} onChange={(e) => onChange(dayOrNone(e.target.value))} />
     </div>
   );
 }
@@ -109,6 +124,7 @@ function ChildRow({
         {child.name.trim() && !child.sex && (
           <p className="small muted house-required">Bitte wählen: Sohn oder Tochter. Davon hängt das Gebet an seinem Tag ab.</p>
         )}
+        <HouseDateField label={`Geburtstag von ${label}`} value={child.birthday} onChange={(birthday) => update((c) => ({ ...c, birthday }))} />
         <ConcernField
           label={`Anliegen für ${label}`}
           person={child}
@@ -210,6 +226,14 @@ export function HouseSettings() {
             placeholder="Name"
             onChange={(e) => setHouse((h) => ({ ...h, wife: { ...h.wife, name: e.target.value } }), false)}
           />
+        </div>
+        <div className="grid2">
+          <HouseDateField
+            label="Geburtstag"
+            value={house.wife.birthday}
+            onChange={(birthday) => setHouse((h) => ({ ...h, wife: { ...h.wife, birthday } }))}
+          />
+          <HouseDateField label="Hochzeitstag" value={house.wedding} onChange={(wedding) => setHouse((h) => ({ ...h, wedding }))} />
         </div>
         <ConcernField
           label={`Anliegen für ${house.wife.name.trim() || 'deine Frau'}`}

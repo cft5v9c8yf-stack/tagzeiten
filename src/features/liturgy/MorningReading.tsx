@@ -12,10 +12,11 @@ import {
 } from '../../content/method';
 import type { FieldPath, Part } from '../../content/orders';
 import { SEVEN_QUESTIONS } from '../../content/questions';
-import { useDay, useStore, useStoreVersion } from '../../data/hooks';
+import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
 import type { Day } from '../../domain/model';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
+import { Segmented } from '../../ui/Choice';
 import { DayField } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
 import { RefLabel } from '../../ui/RefLabel';
@@ -147,6 +148,7 @@ function written(day: Day, f: FieldPath): boolean {
 export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) {
   const store = useStore();
   const day = useDay(ctx.date);
+  const profile = useProfile();
   const full = ctx.form === 'full';
 
   // Today receives its portion when the reading is first shown.
@@ -178,6 +180,14 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
     );
   };
 
+  // Paper or app: the choice of this day, else the last one; a day with more than the verse written stands in the app.
+  const onPaper = day.morning.paper ?? (fields.some((f) => !ON_PAPER_DAY.has(f) && written(day, f)) ? false : profile.readingOnPaper);
+  const choose = (where: 'paper' | 'app') => {
+    const paper = where === 'paper';
+    store.updateDay(ctx.date, (d) => ({ ...d, morning: { ...d.morning, paper } }), { immediate: true });
+    store.updateProfile((p) => ({ ...p, readingOnPaper: paper }), { immediate: true });
+  };
+
   return (
     <>
       <ReadingRefs date={ctx.date} />
@@ -185,13 +195,31 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
       <p className="small muted">{READING_RUBRICS.paper}</p>
       {full && <p className="small muted">{READING_RUBRICS.restart}</p>}
       {full && <MethodHelp />}
-      {fields.filter((f) => IN_VIEW.has(f)).map(field)}
-      {folded.length > 0 && (
-        <details className="fold" open={openAtStart || undefined}>
-          <summary>Mehr notieren</summary>
-          {folded.map(field)}
-        </details>
+      <Segmented label="Wo du deine Gedanken aufschreibst" options={WHERE} value={onPaper ? 'paper' : 'app'} onChange={choose} />
+      {onPaper ? (
+        <>
+          <p className="small muted">{READING_RUBRICS.paperDay}</p>
+          {fields.filter((f) => ON_PAPER_DAY.has(f)).map(field)}
+        </>
+      ) : (
+        <>
+          {fields.filter((f) => IN_VIEW.has(f)).map(field)}
+          {folded.length > 0 && (
+            <details className="fold" open={openAtStart || undefined}>
+              <summary>Mehr notieren</summary>
+              {folded.map(field)}
+            </details>
+          )}
+        </>
       )}
     </>
   );
 }
+
+const WHERE = [
+  { value: 'paper', label: 'Im Notizbuch' },
+  { value: 'app', label: 'In der App' },
+] as const;
+
+/** On a notebook day only the verse stays in view: it also stands in the archive and the Wüstenzeit (1.41). */
+const ON_PAPER_DAY: ReadonlySet<FieldPath> = new Set(['morning.verseRef', 'morning.verse']);

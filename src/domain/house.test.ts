@@ -5,6 +5,7 @@ import {
   emptyHouse,
   focusName,
   focusOf,
+  houseDays,
   joinNames,
   normalizeAnswered,
   normalizeHouse,
@@ -107,5 +108,47 @@ describe('Mein Haus', () => {
     // Nothing to keep without a concern.
     expect(answerConcern(emptyHouse(), [], 'wife', '2026-09-29').answered).toEqual([]);
     expect(normalizeAnswered([{ id: 'a', date: 'gestern', person: 'X', role: 'wife', concern: 'y' }])).toEqual([]);
+  });
+});
+
+describe('Tage des Hauses', () => {
+  const house = (): House => ({
+    wife: { name: 'Anna', concern: '', birthday: '1990-03-14' },
+    children: [
+      { id: 'a', name: 'Paul', concern: '', sex: 'son', birthday: '2020-02-29' },
+      { id: 'b', name: '', concern: '', birthday: '2019-03-14' },
+    ],
+    wedding: '2015-06-20',
+  });
+
+  it('names a birthday and the wedding day on their day, year after year', () => {
+    expect(houseDays(house(), '2026-03-14')).toEqual(['Geburtstag von Anna']);
+    expect(houseDays(house(), '2027-06-20')).toEqual(['Euer Hochzeitstag']);
+    expect(houseDays(house(), '2026-03-15')).toEqual([]);
+    // Not before the day itself.
+    expect(houseDays(house(), '2014-06-20')).toEqual([]);
+  });
+
+  it('keeps the 29th of February on the 28th in a year without it', () => {
+    expect(houseDays(house(), '2024-02-29')).toEqual(['Geburtstag von Paul']);
+    expect(houseDays(house(), '2024-02-28')).toEqual([]);
+    expect(houseDays(house(), '2026-02-28')).toEqual(['Geburtstag von Paul']);
+  });
+
+  it('needs a name, and a wife for the wedding day', () => {
+    const h = house();
+    h.wife.name = '';
+    expect(houseDays(h, '2026-03-14')).toEqual([]);
+    expect(houseDays(h, '2026-06-20')).toEqual([]);
+  });
+
+  it('keeps real dates through a backup and drops anything else', () => {
+    const back = normalizeHouse(JSON.parse(JSON.stringify(house())));
+    expect(back.wife.birthday).toBe('1990-03-14');
+    expect(back.wedding).toBe('2015-06-20');
+    expect(back.children[0]!.birthday).toBe('2020-02-29');
+    const bad = normalizeHouse({ wife: { name: 'Anna', concern: '', birthday: '14.3.' }, children: [], wedding: 5 });
+    expect(bad.wife.birthday).toBeUndefined();
+    expect(bad.wedding).toBeUndefined();
   });
 });
