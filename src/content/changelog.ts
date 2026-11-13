@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.40.3',
+    date: '2026-11-13',
+    title: 'Erste Seite der Einrichtung: in der Mitte',
+    changes: [
+      { area: 'Einrichtung', text: 'Auf einem hohen Bildschirm stehen Matthäus 6,33 und „So beginnt dein Tag“ jetzt in der Mitte zwischen Kopf und unterer Fläche statt oben mit einer Lücke darunter. Die Überschrift „So beginnt dein Tag“ ist mittig gesetzt.' },
+    ],
+  },
+  {
     version: '1.40.2',
     date: '2026-11-13',
     title: 'Das Zeichen von Henoch auf der ersten Seite',

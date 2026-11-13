@@ -816,3 +816,11 @@
 .ob-welcome-head {
   padding-top: 6px;
 }
+/* On a tall screen the room left over is shared above the verse and above the sheet,
+   so verse and day stand in the middle between the head and the sheet. */
+.ob-welcome .ob-verse {
+  margin-top: auto;
+}
+.ob-day h3 {
+  text-align: center;
+}
