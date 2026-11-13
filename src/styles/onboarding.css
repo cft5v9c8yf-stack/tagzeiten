@@ -750,3 +750,69 @@
 .ob-days {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+
+/* The welcome carries the sign of Henoch, its line and the subtitle of the homepage. */
+.ob-welcome-head {
+  display: grid;
+  justify-items: center;
+  padding: 10px 0 0;
+}
+.ob-welcome {
+  gap: 12px;
+}
+.ob-welcome .ob-title,
+.ob-tagline,
+.ob-sub {
+  text-align: center;
+}
+.ob-tagline {
+  margin: -8px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.ob-sub {
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+/* Tight enough for one screen: the look ahead as two short rows, each sign beside its name. */
+.ob-welcome-head {
+  padding-top: 8px;
+}
+.ob-welcome .ob-title {
+  font-size: 1.6rem;
+}
+.ob-welcome .ob-verse p {
+  font-size: 0.98rem;
+}
+.ob-day h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+.ob-ahead {
+  gap: 10px 6px;
+  margin-bottom: 14px;
+}
+.ob-ahead li {
+  grid-auto-flow: column;
+  justify-content: start;
+  align-items: center;
+  gap: 6px;
+}
+.ob-ahead-title {
+  margin-bottom: 10px;
+}
+.ob-sheet {
+  padding-top: 14px;
+}
+.ob-welcome {
+  gap: 10px;
+}
+.ob-welcome-head {
+  padding-top: 6px;
+}

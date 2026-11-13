@@ -165,6 +165,12 @@ describe('Einrichtung: der Weg Alltag', () => {
     expect(document.body.textContent).toContain(
       '„Trachtet am ersten nach dem Reich Gottes und nach seiner Gerechtigkeit, so wird euch solches alles zufallen.“',
     );
+    // The sign of Henoch, and title line and subtitle as on the homepage.
+    expect(document.querySelector('.ob-welcome-head .henoch-logo')).not.toBeNull();
+    expect(document.querySelector('.ob-tagline')!.textContent).toBe('Mit Gott durch den Tag.');
+    expect(document.querySelector('.ob-sub')!.textContent).toBe(
+      'Gebet am Morgen und am Abend, Gottes Wort und der Katechismus – geordnet, dort, wo Gott dich hingestellt hat.',
+    );
     // Word, prayer, alignment in this order (rule 2), and no length of the Stille Zeit.
     expect([...document.querySelectorAll('.ob-order b')].map((b) => b.textContent)).toEqual(['Wort', 'Gebet', 'Ausrichtung']);
     expect(document.body.textContent).not.toContain('45 Minuten');

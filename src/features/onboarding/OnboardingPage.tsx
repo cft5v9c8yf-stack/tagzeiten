@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { FlowIcon } from '../../ui/FlowIcon';
+import { HenochLogo } from '../../ui/HenochLogo';
 import { useStore } from '../../data/hooks';
 import { draftDays, draftStart, useDesertDraft } from './desertDraft';
 import {
@@ -148,7 +149,8 @@ export function OnboardingPage() {
       <div className={welcome ? 'wrap ob-wrap is-welcome' : 'wrap ob-wrap'} data-path={ONBOARDING_PATH}>
         {welcome ? (
           <header className="ob-welcome-head">
-            <h1 className="ob-kicker">Einrichtung</h1>
+            <h1 className="visually-hidden">Einrichtung</h1>
+            <HenochLogo size={62} />
           </header>
         ) : (
           // Back on the left, putting aside on the right; the one button that leads on stands at the foot.

@@ -101,7 +101,11 @@ function ChoiceCard({
 export function OrderStep() {
   return (
     <>
+      {/* Title line and subtitle as on the homepage (henoch.app). */}
       <p className="ob-tagline">Mit Gott durch den Tag.</p>
+      <p className="ob-sub">
+        Gebet am Morgen und am Abend, Gottes Wort und der Katechismus – geordnet, dort, wo Gott dich hingestellt hat.
+      </p>
       <blockquote className="ob-verse">
         <p>
           „Trachtet am ersten nach dem Reich Gottes und nach seiner Gerechtigkeit, so wird euch solches alles zufallen.“
@@ -148,7 +152,7 @@ export function AheadList() {
       <ul className="ob-ahead">
         {AHEAD.map((a) => (
           <li key={a.label}>
-            <FlowIcon name={a.icon} size={22} />
+            <FlowIcon name={a.icon} size={18} />
             <span>{a.label}</span>
           </li>
         ))}

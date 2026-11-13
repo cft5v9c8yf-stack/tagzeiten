@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.40.2',
+    date: '2026-11-13',
+    title: 'Das Zeichen von Henoch auf der ersten Seite',
+    changes: [
+      { area: 'Einrichtung', text: 'Die erste Seite der Einrichtung trägt jetzt das Zeichen von Henoch, die Sonne über dem Horizont mit dem Weg, der zu ihr führt, und darunter Titelzeile und Untertitel wie auf der Homepage: „Mit Gott durch den Tag.“ und „Gebet am Morgen und am Abend, Gottes Wort und der Katechismus – geordnet, dort, wo Gott dich hingestellt hat.“ Die Vorschau auf das, was du einrichtest, steht dafür in zwei kurzen Zeilen.' },
+    ],
+  },
+  {
     version: '1.40.1',
     date: '2026-11-12',
     title: 'Geburtstage und Hochzeitstag',
