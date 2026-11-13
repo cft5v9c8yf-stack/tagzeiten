@@ -20,8 +20,7 @@ export const READING_RUBRICS = {
   restart: 'Ausgesetzt? Einfach beim nächsten Abschnitt weitermachen. Nichts nachholen, nichts aufrechnen.',
   threeTimes: 'Dreimal lesen: ohne Stift, mit Stift nach Farbcode, dann zusammenfassen.',
   paper: 'Du liest auf Papier, mit Farbstiften. Die App zeigt nur, wo.',
-  paperDay: 'Deine Gedanken stehen heute auf dem Blatt. Den Vers kannst du hier mitnehmen, wenn du magst. Was du schon in der App notiert hast, bleibt erhalten.',
-  daySheet: 'Das Tagesblatt aus der Ordnung, mit Datum und Lesung des Tages, zum Ausdrucken.',
+  paperDay: 'Deine Gedanken stehen heute im Notizbuch. Den Vers kannst du hier mitnehmen, wenn du magst. Was du schon in der App notiert hast, bleibt erhalten.',
 };
 
 export const READING_PASSES = [

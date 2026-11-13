@@ -27,9 +27,7 @@ export type Block =
   | { kind: 'list'; items: { runs: Run[]; check?: boolean }[] }
   | { kind: 'quote'; runs: Run[] }
   /** Handwriting (or another drawing of the app) as SVG. */
-  | { kind: 'svg'; svg: string }
-  /** Empty ruled lines to write on by hand; `marks` stand at the start of the first lines ("Wort", "Haus", …). */
-  | { kind: 'write'; lines: number; marks?: readonly string[] };
+  | { kind: 'svg'; svg: string };
 
 export interface PrintDoc {
   /** The place shown at the top right: "Gebetskammer", "Treffen am Abendbrunnen", … */

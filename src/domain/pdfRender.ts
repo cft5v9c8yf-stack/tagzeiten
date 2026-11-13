@@ -377,19 +377,6 @@ export async function renderPdf(doc: PrintDoc): Promise<Uint8Array> {
       case 'svg':
         drawSvg(b.svg);
         break;
-      case 'write': {
-        const step = 8 * MM;
-        for (let n = 0; n < b.lines; n++) {
-          need(step);
-          y -= step;
-          const mark = b.marks?.[n];
-          const x0 = mark ? LEFT + 14 * MM : LEFT;
-          if (mark) page.drawText(encodable(fonts.sansBold, mark), { x: LEFT, y: y + 1.2 * MM, size: 9, font: fonts.sansBold, color: C.label });
-          page.drawLine({ start: { x: x0, y }, end: { x: RIGHT, y }, thickness: 0.2 * MM, color: C.rule });
-        }
-        y -= 2 * MM;
-        break;
-      }
     }
     first = false;
   });
