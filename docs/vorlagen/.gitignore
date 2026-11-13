@@ -1,0 +1,9 @@
+# Intermediate files of build.mjs; only the finished PDFs are kept.
+*.html
+*.png
+komplett/
+goodnotes/
+Henoch-Predigtbuch-*.pdf
+Henoch_Tagebuch_lesen_hoeren.pdf
+Henoch_Tagebuch_lesen_hoeren_Druck.pdf
+Henoch_Tagebuch_lesen_hoeren_Jahr.pdf
