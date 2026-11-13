@@ -94,6 +94,8 @@ export type MorningEntry = {
   atBed: boolean;
   /** Index into the seven questions, if one was chosen. */
   questionNo?: number;
+  /** Where the thoughts of the reading were written this day: on paper (true) or in the app (false); unset = the last choice (1.41). */
+  paper?: boolean;
   wreath: Partial<Record<WreathField, string>>;
   three: Partial<Record<ThreeKey, string>>;
 } & Partial<Record<MorningTextField, string>>;
@@ -285,6 +287,8 @@ export interface Profile {
   weekReview: boolean;
   /** The prayer at the bed in the morning ("Am Bett") is part of the morning. */
   showAtBed: boolean;
+  /** The last choice in the reading: thoughts on paper (true) or in the app; a new day starts with it (1.41). */
+  readingOnPaper: boolean;
   /**
    * "Bitte und Fürbitte": the Stille Zeit and the Vesper as Word, the concerns of the
    * day, blessing – instead of the fixed order. No minutes, no short form.

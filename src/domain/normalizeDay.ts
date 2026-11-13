@@ -41,6 +41,7 @@ export function normalizeDay(raw: unknown): Day | null {
   d.morning.steps = trueRecord(m.steps);
   d.morning.done = m.done === true;
   d.morning.atBed = m.atBed === true;
+  if (typeof m.paper === 'boolean') d.morning.paper = m.paper;
   if (typeof m.questionNo === 'number' && Number.isInteger(m.questionNo) && m.questionNo >= 0 && m.questionNo < SEVEN_QUESTIONS.length) {
     d.morning.questionNo = m.questionNo;
   }

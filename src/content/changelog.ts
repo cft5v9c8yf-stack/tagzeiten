@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.41.0',
+    date: '2026-11-13',
+    title: 'Lesung: auf Papier oder in der App',
+    changes: [
+      { area: 'Stille Zeit', text: 'In der Lesung wählst du jetzt, wo du deine Gedanken aufschreibst: „Auf Papier“ oder „In der App“. Auf Papier bleibt nur der Vers, den du mitnimmst, im Blick; die übrigen Felder treten zurück, und was du dort schon notiert hast, bleibt erhalten. Henoch merkt sich deine letzte Wahl für den nächsten Morgen. Die Stille Zeit gilt so oder so ganz.' },
+      { area: 'Tagesblatt', text: 'An einem Papiertag kannst du das Tagesblatt aus der Ordnung als PDF sichern, mit Datum und Lesung des Tages schon eingetragen: Vers, was du über Gott und über den Menschen lernst, die drei Dinge mit Wort, Haus und Werk, und wem du es weitergegeben hast.' },
+    ],
+  },
+  {
     version: '1.40.3',
     date: '2026-11-13',
     title: 'Erste Seite der Einrichtung: in der Mitte',

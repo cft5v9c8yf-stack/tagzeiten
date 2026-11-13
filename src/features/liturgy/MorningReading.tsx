@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from 'react';
+import { usePdf } from '../../app/usePdf';
 import { FIELDS } from '../../content/fields';
 import {
   COLOR_CODE,
@@ -12,10 +13,13 @@ import {
 } from '../../content/method';
 import type { FieldPath, Part } from '../../content/orders';
 import { SEVEN_QUESTIONS } from '../../content/questions';
-import { useDay, useStore, useStoreVersion } from '../../data/hooks';
+import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
+import { daySheetDoc } from '../../domain/daySheet';
 import type { Day } from '../../domain/model';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
+import { savePdf, shortDate } from '../../domain/printDoc';
+import { Segmented } from '../../ui/Choice';
 import { DayField } from '../../ui/DayField';
 import { Rubric } from '../../ui/PrayerText';
 import { RefLabel } from '../../ui/RefLabel';
@@ -147,6 +151,8 @@ function written(day: Day, f: FieldPath): boolean {
 export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) {
   const store = useStore();
   const day = useDay(ctx.date);
+  const profile = useProfile();
+  const pdf = usePdf();
   const full = ctx.form === 'full';
 
   // Today receives its portion when the reading is first shown.
@@ -178,6 +184,14 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
     );
   };
 
+  // Paper or app: the choice of this day, else the last one; a day with more than the verse written stands in the app.
+  const onPaper = day.morning.paper ?? (fields.some((f) => !ON_PAPER_DAY.has(f) && written(day, f)) ? false : profile.readingOnPaper);
+  const choose = (where: 'paper' | 'app') => {
+    const paper = where === 'paper';
+    store.updateDay(ctx.date, (d) => ({ ...d, morning: { ...d.morning, paper } }), { immediate: true });
+    store.updateProfile((p) => ({ ...p, readingOnPaper: paper }), { immediate: true });
+  };
+
   return (
     <>
       <ReadingRefs date={ctx.date} />
@@ -185,13 +199,49 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
       <p className="small muted">{READING_RUBRICS.paper}</p>
       {full && <p className="small muted">{READING_RUBRICS.restart}</p>}
       {full && <MethodHelp />}
-      {fields.filter((f) => IN_VIEW.has(f)).map(field)}
-      {folded.length > 0 && (
-        <details className="fold" open={openAtStart || undefined}>
-          <summary>Mehr notieren</summary>
-          {folded.map(field)}
-        </details>
+      <Segmented label="Wo du deine Gedanken aufschreibst" options={WHERE} value={onPaper ? 'paper' : 'app'} onChange={choose} />
+      {onPaper ? (
+        <>
+          <p className="small muted">{READING_RUBRICS.paperDay}</p>
+          {fields.filter((f) => ON_PAPER_DAY.has(f)).map(field)}
+          <p className="small muted">{READING_RUBRICS.daySheet}</p>
+          <button type="button" className="btn" onClick={() => pdf(() => savePdf(daySheetDoc(ctx.date, readingLine(store, ctx.date)), `${shortDate(ctx.date)}_Tagesblatt`))}>
+            Tagesblatt als PDF sichern
+          </button>
+        </>
+      ) : (
+        <>
+          {fields.filter((f) => IN_VIEW.has(f)).map(field)}
+          {folded.length > 0 && (
+            <details className="fold" open={openAtStart || undefined}>
+              <summary>Mehr notieren</summary>
+              {folded.map(field)}
+            </details>
+          )}
+        </>
       )}
     </>
   );
+}
+
+const WHERE = [
+  { value: 'paper', label: 'Auf Papier' },
+  { value: 'app', label: 'In der App' },
+] as const;
+
+/** On a paper day only the verse stays in view: it also stands in the archive and the Wüstenzeit (1.41). */
+const ON_PAPER_DAY: ReadonlySet<FieldPath> = new Set(['morning.verseRef', 'morning.verse']);
+
+/** The day's portions as one line for the Tagesblatt, e.g. "AT 1. Mose 3 · NT Matthäus 2". */
+function readingLine(store: ReturnType<typeof useStore>, date: DateKey): string {
+  const { reading } = store.readingFor(date);
+  const plan = getPlan(reading.planId);
+  return plan.tracks
+    .map((t) => {
+      const i = reading.portions[t.def.id];
+      const p = i === undefined ? undefined : t.portions[i];
+      return p ? `${t.def.label} ${portionLabel(t, p)}` : '';
+    })
+    .filter(Boolean)
+    .join(' · ');
 }
