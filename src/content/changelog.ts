@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.41.1',
+    date: '2026-11-13',
+    title: 'Vom Wort ins Notizbuch',
+    changes: [
+      { area: 'Stille Zeit', text: 'Schreibst du im Notizbuch, steht in der Lesung der Knopf „Notizbuch öffnen“. Er öffnet GoodNotes. Unter „Link zum Notizbuch“ kannst du einen eigenen Link hinterlegen, etwa einen Kurzbefehl, der gleich dein Notizbuch aufschlägt.' },
+    ],
+  },
+  {
     version: '1.41.0',
     date: '2026-11-13',
     title: 'Lesung: im Notizbuch oder in der App',
