@@ -154,14 +154,18 @@ describe('Stille Zeit without the bed', () => {
     expect(store.getProfile().readingOnPaper).toBe(true);
     const labels = [...document.querySelectorAll('.flow-step label')].map((l) => l.textContent);
     expect(labels).toEqual(['Stelle des Verses', 'Vers, den ich mitnehme', 'Eigener Link']);
-    expect(screen.getByRole('link', { name: 'Notizbuch öffnen' }).getAttribute('href')).toBe('goodnotes://');
+    // Without a link of one's own there is no button: the bare GoodNotes address ends in an error there.
+    expect(screen.queryByRole('link', { name: 'Notizbuch öffnen' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Kurzbefehl „Notizbuch“ eintragen' }));
+    await waitFor(() => expect(store.getProfile().notebookLink).toBe('shortcuts://run-shortcut?name=Notizbuch'));
+    expect(screen.getByRole('link', { name: 'Notizbuch öffnen' })).toBeTruthy();
     const own = screen.getByLabelText('Eigener Link');
     fireEvent.change(own, { target: { value: 'javascript:alert(1)' } });
     fireEvent.blur(own);
-    expect(store.getProfile().notebookLink).toBe('');
-    fireEvent.change(own, { target: { value: 'shortcuts://run-shortcut?name=Notizbuch' } });
+    expect(store.getProfile().notebookLink).toBe('shortcuts://run-shortcut?name=Notizbuch');
+    fireEvent.change(own, { target: { value: 'shortcuts://run-shortcut?name=Lesung' } });
     fireEvent.blur(own);
-    await waitFor(() => expect(screen.getByRole('link', { name: 'Notizbuch öffnen' }).getAttribute('href')).toBe('shortcuts://run-shortcut?name=Notizbuch'));
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Notizbuch öffnen' }).getAttribute('href')).toBe('shortcuts://run-shortcut?name=Lesung'));
     expect(screen.queryByText('Mehr notieren')).toBeNull();
     cleanup();
     // A new day starts with the last choice; a day with thoughts written in the app stands in the app.

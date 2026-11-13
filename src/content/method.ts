@@ -21,7 +21,7 @@ export const READING_RUBRICS = {
   threeTimes: 'Dreimal lesen: ohne Stift, mit Stift nach Farbcode, dann zusammenfassen.',
   paper: 'Du liest auf Papier, mit Farbstiften. Die App zeigt nur, wo.',
   paperDay: 'Deine Gedanken stehen heute im Notizbuch. Den Vers kannst du hier mitnehmen, wenn du magst. Was du schon in der App notiert hast, bleibt erhalten.',
-  notebookLink: 'Ohne eigenen Link öffnet der Knopf GoodNotes. Mit einem Kurzbefehl oder einem Link aus GoodNotes führt er direkt zu deinem Notizbuch.',
+  notebookLink: 'GoodNotes lässt sich von außen nicht direkt zu einem Notizbuch führen. Lege darum in der App Kurzbefehle einen Kurzbefehl mit der Aktion „App öffnen“ an, wähle dort dein Notizbuch und nenne ihn „Notizbuch“. Dann führt dich der Knopf „Notizbuch öffnen“ über diesen Kurzbefehl in dein Notizbuch.',
 };
 
 export const READING_PASSES = [
