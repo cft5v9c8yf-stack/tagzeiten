@@ -289,8 +289,6 @@ export interface Profile {
   showAtBed: boolean;
   /** The last choice in the reading: thoughts on paper (true) or in the app; a new day starts with it (1.41). */
   readingOnPaper: boolean;
-  /** Where "Notizbuch öffnen" leads: one's own link (a shortcut, a link from GoodNotes); empty = the GoodNotes app (1.41). */
-  notebookLink: string;
   /**
    * "Bitte und Fürbitte": the Stille Zeit and the Vesper as Word, the concerns of the
    * day, blessing – instead of the fixed order. No minutes, no short form.

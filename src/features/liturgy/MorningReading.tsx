@@ -15,7 +15,6 @@ import { SEVEN_QUESTIONS } from '../../content/questions';
 import { useDay, useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import type { DateKey } from '../../domain/dates';
 import type { Day } from '../../domain/model';
-import { isNotebookLink } from '../../domain/profile';
 import { getPlan, portionLabel } from '../../domain/readingPlan';
 import { Segmented } from '../../ui/Choice';
 import { DayField } from '../../ui/DayField';
@@ -200,15 +199,7 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
       {onPaper ? (
         <>
           <p className="small muted">{READING_RUBRICS.paperDay}</p>
-          {profile.notebookLink && (
-            <p>
-              <a className="btn" href={profile.notebookLink}>
-                Notizbuch öffnen
-              </a>
-            </p>
-          )}
           {fields.filter((f) => ON_PAPER_DAY.has(f)).map(field)}
-          <NotebookLinkField />
         </>
       ) : (
         <>
@@ -222,59 +213,6 @@ export function MorningReading({ part, ctx }: { part: Part; ctx: PartContext }) 
         </>
       )}
     </>
-  );
-}
-
-/** A shortcut named "Notizbuch" that opens the notebook in GoodNotes: GoodNotes itself offers no link to a notebook. */
-const SHORTCUT_LINK = 'shortcuts://run-shortcut?name=Notizbuch';
-
-/** One's own link for "Notizbuch öffnen"; kept when it is a link the button may follow (1.41). */
-function NotebookLinkField() {
-  const store = useStore();
-  const profile = useProfile();
-  const id = useId();
-  const [draft, setDraft] = useState(profile.notebookLink);
-  const ok = draft.trim() === '' || isNotebookLink(draft);
-  const save = (v: string) => store.updateProfile((p) => ({ ...p, notebookLink: v.trim() }), { immediate: true });
-  // Open while no link is kept: then the way to one is the first thing to read.
-  const [openAtStart] = useState(() => !profile.notebookLink);
-  return (
-    <details className="fold" open={openAtStart || undefined}>
-      <summary>Link zum Notizbuch</summary>
-      <p className="small muted">{READING_RUBRICS.notebookLink}</p>
-      {draft.trim() !== SHORTCUT_LINK && (
-        <p>
-          <button
-            type="button"
-            className="btn"
-            onClick={() => {
-              setDraft(SHORTCUT_LINK);
-              save(SHORTCUT_LINK);
-            }}
-          >
-            Kurzbefehl „Notizbuch“ eintragen
-          </button>
-        </p>
-      )}
-      <div className="field">
-        <label htmlFor={id}>Eigener Link</label>
-        <input
-          id={id}
-          type="url"
-          inputMode="url"
-          autoCapitalize="off"
-          autoCorrect="off"
-          placeholder={SHORTCUT_LINK}
-          value={draft}
-          aria-invalid={!ok || undefined}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => {
-            if (ok) save(draft);
-          }}
-        />
-        {!ok && <p className="small muted">Erlaubt sind Links mit goodnotes://, shortcuts:// oder https://.</p>}
-      </div>
-    </details>
   );
 }
 

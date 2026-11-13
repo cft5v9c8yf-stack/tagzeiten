@@ -30,7 +30,6 @@ export function defaultProfile(today: DateKey): Profile {
     weekReview: true,
     showAtBed: true,
     readingOnPaper: false,
-    notebookLink: '',
     petition: { morning: false, evening: false },
     showCompline: true,
     arena: [],
@@ -48,9 +47,6 @@ function declined(raw: unknown): Pick<Profile, 'seasonsDeclined'> {
 }
 
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
-
-/** A link "Notizbuch öffnen" may follow: GoodNotes, a shortcut or a web address, nothing else (1.41). */
-export const isNotebookLink = (s: string): boolean => /^(goodnotes|shortcuts|https):\/\/\S*$/i.test(s.trim());
 
 /**
  * Brings a stored or imported profile into the current shape: fills gaps with
@@ -81,7 +77,6 @@ export function normalizeProfile(raw: Partial<Profile> | undefined, today: DateK
     weekReview: raw.weekReview !== false,
     showAtBed: raw.showAtBed !== false,
     readingOnPaper: raw.readingOnPaper === true,
-    notebookLink: typeof raw.notebookLink === 'string' && isNotebookLink(raw.notebookLink) ? raw.notebookLink.trim() : '',
     petition: { morning: raw.petition?.morning === true, evening: raw.petition?.evening === true },
     showCompline: raw.showCompline !== false,
     arena: normalizeArena(raw.arena),
