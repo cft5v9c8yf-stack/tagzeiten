@@ -373,3 +373,14 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
     gewinnen lassen.
   - **Aufwand:** etwa eine Sitzung; Tests für Randfälle (leere Tage, gleiche Zeitstempel, fehlende Runden).
 - **Passionszeit** als zweite Gelegenheit für die Wüstenzeit (Aschermittwoch bis Karsamstag, Matthäus 4,1).
+- **Quartals- und Jahresrückblick in der App** (Idee vom 14.11.2026, nicht beschlossen): Die Vorlagen in
+  `docs/vorlagen/` haben ausführliche Reflexionsseiten für Quartal und Jahr (Bestandsaufnahme, Reflexion,
+  Entwicklung). Die App soll sie nicht nachbauen; die lange Reflexion bleibt auf Papier oder im Tablet mit
+  Stift. Die App kann aber zusammentragen, was nur sie weiß: im Quartal oder Jahr gelesene Kapitel und
+  Bücher, gelernte Katechismusstücke, die Verse aus „Vers, den ich mitnehme“. Das ist dokumentierter
+  Fortschritt ohne Bewertung (Regel 4: keine Zahlen als Leistung, keine Lücken, kein Rückstand). Danach
+  höchstens zwei Fragen (etwa „Was hat dir geholfen, bei Gott zu bleiben?“ und „Wo hat Gott dich
+  verändert?“) und ein Zuspruch (Regel 1, z. B. Philipper 1,6). Ort: im Archiv, einmal je Quartal
+  angeboten, abschaltbar; kein neuer Tab. Dazu klein: unter Mehr ein Hinweis „Henoch zum Schreiben“ mit
+  Link auf die Vorlagen auf der Homepage, sobald sie dort liegen. Später denkbar: die drei Schritte als
+  Gliederung des vorhandenen Wochenrückblicks, ohne neue Felder.
