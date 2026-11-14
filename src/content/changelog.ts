@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.42.0',
+    date: '2026-11-14',
+    title: 'Handschrift: Papier wählen',
+    changes: [
+      { area: 'Gebetskammer', text: 'Über der Seite für die Handschrift wählst du jetzt das Papier: leer, liniert, kariert oder punktiert. Linien, Kästchen und Raster sind blass, damit die Schrift vorn bleibt, und wachsen mit der Seite. Henoch merkt sich deine Wahl auf diesem Gerät; die Striche selbst bleiben, wie sie sind.' },
+    ],
+  },
+  {
     version: '1.41.0',
     date: '2026-11-13',
     title: 'Lesung: im Notizbuch oder in der App',

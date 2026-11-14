@@ -17,3 +17,25 @@ export const rememberWriting = (w: Writing) => {
     // Only a convenience.
   }
 };
+
+export type Paper = 'blank' | 'lined' | 'grid' | 'dotted';
+const PAPER_KEY = 'tz:ink-paper';
+const PAPERS: readonly Paper[] = ['blank', 'lined', 'grid', 'dotted'];
+
+/** The paper of the handwriting page, on this device: a convenience only. */
+export const lastPaper = (): Paper => {
+  try {
+    const v = localStorage.getItem(PAPER_KEY) as Paper | null;
+    return v && PAPERS.includes(v) ? v : 'blank';
+  } catch {
+    return 'blank';
+  }
+};
+
+export const rememberPaper = (p: Paper) => {
+  try {
+    localStorage.setItem(PAPER_KEY, p);
+  } catch {
+    // Only a convenience.
+  }
+};

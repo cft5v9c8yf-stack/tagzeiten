@@ -413,6 +413,17 @@ describe('Handwriting in the Gebetskammer', () => {
         .map((b) => b.getAttribute('aria-label'));
       expect(colours).toEqual(['Tinte', 'Gold', 'Blau']);
 
+      // The paper: blank by default, lined, squared or dotted, remembered on the device.
+      const paper = within(screen.getByRole('group', { name: 'Papier' }));
+      expect(paper.getAllByRole('button').map((b) => b.textContent)).toEqual(['Leer', 'Liniert', 'Kariert', 'Punktiert']);
+      expect(paper.getByRole('button', { name: 'Leer' }).getAttribute('aria-pressed')).toBe('true');
+      expect(page.style.backgroundImage).toBe('');
+      fireEvent.click(paper.getByRole('button', { name: 'Kariert' }));
+      expect(page.style.backgroundImage).toContain('linear-gradient');
+      expect(page.style.backgroundSize).toBe('25px 25px');
+      expect(localStorage.getItem('tz:ink-paper')).toBe('grid');
+      fireEvent.click(paper.getByRole('button', { name: 'Leer' }));
+
       const stroke = (x0: number, x1: number, y: number) => {
         fireEvent.pointerDown(page, { pointerId: 1, pointerType: 'pen', clientX: x0, clientY: y, pressure: 0.5 });
         fireEvent.pointerMove(page, { pointerId: 1, pointerType: 'pen', clientX: x1, clientY: y, pressure: 0.8 });
