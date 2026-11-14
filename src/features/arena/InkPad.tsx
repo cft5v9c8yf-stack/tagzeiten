@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 import { useProfile } from '../../data/hooks';
 import {
+  eachCurve,
   hitStroke,
   MARKER_ALPHA,
   PAGE_WIDTH,
   pageHeight,
+  smoothPressure,
   strokeWidth,
   type InkColor,
   type InkStroke,
@@ -94,17 +96,18 @@ function paint(ctx: CanvasRenderingContext2D, s: InkStroke, scale: number, color
     ctx.lineWidth = strokeWidth('marker', 0) * scale;
     ctx.beginPath();
     ctx.moveTo(p[0]! * scale, p[1]! * scale);
-    for (let i = 3; i < p.length; i += 3) ctx.lineTo(p[i]! * scale, p[i + 1]! * scale);
+    eachCurve(p, (_ax, _ay, cx, cy, bx, by) => ctx.quadraticCurveTo(cx * scale, cy * scale, bx * scale, by * scale));
     ctx.stroke();
   } else {
-    // Segment by segment, each as thick as the pressure there.
-    for (let i = 3; i < p.length; i += 3) {
-      ctx.lineWidth = strokeWidth('pen', (p[i - 1]! + p[i + 2]!) / 2) * scale;
+    // Soft curves, each piece as thick as the calmed pressure there.
+    const pressure = smoothPressure(p);
+    eachCurve(p, (ax, ay, cx, cy, bx, by, i) => {
+      ctx.lineWidth = strokeWidth('pen', pressure[i]!) * scale;
       ctx.beginPath();
-      ctx.moveTo(p[i - 3]! * scale, p[i - 2]! * scale);
-      ctx.lineTo(p[i]! * scale, p[i + 1]! * scale);
+      ctx.moveTo(ax * scale, ay * scale);
+      ctx.quadraticCurveTo(cx * scale, cy * scale, bx * scale, by * scale);
       ctx.stroke();
-    }
+    });
   }
   ctx.globalAlpha = 1;
 }
@@ -201,8 +204,9 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
 
   const toPage = (e: { clientX: number; clientY: number; pressure: number; pointerType: string }) => {
     const r = canvasRef.current!.getBoundingClientRect();
-    const x = Math.round((e.clientX - r.left) / scale);
-    const y = Math.round((e.clientY - r.top) / scale);
+    // A tenth of a unit: whole units let the line shiver on a wide page.
+    const x = Math.round(((e.clientX - r.left) / scale) * 10) / 10;
+    const y = Math.round(((e.clientY - r.top) / scale) * 10) / 10;
     const p = e.pointerType === 'pen' ? Math.round(e.pressure * 100) : 50;
     return [x, y, p] as const;
   };
@@ -219,7 +223,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
     const s = live.current;
     if (!s) return;
     const n = s.points.length;
-    if (Math.hypot(x - s.points[n - 3]!, y - s.points[n - 2]!) < 1.5) return;
+    if (Math.hypot(x - s.points[n - 3]!, y - s.points[n - 2]!) < 1) return;
     s.points.push(x, y, p);
   };
 

@@ -54,6 +54,43 @@ export function pageHeight(strokes: readonly InkStroke[]): number {
   return Math.max(MIN_PAGE_HEIGHT, Math.ceil(max + PAGE_ROOM));
 }
 
+/**
+ * The pressure along a stroke, calmed: the pencil reports small jumps from
+ * point to point, which would make the line swell and thin unevenly.
+ */
+export function smoothPressure(points: readonly number[]): number[] {
+  const out: number[] = [];
+  let last = points[2] ?? 50;
+  for (let i = 2; i < points.length; i += 3) {
+    last = last * 0.6 + points[i]! * 0.4;
+    out.push(last);
+  }
+  return out;
+}
+
+/**
+ * A stroke as soft curves: from the middle of one piece to the middle of the
+ * next, bent through the point between them, so no corners show.
+ * Calls `piece` with start, control and end point and the index of the control point.
+ */
+export function eachCurve(
+  points: readonly number[],
+  piece: (ax: number, ay: number, cx: number, cy: number, bx: number, by: number, i: number) => void,
+) {
+  const n = points.length / 3;
+  const x = (i: number) => points[i * 3]!;
+  const y = (i: number) => points[i * 3 + 1]!;
+  if (n < 2) return;
+  if (n === 2) return piece(x(0), y(0), (x(0) + x(1)) / 2, (y(0) + y(1)) / 2, x(1), y(1), 1);
+  for (let i = 1; i < n - 1; i++) {
+    const ax = i === 1 ? x(0) : (x(i - 1) + x(i)) / 2;
+    const ay = i === 1 ? y(0) : (y(i - 1) + y(i)) / 2;
+    const bx = i === n - 2 ? x(n - 1) : (x(i) + x(i + 1)) / 2;
+    const by = i === n - 2 ? y(n - 1) : (y(i) + y(i + 1)) / 2;
+    piece(ax, ay, x(i), y(i), bx, by, i);
+  }
+}
+
 const distToSegment = (px: number, py: number, ax: number, ay: number, bx: number, by: number) => {
   const dx = bx - ax;
   const dy = by - ay;
@@ -83,7 +120,8 @@ export function inkToSvg(strokes: readonly InkStroke[]): string {
     const p = s.points;
     let d = `M${p[0]} ${p[1]}`;
     if (p.length === 3) d += 'l0 0.01';
-    for (let i = 3; i < p.length; i += 3) d += `L${p[i]} ${p[i + 1]}`;
+    const r = (v: number) => Math.round(v * 10) / 10;
+    eachCurve(p, (_ax, _ay, cx, cy, bx, by) => (d += `Q${r(cx)} ${r(cy)} ${r(bx)} ${r(by)}`));
     let avg = 0;
     for (let i = 2; i < p.length; i += 3) avg += p[i]!;
     avg /= p.length / 3;
