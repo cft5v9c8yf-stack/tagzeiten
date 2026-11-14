@@ -13,6 +13,22 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.42.1',
+    date: '2026-11-14',
+    title: 'Handschrift: ruhigeres Schriftbild',
+    changes: [
+      { area: 'Gebetskammer', text: 'Die Handschrift sieht jetzt ruhiger aus. Henoch merkt sich jeden Strich feiner und verbindet ihn in weichen Bögen statt in geraden Stücken, so zittert die Linie nicht mehr. Der Druck des Apple Pencil wirkt gleichmäßiger, und die Linie schwillt nicht mehr bei jeder kleinen Bewegung an und ab. Was du schon geschrieben hast, wird ebenso glatt gezeichnet.' },
+    ],
+  },
+  {
+    version: '1.42.0',
+    date: '2026-11-14',
+    title: 'Handschrift: Papier wählen',
+    changes: [
+      { area: 'Gebetskammer', text: 'Über der Seite für die Handschrift wählst du jetzt das Papier: leer, liniert, kariert oder punktiert. Linien, Kästchen und Raster sind blass, damit die Schrift vorn bleibt, und wachsen mit der Seite. Henoch merkt sich deine Wahl auf diesem Gerät; die Striche selbst bleiben, wie sie sind.' },
+    ],
+  },
+  {
     version: '1.41.0',
     date: '2026-11-13',
     title: 'Lesung: im Notizbuch oder in der App',

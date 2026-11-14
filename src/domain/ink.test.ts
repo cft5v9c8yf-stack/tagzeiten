@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hitStroke, inkToSvg, MIN_PAGE_HEIGHT, normalizeInk, pageHeight, type InkStroke } from './ink';
+import { eachCurve, hitStroke, inkToSvg, smoothPressure, MIN_PAGE_HEIGHT, normalizeInk, pageHeight, type InkStroke } from './ink';
 import { toMarkdown } from './exportMarkdown';
 
 const line: InkStroke = { tool: 'pen', color: 'ink', points: [100, 100, 50, 300, 100, 50] };
@@ -21,10 +21,28 @@ describe('ink', () => {
   });
 
   it('goes into the Markdown export as a picture (rule 11)', () => {
-    expect(inkToSvg([line])).toContain('<path d="M100 100L300 100"');
+    expect(inkToSvg([line])).toContain('<path d="M100 100Q200 100 300 100"');
     const md = toMarkdown([], [], new Date(2026, 8, 28), [
       { id: 'a', createdAt: 1, updatedAt: 1, verses: [], concerns: [], text: '', ink: [line] },
     ]);
     expect(md).toMatch(/!\[Handschrift\]\(data:image\/svg\+xml;base64,[A-Za-z0-9+/=]+\)/);
+  });
+});
+
+describe('a stroke as soft curves', () => {
+  it('runs from the middle of one piece to the next, from the first point to the last', () => {
+    const pieces: number[][] = [];
+    eachCurve([0, 0, 50, 10, 0, 50, 20, 10, 50, 30, 0, 50], (...a) => pieces.push(a));
+    expect(pieces).toEqual([
+      [0, 0, 10, 0, 15, 5, 1],
+      [15, 5, 20, 10, 30, 0, 2],
+    ]);
+  });
+
+  it('calms the pressure from point to point', () => {
+    const p = smoothPressure([0, 0, 20, 1, 0, 100, 2, 0, 20]);
+    expect(p[0]).toBe(20);
+    expect(p[1]).toBeCloseTo(52);
+    expect(p[2]).toBeCloseTo(39.2);
   });
 });

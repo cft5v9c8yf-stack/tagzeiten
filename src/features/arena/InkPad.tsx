@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
 import { useProfile } from '../../data/hooks';
 import {
+  eachCurve,
   hitStroke,
   MARKER_ALPHA,
   PAGE_WIDTH,
   pageHeight,
+  smoothPressure,
   strokeWidth,
   type InkColor,
   type InkStroke,
 } from '../../domain/ink';
+import { lastPaper, rememberPaper, type Paper } from './writing';
 
 type Tool = 'pen' | 'marker' | 'eraser';
 
@@ -17,6 +20,38 @@ const TOOLS: { value: Tool; label: string }[] = [
   { value: 'marker', label: 'Textmarker' },
   { value: 'eraser', label: 'Radierer' },
 ];
+
+const PAPERS: { value: Paper; label: string }[] = [
+  { value: 'blank', label: 'Leer' },
+  { value: 'lined', label: 'Liniert' },
+  { value: 'grid', label: 'Kariert' },
+  { value: 'dotted', label: 'Punktiert' },
+];
+
+/** Distance of lines, squares and dots on the page (in page units, 1000 wide). */
+const PAPER_STEP = 50;
+
+/** The pattern of the paper as a CSS background, scaled to the page on screen. */
+function paperStyle(paper: Paper, scale: number) {
+  const step = PAPER_STEP * scale;
+  if (paper === 'blank' || !step) return {};
+  const line = 'var(--rule)';
+  if (paper === 'lined')
+    return {
+      backgroundImage: `linear-gradient(to bottom, transparent calc(100% - 1px), ${line} calc(100% - 1px))`,
+      backgroundSize: `100% ${step}px`,
+    };
+  if (paper === 'grid')
+    return {
+      backgroundImage: `linear-gradient(to bottom, transparent calc(100% - 1px), ${line} calc(100% - 1px)), linear-gradient(to right, transparent calc(100% - 1px), ${line} calc(100% - 1px))`,
+      backgroundSize: `${step}px ${step}px`,
+    };
+  return {
+    backgroundImage: `radial-gradient(circle at center, var(--muted) 1.2px, transparent 1.6px)`,
+    backgroundSize: `${step}px ${step}px`,
+    backgroundPosition: `${step / 2}px ${step / 2}px`,
+  };
+}
 
 /** Colours of the app (red stays with the rubrics, rule 5). */
 const COLORS: { value: InkColor; label: string; css: string }[] = [
@@ -61,17 +96,18 @@ function paint(ctx: CanvasRenderingContext2D, s: InkStroke, scale: number, color
     ctx.lineWidth = strokeWidth('marker', 0) * scale;
     ctx.beginPath();
     ctx.moveTo(p[0]! * scale, p[1]! * scale);
-    for (let i = 3; i < p.length; i += 3) ctx.lineTo(p[i]! * scale, p[i + 1]! * scale);
+    eachCurve(p, (_ax, _ay, cx, cy, bx, by) => ctx.quadraticCurveTo(cx * scale, cy * scale, bx * scale, by * scale));
     ctx.stroke();
   } else {
-    // Segment by segment, each as thick as the pressure there.
-    for (let i = 3; i < p.length; i += 3) {
-      ctx.lineWidth = strokeWidth('pen', (p[i - 1]! + p[i + 2]!) / 2) * scale;
+    // Soft curves, each piece as thick as the calmed pressure there.
+    const pressure = smoothPressure(p);
+    eachCurve(p, (ax, ay, cx, cy, bx, by, i) => {
+      ctx.lineWidth = strokeWidth('pen', pressure[i]!) * scale;
       ctx.beginPath();
-      ctx.moveTo(p[i - 3]! * scale, p[i - 2]! * scale);
-      ctx.lineTo(p[i]! * scale, p[i + 1]! * scale);
+      ctx.moveTo(ax * scale, ay * scale);
+      ctx.quadraticCurveTo(cx * scale, cy * scale, bx * scale, by * scale);
       ctx.stroke();
-    }
+    });
   }
   ctx.globalAlpha = 1;
 }
@@ -86,6 +122,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [tool, setTool] = useState<Tool>('pen');
   const [color, setColor] = useState<InkColor>('ink');
+  const [paper, setPaper] = useState<Paper>(lastPaper);
   const [history, setHistory] = useState<InkStroke[][]>([]);
   const [width, setWidth] = useState(0);
   const [penSeen, setPenSeen] = useState(readPenSeen);
@@ -167,8 +204,9 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
 
   const toPage = (e: { clientX: number; clientY: number; pressure: number; pointerType: string }) => {
     const r = canvasRef.current!.getBoundingClientRect();
-    const x = Math.round((e.clientX - r.left) / scale);
-    const y = Math.round((e.clientY - r.top) / scale);
+    // A tenth of a unit: whole units let the line shiver on a wide page.
+    const x = Math.round(((e.clientX - r.left) / scale) * 10) / 10;
+    const y = Math.round(((e.clientY - r.top) / scale) * 10) / 10;
     const p = e.pointerType === 'pen' ? Math.round(e.pressure * 100) : 50;
     return [x, y, p] as const;
   };
@@ -185,7 +223,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
     const s = live.current;
     if (!s) return;
     const n = s.points.length;
-    if (Math.hypot(x - s.points[n - 3]!, y - s.points[n - 2]!) < 1.5) return;
+    if (Math.hypot(x - s.points[n - 3]!, y - s.points[n - 2]!) < 1) return;
     s.points.push(x, y, p);
   };
 
@@ -251,6 +289,21 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   return (
     <div className="ink">
       <div className="ink-tools" role="toolbar" aria-label="Werkzeuge der Handschrift">
+        <div className="seg" role="group" aria-label="Papier">
+          {PAPERS.map((p) => (
+            <button
+              key={p.value}
+              type="button"
+              aria-pressed={paper === p.value}
+              onClick={() => {
+                setPaper(p.value);
+                rememberPaper(p.value);
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
         <div className="seg" role="group" aria-label="Werkzeug">
           {TOOLS.map((t) => (
             <button key={t.value} type="button" aria-pressed={tool === t.value} onClick={() => setTool(t.value)}>
@@ -286,7 +339,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
           ref={canvasRef}
           role="img"
           aria-label={strokes.length ? `Handschrift, ${strokes.length} Striche` : 'Leere Seite für Handschrift'}
-          style={{ height: `${height * scale}px` }}
+          style={{ height: `${height * scale}px`, ...paperStyle(paper, scale) }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerEnd}
