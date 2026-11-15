@@ -472,6 +472,7 @@ if (process.env.JAHR) {
 
 // ---- GoodNotes: single-page templates plus a small start notebook
 const GN = [];
+const BUCH = [];
 if (process.env.GN) {
   mkdirSync(OUT + 'goodnotes', { recursive: true });
   const gnCss = tabletCss + `
@@ -504,7 +505,8 @@ if (process.env.GN) {
   .ruled.wide{--lh:10mm}.ruled.wide::before{content:'';position:absolute;top:0;bottom:0;right:22mm;border-left:.4mm solid var(--rubric)}
   .ruled.wide .mlabel{right:0;left:auto}.toc{padding-right:24mm}.toc .pfoot{right:24mm}`;
   const one2 = (t) => `<div class="one"><span>${t}</span></div>`;
-  const one = (name, html) => { writeFileSync(OUT + `gn-${name}.html`, doc(`<div class="wrap">${html}</div>`, gnCss)); GN.push([`gn-${name}.html`, `goodnotes/Henoch_${name}.pdf`]); };
+  const PG = {};
+  const one = (name, html) => { PG[name] = html; writeFileSync(OUT + `gn-${name}.html`, doc(`<div class="wrap">${html}</div>`, gnCss)); GN.push([`gn-${name}.html`, `goodnotes/Henoch_${name}.pdf`]); };
   const ft = (l, r) => `<div class="foot"><span>${l}</span><span>${r}</span></div>`;
   const seite = 'Seite<i class="seite"></i>';
   const T = a4pages.map(strip);
@@ -788,6 +790,126 @@ if (process.env.GN) {
   const REFL = ['Reflexion_Woche_1', 'Reflexion_Woche_2', 'Reflexion_Quartal', 'Reflexion_Jahr_Rueckblick', 'Reflexion_Jahr_Ausblick'];
   writeFileSync(OUT + 'gn-reflexion-alle.html', doc(REFL.map((n) => readFileSync(OUT + `gn-${n}.html`, 'utf8').match(/<body>([\s\S]*)<\/body>/)[1]).join(''), gnCss));
   GN.push(['gn-reflexion-alle.html', 'goodnotes/Henoch_Reflexion_alle_hoch.pdf']);
+
+  // ---- the printed year book (A5, sewn in signatures of 16 pages): BUCH=1
+  if (process.env.BUCH) {
+    const YEAR = 2027, SIG = 16, SCALE = 0.7047, B = 3 / SCALE; // B: 3 mm bleed on the A4 canvas
+    const KJ = JSON.parse(readFileSync(OUT + 'kirchenjahr2027.json', 'utf8'));
+    const WD = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+    const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+    const D = (m, d) => new Date(Date.UTC(YEAR, m, d));
+    const add = (d, n) => new Date(d.getTime() + n * 864e5);
+    const key = (d) => d.toISOString().slice(0, 10);
+    const dstr = (d) => `${d.getUTCDate()}. ${MON[d.getUTCMonth()]}`;
+    const isoWeek = (d) => { const t = new Date(d.getTime()); const wd = (t.getUTCDay() + 6) % 7; t.setUTCDate(t.getUTCDate() - wd + 3); const j4 = new Date(Date.UTC(t.getUTCFullYear(), 0, 4)); return 1 + Math.round(((t - j4) / 864e5 - 3 + ((j4.getUTCDay() + 6) % 7)) / 7); };
+    const must = (html, a) => { if (!html.includes(a)) throw new Error('missing: ' + a.slice(0, 60)); };
+    const fill = (html, label, val) => { const a = `<span class="label">${label}</span></div>`; must(html, a); return html.replace(a, `<span class="label">${label}</span><span class="val${val.length > 42 ? ' s' : ''}">${val}</span></div>`); };
+    const swap = (html, a, b) => { must(html, a); return html.replace(a, b); };
+    const sunName = (d) => { const i = KJ.days[key(d)]; return !i.feast ? i.week : i.feast.startsWith(i.week.split(' ')[0]) ? i.feast : `${i.week} · ${i.feast}`; };
+
+    const bib0 = swap(PG.Bibellese, 'Diese Seite genügt. Wenn Zeit ist, nimm dazu die Vorlage „Vertiefen“.', 'Diese Seite genügt.');
+    const bib = (d) => { const i = KJ.days[key(d)]; return swap(fill(bib0, 'Datum', `${WD[d.getUTCDay()]}, ${dstr(d)}`), '<span>Notizen beim Lesen</span>', `<span>${i.feast || i.week}</span>`); };
+    const pl0 = PG.Predigtnotiz
+      .replace(/<div class="f"><span class="label">Gemeinde<\/span><\/div>\s*<div class="f"><span class="label">Prediger<\/span><\/div>/, '<div class="f"><span class="label">Prediger</span></div><div class="f"><span class="label">Lied</span></div>')
+      .replace(/<div class="f"><span class="label">Lesungen<\/span><\/div>\s*<div class="f"><span class="label">Lied<\/span><\/div>/, '<div class="f wide"><span class="label">Evangelium · Epistel</span></div>');
+    const predigtL = (d) => { const w = KJ.weeks[KJ.days[key(d)].weekKey]; return fill(fill(fill(pl0, 'Datum', `${dstr(d)} ${YEAR}`), 'Sonntag · Anlass', sunName(d)), 'Evangelium · Epistel', `${w.gospel} · ${w.epistle}`); };
+    const pr0 = swap(PG.Predigtnotiz_Mitnehmen, '<div class="ln"></div>', '');
+    const predigtR = (d) => { const v = KJ.weeks[KJ.days[key(d)].weekKey].verse; return swap(pr0, '<span class="q">Zur Wochenmitte noch einmal lesen.</span>', `<span class="q">Wochenspruch: ${v.parts.join(' ')} <small class="vr">${v.ref}</small></span>`); };
+    const woche1 = (fr, from) => fill(fill(PG.Reflexion_Woche_1, 'Woche', `KW ${isoWeek(fr)}`), 'Vom · bis', `${dstr(from)} – ${dstr(fr)}`);
+    const KINDS = ['Abschnitt', 'Wort', 'Person', 'Ort'];
+    const study = (d, k) => fill(PG['Studie_' + KINDS[k % 4]], 'Datum', dstr(d));
+    const ertrag = (d) => fill(PG.Studie_Ertrag, 'Datum', dstr(d));
+    const frei = () => `<section class="page l a4 frei"><div class="fields frei"><div class="f text"><span class="label">Überschrift</span></div><div class="f"><span class="label">Datum</span></div></div>
+      <div style="height:4mm"></div><div class="dotbox fill">${dots(240, 159.6)}</div><div class="foot"><span></span><span></span></div></section>`;
+    const bleedArt = (h) => h.replace(/x1="0" x2="210"/g, 'x1="-8" x2="218"');
+    const mcover = (k) => bleedArt(swap(monthCover(k), 'Jahr<i class="seite" style="width:22mm"></i>', String(YEAR)));
+    const quartal = (q) => fill(fill(PG.Reflexion_Quartal, 'Quartal', `${q}. Quartal`), 'Jahr', String(YEAR));
+    const raw = (inner, footer = '') => `<section class="raw toc">${inner}<div class="pfoot"><span>${footer}</span><span></span></div></section>`;
+    const u3 = (h, t) => `<div><h3>${h}</h3><p>${t}</p></div>`;
+
+    const seq = []; const marks = []; const sunPage = {};
+    const push = (h) => { seq.push(h); return seq.length; };
+    const mark = (t, n) => marks.push([t, n]);
+
+    // front matter (page 1 is a right-hand page)
+    mark('Titel', push(bleedArt(swap(coverGN, '<div class="no">Tagebuch</div>', `<div class="no jz">${YEAR}</div>`))));
+    push(`<section class="raw toc"><div style="position:absolute;left:24mm;right:24mm;bottom:40mm"><div class="fields" style="grid-template-columns:1fr"><div class="f"><span class="label">Dieses Buch gehört</span></div><div class="f"><span class="label">Begonnen am</span></div></div></div></section>`);
+    mark('Zum Gebrauch', push(raw(`<div class="eyebrow">Henoch · Lesen und Hören ${YEAR}</div><h1>Zum Gebrauch</h1><div class="use">
+      ${u3('Ein Jahr, Tag für Tag', `Jeder Tag des Jahres ${YEAR} hat seine Seite für die Bibellese. Oben stehen das Datum und die Woche des Kirchenjahrs. Eine Seite, die leer bleibt, ist kein Versäumnis; du schlägst einfach den heutigen Tag auf.`)}
+      ${u3('Der Sonntag eröffnet die Woche', 'Jede Woche beginnt mit einer Doppelseite für die Predigt: links die Mitschrift, rechts, was du mitnimmst. Der Name des Sonntags, Evangelium, Epistel und Wochenspruch sind eingedruckt.')}
+      ${u3('Freitag: Wochenrückblick', 'Nach der Bibellese am Freitag folgt die Reflexion in drei Schritten: Bestandsaufnahme, Reflexion, Entwicklung.')}
+      ${u3('Samstag: Bibelstudium', 'Einmal in der Woche ist Platz, tiefer zu graben: im Wechsel ein Abschnitt, ein Wort, eine Person, ein Ort. Daneben liegt eine freie Seite, danach folgt der Ertrag.')}
+      ${u3('Monat, Quartal, Jahr', 'Jeder Monat beginnt mit einem Deckblatt und einem Wort der Schrift; es steht vor der ersten Woche, deren Sonntag in den Monat fällt. Nach jedem Quartal steht eine Reflexion, am Anfang der Jahresausblick, am Ende der Jahresrückblick.')}
+      ${u3('Erst das Wort, zuletzt der Vorsatz', 'Jede Seite beginnt mit dem Wort. Dann wird gebetet. Erst danach fragst du, was es für dein Haus, die Gemeinde und deine Arbeit heißt.')}
+      ${u3('Gesetz und Evangelium', 'Was fordert Gott, und was schenkt Er in Christus? Die Prüfung geschieht im Stillen und wird gebetet, nicht notiert. Das Evangelium hat das letzte Wort.')}
+      ${u3('Die Bibel liegt daneben', 'Gelesen und angestrichen wird in der gedruckten Bibel, mit Farbstiften. Dieses Buch hält fest, was du gefunden und gehört hast.')}
+      </div>`, 'Henoch · Zum Gebrauch')));
+    const sundays = []; for (let s = D(0, 3); s.getUTCFullYear() === YEAR; s = add(s, 7)) sundays.push(s);
+    const kjPage = (part) => () => raw(`<div class="eyebrow">Henoch · Lesen und Hören ${YEAR}</div><h1>Kirchenjahr ${YEAR}</h1>
+      <table class="fill kj"><thead><tr><th style="width:19mm">Datum</th><th>Sonntag</th><th style="width:44mm">Evangelium</th><th style="width:13mm;text-align:right">Seite</th></tr></thead><tbody>
+      ${sundays.slice(part * 26, part * 26 + 26).map((s) => `<tr><td>${s.getUTCDate()}. ${s.getUTCMonth() + 1}.</td><td>${sunName(s)}</td><td>${KJ.weeks[KJ.days[key(s)].weekKey].gospel}</td><td class="n">${sunPage[key(s)]}</td></tr>`).join('')}
+      </tbody></table>`, 'Henoch · Kirchenjahr');
+    mark(`Kirchenjahr ${YEAR}`, push(kjPage(0))); push(kjPage(1));
+    mark('Jahresausblick', push(fill(PG.Reflexion_Jahr_Ausblick, 'Jahr', String(YEAR))));
+    mark('Januar', push(mcover(0)));
+    push(bib(D(0, 1))); push(bib(D(0, 2)));
+
+    // the weeks: [Predigt | Mitnehmen] [So | Mo] [Di | Mi] [Do | Fr] [Woche 1 | Woche 2] [Sa | frei] [Studie | Ertrag]
+    sundays.forEach((s, k) => {
+      const m = s.getUTCMonth();
+      if (s.getUTCDate() <= 7 && m > 0) {
+        if (m % 3 === 0) mark(`${m / 3}. Quartal · Reflexion`, push(quartal(m / 3))); else push(frei());
+        mark(MON[m], push(mcover(m)));
+      }
+      if (seq.length % 2 !== 1) throw new Error('week must start on a left page');
+      sunPage[key(s)] = push(predigtL(s)); push(predigtR(s));
+      for (let i = 0; i < 6; i++) push(bib(add(s, i)));
+      push(woche1(add(s, 5), s)); push(PG.Reflexion_Woche_2);
+      const sa = add(s, 6);
+      if (sa.getUTCFullYear() === YEAR) { push(bib(sa)); push(frei()); push(study(sa, k)); push(ertrag(sa)); }
+    });
+    mark('4. Quartal · Reflexion', push(quartal(4)));
+    mark('Jahresrückblick', push(fill(PG.Reflexion_Jahr_Rueckblick, 'Jahr', String(YEAR))));
+    const content = seq.length;
+    while ((seq.length + 1) % SIG !== 0) push(frei());
+    push('<section class="raw"></section>');
+
+    const finish = (h, n) => {
+      const html = typeof h === 'function' ? h() : h; const recto = n % 2 === 1;
+      const ft = (cls) => (m, t) => (recto ? `<div class="${cls}"><span>${t}</span><span class="pn">${n}</span></div>` : `<div class="${cls}"><span class="pn">${n}</span><span>${t}</span></div>`);
+      return html.replace('class="page l a4', `class="page l a4 ${recto ? 'rr' : 'rv'}`)
+        .replace(/<h2 class="sec">([\s\S]*?)<\/h2>/g, '<div class="sec">$1</div>')
+        .replace(/<div class="foot">\s*<span>([\s\S]*?)<\/span>[\s\S]*?<\/div>/, ft('foot'))
+        .replace(/<div class="pfoot">\s*<span>([\s\S]*?)<\/span>[\s\S]*?<\/div>/, ft('pfoot'));
+    };
+    const pagesB = seq.map((h, i) => finish(h, i + 1));
+    const base = (gnCss + monthCss).replace('@page{size:210mm 297mm;margin:0}', '@page{margin:0}') + `
+    .wrap,.page,.raw,.page.a4{background:#fff}
+    .page.a4.rr{padding-left:21mm;padding-right:13mm}.page.a4.rr .foot{left:21mm;right:13mm}
+    .page.a4.rv{padding-left:13mm;padding-right:21mm}.page.a4.rv .foot{left:13mm;right:21mm}
+    .page.a4.frei.rr{padding-left:16mm;padding-right:7mm}.page.a4.frei.rr .foot{left:16mm;right:7mm}
+    .page.a4.frei.rv{padding-left:7mm;padding-right:16mm}.page.a4.frei.rv .foot{left:7mm;right:16mm}
+    .toc{padding-right:24mm}.toc .pfoot{right:24mm}
+    div.sec{display:flex;align-items:baseline;gap:3mm;margin:0 0 1mm;font:600 10pt var(--serif)}div.sec .label{font-weight:600}
+    .f:has(.val){flex-direction:column}.val{margin-top:auto;padding-bottom:.7mm;font:400 8.6pt/1.1 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.val.s{font-size:7.2pt}
+    .pn{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+    .vr{font:400 6.8pt var(--sans);color:var(--muted);font-style:normal}
+    .raw.cover{overflow:visible}svg.art,svg.mart{overflow:visible}
+    .cover .no.jz{font:600 22pt var(--serif);letter-spacing:0;color:var(--gold);top:20mm}
+    table.kj td{height:7.7mm;font:400 8pt var(--sans);padding-bottom:.6mm}table.kj td+td{padding-left:2mm}table.kj td.n{text-align:right;font-weight:600;padding-right:1mm}table.kj th+th{padding-left:2mm}`;
+    const wrapB = (h) => `<div class="wrap"><div class="inner">${h}</div></div>`;
+    const withBleed = `.wrap{width:${210 + 2 * B}mm;height:${297 + 2 * B}mm}.inner{position:absolute;left:${B}mm;top:${B}mm;width:210mm;height:297mm}`;
+    const noBleed = `.inner{position:absolute;inset:0}`;
+    writeFileSync(OUT + 'buch-beschnitt.html', doc(pagesB.map(wrapB).join(''), base + withBleed));
+    writeFileSync(OUT + 'buch.html', doc(pagesB.map(wrapB).join(''), base + noBleed));
+    const sheets = [];
+    for (let s0 = 0; s0 < pagesB.length; s0 += SIG) for (let k = 0; k < SIG / 4; k++) sheets.push([s0 + SIG - 1 - 2 * k, s0 + 2 * k], [s0 + 2 * k + 1, s0 + SIG - 2 - 2 * k]);
+    writeFileSync(OUT + 'buch-lagen.html', doc(sheets.map(([a, b]) => `<div class="sheet">${wrapB(pagesB[a])}${wrapB(pagesB[b])}</div>`).join(''),
+      base + noBleed + `.sheet{display:flex;justify-content:center;width:${297 / SCALE}mm;height:297mm;break-after:page;overflow:hidden}.sheet .wrap{break-after:auto;flex:none}`));
+    writeFileSync(OUT + 'buch.json', JSON.stringify({ pages: pagesB.length, content, signatures: pagesB.length / SIG, marks }));
+    BUCH.push(['buch.html', `Henoch_Notizbuch_${YEAR}_A5.pdf`, '148mm', '210mm'], ['buch-beschnitt.html', `Henoch_Notizbuch_${YEAR}_A5_Beschnitt.pdf`, '154mm', '216mm'], ['buch-lagen.html', `Henoch_Notizbuch_${YEAR}_Lagen_A4.pdf`, '297mm', '210mm']);
+    console.log('Buch:', pagesB.length, 'Seiten,', pagesB.length / SIG, 'Lagen, Inhalt bis Seite', content);
+  }
 }
 const browser = await chromium.launch();
 const page = await browser.newPage();
@@ -798,10 +920,15 @@ for (const [src, out, w, h] of [
   ['tablet.html', 'Henoch_Tagebuch_lesen_hoeren.pdf', '210mm', '297mm'],
   ['jahr.html', 'Henoch_Tagebuch_lesen_hoeren_Jahr.pdf', '210mm', '297mm'],
   ...GN.map(([src, out, w = '210mm', h = '297mm']) => [src, out, w, h]),
-].filter(([src]) => (process.env.JAHR ? src === 'jahr.html' : process.env.GN ? src.startsWith('gn-') : !src.startsWith('gn-') && src !== 'jahr.html'))) {
+].filter(([src]) => !process.env.BUCH && (process.env.JAHR ? src === 'jahr.html' : process.env.GN ? src.startsWith('gn-') : !src.startsWith('gn-') && src !== 'jahr.html'))) {
   await page.goto('file://' + OUT + src);
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({ path: OUT + out, width: w, height: h, printBackground: true, preferCSSPageSize: true, outline: true, tagged: true });
+}
+for (const [src, out, w, h] of BUCH) {
+  await page.goto('file://' + OUT + src, { timeout: 0 });
+  await page.evaluate(() => document.fonts.ready);
+  await page.pdf({ path: OUT + out, width: w, height: h, scale: 0.7047, printBackground: true, preferCSSPageSize: false });
 }
 await browser.close();
 console.log('ok', N);

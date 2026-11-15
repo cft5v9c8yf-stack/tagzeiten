@@ -50,3 +50,31 @@ Gebraucht werden Node mit Playwright (Chromium) und Python mit `pypdf`. Die Schr
 
 1. `Henoch_Tagebuch_lesen_hoeren_komplett.pdf` in den Webspace laden, zum Beispiel nach `/vorlagen/`.
 2. Von der Homepage darauf verlinken, etwa: „Henoch zum Schreiben: Vorlagen für GoodNotes (PDF, 2 MB)“.
+
+## Notizbuch 2027 (A5, fadengeheftet)
+
+Ein gedrucktes Buch für das ganze Jahr, aus denselben Vorlagen, auf A5 verkleinert (Faktor 0,7047):
+768 Seiten in 48 Lagen zu 16 Seiten.
+
+```sh
+GN=1 BUCH=1 node build.mjs
+python3 buch.py
+```
+
+Das ergibt drei Dateien (nicht im Repository, je etwa 14 MB):
+
+- `Henoch_Notizbuch_2027_A5.pdf`: Seite für Seite, A5, zum Ansehen oder für den Copyshop.
+- `Henoch_Notizbuch_2027_A5_Beschnitt.pdf`: dasselbe mit 3 mm Beschnitt und TrimBox, für die Druckerei.
+- `Henoch_Notizbuch_2027_Lagen_A4.pdf`: ausgeschossen auf A4 quer, je Lage vier Bögen; beidseitig
+  drucken (an der kurzen Kante wenden), je vier Bögen ineinanderlegen, falzen, heften.
+
+Aufbau: Titel, Zum Gebrauch, Kirchenjahr 2027 (alle Sonntage mit Seitenzahl), Jahresausblick; dann
+Woche für Woche auf 14 Seiten: Predigtnotiz und Mitnehmen (Sonntag), Bibellese für jeden Tag,
+Wochenrückblick nach dem Freitag, Samstag mit freier Seite, Bibelstudium (im Wechsel Abschnitt, Wort,
+Person, Ort) mit Ertrag. Monatsdeckblätter stehen vor der ersten Woche, deren Sonntag in den Monat
+fällt; davor links die Quartalsreflexion oder eine freie Seite. Am Ende Jahresrückblick und freie Seiten.
+
+Sonntagsnamen, Evangelium, Epistel und Wochenspruch kommen aus der App (`kirchenjahr2027.json`,
+erzeugt aus `kirchenjahr.ts`: mit esbuild bündeln und mit node ausführen). Für ein anderes Jahr die
+Jahreszahl in `kirchenjahr.ts` und `YEAR` in `build.mjs` ändern; der Aufbau der ersten und letzten
+Tage ist auf 2027 zugeschnitten (1. Januar ein Freitag) und muss dann angepasst werden.

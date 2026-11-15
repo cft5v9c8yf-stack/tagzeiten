@@ -7,3 +7,6 @@ Henoch-Predigtbuch-*.pdf
 Henoch_Tagebuch_lesen_hoeren.pdf
 Henoch_Tagebuch_lesen_hoeren_Druck.pdf
 Henoch_Tagebuch_lesen_hoeren_Jahr.pdf
+# The year book is rebuilt with BUCH=1 (three files of about 14 MB each).
+Henoch_Notizbuch_*.pdf
+buch.json
