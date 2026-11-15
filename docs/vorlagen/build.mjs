@@ -792,9 +792,11 @@ if (process.env.GN) {
   GN.push(['gn-reflexion-alle.html', 'goodnotes/Henoch_Reflexion_alle_hoch.pdf']);
 
   // ---- the printed year book (A5, sewn in signatures of 16 pages): BUCH=1
-  if (process.env.BUCH) {
-    const YEAR = 2027, SIG = 16, SCALE = 0.7047, B = 3 / SCALE; // B: 3 mm bleed on the A4 canvas
-    const KJ = JSON.parse(readFileSync(OUT + 'kirchenjahr2027.json', 'utf8'));
+  // HEFT=1: the same order of pages for GoodNotes, 15 November to 31 December 2026 (A4, no signatures)
+  if (process.env.BUCH || process.env.HEFT) {
+    const TAB = Boolean(process.env.HEFT);
+    const YEAR = TAB ? 2026 : 2027, SIG = 16, SCALE = 0.7047, B = 3 / SCALE; // B: 3 mm bleed on the A4 canvas
+    const KJ = JSON.parse(readFileSync(OUT + `kirchenjahr${YEAR}.json`, 'utf8'));
     const WD = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
     const MON = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
     const D = (m, d) => new Date(Date.UTC(YEAR, m, d));
@@ -831,6 +833,60 @@ if (process.env.GN) {
     const push = (h) => { seq.push(h); return seq.length; };
     const mark = (t, n) => marks.push([t, n]);
 
+    if (TAB) {
+      const FROM = D(10, 15), TO = D(11, 31);
+      const ids = {}; const at = (id, n) => { ids[n] = id; return n; };
+      const short = (d) => `${d.getUTCDate()}. ${d.getUTCMonth() + 1}.`;
+      const preach = []; for (let d = FROM; d <= TO; d = add(d, 1)) if (d.getUTCDay() === 0 || key(d) === `${YEAR}-12-25`) preach.push(d);
+      push(swap(coverGN, '<div class="no">Tagebuch</div>', `<div class="no jz">${YEAR}</div>`)); mark('Titel', 1);
+      mark('Zum Gebrauch', push(raw(`<div class="eyebrow">Henoch · Lesen und Hören ${YEAR}</div><h1>Zum Gebrauch</h1><div class="use">
+        ${u3('Tag für Tag', `Jeder Tag vom ${dstr(FROM)} bis zum ${dstr(TO)} ${YEAR} hat seine Seite für die Bibellese. Oben stehen das Datum und die Woche des Kirchenjahrs. Eine Seite, die leer bleibt, ist kein Versäumnis; du schlägst einfach den heutigen Tag auf.`)}
+        ${u3('Der Sonntag eröffnet die Woche', 'Jede Woche beginnt mit zwei Seiten für die Predigt: erst die Mitschrift, dann, was du mitnimmst. Der Name des Sonntags, Evangelium, Epistel und Wochenspruch sind eingetragen. Auch das Christfest hat seine Predigtseiten.')}
+        ${u3('Freitag: Wochenrückblick', 'Nach der Bibellese am Freitag folgt die Reflexion in drei Schritten: Bestandsaufnahme, Reflexion, Entwicklung.')}
+        ${u3('Samstag: Bibelstudium', 'Einmal in der Woche ist Platz, tiefer zu graben: im Wechsel ein Abschnitt, ein Wort, eine Person, ein Ort. Davor liegt eine freie Seite, danach folgt der Ertrag.')}
+        ${u3('Finden und Springen', 'Die Lesezeichen der Datei führen zu jeder Woche und jedem Monat. Auf der nächsten Seite stehen alle Sonntage; ein Tipp auf eine Zeile bringt dich hin. Brauchst du eine Seite mehr, dupliziere sie in GoodNotes.')}
+        ${u3('Erst das Wort, zuletzt der Vorsatz', 'Jede Seite beginnt mit dem Wort. Dann wird gebetet. Erst danach fragst du, was es für dein Haus, die Gemeinde und deine Arbeit heißt.')}
+        ${u3('Gesetz und Evangelium', 'Was fordert Gott, und was schenkt Er in Christus? Die Prüfung geschieht im Stillen und wird gebetet, nicht notiert. Das Evangelium hat das letzte Wort.')}
+        ${u3('Die Bibel liegt daneben', 'Gelesen und angestrichen wird in der gedruckten Bibel, mit Farbstiften. Das Tablet ersetzt nur das Notizblatt.')}
+        </div>`, 'Henoch · Zum Gebrauch')));
+      mark('Sonntage und Festtage', push(() => raw(`<div class="eyebrow">Henoch · Lesen und Hören ${YEAR}</div><h1>Sonntage und Festtage</h1>
+        <table class="fill kj"><thead><tr><th style="width:19mm">Datum</th><th>Tag</th><th style="width:44mm">Evangelium</th><th style="width:13mm;text-align:right">Seite</th></tr></thead><tbody>
+        ${preach.map((d) => `<tr><td>${short(d)}</td><td><a href="#p${key(d)}">${sunName(d)}</a></td><td>${KJ.weeks[KJ.days[key(d)].weekKey].gospel}</td><td class="n"><a href="#p${key(d)}">${sunPage[key(d)]}</a></td></tr>`).join('')}
+        </tbody></table>`, 'Henoch · Sonntage und Festtage')));
+      mark('November', push(mcover(10)));
+      let k = 0;
+      for (let d = FROM; d <= TO; d = add(d, 1)) {
+        const wd = d.getUTCDay();
+        if (d.getUTCDate() === 1) mark(MON[d.getUTCMonth()], push(mcover(d.getUTCMonth())));
+        if (preach.some((x) => key(x) === key(d))) {
+          sunPage[key(d)] = at('p' + key(d), push(predigtL(d))); push(predigtR(d));
+          mark(`${short(d)} ${sunName(d)}`, sunPage[key(d)]);
+        }
+        push(bib(d));
+        if (wd === 5 || key(d) === key(TO)) { push(woche1(d, add(d, -((wd + 7) % 7)))); push(PG.Reflexion_Woche_2); }
+        if (wd === 6) { push(PG.Frei); push(study(d, k++)); push(ertrag(d)); }
+      }
+      mark('4. Quartal · Reflexion', push(quartal(4)));
+      mark('Jahresrückblick', push(fill(PG.Reflexion_Jahr_Rueckblick, 'Jahr', String(YEAR))));
+      const fin = (h, n) => {
+        const ft = (cls) => (m, t) => `<div class="${cls}"><span>${t}</span><span class="pn">${n}</span></div>`;
+        return (typeof h === 'function' ? h() : h).replace(/<h2 class="sec">([\s\S]*?)<\/h2>/g, '<div class="sec">$1</div>')
+          .replace(/<div class="foot">\s*<span>([\s\S]*?)<\/span>[\s\S]*?<\/div>/, ft('foot')).replace(/<div class="pfoot">\s*<span>([\s\S]*?)<\/span>[\s\S]*?<\/div>/, ft('pfoot'));
+      };
+      const out = `Henoch_Tagebuch_${YEAR}-11-15_bis_12-31_GoodNotes.pdf`;
+      writeFileSync(OUT + 'heft.html', doc(seq.map((h, i) => `<div class="wrap"${ids[i + 1] ? ` id="${ids[i + 1]}"` : ''}>${fin(h, i + 1)}</div>`).join(''), gnCss + monthCss + `
+      .toc{padding-right:24mm}.toc .pfoot{right:24mm}
+      div.sec{display:flex;align-items:baseline;gap:3mm;margin:0 0 1mm;font:600 10pt var(--serif)}div.sec .label{font-weight:600}
+      .f:has(.val){flex-direction:column}.val{margin-top:auto;padding-bottom:.7mm;font:400 8.6pt/1.1 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.val.s{font-size:7.2pt}
+      .pn{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+      .vr{font:400 6.8pt var(--sans);color:var(--muted);font-style:normal}
+      .cover .no.jz{font:600 22pt var(--serif);letter-spacing:0;color:var(--gold);top:20mm}
+      table.kj td{height:11mm;font:400 9pt var(--sans);padding-bottom:1mm}table.kj td+td{padding-left:2mm}table.kj td.n{text-align:right;font-weight:600;padding-right:1mm}table.kj th+th{padding-left:2mm}
+      table.kj a{color:var(--ink);text-decoration:none}`));
+      writeFileSync(OUT + 'buch.json', JSON.stringify({ pages: seq.length, marks, files: [[out, 0]] }));
+      BUCH.push(['heft.html', out, '210mm', '297mm', 1]);
+      console.log('Heft:', seq.length, 'Seiten');
+    } else {
     // front matter (page 1 is a right-hand page)
     mark('Titel', push(bleedArt(swap(coverGN, '<div class="no">Tagebuch</div>', `<div class="no jz">${YEAR}</div>`))));
     push(`<section class="raw toc"><div style="position:absolute;left:24mm;right:24mm;bottom:40mm"><div class="fields" style="grid-template-columns:1fr"><div class="f"><span class="label">Dieses Buch gehört</span></div><div class="f"><span class="label">Begonnen am</span></div></div></div></section>`);
@@ -906,9 +962,10 @@ if (process.env.GN) {
     for (let s0 = 0; s0 < pagesB.length; s0 += SIG) for (let k = 0; k < SIG / 4; k++) sheets.push([s0 + SIG - 1 - 2 * k, s0 + 2 * k], [s0 + 2 * k + 1, s0 + SIG - 2 - 2 * k]);
     writeFileSync(OUT + 'buch-lagen.html', doc(sheets.map(([a, b]) => `<div class="sheet">${wrapB(pagesB[a])}${wrapB(pagesB[b])}</div>`).join(''),
       base + noBleed + `.sheet{display:flex;justify-content:center;width:${297 / SCALE}mm;height:297mm;break-after:page;overflow:hidden}.sheet .wrap{break-after:auto;flex:none}`));
-    writeFileSync(OUT + 'buch.json', JSON.stringify({ pages: pagesB.length, content, signatures: pagesB.length / SIG, marks }));
+    writeFileSync(OUT + 'buch.json', JSON.stringify({ pages: pagesB.length, content, signatures: pagesB.length / SIG, marks, files: [[`Henoch_Notizbuch_${YEAR}_A5.pdf`, 0], [`Henoch_Notizbuch_${YEAR}_A5_Beschnitt.pdf`, 3]] }));
     BUCH.push(['buch.html', `Henoch_Notizbuch_${YEAR}_A5.pdf`, '148mm', '210mm'], ['buch-beschnitt.html', `Henoch_Notizbuch_${YEAR}_A5_Beschnitt.pdf`, '154mm', '216mm'], ['buch-lagen.html', `Henoch_Notizbuch_${YEAR}_Lagen_A4.pdf`, '297mm', '210mm']);
     console.log('Buch:', pagesB.length, 'Seiten,', pagesB.length / SIG, 'Lagen, Inhalt bis Seite', content);
+    }
   }
 }
 const browser = await chromium.launch();
@@ -920,15 +977,15 @@ for (const [src, out, w, h] of [
   ['tablet.html', 'Henoch_Tagebuch_lesen_hoeren.pdf', '210mm', '297mm'],
   ['jahr.html', 'Henoch_Tagebuch_lesen_hoeren_Jahr.pdf', '210mm', '297mm'],
   ...GN.map(([src, out, w = '210mm', h = '297mm']) => [src, out, w, h]),
-].filter(([src]) => !process.env.BUCH && (process.env.JAHR ? src === 'jahr.html' : process.env.GN ? src.startsWith('gn-') : !src.startsWith('gn-') && src !== 'jahr.html'))) {
+].filter(([src]) => !process.env.BUCH && !process.env.HEFT && (process.env.JAHR ? src === 'jahr.html' : process.env.GN ? src.startsWith('gn-') : !src.startsWith('gn-') && src !== 'jahr.html'))) {
   await page.goto('file://' + OUT + src);
   await page.evaluate(() => document.fonts.ready);
   await page.pdf({ path: OUT + out, width: w, height: h, printBackground: true, preferCSSPageSize: true, outline: true, tagged: true });
 }
-for (const [src, out, w, h] of BUCH) {
+for (const [src, out, w, h, sc = 0.7047] of BUCH) {
   await page.goto('file://' + OUT + src, { timeout: 0 });
   await page.evaluate(() => document.fonts.ready);
-  await page.pdf({ path: OUT + out, width: w, height: h, scale: 0.7047, printBackground: true, preferCSSPageSize: false });
+  await page.pdf({ path: OUT + out, width: w, height: h, scale: sc, printBackground: true, preferCSSPageSize: false });
 }
 await browser.close();
 console.log('ok', N);

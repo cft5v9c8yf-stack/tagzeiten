@@ -78,3 +78,17 @@ Sonntagsnamen, Evangelium, Epistel und Wochenspruch kommen aus der App (`kirchen
 erzeugt aus `kirchenjahr.ts`: mit esbuild bündeln und mit node ausführen). Für ein anderes Jahr die
 Jahreszahl in `kirchenjahr.ts` und `YEAR` in `build.mjs` ändern; der Aufbau der ersten und letzten
 Tage ist auf 2027 zugeschnitten (1. Januar ein Freitag) und muss dann angepasst werden.
+
+## Tagebuch für GoodNotes, 15.11. bis 31.12.2026
+
+Dieselbe Abfolge wie im Notizbuch, aber für das Tablet: A4 in voller Größe, Papierton, Lesezeichen
+für jede Woche und eine antippbare Liste der Sonntage. 102 Seiten, etwa 2,5 MB.
+
+```sh
+GN=1 HEFT=1 node build.mjs
+python3 buch.py
+```
+
+Ergebnis: `Henoch_Tagebuch_2026-11-15_bis_12-31_GoodNotes.pdf` (nicht im Repository). Zeitraum und
+Jahr stehen im Abschnitt `if (TAB)` von `build.mjs`; die Daten kommen aus `kirchenjahr2026.json`
+(`node kj.mjs 2026` nach dem Bündeln von `kirchenjahr.ts`).
