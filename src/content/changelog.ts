@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.42.2',
+    date: '2026-11-15',
+    title: 'Leiste unten bleibt unten',
+    changes: [
+      { area: 'Henoch', text: 'Nach dem Eintragen einer Uhrzeit oder eines Textes blieb die Leiste mit den fünf Bereichen manchmal mitten auf dem Bildschirm hängen, bis du die Seite bewegt hast. Jetzt kehrt sie von selbst an den unteren Rand zurück, sobald du das Feld verlässt.' },
+    ],
+  },
+  {
     version: '1.42.1',
     date: '2026-11-14',
     title: 'Handschrift: ruhigeres Schriftbild',
