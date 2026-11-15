@@ -82,7 +82,7 @@ Tage ist auf 2027 zugeschnitten (1. Januar ein Freitag) und muss dann angepasst 
 ## Tagebuch für GoodNotes, 15.11. bis 31.12.2026
 
 Dieselbe Abfolge wie im Notizbuch, aber für das Tablet: A4 in voller Größe, Papierton, Lesezeichen
-für jede Woche und eine antippbare Liste der Sonntage. 102 Seiten, etwa 2,5 MB.
+für jede Woche und eine antippbare Liste der Sonntage. Jeder Tag hat Bibellese und „Vertiefen“. 149 Seiten, etwa 3,5 MB.
 
 ```sh
 GN=1 HEFT=1 node build.mjs

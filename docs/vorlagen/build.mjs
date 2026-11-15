@@ -840,7 +840,7 @@ if (process.env.GN) {
       const preach = []; for (let d = FROM; d <= TO; d = add(d, 1)) if (d.getUTCDay() === 0 || key(d) === `${YEAR}-12-25`) preach.push(d);
       push(swap(coverGN, '<div class="no">Tagebuch</div>', `<div class="no jz">${YEAR}</div>`)); mark('Titel', 1);
       mark('Zum Gebrauch', push(raw(`<div class="eyebrow">Henoch · Lesen und Hören ${YEAR}</div><h1>Zum Gebrauch</h1><div class="use">
-        ${u3('Tag für Tag', `Jeder Tag vom ${dstr(FROM)} bis zum ${dstr(TO)} ${YEAR} hat seine Seite für die Bibellese. Oben stehen das Datum und die Woche des Kirchenjahrs. Eine Seite, die leer bleibt, ist kein Versäumnis; du schlägst einfach den heutigen Tag auf.`)}
+        ${u3('Tag für Tag', `Jeder Tag vom ${dstr(FROM)} bis zum ${dstr(TO)} ${YEAR} hat zwei Seiten für die Bibellese. Die erste genügt für sich; die zweite ist zum Vertiefen, wenn Zeit ist. Eine Seite, die leer bleibt, ist kein Versäumnis.`)}
         ${u3('Der Sonntag eröffnet die Woche', 'Jede Woche beginnt mit zwei Seiten für die Predigt: erst die Mitschrift, dann, was du mitnimmst. Der Name des Sonntags, Evangelium, Epistel und Wochenspruch sind eingetragen. Auch das Christfest hat seine Predigtseiten.')}
         ${u3('Freitag: Wochenrückblick', 'Nach der Bibellese am Freitag folgt die Reflexion in drei Schritten: Bestandsaufnahme, Reflexion, Entwicklung.')}
         ${u3('Samstag: Bibelstudium', 'Einmal in der Woche ist Platz, tiefer zu graben: im Wechsel ein Abschnitt, ein Wort, eine Person, ein Ort. Davor liegt eine freie Seite, danach folgt der Ertrag.')}
@@ -862,7 +862,8 @@ if (process.env.GN) {
           sunPage[key(d)] = at('p' + key(d), push(predigtL(d))); push(predigtR(d));
           mark(`${short(d)} ${sunName(d)}`, sunPage[key(d)]);
         }
-        push(bib(d));
+        push(swap(bib(d), 'Diese Seite genügt.', 'Diese Seite genügt. Die nächste Seite ist zum Vertiefen, wenn Zeit ist.'));
+        push(swap(PG.Bibellese_Vertiefen, '<span class="label">Vertiefen</span>', `<span class="label">Vertiefen</span><span class="label" style="margin-left:auto">${WD[wd]}, ${dstr(d)}</span>`));
         if (wd === 5 || key(d) === key(TO)) { push(woche1(d, add(d, -((wd + 7) % 7)))); push(PG.Reflexion_Woche_2); }
         if (wd === 6) { push(PG.Frei); push(study(d, k++)); push(ertrag(d)); }
       }
