@@ -67,7 +67,8 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
   const validStart = isDateKey(start);
-  const end = validDays && validStart ? endDateOf(start, days) : '';
+  const end = validStart ? endDateOf(start, walking ? WAY_DAYS : days) : '';
+  const ready = validStart && (walking || validDays);
   const last = [...profile.winterArc.runs].filter(isDesert).sort((a, b) => b.createdAt - a.createdAt)[0];
   return (
     <div className="panel confirm-panel winter-arc-start" role="dialog" aria-labelledby={`${id}-title`}>
@@ -85,58 +86,57 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
               { value: 'husband', label: WAY_NAME },
             ]}
             value={way}
-            onChange={(v) => {
-              setWay(v);
-              if (v === 'husband') setDuration(String(WAY_DAYS));
-            }}
+            onChange={setWay}
           />
           <p className="small muted">
             {walking
-              ? 'Jeden Tag ein Bibelwort, ein Gedanke, ein Schritt, eine Frage für dein Tagebuch und ein Gebet. Die Wüstenzeit dauert dann 28 Tage. Beginnen kannst du an jedem Tag. Die fünf Kern-Gewohnheiten und die drei wöchentlichen sind schon gewählt.'
-              : 'Ohne Wegplan wählst du Dauer und Gewohnheiten selbst.'}
+              ? 'Jeden Tag ein Bibelwort, ein Gedanke, ein Schritt, eine Frage für dein Tagebuch und ein Gebet. Der Weg dauert 28 Tage, und du kannst an jedem Tag beginnen.'
+              : 'Ohne Wegplan wählst du Dauer, Leseplan und Gewohnheiten selbst.'}
           </p>
         </div>
       )}
-      <div className="field">
-        <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
-        <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
-          {quick.map((n) => (
-            <button key={n} type="button" aria-pressed={days === n} disabled={walking} onClick={() => setDuration(String(n))}>
-              {n}
-            </button>
-          ))}
+      {!walking && (
+        <div className="field">
+          <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
+          <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
+            {quick.map((n) => (
+              <button key={n} type="button" aria-pressed={days === n} onClick={() => setDuration(String(n))}>
+                {n}
+              </button>
+            ))}
+          </div>
+          {preset && days === preset.days && start === preset.start && <p className="small muted">{preset.note}</p>}
+          <input
+            id={`${id}-days`}
+            type="number"
+            inputMode="numeric"
+            min={MIN_DURATION}
+            max={MAX_DURATION}
+            step={1}
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
         </div>
-        {preset && days === preset.days && start === preset.start && <p className="small muted">{preset.note}</p>}
-        <input
-          id={`${id}-days`}
-          type="number"
-          inputMode="numeric"
-          min={MIN_DURATION}
-          max={MAX_DURATION}
-          step={1}
-          value={duration}
-          readOnly={walking}
-          onChange={(e) => setDuration(e.target.value)}
-        />
-      </div>
+      )}
       <div className="field">
         <label htmlFor={`${id}-start`}>Startdatum</label>
         <input id={`${id}-start`} type="date" value={start} onChange={(e) => setStart(e.target.value)} />
       </div>
-      <div className="field">
-        <label htmlFor={`${id}-end`}>Letzter Tag</label>
-        <input
-          id={`${id}-end`}
-          type="date"
-          value={end}
-          min={validStart ? start : undefined}
-          readOnly={walking}
-          onChange={(e) => {
-            if (!walking && validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
-          }}
-        />
-      </div>
-      {end ? (
+      {!walking && (
+        <div className="field">
+          <label htmlFor={`${id}-end`}>Letzter Tag</label>
+          <input
+            id={`${id}-end`}
+            type="date"
+            value={end}
+            min={validStart ? start : undefined}
+            onChange={(e) => {
+              if (validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
+            }}
+          />
+        </div>
+      )}
+      {ready ? (
         <p>
           Bis <strong>{formatFullDate(end)}</strong>
         </p>
@@ -145,19 +145,23 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           {validStart ? `Wähle eine Dauer von ${MIN_DURATION} bis ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
-      <DesertReadingChoice value={reading} days={validDays ? days : DEFAULT_DESERT_DAYS} onChange={setReading} />
+      {/* The plan brings its own Word each day; no reading of a plan beside it. */}
+      {!walking && <DesertReadingChoice value={reading} days={validDays ? days : DEFAULT_DESERT_DAYS} onChange={setReading} />}
       <p className="small muted">
-        {last?.habits?.length
-          ? 'Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt. Danach kannst du sie ändern.'
-          : 'Danach wählst du die Gewohnheiten.'}
+        {walking
+          ? 'Die fünf Kern-Gewohnheiten und die drei wöchentlichen sind schon gewählt. Danach kannst du bis zu zwei weitere dazunehmen.'
+          : last?.habits?.length
+            ? 'Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt. Danach kannst du sie ändern.'
+            : 'Danach wählst du die Gewohnheiten.'}
       </p>
       <div className="button-row">
         <button
           type="button"
           className="btn primary"
-          disabled={!end}
+          disabled={!ready}
           onClick={() => {
-            store.startDesert(start, days, last?.habits ?? [], preset?.name, reading, walking ? 'husband' : undefined);
+            if (walking) store.startDesert(start, WAY_DAYS, [], '', 'none', 'husband');
+            else store.startDesert(start, days, last?.habits ?? [], preset?.name, reading);
             onDone();
           }}
         >

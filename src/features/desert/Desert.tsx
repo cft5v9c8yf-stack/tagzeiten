@@ -475,7 +475,7 @@ export function Desert({ journal = null }: { journal?: ReactNode }) {
   const settings: TileItem = {
     id: 'arena.desert.settings',
     title: 'Einstellungen der Wüstenzeit',
-    line: 'Beginn, Dauer, Leseplan, Beenden',
+    line: isWayRun(run) ? 'Beginn, Beenden' : 'Beginn, Dauer, Leseplan, Beenden',
     icon: 'sliders',
     content: (
       <>

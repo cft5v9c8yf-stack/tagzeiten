@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.1',
+    date: '2026-11-16',
+    title: 'Wüstenwanderung: Beginn mit Wegplan aufgeräumt',
+    changes: [
+      { area: 'Wüstenwanderung', text: 'Wählst du beim Beginn „28 Tage für Ehemänner“, fragt Henoch nur noch nach dem Startdatum. Dauer, letzter Tag und Leseplan fallen weg, denn der Weg dauert 28 Tage und bringt jeden Tag sein eigenes Bibelwort mit.' },
+    ],
+  },
+  {
     version: '1.43.0',
     date: '2026-11-16',
     title: 'Wüstenwanderung: 28 Tage für Ehemänner',

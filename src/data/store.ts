@@ -549,6 +549,7 @@ export class Store {
       durationDays = WAY_DAYS;
       habits = [...habits, ...WAY_START_HABITS];
       name = name || WAY_NAME;
+      reading = 'none';
     }
     // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
     this.updateProfile(
