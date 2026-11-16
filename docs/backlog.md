@@ -2,6 +2,17 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
+## „28 Tage für Ehemänner“ (Wegplan der Wüstenwanderung)
+
+**Stand 16.11.2026:** 1.43.0 als PR nach `vorschau`. Wegplan beim Beginn einer
+Wüstenzeit wählbar (nur mit Ehefrau unter „Mein Haus“), 28 Tage, Gewohnheitspaket
+„28 Tage für Ehemänner“. Texte in `src/content/husbandWay.ts`, Logik in
+`src/domain/husbandWay.ts`, Oberfläche in `src/features/desert/DesertWay.tsx`.
+**Offen:** Freigabe durch Andreas. Zu klären: Sollen „Morgensegen gebetet“ und
+„Abendsegen mit ihr gebetet“ mit Stiller Zeit und Nachtgebet von selbst abgehakt
+werden wie die Segen der übrigen Pakete? Soll der Wegplan auch während einer
+laufenden Wüstenzeit zuschaltbar sein?
+
 ## „Bitte und Fürbitte“: dritte Form für Stille Zeit und Vesper
 
 Gewünscht (28.10.2026): eine Alternative zu Stille Zeit und Vesper, „eine freie

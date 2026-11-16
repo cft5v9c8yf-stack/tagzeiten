@@ -23,6 +23,9 @@ import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertWeekRows } from './DesertHabits';
+import { WayClosing, WayOverview, WayToday } from './DesertWay';
+import { isWayRun } from '../../domain/husbandWay';
+import { WAY_NAME } from '../../content/husbandWay';
 import { DesertReadingDay, DesertReadingSettings } from './DesertReading';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
@@ -272,6 +275,7 @@ function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) 
     <div className="wa-dashboard">
       <Head run={run} today={today} />
       <DesertReadingDay run={run} date={today} />
+      {isWayRun(run) && <WayToday run={run} today={today} />}
       <Overview run={run} today={today} />
       {none && <p className="wa-to-today">Du hast noch keine Gewohnheiten gewählt.</p>}
       <ToToday />
@@ -280,6 +284,17 @@ function Dashboard({ run, journal }: { run: WinterArcRun; journal: ReactNode }) 
         level={4}
         label="Rückblick"
         items={[
+          ...(isWayRun(run)
+            ? [
+                {
+                  id: 'arena.desert.way',
+                  title: WAY_NAME,
+                  line: 'Die vier Wochen und alle 28 Tage',
+                  icon: 'compass' as const,
+                  content: <WayOverview run={run} today={today} />,
+                },
+              ]
+            : []),
           {
             id: 'arena.desert.review',
             title: 'Rückblick',
@@ -344,6 +359,7 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
           ))}
         </ul>
       )}
+      {isWayRun(run) && <WayClosing run={run} />}
       {open.length > 0 && !done && (
         <section className="desert-adopt" aria-labelledby="desert-adopt-title">
           <h5 id="desert-adopt-title">In den Alltag übernehmen</h5>

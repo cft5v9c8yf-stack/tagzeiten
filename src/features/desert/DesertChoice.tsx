@@ -1,5 +1,6 @@
 import { useId, useState, type FormEvent } from 'react';
-import { DESERT_CHOICE_LEAD, DESERT_MORE, DESERT_MORE_TITLE, DESERT_PACKS, type DesertHabit } from '../../content/desert';
+import { DESERT_CHOICE_LEAD, DESERT_MORE, DESERT_MORE_TITLE, DESERT_PACKS, type DesertHabit, type DesertPack } from '../../content/desert';
+import { WAY_CHOICE_MAX } from '../../content/husbandWay';
 import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
 import { useProfile, useStore } from '../../data/hooks';
 import { OWN_NOTE_MAX } from '../../domain/desert';
@@ -20,12 +21,14 @@ function ChoiceRow({
   onChange,
   waits,
   remove,
+  locked = false,
 }: {
   habit: Pick<Habit, 'id' | 'name' | 'note'>;
   chosen: boolean;
   onChange: (on: boolean) => void;
   waits?: string;
   remove?: () => void;
+  locked?: boolean;
 }) {
   const id = useId();
   const [confirming, setConfirming] = useState(false);
@@ -33,7 +36,7 @@ function ChoiceRow({
     <li className="desert-item">
       <WithInfo habit={habit}>
         <label className="desert-check" htmlFor={id}>
-          <input id={id} type="checkbox" checked={chosen} onChange={(e) => onChange(e.target.checked)} />
+          <input id={id} type="checkbox" checked={chosen} disabled={locked} onChange={(e) => onChange(e.target.checked)} />
           <span>
             {habit.name}
             {waits && <span className="desert-waits">{waits}</span>}
@@ -121,34 +124,47 @@ export function DesertChoice({ run, level = 6 }: { run: WinterArcRun; level?: 4 
     const need: HouseNeed | undefined = o.needs ?? HABIT_NEEDS[o.id];
     return need && !houseHas(profile.house, need) ? NEED_NOTE[need] : undefined;
   };
-  const row = (o: DesertHabit) => (
+  // "28 Tage für Ehemänner": at most two of those "zur Wahl" beside the core.
+  const choiceFull = (pack: DesertPack) => pack.habits.filter((h) => h.art === 'wahl' && chosen.has(h.id)).length >= WAY_CHOICE_MAX;
+  const row = (o: DesertHabit, pack?: DesertPack) => (
     <ChoiceRow
       key={o.id}
       habit={o}
       chosen={chosen.has(o.id)}
       waits={waits(o)}
+      locked={o.art === 'wahl' && !chosen.has(o.id) && !!pack && choiceFull(pack)}
       onChange={(on) => store.chooseDesert(run.id, [o], on)}
     />
   );
+  const taken = (pack: DesertPack) => pack.habits.filter((h) => h.art !== 'wahl');
   const own = profile.habits.filter((h) => h.desert === 'own');
   return (
     <div className="desert-choice">
       <p className="desert-lead">{DESERT_CHOICE_LEAD}</p>
-      {DESERT_PACKS.map((pack) => (
+      {DESERT_PACKS.filter((pack) => !pack.needs || houseHas(profile.house, pack.needs)).map((pack) => (
         <section key={pack.id} className="desert-pack" aria-label={pack.name}>
           <H>{pack.name}</H>
           <p className="desert-tagline">{pack.tagline}</p>
-          <p>{pack.description}</p>
+          {pack.lead ? pack.lead.map((l) => <p key={l}>{l}</p>) : <p>{pack.description}</p>}
           <WaVerse verse={pack.verse} />
           <button
             type="button"
             className="btn small-btn desert-take"
-            disabled={pack.habits.every((o) => chosen.has(o.id))}
-            onClick={() => store.chooseDesert(run.id, pack.habits, true)}
+            disabled={taken(pack).every((o) => chosen.has(o.id))}
+            onClick={() => store.chooseDesert(run.id, taken(pack), true)}
           >
             Paket übernehmen
           </button>
-          <ul className="desert-list">{pack.habits.map(row)}</ul>
+          {pack.habits.some((h) => h.art) ? (
+            <>
+              <p className="small muted">Kern und wöchentlich</p>
+              <ul className="desert-list">{pack.habits.filter((h) => h.art !== 'wahl').map((h) => row(h, pack))}</ul>
+              <p className="small muted">Zur Wahl, höchstens {WAY_CHOICE_MAX}</p>
+              <ul className="desert-list">{pack.habits.filter((h) => h.art === 'wahl').map((h) => row(h, pack))}</ul>
+            </>
+          ) : (
+            <ul className="desert-list">{pack.habits.map((h) => row(h))}</ul>
+          )}
           {pack.id === 'standard' && (
             <details className="wa-settings desert-standard">
               <summary>Anleitung zum 90-Tage-Standard</summary>
@@ -159,7 +175,7 @@ export function DesertChoice({ run, level = 6 }: { run: WinterArcRun; level?: 4 
       ))}
       <section className="desert-pack" aria-label={DESERT_MORE_TITLE}>
         <H>{DESERT_MORE_TITLE}</H>
-        <ul className="desert-list">{DESERT_MORE.map(row)}</ul>
+        <ul className="desert-list">{DESERT_MORE.map((h) => row(h))}</ul>
       </section>
       <section className="desert-pack" aria-label="Eigene Gewohnheiten">
         <H>Eigene Gewohnheiten</H>

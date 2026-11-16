@@ -29,7 +29,10 @@ import { DaySheets } from '../desert/DesertJournal';
 import { ICON_SIZE } from '../../ui/iconBase';
 import { Chevron } from '../../ui/Chevron';
 import { ConfirmRow } from '../../ui/ConfirmRow';
-import { WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
+import { WELL_COMFORT, WELL_SUBTITLE, WELL_TITLE } from '../../content/well';
+import { WAY_NAME } from '../../content/husbandWay';
+import { wayDayText } from '../../domain/husbandWay';
+import { WAY_DAY_PARAM } from '../desert/DesertWay';
 import { MEETING_PREFIX, WELL_SLUG, WellMeetingPage, WellPage } from '../well/WellPage';
 import { downloadText } from '../../app/files';
 import { fieldKeys, focusSibling } from '../../ui/fieldNav';
@@ -610,7 +613,15 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const archived = entry.archivedAt !== undefined;
   const kind = kindOf(entry);
   const place = PLACES[kind];
-  const home = habit ? back! : archived ? REVIEW_PATH : arenaPath(kind);
+  // An answer to the question of a day of "28 Tage für Ehemänner" leads back to that day.
+  const wayDay = entry.wayDay ? wayDayText(entry.wayDay) : undefined;
+  const home = habit
+    ? back!
+    : archived
+      ? REVIEW_PATH
+      : wayDay
+        ? `${arenaPath(kind)}&${WAY_DAY_PARAM}=${wayDay.tag}`
+        : arenaPath(kind);
   // Offered while a new entry is begun, and stays so while it is being written (the Reflexion keeps the entry as it goes).
   const [fresh] = useState(() => isEmptyEntry(entry));
   const chooseKind = kind === 'journal' && !habit && !archived && fresh;
@@ -683,6 +694,17 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       )}
       <h2 className="arena-entry-date">{kind === 'forge' ? forgeTitle(entry) : dateOf(entry.createdAt)}</h2>
       {archived && <p className="small muted">Archiviert am {dateOf(entry.archivedAt!)}. Steht im Rückblick.</p>}
+      {wayDay && (
+        <div className="desert-way-question">
+          <p className="small muted">
+            {WAY_NAME} · Tag {wayDay.tag}: {wayDay.titel}
+          </p>
+          <p>
+            <strong>{wayDay.frage}</strong>
+          </p>
+          <p className="small muted">Hier darfst du auch Schuld und Schwäche aufschreiben. Der Eintrag bleibt auf diesem Gerät.</p>
+        </div>
+      )}
 
       {chooseKind && (
         <figure className="section-verse">
@@ -777,6 +799,12 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       )}
 
       <aside className="arena-comfort" aria-label="Zuspruch">
+        {/* Where sin may be written down, the word of forgiveness follows (rule 1). */}
+        {wayDay && (
+          <p>
+            {WELL_COMFORT.parts.join(' ')} <BibleRef reference={WELL_COMFORT.ref} />
+          </p>
+        )}
         {place.comfort.map((c) => (
           <p key={c.ref}>
             {c.text} <BibleRef reference={c.ref} />
