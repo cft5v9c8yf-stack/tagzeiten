@@ -1,8 +1,11 @@
 import { useId, useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { WAY_NAME } from '../../content/husbandWay';
 import { useProfile, useStore } from '../../data/hooks';
-import { wayOffered } from '../../domain/husbandWay';
+import { isWayRun, wayOffered } from '../../domain/husbandWay';
+
+/** The Wüstenwanderung in the Arena. */
+const HALL_PATH = '/arena?bereich=wuestenwanderung';
 import { activeDesert, DEFAULT_DESERT_DAYS, isDesert, QUICK_DESERT_DAYS, type DesertReading } from '../../domain/desert';
 import { fromKey, isDateKey, MONTH_LONG, WEEKDAY_LONG, type DateKey } from '../../domain/dates';
 import type { Profile } from '../../domain/model';
@@ -156,6 +159,7 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
   const run = activeRun(profile.winterArc);
   const desert = activeDesert(profile.winterArc);
   const [panel, setPanel] = useState<'start' | 'end' | null>(null);
+  const navigate = useNavigate();
   return (
     <>
       <Segmented
@@ -184,7 +188,7 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
       {/* "28 Tage für Ehemänner" has its way in in the Wüstenwanderung (1.43.1). */}
       {!run && wayOffered(profile) && (
         <p className="small">
-          <Link to="/arena?bereich=wuestenwanderung&weg=1">{WAY_NAME} beginnen</Link>
+          <Link to={`${HALL_PATH}&weg=1`}>{WAY_NAME} beginnen</Link>
         </p>
       )}
       {panel === 'end' && (
@@ -212,7 +216,7 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
       {desert && withChoice && stageOf(desert, today) !== 'after' && (
         <>
           <h5>Gewohnheiten der Wüstenzeit</h5>
-          <DesertChoice run={desert} />
+          <DesertChoice run={desert} onDone={isWayRun(desert) ? () => navigate(HALL_PATH) : undefined} />
         </>
       )}
     </>

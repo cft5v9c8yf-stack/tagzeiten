@@ -3447,6 +3447,51 @@ mark.placeholder {
   font-family: var(--sans);
   font-size: 1rem;
 }
+/* 1.43.1: each package folds under its name. */
+.desert-pack > .desert-pack-title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 1rem;
+}
+.desert-pack-head {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 10px 28px 6px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.desert-pack-head::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  top: 16px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+}
+.desert-pack.is-open .desert-pack-head::after {
+  transform: rotate(-135deg);
+  top: 20px;
+}
+.desert-pack-name {
+  display: block;
+}
+.desert-pack-head .desert-tagline {
+  display: block;
+  margin: 2px 0 0;
+  font-weight: normal;
+}
+.desert-choice-done {
+  margin-top: 16px;
+}
 .desert-tagline {
   margin: 0 0 6px;
   font-family: var(--sans);

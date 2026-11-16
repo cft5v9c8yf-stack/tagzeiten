@@ -11,6 +11,14 @@ import { StoreProvider } from '../../data/StoreContext';
 import { DESERT_HABITS } from '../../content/desert';
 import { TodayPage } from './TodayPage';
 
+/** A package of the Wüstenzeit, opened (they stand folded while nothing of them is chosen, 1.43.1). */
+const openPack = (name: string, inside: HTMLElement = document.body): HTMLElement => {
+  const region = within(inside).getByRole('region', { name });
+  const head = region.querySelector(':scope > .desert-pack-title .desert-pack-head');
+  if (head?.getAttribute('aria-expanded') === 'false') fireEvent.click(head);
+  return region;
+};
+
 afterEach(cleanup);
 
 let n = 0;
@@ -342,13 +350,14 @@ describe('Today', () => {
     const care = document.querySelector('.desert-care') as HTMLDetailsElement;
     expect(care.open).toBe(true);
     expect(within(care).getByText('Gewohnheiten dieser Wüstenzeit anpassen')).toBeTruthy();
-    fireEvent.click(within(within(care).getByRole('region', { name: 'Aufbruch' })).getByRole('button', { name: 'Paket übernehmen' }));
+    fireEvent.click(within(openPack('Aufbruch', care)).getByRole('button', { name: 'Paket übernehmen' }));
     expect(store.getProfile().winterArc.runs[0]!.habits).toHaveLength(4);
     // The habits chosen stand in the list to tick, outside the care.
     const desert = within(document.querySelector('.desert-group') as HTMLElement);
     fireEvent.click(desert.getByRole('checkbox', { name: 'Morgensegen' }));
     expect(store.getDay('2026-09-25').habits['wz-morgensegen']).toBe(true);
     // One of one's own: made and deleted here.
+    openPack('Eigene Gewohnheiten', care);
     fireEvent.change(within(care).getByLabelText('Titel'), { target: { value: 'Psalm 23 sprechen' } });
     fireEvent.click(within(care).getByRole('button', { name: 'Gewohnheit hinzufügen' }));
     expect(store.getProfile().habits.some((h) => h.name === 'Psalm 23 sprechen' && h.desert === 'own')).toBe(true);

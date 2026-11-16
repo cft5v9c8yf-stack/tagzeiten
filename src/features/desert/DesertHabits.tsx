@@ -196,7 +196,7 @@ export function DesertCare({ run }: { run: WinterArcRun }) {
   return (
     <details className="wa-settings desert-care" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
       <summary>Gewohnheiten dieser Wüstenzeit anpassen</summary>
-      <DesertChoice run={run} level={6} />
+      <DesertChoice run={run} level={6} onDone={() => setOpen(false)} />
     </details>
   );
 }

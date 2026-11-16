@@ -169,6 +169,25 @@ describe('28 Tage für Ehemänner in the Wüstenwanderung', () => {
     expect((again.getByRole('checkbox', { name: 'Augen und Gedanken gehütet' }) as HTMLInputElement).disabled).toBe(false);
   });
 
+  it('shows only its own package, and ends the choice with a button', async () => {
+    const store = await makeStore();
+    store.startDesert('2026-10-14', 28, [], '', 'none', 'husband');
+    let done = 0;
+    render(
+      <StoreProvider store={store}>
+        <DesertChoice run={run(store)} onDone={() => done++} />
+      </StoreProvider>,
+    );
+    const regions = (await screen.findAllByRole('region')).map((r) => r.getAttribute('aria-label'));
+    expect(regions).toEqual(['28 Tage für Ehemänner']);
+    expect(screen.queryByText(/Wähle ein Paket als Startpunkt/)).toBeNull();
+    // Open, for its habits are chosen; the line beside the name says how many.
+    expect(screen.getByRole('button', { name: /^28 Tage für Ehemänner/ }).getAttribute('aria-expanded')).toBe('true');
+    expect(screen.getByText(/8 gewählt/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Auswahl abschließen' }));
+    expect(done).toBe(1);
+  });
+
   it('ticks daily habits each day and weekly ones once a week', async () => {
     const store = await makeStore();
     store.startDesert('2026-10-12', 28, [], '', 'none', 'husband');

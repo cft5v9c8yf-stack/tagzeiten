@@ -15,6 +15,14 @@ import { resetOpenState, setOpen } from '../../ui/collapseState';
 import { DESERT_HABITS } from '../../content/desert';
 import { SettingsPage } from './SettingsPage';
 
+/** A package of the Wüstenzeit, opened (they stand folded while nothing of them is chosen, 1.43.1). */
+const openPack = (name: string, inside: HTMLElement = document.body): HTMLElement => {
+  const region = within(inside).getByRole('region', { name });
+  const head = region.querySelector(':scope > .desert-pack-title .desert-pack-head');
+  if (head?.getAttribute('aria-expanded') === 'false') fireEvent.click(head);
+  return region;
+};
+
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
   for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'devotion', 'arena', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
@@ -206,7 +214,7 @@ describe('Mehr: Aufbau', () => {
       'Weitere Gewohnheiten',
       'Eigene Gewohnheiten',
     ]);
-    const wuestenweg = screen.getByRole('region', { name: 'Wüstenweg' });
+    const wuestenweg = openPack('Wüstenweg');
     expect(wuestenweg.textContent).toContain('Die klassische Wüstenzeit');
     expect(wuestenweg.textContent).toContain('„Übe dich selbst aber in der Gottseligkeit.“');
     fireEvent.click(within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }));
@@ -216,13 +224,13 @@ describe('Mehr: Aufbau', () => {
     expect((within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }) as HTMLButtonElement).disabled).toBe(true);
     // Single ones off again, and across the packages.
     fireEvent.click(within(wuestenweg).getByLabelText('Bewegung'));
-    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByLabelText('Stille vor Gott'));
+    fireEvent.click(within(openPack('Wie die Wüstenväter')).getByLabelText('Stille vor Gott'));
     expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'bibleReading', 'wz-freitagsfasten', 'wz-stille']);
     // The "i" opens the bubble with the short description and the background.
     fireEvent.click(screen.getByRole('button', { name: 'Info zu Psalm des Tages' }));
     expect(screen.getByRole('note').textContent).toContain('Die Mönche beteten alle 150 Psalmen regelmäßig durch.');
     // An own one, with a description.
-    const own = screen.getByRole('region', { name: 'Eigene Gewohnheiten' });
+    const own = openPack('Eigene Gewohnheiten');
     fireEvent.change(within(own).getByLabelText('Titel'), { target: { value: 'Brief an einen Bruder' } });
     fireEvent.change(within(own).getByLabelText('Beschreibung (wenn du willst)'), { target: { value: 'Jede Woche einen.' } });
     fireEvent.change(within(own).getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
