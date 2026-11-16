@@ -104,6 +104,12 @@ export interface WinterArcRun {
    * its dashboard; absent: its own plan "Bewährung und Nachfolge".
    */
   reading?: 'bible' | 'none';
+  /** A plan of days walked in the Wüstenzeit (1.43): "28 Tage für Ehemänner". */
+  way?: 'husband';
+  /** The days of the plan whose step is ticked, by number from 1; a day missed can be ticked later. */
+  wayDone?: number[];
+  /** The introduction of the plan was shown once at its beginning; then it stays in the overview. */
+  wayIntroSeen?: true;
 }
 
 /** Ticks by point id. */
@@ -346,6 +352,12 @@ function idsOf(run: WinterArcRun, rhythm: Rhythm): readonly string[] {
   return rhythm === 'daily' ? DAILY_ITEMS : rhythm === 'weekly' ? WEEKLY_ITEMS : ['serve'];
 }
 
+/** The plan of a Wüstenzeit: the days ticked, each once, within its span. */
+function wayOf(done: unknown, days: number, seen: boolean): Pick<WinterArcRun, 'way' | 'wayDone' | 'wayIntroSeen'> {
+  const n = Array.isArray(done) ? done.filter((x): x is number => Number.isInteger(x) && x >= 1 && x <= days) : [];
+  return { way: 'husband', wayDone: [...new Set(n)].sort((a, b) => a - b), ...(seen ? { wayIntroSeen: true as const } : {}) };
+}
+
 /** Cleans stored or imported rounds; entries of unknown rounds are dropped. */
 export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): WinterArcData {
   if (!isObj(raw)) return emptyWinterArc();
@@ -366,6 +378,7 @@ export function normalizeWinterArc(raw: Partial<WinterArcData> | undefined): Win
       ...(Array.isArray(r.points) ? { points: normalizePoints(r.points) } : {}),
       ...(Array.isArray(r.habits) ? { habits: habitIds(r.habits) } : {}),
       ...(r.reading === 'bible' || r.reading === 'none' ? { reading: r.reading } : {}),
+      ...(r.way === 'husband' ? wayOf(r.wayDone, r.durationDays as number, r.wayIntroSeen === true) : {}),
     });
   }
   // At most one round is under way: the newest.

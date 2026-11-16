@@ -4573,6 +4573,102 @@ mark.placeholder {
 .desert-reading-choice .seg {
   margin-top: 4px;
 }
+/* Wüstenwanderung, "28 Tage für Ehemänner" (1.43): the day, the overview, the close. */
+.desert-way h5 {
+  margin: 16px 0 4px;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.desert-way h4 {
+  margin: 4px 0 0;
+}
+.desert-way-place {
+  margin: 0;
+}
+.desert-way-theme {
+  margin: 2px 0 0;
+  font-style: italic;
+}
+.desert-way-prayer {
+  font-style: italic;
+}
+.desert-way .wa-tick {
+  border-bottom: 0;
+}
+.desert-way-intro ul {
+  padding-left: 1.2em;
+}
+.desert-way-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 12px;
+  font-size: 0.95rem;
+}
+.desert-way-table th,
+.desert-way-table td {
+  text-align: left;
+  padding: 6px 8px 6px 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  hyphens: auto;
+}
+.desert-way-week {
+  margin-top: 16px;
+}
+.desert-way-week h5 {
+  margin: 0;
+}
+.desert-way-days {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.desert-way-days li > button,
+.desert-way-days li > span {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.desert-way-days li > button {
+  cursor: pointer;
+}
+.desert-way-days li > button[aria-current] .desert-way-name {
+  font-weight: 600;
+}
+.desert-way-later {
+  color: var(--muted);
+}
+.desert-way-num {
+  min-width: 1.6em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.desert-way-name {
+  flex: 1;
+}
+.desert-way-done {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.desert-way-days li.is-done .desert-way-num::before {
+  content: '✓ ';
+}
+.desert-way-question {
+  margin: 8px 0 12px;
+}
+.desert-way-closing {
+  margin-top: 16px;
+}
 /* Gebetskammer: the Reflexion view. */
 .arena .seg + .arena-note,
 .arena .seg + .reflection {

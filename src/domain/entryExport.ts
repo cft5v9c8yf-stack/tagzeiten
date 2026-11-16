@@ -3,6 +3,7 @@
  * as Markdown for a notes system, and as a designed page in a PDF file.
  * Handwriting goes along as an image. Nothing leaves the device (rule 10).
  */
+import { WAY_DAYS_TEXT, WAY_NAME } from '../content/husbandWay';
 import type { ArenaEntry } from './model';
 import { entryTitle, forgeTitle, isEmptyEntry } from './arena';
 import { inkToSvg } from './ink';
@@ -92,6 +93,12 @@ function reflectionParts(e: ArenaEntry): ReflectionPart[] | null {
 /** The title over the written part of an entry, as in the form. */
 const WRITTEN = 'Was dich bewegt';
 
+/** An answer to the question of a day of "28 Tage für Ehemänner": the day and its question first. */
+function wayLines(e: ArenaEntry): string[] {
+  const day = e.wayDay ? WAY_DAYS_TEXT.find((d) => d.tag === e.wayDay) : undefined;
+  return day ? [`**${WAY_NAME} · Tag ${day.tag}: ${day.titel}**`, '', `> ${day.frage}`, ''] : [];
+}
+
 export function entryToMarkdown(e: ArenaEntry): string {
   const verses = filled(e.verses);
   const title = exportTitle(e).replace(/"/g, '\\"');
@@ -101,6 +108,7 @@ export function entryToMarkdown(e: ArenaEntry): string {
     `date: ${isoDate(e.createdAt)}`,
     `ort: ${placeOf(e)}`,
     ...(e.meetingDate ? [`treffen: ${e.meetingDate}`] : []),
+    ...(e.wayDay ? [`wegtag: ${e.wayDay}`] : []),
     ...(verses.length ? ['bibelstellen:', ...verses.map((v) => `  - "${v.replace(/"/g, '\\"')}"`)] : []),
     'tags: [henoch, gebet]',
     '---',
@@ -109,6 +117,7 @@ export function entryToMarkdown(e: ArenaEntry): string {
     '',
     `*${placeOf(e)} · ${longDate(e.createdAt)}*`,
     '',
+    ...wayLines(e),
     ...entryContentLines(e, 2),
   ].join('\n');
 }
@@ -120,7 +129,7 @@ const keptEntries = (entries: readonly ArenaEntry[]) => entries.filter((e) => !i
 export function entriesToMarkdown(entries: readonly ArenaEntry[], place: string, today: string): string {
   const kept = keptEntries(entries);
   const out = ['---', `title: "${place}"`, `date: ${today}`, `ort: ${place}`, `eintraege: ${kept.length}`, 'tags: [henoch, gebet]', '---', '', `# ${place}`, '', `*${kept.length} ${kept.length === 1 ? 'Eintrag' : 'Einträge'}*`, ''];
-  for (const e of kept) out.push(`## ${exportTitle(e)}`, '', `*${longDate(e.createdAt)}*`, '', ...entryContentLines(e, 3));
+  for (const e of kept) out.push(`## ${exportTitle(e)}`, '', `*${longDate(e.createdAt)}*`, '', ...wayLines(e), ...entryContentLines(e, 3));
   return out.join('\n');
 }
 

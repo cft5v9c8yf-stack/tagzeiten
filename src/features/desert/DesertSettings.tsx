@@ -16,6 +16,8 @@ import {
 import { Segmented } from '../../ui/Choice';
 import { DesertChoice } from './DesertChoice';
 import { DesertReadingChoice } from './DesertReading';
+import { WAY_DAYS, WAY_NAME } from '../../content/husbandWay';
+import { wayOffered } from '../../domain/husbandWay';
 
 /** "Samstag, 2. Januar 2027" */
 export function formatFullDate(k: DateKey): string {
@@ -57,6 +59,10 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
   const [duration, setDuration] = useState(String(preset?.days ?? DEFAULT_DESERT_DAYS));
   // The plan of the Wüstenzeit is proposed; it can be left out, or the plan of the Bible area kept.
   const [reading, setReading] = useState<DesertReading>('desert');
+  // A plan of days to walk (1.43): 28 days, offered only with a wife in "Mein Haus".
+  const offered = wayOffered(profile);
+  const [way, setWay] = useState<'none' | 'husband'>('none');
+  const walking = offered && way === 'husband';
   const quick = preset && !(QUICK_DESERT_DAYS as readonly number[]).includes(preset.days) ? [preset.days, ...QUICK_DESERT_DAYS] : QUICK_DESERT_DAYS;
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
@@ -68,11 +74,34 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
       <p id={`${id}-title`}>
         <strong>{preset?.title ?? 'Neue Wüstenzeit'}</strong>
       </p>
+      {offered && (
+        <div className="field desert-way-choice">
+          <span className="field-label">Wegplan</span>
+          <Segmented<'none' | 'husband'>
+            label="Wegplan der Wüstenzeit"
+            grid
+            options={[
+              { value: 'none', label: 'Ohne Wegplan' },
+              { value: 'husband', label: WAY_NAME },
+            ]}
+            value={way}
+            onChange={(v) => {
+              setWay(v);
+              if (v === 'husband') setDuration(String(WAY_DAYS));
+            }}
+          />
+          <p className="small muted">
+            {walking
+              ? 'Jeden Tag ein Bibelwort, ein Gedanke, ein Schritt, eine Frage für dein Tagebuch und ein Gebet. Die Wüstenzeit dauert dann 28 Tage. Beginnen kannst du an jedem Tag. Die fünf Kern-Gewohnheiten und die drei wöchentlichen sind schon gewählt.'
+              : 'Ohne Wegplan wählst du Dauer und Gewohnheiten selbst.'}
+          </p>
+        </div>
+      )}
       <div className="field">
         <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
         <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
           {quick.map((n) => (
-            <button key={n} type="button" aria-pressed={days === n} onClick={() => setDuration(String(n))}>
+            <button key={n} type="button" aria-pressed={days === n} disabled={walking} onClick={() => setDuration(String(n))}>
               {n}
             </button>
           ))}
@@ -86,6 +115,7 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           max={MAX_DURATION}
           step={1}
           value={duration}
+          readOnly={walking}
           onChange={(e) => setDuration(e.target.value)}
         />
       </div>
@@ -100,8 +130,9 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           type="date"
           value={end}
           min={validStart ? start : undefined}
+          readOnly={walking}
           onChange={(e) => {
-            if (validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
+            if (!walking && validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
           }}
         />
       </div>
@@ -126,7 +157,7 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           className="btn primary"
           disabled={!end}
           onClick={() => {
-            store.startDesert(start, days, last?.habits ?? [], preset?.name, reading);
+            store.startDesert(start, days, last?.habits ?? [], preset?.name, reading, walking ? 'husband' : undefined);
             onDone();
           }}
         >
@@ -168,7 +199,7 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
         ]}
       />
       <p className="small muted">
-        In der Wüstenzeit hältst du für einen festen Zeitraum Gewohnheiten, die du selbst wählst: aus sechs Paketen, aus
+        In der Wüstenzeit hältst du für einen festen Zeitraum Gewohnheiten, die du selbst wählst: aus den Paketen, aus
         weiteren Vorschlägen oder eigene. Abgehakt wird unter „Heute“; in der Arena unter „Wüstenwanderung“ stehen
         Anleitung und Überblick.
       </p>
