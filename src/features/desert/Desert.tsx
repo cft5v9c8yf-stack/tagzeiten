@@ -23,14 +23,17 @@ import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertWeekRows } from './DesertHabits';
-import { WayClosing, WayOverview, WayToday } from './DesertWay';
-import { isWayRun } from '../../domain/husbandWay';
+import { WayClosing, WayOverview, WayStartPanel, WayToday } from './DesertWay';
+import { isWayRun, wayOffered } from '../../domain/husbandWay';
 import { WAY_NAME } from '../../content/husbandWay';
 import { DesertReadingDay, DesertReadingSettings } from './DesertReading';
 import { DesertSettings, DesertStartPanel, formatFullDate } from './DesertSettings';
 import { ArenaSeason, SeasonLink, seasonPreset } from './SeasonInvite';
 import { Chevron } from '../../ui/Chevron';
 import { TileGroup, type TileItem } from '../../ui/TileGroup';
+
+/** "?weg=1" opens the way in of "28 Tage für Ehemänner" at once (from "Mehr"). */
+export const WAY_PARAM = 'weg';
 
 const runs = (parts: readonly Run[]) =>
   parts.map((p, i) =>
@@ -323,7 +326,7 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
   const profile = useProfile();
   const lookup = useDayLookup();
   const today = store.today();
-  const [starting, setStarting] = useState(false);
+  const [starting, setStarting] = useState<boolean | 'way'>(false);
   const [taken, setTaken] = useState<string[]>([]);
   const [done, setDone] = useState(false);
   const habits = habitsOf(run, profile);
@@ -405,7 +408,12 @@ function Closing({ run, journal }: { run: WinterArcRun; journal: ReactNode }) {
           Als PDF sichern
         </button>
       </div>
-      {starting && <DesertStartPanel onDone={() => setStarting(false)} />}
+      {wayOffered(profile) && (
+        <button type="button" className="btn" onClick={() => setStarting('way')}>
+          {WAY_NAME}
+        </button>
+      )}
+      {starting === 'way' ? <WayStartPanel onDone={() => setStarting(false)} /> : starting && <DesertStartPanel onDone={() => setStarting(false)} />}
       {journal}
     </div>
   );
@@ -418,22 +426,36 @@ function Start({ journal }: { journal: ReactNode }) {
   // In Advent the invitation stands above; "Wüstenzeit vorbereiten" on "Heute" opens its start at once.
   const offer = arenaOffer(profile, store.today());
   const [params] = useSearchParams();
-  const [starting, setStarting] = useState<'season' | 'free' | false>(offer && params.get('vorbereiten') ? 'season' : false);
+  const [starting, setStarting] = useState<'season' | 'free' | 'way' | false>(
+    offer && params.get('vorbereiten') ? 'season' : wayOffered(profile) && params.get(WAY_PARAM) ? 'way' : false,
+  );
   const earlier = profile.winterArc.runs.length > 0;
+  // "28 Tage für Ehemänner": a way in of its own, only with a wife in "Mein Haus".
+  const way = wayOffered(profile);
   return (
     <>
       <div className="desert-guide">
         <WaVerse verse={DESERT_GUIDE.verse} />
       </div>
       {offer && !starting && <ArenaSeason offer={offer} onPrepare={() => setStarting('season')} onOther={() => setStarting('free')} />}
-      {(!offer || starting || earlier) && (
+      {(!offer || starting || earlier || way) && (
         <div className="panel wa-head wa-invite">
-          {!starting && !offer && (
-            <button type="button" className="btn primary" onClick={() => setStarting('free')}>
-              Wüstenzeit beginnen
-            </button>
+          {!starting && (!offer || way) && (
+            <div className="button-row">
+              {!offer && (
+                <button type="button" className="btn primary" onClick={() => setStarting('free')}>
+                  Wüstenzeit beginnen
+                </button>
+              )}
+              {way && (
+                <button type="button" className={offer ? 'btn primary' : 'btn'} onClick={() => setStarting('way')}>
+                  {WAY_NAME}
+                </button>
+              )}
+            </div>
           )}
-          {starting && (
+          {starting === 'way' && <WayStartPanel onDone={() => setStarting(false)} />}
+          {starting && starting !== 'way' && (
             <DesertStartPanel
               key={starting}
               preset={starting === 'season' && offer ? seasonPreset(offer) : undefined}
@@ -475,7 +497,7 @@ export function Desert({ journal = null }: { journal?: ReactNode }) {
   const settings: TileItem = {
     id: 'arena.desert.settings',
     title: 'Einstellungen der Wüstenzeit',
-    line: 'Beginn, Dauer, Leseplan, Beenden',
+    line: isWayRun(run) ? 'Beginn, Beenden' : 'Beginn, Dauer, Leseplan, Beenden',
     icon: 'sliders',
     content: (
       <>

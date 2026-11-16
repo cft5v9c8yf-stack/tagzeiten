@@ -13,6 +13,14 @@ import { resetOpenState } from '../../ui/collapseState';
 import { ArenaPage } from '../arena/ArenaPage';
 import { TodayPage } from '../today/TodayPage';
 
+/** A package of the Wüstenzeit, opened (they stand folded while nothing of them is chosen, 1.43.1). */
+const openPack = (name: string, inside: HTMLElement = document.body): HTMLElement => {
+  const region = within(inside).getByRole('region', { name });
+  const head = region.querySelector(':scope > .desert-pack-title .desert-pack-head');
+  if (head?.getAttribute('aria-expanded') === 'false') fireEvent.click(head);
+  return region;
+};
+
 beforeEach(() => {
   localStorage.clear();
   resetOpenState();
@@ -184,8 +192,8 @@ describe('the habits of the Wüstenzeit under "Heute"', () => {
   });
   it('combines with another package; a habit in both counts once', async () => {
     const store = await renderToday((s) => s.startDesert('2026-09-14', 40));
-    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByRole('button', { name: 'Paket übernehmen' }));
-    const erbe = screen.getByRole('region', { name: 'Erbe' });
+    fireEvent.click(within(openPack('Wie die Wüstenväter')).getByRole('button', { name: 'Paket übernehmen' }));
+    const erbe = openPack('Erbe');
     expect(erbe.textContent).toContain('Was du nicht angehst, erben deine Kinder.');
     fireEvent.click(within(erbe).getByRole('button', { name: 'Paket übernehmen' }));
     const ids = store.getProfile().winterArc.runs[0]!.habits!;

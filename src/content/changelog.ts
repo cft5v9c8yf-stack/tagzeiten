@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.1',
+    date: '2026-11-16',
+    title: 'Wüstenwanderung: eigener Eingang für die 28 Tage',
+    changes: [
+      { area: 'Wüstenwanderung', text: '„28 Tage für Ehemänner“ hat jetzt einen eigenen Eingang neben „Wüstenzeit beginnen“. Er zeigt zuerst die Einführung, dann wählst du nur den ersten Tag und tippst auf „Weg beginnen“. Dauer und Leseplan fallen weg: Der Weg dauert 28 Tage und bringt jeden Tag sein eigenes Bibelwort mit. Das Startfenster der Wüstenzeit ist wieder wie vorher. Unter Mehr führt ein Link zum neuen Eingang.' },
+      { area: 'Wüstenwanderung', text: 'Während der 28 Tage steht bei den Gewohnheiten nur noch das Paket des Wegs. Darunter schließt „Auswahl abschließen“ die Auswahl ab und führt zurück zum Weg.' },
+      { area: 'Gewohnheiten', text: 'Die Pakete der Wüstenzeit lassen sich zuklappen. Offen ist zuerst nur, woraus du schon etwas gewählt hast; daneben steht, wie viele es sind. So bleibt die Auswahl unter Mehr und unter Heute kurz. Unter Heute schließt „Auswahl abschließen“ die Auswahl.' },
+    ],
+  },
+  {
     version: '1.43.0',
     date: '2026-11-16',
     title: 'Wüstenwanderung: 28 Tage für Ehemänner',

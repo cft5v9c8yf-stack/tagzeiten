@@ -544,11 +544,13 @@ export class Store {
     way?: 'husband',
   ): void {
     const t = this.now().getTime();
-    // "28 Tage für Ehemänner" (1.43): 28 days, its core and weekly habits along with those chosen.
+    // "28 Tage für Ehemänner" (1.43): 28 days, its core and weekly habits along with those chosen; its
+    // introduction was read in its own way in, before the beginning.
     if (way) {
       durationDays = WAY_DAYS;
       habits = [...habits, ...WAY_START_HABITS];
       name = name || WAY_NAME;
+      reading = 'none';
     }
     // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
     this.updateProfile(
@@ -566,7 +568,7 @@ export class Store {
       this.updateProfile(
         (p) => ({
           ...p,
-          winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => (r.id === run.id ? { ...r, way, wayDone: [] } : r)) },
+          winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => (r.id === run.id ? { ...r, way, wayDone: [], wayIntroSeen: true } : r)) },
         }),
         { immediate: true },
       );
