@@ -15,9 +15,9 @@ export const CHANGELOG: readonly Release[] = [
   {
     version: '1.43.1',
     date: '2026-11-16',
-    title: 'Wüstenwanderung: Beginn mit Wegplan aufgeräumt',
+    title: 'Wüstenwanderung: eigener Eingang für die 28 Tage',
     changes: [
-      { area: 'Wüstenwanderung', text: 'Wählst du beim Beginn „28 Tage für Ehemänner“, fragt Henoch nur noch nach dem Startdatum. Dauer, letzter Tag und Leseplan fallen weg, denn der Weg dauert 28 Tage und bringt jeden Tag sein eigenes Bibelwort mit.' },
+      { area: 'Wüstenwanderung', text: '„28 Tage für Ehemänner“ hat jetzt einen eigenen Eingang neben „Wüstenzeit beginnen“. Er zeigt zuerst die Einführung, dann wählst du nur den ersten Tag und tippst auf „Weg beginnen“. Dauer und Leseplan fallen weg: Der Weg dauert 28 Tage und bringt jeden Tag sein eigenes Bibelwort mit. Das Startfenster der Wüstenzeit ist wieder wie vorher. Unter Mehr führt ein Link zum neuen Eingang.' },
     ],
   },
   {

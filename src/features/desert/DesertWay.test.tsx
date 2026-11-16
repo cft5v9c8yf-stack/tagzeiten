@@ -64,8 +64,8 @@ describe('28 Tage für Ehemänner in the Wüstenwanderung', () => {
   it('is not offered without a wife in "Mein Haus": neither the plan nor its package', async () => {
     const store = await makeStore(false);
     await renderArena(store);
-    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beginnen' }));
-    expect(screen.queryByText('Wegplan')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: '28 Tage für Ehemänner' })).toBeNull();
     cleanup();
     store.startDesert('2026-10-14', 40);
     render(
@@ -77,28 +77,25 @@ describe('28 Tage für Ehemänner in the Wüstenwanderung', () => {
     expect(screen.queryByRole('region', { name: '28 Tage für Ehemänner' })).toBeNull();
   });
 
-  it('begins on any weekday with 28 days, the core and the weekly habits chosen, the introduction once', async () => {
+  it('begins on any weekday by its own way in: the introduction, the first day, then the day of the plan', async () => {
     const store = await makeStore();
     await renderArena(store);
-    fireEvent.click(screen.getByRole('button', { name: 'Wüstenzeit beginnen' }));
+    expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: '28 Tage für Ehemänner' }));
     const dialog = within(screen.getByRole('dialog'));
-    fireEvent.click(dialog.getByRole('button', { name: '28 Tage für Ehemänner' }));
+    expect(dialog.getByText(/Bruder, schön, dass du losgehst/)).toBeTruthy();
+    expect(dialog.getByText('Dranbleiben bis ans Ziel')).toBeTruthy();
     // The plan brings its own days and its own Word: no length, no last day, no reading plan to choose.
     expect(dialog.queryByLabelText('Dauer in Kalendertagen')).toBeNull();
     expect(dialog.queryByLabelText('Letzter Tag')).toBeNull();
     expect(dialog.queryByRole('group', { name: 'Leseplan der Wüstenzeit' })).toBeNull();
-    expect(dialog.getByText(/Bis/).textContent).toBe('Bis Dienstag, 10. November 2026');
-    fireEvent.click(dialog.getByRole('button', { name: 'Wüstenzeit beginnen' }));
+    expect(dialog.getByText(/^Bis/).textContent).toBe('Bis Dienstag, 10. November 2026');
+    fireEvent.click(dialog.getByRole('button', { name: 'Weg beginnen' }));
     const r = run(store);
-    expect(r).toMatchObject({ way: 'husband', durationDays: 28, startDate: '2026-10-14', name: '28 Tage für Ehemänner', reading: 'none' });
+    expect(r).toMatchObject({ way: 'husband', durationDays: 28, startDate: '2026-10-14', name: '28 Tage für Ehemänner', reading: 'none', wayIntroSeen: true });
     expect([...WAY_START_HABITS].every((id) => r.habits!.includes(id))).toBe(true);
     expect(r.habits!.filter((id) => HUSBAND_PACK.habits.find((h) => h.id === id)?.art === 'wahl')).toEqual([]);
-    // The introduction first, then the first day.
-    expect(await screen.findByText(/Bruder, schön, dass du losgehst/)).toBeTruthy();
-    expect(document.querySelector('.desert-way-table')?.textContent).toContain('Dranbleiben bis ans Ziel');
-    fireEvent.click(screen.getByRole('button', { name: 'Zum ersten Tag' }));
-    expect(run(store).wayIntroSeen).toBe(true);
-    const day = within(document.getElementById('desert-way-day')!);
+    const day = within(await screen.findByRole('region', { name: 'Raus aus der Trägheit' }));
     const headings = day.getAllByRole('heading').map((h) => h.textContent);
     expect(headings).toEqual(['Raus aus der Trägheit', 'Schriftwort', 'Gedanke', 'Schritt', 'Frage', 'Gebet']);
     expect(day.getByText('1. Mo 3,6')).toBeTruthy();

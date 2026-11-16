@@ -1,5 +1,8 @@
 import { useId, useState } from 'react';
+import { Link } from 'react-router';
+import { WAY_NAME } from '../../content/husbandWay';
 import { useProfile, useStore } from '../../data/hooks';
+import { wayOffered } from '../../domain/husbandWay';
 import { activeDesert, DEFAULT_DESERT_DAYS, isDesert, QUICK_DESERT_DAYS, type DesertReading } from '../../domain/desert';
 import { fromKey, isDateKey, MONTH_LONG, WEEKDAY_LONG, type DateKey } from '../../domain/dates';
 import type { Profile } from '../../domain/model';
@@ -16,8 +19,6 @@ import {
 import { Segmented } from '../../ui/Choice';
 import { DesertChoice } from './DesertChoice';
 import { DesertReadingChoice } from './DesertReading';
-import { WAY_DAYS, WAY_NAME } from '../../content/husbandWay';
-import { wayOffered } from '../../domain/husbandWay';
 
 /** "Samstag, 2. Januar 2027" */
 export function formatFullDate(k: DateKey): string {
@@ -59,84 +60,55 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
   const [duration, setDuration] = useState(String(preset?.days ?? DEFAULT_DESERT_DAYS));
   // The plan of the Wüstenzeit is proposed; it can be left out, or the plan of the Bible area kept.
   const [reading, setReading] = useState<DesertReading>('desert');
-  // A plan of days to walk (1.43): 28 days, offered only with a wife in "Mein Haus".
-  const offered = wayOffered(profile);
-  const [way, setWay] = useState<'none' | 'husband'>('none');
-  const walking = offered && way === 'husband';
   const quick = preset && !(QUICK_DESERT_DAYS as readonly number[]).includes(preset.days) ? [preset.days, ...QUICK_DESERT_DAYS] : QUICK_DESERT_DAYS;
   const days = Number(duration);
   const validDays = duration.trim() !== '' && isValidDuration(days);
   const validStart = isDateKey(start);
-  const end = validStart ? endDateOf(start, walking ? WAY_DAYS : days) : '';
-  const ready = validStart && (walking || validDays);
+  const end = validDays && validStart ? endDateOf(start, days) : '';
   const last = [...profile.winterArc.runs].filter(isDesert).sort((a, b) => b.createdAt - a.createdAt)[0];
   return (
     <div className="panel confirm-panel winter-arc-start" role="dialog" aria-labelledby={`${id}-title`}>
       <p id={`${id}-title`}>
         <strong>{preset?.title ?? 'Neue Wüstenzeit'}</strong>
       </p>
-      {offered && (
-        <div className="field desert-way-choice">
-          <span className="field-label">Wegplan</span>
-          <Segmented<'none' | 'husband'>
-            label="Wegplan der Wüstenzeit"
-            grid
-            options={[
-              { value: 'none', label: 'Ohne Wegplan' },
-              { value: 'husband', label: WAY_NAME },
-            ]}
-            value={way}
-            onChange={setWay}
-          />
-          <p className="small muted">
-            {walking
-              ? 'Jeden Tag ein Bibelwort, ein Gedanke, ein Schritt, eine Frage für dein Tagebuch und ein Gebet. Der Weg dauert 28 Tage, und du kannst an jedem Tag beginnen.'
-              : 'Ohne Wegplan wählst du Dauer, Leseplan und Gewohnheiten selbst.'}
-          </p>
+      <div className="field">
+        <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
+        <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
+          {quick.map((n) => (
+            <button key={n} type="button" aria-pressed={days === n} onClick={() => setDuration(String(n))}>
+              {n}
+            </button>
+          ))}
         </div>
-      )}
-      {!walking && (
-        <div className="field">
-          <label htmlFor={`${id}-days`}>Dauer in Kalendertagen</label>
-          <div className="day-chips winter-arc-quick" role="group" aria-label="Vorschläge für die Dauer">
-            {quick.map((n) => (
-              <button key={n} type="button" aria-pressed={days === n} onClick={() => setDuration(String(n))}>
-                {n}
-              </button>
-            ))}
-          </div>
-          {preset && days === preset.days && start === preset.start && <p className="small muted">{preset.note}</p>}
-          <input
-            id={`${id}-days`}
-            type="number"
-            inputMode="numeric"
-            min={MIN_DURATION}
-            max={MAX_DURATION}
-            step={1}
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-          />
-        </div>
-      )}
+        {preset && days === preset.days && start === preset.start && <p className="small muted">{preset.note}</p>}
+        <input
+          id={`${id}-days`}
+          type="number"
+          inputMode="numeric"
+          min={MIN_DURATION}
+          max={MAX_DURATION}
+          step={1}
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+        />
+      </div>
       <div className="field">
         <label htmlFor={`${id}-start`}>Startdatum</label>
         <input id={`${id}-start`} type="date" value={start} onChange={(e) => setStart(e.target.value)} />
       </div>
-      {!walking && (
-        <div className="field">
-          <label htmlFor={`${id}-end`}>Letzter Tag</label>
-          <input
-            id={`${id}-end`}
-            type="date"
-            value={end}
-            min={validStart ? start : undefined}
-            onChange={(e) => {
-              if (validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
-            }}
-          />
-        </div>
-      )}
-      {ready ? (
+      <div className="field">
+        <label htmlFor={`${id}-end`}>Letzter Tag</label>
+        <input
+          id={`${id}-end`}
+          type="date"
+          value={end}
+          min={validStart ? start : undefined}
+          onChange={(e) => {
+            if (validStart && isDateKey(e.target.value)) setDuration(String(daysBetween(start, e.target.value) + 1));
+          }}
+        />
+      </div>
+      {end ? (
         <p>
           Bis <strong>{formatFullDate(end)}</strong>
         </p>
@@ -145,23 +117,19 @@ export function DesertStartPanel({ onDone, preset }: { onDone: () => void; prese
           {validStart ? `Wähle eine Dauer von ${MIN_DURATION} bis ${MAX_DURATION} Tagen.` : 'Wähle ein Startdatum.'}
         </p>
       )}
-      {/* The plan brings its own Word each day; no reading of a plan beside it. */}
-      {!walking && <DesertReadingChoice value={reading} days={validDays ? days : DEFAULT_DESERT_DAYS} onChange={setReading} />}
+      <DesertReadingChoice value={reading} days={validDays ? days : DEFAULT_DESERT_DAYS} onChange={setReading} />
       <p className="small muted">
-        {walking
-          ? 'Die fünf Kern-Gewohnheiten und die drei wöchentlichen sind schon gewählt. Danach kannst du bis zu zwei weitere dazunehmen.'
-          : last?.habits?.length
-            ? 'Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt. Danach kannst du sie ändern.'
-            : 'Danach wählst du die Gewohnheiten.'}
+        {last?.habits?.length
+          ? 'Die Gewohnheiten der letzten Wüstenzeit sind schon gewählt. Danach kannst du sie ändern.'
+          : 'Danach wählst du die Gewohnheiten.'}
       </p>
       <div className="button-row">
         <button
           type="button"
           className="btn primary"
-          disabled={!ready}
+          disabled={!end}
           onClick={() => {
-            if (walking) store.startDesert(start, WAY_DAYS, [], '', 'none', 'husband');
-            else store.startDesert(start, days, last?.habits ?? [], preset?.name, reading);
+            store.startDesert(start, days, last?.habits ?? [], preset?.name, reading);
             onDone();
           }}
         >
@@ -213,6 +181,12 @@ export function DesertSettings({ withChoice = true }: { withChoice?: boolean }) 
         </p>
       )}
       {panel === 'start' && <DesertStartPanel onDone={() => setPanel(null)} />}
+      {/* "28 Tage für Ehemänner" has its way in in the Wüstenwanderung (1.43.1). */}
+      {!run && wayOffered(profile) && (
+        <p className="small">
+          <Link to="/arena?bereich=wuestenwanderung&weg=1">{WAY_NAME} beginnen</Link>
+        </p>
+      )}
       {panel === 'end' && (
         <div className="panel confirm-panel" role="alertdialog" aria-labelledby="desert-end">
           <p id="desert-end">
