@@ -65,7 +65,7 @@ describe('28 Tage für Ehemänner in the Wüstenwanderung', () => {
     const store = await makeStore(false);
     await renderArena(store);
     expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: '28 Tage für Ehemänner' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Einführung lesen und beginnen' })).toBeNull();
     cleanup();
     store.startDesert('2026-10-14', 40);
     render(
@@ -81,7 +81,9 @@ describe('28 Tage für Ehemänner in the Wüstenwanderung', () => {
     const store = await makeStore();
     await renderArena(store);
     expect(screen.getByRole('button', { name: 'Wüstenzeit beginnen' })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: '28 Tage für Ehemänner' }));
+    const invite = within(screen.getByRole('region', { name: '28 Tage für Ehemänner' }));
+    expect(invite.getByText('Auszug · Manna · Sinai · Jordan')).toBeTruthy();
+    fireEvent.click(invite.getByRole('button', { name: 'Einführung lesen und beginnen' }));
     const dialog = within(screen.getByRole('dialog'));
     expect(dialog.getByText(/Bruder, schön, dass du losgehst/)).toBeTruthy();
     expect(dialog.getByText('Dranbleiben bis ans Ziel')).toBeTruthy();
