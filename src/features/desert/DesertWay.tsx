@@ -3,6 +3,9 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 import { WAY_DAYS, WAY_DAYS_TEXT, WAY_INTRO, WAY_NAME, WAY_WEEKS } from '../../content/husbandWay';
 import type { Run } from '../../content/desert';
 import { WELL_COMFORT } from '../../content/well';
+import { HUSBAND_PACK } from '../../content/desert';
+import { FlowIcon } from '../../ui/FlowIcon';
+import { WaVerse } from '../arena/WinterArcGuide';
 import { useProfile, useStore } from '../../data/hooks';
 import { isDateKey, type DateKey } from '../../domain/dates';
 import { canTickStep, stepDone, wayDayOn, wayDayText, wayEntries, wayEntryOf, wayWeekText } from '../../domain/husbandWay';
@@ -59,6 +62,37 @@ export function WayIntroText() {
 }
 
 /**
+ * The invitation in the Wüstenwanderung, made like the one for Advent: the Word first (rule 2),
+ * the four stretches of the way, what a day holds, and the way in.
+ */
+export function WayInvite({ onOpen }: { onOpen: () => void }) {
+  const id = useId();
+  return (
+    <section className="season-invite season-arena way-invite" aria-labelledby={id}>
+      <div className="season-head">
+        <span className="season-icon" aria-hidden="true">
+          <FlowIcon name="well" size={22} />
+        </span>
+        <div>
+          <p className="season-kicker">Für Ehemänner · 28 Tage</p>
+          <h3 id={id}>{WAY_NAME}</h3>
+        </div>
+      </div>
+      <WaVerse verse={HUSBAND_PACK.verse} />
+      <p className="season-dates">{WAY_WEEKS.map((w) => w.wegstueck).join(' · ')}</p>
+      <p className="season-span">
+        Vier Wochen. Jeden Tag ein Bibelwort, ein Gedanke, ein Schritt, eine Frage für dein Tagebuch und ein Gebet. Beginnen kannst du an jedem Tag.
+      </p>
+      <div className="season-actions">
+        <button type="button" className="btn primary" onClick={onOpen}>
+          Einführung lesen und beginnen
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/**
  * The way in of its own, beside "Wüstenzeit beginnen": the introduction first,
  * then only the first day. The length and the Word of each day come with the
  * plan; the habits of its package come along (core and weekly ones).
@@ -69,10 +103,16 @@ export function WayStartPanel({ onDone }: { onDone: () => void }) {
   const [start, setStart] = useState<DateKey>(store.today());
   const valid = isDateKey(start);
   return (
-    <div className="panel confirm-panel winter-arc-start desert-way-start" role="dialog" aria-labelledby={`${id}-title`}>
-      <p id={`${id}-title`}>
-        <strong>{WAY_NAME}</strong>
-      </p>
+    <div className="season-invite way-start" role="dialog" aria-labelledby={`${id}-title`}>
+      <div className="season-head">
+        <span className="season-icon" aria-hidden="true">
+          <FlowIcon name="well" size={22} />
+        </span>
+        <div>
+          <p className="season-kicker">Einführung</p>
+          <h3 id={`${id}-title`}>{WAY_NAME}</h3>
+        </div>
+      </div>
       <WayIntroText />
       <div className="field">
         <label htmlFor={`${id}-start`}>Startdatum</label>

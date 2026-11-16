@@ -23,7 +23,7 @@ import { activeRun, focusOf, isInRun, phaseOf, positionOf, stageOf, weekOf, type
 import { RoundReviews, roundTitle } from '../arena/WinterArcRounds';
 import { WaVerse, WinterArcGuide } from '../arena/WinterArcGuide';
 import { DesertWeekRows } from './DesertHabits';
-import { WayClosing, WayOverview, WayStartPanel, WayToday } from './DesertWay';
+import { WayClosing, WayInvite, WayOverview, WayStartPanel, WayToday } from './DesertWay';
 import { isWayRun, wayOffered } from '../../domain/husbandWay';
 import { WAY_NAME } from '../../content/husbandWay';
 import { DesertReadingDay, DesertReadingSettings } from './DesertReading';
@@ -438,36 +438,28 @@ function Start({ journal }: { journal: ReactNode }) {
         <WaVerse verse={DESERT_GUIDE.verse} />
       </div>
       {offer && !starting && <ArenaSeason offer={offer} onPrepare={() => setStarting('season')} onOther={() => setStarting('free')} />}
-      {(!offer || starting || earlier || way) && (
+      {!offer && !starting && (
         <div className="panel wa-head wa-invite">
-          {!starting && (!offer || way) && (
-            <div className="button-row">
-              {!offer && (
-                <button type="button" className="btn primary" onClick={() => setStarting('free')}>
-                  Wüstenzeit beginnen
-                </button>
-              )}
-              {way && (
-                <button type="button" className={offer ? 'btn primary' : 'btn'} onClick={() => setStarting('way')}>
-                  {WAY_NAME}
-                </button>
-              )}
-            </div>
-          )}
-          {starting === 'way' && <WayStartPanel onDone={() => setStarting(false)} />}
-          {starting && starting !== 'way' && (
-            <DesertStartPanel
-              key={starting}
-              preset={starting === 'season' && offer ? seasonPreset(offer) : undefined}
-              onDone={() => setStarting(false)}
-            />
-          )}
-          {earlier && (
-            <p className="small">
-              <Link to="/mehr/rueckblick?ansicht=wuestenwanderung">Frühere Wüstenzeiten im Rückblick</Link>
-            </p>
-          )}
+          <button type="button" className="btn primary" onClick={() => setStarting('free')}>
+            Wüstenzeit beginnen
+          </button>
         </div>
+      )}
+      {(starting === 'season' || starting === 'free') && (
+        <div className="panel wa-head wa-invite">
+          <DesertStartPanel
+            key={starting}
+            preset={starting === 'season' && offer ? seasonPreset(offer) : undefined}
+            onDone={() => setStarting(false)}
+          />
+        </div>
+      )}
+      {way && !starting && <WayInvite onOpen={() => setStarting('way')} />}
+      {starting === 'way' && <WayStartPanel onDone={() => setStarting(false)} />}
+      {earlier && !starting && (
+        <p className="small wa-earlier">
+          <Link to="/mehr/rueckblick?ansicht=wuestenwanderung">Frühere Wüstenzeiten im Rückblick</Link>
+        </p>
       )}
       <DesertGuide head={false} />
       {journal}

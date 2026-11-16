@@ -4711,6 +4711,12 @@ mark.placeholder {
 .desert-way-question {
   margin: 8px 0 12px;
 }
+.way-start .desert-way-intro {
+  margin-top: 12px;
+}
+.wa-earlier {
+  margin: 4px 0 12px;
+}
 .desert-way-closing {
   margin-top: 16px;
 }
