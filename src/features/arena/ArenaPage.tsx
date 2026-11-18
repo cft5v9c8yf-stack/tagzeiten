@@ -461,6 +461,10 @@ function IconButton({
   return (
     <button type="button" className="entry-icon" aria-label={label} title={label} aria-pressed={pressed} onClick={onClick}>
       <FlowIcon name={icon} size={20} />
+      {/* Seen only where there is room (tablet); the button is named by aria-label. */}
+      <span className="entry-icon-text" aria-hidden="true">
+        {label.replace(/ und zurück$/, '')}
+      </span>
     </button>
   );
 }
@@ -716,6 +720,8 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
             </figure>
           )}
 
+      {/* On the iPad lying: the frame on the left, the page to write on at the right. */}
+      <div className="entry-grid">
       {kind === 'forge' && (
         <div className="field arena-meeting">
           <label htmlFor={dateId}>Für das Treffen am</label>
@@ -783,6 +789,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
           </p>
         ))}
       </aside>
+      </div>
         </>
       )}
     </article>

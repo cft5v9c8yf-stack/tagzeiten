@@ -4,6 +4,7 @@ import { OutArrow } from '../../ui/OutArrow';
 import { Link, useParams } from 'react-router';
 import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
+import { useWide } from '../../app/useMedia';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { setOpen } from '../../ui/collapseState';
@@ -296,21 +297,30 @@ export function SettingsPage() {
     for (const id of OPEN_GROUPS.find((g) => g.includes(open)) ?? [open]) setOpen(id, id === open);
   }, [alias]);
 
+  const wide = useWide();
+  const tiles = (
+    <ul className="more-tiles">
+      {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
+        <li key={a.slug}>
+          <Link
+            className="more-tile"
+            to={withDate(`/mehr/${a.slug}`, date, isToday)}
+            aria-current={a === area ? 'page' : undefined}
+          >
+            <FlowIcon name={a.icon} size={22} />
+            <span className="more-tile-title">{a.title}</span>
+            <span className="more-tile-line">{a.line}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
   if (!area) {
     return (
       <div className="settings">
         <h2 className="visually-hidden">Mehr</h2>
-        <ul className="more-tiles">
-          {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
-            <li key={a.slug}>
-              <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
-                <FlowIcon name={a.icon} size={22} />
-                <span className="more-tile-title">{a.title}</span>
-                <span className="more-tile-line">{a.line}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {tiles}
         <p className="more-imprint">
           <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>
         </p>
@@ -319,7 +329,7 @@ export function SettingsPage() {
     );
   }
 
-  return (
+  const open = (
     <div className="settings more-area">
       <div className="title-row">
         <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
@@ -329,6 +339,16 @@ export function SettingsPage() {
       <div className="more-area-info">{area.info}</div>
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
       {area.body()}
+    </div>
+  );
+  // On the iPad lying: the areas stay on the left, as in the iPad's own settings.
+  if (!wide) return open;
+  return (
+    <div className="more-split">
+      <nav className="more-side" aria-label="Bereiche von Mehr">
+        {tiles}
+      </nav>
+      {open}
     </div>
   );
 }

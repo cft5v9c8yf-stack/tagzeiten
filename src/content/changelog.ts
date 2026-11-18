@@ -13,6 +13,20 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.0',
+    date: '2026-11-18',
+    title: 'Henoch auf dem iPad und quer',
+    changes: [
+      { area: 'Henoch', text: 'Auf dem iPad hat jede Seite mehr Platz: Die Spalte ist breiter, die Schrift etwas größer, und über dem Titel ist mehr Luft.' },
+      { area: 'Henoch', text: 'Liegt das iPad oder das iPhone quer, stehen die fünf Bereiche senkrecht am linken Rand, in Reichweite des Daumens. Unten verdeckt dann nichts mehr den Text. Auf dem iPhone ist die Leiste kleiner, damit sie in die geringe Höhe passt.' },
+      { area: 'Andacht', text: 'Auf dem iPad und im Querformat bleiben die Schritte beim Lesen oben stehen. So siehst du immer, wo du bist.' },
+      { area: 'Wort', text: 'Auf dem iPad quer steht neben dem Leseplan „So wird gelesen“ offen, mit den Farben und Zeichen für das Lesen auf Papier.' },
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht links der Rahmen des Eintrags mit Titel, Bibelstellen, Anliegen und Zuspruch, rechts die Fläche zum Schreiben, mit Tastatur oder Apple Pencil. Die Knöpfe über dem Eintrag tragen auf dem iPad ihre Namen.' },
+      { area: 'Arena', text: 'Auf dem iPad und im Querformat stehen die vier Orte zu zweit nebeneinander.' },
+      { area: 'Mehr', text: 'Auf dem iPad stehen die Bereiche zu dritt nebeneinander. Liegt es quer, bleibt die Liste links stehen, während rechts ein Bereich offen ist.' },
+    ],
+  },
+  {
     version: '1.42.2',
     date: '2026-11-15',
     title: 'Leiste unten bleibt unten',
