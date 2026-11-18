@@ -2,16 +2,39 @@
 
 Vorhaben, die vorgemerkt, aber noch nicht begonnen sind.
 
-## „28 Tage für Ehemänner“ (Wegplan der Wüstenwanderung)
+## „28 Tage für Ehemänner“ (Wegplan in der Wüstenwanderung)
 
-**Stand 16.11.2026:** 1.43.0 als PR nach `vorschau`. Wegplan beim Beginn einer
-Wüstenzeit wählbar (nur mit Ehefrau unter „Mein Haus“), 28 Tage, Gewohnheitspaket
-„28 Tage für Ehemänner“. Texte in `src/content/husbandWay.ts`, Logik in
-`src/domain/husbandWay.ts`, Oberfläche in `src/features/desert/DesertWay.tsx`.
-**Offen:** Freigabe durch Andreas. Zu klären: Sollen „Morgensegen gebetet“ und
-„Abendsegen mit ihr gebetet“ mit Stiller Zeit und Nachtgebet von selbst abgehakt
-werden wie die Segen der übrigen Pakete? Soll der Wegplan auch während einer
-laufenden Wüstenzeit zuschaltbar sein?
+**Stand 18.11.2026:** gebaut und auf der Vorschau getestet (1.43.0 und 1.43.1,
+PR #26, #27, #28), dann auf Wunsch von Andreas wieder aus `vorschau`
+herausgenommen. Der Code ist nicht verloren: Er liegt vollständig im Merge
+`5d23e6c` (Stand der Vorschau mit der Neuerung). Zum Wiederaufnehmen den Revert
+auf `vorschau` zurücknehmen oder die Dateien aus `5d23e6c` holen, dann Version
+neu vergeben.
+
+**Was gebaut war:**
+- Texte wörtlich aus der Vorlage vom 16.11.2026 in `src/content/husbandWay.ts`
+  (Einführung mit Wochentabelle, 4 Wochen, 28 Tage, 13 Gewohnheiten).
+  Lesefassung: https://claude.ai/artifact/1wsSRzJtHVLerunHy2HG1m
+- Logik in `src/domain/husbandWay.ts`, Oberfläche in
+  `src/features/desert/DesertWay.tsx`. Daten: am Lauf `way`, `wayDone`,
+  `wayIntroSeen`; am Tagebucheintrag `wayRun`, `wayDay`.
+- Eigener Eingang als Karte neben „Wüstenzeit beginnen“, nur mit Ehefrau unter
+  „Mein Haus“: Einführung, Startdatum, „Weg beginnen“ (28 Tage, kein Leseplan).
+- Tag: Titel, Thema, Schriftwort, Gedanke, Schritt (abhaken), Frage
+  (Tagebucheintrag zum Tag, darunter 1. Joh 1,9), Gebet. Übersicht der vier
+  Wochen mit Nachholen, Abschluss „Dein Weg“ mit den eigenen Einträgen.
+- Gewohnheitspaket: Kern und wöchentliche vorausgewählt, höchstens zwei zur
+  Wahl; während des Wegs nur dieses Paket, mit „Auswahl abschließen“.
+- Mit herausgenommen, obwohl allgemein: Die Pakete der Wüstenzeit ließen sich
+  zuklappen (offen nur, woraus etwas gewählt ist, „n gewählt“). Lässt sich auch
+  allein wieder aufnehmen (Commit `1f5bf1a`).
+- In `CLAUDE.md` stand dafür eine Ausnahme zu Regel 9 (Einträge zu den Fragen);
+  sie ist mit herausgenommen und muss beim Wiederaufnehmen zurück.
+
+**Offen beim Wiederaufnehmen:** Sollen „Morgensegen gebetet“ und „Abendsegen
+mit ihr gebetet“ mit Stiller Zeit und Nachtgebet von selbst abgehakt werden?
+Wie fügt sich der Einstieg am besten ein (Andreas fand ihn zuletzt noch nicht
+rund)?
 
 ## „Bitte und Fürbitte“: dritte Form für Stille Zeit und Vesper
 

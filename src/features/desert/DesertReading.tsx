@@ -104,8 +104,7 @@ export function DesertReadingChoice({
 /** The reading of a Wüstenzeit under way, to change at any time. */
 export function DesertReadingSettings({ run }: { run: WinterArcRun }) {
   const store = useStore();
-  // "28 Tage für Ehemänner" brings its own Word each day: no plan of reading beside it.
-  if (stageOf(run, store.today()) === 'after' || run.way) return null;
+  if (stageOf(run, store.today()) === 'after') return null;
   return (
     <DesertReadingChoice
       value={desertReadingOf(run)}

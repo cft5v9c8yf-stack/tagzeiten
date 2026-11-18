@@ -13,27 +13,6 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
-    version: '1.43.1',
-    date: '2026-11-16',
-    title: 'Wüstenwanderung: eigener Eingang für die 28 Tage',
-    changes: [
-      { area: 'Wüstenwanderung', text: '„28 Tage für Ehemänner“ hat jetzt einen eigenen Eingang in der Wüstenwanderung: eine Karte wie die Einladung zum Advent, mit Epheser 5,25, den vier Wegstücken und dem Knopf „Einführung lesen und beginnen“. Danach liest du die Einführung, wählst nur den ersten Tag und tippst auf „Weg beginnen“. Dauer und Leseplan fallen weg: Der Weg dauert 28 Tage und bringt jeden Tag sein eigenes Bibelwort mit. Das Startfenster der Wüstenzeit ist wieder wie vorher. Unter Mehr führt ein Link zum neuen Eingang.' },
-      { area: 'Wüstenwanderung', text: 'Während der 28 Tage steht bei den Gewohnheiten nur noch das Paket des Wegs. Darunter schließt „Auswahl abschließen“ die Auswahl ab und führt zurück zum Weg.' },
-      { area: 'Gewohnheiten', text: 'Die Pakete der Wüstenzeit lassen sich zuklappen. Offen ist zuerst nur, woraus du schon etwas gewählt hast; daneben steht, wie viele es sind. So bleibt die Auswahl unter Mehr und unter Heute kurz. Unter Heute schließt „Auswahl abschließen“ die Auswahl.' },
-    ],
-  },
-  {
-    version: '1.43.0',
-    date: '2026-11-16',
-    title: 'Wüstenwanderung: 28 Tage für Ehemänner',
-    changes: [
-      { area: 'Wüstenwanderung', text: 'Neu ist ein Wegplan, den du beim Beginn einer Wüstenzeit wählen kannst: „28 Tage für Ehemänner“. Du siehst ihn, sobald unter „Mein Haus“ deine Frau steht. Die Wüstenzeit dauert dann 28 Tage, und du kannst an jedem Tag beginnen. Zum Anfang steht einmal die Einführung da. Danach steht jeden Tag unter der Lesung der Weg des Tages: Titel, Thema, Schriftwort, Gedanke, Schritt, Frage und Gebet. Den Schritt hakst du ab. Die Frage öffnet einen Eintrag im Tagebuch, der zu diesem Tag gehört.' },
-      { area: 'Wüstenwanderung', text: 'Die Kachel „28 Tage für Ehemänner“ zeigt die vier Wochen mit ihren Einleitungen und alle 28 Tage. Gegangene Tage sind markiert. Einen Tag, den du ausgelassen hast, öffnest du dort und holst ihn nach. Die Einführung kannst du dort jederzeit wieder lesen. Nach dem letzten Tag stehen im Abschluss deine Einträge noch einmal, Tag für Tag.' },
-      { area: 'Wüstenwanderung', text: 'Dazu gehört ein neues Paket an Gewohnheiten. Die fünf Kern-Gewohnheiten und die drei wöchentlichen sind beim Beginn schon gewählt. Von den übrigen nimmst du höchstens zwei dazu. Wöchentliche hakst du einmal in der Woche ab.' },
-      { area: 'Wüstenwanderung', text: 'Nur in den Einträgen zu den Fragen darfst du auch Schuld und Schwäche aufschreiben. Darunter steht das Wort aus 1. Johannes 1,9. Die Einträge bleiben auf dem Gerät.' },
-    ],
-  },
-  {
     version: '1.42.2',
     date: '2026-11-15',
     title: 'Leiste unten bleibt unten',
