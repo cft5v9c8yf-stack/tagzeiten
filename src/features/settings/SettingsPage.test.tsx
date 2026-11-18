@@ -15,14 +15,6 @@ import { resetOpenState, setOpen } from '../../ui/collapseState';
 import { DESERT_HABITS } from '../../content/desert';
 import { SettingsPage } from './SettingsPage';
 
-/** A package of the Wüstenzeit, opened (they stand folded while nothing of them is chosen, 1.43.1). */
-const openPack = (name: string, inside: HTMLElement = document.body): HTMLElement => {
-  const region = within(inside).getByRole('region', { name });
-  const head = region.querySelector(':scope > .desert-pack-title .desert-pack-head');
-  if (head?.getAttribute('aria-expanded') === 'false') fireEvent.click(head);
-  return region;
-};
-
 /** Under "Mehr" everything starts folded; most tests work inside the sections. */
 function openAllMore() {
   for (const id of ['habits', 'prayer', 'plan', 'times', 'settings', 'display', 'devotion', 'arena', 'data', 'install', 'airplane', 'about', 'prayerlist', 'house', 'treasury', 'treasury.ehefrau', 'treasury.ehemann', 'treasury.eltern', 'display.theme', 'display.atBed', 'display.compline', 'display.armor', 'display.well', 'display.desert', 'data.keep', 'data.export', 'data.import', 'data.delete', 'about.arc', 'about.sources', 'about.privacy']) setOpen(`more.${id}`, true);
@@ -214,7 +206,7 @@ describe('Mehr: Aufbau', () => {
       'Weitere Gewohnheiten',
       'Eigene Gewohnheiten',
     ]);
-    const wuestenweg = openPack('Wüstenweg');
+    const wuestenweg = screen.getByRole('region', { name: 'Wüstenweg' });
     expect(wuestenweg.textContent).toContain('Die klassische Wüstenzeit');
     expect(wuestenweg.textContent).toContain('„Übe dich selbst aber in der Gottseligkeit.“');
     fireEvent.click(within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }));
@@ -224,13 +216,13 @@ describe('Mehr: Aufbau', () => {
     expect((within(wuestenweg).getByRole('button', { name: 'Paket übernehmen' }) as HTMLButtonElement).disabled).toBe(true);
     // Single ones off again, and across the packages.
     fireEvent.click(within(wuestenweg).getByLabelText('Bewegung'));
-    fireEvent.click(within(openPack('Wie die Wüstenväter')).getByLabelText('Stille vor Gott'));
+    fireEvent.click(within(screen.getByRole('region', { name: 'Wie die Wüstenväter' })).getByLabelText('Stille vor Gott'));
     expect(run().habits).toEqual(['wz-segen', 'wz-psalm', 'bibleReading', 'wz-freitagsfasten', 'wz-stille']);
     // The "i" opens the bubble with the short description and the background.
     fireEvent.click(screen.getByRole('button', { name: 'Info zu Psalm des Tages' }));
     expect(screen.getByRole('note').textContent).toContain('Die Mönche beteten alle 150 Psalmen regelmäßig durch.');
     // An own one, with a description.
-    const own = openPack('Eigene Gewohnheiten');
+    const own = screen.getByRole('region', { name: 'Eigene Gewohnheiten' });
     fireEvent.change(within(own).getByLabelText('Titel'), { target: { value: 'Brief an einen Bruder' } });
     fireEvent.change(within(own).getByLabelText('Beschreibung (wenn du willst)'), { target: { value: 'Jede Woche einen.' } });
     fireEvent.change(within(own).getByLabelText('Rhythmus'), { target: { value: 'weekly' } });
@@ -1089,9 +1081,9 @@ describe('Rückblick', () => {
     await renderAt('/mehr/versionen', <SettingsPage />);
     await screen.findByRole('heading', { level: 2, name: 'Über Henoch' });
     const versions = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(versions[0]).toMatch(/^Version 1\.43(?![\d.])/);
+    expect(versions[0]).toMatch(/^Version 1\.42(?![\d.])/);
     // The newest ten numbers stand one by one; earlier tens fold together, then the versions before 1.0.
-    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(4);
+    expect(versions.filter((v) => v?.startsWith('Version 1.'))).toHaveLength(3);
     expect(versions.filter((v) => v?.startsWith('Versionen ')).map((v) => /^Versionen \S+ bis \S+/.exec(v!)![0])).toEqual([
       'Versionen 1.30 bis 1.39',
       'Versionen 1.20 bis 1.29',
@@ -1104,11 +1096,11 @@ describe('Rückblick', () => {
     expect(document.body.textContent).toContain(`Du nutzt Version ${__APP_VERSION__}.`);
     // A list that folds: the newest is open, opening another closes it.
     const toggle = (v: RegExp) => screen.getByRole('button', { name: v });
-    expect(toggle(/^Version 1\.43(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
+    expect(toggle(/^Version 1\.42(?![\d.])/).getAttribute('aria-expanded')).toBe('true');
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(toggle(/^Versionen 0\.1 bis/));
     expect(toggle(/^Versionen 0\.1 bis/).getAttribute('aria-expanded')).toBe('true');
-    expect(toggle(/^Version 1\.43(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
+    expect(toggle(/^Version 1\.42(?![\d.])/).getAttribute('aria-expanded')).toBe('false');
     // Inside, every number once, patches under it: 0.30.0 and 0.30.1 share one entry.
     const earlier = screen.getAllByRole('heading', { level: 4 }).map((h) => h.textContent).filter((v) => /^Version \d/.test(v ?? ''));
     expect(earlier[0]).toMatch(/^Version 0\.41(?![\d.])/);

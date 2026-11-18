@@ -57,17 +57,9 @@ function lookupOf(ticks: Record<DateKey, string[]>) {
 }
 
 describe('the offer of the Wüstenzeit', () => {
-  it('has the packages and the 90-Tage-Standard with their habits, and the further ones from the collection', () => {
-    expect(DESERT_PACKS.map((p) => p.name)).toEqual([
-      'Aufbruch',
-      'Wüstenweg',
-      'Wie die Wüstenväter',
-      'Hauskirche',
-      'Erbe',
-      '28 Tage für Ehemänner',
-      'Der 90-Tage-Standard',
-    ]);
-    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9, 4, 13, 15]);
+  it('has the five packages and the 90-Tage-Standard with their habits, and the further ones from the collection', () => {
+    expect(DESERT_PACKS.map((p) => p.name)).toEqual(['Aufbruch', 'Wüstenweg', 'Wie die Wüstenväter', 'Hauskirche', 'Erbe', 'Der 90-Tage-Standard']);
+    expect(DESERT_PACKS.map((p) => p.habits.length)).toEqual([4, 5, 7, 9, 4, 15]);
     expect(DESERT_MORE.map((h) => h.name)).toEqual([
       'Fürbittliste',
       'Katechismus',
@@ -85,8 +77,7 @@ describe('the offer of the Wüstenzeit', () => {
     // "Erbe" (1.3) shares the examination with the Wüstenväter and the brothers with the further habits.
     const twice = ['bibleReading', 'exercise', 'worship', 'wz-gewissen', 'brothers'];
     expect(new Set(DESERT_HABITS.map((h) => h.id)).size).toBe(DESERT_HABITS.length - twice.length);
-    // The habits of "28 Tage für Ehemänner" (1.43) have ids of their own, "ww-…".
-    expect(DESERT_HABITS.map((h) => h.id).filter((id) => !/^w[zw]-/.test(id))).toEqual([
+    expect(DESERT_HABITS.map((h) => h.id).filter((id) => !id.startsWith('wz-'))).toEqual([
       'bibleReading',
       'bibleReading',
       'exercise',
@@ -103,7 +94,7 @@ describe('the offer of the Wüstenzeit', () => {
       'offering',
       'brothers',
     ]);
-    for (const o of DESERT_HABITS.filter((h) => !/^w[zw]-/.test(h.id))) {
+    for (const o of DESERT_HABITS.filter((h) => !h.id.startsWith('wz-'))) {
       expect(HABIT_PRESETS.find((p) => p.id === o.id)?.rhythm, o.id).toBe(o.rhythm);
     }
   });

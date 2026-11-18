@@ -1,10 +1,8 @@
-import { useId, useState, type FormEvent, type ReactNode } from 'react';
-import { DESERT_CHOICE_LEAD, DESERT_MORE, DESERT_MORE_TITLE, DESERT_PACKS, HUSBAND_PACK, type DesertHabit, type DesertPack } from '../../content/desert';
-import { WAY_CHOICE_MAX } from '../../content/husbandWay';
+import { useId, useState, type FormEvent } from 'react';
+import { DESERT_CHOICE_LEAD, DESERT_MORE, DESERT_MORE_TITLE, DESERT_PACKS, type DesertHabit } from '../../content/desert';
 import { HABIT_NEEDS, RHYTHM_LABEL } from '../../content/habits';
 import { useProfile, useStore } from '../../data/hooks';
 import { OWN_NOTE_MAX } from '../../domain/desert';
-import { isWayRun } from '../../domain/husbandWay';
 import { houseHas, NEED_NOTE, type HouseNeed } from '../../domain/house';
 import type { Habit, Rhythm } from '../../domain/model';
 import type { WinterArcRun } from '../../domain/winterArc';
@@ -22,14 +20,12 @@ function ChoiceRow({
   onChange,
   waits,
   remove,
-  locked = false,
 }: {
   habit: Pick<Habit, 'id' | 'name' | 'note'>;
   chosen: boolean;
   onChange: (on: boolean) => void;
   waits?: string;
   remove?: () => void;
-  locked?: boolean;
 }) {
   const id = useId();
   const [confirming, setConfirming] = useState(false);
@@ -37,7 +33,7 @@ function ChoiceRow({
     <li className="desert-item">
       <WithInfo habit={habit}>
         <label className="desert-check" htmlFor={id}>
-          <input id={id} type="checkbox" checked={chosen} disabled={locked} onChange={(e) => onChange(e.target.checked)} />
+          <input id={id} type="checkbox" checked={chosen} onChange={(e) => onChange(e.target.checked)} />
           <span>
             {habit.name}
             {waits && <span className="desert-waits">{waits}</span>}
@@ -111,51 +107,12 @@ function AddOwn({ run, H }: { run: WinterArcRun; H: Heading }) {
 }
 
 /**
- * A package, or the further and the own habits, folded under its name (1.43.1): open while
- * something of it is chosen, else closed, so the choice stays short; it stays as the person leaves it.
- */
-function Fold({
-  name,
-  tagline,
-  chosenCount,
-  H,
-  children,
-}: {
-  name: string;
-  tagline?: string;
-  chosenCount: number;
-  H: Heading;
-  children: ReactNode;
-}) {
-  const id = useId();
-  const [open, setOpen] = useState(chosenCount > 0);
-  return (
-    <section className={`desert-pack${open ? ' is-open' : ''}`} aria-label={name}>
-      <H className="desert-pack-title">
-        <button type="button" className="desert-pack-head" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
-          <span className="desert-pack-name">{name}</span>
-          <span className="desert-tagline">
-            {tagline}
-            {tagline && chosenCount > 0 && ' · '}
-            {chosenCount > 0 && `${chosenCount} gewählt`}
-          </span>
-        </button>
-      </H>
-      <div id={id} hidden={!open}>
-        {open && children}
-      </div>
-    </section>
-  );
-}
-
-/**
  * The choice of habits for a Wüstenzeit: the packages with their description
  * and verse, each with "Paket übernehmen", which adds to what is chosen, so
  * packages combine; the further habits; and the user's own. Every habit can be
- * chosen on its own, across the packages. "28 Tage für Ehemänner" shows its own
- * package only. At the end, where given, a button to finish the choice.
+ * chosen on its own, across the packages.
  */
-export function DesertChoice({ run, level = 6, onDone }: { run: WinterArcRun; level?: 4 | 5 | 6; onDone?: () => void }) {
+export function DesertChoice({ run, level = 6 }: { run: WinterArcRun; level?: 4 | 5 | 6 }) {
   const store = useStore();
   const profile = useProfile();
   const H = `h${level}` as Heading;
@@ -164,84 +121,63 @@ export function DesertChoice({ run, level = 6, onDone }: { run: WinterArcRun; le
     const need: HouseNeed | undefined = o.needs ?? HABIT_NEEDS[o.id];
     return need && !houseHas(profile.house, need) ? NEED_NOTE[need] : undefined;
   };
-  // "28 Tage für Ehemänner": at most two of those "zur Wahl" beside the core.
-  const choiceFull = (pack: DesertPack) => pack.habits.filter((h) => h.art === 'wahl' && chosen.has(h.id)).length >= WAY_CHOICE_MAX;
-  const row = (o: DesertHabit, pack?: DesertPack) => (
+  const row = (o: DesertHabit) => (
     <ChoiceRow
       key={o.id}
       habit={o}
       chosen={chosen.has(o.id)}
       waits={waits(o)}
-      locked={o.art === 'wahl' && !chosen.has(o.id) && !!pack && choiceFull(pack)}
       onChange={(on) => store.chooseDesert(run.id, [o], on)}
     />
   );
-  const taken = (pack: DesertPack) => pack.habits.filter((h) => h.art !== 'wahl');
-  const count = (list: readonly { id: string }[]) => list.filter((h) => chosen.has(h.id)).length;
   const own = profile.habits.filter((h) => h.desert === 'own');
-  const walking = isWayRun(run);
-  const packs = walking ? [HUSBAND_PACK] : DESERT_PACKS.filter((pack) => !pack.needs || houseHas(profile.house, pack.needs));
   return (
     <div className="desert-choice">
-      {!walking && <p className="desert-lead">{DESERT_CHOICE_LEAD}</p>}
-      {packs.map((pack) => (
-        <Fold key={pack.id} name={pack.name} tagline={pack.tagline} chosenCount={count(pack.habits)} H={H}>
-          {pack.lead ? pack.lead.map((l) => <p key={l}>{l}</p>) : <p>{pack.description}</p>}
+      <p className="desert-lead">{DESERT_CHOICE_LEAD}</p>
+      {DESERT_PACKS.map((pack) => (
+        <section key={pack.id} className="desert-pack" aria-label={pack.name}>
+          <H>{pack.name}</H>
+          <p className="desert-tagline">{pack.tagline}</p>
+          <p>{pack.description}</p>
           <WaVerse verse={pack.verse} />
           <button
             type="button"
             className="btn small-btn desert-take"
-            disabled={taken(pack).every((o) => chosen.has(o.id))}
-            onClick={() => store.chooseDesert(run.id, taken(pack), true)}
+            disabled={pack.habits.every((o) => chosen.has(o.id))}
+            onClick={() => store.chooseDesert(run.id, pack.habits, true)}
           >
             Paket übernehmen
           </button>
-          {pack.habits.some((h) => h.art) ? (
-            <>
-              <p className="small muted">Kern und wöchentlich</p>
-              <ul className="desert-list">{pack.habits.filter((h) => h.art !== 'wahl').map((h) => row(h, pack))}</ul>
-              <p className="small muted">Zur Wahl, höchstens {WAY_CHOICE_MAX}</p>
-              <ul className="desert-list">{pack.habits.filter((h) => h.art === 'wahl').map((h) => row(h, pack))}</ul>
-            </>
-          ) : (
-            <ul className="desert-list">{pack.habits.map((h) => row(h))}</ul>
-          )}
+          <ul className="desert-list">{pack.habits.map(row)}</ul>
           {pack.id === 'standard' && (
             <details className="wa-settings desert-standard">
               <summary>Anleitung zum 90-Tage-Standard</summary>
               <WinterArcGuide />
             </details>
           )}
-        </Fold>
+        </section>
       ))}
-      {!walking && (
-        <>
-          <Fold name={DESERT_MORE_TITLE} chosenCount={count(DESERT_MORE)} H={H}>
-            <ul className="desert-list">{DESERT_MORE.map((h) => row(h))}</ul>
-          </Fold>
-          <Fold name="Eigene Gewohnheiten" chosenCount={count(own)} H={H}>
-            {own.length > 0 && (
-              <ul className="desert-list">
-                {own.map((h) => (
-                  <ChoiceRow
-                    key={h.id}
-                    habit={h}
-                    chosen={chosen.has(h.id)}
-                    onChange={(on) => store.chooseOwnDesert(run.id, h.id, on)}
-                    remove={() => store.deleteOwnDesert(h.id)}
-                  />
-                ))}
-              </ul>
-            )}
-            <AddOwn run={run} H={H} />
-          </Fold>
-        </>
-      )}
-      {onDone && (
-        <button type="button" className="btn primary desert-choice-done" onClick={onDone}>
-          Auswahl abschließen
-        </button>
-      )}
+      <section className="desert-pack" aria-label={DESERT_MORE_TITLE}>
+        <H>{DESERT_MORE_TITLE}</H>
+        <ul className="desert-list">{DESERT_MORE.map(row)}</ul>
+      </section>
+      <section className="desert-pack" aria-label="Eigene Gewohnheiten">
+        <H>Eigene Gewohnheiten</H>
+        {own.length > 0 && (
+          <ul className="desert-list">
+            {own.map((h) => (
+              <ChoiceRow
+                key={h.id}
+                habit={h}
+                chosen={chosen.has(h.id)}
+                onChange={(on) => store.chooseOwnDesert(run.id, h.id, on)}
+                remove={() => store.deleteOwnDesert(h.id)}
+              />
+            ))}
+          </ul>
+        )}
+        <AddOwn run={run} H={H} />
+      </section>
     </div>
   );
 }

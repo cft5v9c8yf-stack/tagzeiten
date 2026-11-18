@@ -75,10 +75,6 @@ export function normalizeArena(raw: unknown): ArenaEntry[] {
       if (Object.keys(inks).length) e.inks = inks;
     }
     if (e.kind === 'forge' && isDateKey(x.meetingDate)) e.meetingDate = x.meetingDate;
-    if (e.kind === 'desert' && str(x.wayRun) && Number.isInteger(x.wayDay) && x.wayDay! >= 1 && x.wayDay! <= 365) {
-      e.wayRun = str(x.wayRun);
-      e.wayDay = x.wayDay;
-    }
     if (e.kind === 'forge') {
       e.points = points(x.points);
       // Written before the list existed: each line of the text becomes a point.

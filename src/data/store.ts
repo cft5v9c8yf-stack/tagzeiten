@@ -29,8 +29,6 @@ import {
   type DesertReading,
 } from '../domain/desert';
 import type { DesertHabit } from '../content/desert';
-import { WAY_DAYS, WAY_NAME } from '../content/husbandWay';
-import { canTickStep, markIntroSeen, toggleStep, WAY_START_HABITS, wayEntryOf } from '../domain/husbandWay';
 import { isDoneOn, newHabitId, toggleHabit as toggleHabitOfDay } from '../domain/habits';
 import { isEmptyEntry, MAX_PINNED, newEntry, nextMeeting, normalizeArena } from '../domain/arena';
 import { isEmptyMeeting, newMeeting, type WellMeeting } from '../domain/well';
@@ -535,23 +533,8 @@ export class Store {
    * nothing is deleted. Its reading (1.16): "Bewährung und Nachfolge" over its
    * days, the plan of the Bible area, or none in its dashboard.
    */
-  startDesert(
-    startDate: DateKey,
-    durationDays: number,
-    habits: readonly string[] = [],
-    name = '',
-    reading: DesertReading = 'desert',
-    way?: 'husband',
-  ): void {
+  startDesert(startDate: DateKey, durationDays: number, habits: readonly string[] = [], name = '', reading: DesertReading = 'desert'): void {
     const t = this.now().getTime();
-    // "28 Tage für Ehemänner" (1.43): 28 days, its core and weekly habits along with those chosen; its
-    // introduction was read in its own way in, before the beginning.
-    if (way) {
-      durationDays = WAY_DAYS;
-      habits = [...habits, ...WAY_START_HABITS];
-      name = name || WAY_NAME;
-      reading = 'none';
-    }
     // A habit of the offer that the profile lacks gets its habit here, as it does when it is chosen in the Arena.
     this.updateProfile(
       (p) => {
@@ -564,39 +547,7 @@ export class Store {
       { immediate: true },
     );
     const run = activeRun(this.profile.winterArc);
-    if (run && way) {
-      this.updateProfile(
-        (p) => ({
-          ...p,
-          winterArc: { ...p.winterArc, runs: p.winterArc.runs.map((r) => (r.id === run.id ? { ...r, way, wayDone: [], wayIntroSeen: true } : r)) },
-        }),
-        { immediate: true },
-      );
-    }
     if (run) this.setDesertReading(run.id, reading);
-  }
-
-  /** "28 Tage für Ehemänner": ticks the step of a day, or takes the tick away; a missed day can be ticked later. */
-  toggleWayStep(runId: string, n: number): void {
-    const run = this.profile.winterArc.runs.find((r) => r.id === runId);
-    if (!run || !canTickStep(run, n, this.today())) return;
-    const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: toggleStep(p.winterArc, runId, n, t) }), { immediate: true });
-  }
-
-  /** The introduction of the plan was read; it stays in the overview. */
-  markWayIntroSeen(runId: string): void {
-    const t = this.now().getTime();
-    this.updateProfile((p) => ({ ...p, winterArc: markIntroSeen(p.winterArc, runId, t) }), { immediate: true });
-  }
-
-  /** The journal entry for the question of a day: the one written, else a new one; returns its id. */
-  openWayEntry(runId: string, n: number): string {
-    const found = wayEntryOf(this.profile.arena, runId, n);
-    if (found) return found.id;
-    const entry = { ...newEntry(this.now().getTime(), 'desert'), wayRun: runId, wayDay: n };
-    this.updateProfile((p) => ({ ...p, arena: [entry, ...p.arena.filter((e) => !isEmptyEntry(e))] }), { immediate: true });
-    return entry.id;
   }
 
   /**

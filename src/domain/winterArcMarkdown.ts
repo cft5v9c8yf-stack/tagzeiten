@@ -2,7 +2,6 @@
  * The Winter Arc in the Markdown export (rule 11): every round with its ticks,
  * weekly standard, monthly point and reviews. Recorded, never counted.
  */
-import { WAY_NAME } from '../content/husbandWay';
 import { WINTER_ARC_COMFORT, WINTER_ARC_FOCUS, WINTER_ARC_REVIEW } from '../content/winterArc';
 import { addDays, fromKey, MONTH_LONG, WEEKDAY_SHORT, type DateKey } from './dates';
 import {
@@ -37,10 +36,6 @@ export function runToMarkdown(run: WinterArcRun, data: WinterArcData, settings: 
   const out = [
     `## ${runName(run)} · ${de(run.startDate)} bis ${de(endDateOf(run.startDate, run.durationDays))} · ${run.durationDays} Tage · ${run.status === 'active' ? 'läuft' : 'beendet'}`,
     '',
-    // "28 Tage für Ehemänner": the days whose step was ticked (rule 11).
-    ...(run.way === 'husband'
-      ? [`Wegplan: ${WAY_NAME}. Schritt abgehakt: ${run.wayDone?.length ? run.wayDone.map((n) => `Tag ${n}`).join(', ') : 'noch keiner'}.`, '']
-      : []),
   ];
   // Every tick is written, also of points taken out later (rule 11).
   const points = pointsOf(run, settings);

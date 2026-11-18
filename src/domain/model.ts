@@ -227,9 +227,6 @@ export interface ArenaEntry {
   kind?: 'forge' | 'desert';
   /** Eisenschmiede: the day of the meeting this entry is for. */
   meetingDate?: DateKey;
-  /** Wüstenwanderung, "28 Tage für Ehemänner" (1.43): the Wüstenzeit and the day whose question this entry answers. */
-  wayRun?: string;
-  wayDay?: number;
   /** Epoch ms when put into the Rückblick; absent while it stands in the Arena. */
   archivedAt?: number;
   /** Epoch ms when pinned to the top of its place (at most three per place); absent otherwise. */

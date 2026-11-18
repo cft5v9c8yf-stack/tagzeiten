@@ -19,7 +19,6 @@ import type { HouseNeed } from '../domain/house';
 import type { Rhythm } from '../domain/model';
 import { DEFAULT_TIMES } from '../domain/winterArc';
 import { WINTER_ARC_ABOUT, WINTER_ARC_DAY, WINTER_ARC_ITEMS, WINTER_ARC_LEAD, WINTER_ARC_TITLE, WINTER_ARC_WEEK } from './winterArc';
-import { WAY_HABITS, WAY_HABITS_LEAD, WAY_HABITS_TITLE, WAY_NAME } from './husbandWay';
 
 export interface DesertVerse {
   text: string;
@@ -98,8 +97,6 @@ export interface DesertHabit {
   needs?: HouseNeed;
   /** Kept with the orders as well as by hand. */
   follows?: Follow;
-  /** "28 Tage für Ehemänner" (1.43): the core and the weekly ones come along, at most two of the others. */
-  art?: 'kern' | 'wahl' | 'fest';
 }
 
 export interface DesertPack {
@@ -109,10 +106,6 @@ export interface DesertPack {
   description: string;
   verse: DesertVerse;
   habits: readonly DesertHabit[];
-  /** Paragraphs shown instead of the description. */
-  lead?: readonly string[];
-  /** Offered only once "Mein Haus" holds the wife. */
-  needs?: HouseNeed;
 }
 
 const daily = (id: string, name: string, note: string, extra: Partial<DesertHabit> = {}): DesertHabit => ({
@@ -181,49 +174,6 @@ const STANDARD_PACK: DesertPack = {
     weekly('wz-std-money', '15 Minuten Finanzen', weekNote(3)),
     monthly('mercy', 'Einmal im Monat dienen', weekNote(4)),
   ],
-};
-
-/** The ids of the habits of "28 Tage für Ehemänner", in the order of its table. */
-export const HUSBAND_HABIT_IDS = [
-  'ww-morgensegen',
-  'ww-fuer-frau',
-  'ww-zuhoeren',
-  'ww-danken',
-  'ww-abendsegen',
-  'ww-zaertlich',
-  'ww-hartes-wort',
-  'ww-augen',
-  'ww-aufgabe',
-  'ww-grenze',
-  'ww-gottesdienst',
-  'ww-hausandacht',
-  'ww-zu-zweit',
-] as const;
-
-/**
- * The habits of "28 Tage für Ehemänner" as a package (1.43), with the two
- * paragraphs before its table; only with a wife in "Mein Haus".
- */
-export const HUSBAND_PACK: DesertPack = {
-  id: 'ehemann',
-  name: WAY_NAME,
-  tagline: WAY_HABITS_TITLE,
-  description: WAY_HABITS_LEAD.join(' '),
-  lead: WAY_HABITS_LEAD,
-  needs: 'wife',
-  verse: verse(
-    'Ihr Männer, liebet eure Weiber, gleichwie Christus auch geliebt hat die Gemeinde und hat sich selbst für sie gegeben',
-    'Eph 5,25',
-    'Eph 5,25',
-  ),
-  habits: WAY_HABITS.map((h, i) => ({
-    id: HUSBAND_HABIT_IDS[i]!,
-    name: h.name,
-    note: '',
-    rhythm: h.rhythmus === 'täglich' ? 'daily' : 'weekly',
-    needs: 'wife',
-    art: h.art,
-  })),
 };
 
 export const DESERT_PACKS: readonly DesertPack[] = [
@@ -345,7 +295,6 @@ export const DESERT_PACKS: readonly DesertPack[] = [
       weekly('brothers', 'Austausch mit einem Bruder (Rechenschaft)', 'Dich jede Woche mit einem Bruder austauschen und Rechenschaft geben.'),
     ],
   },
-  HUSBAND_PACK,
   STANDARD_PACK,
 ];
 

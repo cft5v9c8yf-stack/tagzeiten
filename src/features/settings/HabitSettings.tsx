@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router';
-import { isWayRun } from '../../domain/husbandWay';
 import { useEffect, useId, useRef, useState, type CSSProperties, type HTMLAttributes, type PointerEvent as ReactPointerEvent } from 'react';
 import { NO_SCORE_NOTE } from '../../content/about';
 import { HABIT_NEEDS, READING_HABIT } from '../../content/habits';
@@ -496,7 +494,6 @@ export function HabitSettings() {
 
 /** While a Wüstenzeit runs, its habits are chosen here too, as under Tag und Woche and in the Arena. */
 function DesertGroup() {
-  const navigate = useNavigate();
   const profile = useProfile();
   const store = useStore();
   const run = activeDesert(profile.winterArc);
@@ -507,7 +504,7 @@ function DesertGroup() {
         Solange die Wüstenzeit läuft, stehen ihre Gewohnheiten unter „Heute“ zuerst, als eigene Gruppe. Ein Haken gilt
         überall. Was du abwählst, verschwindet aus der Gruppe; seine Haken bleiben erhalten.
       </p>
-      <DesertChoice run={run} level={4} onDone={isWayRun(run) ? () => navigate('/arena?bereich=wuestenwanderung') : undefined} />
+      <DesertChoice run={run} level={4} />
     </Section>
   );
 }
