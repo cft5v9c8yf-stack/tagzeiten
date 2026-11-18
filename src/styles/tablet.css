@@ -109,7 +109,10 @@
     padding: 10px 0 11px;
     border-radius: 26px;
   }
+  /* No bar below: the way on sits at the lower edge, and its own padding keeps
+     it clear of the home indicator (counted once, not also in the offset). */
   .flow-footer {
+    bottom: 0;
     padding-bottom: calc(var(--safe-bottom) + 12px);
   }
 }

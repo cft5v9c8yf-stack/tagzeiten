@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.1',
+    date: '2026-11-18',
+    title: 'Andacht quer: „Weiter“ am unteren Rand',
+    changes: [
+      { area: 'Andacht', text: 'Im Querformat stand der Knopf „Weiter“ ein Stück über dem unteren Rand, und darunter lief der Text durch. Jetzt sitzt er unten, knapp über dem Balken des iPhone.' },
+    ],
+  },
+  {
     version: '1.43.0',
     date: '2026-11-18',
     title: 'Henoch auf dem iPad und quer',
