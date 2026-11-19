@@ -41,6 +41,21 @@ export function StepFlow({
 }) {
   const titleId = useId();
   const titleRef = useRef<HTMLHeadingElement>(null);
+  // While the way on sticks above the bar, the strip below it is filled, so no text shows through.
+  const footerRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
+  const [stuck, setStuck] = useState(false);
+  useEffect(() => {
+    const foot = footerRef.current;
+    const end = endRef.current;
+    if (!foot || !end || typeof IntersectionObserver === 'undefined') return;
+    const offset = parseFloat(getComputedStyle(foot).bottom) || 0;
+    const io = new IntersectionObserver(([e]) => setStuck(!!e && !e.isIntersecting && e.boundingClientRect.top > 0), {
+      rootMargin: `0px 0px ${-Math.round(offset)}px 0px`,
+    });
+    io.observe(end);
+    return () => io.disconnect();
+  }, [current]);
   const rootRef = useRef<HTMLDivElement>(null);
   const shown = useRef(current);
 
@@ -122,7 +137,13 @@ export function StepFlow({
             <span>{step.title}</span>
           </Title>
           {children}
-          {footer && <div className="flow-footer">{footer}</div>}
+          {footer && (
+            <div ref={footerRef} className={stuck ? 'flow-footer is-stuck' : 'flow-footer'}>
+              {footer}
+            </div>
+          )}
+          {/* Just after the way on: out of view while it sticks to the lower edge. */}
+          {footer && <div ref={endRef} className="flow-footer-end" aria-hidden="true" />}
           {current !== null && current > 0 && (
             <div className="flow-back">
               <button type="button" className="btn quiet" onClick={() => onSelect(current - 1)}>

@@ -30,6 +30,8 @@ import { ConfirmRow } from '../../ui/ConfirmRow';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { StepFlow } from '../../ui/StepFlow';
+import { useWide } from '../../app/useMedia';
+import { useDeskHeight } from '../arena/desk';
 
 /** The address of the place in the Arena. */
 export const WELL_SLUG = 'abendbrunnen';
@@ -73,9 +75,17 @@ function NoteField({
       el.style.height = `${el.scrollHeight + 2}px`;
     };
     fit();
-    // Turned, the phone is wider or narrower, and the text needs another height.
+    // Turned, the phone is wider or narrower, and the text needs another height;
+    // so too once the fonts are in, or when the column changes (the desk on the iPad).
     window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
+    void document.fonts?.ready.then(fit);
+    const box = area.current?.parentElement;
+    const ro = box && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
+    if (box) ro?.observe(box);
+    return () => {
+      window.removeEventListener('resize', fit);
+      ro?.disconnect();
+    };
   }, [value]);
   return (
     <div className="field well-note">
@@ -207,6 +217,10 @@ export function WellMeetingPage({ id }: { id: string }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const exportMarkdown = useMarkdownExport();
+  // On the iPad lying: a desk like an entry of the Gebetskammer.
+  const wide = useWide();
+  const deskRef = useRef<HTMLDivElement>(null);
+  useDeskHeight(deskRef);
   const meeting = profile.well.meetings.find((m) => m.id === id);
   const place = `/arena?bereich=${WELL_SLUG}`;
   const archived = meeting?.archivedAt !== undefined;
@@ -268,59 +282,125 @@ export function WellMeetingPage({ id }: { id: string }) {
       )}
       <h2 className="arena-entry-date">Treffen am {dateLabel(meeting.date)}</h2>
       {archived && <p className="small muted">Archiviert am {dateLabel(toKey(new Date(meeting.archivedAt!)))}. Steht im Rückblick.</p>}
-      {last && <LastResolution meeting={last} />}
-      <div className="field arena-meeting">
-        <label htmlFor={dateId}>Treffen am</label>
-        <input
-          id={dateId}
-          type="date"
-          value={meeting.date}
-          onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
-        />
-      </div>
-      <div className="field arena-title">
-        <label htmlFor={titleId}>Titel</label>
-        <input
-          id={titleId}
-          type="text"
-          data-enter="next"
-          enterKeyHint="next"
-          value={meeting.title ?? ''}
-          placeholder="Wie das Treffen in der Übersicht heißen soll"
-          onChange={(e) => {
-            const v = e.target.value;
-            store.updateWellMeeting(id, (m) => {
-              const { title: _, ...rest } = m;
-              return v ? { ...rest, title: v } : rest;
-            });
-          }}
-        />
-      </div>
-      <NoteField
-        single
-        label={WELL_NOTES.resolution}
-        value={meeting.resolution}
-        placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
-        onChange={(resolution) => set({ resolution })}
-      />
-      <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
-      <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
-      <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
-      <div className="field arena-meeting">
-        <label htmlFor={nextId}>{WELL_NOTES.next}</label>
-        <input
-          id={nextId}
-          type="date"
-          value={meeting.next ?? ''}
-          onChange={(e) =>
-            store.updateWellMeeting(id, (m) => {
-              const { next: _, ...rest } = m;
-              return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
-            })
-          }
-        />
-      </div>
-      <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+      {wide ? (
+        <div className="entry-desk" ref={deskRef}>
+          <div className="entry-frame">
+            {last && <LastResolution meeting={last} />}
+            <div className="field arena-meeting">
+              <label htmlFor={dateId}>Treffen am</label>
+              <input
+                id={dateId}
+                type="date"
+                value={meeting.date}
+                onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
+              />
+            </div>
+            <div className="field arena-title">
+              <label htmlFor={titleId}>Titel</label>
+              <input
+                id={titleId}
+                type="text"
+                data-enter="next"
+                enterKeyHint="next"
+                value={meeting.title ?? ''}
+                placeholder="Wie das Treffen in der Übersicht heißen soll"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  store.updateWellMeeting(id, (m) => {
+                    const { title: _, ...rest } = m;
+                    return v ? { ...rest, title: v } : rest;
+                  });
+                }}
+              />
+            </div>
+            <NoteField
+              single
+              label={WELL_NOTES.resolution}
+              value={meeting.resolution}
+              placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+              onChange={(resolution) => set({ resolution })}
+            />
+            <div className="field arena-meeting">
+              <label htmlFor={nextId}>{WELL_NOTES.next}</label>
+              <input
+                id={nextId}
+                type="date"
+                value={meeting.next ?? ''}
+                onChange={(e) =>
+                  store.updateWellMeeting(id, (m) => {
+                    const { next: _, ...rest } = m;
+                    return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
+                  })
+                }
+              />
+            </div>
+          </div>
+          <div className="entry-sheet">
+            <div className="entry-notes">
+              <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
+              <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
+              <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
+              <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {last && <LastResolution meeting={last} />}
+          <div className="field arena-meeting">
+            <label htmlFor={dateId}>Treffen am</label>
+            <input
+              id={dateId}
+              type="date"
+              value={meeting.date}
+              onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
+            />
+          </div>
+          <div className="field arena-title">
+            <label htmlFor={titleId}>Titel</label>
+            <input
+              id={titleId}
+              type="text"
+              data-enter="next"
+              enterKeyHint="next"
+              value={meeting.title ?? ''}
+              placeholder="Wie das Treffen in der Übersicht heißen soll"
+              onChange={(e) => {
+                const v = e.target.value;
+                store.updateWellMeeting(id, (m) => {
+                  const { title: _, ...rest } = m;
+                  return v ? { ...rest, title: v } : rest;
+                });
+              }}
+            />
+          </div>
+          <NoteField
+            single
+            label={WELL_NOTES.resolution}
+            value={meeting.resolution}
+            placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+            onChange={(resolution) => set({ resolution })}
+          />
+          <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
+          <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
+          <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
+          <div className="field arena-meeting">
+            <label htmlFor={nextId}>{WELL_NOTES.next}</label>
+            <input
+              id={nextId}
+              type="date"
+              value={meeting.next ?? ''}
+              onChange={(e) =>
+                store.updateWellMeeting(id, (m) => {
+                  const { next: _, ...rest } = m;
+                  return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
+                })
+              }
+            />
+          </div>
+          <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+        </>
+      )}
     </article>
   );
 }

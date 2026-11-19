@@ -13,6 +13,17 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.9',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer, Andacht ruhiger',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer steht ein Treffen jetzt wie ein Eintrag der Gebetskammer in zwei gleich hohen Kästen: links dein letzter Vorsatz, der Tag, der Titel, dein neuer Vorsatz und das nächste Treffen; rechts ihr Wunsch und die Gebetsanliegen von ihr und von dir, darunter der Hinweis, dass ihr Bekenntnis im Gespräch bleibt.' },
+      { area: 'Abendbrunnen', text: 'Ein langer Vorsatz wird nicht mehr abgeschnitten; das Feld wächst mit, auch wenn sich die Breite ändert.' },
+      { area: 'Andacht', text: 'Auf dem iPad und im Querformat steht „Zeit starten“ in derselben Zeile wie die Wahl zwischen ganzer Ordnung und Kurzform. So bleibt über den Schritten eine Zeile mehr Platz.' },
+      { area: 'Andacht', text: 'Unter dem Knopf „Weiter“ scheint kein Text mehr durch, solange er über der Leiste steht.' },
+    ],
+  },
+  {
     version: '1.43.8',
     date: '2026-11-19',
     title: 'Eisenschmiede quer: zwei gleiche Kästen',
