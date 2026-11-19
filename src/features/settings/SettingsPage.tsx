@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { BackLink } from '../../ui/BackLink';
 import { OutArrow } from '../../ui/OutArrow';
 import { Link, useParams } from 'react-router';
@@ -298,6 +298,7 @@ export function SettingsPage() {
   }, [alias]);
 
   const wide = useWide();
+  const [showInfo, setShowInfo] = useState(false);
   // On the iPad lying the bar of the five sections starts on the line of the two columns.
   const splitRef = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -359,8 +360,25 @@ export function SettingsPage() {
         <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
         {/* Only the arrow and the title; the area's icon stays on its tile. */}
         <h2>{area.title}</h2>
+        {/* On the iPad lying the explanation waits behind a small "i". */}
+        {wide && (
+          <button
+            type="button"
+            className="info-btn more-info-toggle"
+            aria-expanded={showInfo}
+            aria-controls="more-area-info"
+            aria-label={showInfo ? 'Erklärung ausblenden' : 'Erklärung einblenden'}
+            onClick={() => setShowInfo((x) => !x)}
+          >
+            i
+          </button>
+        )}
       </div>
-      <div className="more-area-info">{area.info}</div>
+      {(!wide || showInfo) && (
+        <div className="more-area-info" id="more-area-info">
+          {area.info}
+        </div>
+      )}
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
     </>
   );

@@ -810,6 +810,10 @@
   /* Mehr: the areas on the left, the open one on the right. */
   .more-head .title-row {
     margin-top: 6px;
+    align-items: center;
+  }
+  .more-head .more-info-toggle {
+    margin-left: 6px;
   }
   .more-head .more-area-info {
     font-size: 0.84rem;
