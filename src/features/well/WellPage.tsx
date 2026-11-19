@@ -249,6 +249,71 @@ export function WellMeetingPage({ id }: { id: string }) {
     toast(`Treffen steht wieder im ${WELL_TITLE}`);
     navigate(place);
   };
+  // The parts of a meeting; on the iPad lying they stand as a desk in the order of the talk.
+  const dateField = (
+    <div className="field arena-meeting">
+      <label htmlFor={dateId}>Treffen am</label>
+      <input
+        id={dateId}
+        type="date"
+        value={meeting.date}
+        onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
+      />
+    </div>
+  );
+  const titleField = (
+    <div className="field arena-title">
+      <label htmlFor={titleId}>Titel</label>
+      <input
+        id={titleId}
+        type="text"
+        data-enter="next"
+        enterKeyHint="next"
+        value={meeting.title ?? ''}
+        placeholder="Wie das Treffen heißen soll"
+        onChange={(e) => {
+          const v = e.target.value;
+          store.updateWellMeeting(id, (m) => {
+            const { title: _, ...rest } = m;
+            return v ? { ...rest, title: v } : rest;
+          });
+        }}
+      />
+    </div>
+  );
+  const resolutionField = (
+    <NoteField
+      single
+      label={WELL_NOTES.resolution}
+      value={meeting.resolution}
+      placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+      onChange={(resolution) => set({ resolution })}
+    />
+  );
+  const wishFields = (
+    <>
+      <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
+      <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
+      <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
+    </>
+  );
+  const nextField = (
+    <div className="field arena-meeting">
+      <label htmlFor={nextId}>{WELL_NOTES.next}</label>
+      <input
+        id={nextId}
+        type="date"
+        value={meeting.next ?? ''}
+        onChange={(e) =>
+          store.updateWellMeeting(id, (m) => {
+            const { next: _, ...rest } = m;
+            return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
+          })
+        }
+      />
+    </div>
+  );
+
   return (
     <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
       <div className="entry-bar">
@@ -283,63 +348,20 @@ export function WellMeetingPage({ id }: { id: string }) {
       <h2 className="arena-entry-date">Treffen am {dateLabel(meeting.date)}</h2>
       {archived && <p className="small muted">Archiviert am {dateLabel(toKey(new Date(meeting.archivedAt!)))}. Steht im Rückblick.</p>}
       {wide ? (
-        <div className="entry-desk" ref={deskRef}>
+        <div className="entry-desk well-desk" ref={deskRef}>
           <div className="entry-frame">
+            {dateField}
+            {titleField}
             {last && <LastResolution meeting={last} />}
-            <div className="field arena-meeting">
-              <label htmlFor={dateId}>Treffen am</label>
-              <input
-                id={dateId}
-                type="date"
-                value={meeting.date}
-                onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
-              />
-            </div>
-            <div className="field arena-title">
-              <label htmlFor={titleId}>Titel</label>
-              <input
-                id={titleId}
-                type="text"
-                data-enter="next"
-                enterKeyHint="next"
-                value={meeting.title ?? ''}
-                placeholder="Wie das Treffen in der Übersicht heißen soll"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  store.updateWellMeeting(id, (m) => {
-                    const { title: _, ...rest } = m;
-                    return v ? { ...rest, title: v } : rest;
-                  });
-                }}
-              />
-            </div>
-            <NoteField
-              single
-              label={WELL_NOTES.resolution}
-              value={meeting.resolution}
-              placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
-              onChange={(resolution) => set({ resolution })}
-            />
-            <div className="field arena-meeting">
-              <label htmlFor={nextId}>{WELL_NOTES.next}</label>
-              <input
-                id={nextId}
-                type="date"
-                value={meeting.next ?? ''}
-                onChange={(e) =>
-                  store.updateWellMeeting(id, (m) => {
-                    const { next: _, ...rest } = m;
-                    return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
-                  })
-                }
-              />
+            <div className="well-desk-word">
+              <Verse verse={WELL_VERSES[1]!} />
             </div>
           </div>
           <div className="entry-sheet">
             <div className="entry-notes">
-              <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
-              <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
-              <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
+              {wishFields}
+              {resolutionField}
+              {nextField}
               <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
             </div>
           </div>
@@ -347,57 +369,11 @@ export function WellMeetingPage({ id }: { id: string }) {
       ) : (
         <>
           {last && <LastResolution meeting={last} />}
-          <div className="field arena-meeting">
-            <label htmlFor={dateId}>Treffen am</label>
-            <input
-              id={dateId}
-              type="date"
-              value={meeting.date}
-              onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
-            />
-          </div>
-          <div className="field arena-title">
-            <label htmlFor={titleId}>Titel</label>
-            <input
-              id={titleId}
-              type="text"
-              data-enter="next"
-              enterKeyHint="next"
-              value={meeting.title ?? ''}
-              placeholder="Wie das Treffen in der Übersicht heißen soll"
-              onChange={(e) => {
-                const v = e.target.value;
-                store.updateWellMeeting(id, (m) => {
-                  const { title: _, ...rest } = m;
-                  return v ? { ...rest, title: v } : rest;
-                });
-              }}
-            />
-          </div>
-          <NoteField
-            single
-            label={WELL_NOTES.resolution}
-            value={meeting.resolution}
-            placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
-            onChange={(resolution) => set({ resolution })}
-          />
-          <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
-          <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
-          <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
-          <div className="field arena-meeting">
-            <label htmlFor={nextId}>{WELL_NOTES.next}</label>
-            <input
-              id={nextId}
-              type="date"
-              value={meeting.next ?? ''}
-              onChange={(e) =>
-                store.updateWellMeeting(id, (m) => {
-                  const { next: _, ...rest } = m;
-                  return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
-                })
-              }
-            />
-          </div>
+          {dateField}
+          {titleField}
+          {resolutionField}
+          {wishFields}
+          {nextField}
           <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
         </>
       )}

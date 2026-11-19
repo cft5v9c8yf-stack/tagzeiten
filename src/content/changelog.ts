@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.10',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: in der Reihenfolge des Gesprächs',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Ein Treffen auf dem iPad quer folgt jetzt dem Gespräch. Links stehen der Tag, der Titel und dein Vorsatz vom letzten Mal, unten das Wort von der dreifältigen Schnur aus Prediger 4,12. Rechts folgen ihr Wunsch, die Gebetsanliegen von ihr und von dir, dann dein neuer Vorsatz und das nächste Treffen.' },
+      { area: 'Abendbrunnen', text: 'Die Felder für Wunsch und Gebetsanliegen sind etwas höher, die Datumsfelder sehen aus wie die übrigen Felder, und der Titel fragt kürzer: „Wie das Treffen heißen soll“.' },
+    ],
+  },
+  {
     version: '1.43.9',
     date: '2026-11-19',
     title: 'Abendbrunnen quer, Andacht ruhiger',

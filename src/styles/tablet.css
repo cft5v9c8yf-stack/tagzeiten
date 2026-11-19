@@ -514,6 +514,40 @@
     margin: auto 0 0;
     padding-top: 14px;
   }
+  /* A meeting at the Abendbrunnen: the word of the place at the foot of the frame;
+     the fields of the talk give room to write; dates look like the other fields. */
+  .well-desk .entry-frame > .well-desk-word {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+  .well-desk-word .section-verse {
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: var(--radius-card);
+    background: var(--warm-soft);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .well-desk .entry-notes .well-note textarea:not([data-enter]) {
+    min-height: 76px;
+  }
+  .well-desk .arena-meeting input[type='date'] {
+    display: block;
+    width: 100%;
+    max-width: none;
+    min-height: 40px;
+    padding: 7px 11px;
+    background: var(--sheet);
+    border: 1px solid var(--field-line);
+    border-radius: var(--radius-control);
+    color: inherit;
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  .well-desk .well-last {
+    margin-top: 14px;
+  }
   /* Wachen on the desk: the way on the left, narrow; one question at a time at the right. */
   .entry-desk.refl-desk {
     grid-template-columns: minmax(0, 0.6fr) minmax(0, 1.4fr);
@@ -630,6 +664,9 @@
   .entry-frame input[type='text'] {
     min-height: 36px;
     padding: 5px 10px;
+  }
+  .well-desk .entry-notes .well-note textarea:not([data-enter]) {
+    min-height: 60px;
   }
   .entry-frame .arena-comfort {
     padding: 8px 10px;
