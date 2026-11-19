@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.14',
+    date: '2026-11-19',
+    title: 'Quer: kleinere Köpfe',
+    changes: [
+      { area: 'Henoch', text: 'Im Querformat, auf dem iPad wie auf dem iPhone, ist der Kopf jeder Seite kleiner: weniger Abstand oben, der Titel etwas kleiner. In der Arena stehen Name und Wort eines Ortes enger beieinander, das Wort in einer Zeile. So beginnt der Inhalt weiter oben. Hochkant bleibt es wie bisher.' },
+    ],
+  },
+  {
     version: '1.43.13',
     date: '2026-11-19',
     title: 'Gebetskammer quer: zwei Kästen',

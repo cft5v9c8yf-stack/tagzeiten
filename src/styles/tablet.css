@@ -106,6 +106,42 @@
 
 /* 2. Lying on its side: the bar at the left edge, beside the camera. */
 @media (orientation: landscape) and (min-width: 600px) {
+  /* The head of every page kept small: the screen is low, the content comes first. */
+  header.top {
+    padding-top: 14px;
+    padding-bottom: 2px;
+  }
+  header.top .top-title {
+    font-size: 1.25rem;
+  }
+  header.top .top-line {
+    font-size: 0.82rem;
+  }
+  /* The head of a place in the Arena: title and word close together, the word in one line. */
+  .arena-place > .title-row {
+    margin: 8px 0 4px;
+  }
+  .arena-place .place-title {
+    font-size: 1.15rem;
+  }
+  .arena-place > .section-verse,
+  .arena-well .well-verses .section-verse {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .arena-place > .section-verse blockquote,
+  .arena-place > .section-verse figcaption {
+    display: inline;
+  }
+  .arena-place > .section-verse figcaption {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .arena-place .place-board,
+  .arena-place .well-board {
+    margin-top: 8px;
+  }
   :root {
     --tabbar-height: 0px;
     --rail: 104px;
@@ -209,7 +245,6 @@
      boxes level at the top: the frame on the left (it stays while the page
      scrolls) and the page at the right, its tools inside it. */
   .wrap:has(.entry-desk) header.top {
-    padding-top: 20px;
     padding-bottom: 0;
   }
   .wrap:has(.entry-desk) header.top .top-line {
