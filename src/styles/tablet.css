@@ -181,7 +181,7 @@
     margin-top: 14px;
   }
   /* An entry as a desk, kept plain. Above, small: the word in one line, then
-     one row with the actions, the choice Beten or Wachen and the day. Below, two
+     one row with the choice Beten or Wachen, the actions and the day. Below, two
      boxes level at the top: the frame on the left (it stays while the page
      scrolls) and the page at the right, its tools inside it. */
   .wrap:has(.entry-desk) header.top {
@@ -193,9 +193,9 @@
   }
   .arena-entry:has(.entry-desk) {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-columns: auto auto minmax(0, 1fr);
     align-items: center;
-    column-gap: 16px;
+    column-gap: 12px;
   }
   .arena-entry:has(.entry-desk) > * {
     grid-column: 1 / -1;
@@ -225,15 +225,15 @@
   }
   .arena-entry:has(.entry-desk) > .seg {
     grid-row: 2;
-    grid-column: 2;
+    grid-column: 1;
     margin: 0;
   }
-  /* The actions on the left, where they stand on every page of an entry. */
+  /* On the left: the choice Beten or Wachen, right beside it the actions. */
   .arena-entry:has(.entry-desk) > .entry-bar {
     grid-row: 2;
-    grid-column: 1;
+    grid-column: 2;
     justify-content: flex-start;
-    margin: 0 0 0 -2px;
+    margin: 0;
   }
   .arena-entry:has(.entry-desk) > .entry-export {
     grid-row: 3;

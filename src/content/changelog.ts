@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.4',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: Beten und Wachen vorn',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht die Wahl zwischen Beten und Wachen jetzt ganz links, die Knöpfe des Eintrags gleich daneben.' },
+    ],
+  },
+  {
     version: '1.43.3',
     date: '2026-11-19',
     title: 'Gebetskammer quer: Knöpfe links',
