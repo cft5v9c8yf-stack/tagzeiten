@@ -458,7 +458,10 @@
     padding: 3px 10px;
     font-size: 0.78rem;
   }
-  /* Wachen on the desk: the way on the left, one question at a time at the right. */
+  /* Wachen on the desk: the way on the left, narrow; one question at a time at the right. */
+  .entry-desk.refl-desk {
+    grid-template-columns: minmax(0, 0.6fr) minmax(0, 1.4fr);
+  }
   .refl-desk .entry-frame > .section-verse {
     margin-bottom: 12px;
   }

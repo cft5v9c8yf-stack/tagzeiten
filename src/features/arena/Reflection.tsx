@@ -144,6 +144,7 @@ export function Reflection({ entry }: { entry: ArenaEntry }) {
   const deskRef = useRef<HTMLDivElement>(null);
   useDeskHeight(deskRef);
   const [current, setCurrent] = useState<string>(REFLECTION_CARDS[0]!.id);
+  const [openWide, setOpenWide] = useState<Record<string, boolean>>({});
 
   // The entry is kept as it is written, like every entry; one left empty is cleared away.
   const keep = (a: Record<string, string>, t: readonly string[], i: Record<string, InkStroke[]>) => {
@@ -199,9 +200,13 @@ export function Reflection({ entry }: { entry: ArenaEntry }) {
       value={answers[card.id]!}
       ink={inks[card.id] ?? []}
       onInk={(strokes) => draw(card.id, strokes)}
-      // Beside the way (iPad lying) the question stands open unless it was folded.
-      open={wide ? open[card.id] !== false : !!open[card.id]}
-      onToggle={() => setOpen((o) => ({ ...o, [card.id]: wide ? o[card.id] === false : !o[card.id] }))}
+      // Beside the way (iPad lying) the question is folded; the "i" opens it.
+      open={wide ? !!openWide[card.id] : !!open[card.id]}
+      onToggle={() =>
+        wide
+          ? setOpenWide((o) => ({ ...o, [card.id]: !o[card.id] }))
+          : setOpen((o) => ({ ...o, [card.id]: !o[card.id] }))
+      }
       onChange={(v) => change(card.id, v)}
     />
   );

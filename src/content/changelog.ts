@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.7',
+    date: '2026-11-19',
+    title: 'Wachen quer: mehr Platz zum Schreiben',
+    changes: [
+      { area: 'Gebetskammer', text: 'Bei Wachen auf dem iPad quer ist der Weg links schmaler, und die Erklärung zu jeder Frage ist eingeklappt. Mit dem „i“ neben der Frage holst du sie hervor. So bleibt der Seite rechts mehr Platz.' },
+    ],
+  },
+  {
     version: '1.43.6',
     date: '2026-11-19',
     title: 'Wachen quer: der Weg links, die Frage rechts',
