@@ -588,10 +588,26 @@
   .well-desk .entry-notes .well-note textarea:not([data-enter]) {
     min-height: 76px;
   }
+  /* Safari on the iPad gives a date field a width of its own: kept in its box,
+     the date at the left like the text of the other fields. */
+  .well-desk .arena-meeting input[type='date'] {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    min-width: 0;
+    text-align: left;
+  }
+  .well-desk .arena-meeting input[type='date']::-webkit-date-and-time-value {
+    text-align: left;
+  }
+  .entry-frame,
+  .entry-sheet > .entry-notes {
+    overflow-x: hidden;
+  }
   .well-desk .arena-meeting input[type='date'] {
     display: block;
     width: 100%;
-    max-width: none;
+    max-width: 100%;
     min-height: 40px;
     padding: 7px 11px;
     background: var(--sheet);

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.16',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: Datumsfelder im Kasten',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer ragten die Felder „Treffen am“ und „Nächstes Treffen“ über den Rand ihres Kastens, und unter dem linken Kasten erschien eine Leiste zum Verschieben. Jetzt bleiben sie im Kasten, und das Datum steht links wie der Text der übrigen Felder.' },
+    ],
+  },
+  {
     version: '1.43.15',
     date: '2026-11-19',
     title: 'Wort quer: beide Spalten gleich lang',
