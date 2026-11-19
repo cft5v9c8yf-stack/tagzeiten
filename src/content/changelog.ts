@@ -17,7 +17,7 @@ export const CHANGELOG: readonly Release[] = [
     date: '2026-11-19',
     title: 'Eisenschmiede quer: zwei gleiche Kästen',
     changes: [
-      { area: 'Eisenschmiede', text: 'Auf dem iPad quer stehen die Punkte, die du mit den Brüdern besprechen willst, jetzt in einem eigenen Kasten rechts, gleich hoch wie der Rahmen links. Vorher stand die Liste frei daneben.' },
+      { area: 'Eisenschmiede', text: 'Auf dem iPad quer steht, was du mit den Brüdern besprechen willst, jetzt in einem eigenen Kasten rechts, gleich hoch wie der Rahmen links. Vorher stand die Liste frei daneben.' },
     ],
   },
   {
