@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.3',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: Knöpfe links',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer stehen die Knöpfe eines Eintrags wieder links, wie überall sonst. Der Tag steht dafür rechts in derselben Zeile.' },
+    ],
+  },
+  {
     version: '1.43.2',
     date: '2026-11-19',
     title: 'Gebetskammer quer: ein schlichtes Schreibpult',
