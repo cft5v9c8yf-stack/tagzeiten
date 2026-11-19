@@ -18,6 +18,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
+import { useWide } from '../../app/useMedia';
 import { Reflection } from './Reflection';
 import { ENTRY_CHOICE_VERSE, PRAYER_HEARD_VERSE } from '../../content/reflection';
 import { lastWriting, rememberWriting, type Writing } from './writing';
@@ -600,6 +601,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [confirm, setConfirm] = useState(false);
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
+  const wide = useWide();
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   // A new entry of the Gebetskammer is either written freely (Beten) or as a Reflexion (Wachen); the page follows the choice.
   const [view, setView] = useState<JournalView>(lastView);
@@ -640,6 +642,90 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
     store.deleteArenaEntry(entry.id);
     navigate(home);
   };
+
+  // The parts of an entry. On the iPad lying they stand as a desk: the frame on
+  // the left (it stays while the page scrolls), the page to write on at the right.
+  const heardVerse = chooseKind && (
+    <figure className="section-verse">
+      <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
+      <figcaption>
+        <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
+      </figcaption>
+    </figure>
+  );
+  const frame = (
+    <>
+      {kind === 'forge' && (
+        <div className="field arena-meeting">
+          <label htmlFor={dateId}>Für das Treffen am</label>
+          <input
+            id={dateId}
+            type="date"
+            value={entry.meetingDate ?? ''}
+            onChange={(e) => {
+              const v = e.target.value;
+              update((x) => {
+                const { meetingDate: _, ...rest } = x;
+                return /^\d{4}-\d{2}-\d{2}$/.test(v) ? { ...rest, meetingDate: v } : rest;
+              });
+            }}
+          />
+        </div>
+      )}
+      <div className="field arena-title">
+        <label htmlFor={titleId}>Titel</label>
+        <input
+          id={titleId}
+          type="text"
+          data-enter="next"
+          enterKeyHint="next"
+          value={entry.title ?? ''}
+          placeholder="Wie der Eintrag heißen soll"
+          onChange={(e) => {
+            const v = e.target.value;
+            update((x) => {
+              const { title: _, ...rest } = x;
+              return v ? { ...rest, title: v } : rest;
+            });
+          }}
+        />
+      </div>
+      <LineList
+        label="Bibelstelle"
+        addLabel="Weitere Bibelstelle hinzufügen"
+        placeholder="z. B. Römer 8,37"
+        values={entry.verses}
+        onChange={(verses) => update((e) => ({ ...e, verses }))}
+        render={(v) => (isReference(v) ? <BibleRef reference={v.trim()} /> : null)}
+      />
+      <LineList
+        label="Gebetsanliegen"
+        addLabel="Weiteres Gebetsanliegen hinzufügen"
+        placeholder={place.concernHint}
+        values={entry.concerns}
+        onChange={(concerns) => update((e) => ({ ...e, concerns }))}
+        suggestions={profile.prayer.concerns}
+      />
+    </>
+  );
+  const page = (
+    <>
+      {kind === 'forge' ? (
+        <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
+      ) : (
+        <JournalText entry={entry} update={update} />
+      )}
+    </>
+  );
+  const comfortWord = (
+    <aside className="arena-comfort" aria-label="Zuspruch">
+      {place.comfort.map((c) => (
+        <p key={c.ref}>
+          {c.text} <BibleRef reference={c.ref} />
+        </p>
+      ))}
+    </aside>
+  );
 
   return (
     <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
@@ -711,85 +797,23 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         <Reflection entry={entry} />
       ) : (
         <>
-          {chooseKind && (
-            <figure className="section-verse">
-              <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
-              <figcaption>
-                <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
-              </figcaption>
-            </figure>
+          {wide && !(chooseKind && view === 'reflection') ? (
+            <div className="entry-desk">
+              <div className="entry-frame">
+                {heardVerse}
+                {frame}
+                {comfortWord}
+              </div>
+              <div className="entry-sheet">{page}</div>
+            </div>
+          ) : (
+            <>
+              {heardVerse}
+              {frame}
+              {page}
+              {comfortWord}
+            </>
           )}
-
-      {/* On the iPad lying: the frame on the left, the page to write on at the right. */}
-      <div className="entry-grid">
-      {kind === 'forge' && (
-        <div className="field arena-meeting">
-          <label htmlFor={dateId}>Für das Treffen am</label>
-          <input
-            id={dateId}
-            type="date"
-            value={entry.meetingDate ?? ''}
-            onChange={(e) => {
-              const v = e.target.value;
-              update((x) => {
-                const { meetingDate: _, ...rest } = x;
-                return /^\d{4}-\d{2}-\d{2}$/.test(v) ? { ...rest, meetingDate: v } : rest;
-              });
-            }}
-          />
-        </div>
-      )}
-
-      <div className="field arena-title">
-        <label htmlFor={titleId}>Titel</label>
-        <input
-          id={titleId}
-          type="text"
-          data-enter="next"
-          enterKeyHint="next"
-          value={entry.title ?? ''}
-          placeholder="Wie der Eintrag in der Übersicht heißen soll"
-          onChange={(e) => {
-            const v = e.target.value;
-            update((x) => {
-              const { title: _, ...rest } = x;
-              return v ? { ...rest, title: v } : rest;
-            });
-          }}
-        />
-      </div>
-
-      <LineList
-        label="Bibelstelle"
-        addLabel="Weitere Bibelstelle hinzufügen"
-        placeholder="z. B. Römer 8,37"
-        values={entry.verses}
-        onChange={(verses) => update((e) => ({ ...e, verses }))}
-        render={(v) => (isReference(v) ? <BibleRef reference={v.trim()} /> : null)}
-      />
-      <LineList
-        label="Gebetsanliegen"
-        addLabel="Weiteres Gebetsanliegen hinzufügen"
-        placeholder={place.concernHint}
-        values={entry.concerns}
-        onChange={(concerns) => update((e) => ({ ...e, concerns }))}
-        suggestions={profile.prayer.concerns}
-      />
-
-      {kind === 'forge' ? (
-        <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
-      ) : (
-        <JournalText entry={entry} update={update} />
-      )}
-
-      <aside className="arena-comfort" aria-label="Zuspruch">
-        {place.comfort.map((c) => (
-          <p key={c.ref}>
-            {c.text} <BibleRef reference={c.ref} />
-          </p>
-        ))}
-      </aside>
-      </div>
         </>
       )}
     </article>

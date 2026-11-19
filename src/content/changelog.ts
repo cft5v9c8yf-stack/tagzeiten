@@ -13,6 +13,16 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.2',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: ein schlichtes Schreibpult',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer ist ein neuer Eintrag jetzt schlicht geordnet. Oben steht in einer Zeile das Wort, darunter in einer zweiten Zeile der Tag, die Wahl zwischen Beten und Wachen und die Knöpfe. Gleich darunter beginnen auf gleicher Höhe zwei Kästen: links der Rahmen mit Psalm 65, Titel, Bibelstellen, Anliegen und Zuspruch, rechts die Seite. Beim Schreiben bleibt der Rahmen stehen, und die Seite läuft weiter.' },
+      { area: 'Gebetskammer', text: 'Die Werkzeuge der Handschrift liegen im Kasten der Seite: Stift, Textmarker, Radierer, die Farben und „Rückgängig“ in einer Zeile. Das Papier wählst du unter der Seite.' },
+      { area: 'Arena', text: 'Die Knöpfe über einem Eintrag stehen auf dem iPad in der schlichten Schrift der Knöpfe, nicht mehr groß wie eine Überschrift. Der Titel eines Eintrags fragt kürzer: „Wie der Eintrag heißen soll“.' },
+    ],
+  },
+  {
     version: '1.43.1',
     date: '2026-11-18',
     title: 'Andacht quer: „Weiter“ am unteren Rand',
