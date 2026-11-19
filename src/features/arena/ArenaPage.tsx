@@ -876,6 +876,7 @@ export function ArenaPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const entries = profile.arena;
+  const wide = useWide();
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
@@ -925,18 +926,17 @@ export function ArenaPage() {
   const place = PLACES[kind];
   const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === kind);
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
-  return (
-    <div className="arena arena-place">
-      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
-      <SectionVerse id={place.verse} />
-      <p className="arena-note">{place.note}</p>
-      <button
-        type="button"
-        className="btn primary arena-new"
-        onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
-      >
-        {place.add}
-      </button>
+  const add = (
+    <button
+      type="button"
+      className="btn primary arena-new"
+      onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
+    >
+      {place.add}
+    </button>
+  );
+  const list = (
+    <>
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
@@ -976,6 +976,45 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
+    </>
+  );
+  // Eisenschmiede on the iPad lying: the word above, then two boxes level at top and
+  // bottom: the matters for the next meetings on the left, at the right what the place
+  // is for and the words for the brothers.
+  if (kind === 'forge' && wide) {
+    return (
+      <div className="arena arena-place">
+        <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
+        <SectionVerse id={place.verse} />
+        <div className="place-board">
+          <section className="place-board-main" aria-labelledby="forge-list">
+            <div className="list-head">
+              <h3 id="forge-list">Für die nächsten Treffen</h3>
+            </div>
+            {add}
+            {list}
+          </section>
+          <aside className="place-board-side" aria-label="Zur Eisenschmiede">
+            <p className="arena-note">{place.note}</p>
+            <div className="arena-comfort">
+              {place.comfort.map((c) => (
+                <p key={c.ref}>
+                  {c.text} <BibleRef reference={c.ref} />
+                </p>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="arena arena-place">
+      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
+      <SectionVerse id={place.verse} />
+      <p className="arena-note">{place.note}</p>
+      {add}
+      {list}
     </div>
   );
 }

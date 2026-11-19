@@ -191,7 +191,7 @@
 
 /* 3. iPad lying: two columns where they help. Same query as WIDE_QUERY. */
 @media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) {
-  .wrap:has(.bible-cols, .entry-desk, .more-split, .well-board) {
+  .wrap:has(.bible-cols, .entry-desk, .more-split, .well-board, .place-board) {
     --content-width: 980px;
   }
   /* Wort: the plan on the left, the way of reading open on the right. */
@@ -605,6 +605,56 @@
   }
   .well-board-side .tile-group {
     margin: auto 0 0;
+  }
+  /* Eisenschmiede: two boxes level at top and bottom; the list on the left, what
+     the place is for and the words for the brothers at the right. */
+  .place-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 12px;
+  }
+  .place-board-main,
+  .place-board-side {
+    min-width: 0;
+    padding: 16px 18px 18px;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+  }
+  .place-board-main {
+    min-height: 360px;
+  }
+  .place-board-main .list-head,
+  .place-board-main .list-head h3 {
+    margin-top: 0;
+  }
+  .place-board-main .arena-new {
+    margin: 4px 0 14px;
+  }
+  .place-board-side {
+    display: flex;
+    flex-direction: column;
+  }
+  .place-board-side .arena-note {
+    margin: 0;
+  }
+  .place-board-side {
+    gap: 16px;
+  }
+  .place-board-side .arena-note {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .place-board-side .arena-comfort {
+    margin: auto 0 0;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .place-board-side .arena-comfort p:last-child {
+    margin-bottom: 0;
   }
   /* Wachen on the desk: the way on the left, narrow; one question at a time at the right. */
   .entry-desk.refl-desk {

@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.12',
+    date: '2026-11-19',
+    title: 'Eisenschmiede quer: zwei Kästen',
+    changes: [
+      { area: 'Eisenschmiede', text: 'Auf dem iPad quer steht unter Sprüche 27,17 links „Für die nächsten Treffen“ mit dem Knopf zum Aufschreiben und deinen Anliegen, rechts der Hinweis, wofür die Eisenschmiede da ist, und darunter Galater 6,2 und Matthäus 18,20. Beide Kästen sind gleich hoch.' },
+    ],
+  },
+  {
     version: '1.43.11',
     date: '2026-11-19',
     title: 'Abendbrunnen quer: alles auf einen Blick',
