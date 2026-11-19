@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.13',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: zwei Kästen',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht die Seite der Gebetskammer wie die Eisenschmiede: unter 1. Timotheus 6,12 links „Deine Einträge“ mit dem Knopf für einen neuen Eintrag, rechts der Hinweis, dass Sünde gebetet und nicht notiert wird, darunter 1. Korinther 10,13 und Römer 8,37.' },
+    ],
+  },
+  {
     version: '1.43.12',
     date: '2026-11-19',
     title: 'Eisenschmiede quer: zwei Kästen',

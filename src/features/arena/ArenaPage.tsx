@@ -978,23 +978,23 @@ export function ArenaPage() {
       )}
     </>
   );
-  // Eisenschmiede on the iPad lying: the word above, then two boxes level at top and
-  // bottom: the matters for the next meetings on the left, at the right what the place
-  // is for and the words for the brothers.
-  if (kind === 'forge' && wide) {
+  // Gebetskammer and Eisenschmiede on the iPad lying: the word above, then two boxes
+  // level at top and bottom: the entries on the left, at the right what the place is
+  // for and its words of comfort.
+  if (wide) {
     return (
       <div className="arena arena-place">
         <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
         <SectionVerse id={place.verse} />
         <div className="place-board">
-          <section className="place-board-main" aria-labelledby="forge-list">
+          <section className="place-board-main" aria-labelledby="place-list">
             <div className="list-head">
-              <h3 id="forge-list">Für die nächsten Treffen</h3>
+              <h3 id="place-list">{kind === 'forge' ? 'Für die nächsten Treffen' : 'Deine Einträge'}</h3>
             </div>
             {add}
             {list}
           </section>
-          <aside className="place-board-side" aria-label="Zur Eisenschmiede">
+          <aside className="place-board-side" aria-label={`Zur ${place.title}`}>
             <p className="arena-note">{place.note}</p>
             <div className="arena-comfort">
               {place.comfort.map((c) => (
