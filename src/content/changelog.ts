@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.6',
+    date: '2026-11-19',
+    title: 'Wachen quer: der Weg links, die Frage rechts',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht Wachen jetzt wie Beten am Schreibpult. Links der Weg: Psalm 139, die drei Fragen, der Zuspruch aus 1. Johannes 1,9 und zuletzt „Gewohnheiten festlegen“. Rechts steht die gewählte Frage mit ihrer Seite, getippt oder mit dem Apple Pencil. Die Frage selbst lässt sich mit dem „i“ einklappen, dann bleibt mehr Platz zum Schreiben.' },
+    ],
+  },
+  {
     version: '1.43.5',
     date: '2026-11-19',
     title: 'Gebetskammer quer: beide Kästen gleich lang',

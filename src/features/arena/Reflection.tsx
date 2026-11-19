@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { useToast } from '../../app/Toast';
 import { WELL_COMFORT } from '../../content/well';
 import { REFLECTION_CARDS, REFLECTION_VERSE, type ReflectionCard } from '../../content/reflection';
@@ -11,6 +11,8 @@ import { Segmented } from '../../ui/Choice';
 import type { InkStroke } from '../../domain/ink';
 import { InkPad } from './InkPad';
 import { lastWriting, rememberWriting, type Writing } from './writing';
+import { useWide } from '../../app/useMedia';
+import { useDeskHeight } from './desk';
 import type { ArenaEntry, Rhythm } from '../../domain/model';
 
 const SEEN_KEY = 'tz:reflexion-seen';
@@ -137,6 +139,11 @@ export function Reflection({ entry }: { entry: ArenaEntry }) {
   const [inks, setInks] = useState<Record<string, InkStroke[]>>(entry.inks ?? {});
   const [name, setName] = useState('');
   const [rhythm, setRhythm] = useState<Rhythm>('daily');
+  // On the iPad lying: one question at a time at the right, the way through them on the left.
+  const wide = useWide();
+  const deskRef = useRef<HTMLDivElement>(null);
+  useDeskHeight(deskRef);
+  const [current, setCurrent] = useState<string>(REFLECTION_CARDS[0]!.id);
 
   // The entry is kept as it is written, like every entry; one left empty is cleared away.
   const keep = (a: Record<string, string>, t: readonly string[], i: Record<string, InkStroke[]>) => {
@@ -177,74 +184,120 @@ export function Reflection({ entry }: { entry: ArenaEntry }) {
     setPlans([]);
     toast(fresh.length === plans.length ? 'In die Gewohnheiten übernommen' : 'In die Gewohnheiten übernommen, schon vorhandene bleiben');
   };
-  return (
-    <div className="reflection">
-      <figure className="section-verse">
-        <blockquote>{REFLECTION_VERSE.text}</blockquote>
-        <figcaption>
-          <BibleRef reference={REFLECTION_VERSE.ref} />
-        </figcaption>
-      </figure>
-      {REFLECTION_CARDS.map((card) => (
-        <Question
-          key={card.id}
-          card={card}
-          value={answers[card.id]!}
-          ink={inks[card.id] ?? []}
-          onInk={(strokes) => draw(card.id, strokes)}
-          open={!!open[card.id]}
-          onToggle={() => setOpen((o) => ({ ...o, [card.id]: !o[card.id] }))}
-          onChange={(v) => change(card.id, v)}
-        />
-      ))}
-      <aside className="arena-comfort" aria-label="Zuspruch">
-        <p>
-          {WELL_COMFORT.parts.join(' ')} <BibleRef reference={WELL_COMFORT.ref} />
-        </p>
-      </aside>
-      <section className="reflection-card reflection-habits" aria-labelledby="refl-habits">
-        <h3 id="refl-habits">Gewohnheiten festlegen</h3>
-        <p className="small muted">
-          Was ich mir aus dieser Reflexion vornehme; es kommt in deine Gewohnheiten (Mehr, Gewohnheiten). Du kannst den Eintrag auch ohne Gewohnheit ablegen.
-        </p>
-        <form className="add-habit" onSubmit={plan}>
-          <div className="field">
-            <label htmlFor={nameId}>Name</label>
-            <input id={nameId} type="text" value={name} placeholder="z. B. Psalm mit den Kindern" onChange={(e) => setName(e.target.value)} />
-          </div>
-          <div className="field">
-            <label htmlFor={rhythmId}>Rhythmus</label>
-            <select id={rhythmId} value={rhythm} onChange={(e) => setRhythm(e.target.value as Rhythm)}>
-              {RHYTHM_ORDER.map((r) => (
-                <option key={r} value={r}>
-                  {RHYTHM_LABEL[r]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="btn" disabled={!name.trim()}>
-            Zur Liste hinzufügen
+  const verse = (
+    <figure className="section-verse">
+      <blockquote>{REFLECTION_VERSE.text}</blockquote>
+      <figcaption>
+        <BibleRef reference={REFLECTION_VERSE.ref} />
+      </figcaption>
+    </figure>
+  );
+  const question = (card: (typeof REFLECTION_CARDS)[number]) => (
+    <Question
+      key={card.id}
+      card={card}
+      value={answers[card.id]!}
+      ink={inks[card.id] ?? []}
+      onInk={(strokes) => draw(card.id, strokes)}
+      // Beside the way (iPad lying) the question stands open unless it was folded.
+      open={wide ? open[card.id] !== false : !!open[card.id]}
+      onToggle={() => setOpen((o) => ({ ...o, [card.id]: wide ? o[card.id] === false : !o[card.id] }))}
+      onChange={(v) => change(card.id, v)}
+    />
+  );
+  const comfort = (
+    <aside className="arena-comfort" aria-label="Zuspruch">
+      <p>
+        {WELL_COMFORT.parts.join(' ')} <BibleRef reference={WELL_COMFORT.ref} />
+      </p>
+    </aside>
+  );
+  const habits = (
+    <section className="reflection-card reflection-habits" aria-labelledby="refl-habits">
+      <h3 id="refl-habits">Gewohnheiten festlegen</h3>
+      <p className="small muted">
+        Was ich mir aus dieser Reflexion vornehme; es kommt in deine Gewohnheiten (Mehr, Gewohnheiten). Du kannst den Eintrag auch ohne Gewohnheit ablegen.
+      </p>
+      <form className="add-habit" onSubmit={plan}>
+        <div className="field">
+          <label htmlFor={nameId}>Name</label>
+          <input id={nameId} type="text" value={name} placeholder="z. B. Psalm mit den Kindern" onChange={(e) => setName(e.target.value)} />
+        </div>
+        <div className="field">
+          <label htmlFor={rhythmId}>Rhythmus</label>
+          <select id={rhythmId} value={rhythm} onChange={(e) => setRhythm(e.target.value as Rhythm)}>
+            {RHYTHM_ORDER.map((r) => (
+              <option key={r} value={r}>
+                {RHYTHM_LABEL[r]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" className="btn" disabled={!name.trim()}>
+          Zur Liste hinzufügen
+        </button>
+      </form>
+      {plans.length > 0 && (
+        <>
+          <ul className="reflection-plans">
+            {plans.map((x) => (
+              <li key={x.name}>
+                {x.name} ({RHYTHM_LABEL[x.rhythm]}){' '}
+                <button type="button" className="btn link" aria-label={`„${x.name}“ von der Liste nehmen`} onClick={() => setPlans(plans.filter((y) => y !== x))}>
+                  Entfernen
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" className="btn" onClick={adopt}>
+            In die Gewohnheiten übernehmen
           </button>
-        </form>
-        {plans.length > 0 && (
-          <>
-            <ul className="reflection-plans">
-              {plans.map((x) => (
-                <li key={x.name}>
-                  {x.name} ({RHYTHM_LABEL[x.rhythm]}){' '}
-                  <button type="button" className="btn link" aria-label={`„${x.name}“ von der Liste nehmen`} onClick={() => setPlans(plans.filter((y) => y !== x))}>
-                    Entfernen
+        </>
+      )}
+      {taken.length > 0 && <p className="small">Übernommen: {taken.join(', ')}</p>}
+    </section>
+  );
+
+  if (wide) {
+    const step = REFLECTION_CARDS.find((c) => c.id === current);
+    return (
+      <div className="reflection">
+        <div className="entry-desk refl-desk" ref={deskRef}>
+          <div className="entry-frame">
+            {verse}
+            {/* The way: the questions, the word of forgiveness, then the resolve (rules 1 and 2). */}
+            <ol className="refl-steps" aria-label="Schritte der Reflexion">
+              {REFLECTION_CARDS.map((c, n) => (
+                <li key={c.id}>
+                  <button type="button" aria-current={c.id === current ? 'step' : undefined} onClick={() => setCurrent(c.id)}>
+                    <span className="refl-step-n">{n + 1}</span>
+                    {c.title}
                   </button>
                 </li>
               ))}
-            </ul>
-            <button type="button" className="btn" onClick={adopt}>
-              In die Gewohnheiten übernehmen
-            </button>
-          </>
-        )}
-        {taken.length > 0 && <p className="small">Übernommen: {taken.join(', ')}</p>}
-      </section>
+            </ol>
+            {comfort}
+            <ol className="refl-steps refl-steps-last" start={REFLECTION_CARDS.length + 1} aria-label="Vorsatz">
+              <li>
+                <button type="button" aria-current={current === 'habits' ? 'step' : undefined} onClick={() => setCurrent('habits')}>
+                  <span className="refl-step-n">{REFLECTION_CARDS.length + 1}</span>
+                  Gewohnheiten festlegen
+                </button>
+              </li>
+            </ol>
+          </div>
+          <div className="entry-sheet">{step ? question(step) : habits}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="reflection">
+      {verse}
+      {REFLECTION_CARDS.map(question)}
+      {comfort}
+      {habits}
     </div>
   );
 }
