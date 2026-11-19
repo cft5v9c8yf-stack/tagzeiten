@@ -11,7 +11,7 @@ import { setOpen } from '../../ui/collapseState';
 import { TileGroup, type TileItem } from '../../ui/TileGroup';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
-import { About, ABOUT_INFO } from './About';
+import { About, ABOUT_INFO, AboutMotto } from './About';
 import { AirplaneGuide } from './AirplaneGuide';
 import { GUIDE_INFO, GuideArea } from '../onboarding/GuideArea';
 import { Imprint } from './Imprint';
@@ -380,6 +380,7 @@ export function SettingsPage() {
         </div>
       )}
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
+      {wide && area.slug === 'ueber' && <AboutMotto />}
     </>
   );
   // On the iPad lying: the head of the area across the page, then the areas on the

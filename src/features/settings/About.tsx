@@ -1,7 +1,9 @@
 import { MOTTO, PRIVACY, SOURCES, THE_ARC } from '../../content/about';
 import { TileGroup } from '../../ui/TileGroup';
+import { useWide } from '../../app/useMedia';
 
-export function About() {
+/** The two words over "Über Henoch"; on the iPad lying they stand in the head of the area. */
+export function AboutMotto() {
   return (
     <>
       {MOTTO.map((m) => (
@@ -9,6 +11,15 @@ export function About() {
           {m.text} <span className="muted">({m.ref})</span>
         </blockquote>
       ))}
+    </>
+  );
+}
+
+export function About() {
+  const wide = useWide();
+  return (
+    <>
+      {!wide && <AboutMotto />}
       <TileGroup
         level={4}
         label="Über Henoch"

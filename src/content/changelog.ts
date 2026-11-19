@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.20',
+    date: '2026-11-19',
+    title: 'Mehr quer: alle Bereiche auf einer Linie',
+    changes: [
+      { area: 'Mehr', text: 'Auf dem iPad quer beginnen jetzt in jedem Bereich unter „Mehr“ Leiste, Liste und Kacheln auf einer Linie. Die Überschriften „Der Tag“ und „Die App“ stehen knapp darüber, und bei „Über Henoch“ stehen die beiden Bibelworte im Kopf des Bereichs.' },
+    ],
+  },
+  {
     version: '1.43.19',
     date: '2026-11-19',
     title: 'Mehr quer: Erklärung hinter dem „i“',

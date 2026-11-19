@@ -841,6 +841,7 @@
   }
   .more-split {
     margin-top: 14px;
+    position: relative;
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
     gap: 0 44px;
@@ -850,6 +851,27 @@
     border-left: 1px solid var(--rule);
     padding-left: 44px;
     min-width: 0;
+  }
+  /* A label over the first tiles at the right ("Der Tag", "Die App") stands just above
+     the line, so the tiles start where the list at the left starts. */
+  .more-split > .more-area {
+    position: relative;
+  }
+  .more-split:has(> .more-area > .more-group-title:first-child) {
+    margin-top: 34px;
+  }
+  .more-split > .more-area > .more-group-title:first-child {
+    position: absolute;
+    top: -26px;
+    margin: 0;
+  }
+  .more-split > .more-area > .more-group-title:first-child + * {
+    margin-top: 0;
+  }
+  .more-head .motto {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
   }
   /* The first tiles at the right on the line of the first tile at the left. */
   .more-split > .more-area > :first-child,
