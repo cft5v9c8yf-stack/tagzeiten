@@ -1,4 +1,4 @@
-import { useLayoutEffect, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, type ReactNode } from 'react';
 import { BackLink } from '../../ui/BackLink';
 import { OutArrow } from '../../ui/OutArrow';
 import { Link, useParams } from 'react-router';
@@ -298,6 +298,30 @@ export function SettingsPage() {
   }, [alias]);
 
   const wide = useWide();
+  // On the iPad lying the bar of the five sections starts on the line of the two columns.
+  const splitRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const split = splitRef.current;
+    const bar = document.querySelector<HTMLElement>('nav.tabs');
+    if (!split || !bar) return;
+    const place = () => {
+      const top = split.getBoundingClientRect().top + window.scrollY;
+      const room = window.innerHeight - bar.offsetHeight - 16;
+      document.documentElement.style.setProperty('--rail-top', `${Math.max(16, Math.min(top, room))}px`);
+    };
+    place();
+    // Again once the fonts are in and whenever the page above the columns changes.
+    void document.fonts?.ready.then(place);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(place) : undefined;
+    // Everything above the columns: the banners in main and the head of the area.
+    for (const el of [document.body, ...Array.from(document.querySelectorAll('main > *, .more-wide > *'))]) ro?.observe(el);
+    window.addEventListener('resize', place);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', place);
+      document.documentElement.style.removeProperty('--rail-top');
+    };
+  });
   const tiles = (
     <ul className="more-tiles">
       {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
@@ -353,7 +377,7 @@ export function SettingsPage() {
   return (
     <div className="more-wide">
       <div className="settings more-head">{head}</div>
-      <div className="more-split">
+      <div className="more-split" ref={splitRef}>
         <nav className="more-side" aria-label="Bereiche von Mehr">
           {tiles}
         </nav>

@@ -13,11 +13,11 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
-    version: '1.43.17',
+    version: '1.43.18',
     date: '2026-11-19',
     title: 'Mehr quer: Liste und Kacheln auf einer Linie',
     changes: [
-      { area: 'Mehr', text: 'Auf dem iPad quer steht der Kopf eines Bereichs mit Titel, Erklärung und Bibelwort jetzt über die ganze Breite. Darunter beginnen links die Liste der Bereiche und rechts die Kacheln des geöffneten Bereichs auf einer Linie.' },
+      { area: 'Mehr', text: 'Auf dem iPad quer steht der Kopf eines Bereichs mit Titel, Erklärung und Bibelwort jetzt kompakt über die ganze Breite, das Bibelwort in einer Zeile. Darunter beginnen die Leiste mit den fünf Bereichen, die Liste von Mehr und die Kacheln des geöffneten Bereichs auf einer Linie.' },
     ],
   },
   {

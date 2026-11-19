@@ -227,6 +227,11 @@
 
 /* 3. iPad lying: two columns where they help. Same query as WIDE_QUERY. */
 @media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) {
+  /* Mehr: the bar starts on the line of the list and the tiles (--rail-top, measured). */
+  html:has(.more-split) nav.tabs {
+    top: var(--rail-top, 50%);
+    transform: none;
+  }
   .wrap:has(.bible-cols, .entry-desk, .more-split, .well-board, .place-board) {
     --content-width: 980px;
   }
@@ -806,8 +811,26 @@
   .more-head .title-row {
     margin-top: 6px;
   }
+  .more-head .more-area-info {
+    font-size: 0.84rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .more-head .more-area-info p {
+    margin: 0 0 4px;
+  }
   .more-head .section-verse {
-    margin-bottom: 4px;
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .more-head .section-verse blockquote,
+  .more-head .section-verse figcaption {
+    display: inline;
+  }
+  .more-head .section-verse figcaption {
+    margin-left: 6px;
+    white-space: nowrap;
   }
   .more-split {
     margin-top: 14px;
