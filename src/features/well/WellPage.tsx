@@ -439,94 +439,126 @@ export function WellPage() {
   const name = wifeName(profile.house.wife.name);
   const shown = pinnedFirstMeetings(profile.well.meetings.filter((m) => !isEmptyMeeting(m) && m.archivedAt === undefined));
   const archivedCount = profile.well.meetings.filter((m) => m.archivedAt !== undefined).length;
-  return (
+  // On the iPad lying: the word and the introduction above, then two boxes side by side,
+  // the way of the talk on the left and the meetings with frame and posture on the right.
+  const wide = useWide();
+  const verses = (
     <>
       {WELL_VERSES.map((v) => (
         <Verse key={v.ref} verse={v} />
       ))}
-      <p className="arena-note">{WELL_INTRO}</p>
-
-      <section className="well-section" aria-labelledby="well-steps">
-        <h3 id="well-steps">Ablauf in sechs Schritten</h3>
-        <Steps name={name} />
-      </section>
-
-      <TileGroup
-        level={4}
-        label="Anleitung"
-        items={[
-          {
-            id: 'well.frame',
-            title: 'Rahmen',
-            line: '20 bis 30 Minuten am Abend',
-            icon: 'clock',
-            content: (
-              <>
-                <p>{WELL_FRAME.intro}</p>
-                <ul className="well-list">
-                  {WELL_FRAME.points.map((p) => (
-                    <li key={p.label}>
-                      <strong>{p.label}:</strong> {p.text}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ),
-          },
-          {
-            id: 'well.posture',
-            title: 'Haltung',
-            line: 'Sechs Hinweise fürs Gespräch',
-            icon: 'heart',
-            content: (
+    </>
+  );
+  const steps = (
+    <section className="well-section" aria-labelledby="well-steps">
+      <h3 id="well-steps">Ablauf in sechs Schritten</h3>
+      <Steps name={name} />
+    </section>
+  );
+  const guide = (
+    <TileGroup
+      level={4}
+      label="Anleitung"
+      items={[
+        {
+          id: 'well.frame',
+          title: 'Rahmen',
+          line: '20 bis 30 Minuten am Abend',
+          icon: 'clock',
+          content: (
+            <>
+              <p>{WELL_FRAME.intro}</p>
               <ul className="well-list">
-                {WELL_POSTURE.map((p) => (
+                {WELL_FRAME.points.map((p) => (
                   <li key={p.label}>
                     <strong>{p.label}:</strong> {p.text}
-                    {p.ref && (
-                      <>
-                        {' '}
-                        <BibleRef reference={p.ref} />
-                      </>
-                    )}
                   </li>
                 ))}
               </ul>
-            ),
-          },
-        ]}
-      />
-
-      <section className="well-section" aria-labelledby="well-meetings">
-        <div className="list-head">
-          <h3 id="well-meetings">Treffen</h3>
-          {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
-            <ExportAll
-              label="Alle Treffen exportieren"
-              onMarkdown={() => {
-                downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
-                toast('Treffen als Markdown erstellt');
-              }}
-              onPdf={() => pdf(() => saveMeetingsPdf(profile.well.meetings, store.today()))}
-            />
-          )}
+            </>
+          ),
+        },
+        {
+          id: 'well.posture',
+          title: 'Haltung',
+          line: 'Sechs Hinweise fürs Gespräch',
+          icon: 'heart',
+          content: (
+            <ul className="well-list">
+              {WELL_POSTURE.map((p) => (
+                <li key={p.label}>
+                  <strong>{p.label}:</strong> {p.text}
+                  {p.ref && (
+                    <>
+                      {' '}
+                      <BibleRef reference={p.ref} />
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ),
+        },
+      ]}
+    />
+  );
+  const meetings = (
+    <section className="well-section" aria-labelledby="well-meetings">
+      <div className="list-head">
+        <h3 id="well-meetings">Treffen</h3>
+        {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
+          <ExportAll
+            label="Alle Treffen exportieren"
+            onMarkdown={() => {
+              downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
+              toast('Treffen als Markdown erstellt');
+            }}
+            onPdf={() => pdf(() => saveMeetingsPdf(profile.well.meetings, store.today()))}
+          />
+        )}
+      </div>
+      <button type="button" className="btn primary arena-new" onClick={() => navigate(meetingPath(store.addWellMeeting()))}>
+        Treffen aufschreiben
+      </button>
+      {shown.length > 0 && (
+        <ul className="arena-list">
+          {shown.map((m) => (
+            <ListItem key={m.id} meeting={m} />
+          ))}
+        </ul>
+      )}
+      {archivedCount > 0 && (
+        <p className="small arena-archived">
+          <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
+        </p>
+      )}
+    </section>
+  );
+  if (wide) {
+    return (
+      <>
+        <div className="well-verses">{verses}</div>
+        <p className="arena-note">{WELL_INTRO}</p>
+        <div className="well-board">
+          <div className="well-board-steps">{steps}</div>
+          <div className="well-board-side">
+            {meetings}
+            {guide}
+          </div>
         </div>
-        <button type="button" className="btn primary arena-new" onClick={() => navigate(meetingPath(store.addWellMeeting()))}>
-          Treffen aufschreiben
-        </button>
-        {shown.length > 0 && (
-          <ul className="arena-list">
-            {shown.map((m) => (
-              <ListItem key={m.id} meeting={m} />
-            ))}
-          </ul>
-        )}
-        {archivedCount > 0 && (
-          <p className="small arena-archived">
-            <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
-          </p>
-        )}
-      </section>
+      </>
+    );
+  }
+  return (
+    <>
+      {verses}
+      <p className="arena-note">{WELL_INTRO}</p>
+
+      {steps}
+
+      {guide}
+
+      {meetings}
     </>
   );
 }

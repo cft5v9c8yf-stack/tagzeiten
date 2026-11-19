@@ -191,7 +191,7 @@
 
 /* 3. iPad lying: two columns where they help. Same query as WIDE_QUERY. */
 @media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) {
-  .wrap:has(.bible-cols, .entry-desk, .more-split) {
+  .wrap:has(.bible-cols, .entry-desk, .more-split, .well-board) {
     --content-width: 980px;
   }
   /* Wort: the plan on the left, the way of reading open on the right. */
@@ -547,6 +547,64 @@
   }
   .well-desk .well-last {
     margin-top: 14px;
+  }
+  /* The page of the Abendbrunnen: the two words side by side, the introduction,
+     then two boxes level at top and bottom: the way of the talk on the left, the
+     meetings with frame and posture on the right. */
+  .well-verses {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 28px;
+  }
+  .well-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 16px;
+  }
+  .well-board-steps,
+  .well-board-side {
+    min-width: 0;
+    padding: 16px 18px 18px;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+  }
+  .well-board .well-section {
+    margin: 0;
+  }
+  .well-board .well-section > h3,
+  .well-board .list-head,
+  .well-board .list-head h3 {
+    margin-top: 0;
+  }
+  .well-board .list-head {
+    align-items: center;
+    min-height: 0;
+    margin-bottom: 10px;
+  }
+  /* The head above the boxes kept small: verses and introduction in smaller type. */
+  .well-verses .section-verse {
+    font-size: 0.92rem;
+    line-height: 1.45;
+    margin: 4px 0 10px;
+  }
+  .well-verses + .arena-note {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin: 0;
+  }
+  .well-board .flow-chain {
+    background: var(--sheet);
+  }
+  .well-board-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .well-board-side .tile-group {
+    margin: auto 0 0;
   }
   /* Wachen on the desk: the way on the left, narrow; one question at a time at the right. */
   .entry-desk.refl-desk {

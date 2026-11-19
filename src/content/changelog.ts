@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.11',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: alles auf einen Blick',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer stehen die beiden Bibelworte nebeneinander, darunter die Einführung. Dann folgen zwei gleich hohe Kästen: links der Ablauf in sechs Schritten, rechts die Treffen mit „Treffen aufschreiben“ und darunter Rahmen und Haltung. So siehst du den Weg des Gesprächs und deine Treffen zugleich.' },
+    ],
+  },
+  {
     version: '1.43.10',
     date: '2026-11-19',
     title: 'Abendbrunnen quer: in der Reihenfolge des Gesprächs',
