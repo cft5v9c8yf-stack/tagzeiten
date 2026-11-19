@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.15',
+    date: '2026-11-19',
+    title: 'Wort quer: beide Spalten gleich lang',
+    changes: [
+      { area: 'Wort', text: 'Auf dem iPad quer steht „Leseplan einstellen“ jetzt links unter „Danach“, und „So wird gelesen“ rechts ist etwas kleiner gesetzt. Beide Spalten enden auf einer Linie.' },
+    ],
+  },
+  {
     version: '1.43.14',
     date: '2026-11-19',
     title: 'Quer: kleinere Köpfe',

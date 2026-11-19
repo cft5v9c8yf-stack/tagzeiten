@@ -100,11 +100,6 @@ export function BiblePage() {
       <Section id="bible.next" title="Danach" className="block block-plain">
         <NextPortions date={date} />
       </Section>
-      </div>
-      <div className="bible-col">
-      <Section id="bible.method" title="So wird gelesen" defaultOpen={wide} className="block block-warm">
-        <MethodHelpBody />
-      </Section>
       <Section
         id="bible.plan"
         title="Leseplan einstellen"
@@ -113,6 +108,11 @@ export function BiblePage() {
         className="block block-quiet"
       >
         <PlanSettings />
+      </Section>
+      </div>
+      <div className="bible-col">
+      <Section id="bible.method" title="So wird gelesen" defaultOpen={wide} className="block block-warm">
+        <MethodHelpBody />
       </Section>
       </div>
       </div>

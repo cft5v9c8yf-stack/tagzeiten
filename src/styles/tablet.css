@@ -240,6 +240,27 @@
   .bible-cols > .bible-col > .block:first-child {
     margin-top: 14px;
   }
+  /* The way of reading beside the plan: in the size of a note, so both columns end close. */
+  .bible-cols .block-warm .fold-body,
+  .bible-cols .block-warm .fold-body * {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  /* Both columns end on one line: the last box of each column takes up the rest. */
+  .bible-cols {
+    align-items: stretch;
+  }
+  .bible-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .bible-col > .block:last-child {
+    flex: 1;
+    margin-bottom: 14px;
+  }
+  .bible-cols .block-warm .fold-body li + li {
+    margin-top: 2px;
+  }
   /* An entry as a desk, kept plain. Above, small: the word in one line, then
      one row with the actions, the choice Beten or Wachen and the day. Below, two
      boxes level at the top: the frame on the left (it stays while the page
