@@ -803,7 +803,14 @@
     overflow-y: auto;
   }
   /* Mehr: the areas on the left, the open one on the right. */
+  .more-head .title-row {
+    margin-top: 6px;
+  }
+  .more-head .section-verse {
+    margin-bottom: 4px;
+  }
   .more-split {
+    margin-top: 14px;
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
     gap: 0 44px;
@@ -814,11 +821,17 @@
     padding-left: 44px;
     min-width: 0;
   }
+  /* The first tiles at the right on the line of the first tile at the left. */
+  .more-split > .more-area > :first-child,
+  .more-split > .more-area > :first-child > :first-child,
+  .more-split > .more-area > :first-child .fold-section:first-child {
+    margin-top: 0;
+  }
   .more-side .more-tiles {
     grid-template-columns: 1fr;
     grid-auto-rows: auto;
     gap: 6px;
-    margin-top: 4px;
+    margin-top: 0;
   }
   .more-side .more-tile {
     min-height: 0;

@@ -329,8 +329,8 @@ export function SettingsPage() {
     );
   }
 
-  const open = (
-    <div className="settings more-area">
+  const head = (
+    <>
       <div className="title-row">
         <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
         {/* Only the arrow and the title; the area's icon stays on its tile. */}
@@ -338,17 +338,27 @@ export function SettingsPage() {
       </div>
       <div className="more-area-info">{area.info}</div>
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
-      {area.body()}
-    </div>
+    </>
   );
-  // On the iPad lying: the areas stay on the left, as in the iPad's own settings.
-  if (!wide) return open;
+  // On the iPad lying: the head of the area across the page, then the areas on the
+  // left and the open one at the right, both starting on one line.
+  if (!wide) {
+    return (
+      <div className="settings more-area">
+        {head}
+        {area.body()}
+      </div>
+    );
+  }
   return (
-    <div className="more-split">
-      <nav className="more-side" aria-label="Bereiche von Mehr">
-        {tiles}
-      </nav>
-      {open}
+    <div className="more-wide">
+      <div className="settings more-head">{head}</div>
+      <div className="more-split">
+        <nav className="more-side" aria-label="Bereiche von Mehr">
+          {tiles}
+        </nav>
+        <div className="settings more-area">{area.body()}</div>
+      </div>
     </div>
   );
 }
