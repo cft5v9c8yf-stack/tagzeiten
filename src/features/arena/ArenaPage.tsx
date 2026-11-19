@@ -602,6 +602,20 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const wide = useWide();
+  // The desk takes exactly the rest of the screen, so both boxes end on one line;
+  // what grows on the page scrolls inside its box.
+  const deskRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const desk = deskRef.current;
+    if (!desk) return;
+    const fit = () => {
+      const top = desk.getBoundingClientRect().top + window.scrollY;
+      desk.style.setProperty('--desk-height', `${Math.max(420, window.innerHeight - top - 20)}px`);
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  });
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   // A new entry of the Gebetskammer is either written freely (Beten) or as a Reflexion (Wachen); the page follows the choice.
   const [view, setView] = useState<JournalView>(lastView);
@@ -798,7 +812,7 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
       ) : (
         <>
           {wide && !(chooseKind && view === 'reflection') ? (
-            <div className="entry-desk">
+            <div className="entry-desk" ref={deskRef}>
               <div className="entry-frame">
                 {heardVerse}
                 {frame}

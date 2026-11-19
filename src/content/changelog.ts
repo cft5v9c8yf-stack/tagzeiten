@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.5',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: beide Kästen gleich lang',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer füllen die beiden Kästen eines Eintrags genau den Bildschirm und enden unten auf einer Linie, wie viel du auch schreibst. Wird die Seite länger, blätterst du sie im Kasten weiter: mit dem Finger, während der Apple Pencil schreibt. Der Zuspruch steht links unten im Rahmen.' },
+      { area: 'Gebetskammer', text: 'In der Zeile darüber stehen links zuerst die Knöpfe, dann die Wahl zwischen Beten und Wachen.' },
+    ],
+  },
+  {
     version: '1.43.4',
     date: '2026-11-19',
     title: 'Gebetskammer quer: Beten und Wachen vorn',

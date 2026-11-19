@@ -181,7 +181,7 @@
     margin-top: 14px;
   }
   /* An entry as a desk, kept plain. Above, small: the word in one line, then
-     one row with the choice Beten or Wachen, the actions and the day. Below, two
+     one row with the actions, the choice Beten or Wachen and the day. Below, two
      boxes level at the top: the frame on the left (it stays while the page
      scrolls) and the page at the right, its tools inside it. */
   .wrap:has(.entry-desk) header.top {
@@ -225,13 +225,13 @@
   }
   .arena-entry:has(.entry-desk) > .seg {
     grid-row: 2;
-    grid-column: 1;
+    grid-column: 2;
     margin: 0;
   }
-  /* On the left: the choice Beten or Wachen, right beside it the actions. */
+  /* On the left the actions, where they stand on every entry; beside them the choice. */
   .arena-entry:has(.entry-desk) > .entry-bar {
     grid-row: 2;
-    grid-column: 2;
+    grid-column: 1;
     justify-content: flex-start;
     margin: 0;
   }
@@ -265,12 +265,16 @@
   .entry-desk {
     display: grid;
     grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    grid-template-rows: 100%;
     gap: 0 20px;
-    align-items: start;
+    height: var(--desk-height, calc(100vh - 240px));
   }
-  /* Both boxes alike: the same paper, edge and corners, level at the top. */
+  /* Both boxes alike: the same paper, edge and corners, level at top and bottom.
+     What does not fit scrolls inside its box. */
   .entry-frame,
   .entry-sheet .arena-text {
+    min-height: 0;
+    height: 100%;
     margin: 0;
     padding: 16px 18px 18px;
     background: var(--sheet);
@@ -278,21 +282,97 @@
     border-radius: 18px;
   }
   .entry-frame {
-    position: sticky;
-    top: calc(var(--safe-top) + 12px);
-    max-height: calc(100vh - var(--safe-top) - 24px);
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
+  }
+  .entry-frame > * {
+    flex: none;
   }
   .entry-frame > :first-child {
     margin-top: 0;
   }
   .entry-frame > .section-verse {
-    margin-bottom: 14px;
-    font-size: 0.92rem;
+    margin-bottom: 4px;
+    font-size: 0.88rem;
+    line-height: 1.45;
   }
+  /* Close set, so the frame fits the box on the smaller iPad as well. */
+  .entry-frame .field,
+  .entry-frame fieldset {
+    margin-top: 10px;
+  }
+  .entry-frame legend,
+  .entry-frame .field label {
+    margin-bottom: 3px;
+    font-size: 0.8rem;
+  }
+  .entry-frame input[type='text'] {
+    min-height: 40px;
+    padding: 7px 11px;
+    font-size: 0.95rem;
+  }
+  .entry-frame .arena-add {
+    margin-top: 2px;
+  }
+  /* The comfort at the foot of the frame. */
   .entry-frame .arena-comfort {
-    margin: 16px 0 0;
-    font-size: 0.9rem;
+    margin: auto 0 0;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+  .entry-frame .arena-comfort p {
+    margin: 0 0 4px;
+  }
+  .entry-frame .arena-comfort p:last-child {
+    margin-bottom: 0;
+  }
+  .entry-frame > :has(+ .arena-comfort) {
+    margin-bottom: 16px;
+  }
+  .entry-sheet {
+    min-height: 0;
+  }
+  .entry-sheet .arena-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .entry-sheet .arena-text > * {
+    flex: none;
+  }
+  .entry-sheet .arena-text > .seg {
+    align-self: flex-start;
+  }
+  /* Typed: the field fills the box and scrolls in itself. */
+  .entry-sheet .arena-text > .field {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+  .entry-sheet .arena-text textarea {
+    flex: 1;
+    min-height: 0;
+    height: auto !important;
+    overflow-y: auto;
+  }
+  /* Handwritten: the page fills the box; the finger turns it, the pen writes. */
+  .entry-sheet .ink {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .entry-sheet .ink > * {
+    flex: none;
+  }
+  .entry-sheet .ink > .ink-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   /* The page: no heading of its own, the box says enough. */
   .entry-sheet .arena-text > legend {
@@ -307,7 +387,6 @@
     margin: 0 0 10px;
   }
   .entry-sheet .arena-text textarea {
-    min-height: 520px;
     padding: 4px 2px;
     border: 0;
     border-top: 1px solid var(--rule);
@@ -365,6 +444,10 @@
   }
   .ink-foot .ink-hint {
     margin: 0;
+    max-width: 30ch;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.35;
   }
   .ink-foot .seg {
     margin: 0;
@@ -401,5 +484,30 @@
     background: var(--gold-soft);
     border-color: transparent;
     box-shadow: inset 0 0 0 1.5px var(--gold);
+  }
+}
+
+/* The smaller iPad lying (768 high): the frame a little closer still, so it fits. */
+@media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) and (max-height: 790px) {
+  .entry-frame,
+  .entry-sheet .arena-text {
+    padding: 12px 14px 14px;
+  }
+  .entry-frame .field,
+  .entry-frame fieldset {
+    margin-top: 6px;
+  }
+  .entry-frame input[type='text'] {
+    min-height: 36px;
+    padding: 5px 10px;
+  }
+  .entry-frame .arena-comfort {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    line-height: 1.38;
+  }
+  .entry-frame > .section-verse {
+    font-size: 0.84rem;
+    line-height: 1.38;
   }
 }
