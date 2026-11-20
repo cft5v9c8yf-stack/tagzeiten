@@ -204,6 +204,26 @@ describe('Store', () => {
     await expect(store.importBackup('{"format":"tagzeiten","version":99}')).rejects.toThrow('neueren Version');
   });
 
+  it('merges a backup from another device instead of replacing what is here', async () => {
+    const ipad = freshStore(new Date(2026, 8, 26, 5, 0)).store;
+    await ipad.load();
+    ipad.updateDay('2026-09-24', (d) => ({ ...d, morning: { ...d.morning, verse: 'Ps 23,1' } }));
+    ipad.updateDay('2026-09-25', (d) => ({ ...d, morning: { ...d.morning, verse: 'Joh 3,16' } }));
+    const json = JSON.stringify(await ipad.exportBackup());
+
+    const { db, store } = freshStore();
+    await store.load();
+    store.updateDay('2026-09-25', (d) => ({ ...d, morning: { ...d.morning, verse: 'Ps 37,7' } }));
+    store.updateDay('2026-09-23', (d) => ({ ...d, morning: { ...d.morning, verse: 'Röm 8,28' } }));
+    expect(await store.previewMerge(json)).toEqual({ added: 1, changed: 1, same: 0 });
+    expect(await store.mergeBackup(json)).toEqual({ added: 1, changed: 1, same: 0 });
+    expect(store.getDay('2026-09-23').morning.verse).toBe('Röm 8,28');
+    expect(store.getDay('2026-09-24').morning.verse).toBe('Ps 23,1');
+    // The iPad's day was changed later (its clock is a day ahead).
+    expect(store.getDay('2026-09-25').morning.verse).toBe('Joh 3,16');
+    expect((await db.days.toArray()).map((d) => d.date).sort()).toEqual(['2026-09-23', '2026-09-24', '2026-09-25']);
+  });
+
   it('stashes unsaved changes synchronously when suspended', async () => {
     const journal = memoryJournal();
     const db = new TagzeitenDB(`test-${++n}`);

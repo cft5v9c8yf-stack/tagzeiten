@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.0',
+    date: '2026-11-20',
+    title: 'Sicherung zusammenführen',
+    changes: [
+      { area: 'Deine Daten', text: 'Eine Sicherung lässt sich jetzt auch zusammenführen, statt alles zu ersetzen. So nimmst du Einträge vom iPhone aufs iPad und zurück, ohne dass etwas verloren geht: Steht ein Tag oder Eintrag auf beiden Geräten, gilt die zuletzt geänderte Fassung, im Leseplan die weitere Stelle. Vorher siehst du, wie viel neu dazukommt. Was du auf einem Gerät gelöscht hast, kann vom anderen zurückkommen.' },
+    ],
+  },
+  {
     version: '1.43.21',
     date: '2026-11-20',
     title: 'Beim Schreiben ohne Leiste',
