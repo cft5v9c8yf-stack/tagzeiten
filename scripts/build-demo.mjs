@@ -23,7 +23,10 @@ css = css.replace(/url\(\/?\.?\/?(?:assets\/)?([^)]+\.woff2)\)/g, (_, f) => {
   const data = readFileSync(join(dir, 'assets', f.replace(/^.*\//, ''))).toString('base64');
   return `url(data:font/woff2;base64,${data})`;
 });
-const js = readFileSync(join(dir, jsSrc), 'utf8').replace(/<\/script/gi, '<\\/script');
+const js = readFileSync(join(dir, jsSrc), 'utf8').replace(/<\/script/gi, '<\\/script')
+  // pdf-lib holds the replacement character on purpose; written as an escape, the
+  // same in JavaScript, so the page has no stray U+FFFD (the artifact upload refuses it).
+  .replace(/\uFFFD/g, '\\uFFFD');
 const themeScript = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? '';
 
 // The Sunday preview: the same app with its clock on the coming Sunday (today, if it is
