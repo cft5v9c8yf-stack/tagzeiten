@@ -1,6 +1,7 @@
 import { WordSwitch } from '../../ui/WordSwitch';
 import { useEffect } from 'react';
 import { useSelectedDate } from '../../app/useSelectedDate';
+import { useWide } from '../../app/useMedia';
 import { useProfile, useStore, useStoreVersion } from '../../data/hooks';
 import { getPlan, ownAmounts, portionLabel, sectionOf } from '../../domain/readingPlan';
 import { Section } from '../../ui/Section';
@@ -60,12 +61,17 @@ export function BiblePage() {
   useEffect(() => {
     if (isToday) store.ensureTodayReading();
   }, [store, isToday]);
+  // Beside the plan, the way of reading stands open, unless it was closed here.
+  const wide = useWide();
 
   return (
     <div className="bible-page">
       <WordSwitch current="bible" />
       <SectionVerse id="plan" />
       {/* Marked as read here, or through the habit "Bibel lesen" on Today: the same tick. */}
+      {/* On the iPad lying: the plan on the left, the way of reading on the right. */}
+      <div className="bible-cols">
+      <div className="bible-col">
       <Section
         id="bible.today"
         title={
@@ -94,9 +100,6 @@ export function BiblePage() {
       <Section id="bible.next" title="Danach" className="block block-plain">
         <NextPortions date={date} />
       </Section>
-      <Section id="bible.method" title="So wird gelesen" defaultOpen={false} className="block block-warm">
-        <MethodHelpBody />
-      </Section>
       <Section
         id="bible.plan"
         title="Leseplan einstellen"
@@ -106,6 +109,13 @@ export function BiblePage() {
       >
         <PlanSettings />
       </Section>
+      </div>
+      <div className="bible-col">
+      <Section id="bible.method" title="So wird gelesen" defaultOpen={wide} className="block block-warm">
+        <MethodHelpBody />
+      </Section>
+      </div>
+      </div>
     </div>
   );
 }

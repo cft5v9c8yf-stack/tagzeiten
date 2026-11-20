@@ -13,6 +13,187 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.21',
+    date: '2026-11-20',
+    title: 'Beim Schreiben ohne Leiste',
+    changes: [
+      { area: 'Henoch', text: 'Solange du in ein Feld schreibst, tritt die Leiste mit den fünf Bereichen zur Seite. Auf dem iPhone stand sie sonst über der Tastatur mitten im Text. Verlässt du das Feld, ist sie wieder da.' },
+    ],
+  },
+  {
+    version: '1.43.20',
+    date: '2026-11-19',
+    title: 'Mehr quer: alle Bereiche auf einer Linie',
+    changes: [
+      { area: 'Mehr', text: 'Auf dem iPad quer beginnen jetzt in jedem Bereich unter „Mehr“ Leiste, Liste und Kacheln auf einer Linie. Die Überschriften „Der Tag“ und „Die App“ stehen knapp darüber, und bei „Über Henoch“ stehen die beiden Bibelworte im Kopf des Bereichs.' },
+    ],
+  },
+  {
+    version: '1.43.19',
+    date: '2026-11-19',
+    title: 'Mehr quer: Erklärung hinter dem „i“',
+    changes: [
+      { area: 'Mehr', text: 'Auf dem iPad quer ist die Erklärung eines Bereichs unter „Mehr“ eingeklappt. Ein kleines „i“ neben dem Titel blendet sie ein und wieder aus. So beginnen die Kacheln weiter oben.' },
+    ],
+  },
+  {
+    version: '1.43.18',
+    date: '2026-11-19',
+    title: 'Mehr quer: Liste und Kacheln auf einer Linie',
+    changes: [
+      { area: 'Mehr', text: 'Auf dem iPad quer steht der Kopf eines Bereichs mit Titel, Erklärung und Bibelwort jetzt kompakt über die ganze Breite, das Bibelwort in einer Zeile. Darunter beginnen die Leiste mit den fünf Bereichen, die Liste von Mehr und die Kacheln des geöffneten Bereichs auf einer Linie.' },
+    ],
+  },
+  {
+    version: '1.43.16',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: Datumsfelder im Kasten',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer ragten die Felder „Treffen am“ und „Nächstes Treffen“ über den Rand ihres Kastens, und unter dem linken Kasten erschien eine Leiste zum Verschieben. Jetzt bleiben sie im Kasten, und das Datum steht links wie der Text der übrigen Felder.' },
+    ],
+  },
+  {
+    version: '1.43.15',
+    date: '2026-11-19',
+    title: 'Wort quer: beide Spalten gleich lang',
+    changes: [
+      { area: 'Wort', text: 'Auf dem iPad quer steht „Leseplan einstellen“ jetzt links unter „Danach“, und „So wird gelesen“ rechts ist etwas kleiner gesetzt. Beide Spalten enden auf einer Linie.' },
+    ],
+  },
+  {
+    version: '1.43.14',
+    date: '2026-11-19',
+    title: 'Quer: kleinere Köpfe',
+    changes: [
+      { area: 'Henoch', text: 'Im Querformat, auf dem iPad wie auf dem iPhone, ist der Kopf jeder Seite kleiner: weniger Abstand oben, der Titel etwas kleiner. In der Arena stehen Name und Wort eines Ortes enger beieinander, das Wort in einer Zeile. So beginnt der Inhalt weiter oben. Hochkant bleibt es wie bisher.' },
+    ],
+  },
+  {
+    version: '1.43.13',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: zwei Kästen',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht die Seite der Gebetskammer wie die Eisenschmiede: unter 1. Timotheus 6,12 links „Deine Einträge“ mit dem Knopf für einen neuen Eintrag, rechts der Hinweis, dass Sünde gebetet und nicht notiert wird, darunter 1. Korinther 10,13 und Römer 8,37.' },
+    ],
+  },
+  {
+    version: '1.43.12',
+    date: '2026-11-19',
+    title: 'Eisenschmiede quer: zwei Kästen',
+    changes: [
+      { area: 'Eisenschmiede', text: 'Auf dem iPad quer steht unter Sprüche 27,17 links „Für die nächsten Treffen“ mit dem Knopf zum Aufschreiben und deinen Anliegen, rechts der Hinweis, wofür die Eisenschmiede da ist, und darunter Galater 6,2 und Matthäus 18,20. Beide Kästen sind gleich hoch.' },
+    ],
+  },
+  {
+    version: '1.43.11',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: alles auf einen Blick',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer stehen die beiden Bibelworte nebeneinander, darunter die Einführung. Dann folgen zwei gleich hohe Kästen: links der Ablauf in sechs Schritten, rechts die Treffen mit „Treffen aufschreiben“ und darunter Rahmen und Haltung. So siehst du den Weg des Gesprächs und deine Treffen zugleich.' },
+    ],
+  },
+  {
+    version: '1.43.10',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer: in der Reihenfolge des Gesprächs',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Ein Treffen auf dem iPad quer folgt jetzt dem Gespräch. Links stehen der Tag, der Titel und dein Vorsatz vom letzten Mal, unten das Wort von der dreifältigen Schnur aus Prediger 4,12. Rechts folgen ihr Wunsch, die Gebetsanliegen von ihr und von dir, dann dein neuer Vorsatz und das nächste Treffen.' },
+      { area: 'Abendbrunnen', text: 'Die Felder für Wunsch und Gebetsanliegen sind etwas höher, die Datumsfelder sehen aus wie die übrigen Felder, und der Titel fragt kürzer: „Wie das Treffen heißen soll“.' },
+    ],
+  },
+  {
+    version: '1.43.9',
+    date: '2026-11-19',
+    title: 'Abendbrunnen quer, Andacht ruhiger',
+    changes: [
+      { area: 'Abendbrunnen', text: 'Auf dem iPad quer steht ein Treffen jetzt wie ein Eintrag der Gebetskammer in zwei gleich hohen Kästen: links dein letzter Vorsatz, der Tag, der Titel, dein neuer Vorsatz und das nächste Treffen; rechts ihr Wunsch und die Gebetsanliegen von ihr und von dir, darunter der Hinweis, dass ihr Bekenntnis im Gespräch bleibt.' },
+      { area: 'Abendbrunnen', text: 'Ein langer Vorsatz wird nicht mehr abgeschnitten; das Feld wächst mit, auch wenn sich die Breite ändert.' },
+      { area: 'Andacht', text: 'Auf dem iPad und im Querformat steht „Zeit starten“ in derselben Zeile wie die Wahl zwischen ganzer Ordnung und Kurzform. So bleibt über den Schritten eine Zeile mehr Platz.' },
+      { area: 'Andacht', text: 'Unter dem Knopf „Weiter“ scheint kein Text mehr durch, solange er über der Leiste steht.' },
+    ],
+  },
+  {
+    version: '1.43.8',
+    date: '2026-11-19',
+    title: 'Eisenschmiede quer: zwei gleiche Kästen',
+    changes: [
+      { area: 'Eisenschmiede', text: 'Auf dem iPad quer steht, was du mit den Brüdern besprechen willst, jetzt in einem eigenen Kasten rechts, gleich hoch wie der Rahmen links. Vorher stand die Liste frei daneben.' },
+    ],
+  },
+  {
+    version: '1.43.7',
+    date: '2026-11-19',
+    title: 'Wachen quer: mehr Platz zum Schreiben',
+    changes: [
+      { area: 'Gebetskammer', text: 'Bei Wachen auf dem iPad quer ist der Weg links schmaler, und die Erklärung zu jeder Frage ist eingeklappt. Mit dem „i“ neben der Frage holst du sie hervor. So bleibt der Seite rechts mehr Platz.' },
+    ],
+  },
+  {
+    version: '1.43.6',
+    date: '2026-11-19',
+    title: 'Wachen quer: der Weg links, die Frage rechts',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht Wachen jetzt wie Beten am Schreibpult. Links der Weg: Psalm 139, die drei Fragen, der Zuspruch aus 1. Johannes 1,9 und zuletzt „Gewohnheiten festlegen“. Rechts steht die gewählte Frage mit ihrer Seite, getippt oder mit dem Apple Pencil. Die Frage selbst lässt sich mit dem „i“ einklappen, dann bleibt mehr Platz zum Schreiben.' },
+    ],
+  },
+  {
+    version: '1.43.5',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: beide Kästen gleich lang',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer füllen die beiden Kästen eines Eintrags genau den Bildschirm und enden unten auf einer Linie, wie viel du auch schreibst. Wird die Seite länger, blätterst du sie im Kasten weiter: mit dem Finger, während der Apple Pencil schreibt. Der Zuspruch steht links unten im Rahmen.' },
+      { area: 'Gebetskammer', text: 'In der Zeile darüber stehen links zuerst die Knöpfe, dann die Wahl zwischen Beten und Wachen.' },
+    ],
+  },
+  {
+    version: '1.43.4',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: Beten und Wachen vorn',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht die Wahl zwischen Beten und Wachen jetzt ganz links, die Knöpfe des Eintrags gleich daneben.' },
+    ],
+  },
+  {
+    version: '1.43.3',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: Knöpfe links',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer stehen die Knöpfe eines Eintrags wieder links, wie überall sonst. Der Tag steht dafür rechts in derselben Zeile.' },
+    ],
+  },
+  {
+    version: '1.43.2',
+    date: '2026-11-19',
+    title: 'Gebetskammer quer: ein schlichtes Schreibpult',
+    changes: [
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer ist ein neuer Eintrag jetzt schlicht geordnet. Oben steht in einer Zeile das Wort, darunter in einer zweiten Zeile der Tag, die Wahl zwischen Beten und Wachen und die Knöpfe. Gleich darunter beginnen auf gleicher Höhe zwei Kästen: links der Rahmen mit Psalm 65, Titel, Bibelstellen, Anliegen und Zuspruch, rechts die Seite. Beim Schreiben bleibt der Rahmen stehen, und die Seite läuft weiter.' },
+      { area: 'Gebetskammer', text: 'Die Werkzeuge der Handschrift liegen im Kasten der Seite: Stift, Textmarker, Radierer, die Farben und „Rückgängig“ in einer Zeile. Das Papier wählst du unter der Seite.' },
+      { area: 'Arena', text: 'Die Knöpfe über einem Eintrag stehen auf dem iPad in der schlichten Schrift der Knöpfe, nicht mehr groß wie eine Überschrift. Der Titel eines Eintrags fragt kürzer: „Wie der Eintrag heißen soll“.' },
+    ],
+  },
+  {
+    version: '1.43.1',
+    date: '2026-11-18',
+    title: 'Andacht quer: „Weiter“ am unteren Rand',
+    changes: [
+      { area: 'Andacht', text: 'Im Querformat stand der Knopf „Weiter“ ein Stück über dem unteren Rand, und darunter lief der Text durch. Jetzt sitzt er unten, knapp über dem Balken des iPhone.' },
+    ],
+  },
+  {
+    version: '1.43.0',
+    date: '2026-11-18',
+    title: 'Henoch auf dem iPad und quer',
+    changes: [
+      { area: 'Henoch', text: 'Auf dem iPad hat jede Seite mehr Platz: Die Spalte ist breiter, die Schrift etwas größer, und über dem Titel ist mehr Luft.' },
+      { area: 'Henoch', text: 'Liegt das iPad oder das iPhone quer, stehen die fünf Bereiche senkrecht am linken Rand, in Reichweite des Daumens. Unten verdeckt dann nichts mehr den Text. Auf dem iPhone ist die Leiste kleiner, damit sie in die geringe Höhe passt.' },
+      { area: 'Andacht', text: 'Auf dem iPad und im Querformat bleiben die Schritte beim Lesen oben stehen. So siehst du immer, wo du bist.' },
+      { area: 'Wort', text: 'Auf dem iPad quer steht neben dem Leseplan „So wird gelesen“ offen, mit den Farben und Zeichen für das Lesen auf Papier.' },
+      { area: 'Gebetskammer', text: 'Auf dem iPad quer steht links der Rahmen des Eintrags mit Titel, Bibelstellen, Anliegen und Zuspruch, rechts die Fläche zum Schreiben, mit Tastatur oder Apple Pencil. Die Knöpfe über dem Eintrag tragen auf dem iPad ihre Namen.' },
+      { area: 'Arena', text: 'Auf dem iPad und im Querformat stehen die vier Orte zu zweit nebeneinander.' },
+      { area: 'Mehr', text: 'Auf dem iPad stehen die Bereiche zu dritt nebeneinander. Liegt es quer, bleibt die Liste links stehen, während rechts ein Bereich offen ist.' },
+    ],
+  },
+  {
     version: '1.42.2',
     date: '2026-11-15',
     title: 'Leiste unten bleibt unten',

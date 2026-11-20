@@ -1,0 +1,926 @@
+/* ---------------------------------------------------------------- larger screens
+   Three steps, each on top of the phone layout:
+   1. Tablet (iPad upright or lying): a wider column, larger type, more air at the top.
+   2. Lying on its side: the bar of the five sections moves to the left edge,
+      compact on the phone (low screen), full on the iPad.
+   3. iPad lying (WIDE_QUERY in src/app/useMedia.ts): two columns where they help,
+      in Wort, in an entry of the Gebetskammer and in Mehr. */
+
+/* The names beside the icons of an entry: only where there is room. */
+.entry-icon-text {
+  display: none;
+}
+
+/* 1. Tablet, upright or lying */
+@media (min-width: 700px) and (min-height: 600px) {
+  :root {
+    --content-width: 744px;
+  }
+  body {
+    font-size: 18px;
+  }
+  header.top {
+    padding-top: 40px;
+    padding-bottom: 12px;
+  }
+  nav.tabs {
+    max-width: 560px;
+  }
+  nav.tabs a {
+    font-size: 0.8rem;
+  }
+  .more-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  /* The actions of an entry say their names. */
+  .entry-bar-icons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .entry-bar-icons .entry-icon {
+    width: auto;
+    height: 36px;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    gap: 6px;
+    padding: 0 12px 0 9px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--sheet);
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+  }
+  .entry-bar-icons .entry-icon[aria-pressed='true'] {
+    background: var(--gold-soft);
+  }
+  .entry-bar-icons .entry-icon-text {
+    display: inline;
+  }
+}
+
+/* Both tablet and phone lying: the head of an order without visible title puts
+   its control (Zeit starten) at the end of the row of options. */
+@media (min-width: 700px) and (min-height: 600px), (orientation: landscape) and (min-width: 600px) {
+  .order-head:has(> .order-head-row > .visually-hidden:first-child) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
+  }
+  .order-head:has(> .order-head-row > .visually-hidden:first-child) > * {
+    flex-basis: 100%;
+  }
+  .order-head:has(> .order-head-row > .visually-hidden:first-child) > .order-options {
+    order: 1;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .order-head:has(> .order-head-row > .visually-hidden:first-child) > .order-head-row {
+    order: 2;
+    flex: none;
+    margin-top: 8px;
+  }
+}
+
+/* Both tablet and phone lying: the four places of the Arena two by two, and the
+   steps of an order stay in view while the text scrolls. */
+@media (min-width: 700px) and (min-height: 600px), (orientation: landscape) and (min-width: 600px) {
+  .arena-places {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .arena-places .arena-place-tile {
+    height: 100%;
+  }
+  .flow-chain {
+    position: sticky;
+    top: var(--safe-top);
+    z-index: 5;
+    margin: 0 -8px;
+    padding: 10px 8px 4px;
+    background: var(--paper);
+    box-shadow: 0 1px 0 var(--rule);
+  }
+}
+
+/* 2. Lying on its side: the bar at the left edge, beside the camera. */
+@media (orientation: landscape) and (min-width: 600px) {
+  /* The head of every page kept small: the screen is low, the content comes first. */
+  header.top {
+    padding-top: 14px;
+    padding-bottom: 2px;
+  }
+  header.top .top-title {
+    font-size: 1.25rem;
+  }
+  header.top .top-line {
+    font-size: 0.82rem;
+  }
+  /* The head of a place in the Arena: title and word close together, the word in one line. */
+  .arena-place > .title-row {
+    margin: 8px 0 4px;
+  }
+  .arena-place .place-title {
+    font-size: 1.15rem;
+  }
+  .arena-place > .section-verse,
+  .arena-well .well-verses .section-verse {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .arena-place > .section-verse blockquote,
+  .arena-place > .section-verse figcaption {
+    display: inline;
+  }
+  .arena-place > .section-verse figcaption {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .arena-place .place-board,
+  .arena-place .well-board {
+    margin-top: 8px;
+  }
+  :root {
+    --tabbar-height: 0px;
+    --rail: 104px;
+    --rail-gap: 28px;
+  }
+  .wrap {
+    max-width: calc(var(--content-width) + var(--safe-left) + var(--rail) + var(--rail-gap) * 2 + var(--safe-right) + var(--gutter));
+    padding-left: calc(var(--safe-left) + var(--rail) + var(--rail-gap) * 2);
+    padding-right: calc(var(--safe-right) + var(--gutter) + 12px);
+    padding-bottom: calc(var(--safe-bottom) + 32px);
+  }
+  nav.tabs {
+    left: calc(var(--safe-left) + var(--rail-gap));
+    right: auto;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    width: var(--rail);
+    max-width: none;
+    margin: 0;
+    border-radius: 34px;
+  }
+  nav.tabs ul {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+  nav.tabs a {
+    padding: 10px 0 11px;
+    border-radius: 26px;
+  }
+  /* No bar below: the way on sits at the lower edge, and its own padding keeps
+     it clear of the home indicator (counted once, not also in the offset). */
+  .flow-footer {
+    bottom: 0;
+    padding-bottom: calc(var(--safe-bottom) + 12px);
+  }
+}
+
+/* The phone lying: low, so the bar gets small and the top little air. */
+@media (orientation: landscape) and (min-width: 600px) and (max-height: 599px) {
+  :root {
+    --rail: 76px;
+    --rail-gap: 8px;
+  }
+  .wrap {
+    max-width: calc(var(--content-width) + var(--safe-left) + var(--rail) + 24px + var(--safe-right) + var(--gutter));
+    padding-left: calc(var(--safe-left) + var(--rail) + 24px);
+  }
+  header.top {
+    padding-top: 10px;
+  }
+  nav.tabs {
+    border-radius: 26px;
+  }
+  nav.tabs ul {
+    gap: 2px;
+    padding: 5px;
+  }
+  nav.tabs a {
+    gap: 1px;
+    padding: 5px 0 6px;
+    border-radius: 20px;
+    font-size: 0.68rem;
+  }
+  nav.tabs .tab-icon,
+  nav.tabs .tab-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+  /* Only the step in view keeps its name, so more lines of the prayer show. */
+  .flow-chain li:not(.current) .flow-short {
+    position: absolute;
+    visibility: hidden;
+  }
+  .flow-chain {
+    padding-top: 6px;
+  }
+  .flow-footer {
+    padding-top: 8px;
+  }
+}
+
+/* 3. iPad lying: two columns where they help. Same query as WIDE_QUERY. */
+@media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) {
+  /* Mehr: the bar starts on the line of the list and the tiles (--rail-top, measured). */
+  html:has(.more-split) nav.tabs {
+    top: var(--rail-top, 50%);
+    transform: none;
+  }
+  .wrap:has(.bible-cols, .entry-desk, .more-split, .well-board, .place-board) {
+    --content-width: 980px;
+  }
+  /* Wort: the plan on the left, the way of reading open on the right. */
+  .bible-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 28px;
+    align-items: start;
+  }
+  .bible-cols > .bible-col > .block:first-child {
+    margin-top: 14px;
+  }
+  /* The way of reading beside the plan: in the size of a note, so both columns end close. */
+  .bible-cols .block-warm .fold-body,
+  .bible-cols .block-warm .fold-body * {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  /* Both columns end on one line: the last box of each column takes up the rest. */
+  .bible-cols {
+    align-items: stretch;
+  }
+  .bible-col {
+    display: flex;
+    flex-direction: column;
+  }
+  .bible-col > .block:last-child {
+    flex: 1;
+    margin-bottom: 14px;
+  }
+  .bible-cols .block-warm .fold-body li + li {
+    margin-top: 2px;
+  }
+  /* An entry as a desk, kept plain. Above, small: the word in one line, then
+     one row with the actions, the choice Beten or Wachen and the day. Below, two
+     boxes level at the top: the frame on the left (it stays while the page
+     scrolls) and the page at the right, its tools inside it. */
+  .wrap:has(.entry-desk) header.top {
+    padding-bottom: 0;
+  }
+  .wrap:has(.entry-desk) header.top .top-line {
+    display: none;
+  }
+  .arena-entry:has(.entry-desk) {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 12px;
+  }
+  .arena-entry:has(.entry-desk) > * {
+    grid-column: 1 / -1;
+  }
+  .arena-entry:has(.entry-desk) > .section-verse {
+    grid-row: 1;
+    margin: 4px auto 10px;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    font-size: 0.92rem;
+  }
+  .arena-entry:has(.entry-desk) > .section-verse blockquote,
+  .arena-entry:has(.entry-desk) > .section-verse figcaption {
+    display: inline;
+  }
+  .arena-entry:has(.entry-desk) > .section-verse figcaption {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .arena-entry:has(.entry-desk) > .arena-entry-date {
+    grid-row: 2;
+    grid-column: 3;
+    margin: 0;
+    text-align: right;
+    font-size: 1.05rem;
+  }
+  .arena-entry:has(.entry-desk) > .seg {
+    grid-row: 2;
+    grid-column: 2;
+    margin: 0;
+  }
+  /* On the left the actions, where they stand on every entry; beside them the choice. */
+  .arena-entry:has(.entry-desk) > .entry-bar {
+    grid-row: 2;
+    grid-column: 1;
+    justify-content: flex-start;
+    margin: 0;
+  }
+  .arena-entry:has(.entry-desk) > .entry-export {
+    grid-row: 3;
+    justify-content: flex-start;
+    margin: 10px 0 0;
+  }
+  .arena-entry:has(.entry-desk) > .confirm-row {
+    grid-row: 4;
+    justify-content: flex-start;
+    margin: 10px 0 0;
+  }
+  .arena-entry:has(.entry-desk) > :is(.entry-desk, .reflection) {
+    grid-row: 5;
+    margin-top: 16px;
+  }
+  /* In this row the actions are marks only, named on touch and for VoiceOver. */
+  .arena-entry:has(.entry-desk) .entry-bar-icons {
+    gap: 4px;
+  }
+  .arena-entry:has(.entry-desk) .entry-bar-icons .entry-icon {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+  .arena-entry:has(.entry-desk) .entry-bar-icons .entry-icon-text {
+    display: none;
+  }
+  .entry-desk {
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    grid-template-rows: 100%;
+    gap: 0 20px;
+    height: var(--desk-height, calc(100vh - 240px));
+  }
+  /* Both boxes alike: the same paper, edge and corners, level at top and bottom.
+     What does not fit scrolls inside its box. */
+  .entry-frame,
+  .entry-sheet > :is(.arena-text, .reflection-card, .arena-points, .entry-notes) {
+    min-height: 0;
+    height: 100%;
+    margin: 0;
+    padding: 16px 18px 18px;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+  }
+  .entry-frame {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .entry-frame > * {
+    flex: none;
+  }
+  .entry-frame > :first-child {
+    margin-top: 0;
+  }
+  .entry-frame > .section-verse {
+    margin-bottom: 4px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  /* Close set, so the frame fits the box on the smaller iPad as well. */
+  .entry-frame .field,
+  .entry-frame fieldset {
+    margin-top: 10px;
+  }
+  .entry-frame legend,
+  .entry-frame .field label {
+    margin-bottom: 3px;
+    font-size: 0.8rem;
+  }
+  .entry-frame input[type='text'] {
+    min-height: 40px;
+    padding: 7px 11px;
+    font-size: 0.95rem;
+  }
+  .entry-frame .arena-add {
+    margin-top: 2px;
+  }
+  /* The comfort at the foot of the frame. */
+  .entry-frame .arena-comfort {
+    margin: auto 0 0;
+    padding: 10px 12px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+  .entry-frame .arena-comfort p {
+    margin: 0 0 4px;
+  }
+  .entry-frame .arena-comfort p:last-child {
+    margin-bottom: 0;
+  }
+  .entry-frame > :has(+ .arena-comfort) {
+    margin-bottom: 16px;
+  }
+  .entry-sheet {
+    min-height: 0;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) {
+    display: flex;
+    flex-direction: column;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) > * {
+    flex: none;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) > .seg {
+    align-self: flex-start;
+  }
+  /* Typed: the field fills the box and scrolls in itself. */
+  .entry-sheet > :is(.arena-text, .reflection-card) > .field {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) textarea {
+    flex: 1;
+    min-height: 0;
+    height: auto !important;
+    overflow-y: auto;
+  }
+  /* Handwritten: the page fills the box; the finger turns it, the pen writes. */
+  .entry-sheet .ink {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .entry-sheet .ink > * {
+    flex: none;
+  }
+  .entry-sheet .ink > .ink-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  /* The page: no heading of its own, the box says enough. */
+  .entry-sheet > :is(.arena-text, .reflection-card) > legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) > .seg {
+    margin: 0 0 10px;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) textarea {
+    padding: 4px 2px;
+    border: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 0;
+    background: transparent;
+    line-height: 1.7;
+  }
+  .entry-sheet > :is(.arena-text, .reflection-card) textarea:focus {
+    outline: none;
+  }
+  .entry-sheet .ink {
+    margin-top: 0;
+  }
+  .entry-sheet .ink-tools {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin: 0 0 12px;
+  }
+  .entry-sheet .ink-tools .seg {
+    flex-wrap: nowrap;
+    margin: 0;
+  }
+  .entry-sheet .ink-tools .seg button {
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+  }
+  .entry-sheet .ink-colors {
+    gap: 2px;
+  }
+  .entry-sheet .ink-color {
+    width: 32px;
+    height: 32px;
+  }
+  .entry-sheet .ink-color::after {
+    inset: 7px;
+  }
+  .entry-sheet .ink-undo {
+    min-height: 32px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+  }
+  .entry-sheet .ink-page {
+    border: 0;
+    border-top: 1px solid var(--rule);
+    border-radius: 0;
+    background: transparent;
+  }
+  .ink-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+  }
+  .ink-foot .ink-hint {
+    margin: 0;
+    max-width: 30ch;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+  .ink-foot .seg {
+    margin: 0;
+    flex: none;
+  }
+  .ink-foot .seg button {
+    min-height: 30px;
+    padding: 3px 10px;
+    font-size: 0.78rem;
+  }
+  /* Eisenschmiede: the points to bring to the brothers, in the same box; its
+     heading stays, the list scrolls inside when long. */
+  .entry-sheet > .arena-points {
+    overflow-y: auto;
+  }
+  .entry-sheet > .arena-points > legend {
+    float: left;
+    width: 100%;
+    margin: 0 0 10px;
+    padding: 0;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .entry-sheet > .arena-points > legend + * {
+    clear: both;
+  }
+  /* Abendbrunnen: what she wishes and what you both bring before God, in the box
+     at the right; the note on confession at its foot. */
+  .entry-sheet > .entry-notes {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .entry-notes > .field:first-child {
+    margin-top: 0;
+  }
+  .entry-notes > .arena-note {
+    margin: auto 0 0;
+    padding-top: 14px;
+  }
+  /* A meeting at the Abendbrunnen: the word of the place at the foot of the frame;
+     the fields of the talk give room to write; dates look like the other fields. */
+  .well-desk .entry-frame > .well-desk-word {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+  .well-desk-word .section-verse {
+    margin: 0;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: var(--radius-card);
+    background: var(--warm-soft);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .well-desk .entry-notes .well-note textarea:not([data-enter]) {
+    min-height: 76px;
+  }
+  /* Safari on the iPad gives a date field a width of its own: kept in its box,
+     the date at the left like the text of the other fields. */
+  .well-desk .arena-meeting input[type='date'] {
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    min-width: 0;
+    text-align: left;
+  }
+  .well-desk .arena-meeting input[type='date']::-webkit-date-and-time-value {
+    text-align: left;
+  }
+  .entry-frame,
+  .entry-sheet > .entry-notes {
+    overflow-x: hidden;
+  }
+  .well-desk .arena-meeting input[type='date'] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-height: 40px;
+    padding: 7px 11px;
+    background: var(--sheet);
+    border: 1px solid var(--field-line);
+    border-radius: var(--radius-control);
+    color: inherit;
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  .well-desk .well-last {
+    margin-top: 14px;
+  }
+  /* The page of the Abendbrunnen: the two words side by side, the introduction,
+     then two boxes level at top and bottom: the way of the talk on the left, the
+     meetings with frame and posture on the right. */
+  .well-verses {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 28px;
+  }
+  .well-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 16px;
+  }
+  .well-board-steps,
+  .well-board-side {
+    min-width: 0;
+    padding: 16px 18px 18px;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+  }
+  .well-board .well-section {
+    margin: 0;
+  }
+  .well-board .well-section > h3,
+  .well-board .list-head,
+  .well-board .list-head h3 {
+    margin-top: 0;
+  }
+  .well-board .list-head {
+    align-items: center;
+    min-height: 0;
+    margin-bottom: 10px;
+  }
+  /* The head above the boxes kept small: verses and introduction in smaller type. */
+  .well-verses .section-verse {
+    font-size: 0.92rem;
+    line-height: 1.45;
+    margin: 4px 0 10px;
+  }
+  .well-verses + .arena-note {
+    font-size: 0.86rem;
+    line-height: 1.45;
+    margin: 0;
+  }
+  .well-board .flow-chain {
+    background: var(--sheet);
+  }
+  .well-board-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .well-board-side .tile-group {
+    margin: auto 0 0;
+  }
+  /* Eisenschmiede: two boxes level at top and bottom; the list on the left, what
+     the place is for and the words for the brothers at the right. */
+  .place-board {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 12px;
+  }
+  .place-board-main,
+  .place-board-side {
+    min-width: 0;
+    padding: 16px 18px 18px;
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+  }
+  .place-board-main {
+    min-height: 360px;
+  }
+  .place-board-main .list-head,
+  .place-board-main .list-head h3 {
+    margin-top: 0;
+  }
+  .place-board-main .arena-new {
+    margin: 4px 0 14px;
+  }
+  .place-board-side {
+    display: flex;
+    flex-direction: column;
+  }
+  .place-board-side .arena-note {
+    margin: 0;
+  }
+  .place-board-side {
+    gap: 16px;
+  }
+  .place-board-side .arena-note {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+  .place-board-side .arena-comfort {
+    margin: auto 0 0;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+  .place-board-side .arena-comfort p:last-child {
+    margin-bottom: 0;
+  }
+  /* Wachen on the desk: the way on the left, narrow; one question at a time at the right. */
+  .entry-desk.refl-desk {
+    grid-template-columns: minmax(0, 0.6fr) minmax(0, 1.4fr);
+  }
+  .refl-desk .entry-frame > .section-verse {
+    margin-bottom: 12px;
+  }
+  .refl-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .refl-steps button {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--ink);
+    font: 600 0.92rem/1.3 var(--serif);
+    text-align: left;
+    cursor: pointer;
+  }
+  .refl-steps button[aria-current='step'] {
+    background: var(--gold-soft);
+    border-color: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--gold);
+  }
+  .refl-step-n {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font: 600 0.78rem var(--sans);
+  }
+  .refl-desk .entry-frame .arena-comfort {
+    margin: auto 0 10px;
+  }
+  .refl-steps-last {
+    flex: none;
+  }
+  .entry-sheet > .reflection-card {
+    margin: 0;
+  }
+  .entry-sheet > .reflection-card > .reflection-head,
+  .entry-sheet > .reflection-card > .reflection-ask {
+    flex: none;
+  }
+  .entry-sheet > .reflection-card > .reflection-ask {
+    margin-bottom: 12px;
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+  .entry-sheet > .reflection-card > .reflection-head + .seg,
+  .entry-sheet > .reflection-card > .reflection-head {
+    margin-bottom: 10px;
+  }
+  .entry-sheet > .reflection-card > .field textarea {
+    margin-top: 0;
+  }
+  .entry-sheet > .reflection-habits {
+    overflow-y: auto;
+  }
+  /* Mehr: the areas on the left, the open one on the right. */
+  .more-head .title-row {
+    margin-top: 6px;
+    align-items: center;
+  }
+  .more-head .title-row h2 {
+    flex: none;
+  }
+  .more-head .more-info-toggle {
+    margin-left: 10px;
+  }
+  .more-head .more-area-info {
+    font-size: 0.84rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .more-head .more-area-info p {
+    margin: 0 0 4px;
+  }
+  .more-head .section-verse {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .more-head .section-verse blockquote,
+  .more-head .section-verse figcaption {
+    display: inline;
+  }
+  .more-head .section-verse figcaption {
+    margin-left: 6px;
+    white-space: nowrap;
+  }
+  .more-split {
+    margin-top: 14px;
+    position: relative;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 0 44px;
+    align-items: start;
+  }
+  .more-split > .more-area {
+    border-left: 1px solid var(--rule);
+    padding-left: 44px;
+    min-width: 0;
+  }
+  /* A label over the first tiles at the right ("Der Tag", "Die App") stands just above
+     the line, so the tiles start where the list at the left starts. */
+  .more-split > .more-area {
+    position: relative;
+  }
+  .more-split:has(> .more-area > .more-group-title:first-child) {
+    margin-top: 34px;
+  }
+  .more-split > .more-area > .more-group-title:first-child {
+    position: absolute;
+    top: -26px;
+    margin: 0;
+  }
+  .more-split > .more-area > .more-group-title:first-child + * {
+    margin-top: 0;
+  }
+  .more-head .motto {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  /* The first tiles at the right on the line of the first tile at the left. */
+  .more-split > .more-area > :first-child,
+  .more-split > .more-area > :first-child > :first-child,
+  .more-split > .more-area > :first-child .fold-section:first-child,
+  .more-split > .more-area .habit-card:first-of-type {
+    margin-top: 0;
+  }
+  .more-side .more-tiles {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+    gap: 6px;
+    margin-top: 0;
+  }
+  .more-side .more-tile {
+    min-height: 0;
+    padding: 12px 14px;
+  }
+  .more-side .more-tile[aria-current='page'] {
+    background: var(--gold-soft);
+    border-color: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--gold);
+  }
+}
+
+/* The smaller iPad lying (768 high): the frame a little closer still, so it fits. */
+@media (orientation: landscape) and (min-width: 1000px) and (min-height: 600px) and (max-height: 790px) {
+  .entry-frame,
+  .entry-sheet > :is(.arena-text, .reflection-card, .arena-points, .entry-notes) {
+    padding: 12px 14px 14px;
+  }
+  .entry-frame .field,
+  .entry-frame fieldset {
+    margin-top: 6px;
+  }
+  .entry-frame input[type='text'] {
+    min-height: 36px;
+    padding: 5px 10px;
+  }
+  .well-desk .entry-notes .well-note textarea:not([data-enter]) {
+    min-height: 60px;
+  }
+  .entry-frame .arena-comfort {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    line-height: 1.38;
+  }
+  .entry-frame > .section-verse {
+    font-size: 0.84rem;
+    line-height: 1.38;
+  }
+}

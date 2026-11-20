@@ -18,6 +18,8 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
+import { useWide } from '../../app/useMedia';
+import { useDeskHeight } from './desk';
 import { Reflection } from './Reflection';
 import { ENTRY_CHOICE_VERSE, PRAYER_HEARD_VERSE } from '../../content/reflection';
 import { lastWriting, rememberWriting, type Writing } from './writing';
@@ -461,6 +463,10 @@ function IconButton({
   return (
     <button type="button" className="entry-icon" aria-label={label} title={label} aria-pressed={pressed} onClick={onClick}>
       <FlowIcon name={icon} size={20} />
+      {/* Seen only where there is room (tablet); the button is named by aria-label. */}
+      <span className="entry-icon-text" aria-hidden="true">
+        {label.replace(/ und zurück$/, '')}
+      </span>
     </button>
   );
 }
@@ -596,6 +602,9 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
   const [confirm, setConfirm] = useState(false);
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
+  const wide = useWide();
+  const deskRef = useRef<HTMLDivElement>(null);
+  useDeskHeight(deskRef);
   const update = (fn: (e: ArenaEntry) => ArenaEntry) => store.updateArenaEntry(entry.id, fn);
   // A new entry of the Gebetskammer is either written freely (Beten) or as a Reflexion (Wachen); the page follows the choice.
   const [view, setView] = useState<JournalView>(lastView);
@@ -636,6 +645,90 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
     store.deleteArenaEntry(entry.id);
     navigate(home);
   };
+
+  // The parts of an entry. On the iPad lying they stand as a desk: the frame on
+  // the left (it stays while the page scrolls), the page to write on at the right.
+  const heardVerse = chooseKind && (
+    <figure className="section-verse">
+      <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
+      <figcaption>
+        <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
+      </figcaption>
+    </figure>
+  );
+  const frame = (
+    <>
+      {kind === 'forge' && (
+        <div className="field arena-meeting">
+          <label htmlFor={dateId}>Für das Treffen am</label>
+          <input
+            id={dateId}
+            type="date"
+            value={entry.meetingDate ?? ''}
+            onChange={(e) => {
+              const v = e.target.value;
+              update((x) => {
+                const { meetingDate: _, ...rest } = x;
+                return /^\d{4}-\d{2}-\d{2}$/.test(v) ? { ...rest, meetingDate: v } : rest;
+              });
+            }}
+          />
+        </div>
+      )}
+      <div className="field arena-title">
+        <label htmlFor={titleId}>Titel</label>
+        <input
+          id={titleId}
+          type="text"
+          data-enter="next"
+          enterKeyHint="next"
+          value={entry.title ?? ''}
+          placeholder="Wie der Eintrag heißen soll"
+          onChange={(e) => {
+            const v = e.target.value;
+            update((x) => {
+              const { title: _, ...rest } = x;
+              return v ? { ...rest, title: v } : rest;
+            });
+          }}
+        />
+      </div>
+      <LineList
+        label="Bibelstelle"
+        addLabel="Weitere Bibelstelle hinzufügen"
+        placeholder="z. B. Römer 8,37"
+        values={entry.verses}
+        onChange={(verses) => update((e) => ({ ...e, verses }))}
+        render={(v) => (isReference(v) ? <BibleRef reference={v.trim()} /> : null)}
+      />
+      <LineList
+        label="Gebetsanliegen"
+        addLabel="Weiteres Gebetsanliegen hinzufügen"
+        placeholder={place.concernHint}
+        values={entry.concerns}
+        onChange={(concerns) => update((e) => ({ ...e, concerns }))}
+        suggestions={profile.prayer.concerns}
+      />
+    </>
+  );
+  const page = (
+    <>
+      {kind === 'forge' ? (
+        <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
+      ) : (
+        <JournalText entry={entry} update={update} />
+      )}
+    </>
+  );
+  const comfortWord = (
+    <aside className="arena-comfort" aria-label="Zuspruch">
+      {place.comfort.map((c) => (
+        <p key={c.ref}>
+          {c.text} <BibleRef reference={c.ref} />
+        </p>
+      ))}
+    </aside>
+  );
 
   return (
     <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
@@ -707,82 +800,23 @@ function EntryEditor({ entry }: { entry: ArenaEntry }) {
         <Reflection entry={entry} />
       ) : (
         <>
-          {chooseKind && (
-            <figure className="section-verse">
-              <blockquote>{PRAYER_HEARD_VERSE.text}</blockquote>
-              <figcaption>
-                <BibleRef reference={PRAYER_HEARD_VERSE.ref} />
-              </figcaption>
-            </figure>
+          {wide && !(chooseKind && view === 'reflection') ? (
+            <div className="entry-desk" ref={deskRef}>
+              <div className="entry-frame">
+                {heardVerse}
+                {frame}
+                {comfortWord}
+              </div>
+              <div className="entry-sheet">{page}</div>
+            </div>
+          ) : (
+            <>
+              {heardVerse}
+              {frame}
+              {page}
+              {comfortWord}
+            </>
           )}
-
-      {kind === 'forge' && (
-        <div className="field arena-meeting">
-          <label htmlFor={dateId}>Für das Treffen am</label>
-          <input
-            id={dateId}
-            type="date"
-            value={entry.meetingDate ?? ''}
-            onChange={(e) => {
-              const v = e.target.value;
-              update((x) => {
-                const { meetingDate: _, ...rest } = x;
-                return /^\d{4}-\d{2}-\d{2}$/.test(v) ? { ...rest, meetingDate: v } : rest;
-              });
-            }}
-          />
-        </div>
-      )}
-
-      <div className="field arena-title">
-        <label htmlFor={titleId}>Titel</label>
-        <input
-          id={titleId}
-          type="text"
-          data-enter="next"
-          enterKeyHint="next"
-          value={entry.title ?? ''}
-          placeholder="Wie der Eintrag in der Übersicht heißen soll"
-          onChange={(e) => {
-            const v = e.target.value;
-            update((x) => {
-              const { title: _, ...rest } = x;
-              return v ? { ...rest, title: v } : rest;
-            });
-          }}
-        />
-      </div>
-
-      <LineList
-        label="Bibelstelle"
-        addLabel="Weitere Bibelstelle hinzufügen"
-        placeholder="z. B. Römer 8,37"
-        values={entry.verses}
-        onChange={(verses) => update((e) => ({ ...e, verses }))}
-        render={(v) => (isReference(v) ? <BibleRef reference={v.trim()} /> : null)}
-      />
-      <LineList
-        label="Gebetsanliegen"
-        addLabel="Weiteres Gebetsanliegen hinzufügen"
-        placeholder={place.concernHint}
-        values={entry.concerns}
-        onChange={(concerns) => update((e) => ({ ...e, concerns }))}
-        suggestions={profile.prayer.concerns}
-      />
-
-      {kind === 'forge' ? (
-        <PointList values={entry.points ?? []} onChange={(points) => update((x) => ({ ...x, points }))} />
-      ) : (
-        <JournalText entry={entry} update={update} />
-      )}
-
-      <aside className="arena-comfort" aria-label="Zuspruch">
-        {place.comfort.map((c) => (
-          <p key={c.ref}>
-            {c.text} <BibleRef reference={c.ref} />
-          </p>
-        ))}
-      </aside>
         </>
       )}
     </article>
@@ -842,6 +876,7 @@ export function ArenaPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const entries = profile.arena;
+  const wide = useWide();
 
   if (eintrag === EXAMEN_SLUG) return <DesertExamen />;
   if (eintrag === THANKS_SLUG) return <DesertThanks />;
@@ -891,18 +926,17 @@ export function ArenaPage() {
   const place = PLACES[kind];
   const shown = entries.filter((e) => entryTitle(e) && e.archivedAt === undefined && kindOf(e) === kind);
   const archivedCount = entries.filter((e) => e.archivedAt !== undefined).length;
-  return (
-    <div className="arena arena-place">
-      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
-      <SectionVerse id={place.verse} />
-      <p className="arena-note">{place.note}</p>
-      <button
-        type="button"
-        className="btn primary arena-new"
-        onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
-      >
-        {place.add}
-      </button>
+  const add = (
+    <button
+      type="button"
+      className="btn primary arena-new"
+      onClick={() => navigate(`/arena/${store.addArenaEntry(kind === 'forge' ? 'forge' : undefined)}`)}
+    >
+      {place.add}
+    </button>
+  );
+  const list = (
+    <>
       {kind === 'journal' && shown.length > 0 && (
         <ul className="arena-list">
           {pinnedFirst(shown).map((e) => (
@@ -942,6 +976,45 @@ export function ArenaPage() {
           <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
         </p>
       )}
+    </>
+  );
+  // Gebetskammer and Eisenschmiede on the iPad lying: the word above, then two boxes
+  // level at top and bottom: the entries on the left, at the right what the place is
+  // for and its words of comfort.
+  if (wide) {
+    return (
+      <div className="arena arena-place">
+        <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
+        <SectionVerse id={place.verse} />
+        <div className="place-board">
+          <section className="place-board-main" aria-labelledby="place-list">
+            <div className="list-head">
+              <h3 id="place-list">{kind === 'forge' ? 'Für die nächsten Treffen' : 'Deine Einträge'}</h3>
+            </div>
+            {add}
+            {list}
+          </section>
+          <aside className="place-board-side" aria-label={`Zur ${place.title}`}>
+            <p className="arena-note">{place.note}</p>
+            <div className="arena-comfort">
+              {place.comfort.map((c) => (
+                <p key={c.ref}>
+                  {c.text} <BibleRef reference={c.ref} />
+                </p>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="arena arena-place">
+      <PlaceHead title={place.title} actions={<PlaceExport kind={kind} />} />
+      <SectionVerse id={place.verse} />
+      <p className="arena-note">{place.note}</p>
+      {add}
+      {list}
     </div>
   );
 }

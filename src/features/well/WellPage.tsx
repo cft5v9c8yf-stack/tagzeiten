@@ -30,6 +30,8 @@ import { ConfirmRow } from '../../ui/ConfirmRow';
 import { EntryMenu } from '../../ui/EntryMenu';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { StepFlow } from '../../ui/StepFlow';
+import { useWide } from '../../app/useMedia';
+import { useDeskHeight } from '../arena/desk';
 
 /** The address of the place in the Arena. */
 export const WELL_SLUG = 'abendbrunnen';
@@ -73,9 +75,17 @@ function NoteField({
       el.style.height = `${el.scrollHeight + 2}px`;
     };
     fit();
-    // Turned, the phone is wider or narrower, and the text needs another height.
+    // Turned, the phone is wider or narrower, and the text needs another height;
+    // so too once the fonts are in, or when the column changes (the desk on the iPad).
     window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
+    void document.fonts?.ready.then(fit);
+    const box = area.current?.parentElement;
+    const ro = box && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(fit) : undefined;
+    if (box) ro?.observe(box);
+    return () => {
+      window.removeEventListener('resize', fit);
+      ro?.disconnect();
+    };
   }, [value]);
   return (
     <div className="field well-note">
@@ -207,6 +217,10 @@ export function WellMeetingPage({ id }: { id: string }) {
   const [exporting, setExporting] = useState(false);
   const pdf = usePdf();
   const exportMarkdown = useMarkdownExport();
+  // On the iPad lying: a desk like an entry of the Gebetskammer.
+  const wide = useWide();
+  const deskRef = useRef<HTMLDivElement>(null);
+  useDeskHeight(deskRef);
   const meeting = profile.well.meetings.find((m) => m.id === id);
   const place = `/arena?bereich=${WELL_SLUG}`;
   const archived = meeting?.archivedAt !== undefined;
@@ -235,6 +249,71 @@ export function WellMeetingPage({ id }: { id: string }) {
     toast(`Treffen steht wieder im ${WELL_TITLE}`);
     navigate(place);
   };
+  // The parts of a meeting; on the iPad lying they stand as a desk in the order of the talk.
+  const dateField = (
+    <div className="field arena-meeting">
+      <label htmlFor={dateId}>Treffen am</label>
+      <input
+        id={dateId}
+        type="date"
+        value={meeting.date}
+        onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
+      />
+    </div>
+  );
+  const titleField = (
+    <div className="field arena-title">
+      <label htmlFor={titleId}>Titel</label>
+      <input
+        id={titleId}
+        type="text"
+        data-enter="next"
+        enterKeyHint="next"
+        value={meeting.title ?? ''}
+        placeholder="Wie das Treffen heißen soll"
+        onChange={(e) => {
+          const v = e.target.value;
+          store.updateWellMeeting(id, (m) => {
+            const { title: _, ...rest } = m;
+            return v ? { ...rest, title: v } : rest;
+          });
+        }}
+      />
+    </div>
+  );
+  const resolutionField = (
+    <NoteField
+      single
+      label={WELL_NOTES.resolution}
+      value={meeting.resolution}
+      placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
+      onChange={(resolution) => set({ resolution })}
+    />
+  );
+  const wishFields = (
+    <>
+      <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
+      <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
+      <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
+    </>
+  );
+  const nextField = (
+    <div className="field arena-meeting">
+      <label htmlFor={nextId}>{WELL_NOTES.next}</label>
+      <input
+        id={nextId}
+        type="date"
+        value={meeting.next ?? ''}
+        onChange={(e) =>
+          store.updateWellMeeting(id, (m) => {
+            const { next: _, ...rest } = m;
+            return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
+          })
+        }
+      />
+    </div>
+  );
+
   return (
     <article className="arena-entry" data-fields onKeyDown={fieldKeys}>
       <div className="entry-bar">
@@ -268,59 +347,36 @@ export function WellMeetingPage({ id }: { id: string }) {
       )}
       <h2 className="arena-entry-date">Treffen am {dateLabel(meeting.date)}</h2>
       {archived && <p className="small muted">Archiviert am {dateLabel(toKey(new Date(meeting.archivedAt!)))}. Steht im Rückblick.</p>}
-      {last && <LastResolution meeting={last} />}
-      <div className="field arena-meeting">
-        <label htmlFor={dateId}>Treffen am</label>
-        <input
-          id={dateId}
-          type="date"
-          value={meeting.date}
-          onChange={(e) => isDateKey(e.target.value) && set({ date: e.target.value })}
-        />
-      </div>
-      <div className="field arena-title">
-        <label htmlFor={titleId}>Titel</label>
-        <input
-          id={titleId}
-          type="text"
-          data-enter="next"
-          enterKeyHint="next"
-          value={meeting.title ?? ''}
-          placeholder="Wie das Treffen in der Übersicht heißen soll"
-          onChange={(e) => {
-            const v = e.target.value;
-            store.updateWellMeeting(id, (m) => {
-              const { title: _, ...rest } = m;
-              return v ? { ...rest, title: v } : rest;
-            });
-          }}
-        />
-      </div>
-      <NoteField
-        single
-        label={WELL_NOTES.resolution}
-        value={meeting.resolution}
-        placeholder="Ein Satz, den du bis zum nächsten Treffen umsetzt"
-        onChange={(resolution) => set({ resolution })}
-      />
-      <NoteField label={WELL_NOTES.herWish} value={meeting.herWish} onChange={(herWish) => set({ herWish })} />
-      <NoteField label={WELL_NOTES.herConcern} value={meeting.herConcern} onChange={(herConcern) => set({ herConcern })} />
-      <NoteField label={WELL_NOTES.myConcern} value={meeting.myConcern} onChange={(myConcern) => set({ myConcern })} />
-      <div className="field arena-meeting">
-        <label htmlFor={nextId}>{WELL_NOTES.next}</label>
-        <input
-          id={nextId}
-          type="date"
-          value={meeting.next ?? ''}
-          onChange={(e) =>
-            store.updateWellMeeting(id, (m) => {
-              const { next: _, ...rest } = m;
-              return isDateKey(e.target.value) ? { ...rest, next: e.target.value } : rest;
-            })
-          }
-        />
-      </div>
-      <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+      {wide ? (
+        <div className="entry-desk well-desk" ref={deskRef}>
+          <div className="entry-frame">
+            {dateField}
+            {titleField}
+            {last && <LastResolution meeting={last} />}
+            <div className="well-desk-word">
+              <Verse verse={WELL_VERSES[1]!} />
+            </div>
+          </div>
+          <div className="entry-sheet">
+            <div className="entry-notes">
+              {wishFields}
+              {resolutionField}
+              {nextField}
+              <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {last && <LastResolution meeting={last} />}
+          {dateField}
+          {titleField}
+          {resolutionField}
+          {wishFields}
+          {nextField}
+          <p className="arena-note">{WELL_CONFESSION_NOTE}</p>
+        </>
+      )}
     </article>
   );
 }
@@ -383,94 +439,126 @@ export function WellPage() {
   const name = wifeName(profile.house.wife.name);
   const shown = pinnedFirstMeetings(profile.well.meetings.filter((m) => !isEmptyMeeting(m) && m.archivedAt === undefined));
   const archivedCount = profile.well.meetings.filter((m) => m.archivedAt !== undefined).length;
-  return (
+  // On the iPad lying: the word and the introduction above, then two boxes side by side,
+  // the way of the talk on the left and the meetings with frame and posture on the right.
+  const wide = useWide();
+  const verses = (
     <>
       {WELL_VERSES.map((v) => (
         <Verse key={v.ref} verse={v} />
       ))}
-      <p className="arena-note">{WELL_INTRO}</p>
-
-      <section className="well-section" aria-labelledby="well-steps">
-        <h3 id="well-steps">Ablauf in sechs Schritten</h3>
-        <Steps name={name} />
-      </section>
-
-      <TileGroup
-        level={4}
-        label="Anleitung"
-        items={[
-          {
-            id: 'well.frame',
-            title: 'Rahmen',
-            line: '20 bis 30 Minuten am Abend',
-            icon: 'clock',
-            content: (
-              <>
-                <p>{WELL_FRAME.intro}</p>
-                <ul className="well-list">
-                  {WELL_FRAME.points.map((p) => (
-                    <li key={p.label}>
-                      <strong>{p.label}:</strong> {p.text}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ),
-          },
-          {
-            id: 'well.posture',
-            title: 'Haltung',
-            line: 'Sechs Hinweise fürs Gespräch',
-            icon: 'heart',
-            content: (
+    </>
+  );
+  const steps = (
+    <section className="well-section" aria-labelledby="well-steps">
+      <h3 id="well-steps">Ablauf in sechs Schritten</h3>
+      <Steps name={name} />
+    </section>
+  );
+  const guide = (
+    <TileGroup
+      level={4}
+      label="Anleitung"
+      items={[
+        {
+          id: 'well.frame',
+          title: 'Rahmen',
+          line: '20 bis 30 Minuten am Abend',
+          icon: 'clock',
+          content: (
+            <>
+              <p>{WELL_FRAME.intro}</p>
               <ul className="well-list">
-                {WELL_POSTURE.map((p) => (
+                {WELL_FRAME.points.map((p) => (
                   <li key={p.label}>
                     <strong>{p.label}:</strong> {p.text}
-                    {p.ref && (
-                      <>
-                        {' '}
-                        <BibleRef reference={p.ref} />
-                      </>
-                    )}
                   </li>
                 ))}
               </ul>
-            ),
-          },
-        ]}
-      />
-
-      <section className="well-section" aria-labelledby="well-meetings">
-        <div className="list-head">
-          <h3 id="well-meetings">Treffen</h3>
-          {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
-            <ExportAll
-              label="Alle Treffen exportieren"
-              onMarkdown={() => {
-                downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
-                toast('Treffen als Markdown erstellt');
-              }}
-              onPdf={() => pdf(() => saveMeetingsPdf(profile.well.meetings, store.today()))}
-            />
-          )}
+            </>
+          ),
+        },
+        {
+          id: 'well.posture',
+          title: 'Haltung',
+          line: 'Sechs Hinweise fürs Gespräch',
+          icon: 'heart',
+          content: (
+            <ul className="well-list">
+              {WELL_POSTURE.map((p) => (
+                <li key={p.label}>
+                  <strong>{p.label}:</strong> {p.text}
+                  {p.ref && (
+                    <>
+                      {' '}
+                      <BibleRef reference={p.ref} />
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ),
+        },
+      ]}
+    />
+  );
+  const meetings = (
+    <section className="well-section" aria-labelledby="well-meetings">
+      <div className="list-head">
+        <h3 id="well-meetings">Treffen</h3>
+        {profile.well.meetings.some((m) => !isEmptyMeeting(m)) && (
+          <ExportAll
+            label="Alle Treffen exportieren"
+            onMarkdown={() => {
+              downloadText(`${meetingsBasename(store.today())}.md`, meetingsToMarkdown(profile.well.meetings, store.today()), 'text/markdown');
+              toast('Treffen als Markdown erstellt');
+            }}
+            onPdf={() => pdf(() => saveMeetingsPdf(profile.well.meetings, store.today()))}
+          />
+        )}
+      </div>
+      <button type="button" className="btn primary arena-new" onClick={() => navigate(meetingPath(store.addWellMeeting()))}>
+        Treffen aufschreiben
+      </button>
+      {shown.length > 0 && (
+        <ul className="arena-list">
+          {shown.map((m) => (
+            <ListItem key={m.id} meeting={m} />
+          ))}
+        </ul>
+      )}
+      {archivedCount > 0 && (
+        <p className="small arena-archived">
+          <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
+        </p>
+      )}
+    </section>
+  );
+  if (wide) {
+    return (
+      <>
+        <div className="well-verses">{verses}</div>
+        <p className="arena-note">{WELL_INTRO}</p>
+        <div className="well-board">
+          <div className="well-board-steps">{steps}</div>
+          <div className="well-board-side">
+            {meetings}
+            {guide}
+          </div>
         </div>
-        <button type="button" className="btn primary arena-new" onClick={() => navigate(meetingPath(store.addWellMeeting()))}>
-          Treffen aufschreiben
-        </button>
-        {shown.length > 0 && (
-          <ul className="arena-list">
-            {shown.map((m) => (
-              <ListItem key={m.id} meeting={m} />
-            ))}
-          </ul>
-        )}
-        {archivedCount > 0 && (
-          <p className="small arena-archived">
-            <Link to={REVIEW_PATH}>Archivierte Einträge im Rückblick</Link>
-          </p>
-        )}
-      </section>
+      </>
+    );
+  }
+  return (
+    <>
+      {verses}
+      <p className="arena-note">{WELL_INTRO}</p>
+
+      {steps}
+
+      {guide}
+
+      {meetings}
     </>
   );
 }

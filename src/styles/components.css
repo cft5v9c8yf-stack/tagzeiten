@@ -192,6 +192,20 @@
   margin-top: 6px;
   text-align: center;
 }
+/* While it sticks above the bar: the strip down to the bar is filled too. */
+.flow-footer.is-stuck::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: calc(var(--tabbar-height) + var(--safe-bottom) + 12px);
+  background: var(--sheet);
+}
+.flow-footer-end {
+  height: 1px;
+  margin-top: -1px;
+}
 .flow-footer .btn {
   width: 100%;
   min-height: 48px;

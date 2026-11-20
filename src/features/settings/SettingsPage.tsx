@@ -1,16 +1,17 @@
-import { useLayoutEffect, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { BackLink } from '../../ui/BackLink';
 import { OutArrow } from '../../ui/OutArrow';
 import { Link, useParams } from 'react-router';
 import { useProfile } from '../../data/hooks';
 import { useSelectedDate, withDate } from '../../app/useSelectedDate';
+import { useWide } from '../../app/useMedia';
 import { SETTINGS_VERSES, type SettingsSectionId } from '../../content/settingsVerses';
 import { FlowIcon, type FlowIconName } from '../../ui/FlowIcon';
 import { setOpen } from '../../ui/collapseState';
 import { TileGroup, type TileItem } from '../../ui/TileGroup';
 import { SectionVerse } from '../../ui/SectionVerse';
 import { ArchivePage } from '../archive/ArchivePage';
-import { About, ABOUT_INFO } from './About';
+import { About, ABOUT_INFO, AboutMotto } from './About';
 import { AirplaneGuide } from './AirplaneGuide';
 import { GUIDE_INFO, GuideArea } from '../onboarding/GuideArea';
 import { Imprint } from './Imprint';
@@ -296,21 +297,55 @@ export function SettingsPage() {
     for (const id of OPEN_GROUPS.find((g) => g.includes(open)) ?? [open]) setOpen(id, id === open);
   }, [alias]);
 
+  const wide = useWide();
+  const [showInfo, setShowInfo] = useState(false);
+  // On the iPad lying the bar of the five sections starts on the line of the two columns.
+  const splitRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const split = splitRef.current;
+    const bar = document.querySelector<HTMLElement>('nav.tabs');
+    if (!split || !bar) return;
+    const place = () => {
+      const top = split.getBoundingClientRect().top + window.scrollY;
+      const room = window.innerHeight - bar.offsetHeight - 16;
+      document.documentElement.style.setProperty('--rail-top', `${Math.max(16, Math.min(top, room))}px`);
+    };
+    place();
+    // Again once the fonts are in and whenever the page above the columns changes.
+    void document.fonts?.ready.then(place);
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(place) : undefined;
+    // Everything above the columns: the banners in main and the head of the area.
+    for (const el of [document.body, ...Array.from(document.querySelectorAll('main > *, .more-wide > *'))]) ro?.observe(el);
+    window.addEventListener('resize', place);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', place);
+      document.documentElement.style.removeProperty('--rail-top');
+    };
+  });
+  const tiles = (
+    <ul className="more-tiles">
+      {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
+        <li key={a.slug}>
+          <Link
+            className="more-tile"
+            to={withDate(`/mehr/${a.slug}`, date, isToday)}
+            aria-current={a === area ? 'page' : undefined}
+          >
+            <FlowIcon name={a.icon} size={22} />
+            <span className="more-tile-title">{a.title}</span>
+            <span className="more-tile-line">{a.line}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+
   if (!area) {
     return (
       <div className="settings">
         <h2 className="visually-hidden">Mehr</h2>
-        <ul className="more-tiles">
-          {AREAS.filter((a) => a.slug !== 'impressum').map((a) => (
-            <li key={a.slug}>
-              <Link className="more-tile" to={withDate(`/mehr/${a.slug}`, date, isToday)}>
-                <FlowIcon name={a.icon} size={22} />
-                <span className="more-tile-title">{a.title}</span>
-                <span className="more-tile-line">{a.line}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {tiles}
         <p className="more-imprint">
           <Link to={withDate('/mehr/impressum', date, isToday)}>Impressum · Anbieter und Datenschutz</Link>
         </p>
@@ -319,16 +354,54 @@ export function SettingsPage() {
     );
   }
 
-  return (
-    <div className="settings more-area">
+  const head = (
+    <>
       <div className="title-row">
         <BackLink to={withDate('/mehr', date, isToday)}>Mehr</BackLink>
         {/* Only the arrow and the title; the area's icon stays on its tile. */}
         <h2>{area.title}</h2>
+        {/* On the iPad lying the explanation waits behind a small "i". */}
+        {wide && (
+          <button
+            type="button"
+            className="info-btn more-info-toggle"
+            aria-expanded={showInfo}
+            aria-controls="more-area-info"
+            aria-label={showInfo ? 'Erklärung ausblenden' : 'Erklärung einblenden'}
+            onClick={() => setShowInfo((x) => !x)}
+          >
+            i
+          </button>
+        )}
       </div>
-      <div className="more-area-info">{area.info}</div>
+      {(!wide || showInfo) && (
+        <div className="more-area-info" id="more-area-info">
+          {area.info}
+        </div>
+      )}
       {area.id in SETTINGS_VERSES && <SectionVerse id={area.id as SettingsSectionId} />}
-      {area.body()}
+      {wide && area.slug === 'ueber' && <AboutMotto />}
+    </>
+  );
+  // On the iPad lying: the head of the area across the page, then the areas on the
+  // left and the open one at the right, both starting on one line.
+  if (!wide) {
+    return (
+      <div className="settings more-area">
+        {head}
+        {area.body()}
+      </div>
+    );
+  }
+  return (
+    <div className="more-wide">
+      <div className="settings more-head">{head}</div>
+      <div className="more-split" ref={splitRef}>
+        <nav className="more-side" aria-label="Bereiche von Mehr">
+          {tiles}
+        </nav>
+        <div className="settings more-area">{area.body()}</div>
+      </div>
     </div>
   );
 }

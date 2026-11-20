@@ -12,6 +12,7 @@ import {
   type InkStroke,
 } from '../../domain/ink';
 import { lastPaper, rememberPaper, type Paper } from './writing';
+import { useWide } from '../../app/useMedia';
 
 type Tool = 'pen' | 'marker' | 'eraser';
 
@@ -127,6 +128,8 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   const [width, setWidth] = useState(0);
   const [penSeen, setPenSeen] = useState(readPenSeen);
   const [schemeTick, setSchemeTick] = useState(0);
+  // On the iPad lying the paper is chosen under the page; above it stay the tools in use.
+  const wide = useWide();
 
   const strokesRef = useRef(strokes);
   strokesRef.current = strokes;
@@ -286,24 +289,35 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
     onChange(prev);
   };
 
+  const paperChoice = (
+    <div className="seg" role="group" aria-label="Papier">
+      {PAPERS.map((p) => (
+        <button
+          key={p.value}
+          type="button"
+          aria-pressed={paper === p.value}
+          onClick={() => {
+            setPaper(p.value);
+            rememberPaper(p.value);
+          }}
+        >
+          {p.label}
+        </button>
+      ))}
+    </div>
+  );
+  const hint = (
+    <p className="small muted ink-hint">
+      {penSeen
+        ? 'Der Apple Pencil schreibt, der Finger blättert.'
+        : 'Mit Stift oder Finger schreiben. Sobald du hier den Apple Pencil benutzt, blättert der Finger die Seite.'}
+    </p>
+  );
+
   return (
     <div className="ink">
       <div className="ink-tools" role="toolbar" aria-label="Werkzeuge der Handschrift">
-        <div className="seg" role="group" aria-label="Papier">
-          {PAPERS.map((p) => (
-            <button
-              key={p.value}
-              type="button"
-              aria-pressed={paper === p.value}
-              onClick={() => {
-                setPaper(p.value);
-                rememberPaper(p.value);
-              }}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
+        {!wide && paperChoice}
         <div className="seg" role="group" aria-label="Werkzeug">
           {TOOLS.map((t) => (
             <button key={t.value} type="button" aria-pressed={tool === t.value} onClick={() => setTool(t.value)}>
@@ -329,11 +343,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
           Rückgängig
         </button>
       </div>
-      <p className="small muted ink-hint">
-        {penSeen
-          ? 'Der Apple Pencil schreibt, der Finger blättert.'
-          : 'Mit Stift oder Finger schreiben. Sobald du hier den Apple Pencil benutzt, blättert der Finger die Seite.'}
-      </p>
+      {!wide && hint}
       <div ref={wrapRef} className="ink-page">
         <canvas
           ref={canvasRef}
@@ -346,6 +356,12 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
           onPointerCancel={onPointerEnd}
         />
       </div>
+      {wide && (
+        <div className="ink-foot">
+          {hint}
+          {paperChoice}
+        </div>
+      )}
     </div>
   );
 }

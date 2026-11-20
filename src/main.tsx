@@ -14,6 +14,7 @@ import './styles/today.css';
 import './styles/pages.css';
 import './styles/fold.css';
 import './styles/onboarding.css';
+import './styles/tablet.css';
 import { App } from './app/App';
 
 const root = document.getElementById('root');
