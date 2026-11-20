@@ -10,6 +10,7 @@ import { UpdateBanner } from './UpdateBanner';
 import { inSection, SECTIONS, SUNDAY_PATH } from './routes';
 import { useSelectedDate, withDate } from './useSelectedDate';
 import { useSettledViewport } from './useSettledViewport';
+import { useTyping } from './useTyping';
 
 /** The title of the page head: the section the page belongs to. */
 function pageTitle(pathname: string): string {
@@ -27,6 +28,7 @@ export function Layout() {
   const [backSlot, setBackSlot] = useState<HTMLElement | null>(null);
   const title = pageTitle(pathname);
   useSettledViewport();
+  useTyping();
   // Today and the Sunday head their pages with the date themselves; elsewhere
   // the date stands under the title, or which other day is open.
   const own = pathname === '/' || pathname.startsWith(SUNDAY_PATH);

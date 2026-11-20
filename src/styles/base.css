@@ -309,6 +309,16 @@ nav.tabs {
     0 10px 30px var(--glass-shadow),
     0 2px 6px var(--glass-shadow);
 }
+/* While a field is written in, the bar steps aside (src/app/useTyping.ts): on the
+   phone it would float above the keyboard, over the text. */
+html.is-typing nav.tabs {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+html.is-typing {
+  --tabbar-height: 0px;
+}
 /* Without blur the glass would be hard to read over text: then it is opaque. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   nav.tabs {

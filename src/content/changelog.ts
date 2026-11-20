@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.43.21',
+    date: '2026-11-20',
+    title: 'Beim Schreiben ohne Leiste',
+    changes: [
+      { area: 'Henoch', text: 'Solange du in ein Feld schreibst, tritt die Leiste mit den fünf Bereichen zur Seite. Auf dem iPhone stand sie sonst über der Tastatur mitten im Text. Verlässt du das Feld, ist sie wieder da.' },
+    ],
+  },
+  {
     version: '1.43.20',
     date: '2026-11-19',
     title: 'Mehr quer: alle Bereiche auf einer Linie',
