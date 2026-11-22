@@ -1,4 +1,4 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { FIELDS } from '../../content/fields';
 import { useAllDays, useDay, useDayLookup, useStore } from '../../data/hooks';
 import { addDays, formatLong, type DateKey } from '../../domain/dates';
@@ -9,6 +9,7 @@ import { endDateOf, type WinterArcRun } from '../../domain/winterArc';
 import { Segmented } from '../../ui/Choice';
 import { GrowingTextarea } from '../../ui/DayField';
 import { InkPad } from '../arena/InkPad';
+import { EnlargeButton, EnlargedNote, useEnlarged } from '../arena/writeFocus';
 
 type Writing = 'text' | 'ink';
 const WRITING_KEY = 'tz:journal-writing';
@@ -49,10 +50,13 @@ export function DesertJournal({ date }: { date: DateKey }) {
     }
   };
   const meta = FIELDS['evening.journal']!;
+  const box = useRef<HTMLFieldSetElement>(null);
+  const [enlarged, toggle] = useEnlarged(box);
   return (
-    <fieldset className="arena-lines arena-text desert-journal">
+    <fieldset ref={box} className={enlarged ? 'arena-lines arena-text desert-journal is-enlarged' : 'arena-lines arena-text desert-journal'}>
       <legend>Tagebuch</legend>
-      <p className="small muted">Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.</p>
+      <EnlargeButton on={enlarged} onToggle={toggle} />
+      <p className="small muted journal-rule">Sünde wird gebetet, nicht notiert – dafür ist die Beichte im Nachtgebet.</p>
       <Segmented<Writing>
         label="Schreiben mit"
         value={writing}
@@ -90,6 +94,7 @@ export function DesertJournal({ date }: { date: DateKey }) {
           {text.trim() && <p className="small muted">Dazu gibt es auch Getipptes.</p>}
         </>
       )}
+      {enlarged && <EnlargedNote />}
     </fieldset>
   );
 }

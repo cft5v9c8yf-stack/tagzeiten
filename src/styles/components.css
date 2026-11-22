@@ -995,9 +995,32 @@ html.write-focus .is-enlarged .ink > .ink-page {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-html.write-focus .is-enlarged > p.small,
+html.write-focus .is-enlarged > p.small:not(.journal-rule),
 html.write-focus .is-enlarged .ink-hint {
   display: none;
+}
+html.write-focus .is-enlarged > .journal-rule {
+  margin: 0 0 10px;
+}
+/* A field of the day (Andacht): label and arrows in one row; without the bar of an
+   entry above, the field begins at the top. */
+.field-head .write-enlarge {
+  width: 36px;
+  height: 36px;
+  margin-left: auto;
+}
+html.write-focus .field.is-enlarged > .field-head {
+  margin-bottom: 10px;
+}
+html.write-focus .field.is-enlarged > .field-head label {
+  font: 600 1.05rem var(--serif);
+  color: var(--ink);
+}
+html.write-focus:not(:has(.entry-bar)) .is-enlarged {
+  padding-top: calc(var(--safe-top) + 16px) !important;
+}
+html.write-focus:not(:has(.entry-bar)) fieldset.is-enlarged > .write-enlarge {
+  top: calc(var(--safe-top) + 16px);
 }
 html.write-focus .write-focus-note {
   display: block;
@@ -1028,4 +1051,7 @@ html.write-focus .confirm-row {
   border-radius: var(--radius-card);
   background: var(--sheet);
   box-shadow: 0 8px 24px var(--glass-shadow);
+}
+html.write-focus .is-enlarged > .journal-rule {
+  padding-right: 52px;
 }

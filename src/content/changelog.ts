@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.6',
+    date: '2026-11-22',
+    title: 'Vergrößern auch im Tagebuch und am Abend',
+    changes: [
+      { area: 'Wüstenzeit', text: 'Das Tagebuch einer Wüstenzeit lässt sich jetzt ebenfalls mit den zwei Pfeilen vergrößern, mit Tastatur und mit Handschrift. Der Satz, dass Sünde gebetet und nicht notiert wird, bleibt dabei stehen.' },
+      { area: 'Andacht', text: 'Am Abend lässt sich „Was mir wichtig geworden ist“ zur Andacht vergrößern. Die kurzen Felder bleiben, wie sie sind.' },
+    ],
+  },
+  {
     version: '1.44.5',
     date: '2026-11-22',
     title: 'Handschrift: alle Werkzeuge in einer Zeile',

@@ -140,7 +140,13 @@ describe('the habits of the Wüstenzeit under "Heute"', () => {
     // Under the day, and behind "Aufschreiben", the same journal of the day.
     fireEvent.click(screen.getByRole('button', { name: 'Aufschreiben' }));
     const page = (await screen.findByRole('heading', { level: 2, name: 'Tagebuch und drei Dankpunkte' })).closest('article') as HTMLElement;
-    fireEvent.change(within(within(page).getByRole('group', { name: 'Tagebuch' })).getByLabelText('Tagebuch'), {
+    const journal = within(within(page).getByRole('group', { name: 'Tagebuch' }));
+    // The journal can be enlarged like an entry of the Arena, and made small again.
+    fireEvent.click(journal.getByRole('button', { name: 'Vergrößern' }));
+    expect(document.documentElement.classList.contains('write-focus')).toBe(true);
+    fireEvent.click(journal.getByRole('button', { name: 'Verkleinern' }));
+    expect(document.documentElement.classList.contains('write-focus')).toBe(false);
+    fireEvent.change(journal.getByLabelText('Tagebuch'), {
       target: { value: 'Was mich heute trägt.' },
     });
     fireEvent.click(within(page).getByRole('button', { name: 'Sichern, abhaken und zurück' }));
