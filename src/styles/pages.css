@@ -1817,6 +1817,33 @@ body.is-sorting * {
   display: flex;
   gap: 6px;
 }
+/* The papers as small pictures, in one capsule like the other choices. */
+.ink-papers {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--sheet);
+}
+.ink-paper {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.ink-paper[aria-pressed='true'] {
+  background: var(--gold-soft);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
 .ink-color {
   width: 44px;
   height: 44px;

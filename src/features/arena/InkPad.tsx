@@ -29,6 +29,19 @@ const PAPERS: { value: Paper; label: string }[] = [
   { value: 'dotted', label: 'Punktiert' },
 ];
 
+/** A small picture of each paper: a sheet, empty, lined, squared or dotted. */
+function PaperMark({ paper }: { paper: Paper }) {
+  return (
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.3">
+      <rect x="2.5" y="2.5" width="15" height="15" rx="2.5" />
+      {paper === 'lined' && <path d="M5.5 7.5h9M5.5 10.5h9M5.5 13.5h9" />}
+      {paper === 'grid' && <path d="M7.5 2.5v15M12.5 2.5v15M2.5 7.5h15M2.5 12.5h15" strokeWidth="1" />}
+      {paper === 'dotted' &&
+        [6.5, 10, 13.5].flatMap((y) => [6.5, 10, 13.5].map((x) => <circle key={`${x}-${y}`} cx={x} cy={y} r="0.9" fill="currentColor" stroke="none" />))}
+    </svg>
+  );
+}
+
 /** Distance of lines, squares and dots on the page (in page units, 1000 wide). */
 const PAPER_STEP = 50;
 
@@ -128,7 +141,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   const [width, setWidth] = useState(0);
   const [penSeen, setPenSeen] = useState(readPenSeen);
   const [schemeTick, setSchemeTick] = useState(0);
-  // On the iPad lying the paper is chosen under the page; above it stay the tools in use.
+  // On the iPad lying the hint stands under the page.
   const wide = useWide();
 
   const strokesRef = useRef(strokes);
@@ -290,18 +303,21 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   };
 
   const paperChoice = (
-    <div className="seg" role="group" aria-label="Papier">
+    <div className="ink-papers" role="group" aria-label="Papier">
       {PAPERS.map((p) => (
         <button
           key={p.value}
           type="button"
+          className="ink-paper"
           aria-pressed={paper === p.value}
+          aria-label={p.label}
+          title={p.label}
           onClick={() => {
             setPaper(p.value);
             rememberPaper(p.value);
           }}
         >
-          {p.label}
+          <PaperMark paper={p.value} />
         </button>
       ))}
     </div>
@@ -317,7 +333,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   return (
     <div className="ink">
       <div className="ink-tools" role="toolbar" aria-label="Werkzeuge der Handschrift">
-        {!wide && paperChoice}
+        {paperChoice}
         <div className="seg" role="group" aria-label="Werkzeug">
           {TOOLS.map((t) => (
             <button key={t.value} type="button" aria-pressed={tool === t.value} onClick={() => setTool(t.value)}>
@@ -356,12 +372,7 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
           onPointerCancel={onPointerEnd}
         />
       </div>
-      {wide && (
-        <div className="ink-foot">
-          {hint}
-          {paperChoice}
-        </div>
-      )}
+      {wide && <div className="ink-foot">{hint}</div>}
     </div>
   );
 }

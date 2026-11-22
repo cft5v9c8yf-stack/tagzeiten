@@ -983,19 +983,19 @@ html.write-focus .is-enlarged textarea:focus {
   outline: none;
   border-color: var(--gold);
 }
-/* Handwriting enlarged: one row of tools above the page (pen and colours), one below
-   (paper and undo), so the page begins high up, also on the phone. */
+/* Handwriting enlarged: two short rows of tools above the page (pen and colours,
+   paper and undo), so the page begins high up, also on the phone. */
 html.write-focus .is-enlarged .ink {
   flex: 1;
   min-height: 0;
   margin: 0;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr);
   grid-template-areas:
     'tools colors'
-    'page page'
-    'paper undo';
+    'paper undo'
+    'page page';
   gap: 10px 8px;
 }
 html.write-focus .is-enlarged .ink-tools,
@@ -1015,8 +1015,12 @@ html.write-focus .is-enlarged .ink .seg button {
 html.write-focus .is-enlarged .ink .seg[aria-label='Werkzeug'] {
   grid-area: tools;
 }
-html.write-focus .is-enlarged .ink .seg[aria-label='Papier'] {
+html.write-focus .is-enlarged .ink-papers {
   grid-area: paper;
+  justify-self: start;
+}
+html.write-focus .is-enlarged .ink-hint {
+  display: none;
 }
 html.write-focus .is-enlarged .ink-colors {
   grid-area: colors;
@@ -1078,4 +1082,14 @@ html.write-focus .confirm-row {
   border-radius: var(--radius-card);
   background: var(--sheet);
   box-shadow: 0 8px 24px var(--glass-shadow);
+}
+/* Wide enough (iPad): all tools of the enlarged page in one row. */
+@media (min-width: 700px) {
+  html.write-focus .is-enlarged .ink {
+    grid-template-columns: auto auto minmax(0, 1fr) auto auto;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'tools paper . colors undo'
+      'page page page page page';
+  }
 }

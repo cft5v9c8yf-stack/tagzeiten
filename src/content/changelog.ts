@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.4',
+    date: '2026-11-22',
+    title: 'Papier als kleine Bilder',
+    changes: [
+      { area: 'Arena', text: 'Leer, Liniert, Kariert und Punktiert stehen jetzt als kleine Bilder des Papiers oben bei den Werkzeugen der Handschrift, nicht mehr unter der Seite. Wer das Wort lesen will, hält den Finger darauf; VoiceOver liest es vor.' },
+      { area: 'Arena', text: 'Vergrößert stehen alle Werkzeuge über der Seite: auf dem iPhone in zwei kurzen Zeilen, auf dem iPad in einer.' },
+    ],
+  },
+  {
     version: '1.44.3',
     date: '2026-11-22',
     title: 'Handschrift vergrößert: Werkzeuge kompakt',

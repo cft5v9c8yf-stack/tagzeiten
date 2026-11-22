@@ -486,9 +486,13 @@
     margin-top: 0;
   }
   .entry-sheet .ink-tools {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 6px;
     margin: 0 0 12px;
+  }
+  .entry-sheet .ink-paper {
+    width: 34px;
+    height: 32px;
   }
   .entry-sheet .ink-tools .seg {
     flex-wrap: nowrap;
