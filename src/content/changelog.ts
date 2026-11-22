@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.2',
+    date: '2026-11-22',
+    title: 'Vergrößertes Schreibfeld mit eigener Fläche',
+    changes: [
+      { area: 'Arena', text: 'Das vergrößerte Schreibfeld hat wieder eine eigene Fläche mit Rand: hell in Weiß auf dem Papier, dunkel in der etwas helleren Farbe der Karten. Beim Schreiben wird der Rand gold. So siehst du, wo du schreibst.' },
+    ],
+  },
+  {
     version: '1.44.1',
     date: '2026-11-22',
     title: 'Vergrößert über die ganze Breite',

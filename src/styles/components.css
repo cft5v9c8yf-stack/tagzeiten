@@ -963,11 +963,25 @@ html.write-focus .is-enlarged > .field {
   flex-direction: column;
   margin: 0;
 }
+/* Enlarged, the field is a sheet of its own, as everywhere: white on the paper in light,
+   the lighter card colour in dark, with the edge of the other fields. */
+html.write-focus .is-enlarged textarea,
+html.write-focus .is-enlarged .ink > .ink-page {
+  background: var(--sheet);
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-card);
+}
 html.write-focus .is-enlarged textarea {
   flex: 1;
   min-height: 0;
   height: auto !important;
   overflow-y: auto;
+  padding: 16px 18px;
+  line-height: 1.7;
+}
+html.write-focus .is-enlarged textarea:focus {
+  outline: none;
+  border-color: var(--gold);
 }
 html.write-focus .is-enlarged .ink {
   flex: 1;
