@@ -141,7 +141,6 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
     <fieldset ref={box} className={enlarged ? 'arena-lines arena-text is-enlarged' : 'arena-lines arena-text'}>
       <legend>{place.textLabel}</legend>
       <EnlargeButton on={enlarged} onToggle={toggle} />
-      {enlarged && <p className="write-focus-head" aria-hidden="true">{place.textLabel}</p>}
       <Segmented<Writing>
         label="Schreiben mit"
         value={writing}

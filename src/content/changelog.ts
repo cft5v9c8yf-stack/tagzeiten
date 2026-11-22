@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.5',
+    date: '2026-11-22',
+    title: 'Handschrift: alle Werkzeuge in einer Zeile',
+    changes: [
+      { area: 'Arena', text: 'Die Werkzeuge der Handschrift stehen jetzt als kleine Bilder in einer einzigen Zeile: Stift, Textmarker und Radierer, die vier Papiere, die drei Farben und ein Pfeil für „Rückgängig“. Über der Seite stehen so nur noch zwei Zeilen, Tastatur oder Handschrift und die Werkzeuge. Hältst du den Finger auf ein Bild, steht sein Name da; VoiceOver liest ihn vor.' },
+      { area: 'Arena', text: 'Vergrößert fällt die Überschrift „Was dich bewegt“ weg; die Seite beginnt gleich unter den Werkzeugen.' },
+    ],
+  },
+  {
     version: '1.44.4',
     date: '2026-11-22',
     title: 'Papier als kleine Bilder',

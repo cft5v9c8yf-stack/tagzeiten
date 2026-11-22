@@ -1810,28 +1810,32 @@ body.is-sorting * {
 .ink-tools {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 12px;
+  gap: 6px;
   align-items: center;
 }
 .ink-colors {
   display: flex;
-  gap: 6px;
+  gap: 3px;
 }
-/* The papers as small pictures, in one capsule like the other choices. */
-.ink-papers {
+/* The tools of the handwriting in one row: pen, highlighter and eraser, the papers, the
+   colours, and undo, all as small pictures (named for VoiceOver and on long touch). */
+.ink-picks {
   display: inline-flex;
-  gap: 2px;
-  padding: 3px;
+  flex: none;
+  gap: 1px;
+  padding: 2px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--sheet);
 }
-.ink-paper {
+.ink-pick,
+.ink-undo {
   appearance: none;
+  position: relative;
   display: inline-grid;
   place-items: center;
-  width: 38px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 0;
   border-radius: 999px;
@@ -1839,14 +1843,24 @@ body.is-sorting * {
   color: var(--muted);
   cursor: pointer;
 }
-.ink-paper[aria-pressed='true'] {
+.ink-pick[aria-pressed='true'] {
   background: var(--gold-soft);
   color: var(--ink);
   box-shadow: inset 0 0 0 1.5px var(--gold);
 }
+.ink-undo {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--control-line);
+  color: var(--ink);
+}
+.ink-undo:disabled {
+  opacity: var(--disabled-opacity);
+  cursor: default;
+}
 .ink-color {
-  width: 44px;
-  height: 44px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 2px solid var(--rule);
   background: var(--sheet);
@@ -1856,7 +1870,7 @@ body.is-sorting * {
 .ink-color::after {
   content: '';
   position: absolute;
-  inset: 9px;
+  inset: 6px;
   border-radius: 50%;
   background: var(--swatch);
 }
@@ -4905,4 +4919,36 @@ mark.placeholder {
 }
 .hb-swipe .hb-line .drag-handle {
   touch-action: none;
+}
+/* On the phone the row is narrow: the pictures a little smaller, so all stand in one row. */
+@media (max-width: 699px) {
+  .ink-tools {
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+  .ink-picks {
+    gap: 0;
+  }
+  .ink-pick,
+  .ink-color {
+    width: 28px;
+    height: 28px;
+  }
+  .ink-colors {
+    gap: 3px;
+  }
+  .ink-undo {
+    width: 30px;
+    height: 30px;
+  }
+}
+@media (min-width: 700px) {
+  .ink-pick,
+  .ink-color {
+    width: 34px;
+    height: 34px;
+  }
+  .ink-color::after {
+    inset: 7px;
+  }
 }

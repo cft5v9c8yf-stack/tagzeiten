@@ -29,6 +29,17 @@ const PAPERS: { value: Paper; label: string }[] = [
   { value: 'dotted', label: 'Punktiert' },
 ];
 
+/** A small picture of each tool: a pen, a highlighter with its broad tip, an eraser. */
+function ToolMark({ tool }: { tool: Tool }) {
+  return (
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      {tool === 'pen' && <path d="M13.5 3.5l3 3L7 16H4v-3zM11.5 5.5l3 3" />}
+      {tool === 'marker' && <path d="M12 3.5l4.5 4.5-6 6-4.5-4.5zM6 9.5 4 15.5l1 1 6-2M3.5 17.5h6" />}
+      {tool === 'eraser' && <path d="M8 16.5 3.5 12a1.5 1.5 0 0 1 0-2l6.5-6.5a1.5 1.5 0 0 1 2 0L16.5 8a1.5 1.5 0 0 1 0 2L10 16.5zM7 7l6 6M8 16.5h8.5" />}
+    </svg>
+  );
+}
+
 /** A small picture of each paper: a sheet, empty, lined, squared or dotted. */
 function PaperMark({ paper }: { paper: Paper }) {
   return (
@@ -303,12 +314,12 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   };
 
   const paperChoice = (
-    <div className="ink-papers" role="group" aria-label="Papier">
+    <div className="ink-picks" role="group" aria-label="Papier">
       {PAPERS.map((p) => (
         <button
           key={p.value}
           type="button"
-          className="ink-paper"
+          className="ink-pick"
           aria-pressed={paper === p.value}
           aria-label={p.label}
           title={p.label}
@@ -333,14 +344,22 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
   return (
     <div className="ink">
       <div className="ink-tools" role="toolbar" aria-label="Werkzeuge der Handschrift">
-        {paperChoice}
-        <div className="seg" role="group" aria-label="Werkzeug">
+        <div className="ink-picks" role="group" aria-label="Werkzeug">
           {TOOLS.map((t) => (
-            <button key={t.value} type="button" aria-pressed={tool === t.value} onClick={() => setTool(t.value)}>
-              {t.label}
+            <button
+              key={t.value}
+              type="button"
+              className="ink-pick"
+              aria-pressed={tool === t.value}
+              aria-label={t.label}
+              title={t.label}
+              onClick={() => setTool(t.value)}
+            >
+              <ToolMark tool={t.value} />
             </button>
           ))}
         </div>
+        {paperChoice}
         <div className="ink-colors" role="group" aria-label="Farbe">
           {COLORS.map((c) => (
             <button
@@ -355,8 +374,17 @@ export function InkPad({ strokes, onChange }: { strokes: InkStroke[]; onChange: 
             />
           ))}
         </div>
-        <button type="button" className="btn quiet ink-undo" disabled={history.length === 0} onClick={undo}>
-          Rückgängig
+        <button
+          type="button"
+          className="ink-undo"
+          aria-label="Rückgängig"
+          title="Rückgängig"
+          disabled={history.length === 0}
+          onClick={undo}
+        >
+          <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M7.5 5 4 8.5 7.5 12M4.5 8.5h7a4.5 4.5 0 0 1 0 9H9" />
+          </svg>
         </button>
       </div>
       {!wide && hint}
