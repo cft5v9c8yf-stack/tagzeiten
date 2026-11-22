@@ -983,18 +983,64 @@ html.write-focus .is-enlarged textarea:focus {
   outline: none;
   border-color: var(--gold);
 }
+/* Handwriting enlarged: one row of tools above the page (pen and colours), one below
+   (paper and undo), so the page begins high up, also on the phone. */
 html.write-focus .is-enlarged .ink {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
   margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'tools colors'
+    'page page'
+    'paper undo';
+  gap: 10px 8px;
 }
-html.write-focus .is-enlarged .ink > * {
-  flex: none;
+html.write-focus .is-enlarged .ink-tools,
+html.write-focus .is-enlarged .ink-foot {
+  display: contents;
+}
+html.write-focus .is-enlarged .ink .seg {
+  margin: 0;
+  justify-self: start;
+  flex-wrap: nowrap;
+}
+html.write-focus .is-enlarged .ink .seg button {
+  min-height: 34px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+}
+html.write-focus .is-enlarged .ink .seg[aria-label='Werkzeug'] {
+  grid-area: tools;
+}
+html.write-focus .is-enlarged .ink .seg[aria-label='Papier'] {
+  grid-area: paper;
+}
+html.write-focus .is-enlarged .ink-colors {
+  grid-area: colors;
+  align-self: center;
+  gap: 4px;
+}
+html.write-focus .is-enlarged .ink-color {
+  width: 34px;
+  height: 34px;
+}
+html.write-focus .is-enlarged .ink-color::after {
+  inset: 7px;
+}
+html.write-focus .is-enlarged .ink-undo {
+  grid-area: undo;
+  justify-self: end;
+  align-self: center;
+  margin: 0;
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 0.82rem;
 }
 html.write-focus .is-enlarged .ink > .ink-page {
-  flex: 1;
+  grid-area: page;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;

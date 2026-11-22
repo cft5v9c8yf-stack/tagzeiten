@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.3',
+    date: '2026-11-22',
+    title: 'Handschrift vergrößert: Werkzeuge kompakt',
+    changes: [
+      { area: 'Arena', text: 'Schreibst du vergrößert mit der Hand, stehen Stift, Textmarker, Radierer und die Farben in einer Zeile über der Seite, Papier und „Rückgängig“ darunter. Auf dem iPhone beginnt die Seite so deutlich weiter oben.' },
+    ],
+  },
+  {
     version: '1.44.2',
     date: '2026-11-22',
     title: 'Vergrößertes Schreibfeld mit eigener Fläche',
