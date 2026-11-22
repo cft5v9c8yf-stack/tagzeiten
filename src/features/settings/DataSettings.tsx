@@ -7,19 +7,16 @@ import { useToast } from '../../app/Toast';
 import { useStore } from '../../data/hooks';
 import { persistence, requestPersistence, type Persistence } from '../../data/persistence';
 import { BackupError, parseBackup } from '../../domain/backup';
-import type { MergeCount } from '../../domain/merge';
 import { resetOpenState } from '../../ui/collapseState';
 import { TileGroup } from '../../ui/TileGroup';
 import { ConfirmRow, ConfirmTrigger } from '../../ui/ConfirmRow';
 
-type Pending = { json: string; days: number; exportedAt?: string; merge: MergeCount };
+type Pending = { json: string; days: number; exportedAt?: string };
 
 /**
  * Export, import and delete (rule 11). Import and delete ask for confirmation
  * on the page itself.
  */
-const entries = (n: number) => `${n} ${n === 1 ? 'Eintrag' : 'Einträge'}`;
-
 export function DataSettings() {
   const store = useStore();
   const toast = useToast();
@@ -72,7 +69,7 @@ export function DataSettings() {
       const json = await file.text();
       const { days } = parseBackup(json, stamp);
       const exportedAt = (JSON.parse(json) as { exportedAt?: string }).exportedAt;
-      setPending({ json, days: days.length, exportedAt, merge: await store.previewMerge(json) });
+      setPending({ json, days: days.length, exportedAt });
     } catch (e) {
       setImportError(e instanceof BackupError ? e.message : 'Die Datei konnte nicht gelesen werden.');
     } finally {
@@ -80,17 +77,12 @@ export function DataSettings() {
     }
   };
 
-  const runImport = async (how: 'merge' | 'replace') => {
+  const runImport = async () => {
     if (!pending || busy) return;
     setBusy(true);
     try {
-      if (how === 'merge') {
-        const { added, changed } = await store.mergeBackup(pending.json);
-        toast(`Sicherung zusammengeführt: ${entries(added)} neu, ${changed} aktualisiert`);
-      } else {
-        const { days } = await store.importBackup(pending.json);
-        toast(`Sicherung eingespielt: ${days} Tage`);
-      }
+      const { days } = await store.importBackup(pending.json);
+      toast(`Sicherung eingespielt: ${days} Tage`);
       setPending(null);
     } catch (e) {
       setImportError(e instanceof BackupError ? e.message : 'Die Sicherung konnte nicht eingespielt werden.');
@@ -200,21 +192,11 @@ export function DataSettings() {
         <div className="panel confirm-panel" role="alertdialog" aria-labelledby="import-confirm">
           <p id="import-confirm">
             Die Sicherung{exportedOn ? ` vom ${exportedOn}` : ''} enthält {pending.days} {pending.days === 1 ? 'Tag' : 'Tage'}.
-          </p>
-          <p>
-            <strong>Zusammenführen:</strong> {entries(pending.merge.added)} neu, {pending.merge.changed} aktualisiert,{' '}
-            {pending.merge.same} schon hier. Was auf beiden Geräten steht, gilt in der zuletzt geänderten Fassung; im
-            Leseplan gilt die weitere Stelle. Auf diesem Gerät Gelöschtes kann dabei zurückkommen.
-          </p>
-          <p>
-            <strong>Ersetzen:</strong> Alle Einträge und Einstellungen auf diesem Gerät werden durch die Sicherung ersetzt.
+            Alle Einträge und Einstellungen auf diesem Gerät werden durch sie ersetzt.
           </p>
           <div className="button-row">
-            <button type="button" className="btn primary" onClick={() => runImport('merge')} disabled={busy} aria-busy={busy}>
-              Sicherung zusammenführen
-            </button>
-            <button type="button" className="btn" onClick={() => runImport('replace')} disabled={busy}>
-              Alles durch die Sicherung ersetzen
+            <button type="button" className="btn primary" onClick={runImport} disabled={busy} aria-busy={busy}>
+              Sicherung einspielen
             </button>
             <button type="button" className="btn quiet" onClick={() => setPending(null)}>
               Abbrechen

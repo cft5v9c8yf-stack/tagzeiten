@@ -8,7 +8,6 @@
 import { READING_HABIT } from '../content/habits';
 import { addDays, todayKey as currentTodayKey, type DateKey } from '../domain/dates';
 import { createBackup, parseBackup, type Backup } from '../domain/backup';
-import { mergeStores, type MergeCount } from '../domain/merge';
 import { toMarkdown } from '../domain/exportMarkdown';
 import { winterArcToMarkdown } from '../domain/winterArcMarkdown';
 import { dogmatikToMarkdown } from '../domain/dogmatik';
@@ -783,12 +782,6 @@ export class Store {
   /** Replaces all data with the content of a backup file. */
   async importBackup(json: string): Promise<{ days: number }> {
     const { profile, days } = parseBackup(json, this.today());
-    await this.writeAll(profile, days);
-    return { days: days.length };
-  }
-
-  /** Replaces everything stored with the given profile and days, in one transaction. */
-  private async writeAll(profile: Profile, days: Day[]): Promise<void> {
     await this.queue.cancelAll();
     this.dirty.clear();
     this.journal.clear();
@@ -809,29 +802,7 @@ export class Store {
     this.days = new Map(days.map((d) => [d.date, d]));
     this.blanks.clear();
     this.emit();
-  }
-
-  /** What merging a backup file would bring, without changing anything. */
-  async previewMerge(json: string): Promise<MergeCount> {
-    const incoming = parseBackup(json, this.today());
-    await this.flush();
-    return mergeStores({ profile: this.profile, days: this.allDays().filter((d) => !isEmptyDay(d)) }, incoming, this.today()).count;
-  }
-
-  /**
-   * Merges a backup file into what is on this device, instead of replacing it:
-   * nothing either side holds is lost, the entry changed last wins.
-   */
-  async mergeBackup(json: string): Promise<MergeCount> {
-    const incoming = parseBackup(json, this.today());
-    await this.flush();
-    const { profile, days, count } = mergeStores(
-      { profile: this.profile, days: this.allDays().filter((d) => !isEmptyDay(d)) },
-      incoming,
-      this.today(),
-    );
-    await this.writeAll(profile, days);
-    return count;
+    return { days: days.length };
   }
 
   /** Deletes every entry and the profile. The app starts over afterwards. */

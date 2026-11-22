@@ -384,7 +384,11 @@ gegen `reference/`, wie bei den Adventslektionen in `data/advent-lektionen.json`
 ## Mögliche Neuerungen (Ideen, nicht beschlossen)
 
 - **Abgleich zwischen iPhone und iPad** (beschlossen am 20.11.2026: Weg 1, eigenes Henoch-Konto).
-  - **Stufe 1, gebaut (1.44.0, auf `vorschau`):** „Sicherung zusammenführen“ unter Deine Daten neben
+  - **Stufe 1, gebaut, aber zurückgestellt:** am 20.11.2026 als 1.44.0 auf `vorschau`, am 22.11.2026 auf
+    Wunsch von Andreas wieder herausgenommen, damit „Schreibfeld vergrößern“ auf die Vorschau kann. Der
+    Code ist vollständig im Commit `053802d`; zum Wiederaufnehmen diesen Commit auf `vorschau` holen
+    (`git cherry-pick 053802d`), Version neu vergeben, Verlauf anpassen.
+    Inhalt: „Sicherung zusammenführen“ unter Deine Daten neben
     „Alles durch die Sicherung ersetzen“. Reine Funktion `mergeStores` in `src/domain/merge.ts`,
     `store.previewMerge`/`store.mergeBackup`. Regeln: Tage, Arena, Winter-Arc-Zeilen je Eintrag ganz, der
     neuere `updatedAt` gewinnt (Gleichstand: dieses Gerät); Einstellungen vom zuletzt geänderten Profil;
