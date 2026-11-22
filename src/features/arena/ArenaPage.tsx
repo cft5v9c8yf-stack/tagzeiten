@@ -18,6 +18,7 @@ import { SectionVerse } from '../../ui/SectionVerse';
 import { activeRun } from '../../domain/winterArc';
 import { WINTER_ARC_COMFORT } from '../../content/winterArc';
 import { InkPad } from './InkPad';
+import { EnlargeButton, EnlargedNote, useEnlarged } from './writeFocus';
 import { useWide } from '../../app/useMedia';
 import { useDeskHeight } from './desk';
 import { Reflection } from './Reflection';
@@ -134,9 +135,13 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
     setWriting(w);
     rememberWriting(w);
   };
+  const box = useRef<HTMLFieldSetElement>(null);
+  const [enlarged, toggle] = useEnlarged(box);
   return (
-    <fieldset className="arena-lines arena-text">
+    <fieldset ref={box} className={enlarged ? 'arena-lines arena-text is-enlarged' : 'arena-lines arena-text'}>
       <legend>{place.textLabel}</legend>
+      <EnlargeButton on={enlarged} onToggle={toggle} />
+      {enlarged && <p className="write-focus-head" aria-hidden="true">{place.textLabel}</p>}
       <Segmented<Writing>
         label="Schreiben mit"
         value={writing}
@@ -175,6 +180,7 @@ function JournalText({ entry, update }: { entry: ArenaEntry; update: (fn: (e: Ar
           {hasText && <p className="small muted">Dazu gibt es auch Getipptes.</p>}
         </>
       )}
+      {enlarged && <EnlargedNote />}
     </fieldset>
   );
 }

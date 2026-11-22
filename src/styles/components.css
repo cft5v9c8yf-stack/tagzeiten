@@ -859,3 +859,161 @@ header.top .search-link:hover,
 .ref-piece {
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------- the field enlarged
+   (src/features/arena/writeFocus.tsx). The arrows sit at the top right of the field; enlarged,
+   the page fills the screen in the width it had, the actions of the entry stay top left. */
+fieldset.arena-text {
+  position: relative;
+}
+.write-enlarge {
+  appearance: none;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--sheet);
+  color: var(--icon-gold, var(--gold));
+  cursor: pointer;
+}
+fieldset.arena-text > .write-enlarge {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.reflection-head .write-enlarge {
+  margin-left: 4px;
+}
+.write-focus-head,
+.write-focus-note {
+  display: none;
+}
+html.write-focus {
+  --focus-left: max(16px, calc(50vw - var(--focus-w, 640px) / 2));
+}
+html.write-focus body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: var(--paper);
+}
+html.write-focus nav.tabs {
+  display: none;
+}
+html.write-focus .is-enlarged {
+  position: fixed !important;
+  z-index: 60;
+  top: 0;
+  bottom: 0;
+  left: var(--focus-left);
+  width: min(var(--focus-w, 640px), calc(100vw - 32px));
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: calc(var(--safe-top) + 66px) 0 calc(var(--safe-bottom) + 12px) !important;
+  display: flex;
+  flex-direction: column;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+html.write-focus .is-enlarged > * {
+  flex: none;
+}
+html.write-focus fieldset.is-enlarged > legend {
+  display: none;
+}
+html.write-focus fieldset.is-enlarged > .write-enlarge {
+  top: calc(var(--safe-top) + 12px);
+}
+html.write-focus .reflection-card.is-enlarged > .reflection-head {
+  margin-bottom: 10px;
+}
+html.write-focus .reflection-card.is-enlarged .write-enlarge {
+  position: absolute;
+  top: calc(var(--safe-top) + 12px);
+  right: 0;
+}
+html.write-focus .write-focus-head {
+  display: block;
+  margin: 0 0 10px;
+  padding-right: 56px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+html.write-focus .is-enlarged > .seg {
+  align-self: flex-start;
+  margin: 0 0 10px;
+}
+html.write-focus .is-enlarged > .field {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+html.write-focus .is-enlarged textarea {
+  flex: 1;
+  min-height: 0;
+  height: auto !important;
+  overflow-y: auto;
+}
+html.write-focus .is-enlarged .ink {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+html.write-focus .is-enlarged .ink > * {
+  flex: none;
+}
+html.write-focus .is-enlarged .ink > .ink-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+html.write-focus .is-enlarged > p.small,
+html.write-focus .is-enlarged .ink-hint {
+  display: none;
+}
+html.write-focus .write-focus-note {
+  display: block;
+  margin: 8px 0 0;
+  font: 0.78rem/1.35 var(--sans);
+  color: var(--muted);
+  text-align: center;
+}
+/* The actions of the entry stay at the top left, above the page. */
+html.write-focus .entry-bar,
+html.write-focus .entry-export,
+html.write-focus .confirm-row {
+  position: fixed;
+  z-index: 70;
+  left: var(--focus-left);
+  margin: 0;
+}
+html.write-focus .entry-bar {
+  top: calc(var(--safe-top) + 12px);
+}
+html.write-focus .entry-bar .back-link {
+  display: none;
+}
+html.write-focus .entry-export,
+html.write-focus .confirm-row {
+  top: calc(var(--safe-top) + 60px);
+  padding: 8px;
+  border-radius: var(--radius-card);
+  background: var(--sheet);
+  box-shadow: 0 8px 24px var(--glass-shadow);
+}

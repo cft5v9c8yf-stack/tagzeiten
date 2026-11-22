@@ -12,6 +12,7 @@ import type { InkStroke } from '../../domain/ink';
 import { InkPad } from './InkPad';
 import { lastWriting, rememberWriting, type Writing } from './writing';
 import { useWide } from '../../app/useMedia';
+import { EnlargeButton, EnlargedNote, useEnlarged } from './writeFocus';
 import { useDeskHeight } from './desk';
 import type { ArenaEntry, Rhythm } from '../../domain/model';
 
@@ -68,10 +69,13 @@ function Question({
     setWriting(w);
     rememberWriting(w);
   };
+  const box = useRef<HTMLElement>(null);
+  const [enlarged, toggle] = useEnlarged(box);
   return (
-    <section className="reflection-card" aria-labelledby={`refl-${card.id}`}>
+    <section ref={box} className={enlarged ? 'reflection-card is-enlarged' : 'reflection-card'} aria-labelledby={`refl-${card.id}`}>
       <div className="reflection-head">
         <h3 id={`refl-${card.id}`}>{card.title}</h3>
+        <EnlargeButton on={enlarged} onToggle={toggle} />
         <button
           type="button"
           className="reflection-i"
@@ -113,6 +117,7 @@ function Question({
           {hasText && <p className="small muted">Dazu gibt es auch Getipptes.</p>}
         </>
       )}
+      {enlarged && <EnlargedNote />}
     </section>
   );
 }

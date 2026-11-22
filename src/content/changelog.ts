@@ -13,6 +13,15 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.0',
+    date: '2026-11-22',
+    title: 'Schreibfeld vergrößern',
+    changes: [
+      { area: 'Arena', text: 'Oben rechts an „Was dich bewegt“ stehen zwei Pfeile, wie Apple sie zum Vergrößern zeigt. Ein Tipp, und nur noch die Seite steht da: Bibelwort, Titel, Bibelstellen, Anliegen, Zuspruch und die Leiste treten zurück. Die Knöpfe zum Sichern, Anheften, Archivieren, Exportieren und Löschen bleiben oben links.' },
+      { area: 'Arena', text: 'Das geht mit Tastatur und mit Handschrift, in der Gebetskammer, bei jeder Frage unter Wachen und in der Wüstenwanderung. Die Seite behält ihre Breite, so sieht deine Handschrift gleich aus. Die Pfeile nach innen führen zurück; jeder Eintrag öffnet sich wieder wie gewohnt.' },
+    ],
+  },
+  {
     version: '1.43.21',
     date: '2026-11-20',
     title: 'Beim Schreiben ohne Leiste',
