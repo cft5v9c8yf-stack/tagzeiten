@@ -892,8 +892,10 @@ fieldset.arena-text > .write-enlarge {
 .write-focus-note {
   display: none;
 }
+/* The page takes the screen: a gutter at the sides, on the iPad at most 1100 wide. */
 html.write-focus {
-  --focus-left: max(16px, calc(50vw - var(--focus-w, 640px) / 2));
+  --focus-w: min(1100px, calc(100vw - 2 * max(16px, min(48px, 4vw)) - var(--safe-left) - var(--safe-right)));
+  --focus-left: calc((100vw - var(--focus-w)) / 2);
 }
 html.write-focus body::after {
   content: '';
@@ -911,7 +913,7 @@ html.write-focus .is-enlarged {
   top: 0;
   bottom: 0;
   left: var(--focus-left);
-  width: min(var(--focus-w, 640px), calc(100vw - 32px));
+  width: var(--focus-w);
   height: auto !important;
   max-height: none !important;
   margin: 0 !important;

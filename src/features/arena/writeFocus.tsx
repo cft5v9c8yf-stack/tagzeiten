@@ -3,24 +3,13 @@ import { FlowIcon } from '../../ui/FlowIcon';
 
 /**
  * The field to write in, enlarged: the rest of the entry steps back (the class
- * "write-focus" on <html>), the actions of the entry stay at the top left. The
- * page keeps the width it had, so handwriting keeps its size. Escape, or the
- * arrows again, return to the entry. Nothing is kept: an entry always opens as is.
+ * "write-focus" on <html>), the actions of the entry stay at the top left, and the
+ * page takes the width of the screen. Escape, or the arrows again, return to the
+ * entry. Nothing is kept: an entry always opens as is.
  */
-export function useEnlarged(field: RefObject<HTMLElement | null>): [boolean, () => void] {
+export function useEnlarged(_field?: RefObject<HTMLElement | null>): [boolean, () => void] {
   const [on, setOn] = useState(false);
-  const toggle = useCallback(() => {
-    if (!on) {
-      // The width of what is written on, without the padding of the box around it.
-      const el = field.current;
-      if (el) {
-        const cs = getComputedStyle(el);
-        const w = el.getBoundingClientRect().width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-        if (w > 0) document.documentElement.style.setProperty('--focus-w', `${Math.round(w)}px`);
-      }
-    }
-    setOn((x) => !x);
-  }, [on, field]);
+  const toggle = useCallback(() => setOn((x) => !x), []);
   useEffect(() => {
     if (!on) return;
     const root = document.documentElement;
@@ -31,7 +20,6 @@ export function useEnlarged(field: RefObject<HTMLElement | null>): [boolean, () 
     document.addEventListener('keydown', onKey);
     return () => {
       root.classList.remove('write-focus');
-      root.style.removeProperty('--focus-w');
       document.removeEventListener('keydown', onKey);
     };
   }, [on]);

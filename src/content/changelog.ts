@@ -13,6 +13,14 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.1',
+    date: '2026-11-22',
+    title: 'Vergrößert über die ganze Breite',
+    changes: [
+      { area: 'Arena', text: 'Das vergrößerte Schreibfeld nutzt jetzt die ganze Breite des Bildschirms, auf dem iPad bis an einen schmalen Rand. Handschrift wird dabei mit der Seite größer gezeigt und beim Verkleinern wieder kleiner.' },
+    ],
+  },
+  {
     version: '1.44.0',
     date: '2026-11-22',
     title: 'Schreibfeld vergrößern',
