@@ -486,33 +486,9 @@
     margin-top: 0;
   }
   .entry-sheet .ink-tools {
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: 6px;
     margin: 0 0 12px;
-  }
-  .entry-sheet .ink-tools .seg {
-    flex-wrap: nowrap;
-    margin: 0;
-  }
-  .entry-sheet .ink-tools .seg button {
-    min-height: 32px;
-    padding: 4px 10px;
-    font-size: 0.82rem;
-  }
-  .entry-sheet .ink-colors {
-    gap: 2px;
-  }
-  .entry-sheet .ink-color {
-    width: 32px;
-    height: 32px;
-  }
-  .entry-sheet .ink-color::after {
-    inset: 7px;
-  }
-  .entry-sheet .ink-undo {
-    min-height: 32px;
-    padding: 4px 12px;
-    font-size: 0.82rem;
   }
   .entry-sheet .ink-page {
     border: 0;

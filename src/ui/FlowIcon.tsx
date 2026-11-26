@@ -32,6 +32,8 @@ export type FlowIconName =
   | 'archive'
   | 'unarchive'
   | 'trash'
+  | 'expand'
+  | 'collapse'
   | 'back'
   | 'forward'
   | 'plus'
@@ -140,6 +142,9 @@ export const FLOW_PATHS: Record<FlowIconName, JSX.Element> = {
   archive: <path d="M3.5 4.5h17v4h-17ZM5 8.5V20h14V8.5M10 12.5h4" />,
   unarchive: <path d="M3.5 4.5h17v4h-17ZM5 8.5V20h14V8.5M12 17.5v-6M9.5 14 12 11.5l2.5 2.5" />,
   trash: <path d="M4 6.5h16M9.5 6.5V4h5v2.5M6.5 6.5l1 13.5h9l1-13.5M10.5 10.5v6M13.5 10.5v6" />,
+  // Two arrows out to the corners, and in again: the field enlarged, as on the iPhone and iPad
+  expand: <path d="M14 4h6v6M10 20H4v-6M20 4l-6.5 6.5M4 20l6.5-6.5" />,
+  collapse: <path d="M20 10h-6V4M4 14h6v6M14 10l6.5-6.5M10 14l-6.5 6.5" />,
   // The way back
   back: <path d="M19.5 12h-15M10.5 6l-6 6 6 6" />,
   forward: <path d="M4.5 12h15M13.5 6l6 6-6 6" />,

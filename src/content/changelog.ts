@@ -13,6 +13,66 @@ export interface Release {
 
 export const CHANGELOG: readonly Release[] = [
   {
+    version: '1.44.6',
+    date: '2026-11-22',
+    title: 'Vergrößern auch im Tagebuch und am Abend',
+    changes: [
+      { area: 'Wüstenzeit', text: 'Das Tagebuch einer Wüstenzeit lässt sich jetzt ebenfalls mit den zwei Pfeilen vergrößern, mit Tastatur und mit Handschrift. Der Satz, dass Sünde gebetet und nicht notiert wird, bleibt dabei stehen.' },
+      { area: 'Andacht', text: 'Am Abend lässt sich „Was mir wichtig geworden ist“ zur Andacht vergrößern. Die kurzen Felder bleiben, wie sie sind.' },
+    ],
+  },
+  {
+    version: '1.44.5',
+    date: '2026-11-22',
+    title: 'Handschrift: alle Werkzeuge in einer Zeile',
+    changes: [
+      { area: 'Arena', text: 'Die Werkzeuge der Handschrift stehen jetzt als kleine Bilder in einer einzigen Zeile: Stift, Textmarker und Radierer, die vier Papiere, die drei Farben und ein Pfeil für „Rückgängig“. Über der Seite stehen so nur noch zwei Zeilen, Tastatur oder Handschrift und die Werkzeuge. Hältst du den Finger auf ein Bild, steht sein Name da; VoiceOver liest ihn vor.' },
+      { area: 'Arena', text: 'Vergrößert fällt die Überschrift „Was dich bewegt“ weg; die Seite beginnt gleich unter den Werkzeugen.' },
+    ],
+  },
+  {
+    version: '1.44.4',
+    date: '2026-11-22',
+    title: 'Papier als kleine Bilder',
+    changes: [
+      { area: 'Arena', text: 'Leer, Liniert, Kariert und Punktiert stehen jetzt als kleine Bilder des Papiers oben bei den Werkzeugen der Handschrift, nicht mehr unter der Seite. Wer das Wort lesen will, hält den Finger darauf; VoiceOver liest es vor.' },
+      { area: 'Arena', text: 'Vergrößert stehen alle Werkzeuge über der Seite: auf dem iPhone in zwei kurzen Zeilen, auf dem iPad in einer.' },
+    ],
+  },
+  {
+    version: '1.44.3',
+    date: '2026-11-22',
+    title: 'Handschrift vergrößert: Werkzeuge kompakt',
+    changes: [
+      { area: 'Arena', text: 'Schreibst du vergrößert mit der Hand, stehen Stift, Textmarker, Radierer und die Farben in einer Zeile über der Seite, Papier und „Rückgängig“ darunter. Auf dem iPhone beginnt die Seite so deutlich weiter oben.' },
+    ],
+  },
+  {
+    version: '1.44.2',
+    date: '2026-11-22',
+    title: 'Vergrößertes Schreibfeld mit eigener Fläche',
+    changes: [
+      { area: 'Arena', text: 'Das vergrößerte Schreibfeld hat wieder eine eigene Fläche mit Rand: hell in Weiß auf dem Papier, dunkel in der etwas helleren Farbe der Karten. Beim Schreiben wird der Rand gold. So siehst du, wo du schreibst.' },
+    ],
+  },
+  {
+    version: '1.44.1',
+    date: '2026-11-22',
+    title: 'Vergrößert über die ganze Breite',
+    changes: [
+      { area: 'Arena', text: 'Das vergrößerte Schreibfeld nutzt jetzt die ganze Breite des Bildschirms, auf dem iPad bis an einen schmalen Rand. Handschrift wird dabei mit der Seite größer gezeigt und beim Verkleinern wieder kleiner.' },
+    ],
+  },
+  {
+    version: '1.44.0',
+    date: '2026-11-22',
+    title: 'Schreibfeld vergrößern',
+    changes: [
+      { area: 'Arena', text: 'Oben rechts an „Was dich bewegt“ stehen zwei Pfeile, wie Apple sie zum Vergrößern zeigt. Ein Tipp, und nur noch die Seite steht da: Bibelwort, Titel, Bibelstellen, Anliegen, Zuspruch und die Leiste treten zurück. Die Knöpfe zum Sichern, Anheften, Archivieren, Exportieren und Löschen bleiben oben links.' },
+      { area: 'Arena', text: 'Das geht mit Tastatur und mit Handschrift, in der Gebetskammer, bei jeder Frage unter Wachen und in der Wüstenwanderung. Die Seite behält ihre Breite, so sieht deine Handschrift gleich aus. Die Pfeile nach innen führen zurück; jeder Eintrag öffnet sich wieder wie gewohnt.' },
+    ],
+  },
+  {
     version: '1.43.21',
     date: '2026-11-20',
     title: 'Beim Schreiben ohne Leiste',

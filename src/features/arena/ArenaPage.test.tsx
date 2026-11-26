@@ -415,7 +415,7 @@ describe('Handwriting in the Gebetskammer', () => {
 
       // The paper: blank by default, lined, squared or dotted, remembered on the device.
       const paper = within(screen.getByRole('group', { name: 'Papier' }));
-      expect(paper.getAllByRole('button').map((b) => b.textContent)).toEqual(['Leer', 'Liniert', 'Kariert', 'Punktiert']);
+      expect(paper.getAllByRole('button').map((b) => b.getAttribute('aria-label'))).toEqual(['Leer', 'Liniert', 'Kariert', 'Punktiert']);
       expect(paper.getByRole('button', { name: 'Leer' }).getAttribute('aria-pressed')).toBe('true');
       expect(page.style.backgroundImage).toBe('');
       fireEvent.click(paper.getByRole('button', { name: 'Kariert' }));

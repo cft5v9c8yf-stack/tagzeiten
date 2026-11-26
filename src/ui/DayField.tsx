@@ -3,6 +3,7 @@ import { FIELDS } from '../content/fields';
 import { useDay, useStore } from '../data/hooks';
 import type { DateKey } from '../domain/dates';
 import { getText, setAt } from '../domain/paths';
+import { EnlargeButton, EnlargedNote, useEnlarged } from '../features/arena/writeFocus';
 
 function autosize(el: HTMLTextAreaElement | null) {
   if (!el) return;
@@ -45,13 +46,18 @@ export function DayField({
     [store, date, path],
   );
 
+  // A field for longer writing (four lines or more) can be enlarged, like the entries of the Arena.
+  const canEnlarge = !meta.single && (meta.rows ?? 1) >= 4;
+  const box = useRef<HTMLDivElement>(null);
+  const [enlarged, toggle] = useEnlarged(box);
   const labelEl = <label htmlFor={id}>{label ?? meta.label}</label>;
   return (
-    <div className="field">
-      {aside ? (
+    <div ref={box} className={enlarged ? 'field is-enlarged' : 'field'}>
+      {aside || canEnlarge ? (
         <div className="field-head">
           {labelEl}
           {aside}
+          {canEnlarge && <EnlargeButton on={enlarged} onToggle={toggle} />}
         </div>
       ) : (
         labelEl
@@ -76,6 +82,7 @@ export function DayField({
           onChange={(e) => onChange(e.target.value)}
         />
       )}
+      {enlarged && <EnlargedNote />}
     </div>
   );
 }
